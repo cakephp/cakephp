@@ -515,7 +515,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $method = new ReflectionMethod($this, '_initializeSchema');
             if ($method->getDeclaringClass()->getName() != Table::class) {
                 deprecationWarning(
-                    'Table::_initializeSchema() is deprecated. Implement `getSchema()` with a parent call instead.'
+                    'Table::_initializeSchema() is deprecated. Override `getSchema()` with a parent call instead.'
                 );
                 $this->_schema = $this->_initializeSchema($this->_schema);
             }
