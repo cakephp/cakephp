@@ -45,6 +45,7 @@ use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use Exception;
 use InvalidArgumentException;
+use ReflectionMethod;
 use RuntimeException;
 
 /**
@@ -507,11 +508,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
-            $this->_schema = $this->_initializeSchema(
-                $this->getConnection()
-                    ->getSchemaCollection()
-                    ->describe($this->getTable())
-            );
+            $this->_schema = $this->getConnection()
+                ->getSchemaCollection()
+                ->describe($this->getTable());
+
+            $method = new ReflectionMethod($this, '_initializeSchema');
+            if ($method->getDeclaringClass()->getName() != Table::class) {
+                deprecationWarning(
+                    'Table::_initializeSchema() is deprecated. Implement `getSchema()` with a parent call instead.'
+                );
+                $this->_schema = $this->_initializeSchema($this->_schema);
+            }
             if (Configure::read('debug')) {
                 $this->checkAliasLengths();
             }

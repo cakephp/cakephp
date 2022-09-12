@@ -465,10 +465,12 @@ class TableTest extends TestCase
 
                 return $schema;
             }));
-        $result = $table->getSchema();
-        $schema->setColumnType('username', 'integer');
-        $this->assertEquals($schema, $result);
-        $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
+        $this->deprecated(function () use ($schema, $table) {
+            $result = $table->getSchema();
+            $schema->setColumnType('username', 'integer');
+            $this->assertEquals($schema, $result);
+            $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
+        });
     }
 
     /**
