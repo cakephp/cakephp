@@ -384,6 +384,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
+                'autoIncrement' => null,
             ],
             'readingtime' => [
                 'type' => 'time',
@@ -804,7 +805,7 @@ SQL;
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
-                '"post_id" INTEGER',
+                '"post_id" INT',
             ],
             [
                 'post_id',
@@ -985,7 +986,7 @@ SQL;
             ]);
 
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '"id" SERIAL');
+        $this->assertSame('"id" SERIAL NOT NULL', $result);
     }
 
     /**
@@ -1201,7 +1202,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "schema_articles" (
-"id" SERIAL,
+"id" SERIAL NOT NULL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
 "data" JSONB,
@@ -1275,8 +1276,8 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "articles_tags" (
-"article_id" INTEGER NOT NULL,
-"tag_id" INTEGER NOT NULL,
+"article_id" INT NOT NULL,
+"tag_id" INT NOT NULL,
 PRIMARY KEY ("article_id", "tag_id")
 )
 SQL;
@@ -1301,8 +1302,8 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "composite_key" (
-"id" SERIAL,
-"account_id" INTEGER NOT NULL,
+"id" SERIAL NOT NULL,
+"account_id" INT NOT NULL,
 PRIMARY KEY ("id", "account_id")
 )
 SQL;

@@ -415,6 +415,8 @@ class PostgresSchemaDialect extends SchemaDialect
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchemaInterface::TYPE_INTEGER => ' INT',
+            TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
@@ -431,21 +433,24 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_JSON => ' JSONB',
         ];
 
-        if (isset($typeMap[$data['type']])) {
-            $out .= $typeMap[$data['type']];
-        }
-
-        $isInt = [
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_INTEGER,
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
-        if (in_array($data['type'], $isInt, true)) {
-            $type = $data['type'] === TableSchemaInterface::TYPE_INTEGER ? ' INTEGER' : ' BIGINT';
-            if ($schema->getPrimaryKey() === [$name] || $data['autoIncrement'] === true) {
-                $type = $data['type'] === TableSchemaInterface::TYPE_INTEGER ? ' SERIAL' : ' BIGSERIAL';
-                unset($data['null'], $data['default']);
-            }
-            $out .= $type;
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            (
+                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
+            )
+        ) {
+            $typeMap[$data['type']] = str_replace('INT', 'SERIAL', $typeMap[$data['type']]);
+            unset($data['default']);
+        }
+
+        if (isset($typeMap[$data['type']])) {
+            $out .= $typeMap[$data['type']];
         }
 
         if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {

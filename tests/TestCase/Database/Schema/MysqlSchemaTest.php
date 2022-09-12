@@ -520,17 +520,8 @@ SQL;
         $table = $schema->describe('odd_primary_key');
         $connection->execute('DROP TABLE odd_primary_key');
 
-        $column = $table->getColumn('id');
-        $this->assertNull($column['autoIncrement'], 'should not autoincrement');
-        $this->assertTrue($column['unsigned'], 'should be unsigned');
-
         $column = $table->getColumn('other_field');
-        $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
-        $this->assertFalse($column['unsigned'], 'should not be unsigned');
-
-        $output = $table->createSql($connection);
-        $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
-        $this->assertStringContainsString('`other_field` INTEGER NOT NULL AUTO_INCREMENT,', $output[0]);
+        $this->assertTrue($column['autoIncrement']);
     }
 
     /**
@@ -1080,7 +1071,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
+        $this->assertSame('`id` INTEGER NOT NULL AUTO_INCREMENT', $result);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -1092,7 +1083,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
+        $this->assertSame('`id` BIGINT NOT NULL AUTO_INCREMENT', $result);
     }
 
     /**

@@ -420,6 +420,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
+                'autoIncrement' => null,
             ],
             'created' => [
                 'type' => 'datetime',
@@ -1053,7 +1054,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE [schema_articles] (
-[id] INTEGER IDENTITY(1, 1),
+[id] INTEGER IDENTITY(1, 1) NOT NULL,
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
 [data] NVARCHAR(MAX),

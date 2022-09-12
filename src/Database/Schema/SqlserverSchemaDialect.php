@@ -436,15 +436,20 @@ class SqlserverSchemaDialect extends SchemaDialect
             $out .= $typeMap[$data['type']];
         }
 
-        $isInt = [
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_INTEGER,
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
-        if (in_array($data['type'], $isInt, true)) {
-            if ($schema->getPrimaryKey() === [$name] || $data['autoIncrement'] === true) {
-                unset($data['null'], $data['default']);
-                $out .= ' IDENTITY(1, 1)';
-            }
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            (
+                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
+            )
+        ) {
+            $out .= ' IDENTITY(1, 1)';
+            unset($data['default']);
         }
 
         if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
