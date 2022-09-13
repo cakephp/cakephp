@@ -146,6 +146,9 @@ use Cake\Error\Debugger;
         margin: 0;
         padding: 0;
     }
+    .stack-previous {
+        margin: 24px 0 12px 8px;
+    }
     .stack-frame {
         background: #e5e5e5;
         padding: 10px;
