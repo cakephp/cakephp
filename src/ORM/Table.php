@@ -515,11 +515,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
-            $this->_schema = $this->_initializeSchema(
-                $this->getConnection()
-                    ->getSchemaCollection()
-                    ->describe($this->getTable())
-            );
+            $this->_schema = $this->getConnection()
+                ->getSchemaCollection()
+                ->describe($this->getTable());
             if (Configure::read('debug')) {
                 $this->checkAliasLengths();
             }
@@ -592,30 +590,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 );
             }
         }
-    }
-
-    /**
-     * Override this function in order to alter the schema used by this table.
-     * This function is only called after fetching the schema out of the database.
-     * If you wish to provide your own schema to this table without touching the
-     * database, you can override schema() or inject the definitions though that
-     * method.
-     *
-     * ### Example:
-     *
-     * ```
-     * protected function _initializeSchema(\Cake\Database\Schema\TableSchemaInterface $schema) {
-     *  $schema->setColumnType('preferences', 'json');
-     *  return $schema;
-     * }
-     * ```
-     *
-     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table definition fetched from database.
-     * @return \Cake\Database\Schema\TableSchemaInterface the altered schema
-     */
-    protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface
-    {
-        return $schema;
     }
 
     /**
