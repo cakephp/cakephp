@@ -117,9 +117,9 @@ class FormHelper extends Helper
             // Submit input element.
             'inputSubmit' => '<input type="{{type}}"{{attrs}}/>',
             // Container element used by control().
-            'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+            'inputContainer' => '<div class="input {{type}} {{required}}">{{content}}</div>',
             // Container element used by control() when a field has an error.
-            'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
+            'inputContainerError' => '<div class="input {{type}} {{required}} error">{{content}}{{error}}</div>',
             // Label element when inputs are not nested inside the label.
             'label' => '<label{{attrs}}>{{text}}</label>',
             // Label element used for radio and multi-checkbox inputs.
@@ -1180,7 +1180,7 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
-            'required' => $options['options']['required'] ? ' required' : '',
+            'required' => $options['options']['required'] ? 'is-required' : 'not-required',
             'type' => $options['options']['type'],
             'templateVars' => $options['options']['templateVars'] ?? [],
         ]);
