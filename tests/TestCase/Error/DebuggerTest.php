@@ -683,7 +683,7 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
@@ -695,7 +695,7 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
         $this->assertSame($expected, $result);
