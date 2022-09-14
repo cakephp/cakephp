@@ -179,7 +179,7 @@ class StringTemplate
         foreach ($templates as $name) {
             $template = $this->get($name);
             if ($template === null) {
-                throw new InvalidArgumentException("String template '$name' is not valid.");
+                throw new InvalidArgumentException(sprintf('String template `%s` is not valid.', $name));
             }
 
             $template = str_replace('%', '%%', $template);
