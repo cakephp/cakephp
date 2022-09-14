@@ -145,23 +145,20 @@ class EnumTypeTest extends TestCase
     /**
      * Test toPHP with string backed enum
      */
-    public function testToPHPString(): void
+    public function testToPHPStringEnum(): void
     {
         $this->assertNull($this->stringType->toPHP(null, $this->driver));
         $this->assertSame(ArticleStatus::PUBLISHED, $this->stringType->toPHP('Y', $this->driver));
-        $this->expectException(InvalidArgumentException::class);
-        $this->stringType->toPHP(1, $this->driver);
     }
 
     /**
      * Test toPHP with integer backed enum
      */
-    public function testToPHPInteger(): void
+    public function testToPHPIntEnum(): void
     {
         $this->assertNull($this->intType->toPHP(null, $this->driver));
         $this->assertSame(Priority::HIGH, $this->intType->toPHP(3, $this->driver));
-        $this->expectException(InvalidArgumentException::class);
-        $this->intType->toPHP('N', $this->driver);
+        $this->assertSame(Priority::HIGH, $this->intType->toPHP('3', $this->driver));
     }
 
     /**
