@@ -76,7 +76,7 @@ class StringTemplateTest extends TestCase
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
-            'invalid' => null
+            'invalid' => null,
         ];
         $this->expectException(InvalidArgumentException::class);
         $this->template->add($templates);
