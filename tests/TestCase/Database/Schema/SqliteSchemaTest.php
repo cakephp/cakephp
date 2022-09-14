@@ -736,7 +736,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
+        $this->assertSame('"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT', $result);
 
         $result = $schema->constraintSql($table, 'primary');
         $this->assertSame('', $result, 'Integer primary keys are special in sqlite.');

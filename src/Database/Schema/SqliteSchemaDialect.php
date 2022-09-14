@@ -463,8 +463,15 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
-            $out .= ' PRIMARY KEY AUTOINCREMENT';
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
+            if ($schema->getPrimaryKey() === [$name]) {
+                $out .= ' PRIMARY KEY';
+
+                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                    $out .= ' AUTOINCREMENT';
+                    unset($data['default']);
+                }
+            }
         }
 
         $timestampTypes = [

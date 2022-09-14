@@ -483,19 +483,21 @@ class MysqlSchemaDialect extends SchemaDialect
         if (isset($data['null']) && $data['null'] === false) {
             $out .= ' NOT NULL';
         }
-        $addAutoIncrement = (
-            $schema->getPrimaryKey() === [$name] &&
-            !$schema->hasAutoincrement() &&
-            !isset($data['autoIncrement'])
-        );
+
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+        ];
         if (
-            in_array($data['type'], [TableSchemaInterface::TYPE_INTEGER, TableSchemaInterface::TYPE_BIGINTEGER]) &&
+            in_array($data['type'], $autoIncrementTypes, true) &&
             (
-                $data['autoIncrement'] === true ||
-                $addAutoIncrement
+                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
             )
         ) {
             $out .= ' AUTO_INCREMENT';
+            unset($data['default']);
         }
 
         $timestampTypes = [

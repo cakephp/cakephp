@@ -253,6 +253,7 @@ class EnumTypeTest extends TestCase
     {
         /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = $this->FeaturedTags->newEntity([
+            'tag_id' => 4,
             'priority' => Priority::MEDIUM,
         ]);
         $saved = $this->FeaturedTags->save($entity);
@@ -269,6 +270,7 @@ class EnumTypeTest extends TestCase
     {
         /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = $this->FeaturedTags->newEntity([
+            'tag_id' => 4,
             'priority' => 2,
         ]);
         $saved = $this->FeaturedTags->save($entity);
@@ -285,6 +287,7 @@ class EnumTypeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->FeaturedTags->newEntity([
+            'tag_id' => 4,
             'priority' => -1,
         ]);
     }
