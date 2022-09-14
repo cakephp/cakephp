@@ -514,7 +514,7 @@ class TableTest extends TestCase
 
     public function testSchemaTypeOverrideInInitialize(): void
     {
-        $table = new class (['table' => 'users', 'connection' => $this->connection]) extends Table {
+        $table = new class (['alias' => 'Users', 'table' => 'users', 'connection' => $this->connection]) extends Table {
             public function initialize(array $config): void
             {
                 $this->getSchema()->setColumnType('username', 'foobar');
