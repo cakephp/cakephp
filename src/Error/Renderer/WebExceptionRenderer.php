@@ -248,10 +248,18 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         }
         $response = $response->withStatus($code);
 
+        $exceptions = [$exception];
+        $previous = $exception->getPrevious();
+        while ($previous != null) {
+            $exceptions[] = $previous;
+            $previous = $previous->getPrevious();
+        }
+
         $viewVars = [
             'message' => $message,
             'url' => h($url),
             'error' => $exception,
+            'exceptions' => $exceptions,
             'code' => $code,
         ];
         $serialize = ['message', 'url', 'code'];
