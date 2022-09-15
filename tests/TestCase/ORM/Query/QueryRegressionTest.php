@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
@@ -24,7 +24,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
@@ -1578,7 +1578,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q
                         ->func()
@@ -1605,7 +1605,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->UPPER([
                         $table
@@ -1632,7 +1632,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q
                         ->func()
@@ -1668,7 +1668,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->coalesce([
                         $table
@@ -1697,7 +1697,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->concat([
                         $table
@@ -1724,7 +1724,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (Query $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->concat([
                         $table

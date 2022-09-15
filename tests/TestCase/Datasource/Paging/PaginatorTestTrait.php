@@ -22,6 +22,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
+use Cake\ORM\Query\SelectQuery;
 
 trait PaginatorTestTrait
 {
@@ -94,11 +95,11 @@ trait PaginatorTestTrait
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -173,11 +174,11 @@ trait PaginatorTestTrait
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -203,11 +204,11 @@ trait PaginatorTestTrait
             'order' => ['PaginatorPosts.id' => 'DESC', 'PaginatorPosts.title' => 'ASC'],
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -239,11 +240,11 @@ trait PaginatorTestTrait
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -565,11 +566,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortInvalid(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -618,11 +619,11 @@ trait PaginatorTestTrait
      */
     public function testValidaSortInitialSortAndDirection(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -655,11 +656,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortAndDirectionAliased(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -700,11 +701,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortRetainsOriginalSortValue(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -1130,11 +1131,11 @@ trait PaginatorTestTrait
             'finder' => 'published',
             'limit' => 2,
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -1267,12 +1268,12 @@ trait PaginatorTestTrait
      * Helper method for mocking queries.
      *
      * @param string|null $table
-     * @return \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject
+     * @return \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockFindQuery($table = null)
     {
-        /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        /** @var \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject $query */
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['all', 'count', 'applyOptions'])
             ->addMethods(['total'])
             ->disableOriginalConstructor()

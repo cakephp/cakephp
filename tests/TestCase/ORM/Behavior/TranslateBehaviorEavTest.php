@@ -21,13 +21,13 @@ use Cake\Collection\CollectionInterface;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
@@ -737,7 +737,7 @@ class TranslateBehaviorEavTest extends TestCase
         $results = $table->find()
             ->select(['title', 'body'])
             ->order(['title' => 'asc'])
-            ->contain(['Authors' => function (QueryInterface $q) {
+            ->contain(['Authors' => function (SelectQuery $q) {
                 return $q->select(['id', 'name']);
             }]);
 

@@ -1446,7 +1446,7 @@ class TreeBehaviorTest extends TestCase
      *
      * @param array $expected tree state to be expected
      * @param \Cake\ORM\Table $table Table instance
-     * @param \Cake\ORM\Query $query Optional query object
+     * @param \Cake\ORM\Query\SelectQuery $query Optional query object
      */
     public function assertMpttValues($expected, $table, $query = null): void
     {

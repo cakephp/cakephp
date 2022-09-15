@@ -206,9 +206,9 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
+			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\.$#"
 			count: 1
-			path: src/ORM/Query.php
+			path: src/ORM/Query/SelectQuery.php
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"

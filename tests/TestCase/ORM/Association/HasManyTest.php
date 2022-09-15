@@ -321,7 +321,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
 
-        /** @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $this->article->query();
         $query->addDefaultTypes($this->article->Comments->getSource());
 
@@ -399,7 +399,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
 
-        /** @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $this->article->query();
         $this->article->method('find')
             ->with('all')
@@ -753,7 +753,7 @@ class HasManyTest extends TestCase
      * Assertion method for order by clause contents.
      *
      * @param array $expected The expected join clause.
-     * @param \Cake\ORM\Query $query The query to check.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to check.
      */
     protected function assertJoin($expected, $query): void
     {
@@ -774,7 +774,7 @@ class HasManyTest extends TestCase
      * Assertion method for where clause contents.
      *
      * @param \Cake\Database\QueryExpression $expected The expected where clause.
-     * @param \Cake\ORM\Query $query The query to check.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to check.
      */
     protected function assertWhereClause($expected, $query): void
     {
@@ -789,7 +789,7 @@ class HasManyTest extends TestCase
      * Assertion method for order by clause contents.
      *
      * @param \Cake\Database\QueryExpression $expected The expected where clause.
-     * @param \Cake\ORM\Query $query The query to check.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to check.
      */
     protected function assertOrderClause($expected, $query): void
     {
@@ -804,7 +804,7 @@ class HasManyTest extends TestCase
      * Assertion method for select clause contents.
      *
      * @param array $expected Array of expected fields.
-     * @param \Cake\ORM\Query $query The query to check.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to check.
      */
     protected function assertSelectClause($expected, $query): void
     {

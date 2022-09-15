@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         4.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM\QueryTests;
+namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Database\Driver\Postgres;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 
 class CaseExpressionQueryTest extends TestCase
@@ -30,7 +30,7 @@ class CaseExpressionQueryTest extends TestCase
     {
         $query = $this->getTableLocator()->get('Products')
             ->find()
-            ->select(function (Query $query) {
+            ->select(function (SelectQuery $query) {
                 return [
                     'name',
                     'price',
@@ -70,7 +70,7 @@ class CaseExpressionQueryTest extends TestCase
     {
         $query = $this->getTableLocator()->get('Products')
             ->find()
-            ->select(function (Query $query) {
+            ->select(function (SelectQuery $query) {
                 $expression = $query->newExpr()
                     ->case()
                     ->when(['Products.price <' => 20])

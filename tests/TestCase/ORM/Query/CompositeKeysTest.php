@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
@@ -23,7 +23,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\OpenArticleEntity;
@@ -146,7 +146,7 @@ class CompositeKeysTest extends TestCase
             'sort' => ['SiteArticles.id' => 'asc'],
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query->select()
             ->contain('SiteArticles')
@@ -226,7 +226,7 @@ class CompositeKeysTest extends TestCase
             'foreignKey' => ['article_id', 'site_id'],
             'targetForeignKey' => ['tag_id', 'site_id'],
         ]);
-        $query = new Query($articles);
+        $query = new SelectQuery($articles);
 
         $results = $query->select()->contain('SiteTags')->enableHydration(false)->toArray();
         $expected = [
@@ -307,7 +307,7 @@ class CompositeKeysTest extends TestCase
             'strategy' => $strategy,
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->where(['SiteArticles.id IN' => [1, 2]])
             ->contain('SiteAuthors')
@@ -355,7 +355,7 @@ class CompositeKeysTest extends TestCase
             'strategy' => $strategy,
             'foreignKey' => ['author_id', 'site_id'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->where(['SiteAuthors.id IN' => [1, 3]])
             ->contain('SiteArticles')
@@ -567,7 +567,7 @@ class CompositeKeysTest extends TestCase
     public function testFindThreadedCompositeKeys(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['_addDefaultFields', 'execute'])
             ->setConstructorArgs([$table])
             ->getMock();

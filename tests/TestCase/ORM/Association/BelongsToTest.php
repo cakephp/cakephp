@@ -24,7 +24,7 @@ use Cake\Database\TypeMap;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -377,7 +377,7 @@ class BelongsToTest extends TestCase
         $called = false;
         $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
             $this->assertInstanceOf(Event::class, $event);
-            $this->assertInstanceOf(Query::class, $query);
+            $this->assertInstanceOf(SelectQuery::class, $query);
             $this->assertInstanceOf(ArrayObject::class, $options);
             $called = true;
         });

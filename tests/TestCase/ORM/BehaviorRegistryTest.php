@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use BadMethodCallException;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingBehaviorException;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use LogicException;
@@ -298,7 +298,7 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = new Query($this->Table);
+        $query = new SelectQuery($this->Table);
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
