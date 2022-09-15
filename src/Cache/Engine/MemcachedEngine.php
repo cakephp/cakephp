@@ -214,7 +214,7 @@ class MemcachedEngine extends CacheEngine
         $serializer = strtolower($this->_config['serialize']);
         if (!isset($this->_serializers[$serializer])) {
             throw new InvalidArgumentException(
-                sprintf('%s is not a valid serializer engine for Memcached', $serializer)
+                sprintf('`%s` is not a valid serializer engine for Memcached.', $serializer)
             );
         }
 
@@ -223,7 +223,7 @@ class MemcachedEngine extends CacheEngine
             !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
-                sprintf('Memcached extension is not compiled with %s support', $serializer)
+                sprintf('Memcached extension is not compiled with `%s` support.', $serializer)
             );
         }
 

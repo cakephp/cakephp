@@ -111,7 +111,7 @@ class EventManager implements EventManagerInterface
 
         if (!$callable && !is_callable($options)) {
             throw new InvalidArgumentException(
-                'Second argument of EventManager::on() must be a callable if `$callable` is null.'
+                'Second argument of `EventManager::on()` must be a callable if `$callable` is null.'
             );
         }
 

@@ -201,7 +201,7 @@ class ResponseTest extends TestCase
     public function testWithTypeInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('"beans" is an invalid content type');
+        $this->expectExceptionMessage('`beans` is an invalid content type');
         $response = new Response();
         $response->withType('beans');
     }

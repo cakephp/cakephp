@@ -53,7 +53,7 @@ class TransportRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
-        throw new BadMethodCallException(sprintf('Mailer transport %s is not available.', $class));
+        throw new BadMethodCallException(sprintf('Mailer transport `%s` is not available.', $class));
     }
 
     /**

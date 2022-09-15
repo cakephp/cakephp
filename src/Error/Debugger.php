@@ -201,7 +201,11 @@ class Debugger
         $instance = static::getInstance();
         if (!isset($instance->editors[$name])) {
             $known = implode(', ', array_keys($instance->editors));
-            throw new InvalidArgumentException("Unknown editor `{$name}`. Known editors are {$known}");
+            throw new InvalidArgumentException(sprintf(
+                'Unknown editor `%s`. Known editors are `%s`.',
+                $name,
+                $known
+            ));
         }
         $instance->setConfig('editor', $name);
     }
@@ -218,7 +222,10 @@ class Debugger
         $instance = static::getInstance();
         $editor = $instance->getConfig('editor');
         if (!isset($instance->editors[$editor])) {
-            throw new InvalidArgumentException("Cannot format editor URL `{$editor}` is not a known editor.");
+            throw new InvalidArgumentException(sprintf(
+                'Cannot format editor URL `%s` is not a known editor.',
+                $editor
+            ));
         }
 
         $template = $instance->editors[$editor];
@@ -507,9 +514,11 @@ class Debugger
         }
         $instance = new $class();
         if (!$instance instanceof FormatterInterface) {
-            throw new CakeException(
-                "The `{$class}` formatter does not implement " . FormatterInterface::class
-            );
+            throw new CakeException(sprintf(
+                'The `%s` formatter does not implement `%s`.',
+                $class,
+                FormatterInterface::class
+            ));
         }
 
         return $instance;

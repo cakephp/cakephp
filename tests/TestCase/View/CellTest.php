@@ -295,7 +295,7 @@ class CellTest extends TestCase
     public function testCellMissingMethod(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.');
+        $this->expectExceptionMessage('Class `TestApp\View\Cell\ArticlesCell` does not have a `nope` method.');
         $cell = $this->View->cell('Articles::nope');
         $cell->render();
     }

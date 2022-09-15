@@ -113,7 +113,7 @@ trait ValidatorAwareTrait
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
-            $message = sprintf('The %s::%s() validation method does not exists.', static::class, $method);
+            $message = sprintf('The `%s::%s()` validation method does not exists.', static::class, $method);
             throw new InvalidArgumentException($message);
         }
 
@@ -129,7 +129,7 @@ trait ValidatorAwareTrait
         assert(
             $validator instanceof Validator,
             sprintf(
-                'The %s::%s() validation method must return an instance of %s.',
+                'The `%s::%s()` validation method must return an instance of `%s`.',
                 static::class,
                 $method,
                 Validator::class

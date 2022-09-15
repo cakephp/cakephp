@@ -159,7 +159,8 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadDuplicateMethodError(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"');
+        $this->expectExceptionMessage('`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate method `slugify`'
+        . ' which is already provided by `Sluggable`.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->load('Duplicate');
     }
@@ -187,7 +188,8 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadDuplicateFinderError(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"');
+        $this->expectExceptionMessage('`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate finder `children`'
+        . ' which is already provided by `Tree`.');
         $this->Behaviors->load('Tree');
         $this->Behaviors->load('Duplicate');
     }
@@ -276,7 +278,7 @@ class BehaviorRegistryTest extends TestCase
     public function testCallError(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call "nope"');
+        $this->expectExceptionMessage('Cannot call `nope` it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->call('nope');
     }
@@ -323,7 +325,7 @@ class BehaviorRegistryTest extends TestCase
     public function testUnloadBehaviorThenCall(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call "slugify" it does not belong to any attached behavior.');
+        $this->expectExceptionMessage('Cannot call `slugify` it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 

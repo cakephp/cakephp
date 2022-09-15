@@ -733,7 +733,7 @@ class Response implements ResponseInterface, Stringable
             return is_array($mapped) ? current($mapped) : $mapped;
         }
         if (!str_contains($contentType, '/')) {
-            throw new InvalidArgumentException(sprintf('"%s" is an invalid content type.', $contentType));
+            throw new InvalidArgumentException(sprintf('`%s` is an invalid content type.', $contentType));
         }
 
         return $contentType;

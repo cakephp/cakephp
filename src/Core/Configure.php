@@ -168,7 +168,7 @@ class Configure
     public static function readOrFail(string $var): mixed
     {
         if (!static::check($var)) {
-            throw new CakeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new CakeException(sprintf('Expected configuration key `%s` not found.', $var));
         }
 
         return static::read($var);
@@ -208,7 +208,7 @@ class Configure
     public static function consumeOrFail(string $var): mixed
     {
         if (!static::check($var)) {
-            throw new CakeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new CakeException(sprintf('Expected configuration key `%s` not found.', $var));
         }
 
         return static::consume($var);
@@ -387,7 +387,7 @@ class Configure
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
-            throw new CakeException(sprintf('There is no "%s" config engine.', $config));
+            throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
         if (!empty($keys)) {

@@ -266,7 +266,7 @@ class AssociationCollection implements IteratorAggregate
             $relation = $this->get($alias);
             if (!$relation) {
                 $msg = sprintf(
-                    'Cannot save %s, it is not associated to %s',
+                    'Cannot save `%s`, it is not associated to `%s`.',
                     $alias,
                     $table->getAlias()
                 );

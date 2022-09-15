@@ -107,7 +107,7 @@ class TableLocatorTest extends TestCase
         $this->assertNotEmpty($users);
 
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
+        $this->expectExceptionMessage('You cannot configure `Users`, it has already been constructed.');
 
         $this->_locator->setConfig('Users', ['table' => 'my_users']);
     }

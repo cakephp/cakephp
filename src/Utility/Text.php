@@ -1080,7 +1080,7 @@ class Text
     {
         $transliterator = transliterator_create($transliteratorId);
         if ($transliterator === null) {
-            throw new CakeException('Unable to create transliterator for id: ' . $transliteratorId);
+            throw new CakeException(sprintf('Unable to create transliterator for id: %s.', $transliteratorId));
         }
 
         static::setTransliterator($transliterator);

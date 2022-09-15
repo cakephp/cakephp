@@ -1447,8 +1447,14 @@ abstract class Query implements ExpressionInterface, Stringable
     public function clause(string $name): mixed
     {
         if (!array_key_exists($name, $this->_parts)) {
-            $clauses = implode(', ', array_keys($this->_parts));
-            throw new InvalidArgumentException("The '$name' clause is not defined. Valid clauses are: $clauses");
+            $clauses = array_keys($this->_parts);
+            array_walk($clauses, fn(&$x) => $x = "`$x`");
+            $clauses = implode(', ', $clauses);
+            throw new InvalidArgumentException(sprintf(
+                'The `%s` clause is not defined. Valid clauses are: %s.',
+                $name,
+                $clauses
+            ));
         }
 
         return $this->_parts[$name];

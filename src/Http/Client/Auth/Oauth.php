@@ -84,7 +84,7 @@ class Oauth
                 break;
 
             default:
-                throw new CakeException(sprintf('Unknown Oauth signature method %s', $credentials['method']));
+                throw new CakeException(sprintf('Unknown Oauth signature method `%s`.', $credentials['method']));
         }
 
         return $request->withHeader('Authorization', $value);

@@ -119,7 +119,7 @@ class MessagesFileLoader
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
-            throw new CakeException(sprintf('Could not find class %s', "{$name}FileParser"));
+            throw new CakeException(sprintf('Could not find class `%s`.', "{$name}FileParser"));
         }
 
         /** @var \Cake\I18n\Parser\MoFileParser|\Cake\I18n\Parser\PoFileParser $object */

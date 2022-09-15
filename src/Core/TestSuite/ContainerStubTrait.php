@@ -86,7 +86,7 @@ trait ContainerStubTrait
             $appClass = Configure::read('App.namespace') . '\Application';
         }
         if (!class_exists($appClass)) {
-            throw new LogicException("Cannot load `{$appClass}` for use in integration testing.");
+            throw new LogicException(sprintf('Cannot load `%s` for use in integration testing.', $appClass));
         }
         $appArgs = $this->_appArgs ?: [CONFIG];
 

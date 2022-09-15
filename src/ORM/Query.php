@@ -604,7 +604,7 @@ class Query extends DbSelectQuery implements JsonSerializable, QueryInterface
         if (!$entity) {
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
-                'Record not found in table "%s"',
+                'Record not found in table `%s`.',
                 $table->getTable()
             ));
         }

@@ -570,7 +570,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function checkAliasLengths(): void
     {
         if ($this->_schema === null) {
-            throw new DatabaseException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
+            throw new DatabaseException(sprintf(
+                'Unable to check max alias lengths for `%s` without schema.',
+                $this->getAlias()
+            ));
         }
 
         $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
@@ -831,7 +834,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_behaviors->has($name)) {
             throw new InvalidArgumentException(sprintf(
-                'The %s behavior is not defined on %s.',
+                'The `%s` behavior is not defined on `%s`.',
                 $name,
                 static::class
             ));
@@ -1466,7 +1469,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [NULL]',
+                'Record not found in table `%s` with primary key `[NULL]`.',
                 $this->getTable()
             ));
         }
@@ -1486,7 +1489,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }, $primaryKey);
 
             throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [%s]',
+                'Record not found in table `%s` with primary key `[%s]`.',
                 $this->getTable(),
                 implode(', ', $primaryKey)
             ));
@@ -2569,7 +2572,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(sprintf(
-            'Unknown finder method "%s" on %s.',
+            'Unknown finder method `%s` on `%s`.',
             $type,
             static::class
         ));

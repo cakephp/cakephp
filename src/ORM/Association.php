@@ -292,7 +292,7 @@ abstract class Association
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The class name "%s" doesn\'t match the target table class name of "%s".',
+                'The class name `%s` doesn\'t match the target table class name of `%s`.',
                 $className,
                 get_class($this->_targetTable)
             ));
@@ -377,12 +377,12 @@ abstract class Association
                 $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
-                    $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
-                    $errorMessage .= 'You can\'t have an association of the same name with a different target ';
-                    $errorMessage .= '"className" option anywhere in your app.';
+                    $msg = '`%s` association `%s` of type `%s` to `%s` doesn\'t match the expected class `%s`. ';
+                    $msg .= 'You can\'t have an association of the same name with a different target ';
+                    $msg .= '"className" option anywhere in your app.';
 
                     throw new DatabaseException(sprintf(
-                        $errorMessage,
+                        $msg,
                         isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
@@ -606,7 +606,7 @@ abstract class Association
     {
         if (!in_array($name, $this->_validStrategies, true)) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid strategy "%s" was provided. Valid options are (%s).',
+                'Invalid strategy `%s` was provided. Valid options are `(%s)`.',
                 $name,
                 implode(', ', $this->_validStrategies)
             ));
@@ -725,7 +725,7 @@ abstract class Association
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
                 throw new DatabaseException(sprintf(
-                    'Query builder for association "%s" did not return a query',
+                    'Query builder for association `%s` did not return a query.',
                     $this->getName()
                 ));
             }
@@ -736,9 +736,10 @@ abstract class Association
             $this->_strategy === static::STRATEGY_JOIN &&
             $dummy->getContain()
         ) {
-            throw new DatabaseException(
-                "`{$this->getName()}` association cannot contain() associations when using JOIN strategy."
-            );
+            throw new DatabaseException(sprintf(
+                '`%s` association cannot contain() associations when using JOIN strategy.',
+                $this->getName()
+            ));
         }
 
         $dummy->where($options['conditions']);
@@ -1077,11 +1078,11 @@ abstract class Association
                 if ($this->isOwningSide($this->getSource())) {
                     $table = $this->getSource()->getTable();
                 }
-                $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
+                $msg = 'The `%s` table does not define a primary key, and cannot have join conditions generated.';
                 throw new DatabaseException(sprintf($msg, $table));
             }
 
-            $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+            $msg = 'Cannot match provided foreignKey for `%s`, got `(%s)` but expected foreign key for `(%s)`';
             throw new DatabaseException(sprintf(
                 $msg,
                 $this->_name,

@@ -82,7 +82,7 @@ class ConfigureTest extends TestCase
     public function testReadOrFailThrowingException(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        $this->expectExceptionMessage('Expected configuration key `This.Key.Does.Not.exist` not found');
         Configure::readOrFail('This.Key.Does.Not.exist');
     }
 
@@ -574,7 +574,7 @@ class ConfigureTest extends TestCase
     public function testConsumeOrFailThrowingException(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        $this->expectExceptionMessage('Expected configuration key `This.Key.Does.Not.exist` not found');
         Configure::consumeOrFail('This.Key.Does.Not.exist');
     }
 }

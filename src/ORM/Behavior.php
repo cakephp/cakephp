@@ -242,7 +242,7 @@ class Behavior implements EventListenerInterface
             foreach ($this->_config[$key] as $method) {
                 if (!is_callable([$this, $method])) {
                     throw new CakeException(sprintf(
-                        'The method %s is not callable on class %s',
+                        'The method `%s` is not callable on class `%s`.',
                         $method,
                         static::class
                     ));

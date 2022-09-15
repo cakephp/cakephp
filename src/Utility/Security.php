@@ -70,7 +70,7 @@ class Security
         $availableAlgorithms = hash_algos();
         if (!in_array($algorithm, $availableAlgorithms, true)) {
             throw new InvalidArgumentException(sprintf(
-                'The hash type `%s` was not found. Available algorithms are: %s',
+                'The hash type `%s` was not found. Available algorithms are: `%s`.',
                 $algorithm,
                 implode(', ', $availableAlgorithms)
             ));

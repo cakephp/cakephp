@@ -796,7 +796,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
                 );
             }
 
@@ -1170,7 +1170,7 @@ class View implements EventDispatcherInterface
 
         if ($initialBlocks !== $remainingBlocks) {
             throw new LogicException(sprintf(
-                'The "%s" block was left open. Blocks are not allowed to cross files.',
+                'The `%s` block was left open. Blocks are not allowed to cross files.',
                 (string)$this->Blocks->active()
             ));
         }
@@ -1397,7 +1397,7 @@ class View implements EventDispatcherInterface
         $absolute = realpath($file);
         if (!str_starts_with($absolute, $path)) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot use "%s" as a template, it is not within any view template path.',
+                'Cannot use `%s` as a template, it is not within any view template path.',
                 $file
             ));
         }
@@ -1444,7 +1444,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
                 );
             }
             $name = $this->layout;

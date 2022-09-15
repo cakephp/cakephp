@@ -66,6 +66,6 @@ trait FileConfigTrait
             return $realPath;
         }
 
-        throw new CakeException(sprintf('Could not load configuration file: %s', $file));
+        throw new CakeException(sprintf('Could not load configuration file: `%s`.', $file));
     }
 }

@@ -486,7 +486,7 @@ class Hash
 
         if (is_array($keys) && count($keys) !== count($vals)) {
             throw new InvalidArgumentException(
-                'Hash::combine() needs an equal number of keys + values.'
+                '`Hash::combine()` needs an equal number of keys + values.'
             );
         }
 

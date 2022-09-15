@@ -135,7 +135,7 @@ class CommandCollection implements IteratorAggregate, Countable
     public function get(string $name): CommandInterface|string
     {
         if (!$this->has($name)) {
-            throw new InvalidArgumentException("The $name is not a known command name.");
+            throw new InvalidArgumentException(sprintf('The `%s` is not a known command name.', $name));
         }
 
         return $this->commands[$name];

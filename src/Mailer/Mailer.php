@@ -393,7 +393,7 @@ class Mailer implements EventListenerInterface
             $name = $config;
             $config = static::getConfig($name);
             if (empty($config)) {
-                throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
+                throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
             unset($name);
         }

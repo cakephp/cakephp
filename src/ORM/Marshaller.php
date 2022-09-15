@@ -93,7 +93,7 @@ class Marshaller
             if (!$this->_table->hasAssociation($key)) {
                 if (!str_starts_with($key, '_')) {
                     throw new InvalidArgumentException(sprintf(
-                        'Cannot marshal data for "%s" association. It is not associated with "%s".',
+                        'Cannot marshal data for `%s` association. It is not associated with `%s`.',
                         (string)$key,
                         $this->_table->getAlias()
                     ));

@@ -77,7 +77,7 @@ class SchemaLoader
         $connection = ConnectionManager::get($connectionName);
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                throw new InvalidArgumentException("Unable to load SQL file `$file`.");
+                throw new InvalidArgumentException(sprintf('Unable to load SQL file `%s`.', $file));
             }
             $sql = file_get_contents($file);
 

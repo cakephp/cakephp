@@ -154,7 +154,7 @@ class MemcachedEngineTest extends TestCase
     public function testInvalidSerializerSetting(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
+        $this->expectExceptionMessage('`invalid_serializer` is not a valid serializer engine for Memcached.');
         $Memcached = new MemcachedEngine();
         $config = [
             'className' => 'Memcached',

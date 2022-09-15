@@ -84,7 +84,7 @@ class PackageLocator
     public function get(string $name, string $locale): Package
     {
         if (!isset($this->registry[$name][$locale])) {
-            throw new I18nException("Package '$name' with locale '$locale' is not registered.");
+            throw new I18nException(sprintf('Package `%s` with locale `%s` is not registered.', $name, $locale));
         }
 
         if (!$this->converted[$name][$locale]) {
