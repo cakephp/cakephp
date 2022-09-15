@@ -131,14 +131,14 @@
     }
 </style>
 <script>
-    ( function( win, doc ) {
+    (function (win, doc) {
 
         function initialize() {
-            createCollapsibles( doc.querySelectorAll( '.cake-debug-array-items' ) );
-            createCollapsibles( doc.querySelectorAll( '.cake-debug-object-props' ) );
-            attachRefEvents( doc.querySelectorAll( '.cake-debug' ) );
-            openBlocks( doc.querySelectorAll( '.cake-debug[data-open-all="true"]' ) );
-            attachCopyButton( doc.querySelectorAll( '.cake-debug' ) );
+            createCollapsibles(doc.querySelectorAll('.cake-debug-array-items'));
+            createCollapsibles(doc.querySelectorAll('.cake-debug-object-props'));
+            attachRefEvents(doc.querySelectorAll('.cake-debug'));
+            openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
+            attachCopyButton(doc.querySelectorAll('.cake-debug'));
         }
 
         // Add a name on window so DebugKit can add controls to dump blocks
@@ -147,87 +147,87 @@
         /**
          * Open all the collapsed sections in a block.
          */
-        function openBlocks( blocks ) {
-            blocks.forEach( function( block ) {
-                block.querySelectorAll( '.cake-debug-collapse[data-open="false"]' ).forEach( function( el ) {
+        function openBlocks(blocks) {
+            blocks.forEach(function (block) {
+                block.querySelectorAll('.cake-debug-collapse[data-open="false"]').forEach(function (el) {
                     el.click();
-                } );
-            } );
+                });
+            });
         }
 
         /**
          * Create collapse toggles and attach events
          */
-        function createCollapsibles( nodes ) {
-            nodes.forEach( function( node ) {
+        function createCollapsibles(nodes) {
+            nodes.forEach(function (node) {
                 // Hide the childnode container if it is not
                 // a direct parent of the container.
-                if( !node.parentNode.parentNode.classList.contains( 'cake-debug' ) ) {
+                if (!node.parentNode.parentNode.classList.contains('cake-dbg')) {
                     node.dataset.hidden = true;
                 }
 
                 // Don't show toggles for empty arrays/objects
-                if( node.childNodes.length == 0 ) {
+                if (node.childNodes.length == 0) {
                     return;
                 }
 
-                let collapser = doc.createElement( 'a' );
-                collapser.classList.add( 'cake-debug-collapse' );
+                let collapser = doc.createElement('a');
+                collapser.classList.add('cake-dbg-collapse');
                 collapser.dataset.open = !node.dataset.hidden;
-                collapser.setAttribute( 'href', '#' )
-                collapser.setAttribute( 'title', 'Toggle items' );
+                collapser.setAttribute('href', '#')
+                collapser.setAttribute('title', 'Toggle items');
 
                 // Add open/close behavior
-                collapser.addEventListener( 'click', function( event ) {
+                collapser.addEventListener('click', function (event) {
                     event.preventDefault();
                     event.stopPropagation();
                     node.dataset.hidden = node.dataset.hidden === 'true' ? 'false' : 'true';
                     collapser.dataset.open = collapser.dataset.open === 'true' ? 'false' : 'true';
-                } );
+                });
 
-                node.parentNode.insertBefore( collapser, node );
-            } );
+                node.parentNode.insertBefore(collapser, node);
+            });
         }
 
         /**
          * When ref links are clicked open the path to that
          * element and highlight the reference
          */
-        function attachRefEvents( nodes ) {
-            nodes.forEach( function( container ) {
-                let refLinks = container.querySelectorAll( '.cake-debug-ref' );
-                refLinks.forEach( function( ref ) {
-                    ref.addEventListener( 'click', function( event ) {
+        function attachRefEvents(nodes) {
+            nodes.forEach(function (container) {
+                let refLinks = container.querySelectorAll('.cake-debug-ref');
+                refLinks.forEach(function (ref) {
+                    ref.addEventListener('click', function (event) {
                         event.preventDefault();
                         event.stopPropagation();
-                        let target = document.getElementById( ref.getAttribute( 'href' ).substr( 1 ) );
-                        openPath( container, target );
-                    } );
-                } );
-            } );
+                        let target = document.getElementById(ref.getAttribute('href').substr(1));
+                        openPath(container, target);
+                    });
+                });
+            });
         }
 
-        function openPath( container, target ) {
+        function openPath(container, target) {
             // Open the target element
-            let expander = target.querySelector( '.cake-debug-collapse' );
-            if( expander.dataset.open === 'false' ) {
+            let expander = target.querySelector('.cake-debug-collapse');
+            if (expander.dataset.open === 'false') {
                 expander.click();
             }
-            container.querySelectorAll( '.cake-debug-object' ).forEach( function( el ) {
+            container.querySelectorAll('.cake-debug-object').forEach(function (el) {
                 el.dataset.highlighted = 'false';
-            } )
+            })
             target.dataset.highlighted = 'true';
 
             let current = target;
             // Traverse up the tree opening all closed containers.
-            while( true ) {
+            while (true) {
                 let parent = current.parentNode;
-                if( parent == container ) {
+                if (parent == container) {
                     break;
                 }
-                if( parent.classList.contains( 'cake-debug-object' ) || parent.classList.contains( 'cake-debug-array' ) ) {
-                    expander = parent.querySelector( '.cake-debug-collapse' );
-                    if( expander.dataset.open === 'false' ) {
+                if (parent.classList.contains('cake-dbg-object') || parent.classList.contains('cake-dbg-array')) {
+                    expander = parent.querySelector('.cake-debug-collapse');
+                    if (expander.dataset.open === 'false') {
                         expander.click();
                     }
                 }
@@ -236,49 +236,49 @@
         }
 
         // https://www.30secondsofcode.org/js/s/copy-to-clipboard
-        function copyToClipboard( str ) {
-            let el = document.createElement( 'textarea' );
+        function copyToClipboard (str) {
+            let el = document.createElement('textarea');
             el.value = str;
-            el.setAttribute( 'readonly', '' );
+            el.setAttribute('readonly', '');
             el.style.position = 'absolute';
             el.style.left = '-9999px';
-            document.body.appendChild( el );
-            let selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt( 0 ) : false;
+            document.body.appendChild(el);
+            let selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
             el.select();
-            document.execCommand( 'copy' );
-            document.body.removeChild( el );
-            if( selected ) {
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            if (selected) {
                 document.getSelection().removeAllRanges();
-                document.getSelection().addRange( selected );
+                document.getSelection().addRange(selected);
             }
         }
 
-        function attachCopyButton( nodes ) {
-            nodes.forEach( function( container ) {
-                let copy = doc.createElement( 'a' );
-                copy.classList.add( 'cake-debug-copy' );
-                copy.setAttribute( 'href', '#' );
-                copy.setAttribute( 'title', 'Copy contents of debug output' );
-                copy.appendChild( doc.createTextNode( 'Copy' ) );
+        function attachCopyButton(nodes) {
+            nodes.forEach(function (container) {
+                let copy = doc.createElement('a');
+                copy.classList.add('cake-dbg-copy');
+                copy.setAttribute('href', '#');
+                copy.setAttribute('title', 'Copy contents of debug output');
+                copy.appendChild(doc.createTextNode('Copy'));
 
                 // Add copy behavior
-                copy.addEventListener( 'click', function( event ) {
+                copy.addEventListener('click', function (event) {
                     event.preventDefault();
                     event.stopPropagation();
                     let lineNo = '';
-                    if( container.parentNode && container.parentNode.classList.contains( 'cake-debug' ) ) {
-                        let line = container.parentNode.querySelector( 'span' );
+                    if (container.parentNode && container.parentNode.classList.contains('cake-debug')) {
+                        let line = container.parentNode.querySelector('span');
                         lineNo = line.textContent + "\n";
                     }
 
                     // Chop off last 4 to exclude copy button text.
-                    copyToClipboard( lineNo + container.textContent.substring( 0, container.textContent.length - 4 ) );
-                } );
+                    copyToClipboard(lineNo + container.textContent.substring(0, container.textContent.length - 4));
+                });
 
-                container.appendChild( copy );
-            } );
+                container.appendChild(copy);
+            });
         }
 
-        doc.addEventListener( 'DOMContentLoaded', initialize );
-    }( window, document ) )
+        doc.addEventListener('DOMContentLoaded', initialize);
+    }(window, document))
 </script>
