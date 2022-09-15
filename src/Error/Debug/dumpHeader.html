@@ -162,7 +162,7 @@
             nodes.forEach(function (node) {
                 // Hide the childnode container if it is not
                 // a direct parent of the container.
-                if (!node.parentNode.parentNode.classList.contains('cake-dbg')) {
+                if (!node.parentNode.parentNode.classList.contains('cake-debug')) {
                     node.dataset.hidden = true;
                 }
 
@@ -172,7 +172,7 @@
                 }
 
                 let collapser = doc.createElement('a');
-                collapser.classList.add('cake-dbg-collapse');
+                collapser.classList.add('cake-debug-collapse');
                 collapser.dataset.open = !node.dataset.hidden;
                 collapser.setAttribute('href', '#')
                 collapser.setAttribute('title', 'Toggle items');
@@ -225,7 +225,7 @@
                 if (parent == container) {
                     break;
                 }
-                if (parent.classList.contains('cake-dbg-object') || parent.classList.contains('cake-dbg-array')) {
+                if (parent.classList.contains('cake-debug-object') || parent.classList.contains('cake-debug-array')) {
                     expander = parent.querySelector('.cake-debug-collapse');
                     if (expander.dataset.open === 'false') {
                         expander.click();
@@ -256,7 +256,7 @@
         function attachCopyButton(nodes) {
             nodes.forEach(function (container) {
                 let copy = doc.createElement('a');
-                copy.classList.add('cake-dbg-copy');
+                copy.classList.add('cake-debug-copy');
                 copy.setAttribute('href', '#');
                 copy.setAttribute('title', 'Copy contents of debug output');
                 copy.appendChild(doc.createTextNode('Copy'));
