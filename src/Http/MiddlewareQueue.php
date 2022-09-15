@@ -73,7 +73,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null) {
                 throw new RuntimeException(sprintf(
-                    'Middleware "%s" was not found.',
+                    'Middleware `%s` was not found.',
                     $middleware
                 ));
             }
@@ -192,7 +192,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
         if ($found) {
             return $this->insertAt($i, $middleware);
         }
-        throw new LogicException(sprintf("No middleware matching '%s' could be found.", $class));
+        throw new LogicException(sprintf('No middleware matching `%s` could be found.', $class));
     }
 
     /**
@@ -252,7 +252,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     public function seek($position): void
     {
         if (!isset($this->queue[$position])) {
-            throw new OutOfBoundsException("Invalid seek position ($position)");
+            throw new OutOfBoundsException(sprintf('Invalid seek position `%s`', $position));
         }
 
         $this->position = $position;
@@ -278,7 +278,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     public function current(): MiddlewareInterface
     {
         if (!isset($this->queue[$this->position])) {
-            throw new OutOfBoundsException("Invalid current position ($this->position)");
+            throw new OutOfBoundsException(sprintf('Invalid current position `(%s)`', $this->position));
         }
 
         if ($this->queue[$this->position] instanceof MiddlewareInterface) {

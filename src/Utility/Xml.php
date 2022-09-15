@@ -122,7 +122,7 @@ class Xml
 
         if (!is_string($input)) {
             $type = gettype($input);
-            throw new XmlException("Invalid input. {$type} cannot be parsed as XML.");
+            throw new XmlException(sprintf('Invalid input. `%s` cannot be parsed as XML.', $type));
         }
 
         if (strpos($input, '<') !== false) {
@@ -359,14 +359,14 @@ class Xml
                         throw new XmlException('Invalid array');
                     }
                     if (is_numeric(implode('', array_keys($value)))) {
-// List
+                        // List
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
                             static::_createChild($itemData);
                         }
                     } else {
-// Struct
+                        // Struct
                         static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }

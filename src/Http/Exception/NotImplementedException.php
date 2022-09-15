@@ -22,7 +22,7 @@ class NotImplementedException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = '%s is not implemented.';
+    protected $_messageTemplate = '`%s` is not implemented.';
 
     /**
      * @inheritDoc

@@ -54,7 +54,7 @@ class LogEngineRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
-        throw new RuntimeException(sprintf('Could not load class %s', $class));
+        throw new RuntimeException(sprintf('Could not load class `%s`', $class));
     }
 
     /**

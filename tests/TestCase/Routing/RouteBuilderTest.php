@@ -979,7 +979,7 @@ class RouteBuilderTest extends TestCase
     public function testMiddlewareGroupOverlap(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
+        $this->expectExceptionMessage('Cannot add middleware group `test`. A middleware by this name has already been registered.');
         $func = function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
@@ -993,7 +993,7 @@ class RouteBuilderTest extends TestCase
     public function testApplyMiddlewareInvalidName(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
+        $this->expectExceptionMessage('Cannot apply `bad` middleware or middleware group. Use `registerMiddleware()` to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
     }

@@ -46,9 +46,10 @@ abstract class BaseCommand implements CommandInterface
     public function setName(string $name)
     {
         if (strpos($name, ' ') < 1) {
-            throw new InvalidArgumentException(
-                "The name '{$name}' is missing a space. Names should look like `cake routes`"
-            );
+            throw new InvalidArgumentException(sprintf(
+                'The name `%s` is missing a space. Names should look like `cake routes`',
+                $name
+            ));
         }
         $this->name = $name;
 
@@ -266,15 +267,16 @@ abstract class BaseCommand implements CommandInterface
     {
         if (is_string($command)) {
             if (!class_exists($command)) {
-                throw new InvalidArgumentException("Command class '{$command}' does not exist.");
+                throw new InvalidArgumentException(sprintf('Command class `%s` does not exist.', $command));
             }
             $command = new $command();
         }
         if (!$command instanceof CommandInterface) {
             $commandType = getTypeName($command);
-            throw new InvalidArgumentException(
-                "Command '{$commandType}' is not a subclass of Cake\Console\CommandInterface."
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Command `%s` is not a subclass of `Cake\Console\CommandInterface`.',
+                $commandType
+            ));
         }
         $io = $io ?: new ConsoleIo();
 

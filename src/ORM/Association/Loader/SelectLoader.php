@@ -272,7 +272,7 @@ class SelectLoader
         if ($missingFields) {
             throw new InvalidArgumentException(
                 sprintf(
-                    'You are required to select the "%s" field(s)',
+                    'You are required to select the `%s` field(s)',
                     implode(', ', $key)
                 )
             );
@@ -373,7 +373,7 @@ class SelectLoader
         $name = $this->alias;
 
         if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
+            $msg = 'Cannot have `foreignKey = false` for hasMany associations. ' .
                    'You must provide a foreignKey column.';
             throw new RuntimeException($msg);
         }

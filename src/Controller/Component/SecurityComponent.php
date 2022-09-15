@@ -99,7 +99,7 @@ class SecurityComponent extends Component
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf(
-                    'Action %s is defined as the blackhole callback.',
+                    'Action `%s` is defined as the blackhole callback.',
                     $this->_action
                 ));
             }

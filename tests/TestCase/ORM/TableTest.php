@@ -1527,7 +1527,7 @@ class TableTest extends TestCase
     public function testTableClassNonExistent(): void
     {
         $this->expectException(MissingEntityException::class);
-        $this->expectExceptionMessage('Entity class FooUser could not be found.');
+        $this->expectExceptionMessage('Entity class `FooUser` could not be found.');
         $table = new Table();
         $table->setEntityClass('FooUser');
     }
@@ -1687,7 +1687,7 @@ class TableTest extends TestCase
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The `Sluggable` alias has already been loaded', $e->getMessage());
         }
     }
 
@@ -1767,7 +1767,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'comments']);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Sluggable behavior is not defined on ' . get_class($table) . '.');
+        $this->expectExceptionMessage('The `Sluggable` behavior is not defined on `' . get_class($table) . '`.');
 
         $this->assertFalse($table->hasBehavior('Sluggable'));
         $table->getBehavior('Sluggable');
@@ -2320,7 +2320,7 @@ class TableTest extends TestCase
     public function testSaveNewErrorOnNoPrimaryKey(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
+        $this->expectExceptionMessage('Cannot insert row in `users` table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = $this->getTableLocator()->get('users', [
             'schema' => [
@@ -3348,7 +3348,7 @@ class TableTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(sprintf(
-            'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
+            'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
             get_class($table)
         ));
 
@@ -3361,7 +3361,7 @@ class TableTest extends TestCase
     public function testValidatorWithMissingMethod(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
+        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');
     }
@@ -3452,7 +3452,7 @@ class TableTest extends TestCase
     public function testMagicFindError(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 0 required 1');
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got `0` required `1`');
         $table = $this->getTableLocator()->get('Users');
 
         $table->findByUsername();
@@ -3464,7 +3464,7 @@ class TableTest extends TestCase
     public function testMagicFindErrorMissingField(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 1 required 2');
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got `1` required `2`');
         $table = $this->getTableLocator()->get('Users');
 
         $table->findByUsernameAndId('garrett');
@@ -5451,7 +5451,7 @@ class TableTest extends TestCase
     public function testGetNotFoundException(): void
     {
         $this->expectException(RecordNotFoundException::class);
-        $this->expectExceptionMessage('Record not found in table "articles"');
+        $this->expectExceptionMessage('Record not found in table `articles`');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5466,7 +5466,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnNoData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table "articles" with primary key [NULL]');
+        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[NULL]`');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5481,7 +5481,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnTooMuchData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table "articles" with primary key [1, \'two\']');
+        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[1, \'two\']`');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5796,7 +5796,7 @@ class TableTest extends TestCase
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
             'Entity findOrCreate failure. ' .
-            'Found the following errors (title._empty: "This field cannot be left empty").'
+            'Found the following errors `title._empty: "This field cannot be left empty"`.'
         );
 
         $articles = $this->getTableLocator()->get('Articles');
@@ -5838,7 +5838,7 @@ class TableTest extends TestCase
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
             'Entity findOrCreate failure. ' .
-            'Found the following errors (title._required: "This field is required").'
+            'Found the following errors `title._required: "This field is required"`.'
         );
 
         $articles->findOrCreate(['body' => 'test']);
@@ -6363,7 +6363,7 @@ class TableTest extends TestCase
     public function testSaveOrFailErrorDisplay(): void
     {
         $this->expectException(PersistenceFailedException::class);
-        $this->expectExceptionMessage('Entity save failure. Found the following errors (field.0: "Some message", multiple.one: "One", multiple.two: "Two")');
+        $this->expectExceptionMessage('Entity save failure. Found the following errors `field.0: "Some message", multiple.one: "One", multiple.two: "Two"`');
 
         $entity = new Entity([
             'foo' => 'bar',
@@ -6381,7 +6381,7 @@ class TableTest extends TestCase
     public function testSaveOrFailNestedError(): void
     {
         $this->expectException(PersistenceFailedException::class);
-        $this->expectExceptionMessage('Entity save failure. Found the following errors (articles.0.title.0: "Bad value")');
+        $this->expectExceptionMessage('Entity save failure. Found the following errors `articles.0.title.0: "Bad value"`');
 
         $entity = new Entity([
             'username' => 'bad',

@@ -1210,7 +1210,7 @@ class FormHelper extends Helper
 
                 return $this->{$options['type']}($fieldName, $opts, $options + ['label' => $label]);
             case 'input':
-                throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
+                throw new RuntimeException(sprintf('Invalid type `input` used for field `%s`', $fieldName));
 
             default:
                 return $this->{$options['type']}($fieldName, $options);
@@ -1606,7 +1606,7 @@ class FormHelper extends Helper
     public function __call(string $method, array $params)
     {
         if (empty($params)) {
-            throw new CakeException(sprintf('Missing field name for FormHelper::%s', $method));
+            throw new CakeException(sprintf('Missing field name for `FormHelper::%s`', $method));
         }
         $options = $params[1] ?? [];
         $options['type'] = $options['type'] ?? $method;
@@ -2541,7 +2541,7 @@ class FormHelper extends Helper
 
         if ($diff) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid value source(s): %s. Valid values are: %s',
+                'Invalid value source(s): `%s`. Valid values are: `%s`',
                 implode(', ', $diff),
                 implode(', ', $this->supportedValueSources)
             ));

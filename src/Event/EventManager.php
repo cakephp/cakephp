@@ -185,7 +185,7 @@ class EventManager implements EventManagerInterface
         if (!is_string($eventKey)) {
             if (!is_callable($eventKey)) {
                 throw new CakeException(
-                    'First argument of EventManager::off() must be ' .
+                    'First argument of `EventManager::off()` must be ' .
                     ' string or EventListenerInterface instance or callable.'
                 );
             }

@@ -66,16 +66,17 @@ class CommandCollection implements IteratorAggregate, Countable
         if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, CommandInterface::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(
-                "Cannot use '%s' for command '%s'. " .
-                "It is not a subclass of Cake\Console\Shell or Cake\Command\Command.",
+                'Cannot use `%s` for command `%s`. ' .
+                'It is not a subclass of `Cake\Console\Shell` or `Cake\Command\Command`.',
                 $class,
                 $name
             ));
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
-            throw new InvalidArgumentException(
-                "The command name `{$name}` is invalid. Names can only be a maximum of three words."
-            );
+            throw new InvalidArgumentException(sprintf(
+                'The command name `%s` is invalid. Names can only be a maximum of three words.',
+                $name
+            ));
         }
 
         $this->commands[$name] = $command;
@@ -134,7 +135,7 @@ class CommandCollection implements IteratorAggregate, Countable
     public function get(string $name)
     {
         if (!$this->has($name)) {
-            throw new InvalidArgumentException("The $name is not a known command name.");
+            throw new InvalidArgumentException(sprintf('The `%s` is not a known command name.', $name));
         }
 
         return $this->commands[$name];

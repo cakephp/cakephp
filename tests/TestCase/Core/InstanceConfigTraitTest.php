@@ -265,7 +265,7 @@ class InstanceConfigTraitTest extends TestCase
     public function testSetClobber(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot set a.nested.value');
+        $this->expectExceptionMessage('Cannot set `a.nested.value`');
         $this->object->setConfig(['a.nested.value' => 'not possible'], null, false);
         $this->object->getConfig();
     }
@@ -507,7 +507,7 @@ class InstanceConfigTraitTest extends TestCase
     public function testDeleteClobber(): void
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
+        $this->expectExceptionMessage('Cannot unset `a.nested.value.whoops`');
         $this->object->setConfig('a.nested.value.whoops', null);
     }
 }

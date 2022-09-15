@@ -89,7 +89,7 @@ class SecurityTest extends TestCase
     public function testInvalidHashTypeException(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
+        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: `\w+/');
 
         Security::hash('test', 'doesnotexist', false);
     }
@@ -155,7 +155,7 @@ class SecurityTest extends TestCase
     public function testEncryptInvalidKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.');
+        $this->expectExceptionMessage('Invalid key for `encrypt()`, key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
         Security::encrypt($txt, $key);
@@ -181,7 +181,7 @@ class SecurityTest extends TestCase
     public function testDecryptInvalidKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.');
+        $this->expectExceptionMessage('Invalid key for `decrypt()`, key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
         Security::decrypt($txt, $key);

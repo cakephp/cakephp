@@ -390,7 +390,7 @@ class EntityContext implements ContextInterface
             $entity = $next;
         }
         throw new RuntimeException(sprintf(
-            'Unable to fetch property "%s"',
+            'Unable to fetch property `%s`',
             implode('.', $path)
         ));
     }
@@ -416,7 +416,7 @@ class EntityContext implements ContextInterface
         $oneElement = count($path) === 1;
         if ($oneElement && $this->_isCollection) {
             throw new RuntimeException(sprintf(
-                'Unable to fetch property "%s"',
+                'Unable to fetch property `%s`',
                 implode('.', $path)
             ));
         }
@@ -457,7 +457,7 @@ class EntityContext implements ContextInterface
             $entity = $next;
         }
         throw new RuntimeException(sprintf(
-            'Unable to fetch property "%s"',
+            'Unable to fetch property `%s`',
             implode('.', $path)
         ));
     }
@@ -610,7 +610,7 @@ class EntityContext implements ContextInterface
 
         $table = $this->_getTable($parts);
         if (!$table) {
-            throw new RuntimeException('Validator not found: ' . $key);
+            throw new RuntimeException(sprintf('Validator not found: `%s`', $key));
         }
         $alias = $table->getAlias();
 

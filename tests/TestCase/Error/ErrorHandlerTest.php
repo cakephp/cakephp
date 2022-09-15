@@ -96,7 +96,7 @@ class ErrorHandlerTest extends TestCase
     public function testInvalidRenderer(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
+        $this->expectExceptionMessage('The `TotallyInvalid` renderer class could not be found');
 
         $errorHandler = new ErrorHandler(['exceptionRenderer' => 'TotallyInvalid']);
         $errorHandler->getRenderer(new Exception('Something bad'));

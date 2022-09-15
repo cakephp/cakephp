@@ -146,7 +146,7 @@ class QueryRegressionTest extends TestCase
         ]);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('"_joinData" is missing from the belongsToMany results');
+        $this->expectExceptionMessage('`_joinData` is missing from the belongsToMany results');
         $table->find()->contain('Tags')->toArray();
     }
 

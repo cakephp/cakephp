@@ -54,7 +54,7 @@ class TransportRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
-        throw new BadMethodCallException(sprintf('Mailer transport %s is not available.', $class));
+        throw new BadMethodCallException(sprintf('Mailer transport `%s` is not available.', $class));
     }
 
     /**
@@ -81,7 +81,7 @@ class TransportRegistry extends ObjectRegistry
         }
 
         throw new RuntimeException(
-            'Mailer transports must use Cake\Mailer\AbstractTransport as a base class.'
+            'Mailer transports must use `Cake\Mailer\AbstractTransport` as a base class.'
         );
     }
 

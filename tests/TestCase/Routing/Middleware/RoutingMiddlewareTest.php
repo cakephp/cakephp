@@ -519,7 +519,7 @@ class RoutingMiddlewareTest extends TestCase
             'tests/TestCase/Routing/Middleware/RoutingMiddlewareTest.php',
         ]);
         $this->expectException(CacheInvalidArgumentException::class);
-        $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
+        $this->expectExceptionMessage('The `notfound` cache configuration does not exist.');
 
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',

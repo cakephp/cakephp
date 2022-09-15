@@ -56,7 +56,7 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
-        throw new BadMethodCallException(sprintf('Cache engine %s is not available.', $class));
+        throw new BadMethodCallException(sprintf('Cache engine `%s` is not available.', $class));
     }
 
     /**
@@ -81,14 +81,14 @@ class CacheRegistry extends ObjectRegistry
 
         if (!($instance instanceof CacheEngine)) {
             throw new RuntimeException(
-                'Cache engines must use Cake\Cache\CacheEngine as a base class.'
+                'Cache engines must use `Cake\Cache\CacheEngine` as a base class.'
             );
         }
 
         if (!$instance->init($config)) {
             throw new RuntimeException(
                 sprintf(
-                    'Cache engine %s is not properly configured. Check error log for additional information.',
+                    'Cache engine `%s` is not properly configured. Check error log for additional information.',
                     get_class($instance)
                 )
             );

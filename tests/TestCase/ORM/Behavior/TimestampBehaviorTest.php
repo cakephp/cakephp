@@ -264,7 +264,7 @@ class TimestampBehaviorTest extends TestCase
     public function testInvalidEventConfig(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid');
+        $this->expectExceptionMessage('When should be one of `always`, `new` or `existing`. The passed value `fat fingers` is invalid');
         $table = $this->getTableInstance();
         $settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
         $this->Behavior = new TimestampBehavior($table, $settings);

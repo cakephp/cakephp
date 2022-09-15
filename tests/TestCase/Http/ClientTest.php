@@ -78,7 +78,7 @@ class ClientTest extends TestCase
     public function testAdapterInstanceCheck(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
+        $this->expectExceptionMessage('Adapter must be an instance of `Cake\Http\Client\AdapterInterface`');
 
         new Client(['adapter' => 'stdClass']);
     }

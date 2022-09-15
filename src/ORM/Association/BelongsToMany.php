@@ -418,10 +418,14 @@ class BelongsToMany extends Association
                 $this->getTargetForeignKey() !== $belongsTo->getForeignKey() ||
                 $target !== $belongsTo->getTarget()
             ) {
-                throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
-                );
+                throw new InvalidArgumentException(sprintf(
+                    'The existing `%s` association on `%s` ' .
+                    'is incompatible with the `%s` association on `%s`',
+                    $tAlias,
+                    $junction->getAlias(),
+                    $this->getName(),
+                    $source->getAlias()
+                ));
             }
         }
 
@@ -639,7 +643,7 @@ class BelongsToMany extends Association
     public function setSaveStrategy(string $strategy)
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            $msg = sprintf('Invalid save strategy `%s`', $strategy);
             throw new InvalidArgumentException($msg);
         }
 

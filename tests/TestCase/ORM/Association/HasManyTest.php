@@ -182,7 +182,7 @@ class HasManyTest extends TestCase
     public function testStrategyFailure(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid strategy "join" was provided');
+        $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new HasMany('Test');
         $assoc->setStrategy(HasMany::STRATEGY_JOIN);
     }
@@ -320,7 +320,7 @@ class HasManyTest extends TestCase
     public function testEagerLoaderFieldsException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
+        $this->expectExceptionMessage('You are required to select the `Articles.author_id`');
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
@@ -859,7 +859,7 @@ class HasManyTest extends TestCase
     public function testSaveAssociatedNotEmptyNotIterable(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Could not save comments, it cannot be traversed');
+        $this->expectExceptionMessage('Could not save `comments`, it cannot be traversed');
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND,

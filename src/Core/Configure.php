@@ -163,7 +163,7 @@ class Configure
     public static function readOrFail(string $var)
     {
         if (!static::check($var)) {
-            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new RuntimeException(sprintf('Expected configuration key `%s` not found.', $var));
         }
 
         return static::read($var);
@@ -203,7 +203,7 @@ class Configure
     public static function consumeOrFail(string $var)
     {
         if (!static::check($var)) {
-            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new RuntimeException(sprintf('Expected configuration key `%s` not found.', $var));
         }
 
         return static::consume($var);
@@ -331,7 +331,7 @@ class Configure
         if (!$engine) {
             throw new CakeException(
                 sprintf(
-                    'Config %s engine not found when attempting to load %s.',
+                    'Config `%s` engine not found when attempting to load `%s`.',
                     $config,
                     $key
                 )
@@ -382,7 +382,7 @@ class Configure
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
-            throw new CakeException(sprintf('There is no "%s" config engine.', $config));
+            throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
         if (!empty($keys)) {
@@ -456,7 +456,7 @@ class Configure
             $data = static::$_values;
         }
         if (!class_exists(Cache::class)) {
-            throw new RuntimeException('You must install cakephp/cache to use Configure::store()');
+            throw new RuntimeException('You must install `cakephp/cache` to use `Configure::store()`');
         }
 
         return Cache::write($name, $data, $cacheConfig);
@@ -474,7 +474,7 @@ class Configure
     public static function restore(string $name, string $cacheConfig = 'default'): bool
     {
         if (!class_exists(Cache::class)) {
-            throw new RuntimeException('You must install cakephp/cache to use Configure::restore()');
+            throw new RuntimeException('You must install `cakephp/cache` to use `Configure::restore()`');
         }
         $values = Cache::read($name, $cacheConfig);
         if ($values) {

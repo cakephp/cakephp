@@ -309,9 +309,14 @@ class CommandRunner implements EventDispatcherInterface
             $name = Inflector::underscore($name);
         }
         if (!$commands->has($name)) {
+            $msg = sprintf(
+                'Unknown command `%s %s`. Run `%s --help` to get the list of commands.',
+                $this->root,
+                $name,
+                $this->root
+            );
             throw new MissingOptionException(
-                "Unknown command `{$this->root} {$name}`. " .
-                "Run `{$this->root} --help` to get the list of commands.",
+                $msg,
                 $name,
                 $commands->keys()
             );

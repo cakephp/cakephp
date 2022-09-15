@@ -61,7 +61,7 @@ class BinaryType extends BaseType
         if (is_resource($value)) {
             return $value;
         }
-        throw new CakeException(sprintf('Unable to convert %s into binary.', gettype($value)));
+        throw new CakeException(sprintf('Unable to convert `%s` into binary.', gettype($value)));
     }
 
     /**

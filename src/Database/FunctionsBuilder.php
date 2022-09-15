@@ -266,7 +266,7 @@ class FunctionsBuilder
             return new FunctionExpression('CURRENT_TIME', [], [], 'time');
         }
 
-        throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type);
+        throw new InvalidArgumentException(sprintf('Invalid argument for FunctionsBuilder::now(): `%s`', $type));
     }
 
     /**

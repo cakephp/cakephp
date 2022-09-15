@@ -82,7 +82,7 @@ trait CookieCryptTrait
     {
         if (!in_array($encrypt, $this->_validCiphers, true)) {
             $msg = sprintf(
-                'Invalid encryption cipher. Must be one of %s or false.',
+                'Invalid encryption cipher. Must be one of `%s` or false.',
                 implode(', ', $this->_validCiphers)
             );
             throw new RuntimeException($msg);

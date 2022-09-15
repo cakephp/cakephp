@@ -1125,7 +1125,7 @@ class Text
 
         $return = transliterator_transliterate($transliterator, $string);
         if ($return === false) {
-            throw new CakeException(sprintf('Unable to transliterate string: %s', $string));
+            throw new CakeException(sprintf('Unable to transliterate string: `%s`', $string));
         }
 
         return $return;

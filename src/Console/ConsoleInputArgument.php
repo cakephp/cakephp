@@ -167,7 +167,7 @@ class ConsoleInputArgument
         if (!in_array($value, $this->_choices, true)) {
             throw new ConsoleException(
                 sprintf(
-                    '"%s" is not a valid value for %s. Please use one of "%s"',
+                    '`%s` is not a valid value for `%s`. Please use one of `%s`',
                     $value,
                     $this->_name,
                     implode(', ', $this->_choices)

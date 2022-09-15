@@ -811,7 +811,7 @@ class QueryTest extends TestCase
     public function testSelectWhereArrayTypeEmptyWithExpression(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('with empty list of values for field (SELECT 1)');
+        $this->expectExceptionMessage('with empty list of values for field `SELECT 1`');
         $query = new Query($this->connection);
         $result = $query
             ->select(['id'])
@@ -4936,7 +4936,7 @@ class QueryTest extends TestCase
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The \'nope\' clause is not defined. Valid clauses are: delete, update');
+        $this->expectExceptionMessage('The `nope` clause is not defined. Valid clauses are: `delete, update');
         $query = new Query($this->connection);
         $this->assertEmpty($query->clause('where'));
         $query->clause('nope');

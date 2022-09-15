@@ -111,7 +111,7 @@ class DateTimeWidget extends BasicWidget
 
         if (!isset($this->formatMap[$data['type']])) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid type `%s` for input tag, expected datetime-local, date, time, month or week',
+                'Invalid type `%s` for input tag, expected `datetime-local`, `date`, `time`, `month` or `week`',
                 $data['type']
             ));
         }

@@ -78,7 +78,7 @@ class BinaryUuidTypeTest extends TestCase
     public function testToPHPFailure(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Unable to convert array into binary uuid.');
+        $this->expectExceptionMessage('Unable to convert `array` into binary uuid.');
 
         $this->type->toPHP([], $this->driver);
     }

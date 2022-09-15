@@ -154,7 +154,7 @@ class BelongsToManyTest extends TestCase
     public function testStrategyFailure(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid strategy "join" was provided');
+        $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
     }
@@ -330,7 +330,7 @@ class BelongsToManyTest extends TestCase
     public function testSaveStrategyInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid save strategy "depsert"');
+        $this->expectExceptionMessage('Invalid save strategy `depsert`');
         new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
 
@@ -1472,7 +1472,7 @@ class BelongsToManyTest extends TestCase
     public function testEagerLoadingRequiresPrimaryKey(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The "tags" table does not define a primary key');
+        $this->expectExceptionMessage('The `tags` table does not define a primary key');
         $table = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->getSchema()->dropConstraint('primary');

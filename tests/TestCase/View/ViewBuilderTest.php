@@ -291,7 +291,7 @@ class ViewBuilderTest extends TestCase
     public function testBuildMissingViewClass(): void
     {
         $this->expectException(MissingViewException::class);
-        $this->expectExceptionMessage('View class "Foo" is missing.');
+        $this->expectExceptionMessage('View class `Foo` is missing.');
         $builder = new ViewBuilder();
         $builder->setClassName('Foo');
         $builder->build();

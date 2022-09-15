@@ -22,5 +22,5 @@ class MissingPluginException extends CakeException
     /**
      * @inheritDoc
      */
-    protected $_messageTemplate = 'Plugin %s could not be found.';
+    protected $_messageTemplate = 'Plugin `%s` could not be found.';
 }

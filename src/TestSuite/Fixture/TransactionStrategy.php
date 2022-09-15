@@ -65,11 +65,12 @@ class TransactionStrategy implements FixtureStrategyInterface
                 );
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
-                    throw new RuntimeException(
-                        "Could not enable save points for the `{$connection->configName()}` connection. " .
+                    throw new RuntimeException(sprintf(
+                        'Could not enable save points for the `%s` connection. ' .
                             'Your database needs to support savepoints in order to use ' .
-                            'TransactionStrategy.'
-                    );
+                            'TransactionStrategy.',
+                        $connection->configName()
+                    ));
                 }
 
                 $connection->begin();

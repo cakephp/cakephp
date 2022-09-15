@@ -1087,8 +1087,8 @@ class RouterTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches(
-            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
-            ' The filter failed with: nope/'
+            '/URL filter defined in `.*RouterTest\.php` on line \d+ could not be applied\.' .
+            ' The filter failed with: `nope`/'
         );
         Router::connect('/{lang}/{controller}/{action}/*');
         $request = new ServerRequest([
@@ -1114,7 +1114,7 @@ class RouterTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches(
-            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
+            '/URL filter defined in `.*RouterTest\.php` on line \d+ could not be applied\.' .
             ' The filter failed with: /'
         );
         Router::connect('/{lang}/{controller}/{action}/*');

@@ -47,7 +47,7 @@ class RouteCollectionTest extends TestCase
     public function testParseMissingRoute(): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A route matching "/" could not be found');
+        $this->expectExceptionMessage('A route matching `/` could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
@@ -62,7 +62,7 @@ class RouteCollectionTest extends TestCase
     public function testParseMissingRouteMethod(): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A "POST" route matching "/b" could not be found');
+        $this->expectExceptionMessage('A `POST` route matching `/b` could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
 
@@ -255,7 +255,7 @@ class RouteCollectionTest extends TestCase
     public function testParseRequestMissingRoute(): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A route matching "/" could not be found');
+        $this->expectExceptionMessage('A route matching `/` could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
@@ -340,7 +340,7 @@ class RouteCollectionTest extends TestCase
     public function testParseRequestCheckHostConditionFail(string $host): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A route matching "/fallback" could not be found');
+        $this->expectExceptionMessage('A route matching `/fallback` could not be found');
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect(
             '/fallback',
@@ -454,7 +454,7 @@ class RouteCollectionTest extends TestCase
     public function testMatchError(): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A route matching "array (');
+        $this->expectExceptionMessage('A route matching `array (');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -720,7 +720,7 @@ class RouteCollectionTest extends TestCase
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->expectExceptionMessage('Cannot add `bad` middleware to group `group`. It has not been registered.');
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

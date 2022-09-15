@@ -146,7 +146,7 @@ class Cache
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('The "%s" cache configuration does not exist.', $name)
+                sprintf('The `%s` cache configuration does not exist.', $name)
             );
         }
 
@@ -169,7 +169,7 @@ class Cache
 
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
-                    '"%s" cache configuration cannot fallback to itself.',
+                    '`%s` cache configuration cannot fallback to itself.',
                     $name
                 ), 0, $e);
             }
@@ -520,7 +520,7 @@ class Cache
             return [$group => self::$_groups[$group]];
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid cache group %s', $group));
+        throw new InvalidArgumentException(sprintf('Invalid cache group `%s`', $group));
     }
 
     /**

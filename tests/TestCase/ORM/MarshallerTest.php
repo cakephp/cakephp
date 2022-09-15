@@ -297,7 +297,7 @@ class MarshallerTest extends TestCase
     public function testOneInvalidAssociation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
+        $this->expectExceptionMessage('Cannot marshal data for `Derp` association. It is not associated with `Articles`.');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -1369,7 +1369,7 @@ class MarshallerTest extends TestCase
     public function testMergeInvalidAssociation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
+        $this->expectExceptionMessage('Cannot marshal data for `Derp` association. It is not associated with `Articles`.');
         $data = [
             'title' => 'My title',
             'body' => 'My content',

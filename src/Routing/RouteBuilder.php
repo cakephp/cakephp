@@ -724,7 +724,7 @@ class RouteBuilder
             $routeClass = App::className($options['routeClass'], 'Routing/Route');
             if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
-                    'Cannot find route class %s',
+                    'Cannot find route class `%s`',
                     $options['routeClass']
                 ));
             }
@@ -737,7 +737,7 @@ class RouteBuilder
             foreach ($this->_params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
                     $msg = 'You cannot define routes that conflict with the scope. ' .
-                        'Scope had %s = %s, while route had %s = %s';
+                        'Scope had `%s = %s`, while route had `%s = %s`';
                     throw new BadMethodCallException(sprintf(
                         $msg,
                         $param,
@@ -998,9 +998,9 @@ class RouteBuilder
     {
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
-                $message = "Cannot apply '$name' middleware or middleware group. " .
-                    'Use registerMiddleware() to register middleware.';
-                throw new RuntimeException($message);
+                $message = 'Cannot apply `%s` middleware or middleware group. ' .
+                    'Use `registerMiddleware()` to register middleware.';
+                throw new RuntimeException(sprintf($message, $name));
             }
         }
         $this->middleware = array_unique(array_merge($this->middleware, $names));

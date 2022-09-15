@@ -155,7 +155,7 @@ class StringTemplateTest extends TestCase
     public function testFormatMissingTemplate(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot find template named \'missing\'');
+        $this->expectExceptionMessage('Cannot find template named `missing`');
         $templates = [
             'text' => '{{text}}',
         ];

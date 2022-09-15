@@ -236,7 +236,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     {
         if (!in_array($value, $allowed, true)) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid arg `%s`, use one of these: %s',
+                'Invalid arg `%s`, use one of these: `%s`',
                 $value,
                 implode(', ', $allowed)
             ));

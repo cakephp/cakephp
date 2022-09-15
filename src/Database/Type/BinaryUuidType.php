@@ -82,7 +82,7 @@ class BinaryUuidType extends BaseType
             return $value;
         }
 
-        throw new CakeException(sprintf('Unable to convert %s into binary uuid.', gettype($value)));
+        throw new CakeException(sprintf('Unable to convert `%s` into binary uuid.', gettype($value)));
     }
 
     /**

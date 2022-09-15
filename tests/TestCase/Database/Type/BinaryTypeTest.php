@@ -68,7 +68,7 @@ class BinaryTypeTest extends TestCase
     public function testToPHPFailure(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Unable to convert array into binary.');
+        $this->expectExceptionMessage('Unable to convert `array` into binary.');
         $this->type->toPHP([], $this->driver);
     }
 

@@ -812,7 +812,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new RuntimeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
                 );
             }
 
@@ -1085,7 +1085,7 @@ class View implements EventDispatcherInterface
                     $paths = $this->_paths($plugin);
                     $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                     throw new LogicException(sprintf(
-                        'You cannot extend an element which does not exist (%s).',
+                        'You cannot extend an element which does not exist `%s`.',
                         $defaultPath . $name . $this->_ext
                     ));
                 }
@@ -1193,7 +1193,7 @@ class View implements EventDispatcherInterface
 
         if ($initialBlocks !== $remainingBlocks) {
             throw new LogicException(sprintf(
-                'The "%s" block was left open. Blocks are not allowed to cross files.',
+                'The `%s` block was left open. Blocks are not allowed to cross files.',
                 (string)$this->Blocks->active()
             ));
         }
@@ -1428,7 +1428,7 @@ class View implements EventDispatcherInterface
         $absolute = realpath($file);
         if (strpos($absolute, $path) !== 0) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot use "%s" as a template, it is not within any view template path.',
+                'Cannot use `%s` as a template, it is not within any view template path.',
                 $file
             ));
         }
@@ -1475,7 +1475,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new RuntimeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
                 );
             }
             $name = $this->layout;

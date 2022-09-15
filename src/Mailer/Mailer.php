@@ -422,7 +422,7 @@ class Mailer implements EventListenerInterface
             $name = $config;
             $config = static::getConfig($name);
             if (empty($config)) {
-                throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
+                throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
             unset($name);
         }
@@ -494,11 +494,11 @@ class Mailer implements EventListenerInterface
         } elseif (is_object($name)) {
             $transport = $name;
             if (!$transport instanceof AbstractTransport) {
-                throw new CakeException('Transport class must extend Cake\Mailer\AbstractTransport');
+                throw new CakeException('Transport class must extend `Cake\Mailer\AbstractTransport`');
             }
         } else {
             throw new InvalidArgumentException(sprintf(
-                'The value passed for the "$name" argument must be either a string, or an object, %s given.',
+                'The value passed for the `$name` argument must be either a string, or an object, `%s` given.',
                 gettype($name)
             ));
         }

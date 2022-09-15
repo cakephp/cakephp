@@ -144,7 +144,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+            '`$factory` must be an instance of `Cake\Datasource\Locator\LocatorInterface` or a callable.'
             . ' Got type `string` instead.'
         );
 
@@ -178,7 +178,7 @@ class ModelAwareTraitTest extends TestCase
     public function testMissingModelException(): void
     {
         $this->expectException(MissingModelException::class);
-        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
+        $this->expectExceptionMessage('Model class `Magic` of type `Test` could not be found.');
         $stub = new Stub();
 
         $this->deprecated(function () {

@@ -3813,7 +3813,7 @@ class FormHelperTest extends TestCase
     public function testInvalidControlTypeOption(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
+        $this->expectExceptionMessage('Invalid type `input` used for field `text`');
         $this->Form->control('text', ['type' => 'input']);
     }
 
@@ -8140,7 +8140,7 @@ class FormHelperTest extends TestCase
     public function testValueSourcesValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid value source(s): invalid, foo. Valid values are: context, data, query');
+        $this->expectExceptionMessage('Invalid value source(s): `invalid, foo`. Valid values are: `context, data, query`');
 
         $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
     }

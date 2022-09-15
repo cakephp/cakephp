@@ -841,9 +841,10 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         if ($value === null && $this->_conjunction !== ',') {
-            throw new InvalidArgumentException(
-                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression)
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Expression `%s` is missing operator (IS, IS NOT) with `null` value.',
+                $expression
+            ));
         }
 
         return new ComparisonExpression($expression, $value, $type, $operator);

@@ -824,7 +824,7 @@ class Route
         $search = $replace = [];
         foreach ($this->keys as $key) {
             if (!array_key_exists($key, $params)) {
-                throw new InvalidArgumentException("Missing required route key `{$key}`");
+                throw new InvalidArgumentException(sprintf('Missing required route key `%s`', $key));
             }
             $string = $params[$key];
             if ($this->braceKeys) {

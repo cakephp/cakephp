@@ -70,7 +70,7 @@ class Security
         $availableAlgorithms = hash_algos();
         if (!in_array($algorithm, $availableAlgorithms, true)) {
             throw new RuntimeException(sprintf(
-                'The hash type `%s` was not found. Available algorithms are: %s',
+                'The hash type `%s` was not found. Available algorithms are: `%s`',
                 $algorithm,
                 implode(', ', $availableAlgorithms)
             ));
@@ -221,9 +221,10 @@ class Security
     protected static function _checkKey(string $key, string $method): void
     {
         if (mb_strlen($key, '8bit') < 32) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Invalid key for `%s`, key must be at least 256 bits (32 bytes) long.',
+                $method
+            ));
         }
     }
 
@@ -288,7 +289,7 @@ class Security
     {
         if (static::$_salt === null) {
             throw new RuntimeException(
-                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
+                'Salt not set. Use `Security::setSalt()` to set one, ideally in `config/bootstrap.php`.'
             );
         }
 

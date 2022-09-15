@@ -211,7 +211,7 @@ class ComponentRegistryTest extends TestCase
     public function testUnloadUnknown(): void
     {
         $this->expectException(MissingComponentException::class);
-        $this->expectExceptionMessage('Component class FooComponent could not be found.');
+        $this->expectExceptionMessage('Component class `FooComponent` could not be found.');
         $this->Components->unload('Foo');
     }
 

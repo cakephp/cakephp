@@ -364,7 +364,7 @@ class Router
                     $ref = new ReflectionFunction($filter);
                 }
                 $message = sprintf(
-                    'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
+                    'URL filter defined in `%s` on line %s could not be applied. The filter failed with: `%s`',
                     $ref->getFileName(),
                     $ref->getStartLine(),
                     $e->getMessage()
@@ -970,9 +970,10 @@ class Router
     {
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
-                throw new InvalidArgumentException(
-                    "`$key` cannot be used when defining route targets with a string route path."
-                );
+                throw new InvalidArgumentException(sprintf(
+                    '`%s` cannot be used when defining route targets with a string route path.',
+                    $key
+                ));
             }
         }
         $url += static::parseRoutePath($url['_path']);
@@ -1012,7 +1013,7 @@ class Router
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
-            throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
+            throw new InvalidArgumentException(sprintf('Could not parse a string route path `%s`.', $url));
         }
 
         $defaults = [];

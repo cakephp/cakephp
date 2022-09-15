@@ -234,7 +234,7 @@ class StringTemplate
     public function format(string $name, array $data): string
     {
         if (!isset($this->_compiled[$name])) {
-            throw new RuntimeException("Cannot find template named '$name'.");
+            throw new RuntimeException(sprintf('Cannot find template named `%s`.', $name));
         }
         [$template, $placeholders] = $this->_compiled[$name];
 

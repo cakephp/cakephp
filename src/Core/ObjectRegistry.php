@@ -132,7 +132,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     protected function _checkDuplicate(string $name, array $config): void
     {
         $existing = $this->_loaded[$name];
-        $msg = sprintf('The "%s" alias has already been loaded.', $name);
+        $msg = sprintf('The `%s` alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'getConfig');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
@@ -146,7 +146,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         $failure = null;
         foreach ($config as $key => $value) {
             if (!array_key_exists($key, $existingConfig)) {
-                $failure = " The `{$key}` was not defined in the previous configuration data.";
+                $failure = sprintf(
+                    ' The `%s` was not defined in the previous configuration data.',
+                    $key
+                );
                 break;
             }
             if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
@@ -230,7 +233,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function get(string $name)
     {
         if (!isset($this->_loaded[$name])) {
-            throw new RuntimeException(sprintf('Unknown object "%s"', $name));
+            throw new RuntimeException(sprintf('Unknown object `%s`', $name));
         }
 
         return $this->_loaded[$name];

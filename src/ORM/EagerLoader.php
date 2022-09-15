@@ -654,7 +654,11 @@ class EagerLoader
                     strpos($path, '.') === false &&
                     (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
                 ) {
-                    $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";
+                    $message = sprintf(
+                        'Unable to load `%s` association. Ensure foreign key in `%s` is selected.',
+                        $path,
+                        $alias
+                    );
                     throw new InvalidArgumentException($message);
                 }
 

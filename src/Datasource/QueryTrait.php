@@ -507,7 +507,7 @@ trait QueryTrait
         if (!$entity) {
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
-                'Record not found in table "%s"',
+                'Record not found in table `%s`',
                 $table->getTable()
             ));
         }
@@ -560,7 +560,7 @@ trait QueryTrait
             return $results->$method(...$arguments);
         }
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s"', $method)
+            sprintf('Unknown method `%s`', $method)
         );
     }
 

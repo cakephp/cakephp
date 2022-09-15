@@ -101,7 +101,7 @@ class MailerTest extends TestCase
     public function testTransportInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
+        $this->expectExceptionMessage('The `Invalid` transport configuration does not exist');
         $this->mailer->setTransport('Invalid');
     }
 
@@ -120,7 +120,7 @@ class MailerTest extends TestCase
     public function testTransportTypeInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
+        $this->expectExceptionMessage('The value passed for the `$name` argument must be either a string, or an object, `integer` given.');
         $this->mailer->setTransport(123);
     }
 
@@ -286,7 +286,7 @@ class MailerTest extends TestCase
     public function testProfileInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown email configuration "derp".');
+        $this->expectExceptionMessage('Unknown email configuration `derp`.');
         $mailer = new Mailer();
         $mailer->setProfile('derp');
     }
@@ -1311,7 +1311,7 @@ class MailerTest extends TestCase
     public function testMissingActionThrowsException(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Mail Cake\Mailer\Mailer::test() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Mail `Cake\Mailer\Mailer::test()` could not be found, or is not accessible.');
         (new Mailer())->send('test');
     }
 

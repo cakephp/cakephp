@@ -149,7 +149,7 @@ class HtmlFormatter implements FormatterInterface
         if ($var instanceof SpecialNode) {
             return $this->style('special', $var->getValue());
         }
-        throw new RuntimeException('Unknown node received ' . get_class($var));
+        throw new RuntimeException(sprintf('Unknown node received `%s`', get_class($var)));
     }
 
     /**

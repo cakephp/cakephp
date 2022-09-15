@@ -703,7 +703,7 @@ class ExceptionRendererTest extends TestCase
         $helpers = $controller->viewBuilder()->getHelpers();
         sort($helpers);
         $this->assertEquals([], $helpers);
-        $this->assertStringContainsString('Helper class Fail', (string)$response->getBody());
+        $this->assertStringContainsString('Helper class `Fail`', (string)$response->getBody());
     }
 
     /**

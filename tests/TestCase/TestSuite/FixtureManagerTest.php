@@ -273,7 +273,7 @@ class FixtureManagerTest extends TestCase
     public function testFixturizeInvalidType(): void
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.DerpFixture" not found. Fixture "Derp.Derp" was referenced');
+        $this->expectExceptionMessage('Referenced fixture class `Test\Fixture\Derp.DerpFixture` not found. Fixture `Derp.Derp` was referenced');
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->expects($this->any())
             ->method('getFixtures')
@@ -401,7 +401,7 @@ class FixtureManagerTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertMatchesRegularExpression('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
+        $this->assertMatchesRegularExpression('/^Unable to insert fixtures for `Mock_TestCase_\w+` test case. `message`$/D', $e->getMessage());
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 
@@ -462,15 +462,15 @@ class FixtureManagerTest extends TestCase
         return [
             [
                 'createConstraints',
-                '/^Unable to create constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+                '/^Unable to create constraints for fixture `Mock_ProductsFixture_\w+` in `Mock_TestCase_\w+` test case: \n`message`$/D',
             ],
             [
                 'dropConstraints',
-                '/^Unable to drop constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+                '/^Unable to drop constraints for fixture `Mock_ProductsFixture_\w+` in `Mock_TestCase_\w+` test case: \n`message`$/D',
             ],
             [
                 'insert',
-                '/^Unable to insert fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+                '/^Unable to insert fixture `Mock_ProductsFixture_\w+` in `Mock_TestCase_\w+` test case: \n`message`$/D',
             ],
         ];
     }

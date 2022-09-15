@@ -659,9 +659,10 @@ class Cookie implements CookieInterface
     protected static function validateSameSiteValue(string $sameSite)
     {
         if (!in_array($sameSite, CookieInterface::SAMESITE_VALUES, true)) {
-            throw new InvalidArgumentException(
-                'Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES)
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Samesite value must be either of: `%s`',
+                implode(', ', CookieInterface::SAMESITE_VALUES)
+            ));
         }
     }
 

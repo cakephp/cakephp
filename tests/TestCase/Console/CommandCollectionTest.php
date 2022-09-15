@@ -57,7 +57,7 @@ class CommandCollectionTest extends TestCase
     public function testConstructorInvalidClass(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\'. It is not a subclass of Cake\Console\Shell');
+        $this->expectExceptionMessage('Cannot use `stdClass` for command `nope`. It is not a subclass of `Cake\Console\Shell`');
         new CommandCollection([
             'sample' => SampleShell::class,
             'nope' => stdClass::class,
@@ -117,7 +117,7 @@ class CommandCollectionTest extends TestCase
     public function testAddInvalidInstance(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\'. It is not a subclass of Cake\Console\Shell');
+        $this->expectExceptionMessage('Cannot use `stdClass` for command `routes`. It is not a subclass of `Cake\Console\Shell`');
         $collection = new CommandCollection();
         $shell = new stdClass();
         $collection->add('routes', $shell);
@@ -161,7 +161,7 @@ class CommandCollectionTest extends TestCase
     public function testInvalidShellClassName(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\'. It is not a subclass of Cake\Console\Shell');
+        $this->expectExceptionMessage('Cannot use `stdClass` for command `routes`. It is not a subclass of `Cake\Console\Shell`');
         $collection = new CommandCollection();
         $collection->add('routes', stdClass::class);
     }

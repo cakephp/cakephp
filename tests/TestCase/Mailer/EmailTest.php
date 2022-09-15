@@ -315,7 +315,7 @@ class EmailTest extends TestCase
     public function testClassNameException(): void
     {
         $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Mailer transport TestFalse is not available.');
+        $this->expectExceptionMessage('Mailer transport `TestFalse` is not available.');
         $email = new Email();
         $email->setTransport('badClassName');
     }
@@ -326,7 +326,7 @@ class EmailTest extends TestCase
     public function testUnsetEmailPattern(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid email set for "to". You passed "fail.@example.com".');
+        $this->expectExceptionMessage('Invalid email set for `to`. You passed `fail.@example.com`.');
         $email = new Email();
         $this->assertSame(Email::EMAIL_PATTERN, $email->getEmailPattern());
 
@@ -343,7 +343,7 @@ class EmailTest extends TestCase
     public function testEmptyTo(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The email set for "to" is empty.');
+        $this->expectExceptionMessage('The email set for `to` is empty.');
         $email = new Email();
         $email->setTo('');
     }
@@ -821,7 +821,7 @@ class EmailTest extends TestCase
     public function testTransportInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
+        $this->expectExceptionMessage('The `Invalid` transport configuration does not exist');
         $this->Email->setTransport('Invalid');
     }
 
@@ -840,7 +840,7 @@ class EmailTest extends TestCase
     public function testTransportTypeInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
+        $this->expectExceptionMessage('The value passed for the `$name` argument must be either a string, or an object, `integer` given.');
         $this->Email->setTransport(123);
     }
 
@@ -909,7 +909,7 @@ class EmailTest extends TestCase
     public function testProfileInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown email configuration "derp".');
+        $this->expectExceptionMessage('Unknown email configuration `derp`.');
         $email = new Email();
         $email->setProfile('derp');
     }

@@ -76,7 +76,7 @@ class QueryCacherTest extends TestCase
     public function testFetchFunctionKeyNoString(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cache key functions must return a string. Got false.');
+        $this->expectExceptionMessage('Cache key functions must return a string. Got `false`.');
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 

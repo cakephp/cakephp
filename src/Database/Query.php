@@ -1751,7 +1751,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function update($table)
     {
         if (!is_string($table) && !($table instanceof ExpressionInterface)) {
-            $text = 'Table must be of type string or "%s", got "%s"';
+            $text = 'Table must be of type string or `%s`, got `%s`';
             $message = sprintf($text, ExpressionInterface::class, gettype($table));
             throw new InvalidArgumentException($message);
         }
@@ -2007,7 +2007,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = implode(', ', array_keys($this->_parts));
-            throw new InvalidArgumentException("The '$name' clause is not defined. Valid clauses are: $clauses");
+            throw new InvalidArgumentException(sprintf(
+                'The `%s` clause is not defined. Valid clauses are: `%s`',
+                $name,
+                $clauses
+            ));
         }
 
         return $this->_parts[$name];

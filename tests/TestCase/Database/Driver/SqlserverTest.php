@@ -226,7 +226,7 @@ class SqlserverTest extends TestCase
         ]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
+        $this->expectExceptionMessage('Config setting `persistent` cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
         $driver->connect();
     }
 

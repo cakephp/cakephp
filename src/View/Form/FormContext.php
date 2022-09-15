@@ -55,7 +55,7 @@ class FormContext implements ContextInterface
     public function __construct(array $context)
     {
         if (!isset($context['entity']) || !$context['entity'] instanceof Form) {
-            throw new CakeException('`$context[\'entity\']` must be an instance of Cake\Form\Form');
+            throw new CakeException('`$context[\'entity\']` must be an instance of `Cake\Form\Form`');
         }
 
         $this->_form = $context['entity'];

@@ -1235,7 +1235,7 @@ class Validation
         }
 
         if (!function_exists('finfo_open')) {
-            throw new LogicException('ext/fileinfo is required for validating file mime types');
+            throw new LogicException('`ext/fileinfo` is required for validating file mime types');
         }
 
         if (!is_file($file)) {
@@ -1524,7 +1524,7 @@ class Validation
         ];
         if ($options['type'] !== 'latLong') {
             throw new RuntimeException(sprintf(
-                'Unsupported coordinate type "%s". Use "latLong" instead.',
+                'Unsupported coordinate type `%s`. Use `latLong` instead.',
                 $options['type']
             ));
         }

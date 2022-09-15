@@ -293,7 +293,7 @@ class Debugger
         $instance = static::getInstance();
         if (!is_string($template) && !($template instanceof Closure)) {
             $type = getTypeName($template);
-            throw new RuntimeException("Invalid editor type of `{$type}`. Expected string or Closure.");
+            throw new RuntimeException(sprintf('Invalid editor type of `%s`. Expected string or Closure.', $type));
         }
         $instance->editors[$name] = $template;
     }
@@ -309,7 +309,7 @@ class Debugger
         $instance = static::getInstance();
         if (!isset($instance->editors[$name])) {
             $known = implode(', ', array_keys($instance->editors));
-            throw new RuntimeException("Unknown editor `{$name}`. Known editors are {$known}");
+            throw new RuntimeException(sprintf('Unknown editor `%s`. Known editors are `%s`', $name, $known));
         }
         $instance->setConfig('editor', $name);
     }
@@ -326,7 +326,7 @@ class Debugger
         $instance = static::getInstance();
         $editor = $instance->getConfig('editor');
         if (!isset($instance->editors[$editor])) {
-            throw new RuntimeException("Cannot format editor URL `{$editor}` is not a known editor.");
+            throw new RuntimeException(sprintf('Cannot format editor URL `%s` is not a known editor.', $editor));
         }
 
         $template = $instance->editors[$editor];
@@ -617,9 +617,11 @@ class Debugger
         }
         $instance = new $class();
         if (!$instance instanceof FormatterInterface) {
-            throw new RuntimeException(
-                "The `{$class}` formatter does not implement " . FormatterInterface::class
-            );
+            throw new RuntimeException(sprintf(
+                'The `%s` formatter does not implement `%s`',
+                $class,
+                FormatterInterface::class
+            ));
         }
 
         return $instance;
@@ -946,9 +948,10 @@ class Debugger
     {
         deprecationWarning('Debugger::addRenderer() is deprecated.');
         if (!in_array(ErrorRendererInterface::class, class_implements($class))) {
-            throw new InvalidArgumentException(
-                'Invalid renderer class. $class must implement ' . ErrorRendererInterface::class
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Invalid renderer class. $class must implement `%s`',
+                ErrorRendererInterface::class
+            ));
         }
         $self = Debugger::getInstance();
         $self->renderers[$name] = $class;

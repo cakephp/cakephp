@@ -232,7 +232,7 @@ class FixtureManager
                 $this->_fixtureMap[$name] = $this->_loaded[$fixture];
             } else {
                 $msg = sprintf(
-                    'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
+                    'Referenced fixture class `%s` not found. Fixture `%s` was referenced in test case `%s`.',
                     $className,
                     $fixture,
                     get_class($test)
@@ -309,7 +309,7 @@ class FixtureManager
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
                             $msg = sprintf(
-                                'Unable to drop constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
+                                'Unable to drop constraints for fixture `%s` in `%s` test case: ' . "\n" . '`%s`',
                                 get_class($fixture),
                                 get_class($test),
                                 $e->getMessage()
@@ -336,7 +336,7 @@ class FixtureManager
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
                         $msg = sprintf(
-                            'Unable to create constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
+                            'Unable to create constraints for fixture `%s` in `%s` test case: ' . "\n" . '`%s`',
                             get_class($fixture),
                             get_class($test),
                             $e->getMessage()
@@ -354,7 +354,7 @@ class FixtureManager
                         $fixture->insert($db);
                     } catch (PDOException $e) {
                         $msg = sprintf(
-                            'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
+                            'Unable to insert fixture `%s` in `%s` test case: ' . "\n" . '`%s`',
                             get_class($fixture),
                             get_class($test),
                             $e->getMessage()
@@ -366,7 +366,7 @@ class FixtureManager
             $this->_runOperation($fixtures, $insert);
         } catch (PDOException $e) {
             $msg = sprintf(
-                'Unable to insert fixtures for "%s" test case. %s',
+                'Unable to insert fixtures for `%s` test case. `%s`',
                 get_class($test),
                 $e->getMessage()
             );
@@ -458,7 +458,7 @@ class FixtureManager
     public function loadSingle(string $name, ?ConnectionInterface $connection = null, bool $dropTables = true): void
     {
         if (!isset($this->_fixtureMap[$name])) {
-            throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
+            throw new UnexpectedValueException(sprintf('Referenced fixture class `%s` not found', $name));
         }
 
         $fixture = $this->_fixtureMap[$name];

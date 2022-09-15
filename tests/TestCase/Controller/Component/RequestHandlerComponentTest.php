@@ -506,7 +506,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testUnrecognizedExtensionFailure(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('Invoked extension not recognized/configured: foo');
+        $this->expectExceptionMessage('Invoked extension not recognized/configured: `foo`');
 
         Router::extensions(['json', 'foo'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));

@@ -146,7 +146,7 @@ trait ModelAwareTrait
     {
         if (!$factory instanceof LocatorInterface && !is_callable($factory)) {
             throw new InvalidArgumentException(sprintf(
-                '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+                '`$factory` must be an instance of `Cake\Datasource\Locator\LocatorInterface` or a callable.'
                 . ' Got type `%s` instead.',
                 getTypeName($factory)
             ));

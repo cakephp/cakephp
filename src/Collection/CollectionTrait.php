@@ -751,7 +751,7 @@ trait CollectionTrait
 
             if (!isset($modes[$order])) {
                 throw new RuntimeException(sprintf(
-                    "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'",
+                    'Invalid direction `%s` provided. Must be one of: `desc`, `asc`, `leaves`',
                     $order
                 ));
             }

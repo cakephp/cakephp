@@ -267,9 +267,10 @@ class Session
         /** @var class-string<\SessionHandlerInterface>|null $className */
         $className = App::className($class, 'Http/Session');
         if ($className === null) {
-            throw new InvalidArgumentException(
-                sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
-            );
+            throw new InvalidArgumentException(sprintf(
+                'The class `%s` does not exist and cannot be used as a session engine',
+                $class
+            ));
         }
 
         return $this->setEngine(new $className($options));
@@ -312,9 +313,10 @@ class Session
 
         foreach ($options as $setting => $value) {
             if (ini_set($setting, (string)$value) === false) {
-                throw new RuntimeException(
-                    sprintf('Unable to configure the session, setting %s failed.', $setting)
-                );
+                throw new RuntimeException(sprintf(
+                    'Unable to configure the session, setting `%s` failed.',
+                    $setting
+                ));
             }
         }
     }
@@ -455,7 +457,7 @@ class Session
     public function readOrFail(string $name)
     {
         if (!$this->check($name)) {
-            throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
+            throw new RuntimeException(sprintf('Expected session key `%s` not found.', $name));
         }
 
         return $this->read($name);

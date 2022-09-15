@@ -81,7 +81,7 @@ class CommandTest extends TestCase
     public function testSetNameInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+        $this->expectExceptionMessage('The name `routes_show` is missing a space. Names should look like `cake routes`');
 
         $command = new Command();
         $command->setName('routes_show');
@@ -260,7 +260,7 @@ class CommandTest extends TestCase
     public function testExecuteCommandStringInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Command class 'Nope' does not exist");
+        $this->expectExceptionMessage('Command class `Nope` does not exist');
 
         $command = new Command();
         $command->executeCommand('Nope', [], $this->getMockIo(new StubConsoleOutput()));
@@ -318,7 +318,7 @@ class CommandTest extends TestCase
     public function testExecuteCommandInstanceInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
+        $this->expectExceptionMessage('Command `stdClass` is not a subclass');
 
         $command = new Command();
         $command->executeCommand(new \stdClass(), [], $this->getMockIo(new StubConsoleOutput()));

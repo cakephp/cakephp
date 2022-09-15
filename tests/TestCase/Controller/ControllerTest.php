@@ -764,7 +764,7 @@ class ControllerTest extends TestCase
     public function testGetActionMissingAction(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Action `TestController::missing()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/missing',
             'params' => ['controller' => 'Test', 'action' => 'missing'],
@@ -781,7 +781,7 @@ class ControllerTest extends TestCase
     public function testGetActionPrivate(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Action `TestController::private_m()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/private_m/',
             'params' => ['controller' => 'Test', 'action' => 'private_m'],
@@ -798,7 +798,7 @@ class ControllerTest extends TestCase
     public function testGetActionProtected(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Action `TestController::protected_m()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/protected_m/',
             'params' => ['controller' => 'Test', 'action' => 'protected_m'],
@@ -815,7 +815,7 @@ class ControllerTest extends TestCase
     public function testGetActionBaseMethods(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Action `TestController::redirect()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/redirect/',
             'params' => ['controller' => 'Test', 'action' => 'redirect'],
@@ -832,7 +832,7 @@ class ControllerTest extends TestCase
     public function testGetActionMethodCasing(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action TestController::RETURNER() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Action `TestController::RETURNER()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/RETURNER/',
             'params' => ['controller' => 'Test', 'action' => 'RETURNER'],
@@ -914,7 +914,7 @@ class ControllerTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
             'Controller actions can only return ResponseInterface instance or null. '
-                . 'Got string instead.'
+                . 'Got `string` instead.'
         );
 
         $url = new ServerRequest([
@@ -1062,7 +1062,7 @@ class ControllerTest extends TestCase
             $controller->loadComponent('FormProtection', ['bad' => 'settings']);
             $this->fail('No exception');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "FormProtection" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The `FormProtection` alias has already been loaded', $e->getMessage());
         }
     }
 

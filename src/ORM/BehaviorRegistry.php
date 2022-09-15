@@ -176,7 +176,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             if (isset($this->_finderMap[$finder]) && $this->has($this->_finderMap[$finder][0])) {
                 $duplicate = $this->_finderMap[$finder];
                 $error = sprintf(
-                    '%s contains duplicate finder "%s" which is already provided by "%s"',
+                    '`%s` contains duplicate finder `%s` which is already provided by `%s`',
                     $class,
                     $finder,
                     $duplicate[0]
@@ -190,7 +190,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             if (isset($this->_methodMap[$method]) && $this->has($this->_methodMap[$method][0])) {
                 $duplicate = $this->_methodMap[$method];
                 $error = sprintf(
-                    '%s contains duplicate method "%s" which is already provided by "%s"',
+                    '`%s` contains duplicate method `%s` which is already provided by `%s`',
                     $class,
                     $method,
                     $duplicate[0]
@@ -253,7 +253,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method)
+            sprintf('Cannot call `%s` it does not belong to any attached behavior.', $method)
         );
     }
 
@@ -277,7 +277,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type)
+            sprintf('Cannot call finder `%s` it does not belong to any attached behavior.', $type)
         );
     }
 }

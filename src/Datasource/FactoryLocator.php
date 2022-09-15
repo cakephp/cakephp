@@ -59,7 +59,7 @@ class FactoryLocator
         }
 
         throw new InvalidArgumentException(sprintf(
-            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
+            '`$factory` must be an instance of `Cake\Datasource\Locator\LocatorInterface` or a callable.'
             . ' Got type `%s` instead.',
             getTypeName($factory)
         ));
@@ -91,7 +91,7 @@ class FactoryLocator
 
         if (!isset(static::$_modelFactories[$type])) {
             throw new InvalidArgumentException(sprintf(
-                'Unknown repository type "%s". Make sure you register a type before trying to use it.',
+                'Unknown repository type `%s`. Make sure you register a type before trying to use it.',
                 $type
             ));
         }

@@ -114,7 +114,7 @@ class QueryCacher
         $func = $this->_key;
         $key = $func($query);
         if (!is_string($key)) {
-            $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
+            $msg = sprintf('Cache key functions must return a string. Got `%s`.', var_export($key, true));
             throw new RuntimeException($msg);
         }
 

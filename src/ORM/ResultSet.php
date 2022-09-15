@@ -230,7 +230,7 @@ class ResultSet implements ResultSetInterface
 
         if (!$this->_useBuffering) {
             $msg = 'You cannot rewind an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
+                . 'Use `Query::bufferResults()` to get a buffered ResultSet.';
             throw new DatabaseException($msg);
         }
 
@@ -312,7 +312,7 @@ class ResultSet implements ResultSetInterface
     {
         if (!$this->_useBuffering) {
             $msg = 'You cannot serialize an un-buffered ResultSet. '
-                . 'Use Query::bufferResults() to get a buffered ResultSet.';
+                . 'Use `Query::bufferResults()` to get a buffered ResultSet.';
             throw new DatabaseException($msg);
         }
 

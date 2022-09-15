@@ -529,7 +529,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 }
 
                 if ($validationSet->offsetExists($name)) {
-                    $message = 'You cannot add a rule without a unique name, already existing rule found: ' . $name;
+                    $message = sprintf(
+                        'You cannot add a rule without a unique name, already existing rule found: `%s`',
+                        $name
+                    );
                     throw new InvalidArgumentException($message);
                 }
 
@@ -1156,7 +1159,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
         if (!is_array($settings)) {
             throw new InvalidArgumentException(
-                sprintf('Invalid settings for "%s". Settings must be an array.', $fieldName)
+                sprintf('Invalid settings for `%s`. Settings must be an array.', $fieldName)
             );
         }
         $settings += $defaults;

@@ -63,7 +63,7 @@ class TransportFactoryTest extends TestCase
     public function testGetMissingClassName(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
+        $this->expectExceptionMessage('Transport config `debug` is invalid, the required `className` option is missing');
 
         TransportFactory::drop('debug');
         TransportFactory::setConfig('debug', []);

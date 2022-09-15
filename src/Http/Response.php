@@ -633,7 +633,7 @@ class Response implements ResponseInterface
     {
         if ($code < static::STATUS_CODE_MIN || $code > static::STATUS_CODE_MAX) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
+                'Invalid status code: `%s`. Use a valid HTTP status code in range 1xx - 5xx.',
                 $code
             ));
         }
@@ -731,7 +731,7 @@ class Response implements ResponseInterface
             return is_array($mapped) ? current($mapped) : $mapped;
         }
         if (strpos($contentType, '/') === false) {
-            throw new InvalidArgumentException(sprintf('"%s" is an invalid content type.', $contentType));
+            throw new InvalidArgumentException(sprintf('`%s` is an invalid content type.', $contentType));
         }
 
         return $contentType;
@@ -1492,7 +1492,7 @@ class Response implements ResponseInterface
         $file = new SplFileInfo($path);
         if (!$file->isFile() || !$file->isReadable()) {
             if (Configure::read('debug')) {
-                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+                throw new NotFoundException(sprintf('The requested file `%s` was not found or not readable', $path));
             }
             throw new NotFoundException(__d('cake', 'The requested file was not found'));
         }

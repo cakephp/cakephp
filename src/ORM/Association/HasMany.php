@@ -111,7 +111,7 @@ class HasMany extends Association
     public function setSaveStrategy(string $strategy)
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            $msg = sprintf('Invalid save strategy `%s`', $strategy);
             throw new InvalidArgumentException($msg);
         }
 
@@ -161,7 +161,7 @@ class HasMany extends Association
 
         if (!is_iterable($targetEntities)) {
             $name = $this->getProperty();
-            $message = sprintf('Could not save %s, it cannot be traversed', $name);
+            $message = sprintf('Could not save `%s`, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
         }
 

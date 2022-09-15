@@ -88,7 +88,7 @@ class ViewBlock
     public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
     {
         if (array_key_exists($name, $this->_active)) {
-            throw new CakeException(sprintf("A view block with the name '%s' is already/still open.", $name));
+            throw new CakeException(sprintf('A view block with the name `%s` is already/still open.', $name));
         }
         $this->_active[$name] = $mode;
         ob_start();

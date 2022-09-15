@@ -108,7 +108,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (empty($matches)) {
-            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
+            throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $col = strtolower($matches[1]);

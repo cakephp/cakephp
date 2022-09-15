@@ -67,7 +67,7 @@ class ConditionDecorator extends AbstractDecorator
             return $condition !== 'unless';
         }
         if (!is_callable($this->_options[$condition])) {
-            throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
+            throw new RuntimeException(sprintf('`%s` the `%s` condition is not a callable!', self::class, $condition));
         }
 
         return (bool)$this->_options[$condition]($event);

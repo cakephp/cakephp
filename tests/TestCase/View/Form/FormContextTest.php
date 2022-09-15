@@ -38,7 +38,7 @@ class FormContextTest extends TestCase
     public function testConstructor()
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('`$context[\'entity\']` must be an instance of Cake\Form\Form');
+        $this->expectExceptionMessage('`$context[\'entity\']` must be an instance of `Cake\Form\Form`');
 
         new FormContext([]);
     }

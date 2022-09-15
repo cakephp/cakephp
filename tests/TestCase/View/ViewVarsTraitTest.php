@@ -116,7 +116,7 @@ class ViewVarsTraitTest extends TestCase
     public function testCreateViewException(): void
     {
         $this->expectException(MissingViewException::class);
-        $this->expectExceptionMessage('View class "Foo" is missing.');
+        $this->expectExceptionMessage('View class `Foo` is missing.');
         $this->subject->createView('Foo');
     }
 }

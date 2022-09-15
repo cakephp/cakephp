@@ -254,10 +254,11 @@ trait DateFormatTrait
                 $pattern
             );
             if (empty($formatter)) {
-                throw new RuntimeException(
+                throw new RuntimeException(sprintf(
                     'Your version of icu does not support creating a date formatter for ' .
-                    "`$key`. You should try to upgrade libicu and the intl extension."
-                );
+                    '`%s`. You should try to upgrade libicu and the intl extension.',
+                    $key
+                ));
             }
             static::$_formatters[$key] = $formatter;
         }

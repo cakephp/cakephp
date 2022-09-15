@@ -208,7 +208,7 @@ class WidgetLocatorTest extends TestCase
     public function testGetResolveDependencyMissingClass(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Unable to locate widget class "TestApp\View\DerpWidget"');
+        $this->expectExceptionMessage('Unable to locate widget class `TestApp\View\DerpWidget`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add(['test' => ['TestApp\View\DerpWidget']]);
         $inputs->get('test');

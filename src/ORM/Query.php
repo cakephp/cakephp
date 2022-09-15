@@ -1347,7 +1347,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
+            sprintf('Cannot call method `%s` on a `%s` query', $method, $this->type())
         );
     }
 

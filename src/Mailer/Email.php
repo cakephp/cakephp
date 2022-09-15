@@ -247,12 +247,12 @@ class Email implements JsonSerializable, Serializable
             $transport = $name;
         } else {
             throw new InvalidArgumentException(sprintf(
-                'The value passed for the "$name" argument must be either a string, or an object, %s given.',
+                'The value passed for the `$name` argument must be either a string, or an object, `%s` given.',
                 gettype($name)
             ));
         }
         if (!method_exists($transport, 'send')) {
-            throw new LogicException(sprintf('The "%s" do not have send method.', get_class($transport)));
+            throw new LogicException(sprintf('The `%s` do not have send method.', get_class($transport)));
         }
 
         $this->_transport = $transport;
@@ -300,7 +300,7 @@ class Email implements JsonSerializable, Serializable
             $name = $config;
             $config = Mailer::getConfig($name);
             if (empty($config)) {
-                throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
+                throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
             unset($name);
         }

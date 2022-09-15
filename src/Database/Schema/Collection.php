@@ -117,7 +117,7 @@ class Collection implements CollectionInterface
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
-            throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
+            throw new DatabaseException(sprintf('Cannot describe `%s`. It has 0 columns.', $name));
         }
 
         $this->_reflect('Index', $name, $config, $table);

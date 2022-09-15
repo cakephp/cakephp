@@ -87,7 +87,7 @@ class ControllerAuthorize extends BaseAuthorize
     {
         if (!method_exists($this->_Controller, 'isAuthorized')) {
             throw new CakeException(sprintf(
-                '%s does not implement an isAuthorized() method.',
+                '`%s` does not implement an `isAuthorized()` method.',
                 get_class($this->_Controller)
             ));
         }

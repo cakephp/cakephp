@@ -548,7 +548,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($result !== null && !$result instanceof ResponseInterface) {
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
-                . 'Got %s instead.',
+                . 'Got `%s` instead.',
                 getTypeName($result)
             ));
         }
@@ -944,12 +944,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (is_string($paginator)) {
             $className = App::className($paginator, 'Datasource/Paging', 'Paginator');
             if ($className === null) {
-                throw new InvalidArgumentException('Invalid paginator: ' . $paginator);
+                throw new InvalidArgumentException(sprintf('Invalid paginator: `%s`', $paginator));
             }
             $paginator = new $className();
         }
         if (!$paginator instanceof PaginatorInterface) {
-            throw new InvalidArgumentException('Paginator must be an instance of ' . PaginatorInterface::class);
+            throw new InvalidArgumentException(sprintf(
+                'Paginator must be an instance of `%s`',
+                PaginatorInterface::class
+            ));
         }
 
         $results = null;

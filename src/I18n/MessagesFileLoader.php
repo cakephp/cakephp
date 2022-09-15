@@ -132,7 +132,7 @@ class MessagesFileLoader
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
-            throw new RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
+            throw new RuntimeException(sprintf('Could not find class `%s`', "{$name}FileParser"));
         }
 
         $messages = (new $class())->parse($file);

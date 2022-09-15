@@ -1890,7 +1890,7 @@ class QueryTest extends TestCase
     public function testCollectionProxyBadMethod(): void
     {
         $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Unknown method "derpFilter"');
+        $this->expectExceptionMessage('Unknown method `derpFilter`');
         $this->getTableLocator()->get('articles')->find('all')->derpFilter();
     }
 

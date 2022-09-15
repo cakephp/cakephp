@@ -564,7 +564,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function checkAliasLengths(): void
     {
         if ($this->_schema === null) {
-            throw new RuntimeException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
+            throw new RuntimeException(sprintf(
+                'Unable to check max alias lengths for `%s` without schema.',
+                $this->getAlias()
+            ));
         }
 
         $maxLength = null;
@@ -579,12 +582,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         foreach ($this->_schema->columns() as $name) {
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
-                throw new RuntimeException(
+                throw new RuntimeException(sprintf(
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
-                    "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
+                    'The table alias `%s` and column `%s` create an alias longer than `%s`. ' .
                     'You must change the table schema in the database and shorten either the table or column ' .
-                    'identifier so they fit within the database alias limits.'
-                );
+                    'identifier so they fit within the database alias limits.',
+                    $table,
+                    $name,
+                    $nameLength
+                ));
             }
         }
     }
@@ -853,7 +859,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_behaviors->has($name)) {
             throw new InvalidArgumentException(sprintf(
-                'The %s behavior is not defined on %s.',
+                'The `%s` behavior is not defined on `%s`.',
                 $name,
                 static::class
             ));
@@ -896,7 +902,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$association) {
             $assocations = $this->associations()->keys();
 
-            $message = "The `{$name}` association is not defined on `{$this->getAlias()}`.";
+            $message = sprintf(
+                'The `%s` association is not defined on `%s`.',
+                $name,
+                $this->getAlias()
+            );
             if ($assocations) {
                 $message .= "\nValid associations are: " . implode(', ', $assocations);
             }
@@ -1498,7 +1508,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [NULL]',
+                'Record not found in table `%s` with primary key `[NULL]`',
                 $this->getTable()
             ));
         }
@@ -1518,7 +1528,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }, $primaryKey);
 
             throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [%s]',
+                'Record not found in table `%s` with primary key `[%s]`',
                 $this->getTable(),
                 implode(', ', $primaryKey)
             ));
@@ -1688,7 +1698,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query = $search;
         } else {
             throw new InvalidArgumentException(sprintf(
-                'Search criteria must be an array, callable or Query. Got "%s"',
+                'Search criteria must be an array, callable or Query. Got `%s`',
                 getTypeName($search)
             ));
         }
@@ -2042,7 +2052,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = (array)$this->getPrimaryKey();
         if (empty($primary)) {
             $msg = sprintf(
-                'Cannot insert row in "%s" table, it has no primary key.',
+                'Cannot insert row in `%s` table, it has no primary key.',
                 $this->getTable()
             );
             throw new RuntimeException($msg);
@@ -2065,7 +2075,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 if (!isset($data[$k]) && empty($schema->getColumn($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
                     $msg .= sprintf(
-                        'Got (%s), expecting (%s)',
+                        'Got `(%s)`, expecting `(%s)`',
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
@@ -2149,7 +2159,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (count($primaryColumns) === 0) {
             $entityClass = get_class($entity);
             $table = $this->getTable();
-            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            $message = sprintf(
+                'Cannot update `%s`. The `%s` has no primary key.',
+                $entityClass,
+                $table
+            );
             throw new InvalidArgumentException($message);
         }
 
@@ -2556,7 +2570,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(sprintf(
-            'Unknown finder method "%s" on %s.',
+            'Unknown finder method `%s` on `%s`.',
             $type,
             static::class
         ));
@@ -2590,7 +2604,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $conditions = [];
             if (count($args) < count($fields)) {
                 throw new BadMethodCallException(sprintf(
-                    'Not enough arguments for magic finder. Got %s required %s',
+                    'Not enough arguments for magic finder. Got `%s` required `%s`',
                     count($args),
                     count($fields)
                 ));
@@ -2646,7 +2660,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s" called on %s', $method, static::class)
+            sprintf('Unknown method `%s"` called on `%s`', $method, static::class)
         );
     }
 

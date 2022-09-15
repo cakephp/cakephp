@@ -63,7 +63,7 @@ class ConsoleInputSubcommand
         if (is_array($name)) {
             $data = $name + ['name' => null, 'help' => '', 'parser' => null];
             if (empty($data['name'])) {
-                throw new InvalidArgumentException('"name" not provided for console option parser');
+                throw new InvalidArgumentException('`name` not provided for console option parser');
             }
 
             $name = $data['name'];

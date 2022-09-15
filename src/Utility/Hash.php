@@ -63,7 +63,7 @@ class Hash
         } else {
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid Parameter %s, should be dot separated path or array.',
+                    'Invalid Parameter `%s`, should be dot separated path or array.',
                     $path
                 ));
             }
@@ -498,7 +498,7 @@ class Hash
 
         if (is_array($keys) && count($keys) !== count($vals)) {
             throw new RuntimeException(
-                'Hash::combine() needs an equal number of keys + values.'
+                '`Hash::combine()` needs an equal number of keys + values.'
             );
         }
 

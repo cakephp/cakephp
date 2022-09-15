@@ -858,7 +858,7 @@ class ViewTest extends TestCase
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Html" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The `Html` alias has already been loaded', $e->getMessage());
         }
     }
 
@@ -1465,7 +1465,7 @@ class ViewTest extends TestCase
             $this->fail('No exception');
         } catch (LogicException $e) {
             ob_end_clean();
-            $this->assertStringContainsString('The "no_close" block was left open', $e->getMessage());
+            $this->assertStringContainsString('The `no_close` block was left open', $e->getMessage());
         }
     }
 

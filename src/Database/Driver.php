@@ -98,7 +98,7 @@ abstract class Driver implements DriverInterface
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
-                'Please pass "username" instead of "login" for connecting to the database'
+                'Please pass `username` instead of `login` for connecting to the database'
             );
         }
         $config += $this->_baseConfig;

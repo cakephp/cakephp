@@ -1941,7 +1941,7 @@ class ValidatorTest extends TestCase
         $validator->add('title', 'notBlank', ['rule' => 'notBlank']);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You cannot add a rule without a unique name, already existing rule found: notBlank');
+        $this->expectExceptionMessage('You cannot add a rule without a unique name, already existing rule found: `notBlank`');
 
         $validator->add('title', [
             [

@@ -201,7 +201,7 @@ class ResponseTest extends TestCase
     public function testWithTypeInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('"beans" is an invalid content type');
+        $this->expectExceptionMessage('`beans` is an invalid content type');
         $response = new Response();
         $response->withType('beans');
     }
@@ -1020,7 +1020,7 @@ class ResponseTest extends TestCase
     public function testWithFileNotFound(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('The requested file /some/missing/folder/file.jpg was not found');
+        $this->expectExceptionMessage('The requested file `/some/missing/folder/file.jpg` was not found');
 
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
@@ -1049,8 +1049,8 @@ class ResponseTest extends TestCase
         return [
             ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
             ['my\..\cat.gif', 'The requested file contains `..` and will not be read.'],
-            ['my/ca..t.gif', 'my/ca..t.gif was not found or not readable'],
-            ['my/ca..t/image.gif', 'my/ca..t/image.gif was not found or not readable'],
+            ['my/ca..t.gif', '`my/ca..t.gif` was not found or not readable'],
+            ['my/ca..t/image.gif', '`my/ca..t/image.gif` was not found or not readable'],
         ];
     }
 
@@ -1392,7 +1392,7 @@ class ResponseTest extends TestCase
     public function testWithStatusInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
+        $this->expectExceptionMessage('Invalid status code: `1001`. Use a valid HTTP status code in range 1xx - 5xx.');
         $response = new Response();
         $response->withStatus(1001);
     }

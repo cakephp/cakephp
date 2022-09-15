@@ -306,7 +306,7 @@ class RouteCollection
                 throw new MissingRouteException([
                     'url' => $name,
                     'context' => $context,
-                    'message' => "A named route was found for `{$name}`, but matching failed.",
+                    'message' => sprintf('A named route was found for `%s`, but matching failed.', $name),
                 ]);
             }
             throw new MissingRouteException(['url' => $name, 'context' => $context]);
@@ -412,13 +412,20 @@ class RouteCollection
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            $message = sprintf(
+                'Cannot add middleware group `%s`. A middleware by this name has already been registered.',
+                $name
+            );
             throw new RuntimeException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
-                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                $message = sprintf(
+                    'Cannot add `%s` middleware to group `%s`. It has not been registered.',
+                    $middlewareName,
+                    $name
+                );
                 throw new RuntimeException($message);
             }
         }
@@ -479,7 +486,7 @@ class RouteCollection
             }
             if (!$this->hasMiddleware($name)) {
                 throw new RuntimeException(sprintf(
-                    "The middleware named '%s' has not been registered. Use registerMiddleware() to define it.",
+                    'The middleware named `%s` has not been registered. Use `registerMiddleware()` to define it.',
                     $name
                 ));
             }

@@ -424,7 +424,7 @@ class CompositeKeysTest extends TestCase
     public function testSaveNewEntityMissingKey(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got `(5, )`, expecting `(id, site_id)`');
         $entity = new Entity([
             'id' => 5,
             'title' => 'Fifth Article',

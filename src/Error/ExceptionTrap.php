@@ -134,10 +134,11 @@ class ExceptionTrap
         if (is_string($class)) {
             /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             if (!(method_exists($class, 'render') && method_exists($class, 'write'))) {
-                throw new InvalidArgumentException(
-                    "Cannot use {$class} as an `exceptionRenderer`. " .
-                    'It must implement render() and write() methods.'
-                );
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot use `%s` as an `exceptionRenderer`. ' .
+                    'It must implement render() and write() methods.',
+                    $class
+                ));
             }
 
             return new $class($exception, $request, $this->_config);

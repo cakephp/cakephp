@@ -51,7 +51,7 @@ class PasswordHasherFactoryTest extends TestCase
     public function testBuildException(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Password hasher class "FooBar" was not found.');
+        $this->expectExceptionMessage('Password hasher class `FooBar` was not found.');
         $hasher = PasswordHasherFactory::build('FooBar');
     }
 }
