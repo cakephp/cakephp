@@ -205,7 +205,8 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString('<!DOCTYPE', $out);
         $this->assertStringContainsString('<html', $out);
         $this->assertStringContainsString('nope', $out);
-        $this->assertStringContainsString('ExceptionTrapTest', $out);
+        $this->assertStringContainsString('class="stack-frame-header"', $out);
+        $this->assertStringContainsString('Toggle Arguments', $out);
     }
 
     public function testLogException()

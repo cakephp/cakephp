@@ -24,6 +24,7 @@ use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
 
 /**
@@ -486,6 +487,38 @@ SQL;
             'length' => [],
         ];
         $this->assertEquals($expected, $result->getIndex('author_idx'));
+    }
+
+    /**
+     * Test describing a table with conditional constraints
+     */
+    public function testDescribeTableConditionalConstraint(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
+        $table = <<<SQL
+CREATE TABLE conditional_constraint (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    config_id INT UNSIGNED NOT NULL,
+    status ENUM ('new', 'processing', 'completed', 'failed') DEFAULT 'new' NOT NULL,
+    CONSTRAINT unique_index UNIQUE (config_id, (
+        (CASE WHEN ((`status` = "new") OR (`status` = "processing")) THEN `status` END)
+    ))
+);
+SQL;
+        try {
+            $connection->execute($table);
+        } catch (Exception $e) {
+            $this->markTestSkipped('Could not create table with conditional constraint');
+        }
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('conditional_constraint');
+        $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
+
+        $constraint = $result->getConstraint('unique_index');
+        $this->assertNotEmpty($constraint);
+        $this->assertEquals('unique', $constraint['type']);
+        $this->assertEquals(['config_id'], $constraint['columns']);
     }
 
     /**

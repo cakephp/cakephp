@@ -52,6 +52,8 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
+use ReflectionMethod;
+use RuntimeException;
 
 /**
  * Represents a single database table.
