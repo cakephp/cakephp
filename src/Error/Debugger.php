@@ -793,7 +793,7 @@ class Debugger
     public static function formatHtmlMessage(string $message): string
     {
         $message = h($message);
-        $message = preg_replace('/`([^`]+)`/', '<code>`$1`</code>', $message);
+        $message = preg_replace('/`([^`]+)`/', '<code>$0</code>', $message);
 
         return nl2br($message);
     }
