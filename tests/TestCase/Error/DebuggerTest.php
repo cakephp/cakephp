@@ -732,14 +732,14 @@ EXPECTED;
     public function testFormatHtmlMessage(): void
     {
         $output = Debugger::formatHtmlMessage('Some `code` to `replace`');
-        $this->assertSame('Some <code>code</code> to <code>replace</code>', $output);
+        $this->assertSame('Some <code>`code`</code> to <code>`replace`</code>', $output);
 
         $output = Debugger::formatHtmlMessage("Some `co\nde` to `replace`\nmore");
-        $this->assertSame("Some <code>co<br />\nde</code> to <code>replace</code><br />\nmore", $output);
+        $this->assertSame("Some <code>`co<br />\nde`</code> to <code>`replace`</code><br />\nmore", $output);
 
         $output = Debugger::formatHtmlMessage("Some `code` to <script>alert(\"test\")</script>\nmore");
         $this->assertSame(
-            "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
+            "Some <code>`code`</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
     }
