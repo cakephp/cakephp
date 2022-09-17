@@ -109,7 +109,7 @@ class TreeBehavior extends Behavior
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) === $parent) {
-            throw new DatabaseException("Cannot set a node's parent as itself");
+            throw new DatabaseException('Cannot set a node\'s parent as itself.');
         }
 
         if ($isNew) {
@@ -277,7 +277,7 @@ class TreeBehavior extends Behavior
 
         if ($parentLeft > $left && $parentLeft < $right) {
             throw new DatabaseException(sprintf(
-                'Cannot use node "%s" as parent for entity "%s"',
+                'Cannot use node `%s` as parent for entity `%s`.',
                 $parent,
                 $entity->get($this->_getPrimaryKey())
             ));
@@ -389,7 +389,7 @@ class TreeBehavior extends Behavior
     public function findPath(Query $query, array $options): Query
     {
         if (empty($options['for'])) {
-            throw new InvalidArgumentException("The 'for' key is required for find('path')");
+            throw new InvalidArgumentException('The "for" key is required for find(\'path\').');
         }
 
         $config = $this->getConfig();
@@ -464,7 +464,7 @@ class TreeBehavior extends Behavior
         [$for, $direct] = [$options['for'], $options['direct']];
 
         if (empty($for)) {
-            throw new InvalidArgumentException("The 'for' key is required for find('children')");
+            throw new InvalidArgumentException('The "for" key is required for find(\'children\').');
         }
 
         if ($query->clause('order') === null) {
@@ -807,7 +807,7 @@ class TreeBehavior extends Behavior
             ->first();
 
         if (!$node) {
-            throw new RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+            throw new RecordNotFoundException(sprintf('Node `%s` was not found in the tree.', $id));
         }
 
         return $node;

@@ -228,7 +228,7 @@ class HasManyTest extends TestCase
     public function testStrategyFailure(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid strategy "join" was provided');
+        $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new HasMany('Test');
         $assoc->setStrategy(HasMany::STRATEGY_JOIN);
     }

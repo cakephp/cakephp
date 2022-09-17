@@ -1090,7 +1090,7 @@ class TreeBehaviorTest extends TestCase
     public function testReparentCycle(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot use node "5" as parent for entity "2"');
+        $this->expectExceptionMessage('Cannot use node `5` as parent for entity `2`.');
         $table = $this->table;
         $entity = $table->get(2);
         $entity->parent_id = 5;

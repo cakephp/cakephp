@@ -282,7 +282,7 @@ class PluginCollection implements Iterator, Countable
     {
         if (str_contains($name, '\\')) {
             if (!class_exists($name)) {
-                throw new InvalidArgumentException("Class `{$name}` does not exist.");
+                throw new InvalidArgumentException(sprintf('Class `%s` does not exist.', $name));
             }
 
             /** @var \Cake\Core\PluginInterface $plugin */
@@ -399,7 +399,7 @@ class PluginCollection implements Iterator, Countable
     public function with(string $hook): Generator
     {
         if (!in_array($hook, PluginInterface::VALID_HOOKS, true)) {
-            throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
+            throw new InvalidArgumentException(sprintf('The `%s` hook is not a known plugin hook.', $hook));
         }
         foreach ($this as $plugin) {
             if ($plugin->isEnabled($hook)) {

@@ -455,7 +455,7 @@ class Session
     public function readOrFail(string $name): mixed
     {
         if (!$this->check($name)) {
-            throw new CakeException(sprintf('Expected session key "%s" not found.', $name));
+            throw new CakeException(sprintf('Expected session key `%s` not found.', $name));
         }
 
         return $this->read($name);

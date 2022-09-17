@@ -274,7 +274,7 @@ class BelongsToTest extends TestCase
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
+        $this->expectExceptionMessage('Cannot match provided foreignKey for `Companies`, got `(company_id)` but expected foreign key for `(id, tenant_id)`');
         $this->company->setPrimaryKey(['id', 'tenant_id']);
         $query = $this->client->query();
         $config = [

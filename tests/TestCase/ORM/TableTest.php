@@ -1823,7 +1823,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'comments']);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Sluggable behavior is not defined on ' . get_class($table) . '.');
+        $this->expectExceptionMessage('The `Sluggable` behavior is not defined on `' . get_class($table) . '`.');
 
         $this->assertFalse($table->hasBehavior('Sluggable'));
         $table->getBehavior('Sluggable');
@@ -3397,7 +3397,7 @@ class TableTest extends TestCase
 
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(sprintf(
-            'The %s::validationBad() validation method must return an instance of Cake\Validation\Validator.',
+            'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
             get_class($table)
         ));
 
@@ -3410,7 +3410,7 @@ class TableTest extends TestCase
     public function testValidatorWithMissingMethod(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
+        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');
     }
@@ -5444,7 +5444,7 @@ class TableTest extends TestCase
     public function testGetNotFoundException(): void
     {
         $this->expectException(RecordNotFoundException::class);
-        $this->expectExceptionMessage('Record not found in table "articles"');
+        $this->expectExceptionMessage('Record not found in table `articles`.');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5459,7 +5459,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnNoData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table "articles" with primary key [NULL]');
+        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[NULL]`.');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5474,7 +5474,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnTooMuchData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table "articles" with primary key [1, \'two\']');
+        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[1, \'two\']`.');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,

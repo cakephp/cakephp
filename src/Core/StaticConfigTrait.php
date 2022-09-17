@@ -90,7 +90,7 @@ trait StaticConfigTrait
         }
 
         if (isset(static::$_config[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
+            throw new BadMethodCallException(sprintf('Cannot reconfigure existing key `%s`.', $key));
         }
 
         if (is_object($config)) {
@@ -252,7 +252,7 @@ REGEXP;
         preg_match($pattern, $dsn, $parsed);
 
         if (!$parsed) {
-            throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
+            throw new InvalidArgumentException(sprintf('The DSN string `%s` could not be parsed.', $dsn));
         }
 
         $exists = [];

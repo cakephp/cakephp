@@ -206,7 +206,7 @@ class HasOneTest extends TestCase
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
+        $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join', 'select'])
             ->setConstructorArgs([$this->user])

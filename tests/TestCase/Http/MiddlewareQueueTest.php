@@ -303,7 +303,7 @@ class MiddlewareQueueTest extends TestCase
     public function testInsertBeforeInvalid(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No middleware matching \'InvalidClassName\' could be found.');
+        $this->expectExceptionMessage('No middleware matching `InvalidClassName` could be found.');
         $one = function (): void {
         };
         $two = new SampleMiddleware();

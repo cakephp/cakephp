@@ -142,7 +142,7 @@ class CookieCollection implements IteratorAggregate, Countable
 
         throw new InvalidArgumentException(
             sprintf(
-                'Cookie %s not found. Use has() to check first for existence.',
+                'Cookie `%s` not found. Use `has()` to check first for existence.',
                 $name
             )
         );

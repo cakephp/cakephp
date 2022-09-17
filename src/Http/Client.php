@@ -226,7 +226,10 @@ class Client implements ClientInterface
         $parts = parse_url($url);
 
         if ($parts === false) {
-            throw new InvalidArgumentException('String ' . $url . ' did not parse');
+            throw new InvalidArgumentException(sprintf(
+                'String `%s` did not parse.',
+                $url
+            ));
         }
 
         $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '', 'path' => '']);
@@ -667,7 +670,10 @@ class Client implements ClientInterface
             'xml' => 'application/xml',
         ];
         if (!isset($typeMap[$type])) {
-            throw new CakeException("Unknown type alias '$type'.");
+            throw new CakeException(sprintf(
+                'Unknown type alias `%s`.',
+                $type
+            ));
         }
 
         return [
@@ -734,7 +740,7 @@ class Client implements ClientInterface
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new CakeException(
-                sprintf('Invalid authentication type %s', $name)
+                sprintf('Invalid authentication type `%s`.', $name)
             );
         }
 

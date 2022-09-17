@@ -84,7 +84,7 @@ class ExistsIn
         if (is_string($this->_repository)) {
             if (!$options['repository']->hasAssociation($this->_repository)) {
                 throw new DatabaseException(sprintf(
-                    "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
+                    'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
                     get_class($options['repository'])

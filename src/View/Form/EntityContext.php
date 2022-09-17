@@ -154,9 +154,7 @@ class EntityContext implements ContextInterface
         }
 
         if (!($table instanceof Table)) {
-            throw new CakeException(
-                'Unable to find table class for current entity.'
-            );
+            throw new CakeException('Unable to find table class for current entity.');
         }
 
         $alias = $this->_rootName = $table->getAlias();
@@ -376,7 +374,7 @@ class EntityContext implements ContextInterface
             $entity = $next;
         }
         throw new CakeException(sprintf(
-            'Unable to fetch property "%s"',
+            'Unable to fetch property `%s`.',
             implode('.', $path)
         ));
     }
@@ -402,7 +400,7 @@ class EntityContext implements ContextInterface
         $oneElement = count($path) === 1;
         if ($oneElement && $this->_isCollection) {
             throw new CakeException(sprintf(
-                'Unable to fetch property "%s"',
+                'Unable to fetch property `%s`.',
                 implode('.', $path)
             ));
         }
@@ -443,7 +441,7 @@ class EntityContext implements ContextInterface
             $entity = $next;
         }
         throw new CakeException(sprintf(
-            'Unable to fetch property "%s"',
+            'Unable to fetch property `%s`.',
             implode('.', $path)
         ));
     }
@@ -597,7 +595,7 @@ class EntityContext implements ContextInterface
 
         $table = $this->_getTable($parts);
         if (!$table) {
-            throw new InvalidArgumentException('Validator not found: ' . $key);
+            throw new InvalidArgumentException(sprintf('Validator not found: `%s`.', $key));
         }
         $alias = $table->getAlias();
 

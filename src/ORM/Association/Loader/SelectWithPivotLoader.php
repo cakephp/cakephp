@@ -180,7 +180,7 @@ class SelectWithPivotLoader extends SelectLoader
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {
                 throw new DatabaseException(sprintf(
-                    '"%s" is missing from the belongsToMany results. Results cannot be created.',
+                    '`%s` is missing from the belongsToMany results. Results cannot be created.',
                     $this->junctionProperty
                 ));
             }

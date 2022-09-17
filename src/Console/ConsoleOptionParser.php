@@ -878,7 +878,7 @@ class ConsoleOptionParser
                 $options[] = "{$short} (short for `--{$long}`)";
             }
             throw new MissingOptionException(
-                "Unknown short option `{$key}`.",
+                sprintf('Unknown short option `%s`.', $key),
                 $key,
                 $options
             );
@@ -900,7 +900,7 @@ class ConsoleOptionParser
     {
         if (!isset($this->_options[$name])) {
             throw new MissingOptionException(
-                "Unknown option `{$name}`.",
+                sprintf('Unknown option `%s`.', $name),
                 $name,
                 array_keys($this->_options)
             );
@@ -965,9 +965,11 @@ class ConsoleOptionParser
         $next = count($args);
         if (!isset($this->_args[$next])) {
             $expected = count($this->_args);
-            throw new ConsoleException(
-                "Received too many arguments. Got {$next} but only {$expected} arguments are defined."
-            );
+            throw new ConsoleException(sprintf(
+                'Received too many arguments. Got `%s` but only `%s` arguments are defined.',
+                $next,
+                $expected
+            ));
         }
 
         $this->_args[$next]->validChoice($argument);

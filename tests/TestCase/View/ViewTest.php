@@ -1466,7 +1466,7 @@ class ViewTest extends TestCase
             $this->fail('No exception');
         } catch (LogicException $e) {
             ob_end_clean();
-            $this->assertStringContainsString('The "no_close" block was left open', $e->getMessage());
+            $this->assertStringContainsString('The `no_close` block was left open', $e->getMessage());
         }
     }
 

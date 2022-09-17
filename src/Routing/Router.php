@@ -843,7 +843,7 @@ class Router
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
-            throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
+            throw new InvalidArgumentException(sprintf('Could not parse a string route path `%s`.', $url));
         }
 
         $defaults = [];

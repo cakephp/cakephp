@@ -77,7 +77,7 @@ class FormatterLocator
     public function get(string $name): FormatterInterface
     {
         if (!isset($this->registry[$name])) {
-            throw new I18nException("Formatter named `{$name}` has not been registered");
+            throw new I18nException(sprintf('Formatter named `%s` has not been registered.', $name));
         }
 
         if (!$this->converted[$name]) {

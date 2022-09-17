@@ -477,7 +477,7 @@ class ServerRequest implements ServerRequestInterface
 
             return $this->is(...$params);
         }
-        throw new BadMethodCallException(sprintf('Method "%s()" does not exist', $name));
+        throw new BadMethodCallException(sprintf('Method `%s()` does not exist.', $name));
     }
 
     /**
@@ -507,7 +507,7 @@ class ServerRequest implements ServerRequestInterface
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
-            throw new InvalidArgumentException("No detector set for type `{$type}`");
+            throw new InvalidArgumentException(sprintf('No detector set for type `%s`.', $type));
         }
         if ($args) {
             return $this->_is($type, $args);
@@ -968,7 +968,7 @@ class ServerRequest implements ServerRequestInterface
             !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
         ) {
             throw new InvalidArgumentException(sprintf(
-                'Unsupported HTTP method "%s" provided',
+                'Unsupported HTTP method `%s` provided.',
                 $method
             ));
         }
@@ -1375,7 +1375,7 @@ class ServerRequest implements ServerRequestInterface
     public function withProtocolVersion($version): static
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
-            throw new InvalidArgumentException("Unsupported protocol version '{$version}' provided");
+            throw new InvalidArgumentException(sprintf('Unsupported protocol version `%s` provided.', $version));
         }
         $new = clone $this;
         $new->protocol = $version;
@@ -1669,7 +1669,7 @@ class ServerRequest implements ServerRequestInterface
             }
 
             if (!$file instanceof UploadedFileInterface) {
-                throw new InvalidArgumentException("Invalid file at '{$path}{$key}'");
+                throw new InvalidArgumentException(sprintf('Invalid file at `%s%s`.', $path, $key));
             }
         }
     }

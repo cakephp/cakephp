@@ -262,7 +262,7 @@ trait InstanceConfigTrait
 
         foreach ($stack as $k) {
             if (!is_array($update)) {
-                throw new CakeException(sprintf('Cannot set %s value', $key));
+                throw new CakeException(sprintf('Cannot set `%s` value.', $key));
             }
 
             $update[$k] = $update[$k] ?? [];
@@ -294,7 +294,7 @@ trait InstanceConfigTrait
 
         foreach ($stack as $i => $k) {
             if (!is_array($update)) {
-                throw new CakeException(sprintf('Cannot unset %s value', $key));
+                throw new CakeException(sprintf('Cannot unset `%s` value.', $key));
             }
 
             if (!isset($update[$k])) {

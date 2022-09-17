@@ -71,7 +71,7 @@ class Uri implements UriInterface
         if ($name === 'base' || $name === 'webroot') {
             return $this->{$name};
         }
-        throw new UnexpectedValueException("Undefined property via __get('{$name}')");
+        throw new UnexpectedValueException(sprintf('Undefined property via __get(\'%s\').', $name));
     }
 
     /**

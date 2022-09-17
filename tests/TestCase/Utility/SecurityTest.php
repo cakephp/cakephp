@@ -88,7 +88,7 @@ class SecurityTest extends TestCase
     public function testInvalidHashTypeException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
+        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: `\w+/');
 
         Security::hash('test', 'doesnotexist', false);
     }

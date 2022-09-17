@@ -246,9 +246,11 @@ class BasePlugin implements PluginInterface
     protected function checkHook(string $hook): void
     {
         if (!in_array($hook, static::VALID_HOOKS, true)) {
-            throw new InvalidArgumentException(
-                "`$hook` is not a valid hook name. Must be one of " . implode(', ', static::VALID_HOOKS)
-            );
+            throw new InvalidArgumentException(sprintf(
+                '`%s` is not a valid hook name. Must be one of `%s.`',
+                $hook,
+                implode(', ', static::VALID_HOOKS)
+            ));
         }
     }
 

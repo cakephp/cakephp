@@ -88,7 +88,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigDuplicateConfig(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot reconfigure existing key "test_variant"');
+        $this->expectExceptionMessage('Cannot reconfigure existing key `test_variant`');
         $settings = [
             'className' => FakeConnection::class,
             'database' => ':memory:',
@@ -385,7 +385,7 @@ class ConnectionManagerTest extends TestCase
     public function testParseDsnInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The DSN string \'bagof:nope\' could not be parsed.');
+        $this->expectExceptionMessage('The DSN string `bagof:nope` could not be parsed.');
         $result = ConnectionManager::parseDsn('bagof:nope');
     }
 

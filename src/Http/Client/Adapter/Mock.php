@@ -55,7 +55,10 @@ class Mock implements AdapterInterface
     {
         if (isset($options['match']) && !($options['match'] instanceof Closure)) {
             $type = get_debug_type($options['match']);
-            throw new InvalidArgumentException("The `match` option must be a `Closure`. Got `{$type}`.");
+            throw new InvalidArgumentException(sprintf(
+                'The `match` option must be a `Closure`. Got `%s`.',
+                $type
+            ));
         }
         $this->responses[] = [
             'request' => $request,

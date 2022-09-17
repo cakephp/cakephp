@@ -83,11 +83,11 @@ class FixtureHelper
             }
 
             if (isset($fixtures[$className])) {
-                throw new UnexpectedValueException("Found duplicate fixture `$fixtureName`.");
+                throw new UnexpectedValueException(sprintf('Found duplicate fixture `%s`.', $fixtureName));
             }
 
             if (!class_exists($className)) {
-                throw new UnexpectedValueException("Could not find fixture `$fixtureName`.");
+                throw new UnexpectedValueException(sprintf('Could not find fixture `%s`.', $fixtureName));
             }
 
             if (!isset($cachedFixtures[$className])) {

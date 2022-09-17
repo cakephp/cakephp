@@ -577,7 +577,7 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testExistsInInvalidAssociation(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
+        $this->expectExceptionMessage('ExistsIn rule for `author_id` is invalid. `NotValid` is not associated with `Cake\ORM\Table`.');
         $entity = new Entity([
             'title' => 'An Article',
             'author_id' => 500,

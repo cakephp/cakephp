@@ -211,7 +211,7 @@ class Statement implements StatementInterface
             return $mode;
         }
 
-        throw new InvalidArgumentException("Invalid fetch mode requested. Expected 'assoc', 'num' or 'obj'.");
+        throw new InvalidArgumentException('Invalid fetch mode requested. Expected \'assoc\', \'num\' or \'obj\'.');
     }
 
     /**

@@ -230,7 +230,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function get(string $name): object
     {
         if (!isset($this->_loaded[$name])) {
-            throw new CakeException(sprintf('Unknown object "%s"', $name));
+            throw new CakeException(sprintf('Unknown object `%s`.', $name));
         }
 
         return $this->_loaded[$name];

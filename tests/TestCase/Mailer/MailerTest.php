@@ -265,7 +265,7 @@ class MailerTest extends TestCase
     public function testProfileInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown email configuration "derp".');
+        $this->expectExceptionMessage('Unknown email configuration `derp`.');
         $mailer = new Mailer();
         $mailer->setProfile('derp');
     }
