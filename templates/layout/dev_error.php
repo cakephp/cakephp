@@ -43,7 +43,7 @@ use Cake\Error\Debugger;
         flex: 1;
         background-color: #D33C47;
         color: #ffffff;
-        padding: 10px;
+        padding: 30px;
     }
     .header-title {
         display: flex;
@@ -73,21 +73,8 @@ use Cake\Error\Debugger;
     .header-help a {
         color: #fff;
     }
-
     .error-content {
-        display: flex;
-    }
-    .col-left,
-    .col-right {
-        overflow-y: auto;
-        padding: 10px;
-    }
-    .col-left {
-        background: #ececec;
-        flex: 0 0 30%;
-    }
-    .col-right {
-        flex: 1;
+        padding: 30px;
     }
 
     .toggle-vendor-frames {
@@ -146,11 +133,28 @@ use Cake\Error\Debugger;
         margin: 0;
         padding: 0;
     }
-    .stack-previous {
-        margin: 24px 0 12px 8px;
+
+    /* Previous exception blocks */
+    .stack-exception-header {
+        margin: 36px 0 12px 8px;
     }
+    .stack-exception-caused {
+        font-size: 1.4em;
+        display: block;
+    }
+    .stack-exception-type {
+        font-family: consolas, monospace;
+    }
+    .stack-exception-message {
+        margin-top: 12px;
+    }
+
     .stack-frame {
         background: #e5e5e5;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #ececec;
+        border-radius: 4px;
         padding: 10px;
         margin-bottom: 10px;
     }
@@ -159,7 +163,6 @@ use Cake\Error\Debugger;
         margin-bottom: 0;
     }
     .stack-frame a {
-        display: block;
         color: #212121;
         text-decoration: none;
     }
@@ -169,47 +172,21 @@ use Cake\Error\Debugger;
     .stack-frame a:hover {
         text-decoration: underline;
     }
+
+    /* Stack frame headers */
     .stack-frame-header {
         display: flex;
-        align-items: center;
+        justify-content: space-between;
     }
-    .stack-frame-file a {
-        color: #212121;
+    .stack-frame-header-content {
+        display: flex;
+        gap: 8px;
     }
-
-    .stack-frame-args {
-        flex: 0 0 150px;
-        display: block;
-        padding: 8px 14px;
-        text-decoration: none;
-        background-color: #606c76;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        text-align: center;
-        margin-bottom: 10px;
-    }
-    .stack-frame-args:hover {
-        background-color: #D33C47;
-    }
-
-    .stack-frame-file {
-        flex: 1;
-        word-break:break-all;
-        margin-right: 10px;
-        font-size: 16px;
-    }
-    .stack-file,
-    .stack-function {
-        display: block;
-    }
-
+    .stack-function,
     .stack-frame-file,
+    .stack-frame-line,
     .stack-file {
         font-family: consolas, monospace;
-    }
-    .stack-function {
-        font-weight: bold;
     }
     .stack-file {
         font-size: 0.9em;
@@ -218,14 +195,42 @@ use Cake\Error\Debugger;
         overflow: hidden;
         direction: rtl;
     }
-
-    .stack-details {
-        background: #ececec;
-        border-radius: 4px;
-        padding: 10px;
-        margin-bottom: 18px;
+    .stack-frame-file {
+        word-break: break-all;
+    }
+    .stack-frame-label {
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-weight: normal;
+        margin: 0 5px 0 0;
+        font-size: 0.9em;
+    }
+    .stack-frame-edit {
+        margin: 0 5px 0 0;
+    }
+    .stack-frame-toggle {
+        border: 1px solid #7a7a7a;
+        border-radius: 5px;
+        height: 28px;
+        width: 28px;
+        background: #F5F7FA;
+        line-height: 1.5;
+    }
+    .stack-frame-toggle.active {
+        transform: rotate(180deg);
     }
 
+    .stack-frame-args {
+        display: block;
+        margin: 10px 0 0 0;
+    }
+    .stack-frame-args:hover {
+        color: #D33C47;
+    }
+    .stack-args h4 {
+        margin-top: 0;
+    }
+
+    /* Code excerpts */
     .code-excerpt {
         width: 100%;
         margin: 10px 0 0 0;
@@ -249,10 +254,6 @@ use Cake\Error\Debugger;
     .excerpt-number:after {
         content: attr(data-number);
     }
-    .cake-debug {
-        margin-top: 10px;
-    }
-
     table {
         text-align: left;
     }
@@ -261,6 +262,10 @@ use Cake\Error\Debugger;
     }
     th {
         border-bottom: 1px solid #ccc;
+    }
+
+    .cake-debug {
+        margin-top: 10px;
     }
     </style>
     <?php require CAKE . 'Error/Debug/dumpHeader.html'; ?>
@@ -282,21 +287,17 @@ use Cake\Error\Debugger;
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
     <div class="error-content">
-        <div class="col-left">
-            <?= $this->element('exception_stack_trace_nav') ?>
-        </div>
-        <div class="col-right">
             <?php if ($this->fetch('subheading')): ?>
             <p class="error-subheading">
                 <?= $this->fetch('subheading') ?>
             </p>
             <?php endif; ?>
 
-            <?= $this->element('exception_stack_trace'); ?>
-
             <div class="error-suggestion">
                 <?= $this->fetch('file') ?>
             </div>
+
+            <?= $this->element('dev_error_stacktrace'); ?>
 
             <?php if ($this->fetch('templateName')): ?>
             <p class="customize">
@@ -304,7 +305,6 @@ use Cake\Error\Debugger;
                 <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
             </p>
             <?php endif; ?>
-        </div>
     </div>
 
     <script type="text/javascript">
@@ -340,18 +340,12 @@ use Cake\Error\Debugger;
 
             var details = document.querySelectorAll('.stack-details');
             var frames = document.querySelectorAll('.stack-frame');
-            bindEvent('.stack-frame a', 'click', function(event) {
-                each(frames, function(el) {
-                    el.classList.remove('active');
-                });
-                this.parentNode.classList.add('active');
+            bindEvent('.stack-frame-toggle', 'click', function(event) {
+                this.classList.toggle('active');
 
-                each(details, function(el) {
-                    el.style.display = 'none';
-                });
-
-                var target = document.getElementById(this.dataset['target']);
-                toggleElement(target);
+                var frameId = this.dataset.frameId;
+                var frame = document.getElementById('stack-frame-details-' + frameId);
+                toggleElement(frame);
                 event.preventDefault();
             });
 
