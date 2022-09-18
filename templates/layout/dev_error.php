@@ -389,15 +389,6 @@ use Cake\Error\Debugger;
                 event.preventDefault();
             });
 
-            bindEvent('.toggle-vendor-frames', 'click', function(event) {
-                each(frames, function(el) {
-                    if (el.classList.contains('vendor-frame')) {
-                        toggleElement(el);
-                    }
-                });
-                event.preventDefault();
-            });
-
             bindEvent('.header-title a', 'click', function(event) {
                 event.preventDefault();
                 var text = '';
