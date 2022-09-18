@@ -28,8 +28,23 @@ use Cake\Error\Debugger;
     * {
         box-sizing: border-box;
     }
+    :root {
+        --typeface: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        --typeface-mono: consolas, monospace;
+        --layout-padding: 30px;
+
+        --breakpoint-tablet: 810px;
+    }
+
+    /* Smaller viewport variations */
+    @media (max-width: 810px) {
+        :root {
+            --layout-padding: 20px;
+        }
+    }
+
     body {
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-family: var(--typeface);
         color: #404041;
         background: #F5F7FA;
         font-size: 14px;
@@ -43,7 +58,7 @@ use Cake\Error\Debugger;
         flex: 1;
         background-color: #D33C47;
         color: #ffffff;
-        padding: 30px;
+        padding: var(--layout-padding);
     }
     .header-title {
         display: flex;
@@ -74,7 +89,7 @@ use Cake\Error\Debugger;
         color: #fff;
     }
     .error-content {
-        padding: 30px;
+        padding: var(--layout-padding);
     }
 
     .toggle-vendor-frames {
@@ -143,22 +158,31 @@ use Cake\Error\Debugger;
         display: block;
     }
     .stack-exception-type {
-        font-family: consolas, monospace;
+        font-family: var(--typeface-mono);
     }
     .stack-exception-message {
         margin-top: 12px;
     }
 
+    .stack-frames {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-radius: 4px;
+    }
     .stack-frame {
         background: #e5e5e5;
         padding: 10px;
-        margin-bottom: 10px;
         background: #ececec;
-        border-radius: 4px;
         padding: 10px;
-        margin-bottom: 10px;
+        border-bottom: 2px solid #f5f7fa;
+        overflow: hidden;
+    }
+    .stack-frame:first-child {
+        border-radius: 5px 5px 0 0;
     }
     .stack-frame:last-child {
+        border-radius: 0 0 5px 5px;
         border-bottom: none;
         margin-bottom: 0;
     }
@@ -182,11 +206,16 @@ use Cake\Error\Debugger;
         display: flex;
         gap: 8px;
     }
+    @media (max-width: 810px) {
+        .stack-frame-header-content {
+            flex-direction: column;
+        }
+    }
     .stack-function,
     .stack-frame-file,
     .stack-frame-line,
     .stack-file {
-        font-family: consolas, monospace;
+        font-family: var(--typeface-mono);
     }
     .stack-file {
         font-size: 0.9em;
@@ -199,16 +228,21 @@ use Cake\Error\Debugger;
         word-break: break-all;
     }
     .stack-frame-label {
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        font-family: var(--typeface);
         font-weight: normal;
         margin: 0 5px 0 0;
         font-size: 0.9em;
     }
+    .stack-function .stack-frame-label {
+        margin: 0;
+    }
+
     .stack-frame-edit {
         margin: 0 5px 0 0;
     }
     .stack-frame-toggle {
-        border: 1px solid #7a7a7a;
+        color: #525252;
+        border: 1px solid #d2d2d2;
         border-radius: 5px;
         height: 28px;
         width: 28px;

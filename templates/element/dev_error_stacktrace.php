@@ -30,6 +30,7 @@ foreach ($exceptions as $level => $exc):
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
         </div>
     <?php endif; ?>
+    <ul class="stack-frames">
     <?php
     foreach ($stackTrace as $i => $stack):
         $excerpt = $params = [];
@@ -59,7 +60,7 @@ foreach ($exceptions as $level => $exc):
         $frameId = "{$level}-{$i}";
         $activeFrame = $i == 0;
     ?>
-        <div id="stack-frame-<?= $frameId ?>" class="stack-frame">
+        <li id="stack-frame-<?= $frameId ?>" class="stack-frame">
             <div class="stack-frame-header">
                 <div class="stack-frame-header-content">
                     <span class="stack-frame-file">
@@ -116,6 +117,7 @@ foreach ($exceptions as $level => $exc):
                     <?php endforeach; ?>
                 </div>
             </div>
-        </div>
+        </li>
     <?php endforeach; ?>
+    </ul>
 <?php endforeach; ?>
