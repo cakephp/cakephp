@@ -31,7 +31,12 @@ use Cake\Error\Debugger;
     :root {
         --typeface: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
         --typeface-mono: consolas, monospace;
+
+        --border-radius: 5px;
         --layout-padding: 30px;
+        --layout-vertical-gap: 20px;
+
+        --color-vendor-frame: #8c8c8c;
 
         --breakpoint-tablet: 810px;
     }
@@ -79,7 +84,7 @@ use Cake\Error\Debugger;
         display: block;
         font-size: 18px;
         line-height: 1.2;
-        margin-bottom: 16px;
+        margin-bottom: var(--layout-vertical-gap);
     }
     .header-type {
         display: block;
@@ -92,23 +97,10 @@ use Cake\Error\Debugger;
         padding: var(--layout-padding);
     }
 
-    .toggle-vendor-frames {
-        color: #404041;
-        display: block;
-        padding: 5px;
-        margin-bottom: 10px;
-        text-align: center;
-        text-decoration: none;
-    }
-    .toggle-vendor-frames:hover,
-    .toggle-vendor-frames:active {
-        background: #e5e5e5;
-    }
-
     .code-dump,
     pre {
         background: #fff;
-        border-radius: 4px;
+        border-radius: var(--border-radius);
         padding: 5px;
         white-space: pre-wrap;
         margin: 0;
@@ -116,9 +108,10 @@ use Cake\Error\Debugger;
 
     .error,
     .error-subheading {
+        border-radius: var(--border-radius);
         font-size: 18px;
         margin-top: 0;
-        padding: 20px 16px;
+        padding: var(--layout-vertical-gap) 16px;
     }
     .error-subheading {
         color: #fff;
@@ -154,21 +147,25 @@ use Cake\Error\Debugger;
         margin: 36px 0 12px 8px;
     }
     .stack-exception-caused {
-        font-size: 1.4em;
+        font-size: 1.6em;
         display: block;
+        margin-bottom: var(--layout-vertical-gap);
     }
     .stack-exception-type {
+        display: block;
         font-family: var(--typeface-mono);
     }
     .stack-exception-message {
-        margin-top: 12px;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+        font-weight: bold;
     }
 
     .stack-frames {
         list-style: none;
         padding: 0;
         margin: 0;
-        border-radius: 4px;
+        border-radius: var(--border-radius);
     }
     .stack-frame {
         background: #e5e5e5;
@@ -179,10 +176,10 @@ use Cake\Error\Debugger;
         overflow: hidden;
     }
     .stack-frame:first-child {
-        border-radius: 5px 5px 0 0;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
     }
     .stack-frame:last-child {
-        border-radius: 0 0 5px 5px;
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
         border-bottom: none;
         margin-bottom: 0;
     }
@@ -205,6 +202,10 @@ use Cake\Error\Debugger;
     .stack-frame-header-content {
         display: flex;
         gap: 8px;
+    }
+    .stack-frame-header-content.vendor-frame ,
+    .stack-frame-header-content.vendor-frame a {
+        color: var(--color-vendor-frame);
     }
     @media (max-width: 810px) {
         .stack-frame-header-content {
@@ -243,7 +244,7 @@ use Cake\Error\Debugger;
     .stack-frame-toggle {
         color: #525252;
         border: 1px solid #d2d2d2;
-        border-radius: 5px;
+        border-radius: var(--border-radius);
         height: 28px;
         width: 28px;
         background: #F5F7FA;
@@ -262,6 +263,11 @@ use Cake\Error\Debugger;
     }
     .stack-args h4 {
         margin-top: 0;
+    }
+
+    /* Suggestion and help context */
+    .error-suggestion {
+        margin-bottom: var(--layout-vertical-gap);
     }
 
     /* Code excerpts */

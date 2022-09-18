@@ -25,9 +25,9 @@ foreach ($exceptions as $level => $exc):
 
     if ($level != 0): ?>
         <div class="stack-exception-header">
-            <span class="stack-exception-caused">Caused by:</span>
-            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
+            <span class="stack-exception-caused">Caused by</span>
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
+            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
         </div>
     <?php endif; ?>
     <ul class="stack-frames">
@@ -59,10 +59,11 @@ foreach ($exceptions as $level => $exc):
 
         $frameId = "{$level}-{$i}";
         $activeFrame = $i == 0;
+        $vendorFrame = isset($stack['file']) && strpos($stack['file'], APP) === false ? 'vendor-frame' : '';
     ?>
         <li id="stack-frame-<?= $frameId ?>" class="stack-frame">
             <div class="stack-frame-header">
-                <div class="stack-frame-header-content">
+                <div class="stack-frame-header-content <?= $vendorFrame ?>">
                     <span class="stack-frame-file">
                         <?= h(Debugger::trimPath($file)); ?>
                     </span>
@@ -84,7 +85,7 @@ foreach ($exceptions as $level => $exc):
                     <?php endif ?>
 
                     <?php if ($line !== null): ?>
-                        <?= $this->Html->link('(open)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
+                        <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
                     <?php endif; ?>
                 </div>
 
