@@ -22,7 +22,7 @@ use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -306,11 +306,11 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * If the `locales` array is not passed, it will bring all translations found
      * for each record.
      *
-     * @param \Cake\ORM\Query $query The original query to modify
+     * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
      * @param array<string, mixed> $options Options
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findTranslations(Query $query, array $options): Query
+    public function findTranslations(SelectQuery $query, array $options): SelectQuery
     {
         $locales = $options['locales'] ?? [];
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();

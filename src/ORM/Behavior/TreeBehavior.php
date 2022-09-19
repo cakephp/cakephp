@@ -20,12 +20,13 @@ use Cake\Collection\CollectionInterface;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Query as DbQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
-use Cake\ORM\Query;
+use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UpdateQuery;
 use InvalidArgumentException;
 
 /**
@@ -372,7 +373,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn(QueryExpression $exp) => $exp->lt($config['leftField'], 0)
+            fn (QueryExpression $exp) => $exp->lt($config['leftField'], 0)
         );
     }
 
@@ -381,12 +382,12 @@ class TreeBehavior extends Behavior
      * to a specific node in the tree. This custom finder requires that the key 'for'
      * is passed in the options containing the id of the node to get its path for.
      *
-     * @param \Cake\ORM\Query $query The constructed query to modify
+     * @param \Cake\ORM\Query\SelectQuery $query The constructed query to modify
      * @param array<string, mixed> $options the list of options for the query
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
-    public function findPath(Query $query, array $options): Query
+    public function findPath(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['for'])) {
             throw new InvalidArgumentException('The "for" key is required for find(\'path\').');
@@ -445,12 +446,12 @@ class TreeBehavior extends Behavior
      *
      * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
      *
-     * @param \Cake\ORM\Query $query Query.
+     * @param \Cake\ORM\Query\SelectQuery $query Query.
      * @param array<string, mixed> $options Array of options as described above
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
-    public function findChildren(Query $query, array $options): Query
+    public function findChildren(SelectQuery $query, array $options): SelectQuery
     {
         $config = $this->getConfig();
         $options += ['for' => null, 'direct' => false];
@@ -497,11 +498,11 @@ class TreeBehavior extends Behavior
      *   return the value out of the provided row.
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
      *
-     * @param \Cake\ORM\Query $query Query.
+     * @param \Cake\ORM\Query\SelectQuery $query Query.
      * @param array<string, mixed> $options Array of options as described above.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findTreeList(Query $query, array $options): Query
+    public function findTreeList(SelectQuery $query, array $options): SelectQuery
     {
         $left = $this->_table->aliasField($this->getConfig('left'));
 
@@ -527,11 +528,11 @@ class TreeBehavior extends Behavior
      *   return the value from the provided row.
      * - spacer: A string to be used as prefix for denoting the depth in the tree for each item.
      *
-     * @param \Cake\ORM\Query $query The query object to format.
+     * @param \Cake\ORM\Query\SelectQuery $query The query object to format.
      * @param array<string, mixed> $options Array of options as described above.
-     * @return \Cake\ORM\Query Augmented query.
+     * @return \Cake\ORM\Query\SelectQuery Augmented query.
      */
-    public function formatTreeList(Query $query, array $options = []): Query
+    public function formatTreeList(SelectQuery $query, array $options = []): SelectQuery
     {
         return $query->formatResults(function (CollectionInterface $results) use ($options) {
             $options += [
@@ -652,7 +653,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -663,7 +664,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -740,7 +741,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -751,7 +752,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
-                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderDesc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -930,13 +931,13 @@ class TreeBehavior extends Behavior
      * Alters the passed query so that it only returns scoped records as defined
      * in the tree configuration.
      *
-     * @param \Cake\Database\Query $query the Query to modify
-     * @return \Cake\Database\Query
-     * @template T of \Cake\ORM\Query|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
+     * @param \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery $query the Query to modify
+     * @return \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
+     * @template T of \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
      * @psalm-param T $query
      * @psalm-return T
      */
-    protected function _scope(DbQuery $query): DbQuery
+    protected function _scope(SelectQuery|UpdateQuery|DeleteQuery $query): SelectQuery|UpdateQuery|DeleteQuery
     {
         $scope = $this->getConfig('scope');
 

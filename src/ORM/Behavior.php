@@ -50,7 +50,7 @@ use ReflectionMethod;
  * CakePHP provides a number of lifecycle events your behaviors can
  * listen to:
  *
- * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, boolean $primary)`
  *   Fired before each find operation. By stopping the event and supplying a
  *   return value you can bypass the find operation entirely. Any changes done
  *   to the $query instance will be retained for the rest of the find. The
@@ -106,7 +106,7 @@ use ReflectionMethod;
  * methods should expect the following arguments:
  *
  * ```
- * findSlugged(Query $query, array $options)
+ * findSlugged(SelectQuery $query, array $options)
  * ```
  *
  * @see \Cake\ORM\Table::addBehavior()

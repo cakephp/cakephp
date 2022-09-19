@@ -22,7 +22,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\PropertyMarshalInterface;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
@@ -91,11 +91,11 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query $query Query
+     * @param \Cake\ORM\Query\SelectQuery $query Query
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void;
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void;
 
     /**
      * Modifies the entity before it is saved so that translated fields are persisted

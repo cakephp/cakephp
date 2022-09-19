@@ -19,7 +19,7 @@ namespace Cake\ORM\Association\Loader;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\ORM\Association\HasMany;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Closure;
 
 /**
@@ -77,10 +77,10 @@ class SelectWithPivotLoader extends SelectLoader
      * This is used for eager loading records on the target table based on conditions.
      *
      * @param array<string, mixed> $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
-    protected function _buildQuery(array $options): Query
+    protected function _buildQuery(array $options): SelectQuery
     {
         $name = $this->junctionAssociationName;
         $assoc = $this->junctionAssoc;
@@ -135,7 +135,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * @inheritDoc
      */
-    protected function _assertFieldsPresent(Query $fetchQuery, array $key): void
+    protected function _assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
     {
         // _buildQuery() manually adds in required fields from junction table
     }
@@ -167,12 +167,12 @@ class SelectWithPivotLoader extends SelectLoader
      * Builds an array containing the results from fetchQuery indexed by
      * the foreignKey value corresponding to this association.
      *
-     * @param \Cake\ORM\Query $fetchQuery The query to get results from
+     * @param \Cake\ORM\Query\SelectQuery $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
      * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException when the association property is not part of the results set.
      */
-    protected function _buildResultMap(Query $fetchQuery, array $options): array
+    protected function _buildResultMap(SelectQuery $fetchQuery, array $options): array
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];

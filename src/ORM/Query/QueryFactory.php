@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Query;
 
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -28,11 +27,11 @@ class QueryFactory
      * Create a new Query instance.
      *
      * @param \Cake\ORM\Table $table The table this query is starting on.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function select(Table $table): Query
+    public function select(Table $table): SelectQuery
     {
-        return new Query($table);
+        return new SelectQuery($table);
     }
 
     /**

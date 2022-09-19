@@ -23,7 +23,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -59,7 +59,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = SelectQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -441,11 +441,11 @@ class BelongsToMany extends Association
      * - fields: a list of fields in the target table to include in the result
      * - type: The type of join to be used (e.g. INNER)
      *
-     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      */
-    public function attachTo(Query $query, array $options = []): void
+    public function attachTo(SelectQuery $query, array $options = []): void
     {
         if (!empty($options['negateMatch'])) {
             $this->_appendNotMatching($query, $options);
@@ -481,7 +481,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    protected function _appendNotMatching(Query $query, array $options): void
+    protected function _appendNotMatching(SelectQuery $query, array $options): void
     {
         if (empty($options['negateMatch'])) {
             return;
@@ -1065,9 +1065,9 @@ class BelongsToMany extends Association
      *   it will be interpreted as the `$options` parameter
      * @param array<string, mixed> $options The options to for the find
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function find(array|string|null $type = null, array $options = []): Query
+    public function find(array|string|null $type = null, array $options = []): SelectQuery
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
@@ -1086,11 +1086,11 @@ class BelongsToMany extends Association
     /**
      * Append a join to the junction table.
      *
-     * @param \Cake\ORM\Query $query The query to append.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to append.
      * @param array|null $conditions The query conditions to use.
-     * @return \Cake\ORM\Query The modified query.
+     * @return \Cake\ORM\Query\SelectQuery The modified query.
      */
-    protected function _appendJunctionJoin(Query $query, ?array $conditions = null): Query
+    protected function _appendJunctionJoin(SelectQuery $query, ?array $conditions = null): SelectQuery
     {
         $junctionTable = $this->junction();
         if ($conditions === null) {
@@ -1108,7 +1108,7 @@ class BelongsToMany extends Association
             $name => [
                 'table' => $junctionTable->getTable(),
                 'conditions' => $conditions,
-                'type' => Query::JOIN_TYPE_INNER,
+                'type' => SelectQuery::JOIN_TYPE_INNER,
             ],
         ];
 
@@ -1249,7 +1249,7 @@ class BelongsToMany extends Association
      * `$existing` and `$jointEntities`. This method will return the values from
      * `$targetEntities` that were not deleted from calculating the difference.
      *
-     * @param \Cake\ORM\Query $existing a query for getting existing links
+     * @param \Cake\ORM\Query\SelectQuery $existing a query for getting existing links
      * @param array<\Cake\Datasource\EntityInterface> $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`
@@ -1257,7 +1257,7 @@ class BelongsToMany extends Association
      * @return array|false Array of entities not deleted or false in case of deletion failure for atomic saves.
      */
     protected function _diffLinks(
-        Query $existing,
+        SelectQuery $existing,
         array $jointEntities,
         array $targetEntities,
         array $options = []

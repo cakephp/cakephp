@@ -27,6 +27,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
@@ -163,7 +164,7 @@ abstract class Association
      *
      * @var string
      */
-    protected string $_joinType = Query::JOIN_TYPE_LEFT;
+    protected string $_joinType = SelectQuery::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -683,12 +684,12 @@ abstract class Association
      * - negateMatch: Will append a condition to the passed query for excluding matches.
      *   with this association.
      *
-     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      * @throws \RuntimeException Unable to build the query or associations.
      */
-    public function attachTo(Query $query, array $options = []): void
+    public function attachTo(SelectQuery $query, array $options = []): void
     {
         $target = $this->getTarget();
         $table = $target->getTable();
@@ -723,7 +724,7 @@ abstract class Association
 
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
-            if (!($dummy instanceof Query)) {
+            if (!($dummy instanceof SelectQuery)) {
                 throw new DatabaseException(sprintf(
                     'Query builder for association `%s` did not return a query.',
                     $this->getName()
@@ -761,11 +762,11 @@ abstract class Association
      * Conditionally adds a condition to the passed Query that will make it find
      * records where there is no match with this association.
      *
-     * @param \Cake\ORM\Query $query The query to modify
+     * @param \Cake\ORM\Query\SelectQuery $query The query to modify
      * @param array<string, mixed> $options Options array containing the `negateMatch` key.
      * @return void
      */
-    protected function _appendNotMatching(Query $query, array $options): void
+    protected function _appendNotMatching(SelectQuery $query, array $options): void
     {
         $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
@@ -833,9 +834,9 @@ abstract class Association
      *   it will be interpreted as the `$options` parameter
      * @param array<string, mixed> $options The options to for the find
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function find(array|string|null $type = null, array $options = []): Query
+    public function find(array|string|null $type = null, array $options = []): SelectQuery
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
@@ -917,10 +918,10 @@ abstract class Association
      * Triggers beforeFind on the target table for the query this association is
      * attaching to
      *
-     * @param \Cake\ORM\Query $query the query this association is attaching itself to
+     * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
      * @return void
      */
-    protected function _dispatchBeforeFind(Query $query): void
+    protected function _dispatchBeforeFind(SelectQuery $query): void
     {
         $query->triggerBeforeFind();
     }
@@ -929,12 +930,12 @@ abstract class Association
      * Helper function used to conditionally append fields to the select clause of
      * a query from the fields found in another query object.
      *
-     * @param \Cake\ORM\Query $query the query that will get the fields appended to
-     * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
+     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the fields appended to
+     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the fields to be copied from
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _appendFields(Query $query, Query $surrogate, array $options): void
+    protected function _appendFields(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         if ($query->getEagerLoader()->isAutoFieldsEnabled() === false) {
             return;
@@ -960,13 +961,13 @@ abstract class Association
      * applying the surrogate formatters to only the property corresponding to
      * such table.
      *
-     * @param \Cake\ORM\Query $query the query that will get the formatter applied to
-     * @param \Cake\ORM\Query $surrogate the query having formatters for the associated
+     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the formatter applied to
+     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having formatters for the associated
      * target table.
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _formatAssociationResults(Query $query, Query $surrogate, array $options): void
+    protected function _formatAssociationResults(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         $formatters = $surrogate->getResultFormatters();
 
@@ -978,7 +979,7 @@ abstract class Association
         $propertyPath = explode('.', $property);
         $query->formatResults(function (
             CollectionInterface $results,
-            Query $query
+            SelectQuery $query
         ) use (
             $formatters,
             $property,
@@ -1010,7 +1011,7 @@ abstract class Association
             }
 
             return $results;
-        }, Query::PREPEND);
+        }, SelectQuery::PREPEND);
     }
 
     /**
@@ -1021,12 +1022,12 @@ abstract class Association
      * passed `$query`. Containments are altered so that they respect the associations
      * chain from which they originated.
      *
-     * @param \Cake\ORM\Query $query the query that will get the associations attached to
-     * @param \Cake\ORM\Query $surrogate the query having the containments to be attached
+     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the associations attached to
+     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the containments to be attached
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _bindNewAssociations(Query $query, Query $surrogate, array $options): void
+    protected function _bindNewAssociations(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         $loader = $surrogate->getEagerLoader();
         $contain = $loader->getContain();
@@ -1189,7 +1190,7 @@ abstract class Association
      *
      * Options array accepts the following keys:
      *
-     * - query: Query object setup to find the source table records
+     * - query: SelectQuery object setup to find the source table records
      * - keys: List of primary key values from the source table
      * - foreignKey: The name of the field used to relate both tables
      * - conditions: List of conditions to be passed to the query where() method

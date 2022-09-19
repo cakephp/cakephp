@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Driver\Mysql;
@@ -34,16 +34,16 @@ use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use ReflectionProperty;
 
 /**
- * Tests Query class
+ * Tests SelectQuery class
  */
-class QueryTest extends TestCase
+class SelectQueryTest extends TestCase
 {
     /**
      * Fixture to be used
@@ -154,7 +154,7 @@ class QueryTest extends TestCase
      */
     public function testGetRepository(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
 
         $result = $query->getRepository();
         $this->assertSame($this->table, $result);
@@ -171,7 +171,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('authors')
             ->enableHydration(false)
@@ -232,7 +232,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query->select()
             ->contain('articles')
@@ -310,7 +310,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $query = $query->select()
             ->contain('articles');
@@ -337,7 +337,7 @@ class QueryTest extends TestCase
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles', ['propertyName' => 'articles'] + compact('strategy'));
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain([
                 'articles' => [
@@ -392,7 +392,7 @@ class QueryTest extends TestCase
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query->select()
             ->contain(['articles' => ['authors']])
@@ -467,7 +467,7 @@ class QueryTest extends TestCase
         ]);
         $article->belongsTo('authors');
 
-        $query = new Query($article);
+        $query = new SelectQuery($article);
 
         $results = $query->select()
             ->contain(['authors' => ['posts']])
@@ -571,7 +571,7 @@ class QueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => 'tag_id',
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query->select()->contain('Tags')->disableHydration()->toArray();
         $expected = [
@@ -679,7 +679,7 @@ class QueryTest extends TestCase
      */
     public function testFilteringByHasManyNoHydration(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
@@ -719,7 +719,7 @@ class QueryTest extends TestCase
     public function testFilteringByHasManyHydration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $table->hasMany('Comments');
 
         $result = $query->setRepository($table)
@@ -740,7 +740,7 @@ class QueryTest extends TestCase
      */
     public function testFilteringByBelongsToManyNoHydration(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $table = $this->getTableLocator()->get('Articles');
         $this->getTableLocator()->get('Tags');
         $this->getTableLocator()->get('ArticlesTags', [
@@ -774,7 +774,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.name' => 'tag2']);
@@ -807,7 +807,7 @@ class QueryTest extends TestCase
      */
     public function testMatchingDotNotation(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles');
@@ -853,7 +853,7 @@ class QueryTest extends TestCase
      */
     public function testSetResult(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
 
         $results = new ResultSet([]);
         $query->setResult($results);
@@ -869,7 +869,7 @@ class QueryTest extends TestCase
     public function testClearResult(): void
     {
         $article = $this->getTableLocator()->get('articles');
-        $query = new Query($article);
+        $query = new SelectQuery($article);
 
         $firstCount = $query->count();
         $firstResults = $query->toArray();
@@ -927,7 +927,7 @@ class QueryTest extends TestCase
             'contain' => ['articles'],
             'join' => ['table_a' => ['conditions' => ['a > b']]],
         ];
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $query->applyOptions($options);
 
         $this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
@@ -962,7 +962,7 @@ class QueryTest extends TestCase
      */
     public function testApplyOptionsPageIsLast(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $opts = [
             'page' => 3,
             'limit' => 5,
@@ -980,7 +980,7 @@ class QueryTest extends TestCase
         $options = [
             'fields' => null,
         ];
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $query->applyOptions($options);
         $this->assertEquals([], $query->clause('select'));
     }
@@ -991,7 +991,7 @@ class QueryTest extends TestCase
     public function testGetOptions(): void
     {
         $options = ['doABarrelRoll' => true, 'fields' => ['id', 'name']];
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $query->applyOptions($options);
         $expected = ['doABarrelRoll' => true];
         $this->assertEquals($expected, $query->getOptions());
@@ -1010,7 +1010,7 @@ class QueryTest extends TestCase
         };
         $mapper2 = function (): void {
         };
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => null]],
@@ -1041,7 +1041,7 @@ class QueryTest extends TestCase
         };
         $reducer2 = function (): void {
         };
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
@@ -1071,7 +1071,7 @@ class QueryTest extends TestCase
         };
         $reducer2 = function (): void {
         };
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
@@ -1091,7 +1091,7 @@ class QueryTest extends TestCase
     public function testResultsAreWrappedInMapReduce(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select(['a' => 'id'])->limit(2)->order(['id' => 'ASC']);
         $query->mapReduce(function ($v, $k, $mr): void {
             $mr->emit($v['a']);
@@ -1114,7 +1114,7 @@ class QueryTest extends TestCase
     public function testFirstDirtyQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $result = $query->select(['id'])->enableHydration(false)->first();
         $this->assertEquals(['id' => 1], $result);
         $this->assertEquals(1, $query->clause('limit'));
@@ -1128,7 +1128,7 @@ class QueryTest extends TestCase
     public function testFirstCleanQuery(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select(['id'])->toArray();
 
         $first = $query->enableHydration(false)->first();
@@ -1142,7 +1142,7 @@ class QueryTest extends TestCase
     public function testFirstSameResult(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select(['id'])->toArray();
 
         $first = $query->enableHydration(false)->first();
@@ -1164,7 +1164,7 @@ class QueryTest extends TestCase
         };
 
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select(['id'])
             ->enableHydration(false)
             ->mapReduce($map, $reduce);
@@ -1179,7 +1179,7 @@ class QueryTest extends TestCase
     public function testFirstUnbuffered(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select(['id']);
 
         $first = $query->enableHydration(false)->first();
@@ -1193,7 +1193,7 @@ class QueryTest extends TestCase
     public function testHydrateSimple(): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()->toArray();
 
         $this->assertCount(3, $results);
@@ -1220,7 +1220,7 @@ class QueryTest extends TestCase
             'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('articles')
             ->toArray();
@@ -1260,7 +1260,7 @@ class QueryTest extends TestCase
             'table' => 'articles_tags',
         ]);
         $table->belongsToMany('Tags');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query
             ->select()
@@ -1318,7 +1318,7 @@ class QueryTest extends TestCase
                 });
             });
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query
             ->select()
@@ -1371,7 +1371,7 @@ class QueryTest extends TestCase
         $this->getTableLocator()->get('authors');
         $table->belongsTo('authors', ['strategy' => $strategy]);
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('authors')
             ->order(['articles.id' => 'asc'])
@@ -1398,7 +1398,7 @@ class QueryTest extends TestCase
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors', ['strategy' => $strategy]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $results = $query->select()
             ->contain(['articles' => ['authors']])
@@ -1422,7 +1422,7 @@ class QueryTest extends TestCase
             'table' => 'articles',
             'entityClass' => '\\' . $class,
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()->toArray();
 
         $this->assertCount(3, $results);
@@ -1456,7 +1456,7 @@ class QueryTest extends TestCase
             'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('articles')
             ->toArray();
@@ -1490,7 +1490,7 @@ class QueryTest extends TestCase
         ]);
         $table->belongsTo('authors');
 
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('authors')
             ->order(['articles.id' => 'asc'])
@@ -1752,7 +1752,7 @@ class QueryTest extends TestCase
      */
     public function testClearContain(): void
     {
-        /** @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
             ->setConstructorArgs([$this->table])
@@ -1767,7 +1767,7 @@ class QueryTest extends TestCase
         $this->assertNotEmpty($result);
 
         $result = $query->clearContain();
-        $this->assertInstanceOf(Query::class, $result);
+        $this->assertInstanceOf(SelectQuery::class, $result);
 
         $result = $query->getContain();
         $this->assertIsArray($result);
@@ -1807,7 +1807,7 @@ class QueryTest extends TestCase
     public function testCacheWriteIntegration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
 
         $query->select(['id', 'title']);
 
@@ -1832,7 +1832,7 @@ class QueryTest extends TestCase
     public function testCacheIntegrationWithFormatResults(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $cacher = new FileEngine();
         $cacher->init();
 
@@ -1844,7 +1844,7 @@ class QueryTest extends TestCase
             ->cache('my_key', $cacher);
 
         $expected = $query->toArray();
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $results = $query->cache('my_key', $cacher)->toArray();
         $this->assertSame($expected, $results);
     }
@@ -1876,7 +1876,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query
             ->select()
             ->contain([
@@ -1902,7 +1902,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query
             ->select()
             ->contain('articles', function ($q) {
@@ -1922,7 +1922,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query
             ->select()
             ->contain('articles', function ($q) {
@@ -1942,7 +1942,7 @@ class QueryTest extends TestCase
         $this->expectException(DatabaseException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select()
             ->contain([
                 'Articles' => [
@@ -1963,7 +1963,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasOne('Articles');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select()
             ->contain([
                 'Articles' => [
@@ -1979,7 +1979,7 @@ class QueryTest extends TestCase
 
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
-        $query = new Query($articles);
+        $query = new SelectQuery($articles);
         $query->select()
             ->contain([
                 'Authors' => [
@@ -2019,7 +2019,7 @@ class QueryTest extends TestCase
         $callback2 = function (): void {
         };
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $this->assertSame($query, $query->formatResults($callback1));
         $this->assertSame([$callback1], $query->getResultFormatters());
         $this->assertSame($query, $query->formatResults($callback2));
@@ -2068,7 +2068,7 @@ class QueryTest extends TestCase
 
         $authors->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
+            function ($event, SelectQuery $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2105,7 +2105,7 @@ class QueryTest extends TestCase
 
         $sourceQuery = $articles
             ->find()
-            ->contain('Authors', function (Query $targetQuery) use (
+            ->contain('Authors', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery
             ) {
@@ -2140,7 +2140,7 @@ class QueryTest extends TestCase
 
         $tags->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, Query $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
+            function ($event, SelectQuery $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2177,7 +2177,7 @@ class QueryTest extends TestCase
 
         $sourceQuery = $articles
             ->find()
-            ->contain('Tags', function (Query $targetQuery) use (
+            ->contain('Tags', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery
             ) {
@@ -2203,7 +2203,7 @@ class QueryTest extends TestCase
     public function testQueryWithFormatter(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
@@ -2218,7 +2218,7 @@ class QueryTest extends TestCase
     public function testQueryWithStackedFormatters(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $query = new Query($table);
+        $query = new SelectQuery($table);
         $query->select()->formatResults(function ($results) {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
@@ -3069,7 +3069,7 @@ class QueryTest extends TestCase
      */
     public function testMatchingWithContain(): void
     {
-        $query = new Query($this->table);
+        $query = new SelectQuery($this->table);
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
@@ -3492,7 +3492,7 @@ class QueryTest extends TestCase
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('`Articles` association cannot contain() associations when using JOIN strategy');
         $comments->find()
-            ->innerJoinWith('Articles', function (Query $q) {
+            ->innerJoinWith('Articles', function (SelectQuery $q) {
                 return $q
                     ->contain('ArticlesTranslations')
                     ->where(['ArticlesTranslations.title' => 'Titel #1']);
@@ -3612,8 +3612,8 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->enableHydration(false)
-            ->matching('articles', function (Query $q) {
-                return $q->notMatching('tags', function (Query $q) {
+            ->matching('articles', function (SelectQuery $q) {
+                return $q->notMatching('tags', function (SelectQuery $q) {
                     return $q->where(['tags.name' => 'tag3']);
                 });
             })
@@ -3667,7 +3667,7 @@ class QueryTest extends TestCase
         $result = $table
             ->find()
             ->contain([
-                'Comments' => function (Query $query) use ($table) {
+                'Comments' => function (SelectQuery $query) use ($table) {
                     return $query->selectAllExcept($table->Comments, ['published']);
                 },
             ])
@@ -3735,7 +3735,7 @@ class QueryTest extends TestCase
     {
         $post = $this->getTableLocator()->get('posts');
 
-        $query = new Query($post);
+        $query = new SelectQuery($post);
 
         $results = $query
             ->select([
@@ -3779,7 +3779,7 @@ class QueryTest extends TestCase
 
         $cteQuery = $table
             ->find()
-            ->select(function (Query $query) use ($table) {
+            ->select(function (SelectQuery $query) use ($table) {
                 $columns = $table->getSchema()->columns();
 
                 return array_combine($columns, $columns) + [
@@ -3846,19 +3846,19 @@ class QueryTest extends TestCase
 
         $articles
             ->find()
-            ->contain('Comments', function (Query $query) {
+            ->contain('Comments', function (SelectQuery $query) {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles', function (Query $query) {
+            ->contain('Comments.Articles', function (SelectQuery $query) {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles.Tags', function (Query $query) {
+            ->contain('Comments.Articles.Tags', function (SelectQuery $query) {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
@@ -3866,7 +3866,7 @@ class QueryTest extends TestCase
                     ->enableHydration()
                     ->enableResultsCasting();
             })
-            ->contain('Comments.Articles.Tags.Articles', function (Query $query) {
+            ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query) {
                 $this->assertTrue($query->isHydrationEnabled());
                 $this->assertTrue($query->isResultsCastingEnabled());
 

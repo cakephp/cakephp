@@ -44,6 +44,7 @@ use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -130,7 +131,7 @@ use InvalidArgumentException;
  * You can subscribe to the events listed above in your table classes by implementing the
  * lifecycle methods below:
  *
- * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, boolean $primary)`
  * - `beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options)`
  * - `afterMarshal(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
@@ -1228,11 +1229,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type the type of query to perform
      * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
-     * @return \Cake\ORM\Query The query builder
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function find(string $type = 'all', array $options = []): Query
+    public function find(string $type = 'all', array $options = []): SelectQuery
     {
-        return $this->callFinder($type, $this->query()->select(), $options);
+        return $this->callFinder($type, $this->selectQuery(), $options);
     }
 
     /**
@@ -1241,11 +1242,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * By default findAll() applies no conditions, you
      * can override this method in subclasses to modify how `find('all')` works.
      *
-     * @param \Cake\ORM\Query $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
      * @param array<string, mixed> $options The options to use for the find
-     * @return \Cake\ORM\Query The query builder
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findAll(Query $query, array $options): Query
+    public function findAll(SelectQuery $query, array $options): SelectQuery
     {
         return $query;
     }
@@ -1322,11 +1323,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * @param \Cake\ORM\Query $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
      * @param array<string, mixed> $options The options for the find
-     * @return \Cake\ORM\Query The query builder
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findList(Query $query, array $options): Query
+    public function findList(SelectQuery $query, array $options): SelectQuery
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1386,11 +1387,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]);
      * ```
      *
-     * @param \Cake\ORM\Query $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
      * @param array<string, mixed> $options The options to find with
-     * @return \Cake\ORM\Query The query builder
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findThreaded(Query $query, array $options): Query
+    public function findThreaded(SelectQuery $query, array $options): SelectQuery
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1559,7 +1560,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * entity will be saved and returned.
      *
      * If your find conditions require custom order, associations or conditions, then the $search
-     * parameter can be a callable that takes the Query as the argument, or a \Cake\ORM\Query object passed
+     * parameter can be a callable that takes the Query as the argument, or a \Cake\ORM\Query\SelectQuery object passed
      * as the $search parameter. Allowing you to customize the find results.
      *
      * ### Options
@@ -1570,7 +1571,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -1581,7 +1582,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     public function findOrCreate(
-        Query|callable|array $search,
+        SelectQuery|callable|array $search,
         ?callable $callback = null,
         array $options = []
     ): EntityInterface {
@@ -1605,7 +1606,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1616,7 +1617,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \InvalidArgumentException
      */
     protected function _processFindOrCreate(
-        Query|callable|array $search,
+        SelectQuery|callable|array $search,
         ?callable $callback = null,
         array $options = []
     ): EntityInterface|array {
@@ -1649,10 +1650,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _getFindOrCreateQuery(Query|callable|array $search): Query
+    protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
         if (is_callable($search)) {
             $query = $this->find();
@@ -1667,11 +1668,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Creates a new Query instance for a table.
+     * Creates a new SelectQuery instance for a table.
      *
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function query(): Query
+    public function query(): SelectQuery
+    {
+        return $this->selectQuery();
+    }
+
+    /**
+     * Creates a new select query
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function selectQuery(): SelectQuery
     {
         return $this->queryFactory->select($this);
     }
@@ -1711,9 +1722,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * This is useful for subqueries.
      *
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function subquery(): Query
+    public function subquery(): SelectQuery
     {
         return $this->queryFactory->select($this)->disableAutoAliasing();
     }
@@ -2548,15 +2559,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Calls a finder method and applies it to the passed query.
      *
      * @param string $type Name of the finder to be called.
-     * @param \Cake\ORM\Query $query The query object to apply the finder options to.
+     * @param \Cake\ORM\Query\SelectQuery $query The query object to apply the finder options to.
      * @param array<string, mixed> $options List of options to pass to the finder.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
      * @uses findThreaded()
      */
-    public function callFinder(string $type, Query $query, array $options = []): Query
+    public function callFinder(string $type, SelectQuery $query, array $options = []): SelectQuery
     {
         assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
 
@@ -2583,11 +2594,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
-    protected function _dynamicFinder(string $method, array $args): Query
+    protected function _dynamicFinder(string $method, array $args): SelectQuery
     {
         $method = Inflector::underscore($method);
         preg_match('/^find_([\w]+)_by_/', $method, $matches);

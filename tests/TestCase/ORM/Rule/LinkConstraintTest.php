@@ -22,7 +22,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Association\HasMany;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
@@ -603,7 +603,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, Query $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
@@ -639,7 +639,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, Query $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])

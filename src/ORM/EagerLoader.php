@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Query\SelectQuery;
 use Closure;
 use InvalidArgumentException;
 
@@ -240,7 +241,7 @@ class EagerLoader
     {
         $this->_matching ??= new static();
 
-        $options += ['joinType' => Query::JOIN_TYPE_INNER];
+        $options += ['joinType' => SelectQuery::JOIN_TYPE_INNER];
         $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
 
         $contains = [];
@@ -390,14 +391,14 @@ class EagerLoader
      * This method will not modify the query for loading external associations, i.e.
      * those that cannot be loaded without executing a separate query.
      *
-     * @param \Cake\ORM\Query $query The query to be modified.
+     * @param \Cake\ORM\Query\SelectQuery $query The query to be modified.
      * @param \Cake\ORM\Table $repository The repository containing the associations
      * @param bool $includeFields whether to append all fields from the associations
      * to the passed query. This can be overridden according to the settings defined
      * per association in the containments array.
      * @return void
      */
-    public function attachAssociations(Query $query, Table $repository, bool $includeFields): void
+    public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
         if (empty($this->_containments) && $this->_matching === null) {
             return;
@@ -605,13 +606,13 @@ class EagerLoader
     /**
      * Inject data from associations that cannot be joined directly.
      *
-     * @param \Cake\ORM\Query $query The query for which to eager load external.
+     * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
      * @param array $results Results array.
      * @return array
      * @throws \RuntimeException
      */
-    public function loadExternal(Query $query, array $results): array
+    public function loadExternal(SelectQuery $query, array $results): array
     {
         if (empty($results)) {
             return $results;
@@ -764,11 +765,11 @@ class EagerLoader
      * to eagerly load associations.
      *
      * @param array<\Cake\ORM\EagerLoadable> $external The list of external associations to be loaded.
-     * @param \Cake\ORM\Query $query The query from which the results where generated.
+     * @param \Cake\ORM\Query\SelectQuery $query The query from which the results where generated.
      * @param array $results Results array.
      * @return array
      */
-    protected function _collectKeys(array $external, Query $query, array $results): array
+    protected function _collectKeys(array $external, SelectQuery $query, array $results): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {

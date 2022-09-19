@@ -24,7 +24,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
 
@@ -134,7 +134,7 @@ class EavStrategy implements TranslateStrategyInterface
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? Query::JOIN_TYPE_INNER : Query::JOIN_TYPE_LEFT,
+                'joinType' => $filter ? SelectQuery::JOIN_TYPE_INNER : SelectQuery ::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation',
             ]);
@@ -161,11 +161,11 @@ class EavStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query $query Query
+     * @param \Cake\ORM\Query\SelectQuery $query Query
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
         $locale = Hash::get($options, 'locale', $this->getLocale());
 
@@ -173,8 +173,8 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $conditions = function (string $field, string $locale, Query $query, array $select) {
-            return function (Query $q) use ($field, $locale, $query, $select) {
+        $conditions = function (string $field, string $locale, SelectQuery $query, array $select) {
+            return function (SelectQuery $q) use ($field, $locale, $query, $select) {
                 $table = $q->getRepository();
                 $q->where([$table->aliasField('locale') => $locale]);
 
@@ -210,8 +210,8 @@ class EavStrategy implements TranslateStrategyInterface
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale']
-                    ? Query::JOIN_TYPE_INNER
-                    : Query::JOIN_TYPE_LEFT;
+                    ? SelectQuery::JOIN_TYPE_INNER
+                    : SelectQuery ::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }

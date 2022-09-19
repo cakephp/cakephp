@@ -44,9 +44,9 @@ use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
-use Cake\ORM\Query;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -1155,14 +1155,14 @@ class TableTest extends TestCase
     public function testFindApplyOptions(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query', 'findAll'])
+            ->onlyMethods(['selectQuery', 'findAll'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->setConstructorArgs([$table])
             ->getMock();
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
@@ -5262,7 +5262,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = (new Query($table))->select();
+        $query = (new SelectQuery($table))->select();
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, []);
         $table->find();
@@ -5286,7 +5286,7 @@ class TableTest extends TestCase
     public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5297,13 +5297,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])
@@ -5335,7 +5335,7 @@ class TableTest extends TestCase
     public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5346,13 +5346,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('custom', $query, ['fields' => ['id']])
@@ -5402,7 +5402,7 @@ class TableTest extends TestCase
     public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5414,13 +5414,13 @@ class TableTest extends TestCase
             ->getMock();
         $table->setTable('table_name');
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])
@@ -5766,8 +5766,8 @@ class TableTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $article = $articles->findOrCreate(function (Query $query): void {
-            $this->assertInstanceOf(Query::class, $query);
+        $article = $articles->findOrCreate(function (SelectQuery $query): void {
+            $this->assertInstanceOf(SelectQuery::class, $query);
             $query->where(['title' => 'Find Something New']);
             $this->assertFalse($this->connection->inTransaction());
         }, function ($article): void {
@@ -5988,7 +5988,7 @@ class TableTest extends TestCase
         $associationBeforeFindCount = 0;
         $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount): void {
+            function (EventInterface $event, SelectQuery $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount): void {
                 $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
             }
@@ -5997,7 +5997,7 @@ class TableTest extends TestCase
         $beforeFindCount = 0;
         $eventManager->on(
             'Model.beforeFind',
-            function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount): void {
+            function (EventInterface $event, SelectQuery $query, ArrayObject $options, $primary) use (&$beforeFindCount): void {
                 $this->assertIsBool($primary);
                 $beforeFindCount++;
             }

@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Query\SelectQuery;
 
 /**
  * Factory class for generation ResulSet instances.
@@ -30,11 +31,11 @@ class ResultSetFactory
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Query $query Query from where results came.
+     * @param \Cake\ORM\Query\SelectQuery $query Query from where results came.
      * @param array $results Results array.
      * @return \Cake\ORM\ResultSet
      */
-    public function createResultSet(Query $query, array $results): ResultSet
+    public function createResultSet(SelectQuery $query, array $results): ResultSet
     {
         $data = $this->collectData($query);
 
@@ -49,10 +50,10 @@ class ResultSetFactory
      * Get repository and it's associations data for nesting results key and
      * entity hydration.
      *
-     * @param \Cake\ORM\Query $query The query from where to derive the data.
+     * @param \Cake\ORM\Query\SelectQuery $query The query from where to derive the data.
      * @return array
      */
-    protected function collectData(Query $query): array
+    protected function collectData(SelectQuery $query): array
     {
         $primaryTable = $query->getRepository();
         $data = [

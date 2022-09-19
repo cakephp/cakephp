@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Model\Table;
 
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
@@ -19,7 +19,7 @@ class TestTable extends Table
         $this->setSchema(['id' => ['type' => 'integer']]);
     }
 
-    public function findPublished(Query $query): Query
+    public function findPublished(SelectQuery $query): SelectQuery
     {
         return $query->applyOptions(['this' => 'worked']);
     }
