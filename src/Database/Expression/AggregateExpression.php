@@ -80,7 +80,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function partition($partitions)
+    public function partition(ExpressionInterface|Closure|array|string $partitions)
     {
         $this->getWindow()->partition($partitions);
 
@@ -90,7 +90,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function order($fields)
+    public function order(ExpressionInterface|Closure|array|string $fields)
     {
         $this->getWindow()->order($fields);
 
@@ -100,7 +100,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function range($start, $end = 0)
+    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0)
     {
         $this->getWindow()->range($start, $end);
 
@@ -132,9 +132,9 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      */
     public function frame(
         string $type,
-        $startOffset,
+        ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
-        $endOffset,
+        ExpressionInterface|string|int|null $endOffset,
         string $endDirection
     ) {
         $this->getWindow()->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);

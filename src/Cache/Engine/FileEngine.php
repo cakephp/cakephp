@@ -431,7 +431,7 @@ class FileEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    protected function _key($key): string
+    protected function _key(string $key): string
     {
         $key = parent::_key($key);
 

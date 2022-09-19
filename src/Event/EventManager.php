@@ -279,7 +279,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
-    public function dispatch($event): EventInterface
+    public function dispatch(EventInterface|string $event): EventInterface
     {
         if (is_string($event)) {
             $event = new Event($event);

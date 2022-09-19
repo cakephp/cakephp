@@ -166,7 +166,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
-    protected function _bindValue($value, ValueBinder $binder, ?string $type = null): string
+    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
     {
         $placeholder = $binder->placeholder('tuple');
         $binder->bind($placeholder, $value, $type);

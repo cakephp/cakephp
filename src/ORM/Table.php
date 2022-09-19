@@ -1466,7 +1466,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, array $options = []): EntityInterface
+    public function get(mixed $primaryKey, array $options = []): EntityInterface
     {
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
@@ -2354,7 +2354,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []): bool
+    public function delete(EntityInterface $entity, array $options = []): bool
     {
         $options = new ArrayObject($options + [
             'atomic' => true,

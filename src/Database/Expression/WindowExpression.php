@@ -87,7 +87,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function partition($partitions)
+    public function partition(ExpressionInterface|Closure|array|string $partitions)
     {
         if (!$partitions) {
             return $this;
@@ -115,7 +115,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function order($fields)
+    public function order(ExpressionInterface|Closure|array|string $fields)
     {
         if (!$fields) {
             return $this;
@@ -135,7 +135,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
-    public function range($start, $end = 0)
+    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0)
     {
         return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
@@ -161,9 +161,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function frame(
         string $type,
-        $startOffset,
+        ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
-        $endOffset,
+        ExpressionInterface|string|int|null $endOffset,
         string $endDirection
     ) {
         $this->frame = [

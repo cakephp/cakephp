@@ -205,7 +205,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
      * @return \DateTimeInterface|null
      */
-    public function toPHP($value, Driver $driver): ?DateTimeInterface
+    public function toPHP(mixed $value, Driver $driver): ?DateTimeInterface
     {
         if ($value === null) {
             return null;

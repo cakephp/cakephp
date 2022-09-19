@@ -137,7 +137,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function setConfig($alias, $options = null)
+    public function setConfig(array|string $alias, ?array $options = null)
     {
         if (!is_string($alias)) {
             $this->_config = $alias;

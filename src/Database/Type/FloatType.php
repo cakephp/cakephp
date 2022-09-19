@@ -67,7 +67,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @return float|null
      * @throws \Cake\Core\Exception\CakeException
      */
-    public function toPHP($value, Driver $driver): ?float
+    public function toPHP(mixed $value, Driver $driver): ?float
     {
         if ($value === null) {
             return null;
