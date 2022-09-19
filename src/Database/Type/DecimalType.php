@@ -84,7 +84,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toPHP($value, Driver $driver): ?string
+    public function toPHP(mixed $value, Driver $driver): ?string
     {
         if ($value === null) {
             return null;

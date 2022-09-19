@@ -182,7 +182,7 @@ trait PluginAssetsTrait
 
         if (is_link($dest)) {
             // phpcs:ignore
-            $success = DS === '\\' ? @rmdir($dest) : @unlink($dest);
+            $success = DIRECTORY_SEPARATOR === '\\' ? @rmdir($dest) : @unlink($dest);
             if ($success) {
                 $this->io->out('Unlinked ' . $dest);
 

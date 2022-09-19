@@ -178,7 +178,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The rules class name that is used.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\RulesChecker>
      */
     public const RULES_CLASS = RulesChecker::class;
 
@@ -1466,7 +1466,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, array $options = []): EntityInterface
+    public function get(mixed $primaryKey, array $options = []): EntityInterface
     {
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
@@ -2081,8 +2081,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $id = (array)$this->_newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-        $primary = array_combine($primary, $id) ?: [];
+        $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
         $filteredKeys = array_filter($primary, function ($v) {
@@ -2355,7 +2354,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []): bool
+    public function delete(EntityInterface $entity, array $options = []): bool
     {
         $options = new ArrayObject($options + [
             'atomic' => true,

@@ -741,12 +741,11 @@ abstract class TestCase extends BaseTestCase
                 ];
             }
         }
-        /**
-         * @var array<string, mixed> $assertion
-         */
+
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
+                /** @psalm-suppress InvalidArgument */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
                 if ($fullDebug === true && $string === false) {
                     debug($string, true);

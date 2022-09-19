@@ -143,7 +143,10 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
-        /** @psalm-suppress InvalidArgument */
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
         set_error_handler($this->_connectionErrorHandler(...));
         $remoteSocketTarget = $scheme . $this->_config['host'];
         $port = (int)$this->_config['port'];

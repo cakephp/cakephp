@@ -154,9 +154,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
      * @return string The rendered cell.
-     * @throws \Cake\View\Exception\MissingCellTemplateException
-     *   When a MissingTemplateException is raised during rendering.
-     * @throws \BadMethodCallException
+     * @throws \Cake\View\Exception\MissingCellTemplateException|\BadMethodCallException
      */
     public function render(?string $template = null): string
     {

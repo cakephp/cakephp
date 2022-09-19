@@ -21,7 +21,7 @@ use Cake\Core\Exception\CakeException;
 /**
  * Class Event
  *
- * @template TSubject
+ * @template TSubject of object
  */
 class Event implements EventInterface
 {
@@ -105,7 +105,6 @@ class Event implements EventInterface
      * @return object
      * @throws \Cake\Core\Exception\CakeException
      * @psalm-return TSubject
-     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function getSubject(): object
     {

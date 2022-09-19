@@ -96,6 +96,7 @@ class ExtractIterator extends Collection
         $callback = $this->_extractor;
         $res = [];
 
+        /** @phpstan-ignore-next-line **/
         foreach ($iterator->getArrayCopy() as $k => $v) {
             $res[$k] = $callback($v);
         }

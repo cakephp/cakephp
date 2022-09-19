@@ -69,7 +69,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toPHP($value, Driver $driver): ?int
+    public function toPHP(mixed $value, Driver $driver): ?int
     {
         if ($value === null) {
             return null;

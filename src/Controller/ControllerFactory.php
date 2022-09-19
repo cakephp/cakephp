@@ -122,11 +122,11 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $controller = $this->controller;
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /** @var \Cake\Http\ServerRequest $request */
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();
-        if ($result instanceof ResponseInterface) {
+        if ($result !== null) {
             return $result;
         }
 
@@ -138,7 +138,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
-        if ($result instanceof ResponseInterface) {
+        if ($result !== null) {
             return $result;
         }
 
