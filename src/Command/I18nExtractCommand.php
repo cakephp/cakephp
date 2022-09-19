@@ -490,7 +490,6 @@ class I18nExtractCommand extends Command
 
                 if ($mapCount === count($strings)) {
                     $singular = '';
-                    $plural = $context = null;
                     $vars = array_combine($map, $strings);
                     extract($vars);
                     $domain = $domain ?? 'default';
@@ -499,10 +498,10 @@ class I18nExtractCommand extends Command
                         'line' => $line,
                     ];
                     $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
-                    if ($plural !== null) {
+                    if (isset($plural)) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if ($context !== null) {
+                    if (isset($context)) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);

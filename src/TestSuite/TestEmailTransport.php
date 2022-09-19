@@ -32,7 +32,7 @@ class TestEmailTransport extends DebugTransport
     /**
      * @var array
      */
-    private static array $messages = [];
+    protected static array $messages = [];
 
     /**
      * Stores email for later assertions

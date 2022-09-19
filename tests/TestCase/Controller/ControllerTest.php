@@ -857,7 +857,7 @@ class ControllerTest extends TestCase
     {
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(
-            'Controller actions can only return ResponseInterface instance or null. '
+            'Controller actions can only return Response instance or null. '
                 . 'Got string instead.'
         );
 

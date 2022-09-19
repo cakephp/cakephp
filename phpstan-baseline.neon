@@ -1,21 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to undefined constant Memcached\\:\\:DYNAMIC_CLIENT_MODE\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
-			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
-			message: "#^Call to an undefined method Iterator\\:\\:getArrayCopy\\(\\)\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ExtractIterator.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
@@ -31,39 +16,9 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
-			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
-			count: 2
-			path: src/Command/I18nExtractCommand.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between '/' and '\\\\\\\\' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Command/PluginAssetsCopyCommand.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between '/' and '\\\\\\\\' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Command/PluginAssetsRemoveCommand.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between '/' and '\\\\\\\\' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Command/PluginAssetsSymlinkCommand.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
-
-		-
-			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
-			count: 1
-			path: src/Controller/Controller.php
-
-		-
-			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\Controller\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
-			count: 1
-			path: src/Controller/ControllerFactory.php
 
 		-
 			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:getControllerClass\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
@@ -76,26 +31,6 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$class with type string\\|TObject is not subtype of native type object\\|string\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
-			count: 2
-			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^PHPDoc tag @return with type TObject is not subtype of native type object\\.$#"
-			count: 3
-			path: src/Core/ObjectRegistry.php
-
-		-
-			message: "#^PHPDoc tag @return with type TObject\\|null is not subtype of native type object\\|null\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
@@ -104,21 +39,6 @@ parameters:
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
-
-		-
-			message: "#^PHPDoc tag @param for parameter \\$subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
-			count: 1
-			path: src/Event/Event.php
-
-		-
-			message: "#^PHPDoc tag @return with type TSubject is not subtype of native type object\\.$#"
-			count: 1
-			path: src/Event/Event.php
-
-		-
-			message: "#^PHPDoc tag @var for property Cake\\\\Event\\\\Event\\:\\:\\$_subject with type TSubject\\|null is not subtype of native type object\\|null\\.$#"
-			count: 1
-			path: src/Event/Event.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -186,11 +106,6 @@ parameters:
 			path: src/I18n/DateTime.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(int, string\\)\\: void given\\.$#"
-			count: 1
-			path: src/Network/Socket.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
@@ -201,22 +116,12 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Parameter \\#2 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_mergeBelongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
-			count: 1
-			path: src/ORM/Marshaller.php
-
-		-
 			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\.$#"
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
-			count: 1
-			path: src/ORM/Table.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: src/ORM/Table.php
 
@@ -234,26 +139,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
-
-		-
-			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
-			message: "#^Offset 1 does not exist on array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
-			message: "#^Offset 2 does not exist on array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
-			message: "#^Unsafe access to private property Cake\\\\TestSuite\\\\TestEmailTransport\\:\\:\\$messages through static\\:\\:\\.$#"
-			count: 3
-			path: src/TestSuite/TestEmailTransport.php
 
 		-
 			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"

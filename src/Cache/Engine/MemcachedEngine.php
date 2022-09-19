@@ -237,10 +237,8 @@ class MemcachedEngine extends CacheEngine
             defined('Memcached::OPT_CLIENT_MODE') &&
             defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
-            $this->_Memcached->setOption(
-                Memcached::OPT_CLIENT_MODE,
-                Memcached::DYNAMIC_CLIENT_MODE
-            );
+            /** @phpstan-ignore-next-line */
+            $this->_Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
         }
 
         $this->_Memcached->setOption(

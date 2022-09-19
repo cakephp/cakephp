@@ -482,9 +482,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $result = $action(...$args);
         if ($result !== null) {
             assert(
-                $result instanceof ResponseInterface,
+                $result instanceof Response,
                 sprintf(
-                    'Controller actions can only return ResponseInterface instance or null. '
+                    'Controller actions can only return Response instance or null. '
                     . 'Got %s instead.',
                     get_debug_type($result)
                 )
@@ -493,7 +493,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $result = $this->render();
         }
         if ($result) {
-            /** @psalm-suppress PropertyTypeCoercion */
             $this->response = $result;
         }
     }

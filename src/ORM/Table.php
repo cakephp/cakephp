@@ -178,7 +178,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The rules class name that is used.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\RulesChecker>
      */
     public const RULES_CLASS = RulesChecker::class;
 
@@ -2081,8 +2081,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $id = (array)$this->_newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-        $primary = array_combine($primary, $id) ?: [];
+        $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
         $filteredKeys = array_filter($primary, function ($v) {

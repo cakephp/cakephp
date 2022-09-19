@@ -740,6 +740,7 @@ class Marshaller
             return $marshaller->merge($original, $value, $options);
         }
         if ($type === Association::MANY_TO_MANY) {
+            /** @phpstan-ignore-next-line */
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, $options);
         }
 
