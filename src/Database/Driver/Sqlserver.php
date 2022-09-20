@@ -40,7 +40,6 @@ use PDO;
  */
 class Sqlserver extends Driver
 {
-    use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
 
     /**

@@ -33,7 +33,6 @@ use PDO;
  */
 class Sqlite extends Driver
 {
-    use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
 
     /**

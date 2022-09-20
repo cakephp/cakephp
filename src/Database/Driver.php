@@ -19,10 +19,16 @@ namespace Cake\Database;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Expression\ComparisonExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ErrorCodeWaitStrategy;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -88,6 +94,20 @@ abstract class Driver
      * @var bool
      */
     protected bool $_autoQuoting = false;
+
+    /**
+     * String used to start a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected string $_startQuote = '';
+
+    /**
+     * String used to end a database identifier quoting to make it safe
+     *
+     * @var string
+     */
+    protected string $_endQuote = '';
 
     /**
      * The server version
@@ -384,28 +404,37 @@ abstract class Driver
     }
 
     /**
-     * Get the SQL for releasing a save point.
+     * Returns a SQL snippet for creating a new transaction savepoint
      *
-     * @param string|int $name Save point name or id
+     * @param string|int $name save point name
      * @return string
      */
-    abstract public function releaseSavePointSQL(string|int $name): string;
+    public function savePointSQL(string|int $name): string
+    {
+        return 'SAVEPOINT LEVEL' . $name;
+    }
 
     /**
-     * Get the SQL for creating a save point.
+     * Returns a SQL snippet for releasing a previously created save point
      *
-     * @param string|int $name Save point name or id
+     * @param string|int $name save point name
      * @return string
      */
-    abstract public function savePointSQL(string|int $name): string;
+    public function releaseSavePointSQL(string|int $name): string
+    {
+        return 'RELEASE SAVEPOINT LEVEL' . $name;
+    }
 
     /**
-     * Get the SQL for rollingback a save point.
+     * Returns a SQL snippet for rollbacking a previously created save point
      *
-     * @param string|int $name Save point name or id
+     * @param string|int $name save point name
      * @return string
      */
-    abstract public function rollbackSavePointSQL(string|int $name): string;
+    public function rollbackSavePointSQL(string|int $name): string
+    {
+        return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
+    }
 
     /**
      * Get the SQL for disabling foreign keys.
@@ -438,11 +467,195 @@ abstract class Driver
      * This function, in turn, will return an instance of a Query object that has been
      * transformed to accommodate any specificities of the SQL dialect in use.
      *
-     * @param string $type The type of query to be transformed
-     * (select, insert, update, delete).
+     * @param string $type the type of query to be transformed
+     * (select, insert, update, delete)
      * @return \Closure
      */
-    abstract public function queryTranslator(string $type): Closure;
+    public function queryTranslator(string $type): Closure
+    {
+        return function ($query) use ($type) {
+            if ($this->isAutoQuotingEnabled()) {
+                $query = (new IdentifierQuoter($this))->quote($query);
+            }
+
+            $query = match ($type) {
+                'select' => $this->_selectQueryTranslator($query),
+                'insert' => $this->_insertQueryTranslator($query),
+                'update' => $this->_updateQueryTranslator($query),
+                'delete' => $this->_deleteQueryTranslator($query),
+                default => throw new InvalidArgumentException('Valid types are: select, insert, update, delete'),
+            };
+
+            $translators = $this->_expressionTranslators();
+            if (!$translators) {
+                return $query;
+            }
+
+            $query->traverseExpressions(function ($expression) use ($translators, $query): void {
+                foreach ($translators as $class => $method) {
+                    if ($expression instanceof $class) {
+                        $this->{$method}($expression, $query);
+                    }
+                }
+            });
+
+            return $query;
+        };
+    }
+
+    /**
+     * Returns an associative array of methods that will transform Expression
+     * objects to conform with the specific SQL dialect. Keys are class names
+     * and values a method in this class.
+     *
+     * @return array<class-string, string>
+     */
+    protected function _expressionTranslators(): array
+    {
+        return [];
+    }
+
+    /**
+     * Apply translation steps to select queries.
+     *
+     * @param \Cake\Database\Query\SelectQuery $query The query to translate
+     * @return \Cake\Database\Query\SelectQuery The modified query
+     */
+    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
+    {
+        return $this->_transformDistinct($query);
+    }
+
+    /**
+     * Returns the passed query after rewriting the DISTINCT clause, so that drivers
+     * that do not support the "ON" part can provide the actual way it should be done
+     *
+     * @param \Cake\Database\Query\SelectQuery $query The query to be transformed
+     * @return \Cake\Database\Query\SelectQuery
+     */
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
+    {
+        if (is_array($query->clause('distinct'))) {
+            $query->group($query->clause('distinct'), true);
+            $query->distinct(false);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Apply translation steps to delete queries.
+     *
+     * Chops out aliases on delete query conditions as most database dialects do not
+     * support aliases in delete queries. This also removes aliases
+     * in table names as they frequently don't work either.
+     *
+     * We are intentionally not supporting deletes with joins as they have even poorer support.
+     *
+     * @param \Cake\Database\Query\DeleteQuery $query The query to translate
+     * @return \Cake\Database\Query\DeleteQuery The modified query
+     */
+    protected function _deleteQueryTranslator(DeleteQuery $query): DeleteQuery
+    {
+        $hadAlias = false;
+        $tables = [];
+        foreach ($query->clause('from') as $alias => $table) {
+            if (is_string($alias)) {
+                $hadAlias = true;
+            }
+            $tables[] = $table;
+        }
+        if ($hadAlias) {
+            $query->from($tables, true);
+        }
+
+        if (!$hadAlias) {
+            return $query;
+        }
+
+        return $this->_removeAliasesFromConditions($query);
+    }
+
+    /**
+     * Apply translation steps to update queries.
+     *
+     * Chops out aliases on update query conditions as not all database dialects do support
+     * aliases in update queries.
+     *
+     * Just like for delete queries, joins are currently not supported for update queries.
+     *
+     * @param \Cake\Database\Query\UpdateQuery $query The query to translate
+     * @return \Cake\Database\Query\UpdateQuery The modified query
+     */
+    protected function _updateQueryTranslator(UpdateQuery $query): UpdateQuery
+    {
+        return $this->_removeAliasesFromConditions($query);
+    }
+
+    /**
+     * Removes aliases from the `WHERE` clause of a query.
+     *
+     * @param \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery $query The query to process.
+     * @return \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery The modified query.
+     * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
+     *  aliases from the conditions can break references to the joined tables.
+     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
+     * @psalm-param T $query
+     * @psalm-return T
+     */
+    protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
+    {
+        if ($query->clause('join')) {
+            throw new DatabaseException(
+                'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
+                'this can break references to joined tables.'
+            );
+        }
+
+        /** @var \Cake\Database\ExpressionInterface|null $conditions */
+        $conditions = $query->clause('where');
+        if ($conditions) {
+            $conditions->traverse(function ($expression) {
+                if ($expression instanceof ComparisonExpression) {
+                    $field = $expression->getField();
+                    if (
+                        is_string($field) &&
+                        str_contains($field, '.')
+                    ) {
+                        [, $unaliasedField] = explode('.', $field, 2);
+                        $expression->setField($unaliasedField);
+                    }
+
+                    return $expression;
+                }
+
+                if ($expression instanceof IdentifierExpression) {
+                    $identifier = $expression->getIdentifier();
+                    if (str_contains($identifier, '.')) {
+                        [, $unaliasedIdentifier] = explode('.', $identifier, 2);
+                        $expression->setIdentifier($unaliasedIdentifier);
+                    }
+
+                    return $expression;
+                }
+
+                return $expression;
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Apply translation steps to insert queries.
+     *
+     * @param \Cake\Database\Query\InsertQuery $query The query to translate
+     * @return \Cake\Database\Query\InsertQuery The modified query
+     */
+    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
+    {
+        return $query;
+    }
 
     /**
      * Get the schema dialect.
@@ -459,12 +672,60 @@ abstract class Driver
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
-     * be used safely in queries without the risk of using reserved words.
+     * be used safely in queries without the risk of using reserved words
      *
-     * @param string $identifier The identifier expression to quote.
+     * @param string $identifier The identifier to quote.
      * @return string
      */
-    abstract public function quoteIdentifier(string $identifier): string;
+    public function quoteIdentifier(string $identifier): string
+    {
+        $identifier = trim($identifier);
+
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
+        }
+
+        // string
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
+            return $this->_startQuote . $identifier . $this->_endQuote;
+        }
+
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
+            $items = explode('.', $identifier);
+
+            return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
+        }
+
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
+            return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
+        }
+
+        // Functions
+        if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
+            return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
+        }
+
+        // Alias.field AS thing
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
+            return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
+        }
+
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
+
+            return $this->_startQuote . $field . $this->_endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w\s-]*[\w-]+/u', $identifier)) {
+            return $this->_startQuote . $identifier . $this->_endQuote;
+        }
+
+        return $identifier;
+    }
 
     /**
      * Escapes values for use in schema definitions.
