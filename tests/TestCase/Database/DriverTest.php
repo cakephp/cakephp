@@ -246,9 +246,7 @@ class DriverTest extends TestCase
 
         $result = $driver->compileQuery($query, new ValueBinder());
 
-        $this->assertIsArray($result);
-        $this->assertSame($query, $result[0]);
-        $this->assertSame('1', $result[1]);
+        $this->assertSame('1', $result);
     }
 
     /**

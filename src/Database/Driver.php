@@ -599,16 +599,15 @@ abstract class Driver
      *
      * @param \Cake\Database\Query $query The query to compile.
      * @param \Cake\Database\ValueBinder $binder The value binder to use.
-     * @return array containing 2 entries. The first entity is the transformed query
-     * and the second one the compiled SQL.
+     * @return string The compiled SQL.
      */
-    public function compileQuery(Query $query, ValueBinder $binder): array
+    public function compileQuery(Query $query, ValueBinder $binder): string
     {
         $processor = $this->newCompiler();
         $translator = $this->queryTranslator($query->type());
         $query = $translator($query);
 
-        return [$query, $processor->compile($query, $binder)];
+        return $processor->compile($query, $binder);
     }
 
     /**
