@@ -245,6 +245,7 @@ use Cake\Error\Debugger;
         margin: 0 5px 0 0;
     }
     .stack-frame-toggle {
+        cursor: pointer;
         color: #525252;
         border: 1px solid #d2d2d2;
         border-radius: var(--border-radius);
