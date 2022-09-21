@@ -1474,8 +1474,6 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function traverseExpressions(Closure $callback)
     {
-        $callback = $callback(...);
-
         foreach ($this->_parts as $part) {
             $this->_expressionsVisitor($part, $callback);
         }
