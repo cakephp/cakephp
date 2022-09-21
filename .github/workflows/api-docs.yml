@@ -8,8 +8,13 @@ on:
       - 5.*
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   trigger-api:
+    permissions:
+      metadata: read
+
     runs-on: ubuntu-latest
     steps:
       - name: Get Cakebot App Token
