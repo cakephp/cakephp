@@ -20,6 +20,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -178,7 +179,7 @@ class StringTemplate
         foreach ($templates as $name) {
             $template = $this->get($name);
             if ($template === null) {
-                $this->_compiled[$name] = [null, null];
+                throw new InvalidArgumentException(sprintf('String template `%s` is not valid.', $name));
             }
 
             $template = str_replace('%', '%%', $template);
