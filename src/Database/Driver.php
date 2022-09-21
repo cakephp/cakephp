@@ -34,7 +34,6 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Statement\Statement;
-use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -463,44 +462,44 @@ abstract class Driver
     }
 
     /**
-     * Returns a closure that will be used to transform a passed Query object.
-     * This function, in turn, will return an instance of a Query object that has been
-     * transformed to accommodate any specificities of the SQL dialect in use.
+     * Transform the query to accommodate any specificities of the SQL dialect in use.
      *
-     * @param string $type the type of query to be transformed
-     * (select, insert, update, delete)
-     * @return \Closure
+     * It will also quote the identifiers if auto quoting is enabled.
+     *
+     * @param \Cake\Database\Query $query Query to transform.
+     * @return \Cake\Database\Query
      */
-    public function queryTranslator(string $type): Closure
+    protected function transformQuery(Query $query): Query
     {
-        return function ($query) use ($type) {
-            if ($this->isAutoQuotingEnabled()) {
-                $query = (new IdentifierQuoter($this))->quote($query);
-            }
+        if ($this->isAutoQuotingEnabled()) {
+            $query = (new IdentifierQuoter($this))->quote($query);
+        }
 
-            $query = match ($type) {
-                'select' => $this->_selectQueryTranslator($query),
-                'insert' => $this->_insertQueryTranslator($query),
-                'update' => $this->_updateQueryTranslator($query),
-                'delete' => $this->_deleteQueryTranslator($query),
-                default => throw new InvalidArgumentException('Valid types are: select, insert, update, delete'),
-            };
-
-            $translators = $this->_expressionTranslators();
-            if (!$translators) {
-                return $query;
-            }
-
-            $query->traverseExpressions(function ($expression) use ($translators, $query): void {
-                foreach ($translators as $class => $method) {
-                    if ($expression instanceof $class) {
-                        $this->{$method}($expression, $query);
-                    }
-                }
-            });
-
-            return $query;
+        $query = match (true) {
+            $query instanceof SelectQuery => $this->_selectQueryTranslator($query),
+            $query instanceof InsertQuery => $this->_insertQueryTranslator($query),
+            $query instanceof UpdateQuery => $this->_updateQueryTranslator($query),
+            $query instanceof DeleteQuery => $this->_deleteQueryTranslator($query),
+            default => throw new InvalidArgumentException(sprintf(
+                'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
+                get_debug_type($query)
+            )),
         };
+
+        $translators = $this->_expressionTranslators();
+        if (!$translators) {
+            return $query;
+        }
+
+        $query->traverseExpressions(function ($expression) use ($translators, $query): void {
+            foreach ($translators as $class => $method) {
+                if ($expression instanceof $class) {
+                    $this->{$method}($expression, $query);
+                }
+            }
+        });
+
+        return $query;
     }
 
     /**
@@ -865,8 +864,7 @@ abstract class Driver
     public function compileQuery(Query $query, ValueBinder $binder): string
     {
         $processor = $this->newCompiler();
-        $translator = $this->queryTranslator($query->type());
-        $query = $translator($query);
+        $query = $this->transformQuery($query);
 
         return $processor->compile($query, $binder);
     }

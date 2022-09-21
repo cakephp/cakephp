@@ -224,7 +224,7 @@ class DriverTest extends TestCase
             ->willReturn('1');
 
         $driver = $this->getMockBuilder(Driver::class)
-            ->onlyMethods(['newCompiler', 'queryTranslator'])
+            ->onlyMethods(['newCompiler', 'transformQuery'])
             ->getMockForAbstractClass();
 
         $driver
@@ -232,17 +232,15 @@ class DriverTest extends TestCase
             ->method('newCompiler')
             ->willReturn($compiler);
 
-        $driver
-            ->expects($this->once())
-            ->method('queryTranslator')
-            ->willReturn(function ($query) {
-                return $query;
-            });
-
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();
         $query->method('type')->will($this->returnValue('select'));
+
+        $driver
+            ->expects($this->once())
+            ->method('transformQuery')
+            ->willReturn($query);
 
         $result = $driver->compileQuery($query, new ValueBinder());
 
