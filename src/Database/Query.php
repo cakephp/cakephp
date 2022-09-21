@@ -261,7 +261,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $binder->resetCount();
         }
 
-        return $this->getConnection()->getDriver()->compileQuery($this, $binder)[1];
+        return $this->getConnection()->getDriver()->compileQuery($this, $binder);
     }
 
     /**
