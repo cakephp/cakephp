@@ -21,7 +21,6 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\IdentifierQuoter;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association;
@@ -758,10 +757,9 @@ class HasManyTest extends TestCase
     protected function assertJoin($expected, $query): void
     {
         if ($this->autoQuote) {
-            $driver = $query->getConnection()->getDriver();
-            $quoter = new IdentifierQuoter($driver);
+            $quoter = $query->getConnection()->getDriver()->quoter();
             foreach ($expected as &$join) {
-                $join['table'] = $driver->quoteIdentifier($join['table']);
+                $join['table'] = $quoter->quoteIdentifier($join['table']);
                 if ($join['conditions']) {
                     $quoter->quoteExpression($join['conditions']);
                 }
@@ -779,8 +777,7 @@ class HasManyTest extends TestCase
     protected function assertWhereClause($expected, $query): void
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
-            $expected->traverse($quoter->quoteExpression(...));
+            $expected->traverse($query->getConnection()->getDriver()->quoter()->quoteExpression(...));
         }
         $this->assertEquals($expected, $query->clause('where'));
     }
@@ -794,8 +791,7 @@ class HasManyTest extends TestCase
     protected function assertOrderClause($expected, $query): void
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
-            $quoter->quoteExpression($expected);
+            $query->getConnection()->getDriver()->quoter()->quoteExpression($expected);
         }
         $this->assertEquals($expected, $query->clause('order'));
     }
