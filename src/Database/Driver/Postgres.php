@@ -22,7 +22,7 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
-use Cake\Database\Query;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\PostgresSchemaDialect;
@@ -34,8 +34,6 @@ use PDO;
  */
 class Postgres extends Driver
 {
-    use SqlDialectTrait;
-
     /**
      * @inheritDoc
      */
@@ -207,7 +205,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _insertQueryTranslator(Query $query): Query
+    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');

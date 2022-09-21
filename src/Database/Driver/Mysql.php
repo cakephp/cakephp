@@ -27,8 +27,6 @@ use PDO;
  */
 class Mysql extends Driver
 {
-    use SqlDialectTrait;
-
     /**
      * @inheritDoc
      */
