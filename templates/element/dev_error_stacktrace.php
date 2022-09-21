@@ -61,9 +61,16 @@ foreach ($exceptions as $level => $exc):
         $activeFrame = $i == 0;
         $vendorFrame = isset($stack['file']) && strpos($stack['file'], APP) === false ? 'vendor-frame' : '';
     ?>
-        <li id="stack-frame-<?= $frameId ?>" class="stack-frame">
+        <li id="stack-frame-<?= $frameId ?>" class="stack-frame <?= $vendorFrame ?>">
             <div class="stack-frame-header">
-                <div class="stack-frame-header-content <?= $vendorFrame ?>">
+                <button
+                    data-frame-id="<?= h($frameId) ?>"
+                    class="stack-frame-toggle <?= $activeFrame ? 'active' : '' ?>"
+                >
+                    &#x25BC;
+                </button>
+
+                <div class="stack-frame-header-content">
                     <span class="stack-frame-file">
                         <?= h(Debugger::trimPath($file)); ?>
                     </span>
@@ -88,13 +95,6 @@ foreach ($exceptions as $level => $exc):
                         <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
                     <?php endif; ?>
                 </div>
-
-                <button 
-                    data-frame-id="<?= h($frameId) ?>"
-                    class="stack-frame-toggle <?= $activeFrame ? 'active' : '' ?>"
-                >
-                    &#x25BC;
-                </button>
             </div>
             <div
                 class="stack-frame-contents"

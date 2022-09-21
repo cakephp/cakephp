@@ -36,7 +36,7 @@ use Cake\Error\Debugger;
         --layout-padding: 30px;
         --layout-vertical-gap: 20px;
 
-        --color-vendor-frame: #8c8c8c;
+        --color-vendor-frame: #7c7c7c;
 
         --breakpoint-tablet: 810px;
     }
@@ -168,12 +168,14 @@ use Cake\Error\Debugger;
         border-radius: var(--border-radius);
     }
     .stack-frame {
-        background: #e5e5e5;
         padding: 10px;
-        background: #ececec;
+        background: #eaeaea;
         padding: 10px;
         border-bottom: 2px solid #f5f7fa;
         overflow: hidden;
+    }
+    .vendor-frame {
+        background: #f1f1f1;
     }
     .stack-frame:first-child {
         border-radius: var(--border-radius) var(--border-radius) 0 0;
@@ -197,14 +199,15 @@ use Cake\Error\Debugger;
     /* Stack frame headers */
     .stack-frame-header {
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
     }
     .stack-frame-header-content {
         display: flex;
         gap: 8px;
     }
-    .stack-frame-header-content.vendor-frame ,
-    .stack-frame-header-content.vendor-frame a {
+    .vendor-frame .stack-frame-header-content,
+    .vendor-frame .stack-frame-header-content  a {
         color: var(--color-vendor-frame);
     }
     @media (max-width: 810px) {
@@ -252,6 +255,9 @@ use Cake\Error\Debugger;
     }
     .stack-frame-toggle.active {
         transform: rotate(180deg);
+    }
+    .stack-frame-header .stack-frame-toggle {
+        opacity: 0.7;
     }
 
     .stack-frame-args {
@@ -333,9 +339,9 @@ use Cake\Error\Debugger;
             </p>
             <?php endif; ?>
 
-            <div class="error-suggestion">
-                <?= $this->fetch('file') ?>
-            </div>
+<div class="error-suggestion">
+<?= $this->fetch('file') ?>
+</div>
 
             <?= $this->element('dev_error_stacktrace'); ?>
 
