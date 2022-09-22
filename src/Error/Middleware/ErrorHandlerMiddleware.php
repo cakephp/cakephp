@@ -118,7 +118,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $renderer = $trap->renderer($exception, $request);
 
         try {
-            /** @var \Psr\Http\Message\ResponseInterface|string $response */
             $response = $renderer->render();
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);

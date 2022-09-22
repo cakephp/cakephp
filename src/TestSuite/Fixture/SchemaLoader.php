@@ -83,7 +83,6 @@ class SchemaLoader
 
             // Use the underlying PDO connection so we can avoid prepared statements
             // which don't support multiple queries in postgres.
-            /** @var \Cake\Database\Driver $driver */
             $driver = $connection->getDriver();
             $driver->exec($sql);
         }

@@ -1744,7 +1744,6 @@ class Message implements JsonSerializable
             return $text;
         }
 
-        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->appCharset);
         $return = mb_encode_mimeheader($text, $this->getHeaderCharset(), 'B');
@@ -1765,7 +1764,6 @@ class Message implements JsonSerializable
             return $text;
         }
 
-        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->appCharset);
         $return = mb_decode_mimeheader($text);
