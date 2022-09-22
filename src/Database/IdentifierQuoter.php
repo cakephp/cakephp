@@ -33,20 +33,72 @@ use Cake\Database\Query\UpdateQuery;
 class IdentifierQuoter
 {
     /**
-     * The driver instance used to do the identifier quoting
-     *
-     * @var \Cake\Database\Driver
-     */
-    protected Driver $_driver;
-
-    /**
      * Constructor
      *
-     * @param \Cake\Database\Driver $driver The driver instance used to do the identifier quoting
+     * @param string $startQuote String used to start a database identifier quoting to make it safe.
+     * @param string $endQuote String used to end a database identifier quoting to make it safe.
      */
-    public function __construct(Driver $driver)
+    public function __construct(
+        protected string $startQuote,
+        protected string $endQuote
+    ) {
+    }
+
+    /**
+     * Quotes a database identifier (a column name, table name, etc..) to
+     * be used safely in queries without the risk of using reserved words
+     *
+     * @param string $identifier The identifier to quote.
+     * @return string
+     */
+    public function quoteIdentifier(string $identifier): string
     {
-        $this->_driver = $driver;
+        $identifier = trim($identifier);
+
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
+        }
+
+        // string
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
+            return $this->startQuote . $identifier . $this->endQuote;
+        }
+
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
+            $items = explode('.', $identifier);
+
+            return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+        }
+
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
+            return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $identifier);
+        }
+
+        // Functions
+        if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
+            return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
+        }
+
+        // Alias.field AS thing
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
+            return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
+        }
+
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->endQuote . '.' . $this->startQuote, $items);
+
+            return $this->startQuote . $field . $this->endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w\s-]*[\w-]+/u', $identifier)) {
+            return $this->startQuote . $identifier . $this->endQuote;
+        }
+
+        return $identifier;
     }
 
     /**
@@ -87,23 +139,12 @@ class IdentifierQuoter
      */
     public function quoteExpression(ExpressionInterface $expression): void
     {
-        if ($expression instanceof FieldInterface) {
-            $this->_quoteComparison($expression);
-
-            return;
-        }
-
-        if ($expression instanceof OrderByExpression) {
-            $this->_quoteOrderBy($expression);
-
-            return;
-        }
-
-        if ($expression instanceof IdentifierExpression) {
-            $this->_quoteIdentifierExpression($expression);
-
-            return;
-        }
+        match (true) {
+            $expression instanceof FieldInterface => $this->_quoteComparison($expression),
+            $expression instanceof OrderByExpression => $this->_quoteOrderBy($expression),
+            $expression instanceof IdentifierExpression => $this->_quoteIdentifierExpression($expression),
+            default => null // Nothing to do if there is no match
+        };
     }
 
     /**
@@ -139,8 +180,8 @@ class IdentifierQuoter
     {
         $result = [];
         foreach ($part as $alias => $value) {
-            $value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
-            $alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
+            $value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+            $alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
             $result[$alias] = $value;
         }
 
@@ -160,12 +201,12 @@ class IdentifierQuoter
         foreach ($joins as $value) {
             $alias = '';
             if (!empty($value['alias'])) {
-                $alias = $this->_driver->quoteIdentifier($value['alias']);
+                $alias = $this->quoteIdentifier($value['alias']);
                 $value['alias'] = $alias;
             }
 
             if (is_string($value['table'])) {
-                $value['table'] = $this->_driver->quoteIdentifier($value['table']);
+                $value['table'] = $this->quoteIdentifier($value['table']);
             }
 
             $result[$alias] = $value;
@@ -221,10 +262,10 @@ class IdentifierQuoter
             return;
         }
         [$table, $columns] = $insert;
-        $table = $this->_driver->quoteIdentifier($table);
+        $table = $this->quoteIdentifier($table);
         foreach ($columns as &$column) {
             if (is_scalar($column)) {
-                $column = $this->_driver->quoteIdentifier((string)$column);
+                $column = $this->quoteIdentifier((string)$column);
             }
         }
         $query->insert($columns)->into($table);
@@ -241,7 +282,7 @@ class IdentifierQuoter
         $table = $query->clause('update')[0];
 
         if (is_string($table)) {
-            $query->update($this->_driver->quoteIdentifier($table));
+            $query->update($this->quoteIdentifier($table));
         }
     }
 
@@ -255,11 +296,11 @@ class IdentifierQuoter
     {
         $field = $expression->getField();
         if (is_string($field)) {
-            $expression->setField($this->_driver->quoteIdentifier($field));
+            $expression->setField($this->quoteIdentifier($field));
         } elseif (is_array($field)) {
             $quoted = [];
             foreach ($field as $f) {
-                $quoted[] = $this->_driver->quoteIdentifier($f);
+                $quoted[] = $this->quoteIdentifier($f);
             }
             $expression->setField($quoted);
         } else {
@@ -280,12 +321,12 @@ class IdentifierQuoter
     {
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
-                $field = $this->_driver->quoteIdentifier($field);
+                $field = $this->quoteIdentifier($field);
 
                 return $part;
             }
             if (is_string($part) && !str_contains($part, ' ')) {
-                return $this->_driver->quoteIdentifier($part);
+                return $this->quoteIdentifier($part);
             }
 
             return $part;
@@ -301,7 +342,7 @@ class IdentifierQuoter
     protected function _quoteIdentifierExpression(IdentifierExpression $expression): void
     {
         $expression->setIdentifier(
-            $this->_driver->quoteIdentifier($expression->getIdentifier())
+            $this->quoteIdentifier($expression->getIdentifier())
         );
     }
 }

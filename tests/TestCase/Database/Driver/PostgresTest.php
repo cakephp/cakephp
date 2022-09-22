@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
-use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -152,28 +151,19 @@ class PostgresTest extends TestCase
      */
     public function testInsertReturning(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo', 'getPdo', 'connect', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')->willReturn(true);
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
-        $query = new InsertQuery($connection);
-        $query->insert(['id', 'title'])
-            ->into('articles')
-            ->values([1, 'foo']);
-        $translator = $driver->queryTranslator('insert');
-        $query = $translator($query);
-        $this->assertSame('RETURNING *', $query->clause('epilog'));
+        $query = $connection->insertQuery('articles', ['id' => 1, 'title' => 'foo']);
+        $this->assertStringEndsWith(' RETURNING *', $query->sql());
 
-        $query = new InsertQuery($connection);
-        $query->insert(['id', 'title'])
-            ->into('articles')
-            ->values([1, 'foo'])
-            ->epilog('FOO');
-        $query = $translator($query);
-        $this->assertSame('FOO', $query->clause('epilog'));
+        $query = $connection->insertQuery('articles', ['id' => 1, 'title' => 'foo']);
+        $query->epilog('FOO');
+        $this->assertStringEndsWith(' FOO', $query->sql());
     }
 
     /**
