@@ -160,7 +160,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
-        $errorOccured = false;
         try {
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
@@ -177,7 +176,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable $e) {
-            $errorOccured = true;
         }
 
         if (!isset($controller)) {
