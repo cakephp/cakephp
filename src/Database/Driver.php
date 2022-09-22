@@ -457,18 +457,6 @@ abstract class Driver
     abstract public function enableForeignKeySQL(): string;
 
     /**
-     * Returns a value in a safe representation to be used in a query string
-     *
-     * @param string $value The value to quote.
-     * @param int $type Must be one of the \PDO::PARAM_* constants
-     * @return string
-     */
-    public function quote(string $value, int $type = PDO::PARAM_STR): string
-    {
-        return $this->getPdo()->quote($value, $type);
-    }
-
-    /**
      * Transform the query to accommodate any specificities of the SQL dialect in use.
      *
      * It will also quote the identifiers if auto quoting is enabled.

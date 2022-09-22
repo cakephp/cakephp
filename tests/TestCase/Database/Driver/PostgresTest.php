@@ -232,7 +232,6 @@ class PostgresTest extends TestCase
 
         $this->assertTrue($driver->supports(DriverFeatureEnum::CTE));
         $this->assertTrue($driver->supports(DriverFeatureEnum::JSON));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::PDO_QUOTE));
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));

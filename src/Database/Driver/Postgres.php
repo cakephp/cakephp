@@ -183,7 +183,6 @@ class Postgres extends Driver
         return match ($feature) {
             DriverFeatureEnum::CTE,
             DriverFeatureEnum::JSON,
-            DriverFeatureEnum::PDO_QUOTE,
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,

@@ -34,11 +34,6 @@ enum DriverFeatureEnum: string
     case JSON = 'json';
 
     /**
-     * PDO::quote() support.
-     */
-    case PDO_QUOTE = 'pdo-quote';
-
-    /**
      * Transaction savepoint support.
      */
     case SAVEPOINT = 'savepoint';
