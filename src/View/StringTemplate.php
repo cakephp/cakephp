@@ -179,11 +179,11 @@ class StringTemplate
         foreach ($templates as $name) {
             $template = $this->get($name);
             if ($template === null) {
-                $this->_compiled[$name] = [null, null];
+                throw new InvalidArgumentException(sprintf('String template `%s` is not valid.', $name));
             }
 
             $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
+            preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1],

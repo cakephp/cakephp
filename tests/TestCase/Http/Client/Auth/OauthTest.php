@@ -200,7 +200,7 @@ class OauthTest extends TestCase
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testBaseStringWithPostData(): void
     {
@@ -299,7 +299,7 @@ class OauthTest extends TestCase
      * Test HMAC-SHA1 signing
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testHmacSigning(): void
     {
@@ -354,7 +354,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with a private key string
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningString(): void
     {
@@ -413,7 +413,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with a private key file
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningFile(): void
     {
@@ -443,7 +443,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with a private key file passphrase string
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningWithPassphraseString(): void
     {
@@ -475,7 +475,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with a private key string and passphrase string
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningStringWithPassphraseString(): void
     {
@@ -507,7 +507,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with passphrase file
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningWithPassphraseFile(): void
     {
@@ -543,7 +543,7 @@ class OauthTest extends TestCase
      * Test RSA-SHA1 signing with a private key string and passphrase file
      *
      * Hash result + parameters taken from
-     * http://wiki.oauth.net/w/page/12238556/TestCases
+     * https://wiki.oauth.net/w/page/12238556/TestCases
      */
     public function testRsaSigningStringWithPassphraseFile(): void
     {

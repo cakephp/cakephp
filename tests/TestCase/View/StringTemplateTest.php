@@ -69,6 +69,19 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * test adding a template config with a null value
+     */
+    public function testAddWithInvalidTemplate(): void
+    {
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'invalid' => null,
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->template->add($templates);
+    }
+
+    /**
      * Test remove.
      */
     public function testRemove(): void
