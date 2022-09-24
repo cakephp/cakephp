@@ -12,6 +12,9 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   testsuite:
     runs-on: ubuntu-22.04
