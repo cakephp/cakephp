@@ -149,13 +149,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             // hits as subcommands
             if (count($parts) > 1) {
                 $options[] = implode(' ', array_slice($parts, 1));
-                continue;
-            }
-
-            // Handle class strings
-            if (is_string($value)) {
-                $reflection = new ReflectionClass($value);
-                $value = $reflection->newInstance();
             }
         }
         $options = array_unique($options);
@@ -177,10 +170,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         $subcommand = $args->getArgument('subcommand');
 
         $options = [];
-        /**
-         * @var string $key
-         * @var \Cake\Console\BaseCommand|class-string $value
-         */
         foreach ($this->commands as $key => $value) {
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
@@ -199,13 +188,16 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 /** @var \Cake\Console\BaseCommand $value */
                 $value = $reflection->newInstance();
             }
-            $parser = $value->getOptionParser();
 
-            foreach ($parser->options() as $name => $option) {
-                $options[] = "--$name";
-                $short = $option->short();
-                if ($short) {
-                    $options[] = "-$short";
+            if (method_exists($value, 'getOptionParser')) {
+                $parser = $value->getOptionParser();
+
+                foreach ($parser->options() as $name => $option) {
+                    $options[] = "--$name";
+                    $short = $option->short();
+                    if ($short) {
+                        $options[] = "-$short";
+                    }
                 }
             }
         }

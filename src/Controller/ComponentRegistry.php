@@ -113,7 +113,6 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
 
-        /** @var \Cake\Controller\Component $instance */
         $instance = new $class($this, $config);
         $enable = $config['enabled'] ?? true;
         if ($enable) {
