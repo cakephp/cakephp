@@ -212,7 +212,6 @@ class Mysql extends Driver
     {
         return match ($feature) {
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            DriverFeatureEnum::PDO_QUOTE,
             DriverFeatureEnum::SAVEPOINT => true,
 
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => false,

@@ -278,8 +278,6 @@ class Sqlserver extends Driver
 
             DriverFeatureEnum::JSON => false,
 
-            DriverFeatureEnum::PDO_QUOTE => $this->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc',
-
             default => false,
         };
     }
