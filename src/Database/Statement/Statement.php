@@ -19,7 +19,8 @@ namespace Cake\Database\Statement;
 use Cake\Database\Driver;
 use Cake\Database\FieldTypeConverter;
 use Cake\Database\StatementInterface;
-use Cake\Database\TypeConverterTrait;
+use Cake\Database\TypeFactory;
+use Cake\Database\TypeInterface;
 use Cake\Database\TypeMap;
 use InvalidArgumentException;
 use PDO;
@@ -27,11 +28,6 @@ use PDOStatement;
 
 class Statement implements StatementInterface
 {
-    use TypeConverterTrait {
-        cast as protected;
-        matchTypes as protected;
-    }
-
     /**
      * @var array<string, int>
      */
@@ -112,6 +108,28 @@ class Statement implements StatementInterface
 
         $this->params[$column] = $value;
         $this->performBind($column, $value, $type);
+    }
+
+    /**
+     * Converts a give value to a suitable database value based on type and
+     * return relevant internal statement type.
+     *
+     * @param mixed $value The value to cast.
+     * @param \Cake\Database\TypeInterface|string|int $type The type name or type instance to use.
+     * @return array List containing converted value and internal type.
+     * @psalm-return array{0:mixed, 1:int}
+     */
+    protected function cast(mixed $value, TypeInterface|string|int $type = 'string'): array
+    {
+        if (is_string($type)) {
+            $type = TypeFactory::build($type);
+        }
+        if ($type instanceof TypeInterface) {
+            $value = $type->toDatabase($value, $this->_driver);
+            $type = $type->toStatement($value, $this->_driver);
+        }
+
+        return [$value, $type];
     }
 
     /**
