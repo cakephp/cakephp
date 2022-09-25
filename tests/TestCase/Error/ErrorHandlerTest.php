@@ -264,7 +264,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertMatchesRegularExpression('/Undefined variable\:? \$?out in/', $messages[0]);
         $this->assertStringContainsString('[' . __FILE__ . ', line ' . (__LINE__ - 6) . ']', $messages[0]);
         $this->assertStringContainsString('Trace:', $messages[0]);
-        $this->assertStringContainsString(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()', $messages[0]);
+        $this->assertStringContainsString(__NAMESPACE__ . '\ErrorHandlerTest->testHandleErrorLoggingTrace()', $messages[0]);
         $this->assertStringContainsString('Request URL:', $messages[0]);
         $this->assertStringContainsString('Referer URL:', $messages[0]);
     }
