@@ -426,7 +426,11 @@ class Debugger
      */
     public static function trace(array $options = [])
     {
-        return Debugger::formatTrace(debug_backtrace(), $options);
+        // Remove the frame for Debugger::trace()
+        $backtrace = debug_backtrace();
+        array_shift($backtrace);
+
+        return Debugger::formatTrace($backtrace, $options);
     }
 
     /**

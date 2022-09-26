@@ -128,8 +128,8 @@ class ErrorHandlerTest extends TestCase
             $this->assertMatchesRegularExpression('/<b>Warning<\/b>/', $result);
             $this->assertMatchesRegularExpression('/variable \$wrong/', $result);
         }
-        $this->assertStringContainsString(
-            'ErrorHandlerTest.php, line ' . (__LINE__ - 13),
+        $this->assertMatchesRegularExpression(
+            '/ErrorHandlerTest\.php[^,]+, line[^\d]+' . (__LINE__ - 13) . '/',
             $result,
             'Should contain file and line reference'
         );
