@@ -50,7 +50,7 @@ if (!function_exists('debug')) {
         $location = [];
         if ($showFrom) {
             $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
-            if (isset($trace[0])) {
+            if (isset($trace[0]['line']) && isset($trace[0]['file'])) {
                 $location = [
                     'line' => $trace[0]['line'],
                     'file' => $trace[0]['file'],
