@@ -316,7 +316,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _method(Throwable $exception): string
     {
-        [, $baseClass] = namespaceSplit(get_class($exception));
+        [, $baseClass] = namespaceSplit($exception::class);
 
         if (str_ends_with($baseClass, 'Exception')) {
             $baseClass = substr($baseClass, 0, -9);
@@ -386,7 +386,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $exception->getCode();
         }
 
-        return $this->exceptionHttpCodes[get_class($exception)] ?? 500;
+        return $this->exceptionHttpCodes[$exception::class] ?? 500;
     }
 
     /**

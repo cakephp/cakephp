@@ -85,7 +85,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $invert = [];
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
-                $class = get_class($class);
+                $class = $class::class;
             }
             if (!isset($invert[$class])) {
                 $invert[$class] = [];
@@ -198,7 +198,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
-                $class = get_class($class);
+                $class = $class::class;
             }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);

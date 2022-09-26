@@ -87,7 +87,7 @@ TEXT;
         if ($var instanceof SpecialNode) {
             return $var->getValue();
         }
-        throw new InvalidArgumentException('Unknown node received ' . get_class($var));
+        throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
     /**

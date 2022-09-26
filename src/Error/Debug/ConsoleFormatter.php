@@ -138,7 +138,7 @@ class ConsoleFormatter implements FormatterInterface
         if ($var instanceof SpecialNode) {
             return $this->style('special', $var->getValue());
         }
-        throw new InvalidArgumentException('Unknown node received ' . get_class($var));
+        throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
     /**

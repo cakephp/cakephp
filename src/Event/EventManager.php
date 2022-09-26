@@ -489,7 +489,7 @@ class EventManager implements EventManagerInterface
                 $event = $this->_eventList[$i];
                 try {
                     $subject = $event->getSubject();
-                    $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($subject);
+                    $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;
                 } catch (CakeException) {
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with no subject';
                 }

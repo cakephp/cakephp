@@ -103,7 +103,7 @@ class ErrorLogger implements ErrorLoggerInterface
         $message = sprintf(
             '%s[%s] %s in %s on line %s',
             $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
+            $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine()

@@ -666,7 +666,7 @@ class Debugger
         $isRef = $context->hasReference($var);
         $refNum = $context->getReferenceId($var);
 
-        $className = get_class($var);
+        $className = $var::class;
         if ($isRef) {
             return new ReferenceNode($className, $refNum);
         }

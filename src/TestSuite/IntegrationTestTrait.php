@@ -1371,10 +1371,10 @@ trait IntegrationTestTrait
         $message = PHP_EOL;
         foreach ($exceptions as $i => $error) {
             if ($i == 0) {
-                $message .= sprintf('Possibly related to %s: "%s"', get_class($error), $error->getMessage());
+                $message .= sprintf('Possibly related to %s: "%s"', $error::class, $error->getMessage());
                 $message .= PHP_EOL;
             } else {
-                $message .= sprintf('Caused by %s: "%s"', get_class($error), $error->getMessage());
+                $message .= sprintf('Caused by %s: "%s"', $error::class, $error->getMessage());
                 $message .= PHP_EOL;
             }
             $message .= $error->getTraceAsString();

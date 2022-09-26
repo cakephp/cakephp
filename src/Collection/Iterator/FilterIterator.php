@@ -72,7 +72,7 @@ class FilterIterator extends Collection
             $iterator = $iterator->unwrap();
         }
 
-        if (get_class($iterator) !== ArrayIterator::class) {
+        if ($iterator::class !== ArrayIterator::class) {
             return $filter;
         }
 
