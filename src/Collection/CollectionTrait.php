@@ -679,7 +679,7 @@ trait CollectionTrait
         }
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
-        if ($keepKeys && get_class($iterator) === RecursiveIteratorIterator::class) {
+        if ($keepKeys && $iterator::class === RecursiveIteratorIterator::class) {
             $keepKeys = false;
         }
 
@@ -890,7 +890,7 @@ trait CollectionTrait
     {
         $iterator = $this;
         while (
-            get_class($iterator) === Collection::class
+            $iterator::class === Collection::class
             && $iterator instanceof OuterIterator
         ) {
             $iterator = $iterator->getInnerIterator();
@@ -1021,7 +1021,7 @@ trait CollectionTrait
     {
         $iterator = $this->unwrap();
 
-        if (get_class($iterator) === ArrayIterator::class) {
+        if ($iterator::class === ArrayIterator::class) {
             /** @phpstan-ignore-next-line */
             $iterator = $iterator->getArrayCopy();
         }

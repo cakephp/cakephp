@@ -1823,7 +1823,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'comments']);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `Sluggable` behavior is not defined on `' . get_class($table) . '`.');
+        $this->expectExceptionMessage('The `Sluggable` behavior is not defined on `' . $table::class . '`.');
 
         $this->assertFalse($table->hasBehavior('Sluggable'));
         $table->getBehavior('Sluggable');
@@ -3398,7 +3398,7 @@ class TableTest extends TestCase
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(sprintf(
             'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
-            get_class($table)
+            $table::class
         ));
 
         $table->getValidator('bad');

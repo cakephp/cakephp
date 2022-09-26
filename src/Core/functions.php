@@ -53,7 +53,7 @@ if (!function_exists('h')) {
             if ($text instanceof Stringable) {
                 $text = (string)$text;
             } else {
-                $text = '(object)' . get_class($text);
+                $text = '(object)' . $text::class;
             }
         } elseif ($text === null || is_scalar($text)) {
             return $text;

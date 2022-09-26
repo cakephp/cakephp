@@ -159,7 +159,7 @@ class LoggedQuery implements JsonSerializable, Stringable
         $error = $this->error;
         if ($error !== null) {
             $error = [
-                'class' => get_class($error),
+                'class' => $error::class,
                 'message' => $error->getMessage(),
                 'code' => $error->getCode(),
             ];

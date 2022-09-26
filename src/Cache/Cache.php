@@ -255,7 +255,7 @@ class Cache
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($backend)
+                    $backend::class
                 ),
                 E_USER_WARNING
             );

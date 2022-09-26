@@ -86,7 +86,7 @@ class ExtractIterator extends Collection
             $iterator = $iterator->unwrap();
         }
 
-        if (get_class($iterator) !== ArrayIterator::class) {
+        if ($iterator::class !== ArrayIterator::class) {
             return $this;
         }
 
@@ -96,7 +96,6 @@ class ExtractIterator extends Collection
         $callback = $this->_extractor;
         $res = [];
 
-        /** @phpstan-ignore-next-line **/
         foreach ($iterator->getArrayCopy() as $k => $v) {
             $res[$k] = $callback($v);
         }

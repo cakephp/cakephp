@@ -358,7 +358,7 @@ class ExceptionTrap
     {
         $message = sprintf(
             '[%s] %s (%s:%s)', // Keeping same message format
-            get_class($exception),
+            $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine(),

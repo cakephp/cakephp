@@ -137,15 +137,12 @@ class EntityContext implements ContextInterface
                     break;
                 }
             }
-            $isEntity = $entity instanceof EntityInterface;
 
-            if ($isEntity) {
-                /** @psalm-suppress PossiblyInvalidMethodCall */
+            if ($entity instanceof EntityInterface) {
                 $table = $entity->getSource();
             }
-            /** @psalm-suppress PossiblyInvalidArgument */
-            if (!$table && $isEntity && get_class($entity) !== Entity::class) {
-                [, $entityClass] = namespaceSplit(get_class($entity));
+            if (!$table && $entity instanceof EntityInterface && $entity::class !== Entity::class) {
+                [, $entityClass] = namespaceSplit($entity::class);
                 $table = Inflector::pluralize($entityClass);
             }
         }

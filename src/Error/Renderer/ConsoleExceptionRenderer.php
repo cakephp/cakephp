@@ -94,7 +94,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
             sprintf(
                 '<error>%s[%s] %s</error> in %s on line %s',
                 $index > 0 ? 'Caused by ' : '',
-                get_class($exception),
+                $exception::class,
                 $exception->getMessage(),
                 $exception->getFile(),
                 $exception->getLine()

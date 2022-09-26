@@ -352,7 +352,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     protected function referenceName(Table $table): string
     {
-        $name = namespaceSplit(get_class($table));
+        $name = namespaceSplit($table::class);
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
             $name = $table->getTable() ?: $table->getAlias();

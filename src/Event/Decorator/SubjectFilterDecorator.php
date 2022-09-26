@@ -64,6 +64,6 @@ class SubjectFilterDecorator extends AbstractDecorator
             return false;
         }
 
-        return in_array(get_class($subject), $this->_options['allowedSubject'], true);
+        return in_array($subject::class, $this->_options['allowedSubject'], true);
     }
 }

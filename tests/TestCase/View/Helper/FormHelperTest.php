@@ -344,7 +344,7 @@ class FormHelperTest extends TestCase
             'array' => [$data, 'Cake\View\Form\ArrayContext'],
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
-            'custom' => [$custom, get_class($custom)],
+            'custom' => [$custom, $custom::class],
         ];
     }
 

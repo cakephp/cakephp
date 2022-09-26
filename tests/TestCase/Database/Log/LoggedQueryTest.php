@@ -196,7 +196,7 @@ class LoggedQueryTest extends TestCase
             'params' => ['p1' => '$2y$10$dUAIj'],
             'took' => 0,
             'error' => [
-                'class' => get_class($error),
+                'class' => $error::class,
                 'message' => $error->getMessage(),
                 'code' => $error->getCode(),
             ],
