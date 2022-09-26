@@ -103,7 +103,7 @@ if (!function_exists('breakpoint')) {
      * ```
      *
      * @return string|null
-     * @link http://psysh.org/
+     * @link https://psysh.org/
      */
     function breakpoint()
     {

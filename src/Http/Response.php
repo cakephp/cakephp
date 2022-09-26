@@ -1030,7 +1030,7 @@ class Response implements ResponseInterface
      * status code.
      *
      * @link https://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
     public function getReasonPhrase()
@@ -1063,7 +1063,7 @@ class Response implements ResponseInterface
      *            'Hello' => 'World'
      *        ]); // throws an exception due to invalid codes
      *
-     *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
+     *        For more on HTTP status codes see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
      * @return mixed Associative array of the HTTP codes as keys, and the message
      *    strings as values, or null of the given $code does not exist.
      * @throws \InvalidArgumentException If an attempt is made to add an invalid status code
