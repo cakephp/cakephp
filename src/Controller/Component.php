@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use AllowDynamicProperties;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
@@ -59,7 +58,6 @@ use Cake\Log\LogTrait;
  * @link https://book.cakephp.org/4/en/controllers/components.html
  * @see \Cake\Controller\Controller::$components
  */
-#[AllowDynamicProperties]
 class Component implements EventListenerInterface
 {
     use InstanceConfigTrait;
@@ -94,6 +92,13 @@ class Component implements EventListenerInterface
      * @var array<string, array>
      */
     protected array $_componentMap = [];
+
+    /**
+     * Loaded component instances.
+     *
+     * @var array<string, \Cake\Controller\Component>
+     */
+    protected array $componentInstances = [];
 
     /**
      * Constructor
@@ -145,12 +150,20 @@ class Component implements EventListenerInterface
      */
     public function __get(string $name): ?Component
     {
-        if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
-            $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
+        if (isset($this->componentInstances[$name])) {
+            return $this->componentInstances[$name];
         }
 
-        return $this->{$name} ?? null;
+        if (isset($this->_componentMap[$name])) {
+            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
+
+            return $this->componentInstances[$name] = $this->_registry->load(
+                $this->_componentMap[$name]['class'],
+                $config
+            );
+        }
+
+        return null;
     }
 
     /**

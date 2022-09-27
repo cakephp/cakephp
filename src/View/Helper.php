@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
-use AllowDynamicProperties;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 
@@ -41,7 +40,6 @@ use Cake\Event\EventListenerInterface;
  * - `afterRenderFile(EventInterface $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  */
-#[AllowDynamicProperties]
 class Helper implements EventListenerInterface
 {
     use InstanceConfigTrait;
@@ -66,6 +64,13 @@ class Helper implements EventListenerInterface
      * @var array<string, array>
      */
     protected array $_helperMap = [];
+
+    /**
+     * Loaded helper instances.
+     *
+     * @var array<string, \Cake\View\Helper>
+     */
+    protected array $helperInstances = [];
 
     /**
      * The View instance this helper is attached to
@@ -100,11 +105,14 @@ class Helper implements EventListenerInterface
      */
     public function __get(string $name): ?Helper
     {
-        if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-            $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
-            $this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
+        if (isset($this->helperInstances[$name])) {
+            return $this->helperInstances[$name];
+        }
 
-            return $this->{$name};
+        if (isset($this->_helperMap[$name])) {
+            $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
+
+            return $this->helperInstances[$name] = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
         }
 
         return null;
