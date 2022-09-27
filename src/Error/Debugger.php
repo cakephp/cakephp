@@ -395,9 +395,17 @@ class Debugger
         for ($i = $frameCount, $p = $parentCount; $i >= 0 && $p >= 0; $p--) {
             $parentTail = $parentFrames[$p];
             $tail = $frames[$i];
+
+            // Frames without file/line are never equal to another frame.
             $isEqual = (
-                ($tail['file'] ?? '') === ($parentTail['file'] ?? '') &&
-                ($tail['line'] ?? '') === ($parentTail['line'] ?? '')
+                (
+                    isset($tail['file']) &&
+                    isset($tail['line']) &&
+                    isset($parentTail['file']) &&
+                    isset($parentTail['line'])
+                ) &&
+                ($tail['file'] === $parentTail['file']) &&
+                ($tail['line'] === $parentTail['line'])
             );
             if ($isEqual) {
                 unset($frames[$i]);
