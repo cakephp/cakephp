@@ -8,8 +8,6 @@ on:
       - 5.*
   workflow_dispatch:
 
-permissions: {}
-
 jobs:
   trigger-api:
     runs-on: ubuntu-latest
