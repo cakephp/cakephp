@@ -212,7 +212,6 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrl(): void
     {
-        $this->Helper->webroot = '';
         $result = $this->Helper->assetUrl('js/post.js', ['fullBase' => true]);
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
 
@@ -281,7 +280,6 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlPlugin(): void
     {
-        $this->Helper->webroot = '';
         $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
@@ -310,7 +308,6 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlTimestampForce(): void
     {
-        $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->assetUrl('cake.generic.css', ['pathPrefix' => Configure::read('App.cssBaseUrl')]);
@@ -322,7 +319,6 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetTimestampConfigureOverride(): void
     {
-        $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
         $timestamp = false;
 
@@ -356,7 +352,6 @@ class UrlHelperTest extends TestCase
      */
     public function testScript(): void
     {
-        $this->Helper->webroot = '';
         $result = $this->Helper->script(
             'post.js',
             ['fullBase' => true]
@@ -369,7 +364,6 @@ class UrlHelperTest extends TestCase
      */
     public function testScriptTimestampForce(): void
     {
-        $this->Helper->webroot = '';
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->script('script.js');
@@ -547,7 +541,6 @@ class UrlHelperTest extends TestCase
     public function testAppAssetPresent(): void
     {
         $Url = new UrlHelper($this->View, ['assetUrlClassName' => Asset::class]);
-        $Url->webroot = '';
 
         $result = $Url->assetUrl('cake.generic.css', ['pathPrefix' => '/']);
         $this->assertSame('/cake.generic.css?appHash', $result);

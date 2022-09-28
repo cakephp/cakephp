@@ -2136,7 +2136,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->select('Model.select', $options, ['multiple' => true]);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
@@ -5922,7 +5921,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->date('published');
         $expected = ['date', 'published'];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
@@ -5946,7 +5944,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->date('published', ['secure' => false]);
         $expected = [];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
