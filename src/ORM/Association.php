@@ -398,7 +398,7 @@ abstract class Association
             $config = [];
             $exists = $tableLocator->exists($registryAlias);
             if (!$exists) {
-                $config = ['className' => $this->_className];
+                $config = ['className' => $this->_className, 'connection' => $this->_sourceTable->getConnection()];
             }
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
