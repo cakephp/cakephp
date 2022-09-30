@@ -50,6 +50,7 @@ class AuthorsTable extends Table
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query
      * @param array<string, mixed> $options The options
+     * @return \Cake\ORM\Query\SelectQuery
      */
     public function findFormatted(SelectQuery $query, array $options = []): SelectQuery
     {
@@ -60,5 +61,17 @@ class AuthorsTable extends Table
                 return $author;
             });
         });
+    }
+
+    /**
+     * Finder that accepts an option via a typed parameter.
+     *
+     * @param \Cake\ORM\SelectQuery $query The query
+     * @param int $id Author ID
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findWithIdArgument(SelectQuery $query, int $id): SelectQuery
+    {
+        return $query->where(['id' => $id]);
     }
 }

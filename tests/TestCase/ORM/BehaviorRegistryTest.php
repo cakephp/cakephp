@@ -304,7 +304,7 @@ class BehaviorRegistryTest extends TestCase
             ->method('findNoSlug')
             ->with($query, [])
             ->will($this->returnValue($query));
-        $return = $this->Behaviors->callFinder('noSlug', [$query, []]);
+        $return = $this->Behaviors->callFinder('noSlug', $query, []);
         $this->assertSame($query, $return);
     }
 
@@ -316,7 +316,7 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call finder "nope"');
         $this->Behaviors->load('Sluggable');
-        $this->Behaviors->callFinder('nope');
+        $this->Behaviors->callFinder('nope', new SelectQuery($this->Table));
     }
 
     /**
@@ -342,7 +342,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 
-        $this->Behaviors->callFinder('noSlug');
+        $this->Behaviors->callFinder('noSlug', new SelectQuery($this->Table));
     }
 
     /**

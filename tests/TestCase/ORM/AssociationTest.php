@@ -488,6 +488,42 @@ class AssociationTest extends TestCase
         );
     }
 
+    public function testCustomFinderWithTypedArgs(): void
+    {
+        $this->association->setFinder('published');
+        $this->assertEquals(
+            ['this' => 'custom'],
+            $this->association->find(null, [], 'custom')->getOptions()
+        );
+        $this->assertEquals(
+            ['this' => 'custom'],
+            $this->association->find(null, options: [], what: 'custom')->getOptions()
+        );
+
+        $this->assertEquals(
+            ['other' => true, 'this' => 'custom'],
+            $this->association->find(['published' => ['other' => true]], [], 'custom')->getOptions()
+        );
+        $this->assertEquals(
+            ['other' => true, 'this' => 'custom'],
+            $this->association->find(['published' => ['other' => true]], 'custom')->getOptions()
+        );
+
+        $this->association->setFinder('publishedWithArgOnly');
+        $this->assertEquals(
+            ['this' => 'custom'],
+            $this->association->find(null, 'custom')->getOptions()
+        );
+        $this->assertEquals(
+            ['this' => 'custom'],
+            $this->association->find(null, what: 'custom')->getOptions()
+        );
+        $this->assertEquals(
+            ['this' => 'custom'],
+            $this->association->find(what: 'custom')->getOptions()
+        );
+    }
+
     /**
      * Tests that `locator` is a valid option for the association constructor
      */
