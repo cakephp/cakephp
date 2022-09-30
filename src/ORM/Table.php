@@ -55,6 +55,7 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
+use ReflectionMethod;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -1250,21 +1251,54 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Calling finders
      *
      * The find() method is the entry point for custom finder methods.
-     * You can invoke a finder by specifying the type:
+     * You can invoke a finder by specifying the type.
+     *
+     * This will invoke the `findPublished` method:
      *
      * ```
      * $query = $articles->find('published');
      * ```
      *
-     * Would invoke the `findPublished` method.
+     * ## Typed finder arguments
+     *
+     * Finders can have typed parameters separate from the `$options` array and the
+     * `$options` parameter can be optional if not needed:
+     *
+     * ```
+     * $query = $articles->find('byCategory', $category);
+     * ```
+     *
+     * Here, the finder "findByCategory" does not have an `$options` parameter:
+     *
+     * ```
+     * function findByCategory(SelectQuery $query, int $category): SelectQuery
+     * {
+     *     return $query;
+     * }
+     * ```
+     *
+     * If you need to pass query options, just add the typed arguments after `$options`:
+     *
+     * ```
+     * $query = $articles->find('byCategory', [...], $category);
+     * ```
+     *
+     * Here, the finder "findByCategory" does have an `$options` parameter:
+     *
+     * ```
+     * function findByCategory(SelectQuery $query, array $options, int $category): SelectQuery
+     * {
+     *     return $query;
+     * }
+     * ```
      *
      * @param string $type the type of query to perform
-     * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function find(string $type = 'all', array $options = []): SelectQuery
+    public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
-        return $this->callFinder($type, $this->selectQuery(), $options);
+        return $this->callFinder($type, $this->selectQuery(), ...$args);
     }
 
     /**
@@ -2586,30 +2620,54 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Calls a finder method and applies it to the passed query.
      *
+     * @internal
      * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param string $type Name of the finder to be called.
      * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
-     * @param array<string, mixed> $options List of options to pass to the finder.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
      * @uses findThreaded()
      */
-    public function callFinder(string $type, SelectQuery $query, array $options = []): SelectQuery
+    public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
-        assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
+        // Extract and apply $options from arguments
+        if ($args) {
+            $options = [];
+            if (array_key_exists(0, $args)) {
+                // $options is not a named argument
+                $options = &$args[0];
+            } elseif (array_key_exists('options', $args)) {
+                // options is a named argument
+                $options = &$args['options'];
+            }
 
-        /** @var array<string, mixed> $options */
-        $query->applyOptions($options);
-        $options = $query->getOptions();
+            if (is_array($options) && $options) {
+                assert(!array_is_list($options), '`$options` argument should be an associative array.');
+
+                $query->applyOptions($options);
+                /** @psalm-suppress ReferenceReusedFromConfusingScope */
+                $options = $query->getOptions();
+            }
+        }
+
         $finder = 'find' . $type;
         if (method_exists($this, $finder)) {
-            return $this->{$finder}($query, $options);
+            if (!$args) {
+                $reflected = new ReflectionMethod($this, $finder);
+                $param = $reflected->getParameters()[1] ?? null;
+                if ($param?->name === 'options' && !$param->isDefaultValueAvailable()) {
+                    $args = [[]];
+                }
+            }
+
+            return $this->{$finder}($query, ...$args);
         }
 
         if ($this->_behaviors->hasFinder($type)) {
-            return $this->_behaviors->callFinder($type, [$query, $options]);
+            return $this->_behaviors->callFinder($type, $query, ...$args);
         }
 
         throw new BadMethodCallException(sprintf(

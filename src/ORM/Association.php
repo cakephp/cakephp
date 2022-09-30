@@ -836,17 +836,36 @@ abstract class Association
      *
      * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
-     * @param array<string, mixed> $options The options to for the find
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query\SelectQuery
      */
-    public function find(array|string|null $type = null, array $options = []): SelectQuery
+    public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
 
+        // Find $options in arguments to merge with finder options
+        $options = null;
+        if ($args) {
+            if (array_key_exists(0, $args)) {
+                $options = &$args[0];
+            } elseif (array_key_exists('options', $args)) {
+                $options = &$args['options'];
+            }
+        }
+
+        if ($opts) {
+            if (is_array($options)) {
+                /** @psalm-suppress ReferenceReusedFromConfusingScope */
+                $options = $options + $opts;
+            } else {
+                array_unshift($args, $opts);
+            }
+        }
+
         return $this->getTarget()
-            ->find($type, $options + $opts)
+            ->find($type, ...$args)
             ->where($this->getConditions());
     }
 

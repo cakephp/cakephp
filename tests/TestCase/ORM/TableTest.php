@@ -1257,6 +1257,18 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that extra arguments are passed to finders.
+     */
+    public function testFindTypedParameters(): void
+    {
+        $author = $this->getTableLocator()->get('Authors')->find('WithIdArgument', 2)->first();
+        $this->assertSame(2, $author->id);
+
+        $author = $this->getTableLocator()->get('Authors')->find('WithIdArgument', id: 2)->first();
+        $this->assertSame(2, $author->id);
+    }
+
+    /**
      * Tests find('list')
      */
     public function testFindListNoHydration(): void
@@ -5298,7 +5310,7 @@ class TableTest extends TestCase
     public function testSimplifiedFind(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder'])
+            ->onlyMethods(['findAll'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => ['id' => ['type' => 'integer']],
@@ -5306,8 +5318,8 @@ class TableTest extends TestCase
             ->getMock();
 
         $query = (new SelectQuery($table))->select();
-        $table->expects($this->once())->method('callFinder')
-            ->with('all', $query, []);
+        $table->expects($this->once())->method('findAll')
+            ->with($query, []);
         $table->find();
     }
 
