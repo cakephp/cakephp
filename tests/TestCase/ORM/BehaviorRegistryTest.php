@@ -304,7 +304,7 @@ class BehaviorRegistryTest extends TestCase
             ->method('findNoSlug')
             ->with($query, [])
             ->will($this->returnValue($query));
-        $return = $this->Behaviors->callFinder('noSlug', [$query, []]);
+        $return = $this->Behaviors->callFinder('noSlug', $query, []);
         $this->assertSame($query, $return);
     }
 

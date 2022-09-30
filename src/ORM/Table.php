@@ -1251,21 +1251,29 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Calling finders
      *
      * The find() method is the entry point for custom finder methods.
-     * You can invoke a finder by specifying the type:
+     * You can invoke a finder by specifying the type.
+     *
+     * This will invoke the `findPublished` method:
      *
      * ```
      * $query = $articles->find('published');
      * ```
      *
-     * Would invoke the `findPublished` method.
+     * Any arguments passed after the `$options` array will be passed to the finder method.
+     * The `$options` array is not optional when passing extra arguments.
+     *
+     * ```
+     * $query = $articles->find('published', [], $category);
+     * ```
      *
      * @param string $type the type of query to perform
      * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query The query builder
      */
-    public function find(string $type = 'all', array $options = []): Query
+    public function find(string $type = 'all', array $options = [], ...$args): Query
     {
-        return $this->callFinder($type, $this->query()->select(), $options);
+        return $this->callFinder($type, $this->query()->select(), $options, ...$args);
     }
 
     /**
@@ -2543,23 +2551,24 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $type Name of the finder to be called.
      * @param \Cake\ORM\Query $query The query object to apply the finder options to.
      * @param array<string, mixed> $options List of options to pass to the finder.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
      * @uses findThreaded()
      */
-    public function callFinder(string $type, Query $query, array $options = []): Query
+    public function callFinder(string $type, Query $query, array $options = [], ...$args): Query
     {
         $query->applyOptions($options);
         $options = $query->getOptions();
         $finder = 'find' . $type;
         if (method_exists($this, $finder)) {
-            return $this->{$finder}($query, $options);
+            return $this->{$finder}($query, $options, ...$args);
         }
 
         if ($this->_behaviors->hasFinder($type)) {
-            return $this->_behaviors->callFinder($type, [$query, $options]);
+            return $this->_behaviors->callFinder($type, $query, $options, ...$args);
         }
 
         throw new BadMethodCallException(sprintf(

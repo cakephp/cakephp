@@ -260,12 +260,13 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     /**
      * Invoke a finder on a behavior.
      *
+     * @internal
      * @param string $type The finder type to invoke.
-     * @param array $args The arguments you want to invoke the method with.
+     * @param mixed ...$args The arguments you want to invoke the method with.
      * @return \Cake\ORM\Query The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
      */
-    public function callFinder(string $type, array $args = []): Query
+    public function callFinder(string $type, ...$args): Query
     {
         $type = strtolower($type);
 

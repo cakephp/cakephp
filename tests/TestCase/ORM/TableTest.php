@@ -1127,6 +1127,15 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that extra arguments are passed to finders.
+     */
+    public function testFindTypedParameters(): void
+    {
+        $author = $this->getTableLocator()->get('Authors')->find('WithIdArgument', [], 2)->first();
+        $this->assertSame(2, $author->id);
+    }
+
+    /**
      * Tests find('list')
      */
     public function testFindListNoHydration(): void

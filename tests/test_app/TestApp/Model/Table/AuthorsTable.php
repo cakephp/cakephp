@@ -61,4 +61,16 @@ class AuthorsTable extends Table
             });
         });
     }
+
+    /**
+     * Finder that accepts an option via a typed parameter.
+     *
+     * @param \Cake\ORM\Query $query The query
+     * @param array<string, mixed> $options The options
+     * @param int $id Author ID
+     */
+    public function findWithIdArgument(Query $query, array $options, int $id): Query
+    {
+        return $query->where(['id' => $id]);
+    }
 }

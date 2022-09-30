@@ -27,8 +27,9 @@ class GreedyCommentsTable extends Table
      *
      * @param string $type Find type
      * @param array<string, mixed> $options find options
+     * @param mixed ...$args Finder arguments
      */
-    public function find(string $type = 'all', array $options = []): Query
+    public function find(string $type = 'all', array $options = [], ...$args): Query
     {
         if (empty($options['conditions'])) {
             $options['conditions'] = [];
