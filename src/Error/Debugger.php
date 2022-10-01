@@ -272,6 +272,50 @@ class Debugger
     }
 
     /**
+     * Get the frames from $exception that are not present in $parent
+     *
+     * @param \Throwable $exception The exception to get frames from.
+     * @param ?\Throwable $parent The parent exception to compare frames with.
+     * @return array An array of frame structures.
+     */
+    public static function getUniqueFrames(Throwable $exception, ?Throwable $parent): array
+    {
+        if ($parent === null) {
+            return $exception->getTrace();
+        }
+        $parentFrames = $parent->getTrace();
+        $frames = $exception->getTrace();
+
+        $parentCount = count($parentFrames) - 1;
+        $frameCount = count($frames) - 1;
+
+        // Reverse loop through both traces removing frames that
+        // are the same.
+        for ($i = $frameCount, $p = $parentCount; $i >= 0 && $p >= 0; $p--) {
+            $parentTail = $parentFrames[$p];
+            $tail = $frames[$i];
+
+            // Frames without file/line are never equal to another frame.
+            $isEqual = (
+                (
+                    isset($tail['file']) &&
+                    isset($tail['line']) &&
+                    isset($parentTail['file']) &&
+                    isset($parentTail['line'])
+                ) &&
+                ($tail['file'] === $parentTail['file']) &&
+                ($tail['line'] === $parentTail['line'])
+            );
+            if ($isEqual) {
+                unset($frames[$i]);
+                $i--;
+            }
+        }
+
+        return $frames;
+    }
+
+    /**
      * Outputs a stack trace based on the supplied options.
      *
      * ### Options
@@ -289,7 +333,11 @@ class Debugger
      */
     public static function trace(array $options = []): array|string
     {
-        return Debugger::formatTrace(debug_backtrace(), $options);
+        // Remove the frame for Debugger::trace()
+        $backtrace = debug_backtrace();
+        array_shift($backtrace);
+
+        return Debugger::formatTrace($backtrace, $options);
     }
 
     /**
@@ -325,58 +373,49 @@ class Debugger
         ];
         $options = Hash::merge($defaults, $options);
 
-        $count = count($backtrace);
+        $count = count($backtrace) + 1;
         $back = [];
 
-        $_trace = [
-            'line' => '??',
-            'file' => '[internal]',
-            'class' => null,
-            'function' => '[main]',
-        ];
-
         for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
-            $trace = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
-            $signature = $reference = '[main]';
+            $frame = ['file' => '[main]', 'line' => ''];
+            if (isset($backtrace[$i])) {
+                $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
+            }
 
-            if (isset($backtrace[$i + 1])) {
-                $next = $backtrace[$i + 1] + $_trace;
-                $signature = $reference = $next['function'];
-
-                if (!empty($next['class'])) {
-                    $signature = $next['class'] . '::' . $next['function'];
-                    $reference = $signature . '(';
-                    if ($options['args'] && isset($next['args'])) {
-                        $args = [];
-                        foreach ($next['args'] as $arg) {
-                            $args[] = Debugger::exportVar($arg);
-                        }
-                        $reference .= implode(', ', $args);
+            $signature = $reference = $frame['file'];
+            if (!empty($frame['class'])) {
+                $signature = $frame['class'] . $frame['type'] . $frame['function'];
+                $reference = $signature . '(';
+                if ($options['args'] && isset($frame['args'])) {
+                    $args = [];
+                    foreach ($frame['args'] as $arg) {
+                        $args[] = Debugger::exportVar($arg);
                     }
-                    $reference .= ')';
+                    $reference .= implode(', ', $args);
                 }
+                $reference .= ')';
             }
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
             if ($options['format'] === 'points') {
-                $back[] = ['file' => $trace['file'], 'line' => $trace['line'], 'reference' => $reference];
+                $back[] = ['file' => $frame['file'], 'line' => $frame['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 if (!$options['args']) {
-                    unset($trace['args']);
+                    unset($frame['args']);
                 }
-                $back[] = $trace;
+                $back[] = $frame;
             } elseif ($options['format'] === 'text') {
-                $path = static::trimPath($trace['file']);
+                $path = static::trimPath($frame['file']);
                 $reference = $reference;
-                $back[] = sprintf('%s - %s, line %d', $reference, $path, $trace['line']);
+                $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
+                debug($options);
                 throw new InvalidArgumentException(
-                    'Invalid trace format chosen. Must be one of `array`, `points` or `text`.'
+                    "Invalid trace format of `{$options['format']}` chosen. Must be one of `array`, `points` or `text`."
                 );
             }
         }
-
         if ($options['format'] === 'array' || $options['format'] === 'points') {
             return $back;
         }

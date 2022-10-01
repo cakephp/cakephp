@@ -18,7 +18,9 @@
 use Cake\Error\Debugger;
 
 foreach ($exceptions as $level => $exc):
-    $stackTrace = Debugger::formatTrace($exc->getTrace(), [
+    $parent = $exceptions[$level - 1] ?? null;
+    $stackTrace = Debugger::getUniqueFrames($exc, $parent);
+    $stackTrace = Debugger::formatTrace($stackTrace, [
         'format' => 'array',
         'args' => true,
     ]);

@@ -19,6 +19,7 @@ namespace Cake\Error\Renderer;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Error\Debugger;
 use Cake\Error\ExceptionRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -75,7 +76,8 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
         }
         $out = [];
         foreach ($exceptions as $i => $error) {
-            $out = array_merge($out, $this->renderException($error, $i));
+            $parent = $exceptions[$i - 1] ?? null;
+            $out = array_merge($out, $this->renderException($error, $parent));
         }
 
         return join("\n", $out);
@@ -85,15 +87,15 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
      * Render an individual exception
      *
      * @param \Throwable $exception The exception to render.
-     * @param int $index Exception index in the chain
+     * @param ?\Throwable $parent The Exception index in the chain
      * @return array
      */
-    protected function renderException(Throwable $exception, int $index): array
+    protected function renderException(Throwable $exception, ?Throwable $parent): array
     {
         $out = [
             sprintf(
                 '<error>%s[%s] %s</error> in %s on line %s',
-                $index > 0 ? 'Caused by ' : '',
+                $parent ? 'Caused by ' : '',
                 $exception::class,
                 $exception->getMessage(),
                 $exception->getFile(),
@@ -113,10 +115,11 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
         }
 
         if ($this->trace) {
+            $stacktrace = Debugger::getUniqueFrames($exception, $parent);
             $out[] = '';
             $out[] = '<info>Stack Trace:</info>';
             $out[] = '';
-            $out[] = $exception->getTraceAsString();
+            $out[] = Debugger::formatTrace($stacktrace, ['format' => 'text']);
             $out[] = '';
         }
 
