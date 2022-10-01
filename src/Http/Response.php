@@ -660,7 +660,7 @@ class Response implements ResponseInterface
      * status code.
      *
      * @link https://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
     public function getReasonPhrase(): string
