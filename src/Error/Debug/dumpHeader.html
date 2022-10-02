@@ -1,275 +1,284 @@
-<style type="text/css">
-.cake-debug {
-  --color-bg: #ECECE9;
-  --color-highlight-bg: #fcf8e3;
-  --color-control-bg: hsla(0, 0%, 50%, 0.2);
+<style>
+    .cake-debug {
+        --color-bg: #ecece9;
+        --color-highlight-bg: #fcf8e3;
+        --color-control-bg: hsla(0, 0%, 50%, 0.2);
 
-  --color-orange: #c44f24;
-  --color-green: #0b6125;
-  --color-violet: #a71d5d;
-  --color-blue: #4070a0;
-  --color-grey: #5f5f5f;
+        --color-blue: #4070a0;
+        --color-green: #0b6125;
+        --color-grey: #5f5f5f;
+        --color-orange: #c44f24;
+        --color-violet: #a71d5d;
 
-  --color-dark-grey: #222;
-  --color-cyan: #234aa0;
-  --color-red: #d33c44;
+        --color-dark-grey: #222;
+        --color-cyan: #234aa0;
+        --color-red: #d33c44;
 
-  --indent: 20px;
+        --indent: 20px;
 
-  font-family: monospace;
-  background: var(--color-bg);
-  padding: 5px;
-  line-height: 16px;
-  font-size: 14px;
-  margin-bottom: 10px;
-  position: relative;
-}
-.cake-debug:last-child {
-  margin-bottom: 0;
-}
-.cake-debug > span {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--color-dark-grey);
-}
+        font-family: monospace;
+        background: var(--color-bg);
+        padding: 5px;
+        line-height: 16px;
+        font-size: 14px;
+        margin-bottom: 10px;
+        position: relative;
+    }
 
-.cake-dbg-object {
-  display: inline;
-}
-.cake-dbg-object[data-highlighted=true],
-.cake-dbg-object[data-highlighted=true] samp {
-  background: var(--color-highlight-bg);
-}
+    .cake-debug:last-child {
+        margin-bottom: 0;
+    }
 
-/*
-Array item container and each items are blocks so
-nesting works.
-*/
-.cake-dbg-object-props,
-.cake-dbg-array-items {
-  display: block;
-}
-.cake-dbg-prop,
-.cake-dbg-array-item {
-  display: block;
-  padding-left: var(--indent);
-  min-height: 18px;
-}
+    .cake-debug-object {
+        display: inline;
+    }
 
-/** Collapser buttons **/
-[data-hidden=true] {
-  display: none;
-}
+    .cake-debug-object[data-highlighted=true],
+    .cake-debug-object[data-highlighted=true] samp {
+        background: var(--color-highlight-bg);
+    }
 
-.cake-dbg-collapse {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  vertical-align: middle;
-  border-radius: 3px;
-  color: var(--color-blue);
+    /*
+    Array item container and each items are blocks so
+    nesting works.
+    */
+    .cake-debug-object-props,
+    .cake-debug-array-items {
+        display: block;
+    }
 
-  background: var(--color-control-bg);
-  /* Image is an rawurlencoded SVG */
-  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2212%22%20width%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpolygon%20points%3D%223%2C1%203%2C11%208%2C6%22 style%3D%22fill%3A%234070a0%3B%22%2F%3E%3C%2Fsvg%3E");
-  background-position: 2px 1px;
-  background-repeat: no-repeat;
-}
-.cake-dbg-collapse[data-open=true] {
-  transform: rotate(90deg);
-}
-/* Copy button */
-.cake-dbg-copy {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  padding: 6px;
-  background: var(--color-control-bg);
-  color: var(--color-blue);
-  border-radius: 0 0 0 3px;
-}
+    .cake-debug-prop,
+    .cake-debug-array-item {
+        display: block;
+        padding-left: var(--indent);
+        min-height: 18px;
+    }
 
-/* Textual elements */
-.cake-dbg-class {
-  color: var(--color-cyan);
-}
-.cake-dbg-property {
-  color: var(--color-dark-grey);
-}
-.cake-dbg-visibility {
-  color: var(--color-violet);
-}
-.cake-dbg-punct {
-  color: var(--color-grey);
-}
-.cake-dbg-string {
-  color: var(--color-green);
-  white-space: pre-wrap;
-}
-.cake-dbg-number {
-  font-weight: bold;
-  color: var(--color-blue);
-}
-.cake-dbg-const {
-  color: var(--color-yellow);
-  font-weight: bold;
-}
-.cake-dbg-ref {
-  color: var(--color-red);
-}
-.cake-dbg-special {
-  color: var(--color-red);
-  font-style: italic;
-}
+    /** Collapser buttons **/
+    [data-hidden=true] {
+        display: none;
+    }
+
+    .cake-debug-collapse {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        vertical-align: middle;
+        border-radius: 3px;
+        color: var(--color-blue);
+
+        background: var(--color-control-bg);
+        /* Image is an rawurlencoded SVG */
+        background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2212%22%20width%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpolygon%20points%3D%223%2C1%203%2C11%208%2C6%22 style%3D%22fill%3A%234070a0%3B%22%2F%3E%3C%2Fsvg%3E");
+        background-position: 2px 1px;
+        background-repeat: no-repeat;
+    }
+
+    .cake-debug-collapse[data-open=true] {
+        transform: rotate(90deg);
+    }
+
+    /* Copy button */
+    .cake-debug-copy {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 6px;
+        background: var(--color-control-bg);
+        color: var(--color-blue);
+        border-radius: 0 0 0 3px;
+    }
+
+    /* Textual elements */
+    .cake-debug-class {
+        color: var(--color-cyan);
+    }
+
+    .cake-debug-property {
+        color: var(--color-dark-grey);
+    }
+
+    .cake-debug-visibility {
+        color: var(--color-violet);
+    }
+
+    .cake-debug-punct {
+        color: var(--color-grey);
+    }
+
+    .cake-debug-string {
+        color: var(--color-green);
+        white-space: pre-wrap;
+    }
+
+    .cake-debug-number {
+        color: var(--color-blue);
+        font-weight: bold;
+    }
+
+    .cake-debug-const {
+        color: var(--color-orange);
+        font-weight: bold;
+    }
+
+    .cake-debug-ref {
+        color: var(--color-red);
+    }
+
+    .cake-debug-special {
+        color: var(--color-red);
+        font-style: italic;
+    }
 </style>
-<script type="text/javascript">
-(function (win, doc) {
+<script>
+    (function (win, doc) {
 
-function initialize() {
-  createCollapsibles(doc.querySelectorAll('.cake-dbg-array-items'));
-  createCollapsibles(doc.querySelectorAll('.cake-dbg-object-props'));
-  attachRefEvents(doc.querySelectorAll('.cake-dbg'));
-  openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
-  attachCopyButton(doc.querySelectorAll('.cake-dbg'));
-}
-// Add a name on window so DebugKit can add controls to dump blocks
-win.__cakeDebugBlockInit = initialize;
+        function initialize() {
+            createCollapsibles(doc.querySelectorAll('.cake-debug-array-items'));
+            createCollapsibles(doc.querySelectorAll('.cake-debug-object-props'));
+            attachRefEvents(doc.querySelectorAll('.cake-debug'));
+            openBlocks(doc.querySelectorAll('.cake-debug[data-open-all="true"]'));
+            attachCopyButton(doc.querySelectorAll('.cake-debug'));
+        }
 
-/**
- * Open all the collapsed sections in a block.
- */
-function openBlocks(blocks) {
-  blocks.forEach(function (block) {
-    block.querySelectorAll('.cake-dbg-collapse[data-open="false"]').forEach(function (el) {
-      el.click();
-    });
-  });
-}
+        // Add a name on window so DebugKit can add controls to dump blocks
+        win.__cakeDebugBlockInit = initialize;
 
-/**
- * Create collapse toggles and attach events
- */
-function createCollapsibles(nodes) {
-  nodes.forEach(function (node) {
-    // Hide the childnode container if it is not
-    // a direct parent of the container.
-    if (!node.parentNode.parentNode.classList.contains('cake-dbg')) {
-      node.dataset.hidden = true;
-    }
+        /**
+         * Open all the collapsed sections in a block.
+         */
+        function openBlocks(blocks) {
+            blocks.forEach(function (block) {
+                block.querySelectorAll('.cake-debug-collapse[data-open="false"]').forEach(function (el) {
+                    el.click();
+                });
+            });
+        }
 
-    // Don't show toggles for empty arrays/objects
-    if (node.childNodes.length == 0) {
-      return;
-    }
+        /**
+         * Create collapse toggles and attach events
+         */
+        function createCollapsibles(nodes) {
+            nodes.forEach(function (node) {
+                // Hide the childnode container if it is not
+                // a direct parent of the container.
+                if (!node.parentNode.parentNode.classList.contains('cake-debug')) {
+                    node.dataset.hidden = true;
+                }
 
-    var collapser = doc.createElement('a');
-    collapser.classList.add('cake-dbg-collapse');
-    collapser.dataset.open = !node.dataset.hidden;
-    collapser.setAttribute('href', '#')
-    collapser.setAttribute('title', 'Toggle items');
+                // Don't show toggles for empty arrays/objects
+                if (node.childNodes.length == 0) {
+                    return;
+                }
 
-    // Add open/close behavior
-    collapser.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      node.dataset.hidden = node.dataset.hidden === 'true' ? 'false' : 'true';
-      collapser.dataset.open = collapser.dataset.open === 'true' ? 'false' : 'true';
-    });
+                let collapser = doc.createElement('a');
+                collapser.classList.add('cake-debug-collapse');
+                collapser.dataset.open = !node.dataset.hidden;
+                collapser.setAttribute('href', '#')
+                collapser.setAttribute('title', 'Toggle items');
 
-    node.parentNode.insertBefore(collapser, node);
-  });
-}
+                // Add open/close behavior
+                collapser.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    node.dataset.hidden = node.dataset.hidden === 'true' ? 'false' : 'true';
+                    collapser.dataset.open = collapser.dataset.open === 'true' ? 'false' : 'true';
+                });
 
-/**
- * When ref links are clicked open the path to that
- * element and highlight the reference
- */
-function attachRefEvents(nodes) {
-  nodes.forEach(function (container) {
-    var refLinks = container.querySelectorAll('.cake-dbg-ref');
-    refLinks.forEach(function (ref) {
-      ref.addEventListener('click', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        var target = document.getElementById(ref.getAttribute('href').substr(1));
-        openPath(container, target);
-      });
-    });
-  });
-}
+                node.parentNode.insertBefore(collapser, node);
+            });
+        }
 
-function openPath(container, target) {
-  // Open the target element
-  var expander = target.querySelector('.cake-dbg-collapse');
-  if (expander.dataset.open === 'false') {
-    expander.click();
-  }
-  container.querySelectorAll('.cake-dbg-object').forEach(function (el) {
-    el.dataset.highlighted = 'false';
-  })
-  target.dataset.highlighted = 'true';
+        /**
+         * When ref links are clicked open the path to that
+         * element and highlight the reference
+         */
+        function attachRefEvents(nodes) {
+            nodes.forEach(function (container) {
+                let refLinks = container.querySelectorAll('.cake-debug-ref');
+                refLinks.forEach(function (ref) {
+                    ref.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        let target = document.getElementById(ref.getAttribute('href').substr(1));
+                        openPath(container, target);
+                    });
+                });
+            });
+        }
 
-  var current = target;
-  // Traverse up the tree opening all closed containers.
-  while (true) {
-    var parent = current.parentNode;
-    if (parent == container) {
-      break;
-    }
-    if (parent.classList.contains('cake-dbg-object') || parent.classList.contains('cake-dbg-array')) {
-      expander = parent.querySelector('.cake-dbg-collapse');
-      if (expander.dataset.open === 'false') {
-        expander.click();
-      }
-    }
-    current = parent;
-  }
-}
+        function openPath(container, target) {
+            // Open the target element
+            let expander = target.querySelector('.cake-debug-collapse');
+            if (expander.dataset.open === 'false') {
+                expander.click();
+            }
+            container.querySelectorAll('.cake-debug-object').forEach(function (el) {
+                el.dataset.highlighted = 'false';
+            })
+            target.dataset.highlighted = 'true';
 
-// https://www.30secondsofcode.org/js/s/copy-to-clipboard
-function copyToClipboard (str) {
-  var el = document.createElement('textarea');
-  el.value = str;
-  el.setAttribute('readonly', '');
-  el.style.position = 'absolute';
-  el.style.left = '-9999px';
-  document.body.appendChild(el);
-  var selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
-  if (selected) {
-    document.getSelection().removeAllRanges();
-    document.getSelection().addRange(selected);
-  }
-}
+            let current = target;
+            // Traverse up the tree opening all closed containers.
+            while (true) {
+                let parent = current.parentNode;
+                if (parent == container) {
+                    break;
+                }
+                if (parent.classList.contains('cake-debug-object') || parent.classList.contains('cake-debug-array')) {
+                    expander = parent.querySelector('.cake-debug-collapse');
+                    if (expander.dataset.open === 'false') {
+                        expander.click();
+                    }
+                }
+                current = parent;
+            }
+        }
 
-function attachCopyButton(nodes) {
-  nodes.forEach(function (container) {
-    var copy = doc.createElement('a');
-    copy.classList.add('cake-dbg-copy');
-    copy.setAttribute('href', '#');
-    copy.setAttribute('title', 'Copy contents of debug output');
-    copy.appendChild(doc.createTextNode('Copy'));
+        // https://www.30secondsofcode.org/js/s/copy-to-clipboard
+        function copyToClipboard (str) {
+            let el = document.createElement('textarea');
+            el.value = str;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            let selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            if (selected) {
+                document.getSelection().removeAllRanges();
+                document.getSelection().addRange(selected);
+            }
+        }
 
-    // Add copy behavior
-    copy.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var lineNo = '';
-      if (container.parentNode && container.parentNode.classList.contains('cake-debug')) {
-        var line = container.parentNode.querySelector('span');
-        lineNo = line.textContent + "\n";
-      }
+        function attachCopyButton(nodes) {
+            nodes.forEach(function (container) {
+                let copy = doc.createElement('a');
+                copy.classList.add('cake-debug-copy');
+                copy.setAttribute('href', '#');
+                copy.setAttribute('title', 'Copy contents of debug output');
+                copy.appendChild(doc.createTextNode('Copy'));
 
-      // Chop off last 4 to exclude copy button text.
-      copyToClipboard(lineNo + container.textContent.substring(0, container.textContent.length - 4));
-    });
+                // Add copy behavior
+                copy.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let lineNo = '';
+                    if (container.parentNode && container.parentNode.classList.contains('cake-debug')) {
+                        let line = container.parentNode.querySelector('span');
+                        lineNo = line.textContent + "\n";
+                    }
 
-    container.appendChild(copy);
-  });
-}
+                    // Chop off last 4 to exclude copy button text.
+                    copyToClipboard(lineNo + container.textContent.substring(0, container.textContent.length - 4));
+                });
 
-doc.addEventListener('DOMContentLoaded', initialize);
-}(window, document))
+                container.appendChild(copy);
+            });
+        }
+
+        doc.addEventListener('DOMContentLoaded', initialize);
+    }(window, document))
 </script>

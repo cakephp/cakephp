@@ -705,7 +705,7 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
@@ -717,7 +717,7 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
         $this->assertSame($expected, $result);
@@ -754,14 +754,14 @@ EXPECTED;
     public function testFormatHtmlMessage(): void
     {
         $output = Debugger::formatHtmlMessage('Some `code` to `replace`');
-        $this->assertSame('Some <code>code</code> to <code>replace</code>', $output);
+        $this->assertSame('Some <code>`code`</code> to <code>`replace`</code>', $output);
 
         $output = Debugger::formatHtmlMessage("Some `co\nde` to `replace`\nmore");
-        $this->assertSame("Some <code>co<br />\nde</code> to <code>replace</code><br />\nmore", $output);
+        $this->assertSame("Some <code>`co<br />\nde`</code> to <code>`replace`</code><br />\nmore", $output);
 
         $output = Debugger::formatHtmlMessage("Some `code` to <script>alert(\"test\")</script>\nmore");
         $this->assertSame(
-            "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
+            "Some <code>`code`</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
     }
