@@ -651,8 +651,7 @@ TEXT;
     public function testExportVarMockObject(): void
     {
         $result = Debugger::exportVar($this->getMockBuilder(Table::class)->getMock());
-        $expected = '(unable to export object: foreach() argument must be of type array|object, null given)';
-        $this->assertTextEquals($expected, $result);
+        $this->assertStringContainsString('object(Mock_Table', $result);
     }
 
     /**
