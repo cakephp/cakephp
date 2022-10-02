@@ -371,6 +371,7 @@ TEXT;
      */
     public function testExportVarInvalidDebugInfo(): void
     {
+        $this->skipIf(extension_loaded('xdebug'), 'Throwing exceptions inside __debugInfo breaks with xDebug');
         $result = Debugger::exportVar(new ThrowsDebugInfo());
         $expected = '(unable to export object: from __debugInfo)';
         $this->assertTextEquals($expected, $result);
