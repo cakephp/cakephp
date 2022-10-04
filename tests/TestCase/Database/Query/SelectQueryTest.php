@@ -2297,7 +2297,6 @@ class SelectQueryTest extends TestCase
             ->closeCursor();
 
         $reflect = new ReflectionProperty($query, '_dirty');
-        $reflect->setAccessible(true);
         $this->assertFalse($reflect->getValue($query));
 
         $query->offset(2);

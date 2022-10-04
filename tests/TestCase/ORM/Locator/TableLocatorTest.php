@@ -683,18 +683,15 @@ class TableLocatorTest extends TestCase
     {
         $articles = $this->_locator->get(ArticlesTable::class);
         $prop1 = new ReflectionProperty($articles, 'queryFactory');
-        $prop1->setAccessible(true);
 
         $users = $this->_locator->get(MyUsersTable::class);
         $prop2 = new ReflectionProperty($users, 'queryFactory');
-        $prop2->setAccessible(true);
 
         $this->assertInstanceOf(QueryFactory::class, $prop1->getValue($articles));
         $this->assertSame($prop1->getValue($articles), $prop2->getValue($users));
 
         $addresses = $this->_locator->get(AddressesTable::class, ['queryFactory' => new QueryFactory()]);
         $prop3 = new ReflectionProperty($addresses, 'queryFactory');
-        $prop3->setAccessible(true);
         $this->assertNotSame($prop1->getValue($articles), $prop3->getValue($addresses));
     }
 }
