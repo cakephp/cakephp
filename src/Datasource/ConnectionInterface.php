@@ -43,6 +43,16 @@ use Psr\SimpleCache\CacheInterface;
 interface ConnectionInterface extends LoggerAwareInterface
 {
     /**
+     * @var string
+     */
+    public const ROLE_WRITE = 'write';
+
+    /**
+     * @var string
+     */
+    public const ROLE_READ = 'read';
+
+    /**
      * Gets the current logger object.
      *
      * @return \Psr\Log\LoggerInterface logger instance

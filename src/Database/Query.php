@@ -25,6 +25,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Datasource\ConnectionManager;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -227,6 +228,53 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function getConnection(): Connection
     {
         return $this->_connection;
+    }
+
+    /**
+     * Sets the connection for this query to the read-only role for the current connection.
+     *
+     * @return $this
+     */
+    public function useReadRole()
+    {
+        if ($this->_connection->role() !== Connection::ROLE_READ) {
+            /** @var \Cake\Database\Connection $read */
+            $read = ConnectionManager::get($this->_connection->configName(), true, Connection::ROLE_READ);
+            $this->setConnection($read);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the connection for this query to the write role for the current connection.
+     *
+     * @return $this
+     */
+    public function useWriteRole()
+    {
+        if ($this->_connection->role() !== Connection::ROLE_WRITE) {
+            /** @var \Cake\Database\Connection $write */
+            $write = ConnectionManager::get($this->_connection->configName(), true, Connection::ROLE_WRITE);
+            $this->setConnection($write);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the connection for this query to the specified role for the current connection.
+     *
+     * @param string $role Connection role - read or write
+     * @return $this
+     */
+    public function useRole(string $role)
+    {
+        if ($role === Connection::ROLE_READ) {
+            return $this->useReadRole();
+        }
+
+        return $this->useWriteRole();
     }
 
     /**
