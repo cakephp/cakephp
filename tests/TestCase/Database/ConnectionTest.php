@@ -927,7 +927,6 @@ class ConnectionTest extends TestCase
     public function pushNestedTransactionState(): void
     {
         $method = new ReflectionMethod($this->connection, 'wasNestedTransactionRolledback');
-        $method->setAccessible(true);
         $this->nestedTransactionStates[] = $method->invoke($this->connection);
     }
 
@@ -943,7 +942,6 @@ class ConnectionTest extends TestCase
         $statement->closeCursor();
 
         $prop = new ReflectionProperty($conn, '_driver');
-        $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
@@ -973,7 +971,6 @@ class ConnectionTest extends TestCase
         $conn->begin();
 
         $prop = new ReflectionProperty($conn, '_driver');
-        $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
