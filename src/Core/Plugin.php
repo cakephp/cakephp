@@ -127,10 +127,6 @@ class Plugin
      */
     public static function getCollection(): PluginCollection
     {
-        if (!isset(static::$plugins)) {
-            static::$plugins = new PluginCollection();
-        }
-
-        return static::$plugins;
+        return static::$plugins ??= new PluginCollection();
     }
 }
