@@ -67,16 +67,6 @@ class Collection extends IteratorIterator implements CollectionInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return int
-     */
-    public function countKeys(): int
-    {
-        return count($this->toArray());
-    }
-
-    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
