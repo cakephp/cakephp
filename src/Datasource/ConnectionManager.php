@@ -196,9 +196,7 @@ class ConnectionManager
         if (empty(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
-        if (!isset(static::$_registry)) {
-            static::$_registry = new ConnectionRegistry();
-        }
+        static::$_registry ??= new ConnectionRegistry();
 
         return static::$_registry->{$name}
             ?? static::$_registry->load($name, static::$_config[$name]);
