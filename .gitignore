@@ -5,6 +5,7 @@
 /tags
 /composer.lock
 /phpunit.xml
+/phpstan.neon
 /vendor
 /vendors
 /composer.phar
