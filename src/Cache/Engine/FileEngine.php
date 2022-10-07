@@ -167,6 +167,7 @@ class FileEngine extends CacheEngine
 
         $this->_File->rewind();
         $time = time();
+        /** @psalm-suppress RiskyCast */
         $cachetime = (int)$this->_File->current();
 
         if ($cachetime < $time) {
