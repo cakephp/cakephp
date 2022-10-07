@@ -1332,7 +1332,11 @@ class Validation
     {
         if ($check instanceof UploadedFileInterface) {
             $code = $check->getError();
-        } elseif (is_array($check) && isset($check['error'])) {
+        } elseif (is_array($check)) {
+            if (!isset($check['error'])) {
+                return false;
+            }
+
             $code = $check['error'];
         } else {
             $code = $check;

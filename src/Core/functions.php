@@ -206,8 +206,10 @@ if (!function_exists('env')) {
             $key = 'SCRIPT_URL';
         }
 
+        /** @var string|null $val */
         $val = $_SERVER[$key] ?? $_ENV[$key] ?? null;
         if ($val == null && getenv($key) !== false) {
+            /** @var string|false $val */
             $val = getenv($key);
         }
 
