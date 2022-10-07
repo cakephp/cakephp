@@ -394,15 +394,15 @@ class FixtureManagerTest extends TestCase
 
         $manager->fixturize($test);
 
-        $e = null;
+        $exception = null;
         try {
             $manager->load($test);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertMatchesRegularExpression('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
-        $this->assertInstanceOf('PDOException', $e->getPrevious());
+        $this->assertNotNull($exception);
+        $this->assertMatchesRegularExpression('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $exception->getMessage());
+        $this->assertInstanceOf('PDOException', $exception->getPrevious());
     }
 
     /**
@@ -441,15 +441,15 @@ class FixtureManagerTest extends TestCase
             ]));
         $manager->fixturize($test);
 
-        $e = null;
+        $exception = null;
         try {
             $manager->load($test);
-        } catch (CakeException $e) {
+        } catch (CakeException $exception) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertMatchesRegularExpression($expectedMessage, $e->getMessage());
-        $this->assertInstanceOf('PDOException', $e->getPrevious());
+        $this->assertNotNull($exception);
+        $this->assertMatchesRegularExpression($expectedMessage, $exception->getMessage());
+        $this->assertInstanceOf('PDOException', $exception->getPrevious());
     }
 
     /**

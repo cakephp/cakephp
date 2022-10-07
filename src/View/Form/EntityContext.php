@@ -745,7 +745,7 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         try {
             [$entity, $remainingParts] = $this->leafEntity($parts);
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $exception) {
             return [];
         }
         if (count($remainingParts) === 0) {

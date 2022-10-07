@@ -569,7 +569,7 @@ class Router
             static::url($url, $full);
 
             return true;
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException $exception) {
             return false;
         }
     }

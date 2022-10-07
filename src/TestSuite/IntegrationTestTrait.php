@@ -481,12 +481,12 @@ trait IntegrationTestTrait
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (PHPUnitException | DatabaseException $e) {
-            throw $e;
-        } catch (Throwable $e) {
-            $this->_exception = $e;
+        } catch (PHPUnitException | DatabaseException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
+            $this->_exception = $exception;
             // Simulate the global exception handler being invoked.
-            $this->_handleError($e);
+            $this->_handleError($exception);
         }
     }
 

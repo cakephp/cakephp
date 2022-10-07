@@ -2010,14 +2010,14 @@ class RouterTest extends TestCase
         try {
             Router::url(['controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
 
         try {
             Router::url(['prefix' => '1', 'controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }

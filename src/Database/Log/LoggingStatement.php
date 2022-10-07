@@ -74,12 +74,12 @@ class LoggingStatement extends StatementDecorator
         try {
             $result = parent::execute($params);
             $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             /** @psalm-suppress UndefinedPropertyAssignment */
-            $e->queryString = $this->queryString;
-            $this->loggedQuery->error = $e;
+            $exception->queryString = $this->queryString;
+            $this->loggedQuery->error = $exception;
             $this->_log();
-            throw $e;
+            throw $exception;
         }
 
         if (preg_match('/^(?!SELECT)/i', $this->queryString)) {

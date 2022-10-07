@@ -256,16 +256,16 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (MissingConnectionException $e) {
-            throw $e;
-        } catch (Throwable $e) {
+        } catch (MissingConnectionException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
             throw new MissingConnectionException(
                 [
                     'driver' => App::shortName(get_class($this->_driver), 'Database/Driver'),
-                    'reason' => $e->getMessage(),
+                    'reason' => $exception->getMessage(),
                 ],
                 null,
-                $e
+                $exception
             );
         }
     }
@@ -706,9 +706,9 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             $this->rollback(false);
-            throw $e;
+            throw $exception;
         }
 
         if ($result === false) {
@@ -719,9 +719,9 @@ class Connection implements ConnectionInterface
 
         try {
             $this->commit();
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $exception) {
             $this->rollback(false);
-            throw $e;
+            throw $exception;
         }
 
         return $result;

@@ -421,18 +421,18 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $this->controller->render($template);
 
             return $this->_shutdown();
-        } catch (MissingTemplateException $e) {
-            $attributes = $e->getAttributes();
+        } catch (MissingTemplateException $exception) {
+            $attributes = $exception->getAttributes();
             if (
-                $e instanceof MissingLayoutException ||
+                $exception instanceof MissingLayoutException ||
                 strpos($attributes['file'], 'error500') !== false
             ) {
                 return $this->_outputMessageSafe('error500');
             }
 
             return $this->_outputMessage('error500');
-        } catch (MissingPluginException $e) {
-            $attributes = $e->getAttributes();
+        } catch (MissingPluginException $exception) {
+            $attributes = $exception->getAttributes();
             if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
                 $this->controller->setPlugin(null);
             }

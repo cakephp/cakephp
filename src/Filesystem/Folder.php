@@ -207,7 +207,7 @@ class Folder
 
         try {
             $iterator = new DirectoryIterator($this->path);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [$dirs, $files];
         }
 
@@ -509,7 +509,7 @@ class Folder
 
         try {
             $iterator = new DirectoryIterator($path);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return [];
         }
 
@@ -557,7 +557,7 @@ class Folder
                 RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::CURRENT_AS_SELF
             );
             $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             unset($directory, $iterator);
 
             if ($type === null) {
@@ -718,7 +718,7 @@ class Folder
             try {
                 $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
                 $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
-            } catch (Exception $e) {
+            } catch (Exception $exception) {
                 unset($directory, $iterator);
 
                 return false;

@@ -108,15 +108,15 @@ class RoutingMiddleware implements MiddlewareInterface
                 return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
                     return $this->prepareRouteCollection();
                 }, $this->cacheConfig);
-            } catch (InvalidArgumentException $e) {
-                throw $e;
-            } catch (Exception $e) {
+            } catch (InvalidArgumentException $exception) {
+                throw $exception;
+            } catch (Exception $exception) {
                 throw new FailedRouteCacheException(
                     'Unable to cache route collection. Cached routes must be serializable. Check for route-specific
                     middleware or other unserializable settings in your routes. The original exception message can
                     show what type of object failed to serialize.',
                     null,
-                    $e
+                    $exception
                 );
             }
         }
@@ -170,15 +170,15 @@ class RoutingMiddleware implements MiddlewareInterface
                 $request = $request->withAttribute('params', $params);
                 Router::setRequest($request);
             }
-        } catch (RedirectException $e) {
+        } catch (RedirectException $exception) {
             return new RedirectResponse(
-                $e->getMessage(),
-                $e->getCode()
+                $exception->getMessage(),
+                $exception->getCode()
             );
-        } catch (DeprecatedRedirectException $e) {
+        } catch (DeprecatedRedirectException $exception) {
             return new RedirectResponse(
-                $e->getMessage(),
-                $e->getCode()
+                $exception->getMessage(),
+                $exception->getCode()
             );
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);

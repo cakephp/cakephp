@@ -67,14 +67,14 @@ class RoutesCheckCommand extends Command
             ];
             $io->helper('table')->output($output);
             $io->out();
-        } catch (RedirectException $e) {
+        } catch (RedirectException $exception) {
             $output = [
                 ['URI template', 'Redirect'],
-                [$url, $e->getMessage()],
+                [$url, $exception->getMessage()],
             ];
             $io->helper('table')->output($output);
             $io->out();
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException $exception) {
             $io->warning("'$url' did not match any routes.");
             $io->out();
 

@@ -274,7 +274,7 @@ class ConfigureTest extends TestCase
     {
         try {
             Configure::load('nonexistent_configuration_file');
-        } catch (Exception $e) {
+        } catch (Exception $exceptione) {
             $this->assertTrue(Configure::isConfigured('default'));
             $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }

@@ -510,7 +510,7 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['--he', 'other'], $this->io);
-        } catch (MissingOptionException $e) {
+        } catch (MissingOptionException $exception) {
             $this->assertStringContainsString(
                 "Unknown option `he`.\n" .
                 "Did you mean: `help`?\n" .
@@ -518,7 +518,7 @@ class ConsoleOptionParserTest extends TestCase
                 "Other valid choices:\n" .
                 "\n" .
                 '- help',
-                $e->getFullMessage()
+                $exception->getFullMessage()
             );
         }
     }
@@ -535,8 +535,8 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['-f'], $this->io);
-        } catch (MissingOptionException $e) {
-            $this->assertStringContainsString('Unknown short option `f`.', $e->getFullMessage());
+        } catch (MissingOptionException $exception) {
+            $this->assertStringContainsString('Unknown short option `f`.', $exception->getFullMessage());
         }
     }
 
@@ -1060,8 +1060,8 @@ TEXT;
 
         try {
             $result = $parser->help('unknown');
-        } catch (MissingOptionException $e) {
-            $result = $e->getFullMessage();
+        } catch (MissingOptionException $exception) {
+            $result = $exception->getFullMessage();
             $this->assertStringContainsString(
                 "Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.\n" .
                 "\n" .

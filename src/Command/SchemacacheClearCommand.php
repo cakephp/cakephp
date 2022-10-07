@@ -52,8 +52,8 @@ class SchemacacheClearCommand extends Command
             $connection = ConnectionManager::get((string)$args->getOption('connection'));
 
             $cache = new SchemaCache($connection);
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
+        } catch (RuntimeException $exception) {
+            $io->error($exception->getMessage());
 
             return static::CODE_ERROR;
         }

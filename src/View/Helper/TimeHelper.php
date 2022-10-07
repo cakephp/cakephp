@@ -388,9 +388,9 @@ class TimeHelper extends Helper
             $time = new FrozenTime($date);
 
             return $time->i18nFormat($format, $timezone);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             if ($invalid === false) {
-                throw $e;
+                throw $exception;
             }
 
             return $invalid;

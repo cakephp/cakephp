@@ -68,16 +68,16 @@ class CommandRetry
         while (true) {
             try {
                 return $action();
-            } catch (Exception $e) {
+            } catch (Exception $exception) {
                 if (
                     $this->numRetries < $this->maxRetries &&
-                    $this->strategy->shouldRetry($e, $this->numRetries)
+                    $this->strategy->shouldRetry($exception, $this->numRetries)
                 ) {
                     $this->numRetries++;
                     continue;
                 }
 
-                throw $e;
+                throw $exception;
             }
         }
     }

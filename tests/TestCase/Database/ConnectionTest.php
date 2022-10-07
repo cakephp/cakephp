@@ -201,21 +201,21 @@ class ConnectionTest extends TestCase
         $this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
         $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::getConfig('test'));
 
-        $e = null;
+        $exception = null;
         try {
             $connection->connect();
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException $exception) {
         }
 
-        $this->assertNotNull($e);
+        $this->assertNotNull($exception);
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
                 App::shortName(get_class($connection->getDriver()), 'Database/Driver')
             ),
-            $e->getMessage()
+            $exception->getMessage()
         );
-        $this->assertInstanceOf('PDOException', $e->getPrevious());
+        $this->assertInstanceOf('PDOException', $exception->getPrevious());
     }
 
     public function testConnectRetry(): void
@@ -227,7 +227,7 @@ class ConnectionTest extends TestCase
 
         try {
             $connection->connect();
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException $exception) {
         }
 
         $this->assertSame(4, $connection->getDriver()->getConnectRetries());
@@ -1205,7 +1205,7 @@ class ConnectionTest extends TestCase
     {
         $this->rollbackSourceLine = -1;
 
-        $e = null;
+        $exception = null;
         try {
             $this->connection->transactional(function () {
                 $this->connection->transactional(function () {
@@ -1220,10 +1220,10 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $exception) {
         }
 
-        $trace = $e->getTrace();
+        $trace = $exception->getTrace();
         $this->assertEquals(__FILE__, $trace[1]['file']);
         $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
     }
@@ -1237,7 +1237,7 @@ class ConnectionTest extends TestCase
         $this->rollbackSourceLine = -1;
         $this->nestedTransactionStates = [];
 
-        $e = null;
+        $exception = null;
         try {
             $this->connection->transactional(function () {
                 $this->pushNestedTransactionState();
@@ -1272,7 +1272,7 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $exception) {
         }
 
         $this->pushNestedTransactionState();
@@ -1280,7 +1280,7 @@ class ConnectionTest extends TestCase
         $this->assertSame([false, false, true, true, false], $this->nestedTransactionStates);
         $this->assertFalse($this->connection->inTransaction());
 
-        $trace = $e->getTrace();
+        $trace = $exception->getTrace();
         $this->assertEquals(__FILE__, $trace[1]['file']);
         $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
     }
@@ -1348,9 +1348,9 @@ class ConnectionTest extends TestCase
 
         try {
             $conn->query('SELECT 1');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
-        $this->assertInstanceOf(Exception::class, $e ?? null);
+        $this->assertInstanceOf(Exception::class, $exception ?? null);
 
         $prop->setValue($conn, $oldDriver);
         $conn->rollback();

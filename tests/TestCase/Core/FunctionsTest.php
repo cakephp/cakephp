@@ -102,9 +102,9 @@ class FunctionsTest extends TestCase
                 deprecationWarning($message);
             });
             $this->fail();
-        } catch (\Exception $e) {
-            $this->assertStringContainsString($message, $e->getMessage());
-            $this->assertStringContainsString('TestCase.php', $e->getMessage());
+        } catch (\Exception $exception) {
+            $this->assertStringContainsString($message, $exception->getMessage());
+            $this->assertStringContainsString('TestCase.php', $exception->getMessage());
         }
 
         $this->withErrorReporting(E_ALL, function () use ($message): void {

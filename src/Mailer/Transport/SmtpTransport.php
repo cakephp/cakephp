@@ -85,7 +85,7 @@ class SmtpTransport extends AbstractTransport
     {
         try {
             $this->disconnect();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // avoid fatal error on script termination
         }
     }
@@ -290,18 +290,18 @@ class SmtpTransport extends AbstractTransport
                 $this->_socket()->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }
-        } catch (SocketException $e) {
+        } catch (SocketException $exception) {
             if ($config['tls']) {
                 throw new SocketException(
                     'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.',
                     null,
-                    $e
+                    $exception
                 );
             }
             try {
                 $this->_smtpSend("HELO {$host}", '250');
-            } catch (SocketException $e2) {
-                throw new SocketException('SMTP server did not accept the connection.', null, $e2);
+            } catch (SocketException $exception2) {
+                throw new SocketException('SMTP server did not accept the connection.', null, $exception2);
             }
         }
 
@@ -377,13 +377,13 @@ class SmtpTransport extends AbstractTransport
         if ($replyCode === '334') {
             try {
                 $this->_smtpSend(base64_encode($username), '334');
-            } catch (SocketException $e) {
-                throw new SocketException('SMTP server did not accept the username.', null, $e);
+            } catch (SocketException $exception) {
+                throw new SocketException('SMTP server did not accept the username.', null, $exception);
             }
             try {
                 $this->_smtpSend(base64_encode($password), '235');
-            } catch (SocketException $e) {
-                throw new SocketException('SMTP server did not accept the password.', null, $e);
+            } catch (SocketException $exception) {
+                throw new SocketException('SMTP server did not accept the password.', null, $exception);
             }
         } elseif ($replyCode === '504') {
             throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');

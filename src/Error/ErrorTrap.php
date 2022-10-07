@@ -133,9 +133,9 @@ class ErrorTrap
                 return true;
             }
             $renderer->write($renderer->render($error, $debug));
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Fatal errors always log.
-            $this->logger()->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());
+            $this->logger()->logMessage('error', 'Could not render error. Got: ' . $exception->getMessage());
 
             return false;
         }

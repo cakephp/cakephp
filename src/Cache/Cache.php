@@ -155,23 +155,23 @@ class Cache
 
         try {
             $registry->load($name, $config);
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $exception) {
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                trigger_error($exception->getMessage(), E_USER_WARNING);
 
                 return;
             }
 
             if ($config['fallback'] === false) {
-                throw $e;
+                throw $exception;
             }
 
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
                     '"%s" cache configuration cannot fallback to itself.',
                     $name
-                ), 0, $e);
+                ), 0, $exception);
             }
 
             /** @var \Cake\Cache\CacheEngine $fallbackEngine */

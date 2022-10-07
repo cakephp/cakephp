@@ -156,8 +156,8 @@ class Collection implements CollectionInterface
         }
         try {
             $statement = $this->_connection->execute($sql, $params);
-        } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), 500, $e);
+        } catch (PDOException $exception) {
+            throw new DatabaseException($exception->getMessage(), 500, $exception);
         }
         /** @psalm-suppress PossiblyFalseIterator */
         foreach ($statement->fetchAll('assoc') as $row) {

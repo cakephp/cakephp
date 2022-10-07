@@ -66,8 +66,8 @@ class PluginLoadCommand extends Command
         $plugin = $args->getArgument('plugin') ?? '';
         try {
             Plugin::getCollection()->findPath($plugin);
-        } catch (MissingPluginException $e) {
-            $this->io->err($e->getMessage());
+        } catch (MissingPluginException $exception) {
+            $this->io->err($exception->getMessage());
             $this->io->err('Ensure you have the correct spelling and casing.');
 
             return static::CODE_ERROR;

@@ -133,15 +133,15 @@ class DigestAuthenticateTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
-        $e = null;
+        $exception = null;
         try {
             $this->auth->unauthenticated($request, new Response());
-        } catch (UnauthorizedException $e) {
+        } catch (UnauthorizedException $exception) {
         }
 
-        $this->assertNotEmpty($e);
+        $this->assertNotEmpty($exception);
 
-        $header = $e->getHeaders();
+        $header = $exception->getHeaders();
         $this->assertMatchesRegularExpression(
             '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
             $header['WWW-Authenticate']
@@ -167,14 +167,14 @@ class DigestAuthenticateTest extends TestCase
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
-        $e = null;
+        $exception = null;
         try {
             $this->auth->unauthenticated($request, new Response());
-        } catch (UnauthorizedException $e) {
+        } catch (UnauthorizedException $exception) {
         }
-        $this->assertNotEmpty($e);
+        $this->assertNotEmpty($exception);
 
-        $header = $e->getHeaders()['WWW-Authenticate'];
+        $header = $exception->getHeaders()['WWW-Authenticate'];
         $this->assertStringContainsString('stale=true', $header);
     }
 

@@ -1231,7 +1231,7 @@ class MailerTest extends TestCase
         try {
             $mailer->send('welcome', ['foo', 'bar']);
             $this->fail('Exception should bubble up.');
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }

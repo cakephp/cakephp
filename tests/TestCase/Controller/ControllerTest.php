@@ -942,8 +942,8 @@ class ControllerTest extends TestCase
         ]);
         $response = new Response();
         $Controller = new AdminPostsController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $exception) {
+            return $exception->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -951,8 +951,8 @@ class ControllerTest extends TestCase
         $request = $request->withParam('prefix', 'admin/super');
         $response = new Response();
         $Controller = new AdminPostsController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $exception) {
+            return $exception->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -964,8 +964,8 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $exception) {
+            return $exception->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());
@@ -1061,8 +1061,8 @@ class ControllerTest extends TestCase
         try {
             $controller->loadComponent('FormProtection', ['bad' => 'settings']);
             $this->fail('No exception');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "FormProtection" alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('The "FormProtection" alias has already been loaded', $exception->getMessage());
         }
     }
 

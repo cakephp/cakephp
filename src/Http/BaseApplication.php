@@ -148,7 +148,7 @@ abstract class BaseApplication implements
     {
         try {
             $this->addPlugin($name, $config);
-        } catch (MissingPluginException $e) {
+        } catch (MissingPluginException $exception) {
             // Do not halt if the plugin is missing
         }
 

@@ -356,7 +356,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
 
                 return $dateTime;
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return null;
         }
 
@@ -535,7 +535,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                 if ($dateTime !== false) {
                     return $dateTime;
                 }
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException $exception) {
                 // Chronos wraps DateTime::createFromFormat and throws
                 // exception if parse fails.
                 continue;

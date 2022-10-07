@@ -147,7 +147,7 @@ trait ContainerStubTrait
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException $exception) {
                     $container->add($key, $factory);
                 }
             } else {

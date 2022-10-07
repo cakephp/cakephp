@@ -307,14 +307,14 @@ class FixtureManager
                     if (in_array($fixture->sourceName(), $tables, true)) {
                         try {
                             $fixture->dropConstraints($db);
-                        } catch (PDOException $e) {
+                        } catch (PDOException $exception) {
                             $msg = sprintf(
                                 'Unable to drop constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
                                 get_class($fixture),
                                 get_class($test),
-                                $e->getMessage()
+                                $exception->getMessage()
                             );
-                            throw new CakeException($msg, null, $e);
+                            throw new CakeException($msg, null, $exception);
                         }
                     }
                 }
@@ -334,14 +334,14 @@ class FixtureManager
 
                     try {
                         $fixture->createConstraints($db);
-                    } catch (PDOException $e) {
+                    } catch (PDOException $exception) {
                         $msg = sprintf(
                             'Unable to create constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
                             get_class($fixture),
                             get_class($test),
-                            $e->getMessage()
+                            $exception->getMessage()
                         );
-                        throw new CakeException($msg, null, $e);
+                        throw new CakeException($msg, null, $exception);
                     }
                 }
             };
@@ -352,25 +352,25 @@ class FixtureManager
                 foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
-                    } catch (PDOException $e) {
+                    } catch (PDOException $exception) {
                         $msg = sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
                             get_class($fixture),
                             get_class($test),
-                            $e->getMessage()
+                            $exception->getMessage()
                         );
-                        throw new CakeException($msg, null, $e);
+                        throw new CakeException($msg, null, $exception);
                     }
                 }
             };
             $this->_runOperation($fixtures, $insert);
-        } catch (PDOException $e) {
+        } catch (PDOException $exception) {
             $msg = sprintf(
                 'Unable to insert fixtures for "%s" test case. %s',
                 get_class($test),
-                $e->getMessage()
+                $exception->getMessage()
             );
-            throw new RuntimeException($msg, 0, $e);
+            throw new RuntimeException($msg, 0, $exception);
         }
     }
 

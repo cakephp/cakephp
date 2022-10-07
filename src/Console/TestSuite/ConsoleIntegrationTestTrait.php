@@ -104,12 +104,12 @@ trait ConsoleIntegrationTestTrait
 
         try {
             $this->_exitCode = $runner->run($args, $io);
-        } catch (MissingConsoleInputException $e) {
+        } catch (MissingConsoleInputException $exception) {
             $messages = $this->_out->messages();
             if (count($messages)) {
-                $e->setQuestion($messages[count($messages) - 1]);
+                $exception->setQuestion($messages[count($messages) - 1]);
             }
-            throw $e;
+            throw $exception;
         } catch (StopException $exception) {
             $this->_exitCode = $exception->getCode();
         }

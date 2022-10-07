@@ -129,14 +129,14 @@ abstract class Driver implements DriverInterface
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {
             $retry->run($action);
-        } catch (PDOException $e) {
+        } catch (PDOException $exception) {
             throw new MissingConnectionException(
                 [
                     'driver' => App::shortName(static::class, 'Database/Driver'),
-                    'reason' => $e->getMessage(),
+                    'reason' => $exception->getMessage(),
                 ],
                 null,
-                $e
+                $exception
             );
         } finally {
             $this->connectRetries = $retry->getRetries();
@@ -402,7 +402,7 @@ abstract class Driver implements DriverInterface
         } else {
             try {
                 $connected = (bool)$this->_connection->query('SELECT 1');
-            } catch (PDOException $e) {
+            } catch (PDOException $exception) {
                 $connected = false;
             }
         }

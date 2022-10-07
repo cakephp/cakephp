@@ -787,8 +787,8 @@ class Debugger
                     }
 
                     return $node;
-                } catch (Exception $e) {
-                    return new SpecialNode("(unable to export object: {$e->getMessage()})");
+                } catch (Exception $exception) {
+                    return new SpecialNode("(unable to export object: {$exception->getMessage()})");
                 }
             }
 

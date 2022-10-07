@@ -2437,7 +2437,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $exception) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {

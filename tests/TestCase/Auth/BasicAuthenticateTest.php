@@ -166,16 +166,16 @@ class BasicAuthenticateTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
-        $e = null;
+        $exception = null;
         try {
             $this->auth->unauthenticated($request, new Response());
-        } catch (UnauthorizedException $e) {
+        } catch (UnauthorizedException $exception) {
         }
 
-        $this->assertNotEmpty($e);
+        $this->assertNotEmpty($exception);
 
         $expected = ['WWW-Authenticate' => 'Basic realm="localhost"'];
-        $this->assertEquals($expected, $e->getHeaders());
+        $this->assertEquals($expected, $exception->getHeaders());
     }
 
     /**

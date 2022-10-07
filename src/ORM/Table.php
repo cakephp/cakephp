@@ -2259,10 +2259,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         }
                     }
                 });
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $cleanupOnFailure($entities);
 
-            throw $e;
+            throw $exception;
         }
 
         if ($failed !== null) {

@@ -83,8 +83,8 @@ class CacheClearCommand extends Command
             } else {
                 $io->out("<success>Cleared {$name} cache</success>");
             }
-        } catch (InvalidArgumentException $e) {
-            $io->error($e->getMessage());
+        } catch (InvalidArgumentException $exception) {
+            $io->error($exception->getMessage());
             $this->abort();
         }
 

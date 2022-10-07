@@ -343,7 +343,7 @@ class Shell
             }
 
             return $method->getDeclaringClass()->name !== self::class;
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException $exception) {
             return false;
         }
     }
@@ -470,8 +470,8 @@ class Shell
         $this->OptionParser = $this->getOptionParser();
         try {
             [$this->params, $this->args] = $this->OptionParser->parse($argv, $this->_io);
-        } catch (ConsoleException $e) {
-            $this->err('Error: ' . $e->getMessage());
+        } catch (ConsoleException $exception) {
+            $this->err('Error: ' . $exception->getMessage());
 
             return false;
         }
@@ -517,8 +517,8 @@ class Shell
         $this->err('No subcommand provided. Choose one of the available subcommands.', 2);
         try {
             $this->_io->err($this->OptionParser->help($command));
-        } catch (ConsoleException $e) {
-            $this->err('Error: ' . $e->getMessage());
+        } catch (ConsoleException $exception) {
+            $this->err('Error: ' . $exception->getMessage());
         }
 
         return false;
@@ -869,7 +869,7 @@ class Shell
             $fs->dumpFile($path, $contents);
 
             $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
-        } catch (CakeException $e) {
+        } catch (CakeException $exception) {
             $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 
             return false;

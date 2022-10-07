@@ -959,15 +959,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $this->request->getQueryParams(),
                 $settings
             );
-        } catch (PageOutOfBoundsException $e) {
+        } catch (PageOutOfBoundsException $exception) {
             // Exception thrown below
         } finally {
             $paging = $paginator->getPagingParams() + (array)$this->request->getAttribute('paging', []);
             $this->request = $this->request->withAttribute('paging', $paging);
         }
 
-        if (isset($e)) {
-            throw new NotFoundException(null, null, $e);
+        if (isset($exception)) {
+            throw new NotFoundException(null, null, $exception);
         }
 
         /** @psalm-suppress NullableReturnStatement */
@@ -993,7 +993,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         try {
             $method = new ReflectionMethod($this, $action);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException $exception) {
             return false;
         }
 

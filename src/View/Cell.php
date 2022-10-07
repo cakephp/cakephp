@@ -172,7 +172,7 @@ abstract class Cell implements EventDispatcherInterface
             try {
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException $exception) {
                 throw new BadMethodCallException(sprintf(
                     'Class %s does not have a "%s" method.',
                     static::class,
@@ -201,14 +201,14 @@ abstract class Cell implements EventDispatcherInterface
             $view = $this->createView();
             try {
                 return $view->render($template, false);
-            } catch (MissingTemplateException $e) {
-                $attributes = $e->getAttributes();
+            } catch (MissingTemplateException $exception) {
+                $attributes = $exception->getAttributes();
                 throw new MissingCellTemplateException(
                     $name,
                     $attributes['file'],
                     $attributes['paths'],
                     null,
-                    $e
+                    $exception
                 );
             }
         };
@@ -264,22 +264,22 @@ abstract class Cell implements EventDispatcherInterface
     {
         try {
             return $this->render();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             trigger_error(sprintf(
                 'Could not render cell - %s [%s, line %d]',
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine()
             ), E_USER_WARNING);
 
             return '';
-        } catch (Error $e) {
+        } catch (Error $exception) {
             throw new Error(sprintf(
                 'Could not render cell - %s [%s, line %d]',
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine()
-            ), 0, $e);
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine()
+            ), 0, $exception);
         }
     }
 

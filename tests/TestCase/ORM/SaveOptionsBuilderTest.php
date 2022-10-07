@@ -98,7 +98,7 @@ class SaveOptionsBuilderTest extends TestCase
                 'Comments.DoesNotExist'
             );
             $this->fail('No \RuntimeException throw for invalid association!');
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $exception) {
         }
 
         $expected = [

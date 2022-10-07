@@ -1594,14 +1594,14 @@ TEXT;
     {
         $bufferLevel = ob_get_level();
 
-        $e = null;
+        $exception = null;
         try {
             $this->View->element('exception_with_open_buffers');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertNotNull($exception);
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 
@@ -1622,7 +1622,7 @@ TEXT;
 
         $bufferLevel = ob_get_level();
 
-        $e = null;
+        $exception = null;
         try {
             $this->View->cache(function (): void {
                 ob_start();
@@ -1632,14 +1632,14 @@ TEXT;
                 'key' => __FUNCTION__,
                 'config' => 'test_view',
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         Cache::clear('test_view');
         Cache::drop('test_view');
 
-        $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertNotNull($exception);
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 

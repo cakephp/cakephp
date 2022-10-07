@@ -506,7 +506,7 @@ CREATE TABLE conditional_constraint (
 SQL;
         try {
             $connection->execute($table);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->markTestSkipped('Could not create table with conditional constraint');
         }
         $schema = new SchemaCollection($connection);

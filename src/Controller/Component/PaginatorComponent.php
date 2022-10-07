@@ -200,10 +200,10 @@ class PaginatorComponent extends Component
             );
 
             $this->_setPagingParams();
-        } catch (PageOutOfBoundsException $e) {
+        } catch (PageOutOfBoundsException $exception) {
             $this->_setPagingParams();
 
-            throw new NotFoundException(null, null, $e);
+            throw new NotFoundException(null, null, $exception);
         }
 
         return $results;

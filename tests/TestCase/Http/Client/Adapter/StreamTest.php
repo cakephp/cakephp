@@ -98,7 +98,7 @@ class StreamTest extends TestCase
 
         try {
             $stream->send($request, []);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         $newHandler = set_error_handler(function (): void {

@@ -1707,8 +1707,8 @@ XML;
         try {
             $request->allowMethod(['POST', 'DELETE']);
             $this->fail('An expected exception has not been raised.');
-        } catch (MethodNotAllowedException $e) {
-            $this->assertEquals(['Allow' => 'POST, DELETE'], $e->getHeaders());
+        } catch (MethodNotAllowedException $exception) {
+            $this->assertEquals(['Allow' => 'POST, DELETE'], $exception->getHeaders());
         }
 
         $this->expectException(MethodNotAllowedException::class);

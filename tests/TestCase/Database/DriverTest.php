@@ -58,10 +58,10 @@ class DriverTest extends TestCase
         $arg = ['login' => 'Bear'];
         try {
             $this->getMockForAbstractClass(Driver::class, [$arg]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
-                $e->getMessage()
+                $exception->getMessage()
             );
         }
     }

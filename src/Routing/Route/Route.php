@@ -466,8 +466,8 @@ class Route
             if ($method !== '') {
                 $method = $this->normalizeAndValidateMethods($method);
             }
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestException($e->getMessage());
+        } catch (InvalidArgumentException $exception) {
+            throw new BadRequestException($exception->getMessage());
         }
 
         $compiledRoute = $this->compile();

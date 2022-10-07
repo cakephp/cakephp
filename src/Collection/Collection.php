@@ -123,7 +123,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     {
         try {
             $count = $this->count();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $count = 'An exception occurred while getting count';
         }
 

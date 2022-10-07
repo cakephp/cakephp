@@ -194,7 +194,7 @@ class DateTimeWidget extends BasicWidget
             } else {
                 $dateTime = new DateTime();
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $dateTime = new DateTime();
         }
 

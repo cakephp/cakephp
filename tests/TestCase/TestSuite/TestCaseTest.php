@@ -168,8 +168,8 @@ class TestCaseTest extends TestCase
             });
 
             $this->fail();
-        } catch (\Exception $e) {
-            $this->assertStringContainsString('A random message', $e->getMessage());
+        } catch (\Exception $exception) {
+            $this->assertStringContainsString('A random message', $exception->getMessage());
         }
     }
 
@@ -183,8 +183,8 @@ class TestCaseTest extends TestCase
             });
 
             $this->fail();
-        } catch (\Exception $e) {
-            $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
+        } catch (\Exception $exception) {
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $exception->getMessage());
         }
     }
 
@@ -470,7 +470,7 @@ class TestCaseTest extends TestCase
         try {
             Router::url($url);
             $this->fail('Missing URL should throw an exception');
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException $exception) {
         }
         Configure::write('App.namespace', 'TestApp');
         $this->loadRoutes();

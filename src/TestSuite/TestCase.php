@@ -378,8 +378,8 @@ abstract class TestCase extends BaseTestCase
             $reflect = new ReflectionClass($className);
             /** @var \Cake\Routing\RoutingApplicationInterface $app */
             $app = $reflect->newInstanceArgs($appArgs);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), 0, $e);
+        } catch (ReflectionException $exception) {
+            throw new LogicException(sprintf('Cannot load "%s" to load routes from.', $className), 0, $exception);
         }
         $builder = Router::createRouteBuilder('/');
         $app->routes($builder);

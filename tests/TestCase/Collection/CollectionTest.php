@@ -799,7 +799,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
-        $collection->indexBy(function ($e) {
+        $collection->indexBy(function ($exception) {
             return null;
         });
     }

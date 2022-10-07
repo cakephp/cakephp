@@ -1686,8 +1686,8 @@ class TableTest extends TestCase
         try {
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $exception->getMessage());
         }
     }
 

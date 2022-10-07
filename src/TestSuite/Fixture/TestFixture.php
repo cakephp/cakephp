@@ -254,13 +254,13 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             $this->_schema = $schema;
 
             $this->getTableLocator()->clear();
-        } catch (CakeException $e) {
+        } catch (CakeException $exception) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
                 $this->table,
                 static::class
             );
-            throw new CakeException($message, null, $e);
+            throw new CakeException($message, null, $exception);
         }
     }
 
@@ -286,11 +286,11 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
                 $stmt->execute();
                 $stmt->closeCursor();
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $msg = sprintf(
                 'Fixture creation for "%s" failed "%s"',
                 $this->table,
-                $e->getMessage()
+                $exception->getMessage()
             );
             Log::error($msg);
             trigger_error($msg, E_USER_WARNING);
@@ -321,7 +321,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             foreach ($sql as $stmt) {
                 $connection->execute($stmt)->closeCursor();
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             return false;
         }
 

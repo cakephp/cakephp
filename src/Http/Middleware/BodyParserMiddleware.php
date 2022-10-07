@@ -207,7 +207,7 @@ class BodyParserMiddleware implements MiddlewareInterface
             }
 
             return [];
-        } catch (XmlException $e) {
+        } catch (XmlException $exception) {
             return [];
         }
     }

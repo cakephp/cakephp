@@ -169,8 +169,8 @@ abstract class BaseCommand implements CommandInterface
                 $options,
                 $parser->argumentNames()
             );
-        } catch (ConsoleException $e) {
-            $io->err('Error: ' . $e->getMessage());
+        } catch (ConsoleException $exception) {
+            $io->err('Error: ' . $exception->getMessage());
 
             return static::CODE_ERROR;
         }
@@ -280,8 +280,8 @@ abstract class BaseCommand implements CommandInterface
 
         try {
             return $command->run($args, $io);
-        } catch (StopException $e) {
-            return $e->getCode();
+        } catch (StopException $exception) {
+            return $exception->getCode();
         }
     }
 }

@@ -310,7 +310,7 @@ class FileEngine extends CacheEngine
 
             try {
                 $file = new SplFileObject($path . $entry, 'r');
-            } catch (Exception $e) {
+            } catch (Exception $exception) {
                 continue;
             }
 
@@ -386,8 +386,8 @@ class FileEngine extends CacheEngine
             $exists = is_file($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
-            } catch (Exception $e) {
-                trigger_error($e->getMessage(), E_USER_WARNING);
+            } catch (Exception $exception) {
+                trigger_error($exception->getMessage(), E_USER_WARNING);
 
                 return false;
             }
