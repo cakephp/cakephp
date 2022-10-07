@@ -417,8 +417,8 @@ class Connection implements ConnectionInterface
 
         if ($this->_transactionLevel === 0) {
             if ($this->wasNestedTransactionRolledback()) {
-                /** @var \Cake\Database\Exception\NestedTransactionRollbackException $e */
                 $e = $this->nestedTransactionRollbackException;
+                assert($e !== null);
                 $this->nestedTransactionRollbackException = null;
                 throw $e;
             }

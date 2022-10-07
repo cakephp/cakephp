@@ -185,7 +185,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The IsUnique class name that is used.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\Rule\IsUnique>
      */
     public const IS_UNIQUE_CLASS = IsUnique::class;
 
@@ -2121,8 +2121,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
-                    /** @var string $type */
                     $type = $schema->getColumnType($key);
+                    assert($type !== null);
                     $entity->set($key, TypeFactory::build($type)->toPHP($id, $driver));
                     break;
                 }
@@ -2150,8 +2150,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$primary || count($primary) > 1) {
             return null;
         }
-        /** @var string $typeName */
         $typeName = $this->getSchema()->getColumnType($primary[0]);
+        assert($typeName !== null);
         $type = TypeFactory::build($typeName);
 
         return $type->newId();

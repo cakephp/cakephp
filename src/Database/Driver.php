@@ -231,8 +231,8 @@ abstract class Driver
         if ($this->pdo === null) {
             $this->connect();
         }
+        assert($this->pdo !== null);
 
-        /** @var \PDO */
         return $this->pdo;
     }
 
