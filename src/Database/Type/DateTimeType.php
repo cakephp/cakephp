@@ -328,7 +328,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             return $value->setTimezone($this->defaultTimezone);
         }
 
-        /** @var class-string<\DatetimeInterface> $class */
+        /** @var class-string<\DateTimeInterface> $class */
         $class = $this->_className;
         try {
             if ($value === '' || $value === null || is_bool($value)) {
@@ -336,7 +336,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             }
 
             if (is_int($value) || (is_string($value) && ctype_digit($value))) {
-                /** @var \Datetime|\DateTimeImmutable $dateTime */
+                /** @var \DateTime|\DateTimeImmutable $dateTime */
                 $dateTime = new $class('@' . $value);
 
                 return $dateTime->setTimezone($this->defaultTimezone);
@@ -349,7 +349,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                     $dateTime = $this->_parseValue($value);
                 }
 
-                /** @var \Datetime|\DateTimeImmutable $dateTime */
+                /** @var \DateTime|\DateTimeImmutable $dateTime */
                 if ($dateTime !== null) {
                     $dateTime = $dateTime->setTimezone($this->defaultTimezone);
                 }
@@ -392,7 +392,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value['microsecond']
         );
 
-        /** @var \Datetime|\DateTimeImmutable $dateTime */
+        /** @var \DateTime|\DateTimeImmutable $dateTime */
         $dateTime = new $class($format, $value['timezone'] ?? $this->userTimezone);
 
         return $dateTime->setTimezone($this->defaultTimezone);
