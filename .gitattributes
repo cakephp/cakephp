@@ -37,7 +37,7 @@ tests/TestCase export-ignore
 .stickler.yml export-ignore
 Makefile export-ignore
 phpcs.xml export-ignore
-phpstan.neon export-ignore
+phpstan.neon.dist export-ignore
 phpstan-baseline.neon export-ignore
 phpunit.xml.dist export-ignore
 psalm.xml export-ignore
