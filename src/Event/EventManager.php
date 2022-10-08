@@ -324,9 +324,7 @@ class EventManager implements EventManagerInterface
      */
     protected function _callListener(callable $listener, EventInterface $event): mixed
     {
-        $data = (array)$event->getData();
-
-        return $listener($event, ...array_values($data));
+        return $listener($event, ...array_values($event->getData()));
     }
 
     /**

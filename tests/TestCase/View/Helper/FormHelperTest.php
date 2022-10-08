@@ -6884,7 +6884,6 @@ class FormHelperTest extends TestCase
         $this->assertEquals(['title'], $fields);
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
         $reflect = new ReflectionProperty($this->Form, '_lastAction');
-        $reflect->setAccessible(true);
         $this->assertSame('/Articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 

@@ -1870,33 +1870,15 @@ class CaseStatementExpressionTest extends TestCase
         new CaseStatementExpression($value);
     }
 
-    public function invalidWhenValueDataProvider(): array
-    {
-        $res = fopen('data:text/plain,123', 'rb');
-        fclose($res);
-
-        return [
-            [null, 'null'],
-            [[], '[]'],
-            [$res, 'resource (closed)'],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidWhenValueDataProvider
-     * @param mixed $value The when value.
-     * @param string $typeName The expected error type name.
-     */
-    public function testInvalidWhenValue($value, string $typeName): void
+    public function testInvalidWhenValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$when` argument must be either a non-empty array, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            'The `$when` argument must be a non-empty array'
         );
 
         (new CaseStatementExpression())
-            ->when($value)
+            ->when([])
             ->then(1);
     }
 

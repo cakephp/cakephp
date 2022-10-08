@@ -185,6 +185,7 @@ class ResultSet implements ResultSetInterface
      */
     public function countKeys(): int
     {
+        // This is an optimization over the implementation provided by CollectionTrait::countKeys()
         return $this->_count;
     }
 

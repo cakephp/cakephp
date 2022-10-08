@@ -2810,7 +2810,6 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame($copyLoader, $loader, 'should be clones');
 
         $reflect = new ReflectionProperty($loader, '_matching');
-        $reflect->setAccessible(true);
         $this->assertNotSame(
             $reflect->getValue($copyLoader),
             $reflect->getValue($loader),

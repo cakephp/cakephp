@@ -52,11 +52,7 @@ class TransportFactory
      */
     public static function getRegistry(): TransportRegistry
     {
-        if (isset(static::$_registry)) {
-            return static::$_registry;
-        }
-
-        return static::$_registry = new TransportRegistry();
+        return static::$_registry ??= new TransportRegistry();
     }
 
     /**
