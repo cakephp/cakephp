@@ -147,7 +147,7 @@ class TupleComparison extends ComparisonExpression
                 $bound = [];
                 foreach ($value as $k => $val) {
                     $valType = $type && isset($type[$k]) ? $type[$k] : $type;
-                    assert(is_string($valType));
+                    assert($valType === null || is_scalar($valType));
                     $bound[] = $this->_bindValue($val, $binder, $valType);
                 }
 
