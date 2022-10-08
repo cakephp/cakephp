@@ -149,7 +149,6 @@ class Cache
             );
         }
 
-        /** @var array $config */
         $config = static::$_config[$name];
         assert(is_array($config));
 
