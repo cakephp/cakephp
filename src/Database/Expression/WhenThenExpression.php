@@ -102,7 +102,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Sets the `WHEN` value.
      *
-     * @param \Cake\Database\ExpressionInterface|object|array|scalar $when The `WHEN` value. When using an array of
+     * @param object|array|string|float|int|bool $when The `WHEN` value. When using an array of
      *  conditions, it must be compatible with `\Cake\Database\Query::where()`. Note that this argument is _not_
      *  completely safe for use with user data, as a user supplied array would allow for raw SQL to slip in! If you
      *  plan to use user data, either pass a single type for the `$type` argument (which forces the `$when` value to be
@@ -111,32 +111,20 @@ class WhenThenExpression implements ExpressionInterface
      * @param array<string, string>|string|null $type The when value type. Either an associative array when using array style
      *  conditions, or else a string. If no type is provided, the type will be tried to be inferred from the value.
      * @return $this
-     * @throws \InvalidArgumentException In case the `$when` argument is neither a non-empty array, nor a scalar value,
-     *  an object, or an instance of `\Cake\Database\ExpressionInterface`.
-     * @throws \InvalidArgumentException In case the `$type` argument is neither an array, a string, nor null.
+     * @throws \InvalidArgumentException In case the `$when` argument is an empty array.
      * @throws \InvalidArgumentException In case the `$when` argument is an array, and the `$type` argument is neither
      * an array, nor null.
      * @throws \InvalidArgumentException In case the `$when` argument is a non-array value, and the `$type` argument is
      * neither a string, nor null.
      * @see CaseStatementExpression::when() for a more detailed usage explanation.
      */
-    public function when(mixed $when, array|string|null $type = null)
+    public function when(object|array|string|float|int|bool $when, array|string|null $type = null)
     {
-        /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
-        if (
-            !(is_array($when) && !empty($when)) &&
-            !is_scalar($when) &&
-            !is_object($when)
-        ) {
-            throw new InvalidArgumentException(sprintf(
-                'The `$when` argument must be either a non-empty array, a scalar value, an object, ' .
-                'or an instance of `\%s`, `%s` given.',
-                ExpressionInterface::class,
-                is_array($when) ? '[]' : get_debug_type($when) // @phpstan-ignore-line
-            ));
-        }
-
         if (is_array($when)) {
+            if (empty($when)) {
+                throw new InvalidArgumentException('The `$when` argument must be a non-empty array');
+            }
+
             if (
                 $type !== null &&
                 !is_array($type)
