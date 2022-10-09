@@ -50,7 +50,9 @@ class DeleteQuery extends Query
      */
     public function delete(?string $table = null)
     {
-        $this->_deprecatedException('delete()', 'Remove this method call.');
+        $this->_deprecatedMethod('delete()', 'Remove this method call.');
+
+        return parent::delete($table);
     }
 
     /**
@@ -58,7 +60,9 @@ class DeleteQuery extends Query
      */
     public function cache($key, $config = 'default')
     {
-        $this->_deprecatedException('cache()', 'Use execute() instead.');
+        $this->_deprecatedMethod('cache()', 'Use execute() instead.');
+
+        return parent::cache($key, $config);
     }
 
     /**
@@ -66,7 +70,9 @@ class DeleteQuery extends Query
      */
     public function all(): ResultSetInterface
     {
-        $this->_deprecatedException('all()', 'Use execute() instead.');
+        $this->_deprecatedMethod('all()', 'Use execute() instead.');
+
+        return parent::all();
     }
 
     /**
@@ -74,7 +80,9 @@ class DeleteQuery extends Query
      */
     public function select($fields = [], bool $overwrite = false)
     {
-        $this->_deprecatedException('select()');
+        $this->_deprecatedMethod('select()');
+
+        return parent::select($fields, $overwrite);
     }
 
     /**
@@ -82,7 +90,9 @@ class DeleteQuery extends Query
      */
     public function distinct($on = [], $overwrite = false)
     {
-        $this->_deprecatedException('distinct()');
+        $this->_deprecatedMethod('distinct()');
+
+        return parent::distinct($on, $overwrite);
     }
 
     /**
@@ -90,7 +100,9 @@ class DeleteQuery extends Query
      */
     public function modifier($modifiers, $overwrite = false)
     {
-        $this->_deprecatedException('modifier()');
+        $this->_deprecatedMethod('modifier()');
+
+        return parent::modifier($modifiers, $overwrite);
     }
 
     /**
@@ -98,7 +110,9 @@ class DeleteQuery extends Query
      */
     public function join($tables, $types = [], $overwrite = false)
     {
-        $this->_deprecatedException('join()');
+        $this->_deprecatedMethod('join()');
+
+        return parent::join($tables, $types, $overwrite);
     }
 
     /**
@@ -106,7 +120,9 @@ class DeleteQuery extends Query
      */
     public function removeJoin(string $name)
     {
-        $this->_deprecatedException('removeJoin()');
+        $this->_deprecatedMethod('removeJoin()');
+
+        return parent::removeJoin($name);
     }
 
     /**
@@ -114,7 +130,9 @@ class DeleteQuery extends Query
      */
     public function leftJoin($table, $conditions = [], $types = [])
     {
-        $this->_deprecatedException('leftJoin()');
+        $this->_deprecatedMethod('leftJoin()');
+
+        return parent::leftJoin($table, $conditions, $types);
     }
 
     /**
@@ -122,7 +140,9 @@ class DeleteQuery extends Query
      */
     public function rightJoin($table, $conditions = [], $types = [])
     {
-        $this->_deprecatedException('rightJoin()');
+        $this->_deprecatedMethod('rightJoin()');
+
+        return parent::rightJoin($table, $conditions, $types);
     }
 
     /**
@@ -130,7 +150,9 @@ class DeleteQuery extends Query
      */
     public function innerJoin($table, $conditions = [], $types = [])
     {
-        $this->_deprecatedException('innerJoin()');
+        $this->_deprecatedMethod('innerJoin()');
+
+        return parent::innerJoin($table, $conditions, $types);
     }
 
     /**
@@ -138,7 +160,9 @@ class DeleteQuery extends Query
      */
     public function group($fields, $overwrite = false)
     {
-        $this->_deprecatedException('group()');
+        $this->_deprecatedMethod('group()');
+
+        return parent::group($fields, $overwrite);
     }
 
     /**
@@ -146,7 +170,9 @@ class DeleteQuery extends Query
      */
     public function having($conditions = null, $types = [], $overwrite = false)
     {
-        $this->_deprecatedException('having()');
+        $this->_deprecatedMethod('having()');
+
+        return parent::having($conditions, $types, $overwrite);
     }
 
     /**
@@ -154,7 +180,9 @@ class DeleteQuery extends Query
      */
     public function andHaving($conditions, $types = [])
     {
-        $this->_deprecatedException('andHaving()');
+        $this->_deprecatedMethod('andHaving()');
+
+        return parent::andHaving($conditions, $types);
     }
 
     /**
@@ -162,7 +190,9 @@ class DeleteQuery extends Query
      */
     public function page(int $num, ?int $limit = null)
     {
-        $this->_deprecatedException('page()');
+        $this->_deprecatedMethod('page()');
+
+        return parent::page($num, $limit);
     }
 
     /**
@@ -170,7 +200,9 @@ class DeleteQuery extends Query
      */
     public function union($query, $overwrite = false)
     {
-        $this->_deprecatedException('union()');
+        $this->_deprecatedMethod('union()');
+
+        return parent::union($query, $overwrite);
     }
 
     /**
@@ -178,7 +210,9 @@ class DeleteQuery extends Query
      */
     public function unionAll($query, $overwrite = false)
     {
-        $this->_deprecatedException('union()');
+        $this->_deprecatedMethod('union()');
+
+        return parent::unionAll($query, $overwrite);
     }
 
     /**
@@ -186,7 +220,9 @@ class DeleteQuery extends Query
      */
     public function insert(array $columns, array $types = [])
     {
-        $this->_deprecatedException('insert()');
+        $this->_deprecatedMethod('insert()');
+
+        return parent::insert($columns, $types);
     }
 
     /**
@@ -194,7 +230,9 @@ class DeleteQuery extends Query
      */
     public function into(string $table)
     {
-        $this->_deprecatedException('into()', 'Use from() instead.');
+        $this->_deprecatedMethod('into()', 'Use from() instead.');
+
+        return parent::into($table);
     }
 
     /**
@@ -202,7 +240,9 @@ class DeleteQuery extends Query
      */
     public function values($data)
     {
-        $this->_deprecatedException('values()');
+        $this->_deprecatedMethod('values()');
+
+        return parent::values($data);
     }
 
     /**
@@ -210,7 +250,9 @@ class DeleteQuery extends Query
      */
     public function update($table = null)
     {
-        $this->_deprecatedException('update()');
+        $this->_deprecatedMethod('update()');
+
+        return parent::update($table);
     }
 
     /**
@@ -218,6 +260,8 @@ class DeleteQuery extends Query
      */
     public function set($key, $value = null, $types = [])
     {
-        $this->_deprecatedException('set()');
+        $this->_deprecatedMethod('set()');
+
+        return parent::set($key, $value, $types);
     }
 }

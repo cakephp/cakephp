@@ -1079,7 +1079,7 @@ class TableTest extends TestCase
             ->onlyMethods(['deleteQuery'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\DeleteQuery')
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();

@@ -27,7 +27,6 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use Cake\Datasource\ResultSetInterface;
-use Cake\ORM\Exception\DeprecationException;
 use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
@@ -1450,10 +1449,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return void
      * @internal
      */
-    protected function _deprecatedException($method, $message = '')
+    protected function _deprecatedMethod($method, $message = '')
     {
-        $class = $this::class;
-        $text = "Calling {$method}() on {$class} is deprecated. " . $message;
-        throw new DeprecationException($text);
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
     }
 }

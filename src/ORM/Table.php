@@ -39,8 +39,8 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
-use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -1720,9 +1720,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Creates a new DeleteQuery instance for a table.
      *
-     * @return \Cake\ORM\DeleteQuery
+     * @return \Cake\ORM\Query\DeleteQuery
      */
-    public function deleteQuery(): Query
+    public function deleteQuery(): DeleteQuery
     {
         return new DeleteQuery($this->getConnection(), $this);
     }
