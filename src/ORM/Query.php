@@ -27,9 +27,9 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\Exception\DeprecationException;
 use InvalidArgumentException;
 use JsonSerializable;
-use PHPUnit\Framework\MockObject\InvalidMethodNameException;
 use RuntimeException;
 use Traversable;
 
@@ -1447,12 +1447,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @param string $method The method that is invalid.
      * @param string $message An additional message.
+     * @return void
      * @internal
      */
     protected function _deprecatedException($method, $message = '')
     {
-        $class = get_class($this);
+        $class = $this::class;
         $text = "Calling {$method}() on {$class} is deprecated. " . $message;
-        throw new InvalidMethodNameException($text);
+        throw new DeprecationException($text);
     }
 }
