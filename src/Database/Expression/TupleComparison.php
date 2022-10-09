@@ -146,8 +146,8 @@ class TupleComparison extends ComparisonExpression
             if ($isMultiOperation) {
                 $bound = [];
                 foreach ($value as $k => $val) {
-                    /** @var string $valType */
                     $valType = $type && isset($type[$k]) ? $type[$k] : $type;
+                    assert($valType === null || is_scalar($valType));
                     $bound[] = $this->_bindValue($val, $binder, $valType);
                 }
 
@@ -155,8 +155,8 @@ class TupleComparison extends ComparisonExpression
                 continue;
             }
 
-            /** @var string $valType */
             $valType = $type && isset($type[$i]) ? $type[$i] : $type;
+            assert($valType === null || is_scalar($valType));
             $values[] = $this->_bindValue($value, $binder, $valType);
         }
 

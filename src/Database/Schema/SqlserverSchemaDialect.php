@@ -402,8 +402,8 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getColumn($name);
+        assert($data !== null);
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
@@ -564,8 +564,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
@@ -584,8 +584,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
@@ -601,8 +601,8 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getIndex($name);
+        assert($data !== null);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -621,8 +621,8 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getConstraint($name);
+        assert($data !== null);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
@@ -691,8 +691,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         // Restart identity sequences
         $pk = $schema->getPrimaryKey();
         if (count($pk) === 1) {
-            /** @var array $column */
             $column = $schema->getColumn($pk[0]);
+            assert($column !== null);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
                     "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = '%s' AND " .

@@ -403,8 +403,8 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getColumn($name);
+        assert($data !== null);
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
@@ -547,8 +547,8 @@ class PostgresSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
@@ -567,8 +567,8 @@ class PostgresSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
@@ -584,8 +584,8 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getIndex($name);
+        assert($data !== null);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -604,8 +604,8 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array<string, mixed> $data */
         $data = $schema->getConstraint($name);
+        assert($data !== null);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';

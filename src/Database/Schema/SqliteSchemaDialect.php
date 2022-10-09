@@ -352,8 +352,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getColumn($name);
+        assert($data !== null);
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
@@ -503,9 +503,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getConstraint($name);
-        /** @psalm-suppress PossiblyNullArrayAccess */
+        assert($data !== null);
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
@@ -579,8 +578,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getIndex($name);
+        assert($data !== null);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']

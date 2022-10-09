@@ -478,7 +478,6 @@ class Sqlserver extends Driver
                 $expression->setName('')->setConjunction(' +');
                 break;
             case 'DATEDIFF':
-                /** @var bool $hasDay */
                 $hasDay = false;
                 $visitor = function ($value) use (&$hasDay) {
                     if ($value === 'day') {

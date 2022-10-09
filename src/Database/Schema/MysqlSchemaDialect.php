@@ -344,8 +344,8 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getColumn($name);
+        assert($data !== null);
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
@@ -399,16 +399,16 @@ class MysqlSchemaDialect extends SchemaDialect
                         break;
                     }
 
-                    /** @var string $length */
                     $length = array_search($data['length'], TableSchema::$columnLengths);
+                    assert(is_string($length));
                     $out .= ' ' . strtoupper($length) . 'TEXT';
 
                     break;
                 case TableSchemaInterface::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
                     if ($isKnownLength) {
-                        /** @var string $length */
                         $length = array_search($data['length'], TableSchema::$columnLengths);
+                        assert(is_string($length));
                         $out .= ' ' . strtoupper($length) . 'BLOB';
                         break;
                     }
@@ -546,8 +546,8 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getConstraint($name);
+        assert($data !== null);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 [$this->_driver, 'quoteIdentifier'],
@@ -578,8 +578,8 @@ class MysqlSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
@@ -598,8 +598,8 @@ class MysqlSchemaDialect extends SchemaDialect
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            /** @var array $constraint */
             $constraint = $schema->getConstraint($name);
+            assert($constraint !== null);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
@@ -615,8 +615,8 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getIndex($name);
+        assert($data !== null);
         $out = '';
         if ($data['type'] === TableSchema::INDEX_INDEX) {
             $out = 'KEY ';
