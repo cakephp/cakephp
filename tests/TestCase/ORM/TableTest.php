@@ -1076,7 +1076,7 @@ class TableTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
+            ->onlyMethods(['deleteQuery'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
         $query = $this->getMockBuilder('Cake\ORM\Query')
@@ -1084,7 +1084,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
         $table->expects($this->once())
-            ->method('query')
+            ->method('deleteQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())

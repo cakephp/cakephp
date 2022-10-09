@@ -40,6 +40,7 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\Query\DeleteQuery;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -1710,7 +1711,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function query(): Query
     {
+        // TODO(markstory) Add deprecation here to encourage new methods.
+        // Remember to remind people implementing this method to
+        // implement the new ones instead.
         return new Query($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new DeleteQuery instance for a table.
+     *
+     * @return \Cake\ORM\DeleteQuery
+     */
+    public function deleteQuery(): Query
+    {
+        return new DeleteQuery($this->getConnection(), $this);
     }
 
     /**
@@ -1744,8 +1758,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteAll($conditions): int
     {
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($conditions)
             ->execute();
         $statement->closeCursor();
@@ -2507,8 +2520,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($entity->extract($primaryKey))
             ->execute();
 
