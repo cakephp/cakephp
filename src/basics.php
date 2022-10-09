@@ -87,8 +87,8 @@ if (!function_exists('stackTrace')) {
         $options += ['start' => 0];
         $options['start']++;
 
-        /** @var string $trace */
         $trace = Debugger::trace($options);
+        assert(is_string($trace));
         echo $trace;
     }
 

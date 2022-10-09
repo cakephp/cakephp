@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Behavior;
 
 use Cake\I18n\I18n;
+use Cake\Datasource\QueryInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
@@ -316,8 +317,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
 
         return $query
-            ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
-                /** @var \Cake\Datasource\QueryInterface $query */
+            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
                     $query->where(["$targetAlias.locale IN" => $locales]);
                 }

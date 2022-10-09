@@ -188,8 +188,8 @@ class DateTimeWidget extends BasicWidget
 
         try {
             if ($value instanceof DateTimeInterface) {
-                /** @var \DateTime|\DateTimeImmutable $dateTime */
                 $dateTime = clone $value;
+                assert($dateTime instanceof DateTime || $dateTime instanceof DateTimeImmutable);
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);
             } elseif (is_numeric($value)) {

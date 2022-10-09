@@ -88,8 +88,8 @@ class PackageLocator
         }
 
         if (!$this->converted[$name][$locale]) {
-            /** @var callable $func */
             $func = $this->registry[$name][$locale];
+            assert(is_callable($func));
             $this->registry[$name][$locale] = $func();
             $this->converted[$name][$locale] = true;
         }

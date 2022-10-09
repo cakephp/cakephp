@@ -386,13 +386,14 @@ class Xml
             'format' => null,
         ];
 
-        $value = $data['value'];
-        /** @var \DOMDocument $dom */
-        $dom = $data['dom'];
         $key = $data['key'];
         $format = $data['format'];
-        /** @var \DOMElement $node */
+        $value = $data['value'];
+        $dom = $data['dom'];
+        assert($dom instanceof DOMDocument);
+
         $node = $data['node'];
+        assert($node instanceof DOMElement || $node instanceof DOMDocument);
 
         $childNS = $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
@@ -435,8 +436,8 @@ class Xml
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);
         }
+        assert($obj instanceof SimpleXMLElement);
         $result = [];
-        /** @var \SimpleXMLElement $obj */
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
         static::_toArray($obj, $result, '', array_keys($namespaces));
 

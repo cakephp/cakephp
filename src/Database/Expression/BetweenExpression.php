@@ -81,7 +81,6 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
             'to' => $this->_to,
         ];
 
-        /** @var \Cake\Database\ExpressionInterface|string $field */
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
             $field = $field->sql($binder);
@@ -94,6 +93,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
             }
             $parts[$name] = $this->_bindValue($part, $binder, $this->_type);
         }
+        assert(is_string($field));
 
         return sprintf('%s BETWEEN %s AND %s', $field, $parts['from'], $parts['to']);
     }

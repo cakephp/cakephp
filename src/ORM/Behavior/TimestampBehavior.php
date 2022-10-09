@@ -216,9 +216,7 @@ class TimestampBehavior extends Behavior
             return;
         }
 
-        /** @var \Cake\Database\Type\DateTimeType $type */
         $type = TypeFactory::build($columnType);
-
         assert(
             $type instanceof DateTimeType,
             'TimestampBehavior only supports columns of type DateTimeType.'

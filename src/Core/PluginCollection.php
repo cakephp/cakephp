@@ -285,8 +285,8 @@ class PluginCollection implements Iterator, Countable
                 throw new InvalidArgumentException(sprintf('Class `%s` does not exist.', $name));
             }
 
-            /** @var \Cake\Core\PluginInterface $plugin */
             $plugin = new $name($config);
+            assert($plugin instanceof PluginInterface);
 
             return $plugin;
         }

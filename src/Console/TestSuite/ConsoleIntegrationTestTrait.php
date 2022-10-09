@@ -25,6 +25,7 @@ use Cake\Console\TestSuite\Constraint\ContentsEmpty;
 use Cake\Console\TestSuite\Constraint\ContentsNotContain;
 use Cake\Console\TestSuite\Constraint\ContentsRegExp;
 use Cake\Console\TestSuite\Constraint\ExitCode;
+use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 
 /**
@@ -259,8 +260,8 @@ trait ConsoleIntegrationTestTrait
      */
     protected function makeRunner(): CommandRunner
     {
-        /** @var \Cake\Core\ConsoleApplicationInterface $app */
         $app = $this->createApp();
+        assert($app instanceof ConsoleApplicationInterface);
 
         return new CommandRunner($app);
     }

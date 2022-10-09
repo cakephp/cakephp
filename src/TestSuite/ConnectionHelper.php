@@ -18,6 +18,7 @@ namespace Cake\TestSuite;
 use Cake\Database\Connection;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -88,8 +89,8 @@ class ConnectionHelper
      */
     public function dropTables(string $connectionName, ?array $tables = null): void
     {
-        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
+        assert($connection instanceof Connection);
         $collection = $connection->getSchemaCollection();
         $allTables = $collection->listTablesWithoutViews();
 
@@ -97,14 +98,14 @@ class ConnectionHelper
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
-        /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
+            assert($schema instanceof TableSchema);
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
                 $connection->execute($statement);
             }
         }
-        /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
+            assert($schema instanceof TableSchema);
             foreach ($dialect->dropTableSql($schema) as $statement) {
                 $connection->execute($statement);
             }
@@ -120,8 +121,8 @@ class ConnectionHelper
      */
     public function truncateTables(string $connectionName, ?array $tables = null): void
     {
-        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
+        assert($connection instanceof Connection);
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTablesWithoutViews();

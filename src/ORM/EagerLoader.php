@@ -537,8 +537,8 @@ class EagerLoader
                 if (count($configs) < 2) {
                     continue;
                 }
-                /** @var \Cake\ORM\EagerLoadable $loadable */
                 foreach ($configs as $loadable) {
+                    assert($loadable instanceof EagerLoadable);
                     if (str_contains($loadable->aliasPath(), '.')) {
                         $this->_correctStrategy($loadable);
                     }

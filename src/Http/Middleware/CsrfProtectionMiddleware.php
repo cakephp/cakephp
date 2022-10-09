@@ -155,7 +155,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->createToken();
             $request = $request->withAttribute('csrfToken', $this->saltToken($token));
-            /** @var mixed $response */
             $response = $handler->handle($request);
 
             return $this->_addTokenCookie($token, $request, $response);

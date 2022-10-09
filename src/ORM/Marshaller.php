@@ -106,8 +106,7 @@ class Marshaller
                 $nested['forceNew'] = $options['forceNew'];
             }
             if (isset($options['isMerge'])) {
-                $callback = function ($value, $entity) use ($assoc, $nested) {
-                    /** @var \Cake\Datasource\EntityInterface $entity */
+                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested) {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
@@ -409,8 +408,8 @@ class Marshaller
             $keyFields = array_keys($primaryKey);
 
             $existing = [];
-            /** @var \Cake\Datasource\EntityInterface $row */
             foreach ($query as $row) {
+                assert($row instanceof EntityInterface);
                 $k = implode(';', $row->extract($keyFields));
                 $existing[$k] = $row;
             }
@@ -595,7 +594,7 @@ class Marshaller
         }
 
         foreach ((array)$options['fields'] as $field) {
-            /** @var string $field */
+            assert(is_string($field));
             if (!array_key_exists($field, $properties)) {
                 continue;
             }
@@ -690,8 +689,8 @@ class Marshaller
         $maybeExistentQuery = $this->_table->find()->where($conditions);
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
-            /** @var \Cake\Datasource\EntityInterface $entity */
             foreach ($maybeExistentQuery as $entity) {
+                assert($entity instanceof EntityInterface);
                 $key = implode(';', $entity->extract($primary));
                 if (isset($indexed[$key])) {
                     $output[] = $this->merge($entity, $indexed[$key], $options);

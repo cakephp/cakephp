@@ -164,8 +164,8 @@ class SelectLoader
         $finder = $this->finder;
         $options['fields'] = $options['fields'] ?? [];
 
-        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $finder();
+        assert($query instanceof SelectQuery);
         if (isset($options['finder'])) {
             [$finderName, $opts] = $this->_extractFinder($options['finder']);
             $query = $query->find($finderName, $opts);

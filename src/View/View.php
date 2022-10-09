@@ -883,7 +883,6 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                /** @var array|false $data */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new CakeException(

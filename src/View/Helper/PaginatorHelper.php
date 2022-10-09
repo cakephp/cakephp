@@ -1150,8 +1150,8 @@ class PaginatorHelper extends Helper
             '100' => '100',
         ];
         $default = $default ?? $this->paginated()->perPage();
-        /** @var string|null $scope */
         $scope = $this->param('scope');
+        assert($scope === null || is_string($scope));
         if ($scope) {
             $scope .= '.';
         }

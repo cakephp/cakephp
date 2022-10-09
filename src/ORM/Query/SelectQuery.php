@@ -19,6 +19,7 @@ namespace Cake\ORM\Query;
 use ArrayObject;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query\SelectQuery as DbSelectQuery;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
@@ -1417,8 +1418,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         if (!$complex && $this->_valueBinder !== null) {
-            /** @var \Cake\Database\Expression\QueryExpression|null $order */
             $order = $this->clause('order');
+            assert($order === null || $order instanceof QueryExpression);
             $complex = $order === null ? false : $order->hasNestedExpression();
         }
 

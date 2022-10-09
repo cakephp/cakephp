@@ -261,8 +261,7 @@ class Debugger
      */
     public static function log(mixed $var, string|int $level = 'debug', int $maxDepth = 3): void
     {
-        /** @var string $source */
-        $source = static::trace(['start' => 1]);
+        $source = (string)static::trace(['start' => 1]);
         $source .= "\n";
 
         Log::write(

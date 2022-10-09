@@ -26,6 +26,7 @@ use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
@@ -178,7 +179,6 @@ abstract class TestCase extends BaseTestCase
     {
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
         Configure::write('Error.allowDuplicateDeprecations', true);
-        /** @var bool $deprecation */
         $deprecation = false;
 
         $previousHandler = set_error_handler(
@@ -302,8 +302,8 @@ abstract class TestCase extends BaseTestCase
         $className = Configure::read('App.namespace') . '\\Application';
         try {
             $reflect = new ReflectionClass($className);
-            /** @var \Cake\Routing\RoutingApplicationInterface $app */
             $app = $reflect->newInstanceArgs($appArgs);
+            assert($app instanceof RoutingApplicationInterface);
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf('Cannot load `%s` to load routes from.', $className), 0, $e);
         }

@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use BadMethodCallException;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
@@ -500,8 +501,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection(): Connection
     {
         if (!$this->_connection) {
-            /** @var \Cake\Database\Connection $connection */
             $connection = ConnectionManager::get(static::defaultConnectionName());
+            assert($connection instanceof Connection);
             $this->_connection = $connection;
         }
 
@@ -1358,8 +1359,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(fn($results) =>
-            /** @var \Cake\Collection\CollectionInterface $results */
+        return $query->formatResults(fn(CollectionInterface $results) =>
             $results->combine(
                 $options['keyField'],
                 $options['valueField'],
@@ -1401,8 +1401,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
-        return $query->formatResults(fn($results) =>
-            /** @var \Cake\Collection\CollectionInterface $results */
+        return $query->formatResults(fn(CollectionInterface $results) =>
             $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']));
     }
 

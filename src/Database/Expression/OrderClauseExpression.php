@@ -52,13 +52,13 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        /** @var \Cake\Database\ExpressionInterface|string $field */
         $field = $this->_field;
         if ($field instanceof Query) {
             $field = sprintf('(%s)', $field->sql($binder));
         } elseif ($field instanceof ExpressionInterface) {
             $field = $field->sql($binder);
         }
+        assert(is_string($field));
 
         return sprintf('%s %s', $field, $this->_direction);
     }

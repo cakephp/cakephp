@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
@@ -135,8 +136,8 @@ class TestFixture implements FixtureInterface
      */
     protected function _schemaFromReflection(): void
     {
-        /** @var \Cake\Database\Connection $db */
         $db = ConnectionManager::get($this->connection());
+        assert($db instanceof Connection);
         try {
             $name = Inflector::camelize($this->table);
             $ormTable = $this->fetchTable($name, ['connection' => $db]);
@@ -145,8 +146,8 @@ class TestFixture implements FixtureInterface
             // with test cases that need to (re)configure the alias.
             $this->getTableLocator()->remove($name);
 
-            /** @var \Cake\Database\Schema\TableSchema $schema */
             $schema = $ormTable->getSchema();
+            assert($schema instanceof TableSchemaInterface);
             $this->_schema = $schema;
 
             $this->getTableLocator()->clear();
@@ -165,9 +166,9 @@ class TestFixture implements FixtureInterface
      */
     public function insert(ConnectionInterface $connection): bool
     {
+        assert($connection instanceof Connection);
         if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
-            /** @var \Cake\Database\Connection $connection */
             $query = $connection->insertQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
@@ -196,8 +197,8 @@ class TestFixture implements FixtureInterface
         /** @var array<string> $fields */
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
-            /** @var array $column */
             $column = $this->_schema->getColumn($field);
+            assert($column !== null);
             $types[$field] = $column['type'];
         }
         $default = array_fill_keys($fields, null);
@@ -213,7 +214,7 @@ class TestFixture implements FixtureInterface
      */
     public function truncate(ConnectionInterface $connection): bool
     {
-        /** @var \Cake\Database\Connection $connection */
+        assert($connection instanceof Connection);
         $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
             $connection->execute($stmt);

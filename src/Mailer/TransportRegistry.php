@@ -69,7 +69,8 @@ class TransportRegistry extends ObjectRegistry
     protected function _create(object|string $class, string $alias, array $config): AbstractTransport
     {
         if (is_object($class)) {
-            /** @var \Cake\Mailer\AbstractTransport */
+            assert($class instanceof AbstractTransport);
+
             return $class;
         }
 

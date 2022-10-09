@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Behavior;
 
 use Cake\Collection\CollectionInterface;
+use Cake\Collection\Iterator\TreeIterator;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -201,8 +202,8 @@ class TreeBehavior extends Behavior
             'order' => $config['left'],
         ]);
 
-        /** @var \Cake\Datasource\EntityInterface $node */
         foreach ($children as $node) {
+            assert($node instanceof EntityInterface);
             $parentIdValue = $node->get($config['parent']);
             $depth = $depths[$parentIdValue] + 1;
             $depths[$node->get($primaryKey)] = $depth;
@@ -363,8 +364,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $this->_table->updateAll(
-            function ($exp) use ($config) {
-                /** @var \Cake\Database\Expression\QueryExpression $exp */
+            function (QueryExpression $exp) use ($config) {
                 $leftInverse = clone $exp;
                 $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
@@ -541,8 +541,8 @@ class TreeBehavior extends Behavior
                 'spacer' => '_',
             ];
 
-            /** @var \Cake\Collection\Iterator\TreeIterator $nested */
             $nested = $results->listNested();
+            assert($nested instanceof TreeIterator);
 
             return $nested->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
         });
@@ -737,7 +737,6 @@ class TreeBehavior extends Behavior
 
         $targetNode = null;
         if ($number !== true) {
-            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -748,7 +747,6 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
-            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -761,6 +759,7 @@ class TreeBehavior extends Behavior
                 return $node;
             }
         }
+        assert($targetNode instanceof EntityInterface);
 
         [, $targetRight] = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
@@ -774,9 +773,8 @@ class TreeBehavior extends Behavior
         $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
         $this->_sync($nodeToHole, '-', "> {$edge}");
 
-        /** @var string $left */
+        assert(is_string($left) && is_string($right));
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
-        /** @var string $right */
         $node->set($right, $targetRight);
 
         $node->setDirty($left, false);

@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Error\Renderer\WebExceptionRenderer;
@@ -503,8 +504,8 @@ trait IntegrationTestTrait
     protected function _makeDispatcher(): MiddlewareDispatcher
     {
         EventManager::instance()->on('Controller.initialize', $this->controllerSpy(...));
-        /** @var \Cake\Core\HttpApplicationInterface $app */
         $app = $this->createApp();
+        assert($app instanceof HttpApplicationInterface);
 
         return new MiddlewareDispatcher($app);
     }
@@ -519,8 +520,8 @@ trait IntegrationTestTrait
     public function controllerSpy(EventInterface $event, ?Controller $controller = null): void
     {
         if (!$controller) {
-            /** @var \Cake\Controller\Controller $controller */
             $controller = $event->getSubject();
+            assert($controller instanceof Controller);
         }
         $this->_controller = $controller;
         $events = $controller->getEventManager();

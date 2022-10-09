@@ -307,10 +307,9 @@ class Cookie implements CookieInterface
             }
         }
 
-        /** @var string $name */
         $name = $data['name'];
-        /** @var string $value */
         $value = $data['value'];
+        assert(is_string($name) && is_string($value));
         unset($data['name'], $data['value']);
 
         return Cookie::create(

@@ -121,8 +121,8 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        assert($request instanceof ServerRequest);
         $controller = $this->controller;
-        /** @var \Cake\Http\ServerRequest $request */
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();

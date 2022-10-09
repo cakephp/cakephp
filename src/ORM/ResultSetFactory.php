@@ -128,11 +128,13 @@ class ResultSetFactory
                 array_intersect_key($row, $keys)
             );
             if ($data['hydrate']) {
-                /** @var \Cake\ORM\Table $table */
                 $table = $matching['instance'];
+                assert($table instanceof Table || $table instanceof Association);
+
                 $options['source'] = $table->getRegistryAlias();
-                /** @var \Cake\Datasource\EntityInterface $entity */
                 $entity = new $matching['entityClass']($results['_matchingData'][$alias], $options);
+                assert($entity instanceof EntityInterface);
+
                 $results['_matchingData'][$alias] = $entity;
             }
         }
@@ -156,8 +158,8 @@ class ResultSetFactory
                 continue;
             }
 
-            /** @var \Cake\ORM\Association $instance */
             $instance = $assoc['instance'];
+            assert($instance instanceof Association);
 
             if (!$assoc['canBeJoined'] && !isset($row[$alias])) {
                 $results = $instance->defaultRowValue($results, $assoc['canBeJoined']);

@@ -20,6 +20,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -98,8 +99,9 @@ class RoutingMiddleware implements MiddlewareInterface
                 unset($params['_middleware'], $params['_route']);
 
                 $request = $request->withAttribute('route', $route);
-                /** @var \Cake\Http\ServerRequest $request */
                 $request = $request->withAttribute('params', $params);
+
+                assert($request instanceof ServerRequest);
                 Router::setRequest($request);
             }
         } catch (RedirectException $e) {

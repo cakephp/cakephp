@@ -248,8 +248,8 @@ class FileEngine extends CacheEngine
             RecursiveIteratorIterator::SELF_FIRST
         );
         $cleared = [];
-        /** @var \SplFileInfo $fileInfo */
         foreach ($contents as $fileInfo) {
+            assert($fileInfo instanceof SplFileInfo);
             if ($fileInfo->isFile()) {
                 unset($fileInfo);
                 continue;

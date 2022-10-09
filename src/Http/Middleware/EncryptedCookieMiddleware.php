@@ -139,9 +139,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      */
     protected function encodeCookies(Response $response): Response
     {
-        /** @var array<\Cake\Http\Cookie\CookieInterface> $cookies */
-        $cookies = $response->getCookieCollection();
-        foreach ($cookies as $cookie) {
+        foreach ($response->getCookieCollection() as $cookie) {
             if (in_array($cookie->getName(), $this->cookieNames, true)) {
                 $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $response = $response->withCookie($cookie->withValue($value));
@@ -159,7 +157,6 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      */
     protected function encodeSetCookieHeader(ResponseInterface $response): ResponseInterface
     {
-        /** @var array<\Cake\Http\Cookie\CookieInterface> $cookies */
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $header = [];
         foreach ($cookies as $cookie) {
