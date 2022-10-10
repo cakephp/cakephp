@@ -189,7 +189,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
-     * @psalm-param TObject|string $class
+     * @psalm-param TObject|class-string<TObject> $class
      * @psalm-return TObject
      */
     abstract protected function _create(object|string $class, string $alias, array $config): object;

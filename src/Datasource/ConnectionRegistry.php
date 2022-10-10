@@ -69,7 +69,7 @@ class ConnectionRegistry extends ObjectRegistry
      * If a closure is passed as first argument, The returned value of this
      * function will be the result from calling the closure.
      *
-     * @param object|string $class The classname or object to make.
+     * @param \Cake\Datasource\ConnectionInterface|\Closure|class-string<\Cake\Datasource\ConnectionInterface> $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
@@ -79,7 +79,6 @@ class ConnectionRegistry extends ObjectRegistry
         if (is_string($class)) {
             unset($config['className']);
 
-            /** @var class-string<\Cake\Datasource\ConnectionInterface> $class */
             return new $class($config);
         }
 
@@ -87,7 +86,6 @@ class ConnectionRegistry extends ObjectRegistry
             return $class($alias);
         }
 
-        /** @var \Cake\Datasource\ConnectionInterface */
         return $class;
     }
 

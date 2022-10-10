@@ -100,12 +100,10 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}
      * Enabled components will be registered with the event manager.
      *
-     * @param \Cake\Controller\Component|string $class The classname to create.
+     * @param \Cake\Controller\Component|class-string<\Cake\Controller\Component> $class The classname to create.
      * @param string $alias The alias of the component.
      * @param array<string, mixed> $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
-     * @psalm-suppress MoreSpecificImplementedParamType
-     * @psalm-param \Cake\Controller\Component|class-string<\Cake\Controller\Component> $class
      */
     protected function _create(object|string $class, string $alias, array $config): Component
     {
