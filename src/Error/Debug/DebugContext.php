@@ -39,7 +39,7 @@ class DebugContext
     private int $depth = 0;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<object, int>
      */
     private SplObjectStorage $refs;
 

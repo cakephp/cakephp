@@ -36,7 +36,7 @@ class RulesProvider
     /**
      * The proxied class' reflection
      *
-     * @var \ReflectionClass
+     * @var \ReflectionClass<object>
      */
     protected ReflectionClass $_reflection;
 

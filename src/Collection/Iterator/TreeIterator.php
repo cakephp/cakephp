@@ -41,7 +41,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     /**
      * Constructor
      *
-     * @param \RecursiveIterator $items The iterator to flatten.
+     * @param \RecursiveIterator<mixed, mixed> $items The iterator to flatten.
      * @param int $mode Iterator mode.
      * @param int $flags Iterator flags.
      */

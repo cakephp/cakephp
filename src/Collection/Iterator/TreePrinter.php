@@ -62,7 +62,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
     /**
      * Constructor
      *
-     * @param \RecursiveIterator $items The iterator to flatten.
+     * @param \RecursiveIterator<mixed, mixed> $items The iterator to flatten.
      * @param callable|string $valuePath The property to extract or a callable to return
      * the display value.
      * @param callable|string $keyPath The property to use as iteration key or a

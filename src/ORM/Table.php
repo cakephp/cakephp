@@ -1941,7 +1941,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Performs the actual saving of an entity based on the passed options.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayObject $options the options to use for the save operation
+     * @param \ArrayObject<string, mixed> $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\Database\Exception\DatabaseException When an entity is missing some of the primary keys.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
@@ -2024,7 +2024,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * once the entity for this table has been saved successfully.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayObject $options the options to use for the save operation
+     * @param \ArrayObject<string, mixed> $options the options to use for the save operation
      * @return bool True on success
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
@@ -2486,7 +2486,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * dependent associations, and clear out join tables for BelongsToMany associations.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to delete.
-     * @param \ArrayObject $options The options for the delete.
+     * @param \ArrayObject<string, mixed> $options The options for the delete.
      * @throws \InvalidArgumentException if there are no primary key values of the
      * passed entity
      * @return bool success
