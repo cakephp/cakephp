@@ -81,8 +81,8 @@ trait EventDispatcherTrait
     {
         $subject ??= $this;
 
+        /** @var \Cake\Event\EventInterface $event Coerce for psalm/phpstan */
         $event = new $this->_eventClass($name, $subject, $data);
-        assert($event instanceof EventInterface);
         $this->getEventManager()->dispatch($event);
 
         return $event;

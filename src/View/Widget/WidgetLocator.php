@@ -212,8 +212,8 @@ class WidgetLocator
         } else {
             $instance = new $className($this->_templates);
         }
-        assert($instance instanceof WidgetInterface);
 
+        /** @var \Cake\View\Widget\WidgetInterface */
         return $instance;
     }
 }

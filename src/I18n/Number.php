@@ -345,8 +345,8 @@ class Number
             static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
         }
 
+        /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
-        assert($formatter instanceof NumberFormatter);
         $formatter = clone $formatter;
 
         return static::_setAttributes($formatter, $options);

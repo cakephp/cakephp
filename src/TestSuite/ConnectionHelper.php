@@ -18,7 +18,6 @@ namespace Cake\TestSuite;
 use Cake\Database\Connection;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Log\QueryLogger;
-use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -95,17 +94,16 @@ class ConnectionHelper
         $allTables = $collection->listTablesWithoutViews();
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
         foreach ($schemas as $schema) {
-            assert($schema instanceof TableSchema);
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
                 $connection->execute($statement);
             }
         }
         foreach ($schemas as $schema) {
-            assert($schema instanceof TableSchema);
             foreach ($dialect->dropTableSql($schema) as $statement) {
                 $connection->execute($statement);
             }
@@ -127,11 +125,11 @@ class ConnectionHelper
 
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
-            /** @var \Cake\Database\Schema\TableSchema $schema */
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
                     $connection->execute($statement);

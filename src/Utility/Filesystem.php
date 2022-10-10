@@ -201,6 +201,7 @@ class Filesystem
             throw new CakeException(sprintf('"%s" is not a directory', $path));
         }
 
+        /** @var \RecursiveDirectoryIterator $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
@@ -208,7 +209,6 @@ class Filesystem
 
         $result = true;
         foreach ($iterator as $fileInfo) {
-            assert($fileInfo instanceof SplFileInfo);
             $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
                 // phpcs:ignore
@@ -250,7 +250,6 @@ class Filesystem
 
         $result = true;
         foreach ($iterator as $fileInfo) {
-            assert($fileInfo instanceof SplFileInfo);
             if ($fileInfo->isDir()) {
                 $result = $result && $this->copyDir(
                     $fileInfo->getPathname(),

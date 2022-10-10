@@ -106,9 +106,7 @@ class SchemaCache
             $connection->cacheMetadata(true);
         }
 
-        $schemaCollection = $connection->getSchemaCollection();
-        assert($schemaCollection instanceof CachedCollection);
-
-        return $schemaCollection;
+        /** @var \Cake\Database\Schema\CachedCollection */
+        return $connection->getSchemaCollection();
     }
 }

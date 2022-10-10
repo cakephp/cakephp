@@ -145,8 +145,8 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             return $class;
         }
 
+        /** @var \Cake\ORM\Behavior $instance */
         $instance = new $class($this->_table, $config);
-        assert($instance instanceof Behavior);
 
         $enable = $config['enabled'] ?? true;
         if ($enable) {

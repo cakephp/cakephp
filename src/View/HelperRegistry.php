@@ -150,8 +150,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             return $class;
         }
 
+        /** @var \Cake\View\Helper $instance */
         $instance = new $class($this->_View, $config);
-        assert($instance instanceof Helper);
 
         $enable = $config['enabled'] ?? true;
         if ($enable) {

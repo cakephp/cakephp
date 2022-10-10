@@ -91,8 +91,8 @@ trait CellTrait
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
+        /** @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
-        assert($instance instanceof Cell);
 
         $builder = $instance->viewBuilder();
         $builder->setTemplate(Inflector::underscore($action));

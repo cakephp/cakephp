@@ -590,10 +590,8 @@ class ViewBuilder implements JsonSerializable
         ];
         $data += $this->_options;
 
-        $view = new $className($request, $response, $events, $data);
-        assert($view instanceof View);
-
-        return $view;
+        /** @var \Cake\View\View */
+        return new $className($request, $response, $events, $data);
     }
 
     /**

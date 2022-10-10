@@ -364,8 +364,8 @@ class Log
 
         $registry = static::getRegistry();
         foreach ($registry->loaded() as $streamName) {
+            /** @var \Psr\Log\LoggerInterface $logger */
             $logger = $registry->{$streamName};
-            assert($logger instanceof LoggerInterface);
             $levels = $scopes = null;
 
             if ($logger instanceof BaseLog) {
