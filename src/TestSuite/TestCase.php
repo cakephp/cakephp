@@ -179,6 +179,7 @@ abstract class TestCase extends BaseTestCase
     {
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
         Configure::write('Error.allowDuplicateDeprecations', true);
+        /** @var bool $deprecation Expand type for psalm */
         $deprecation = false;
 
         $previousHandler = set_error_handler(

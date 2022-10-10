@@ -18,8 +18,8 @@ namespace Cake\ORM\Query;
 
 use ArrayObject;
 use Cake\Collection\Iterator\MapReduce;
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery as DbSelectQuery;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;

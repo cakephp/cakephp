@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\I18n\I18n;
 use Cake\Datasource\QueryInterface;
+use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;

@@ -373,11 +373,8 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getCookies(): array
     {
-        $cookies = $this->buildCookieCollection();
-        assert($cookies !== null);
-
         $out = [];
-        foreach ($cookies as $cookie) {
+        foreach ($this->buildCookieCollection() as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
         }
 

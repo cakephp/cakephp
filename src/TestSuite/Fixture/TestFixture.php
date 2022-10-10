@@ -18,6 +18,7 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -147,7 +148,7 @@ class TestFixture implements FixtureInterface
             $this->getTableLocator()->remove($name);
 
             $schema = $ormTable->getSchema();
-            assert($schema instanceof TableSchemaInterface);
+            assert($schema instanceof TableSchema);
             $this->_schema = $schema;
 
             $this->getTableLocator()->clear();
