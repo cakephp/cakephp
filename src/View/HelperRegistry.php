@@ -139,7 +139,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      * Enabled helpers will be registered with the event manager.
      *
-     * @param \Cake\View\Helper|string $class The class to create.
+     * @param \Cake\View\Helper|class-string<\Cake\View\Helper> $class The class to create.
      * @param string $alias The alias of the loaded helper.
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
@@ -150,7 +150,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             return $class;
         }
 
-        /** @var \Cake\View\Helper $instance */
         $instance = new $class($this->_View, $config);
 
         $enable = $config['enabled'] ?? true;

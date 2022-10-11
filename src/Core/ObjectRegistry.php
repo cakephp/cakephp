@@ -166,6 +166,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $class The class to resolve.
      * @return class-string|null The resolved name or null for failure.
+     * @psalm-return class-string<TObject>|null
      */
     abstract protected function _resolveClassName(string $class): ?string;
 
@@ -189,7 +190,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
-     * @psalm-param TObject|string $class
+     * @psalm-param TObject|class-string<TObject> $class
      * @psalm-return TObject
      */
     abstract protected function _create(object|string $class, string $alias, array $config): object;
