@@ -80,7 +80,7 @@ class DeleteQuery extends Query
      */
     public function select($fields = [], bool $overwrite = false)
     {
-        $this->_deprecatedMethod('select()');
+        $this->_deprecatedMethod('select()', 'Create your query with selectQuery() instead.');
 
         return parent::select($fields, $overwrite);
     }
@@ -148,11 +148,41 @@ class DeleteQuery extends Query
     /**
      * @inheritDoc
      */
+    public function leftJoinWith(string $assoc, ?callable $builder = null)
+    {
+        $this->_deprecatedMethod('leftJoinWith()');
+
+        return parent::leftJoinWith($assoc, $builder);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rightJoinWith(string $assoc, ?callable $builder = null)
+    {
+        $this->_deprecatedMethod('rightJoinWith()');
+
+        return parent::rightJoinWith($assoc, $builder);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function innerJoin($table, $conditions = [], $types = [])
     {
         $this->_deprecatedMethod('innerJoin()');
 
         return parent::innerJoin($table, $conditions, $types);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function innerJoinWith(string $assoc, ?callable $builder = null)
+    {
+        $this->_deprecatedMethod('innerJoinWith()');
+
+        return parent::innerJoinWith($assoc, $builder);
     }
 
     /**
@@ -220,7 +250,7 @@ class DeleteQuery extends Query
      */
     public function insert(array $columns, array $types = [])
     {
-        $this->_deprecatedMethod('insert()');
+        $this->_deprecatedMethod('insert()', 'Create your query with insertQuery() instead.');
 
         return parent::insert($columns, $types);
     }
@@ -250,7 +280,7 @@ class DeleteQuery extends Query
      */
     public function update($table = null)
     {
-        $this->_deprecatedMethod('update()');
+        $this->_deprecatedMethod('update()', 'Create your query with updateQuery() instead.');
 
         return parent::update($table);
     }
@@ -263,5 +293,65 @@ class DeleteQuery extends Query
         $this->_deprecatedMethod('set()');
 
         return parent::set($key, $value, $types);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function matching(string $assoc, ?callable $builder = null)
+    {
+        $this->_deprecatedMethod('matching()');
+
+        return parent::matching($assoc, $builder);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function notMatching(string $assoc, ?callable $builder = null)
+    {
+        $this->_deprecatedMethod('notMatching()');
+
+        return parent::notMatching($assoc, $builder);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function contain($associations, $override = false)
+    {
+        $this->_deprecatedMethod('contain()');
+
+        return parent::contain($associations, $override);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContain(): array
+    {
+        $this->_deprecatedMethod('getContain()');
+
+        return parent::getContain();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function cleanContain()
+    {
+        $this->_deprecatedMethod('cleanContain()');
+
+        return parent::cleanContain();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function find(string $finder, array $options = [])
+    {
+        $this->_deprecatedMethod('find()');
+
+        return parent::find($finder, $options);
     }
 }
