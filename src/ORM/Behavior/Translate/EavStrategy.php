@@ -298,8 +298,9 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $modified = [];
-        /** @var \Cake\Datasource\EntityInterface $translation */
         foreach ($preexistent as $field => $translation) {
+            assert($translation instanceof EntityInterface);
+
             $translation->set('content', $values[$field]);
             $modified[$field] = $translation;
         }

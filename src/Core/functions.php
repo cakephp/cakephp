@@ -206,11 +206,10 @@ if (!function_exists('env')) {
             $key = 'SCRIPT_URL';
         }
 
-        /** @var string|null $val */
         $val = $_SERVER[$key] ?? $_ENV[$key] ?? null;
+        assert($val === null || is_scalar($val));
         if ($val == null && getenv($key) !== false) {
-            /** @var string|false $val */
-            $val = getenv($key);
+            $val = (string)getenv($key);
         }
 
         if ($key === 'REMOTE_ADDR' && $val === env('SERVER_ADDR')) {

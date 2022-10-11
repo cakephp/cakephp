@@ -49,8 +49,8 @@ class Curl implements AdapterInterface
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
 
-        /** @var string|false $body */
         $body = $this->exec($ch);
+        assert($body === false || is_string($body));
         if ($body === false) {
             $errorCode = curl_errno($ch);
             $error = curl_error($ch);

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
+use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
@@ -185,8 +186,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             // Handle class strings
             if (is_string($value)) {
                 $reflection = new ReflectionClass($value);
-                /** @var \Cake\Console\BaseCommand $value */
                 $value = $reflection->newInstance();
+                assert($value instanceof BaseCommand);
             }
 
             if (method_exists($value, 'getOptionParser')) {

@@ -1174,8 +1174,8 @@ class Message implements JsonSerializable
             } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
                 $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
                 if (is_int($name)) {
-                    /** @var string $name */
                     $name = $fileInfo['file']->getClientFilename();
+                    assert(is_string($name));
                 }
             } elseif (is_string($fileInfo['file'])) {
                 $fileName = $fileInfo['file'];
@@ -1299,8 +1299,7 @@ class Message implements JsonSerializable
         $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
-        /** @var string $boundary */
-        $boundary = $this->boundary;
+        $boundary = $this->boundary ?? '';
         $relBoundary = $textBoundary = $boundary;
 
         if ($hasInlineAttachments) {

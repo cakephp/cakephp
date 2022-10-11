@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -402,8 +403,8 @@ class I18nExtractCommand extends Command
      */
     protected function _extractTokens(Arguments $args, ConsoleIo $io): void
     {
-        /** @var \Cake\Command\Helper\ProgressHelper $progress */
         $progress = $io->helper('progress');
+        assert($progress instanceof ProgressHelper);
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $args->getOption('verbose');
 

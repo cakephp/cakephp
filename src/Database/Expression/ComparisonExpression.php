@@ -143,7 +143,6 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        /** @var \Cake\Database\ExpressionInterface|string $field */
         $field = $this->_field;
 
         if ($field instanceof ExpressionInterface) {
@@ -159,6 +158,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         } else {
             [$template, $value] = $this->_stringExpression($binder);
         }
+        assert(is_string($field));
 
         return sprintf($template, $field, $this->_operator, $value);
     }
@@ -302,8 +302,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         $isArray = is_array($values);
 
         if ($isArray) {
-            /** @var array $result */
-            $result = $values;
+            $result = (array)$values;
         }
 
         foreach ($values as $k => $v) {

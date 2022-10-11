@@ -1102,8 +1102,8 @@ class BelongsToMany extends Association
         }
 
         $name = $this->_junctionAssociationName();
-        /** @var array $joins */
         $joins = $query->clause('join');
+        assert(is_array($joins));
         $matching = [
             $name => [
                 'table' => $junctionTable->getTable(),

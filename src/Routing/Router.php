@@ -611,11 +611,12 @@ class Router
     {
         $route = null;
         if ($params instanceof ServerRequest) {
-            /** @var \Cake\Routing\Route\Route|null $route */
             $route = $params->getAttribute('route');
+            assert($route === null || $route instanceof Route);
+
             $queryString = $params->getQueryParams();
-            /** @var array<string, mixed> $params */
             $params = $params->getAttribute('params');
+            assert(is_array($params));
             $params['?'] = $queryString;
         }
         $pass = $params['pass'] ?? [];

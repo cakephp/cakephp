@@ -67,7 +67,7 @@ class TextExceptionRenderer implements ExceptionRendererInterface
      */
     public function write(ResponseInterface|string $output): void
     {
-        /** @var string $output */
+        assert(is_string($output));
         echo $output;
     }
 }

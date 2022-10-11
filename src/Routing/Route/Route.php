@@ -294,8 +294,8 @@ class Route
         if ($this->_compiledRoute === null) {
             $this->_writeRoute();
         }
+        assert($this->_compiledRoute !== null);
 
-        /** @var string */
         return $this->_compiledRoute;
     }
 

@@ -385,8 +385,8 @@ class Behavior implements EventListenerInterface
         $eventMethods = [];
         foreach ($events as $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
-                /** @var string $callable */
                 $callable = $binding['callable'];
+                assert(is_string($callable));
                 $binding = $callable;
             }
             $eventMethods[$binding] = true;

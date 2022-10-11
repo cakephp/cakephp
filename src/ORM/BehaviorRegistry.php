@@ -146,6 +146,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         $instance = new $class($this->_table, $config);
+
         $enable = $config['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);

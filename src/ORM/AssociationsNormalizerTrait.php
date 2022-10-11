@@ -47,8 +47,9 @@ trait AssociationsNormalizerTrait
 
             $path = explode('.', $table);
             $table = array_pop($path);
-            /** @var string $first */
             $first = array_shift($path);
+            assert(is_string($first));
+
             $pointer += [$first => []];
             $pointer = &$pointer[$first];
             $pointer += ['associated' => []];

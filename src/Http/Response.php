@@ -1281,9 +1281,8 @@ class Response implements ResponseInterface, Stringable
     public function getCookies(): array
     {
         $out = [];
-        /** @var array<\Cake\Http\Cookie\Cookie> $cookies */
-        $cookies = $this->_cookies;
-        foreach ($cookies as $cookie) {
+        foreach ($this->_cookies as $cookie) {
+            assert($cookie instanceof CookieInterface);
             $out[$cookie->getName()] = $cookie->toArray();
         }
 

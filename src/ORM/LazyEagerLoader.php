@@ -158,8 +158,8 @@ class LazyEagerLoader
                 continue;
             }
 
-            /** @var \Cake\Datasource\EntityInterface $loaded */
             $loaded = $results[$key];
+            assert($loaded instanceof EntityInterface);
             foreach ($associations as $assoc) {
                 $property = $properties[$assoc];
                 $object->set($property, $loaded->get($property), ['useSetters' => false]);

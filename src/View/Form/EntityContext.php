@@ -122,11 +122,10 @@ class EntityContext implements ContextInterface
      */
     protected function _prepare(): void
     {
-        /** @var \Cake\ORM\Table|null $table */
         $table = $this->_context['table'];
+
         /** @var \Cake\Datasource\EntityInterface|iterable<\Cake\Datasource\EntityInterface|array> $entity */
         $entity = $this->_context['entity'];
-
         $this->_isCollection = is_iterable($entity);
 
         if (empty($table)) {

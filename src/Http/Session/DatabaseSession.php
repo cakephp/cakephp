@@ -112,8 +112,8 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function read(string $id): string|false
     {
-        /** @var string $pkField */
         $pkField = $this->_table->getPrimaryKey();
+        assert(is_string($pkField));
         $result = $this->_table
             ->find('all')
             ->select(['data'])

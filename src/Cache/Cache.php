@@ -169,8 +169,9 @@ class Cache
                 ), 0, $e);
             }
 
-            /** @var \Cake\Cache\CacheEngine $fallbackEngine */
             $fallbackEngine = clone static::pool($config['fallback']);
+            assert($fallbackEngine instanceof CacheEngine);
+
             $newConfig = $config + ['groups' => [], 'prefix' => null];
             $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
             if ($newConfig['prefix']) {

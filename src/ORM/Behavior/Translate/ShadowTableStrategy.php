@@ -20,6 +20,7 @@ use ArrayObject;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -247,11 +248,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     protected function iterateClause(SelectQuery $query, string $name = '', array $config = []): bool
     {
-        /** @var \Cake\Database\Expression\QueryExpression|null $clause */
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {
             return false;
         }
+        assert($clause instanceof QueryExpression);
 
         $alias = $config['hasOneAlias'];
         $fields = $this->translatedFields();
@@ -397,7 +398,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         if ($id) {
             $where['id'] = $id;
 
-            /** @var \Cake\Datasource\EntityInterface|null $translation */
             $translation = $this->translationTable->find()
                 ->select(array_merge(['id', 'locale'], $fields))
                 ->where($where)
@@ -415,6 +415,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 ]
             );
         }
+        assert($translation instanceof EntityInterface);
 
         $entity->set('_i18n', array_merge($bundled, [$translation]));
         $entity->set('_locale', $locale, ['setter' => false]);

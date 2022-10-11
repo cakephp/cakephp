@@ -126,8 +126,9 @@ class PoFileParser
                 $item['ids']['plural'] = substr($line, 14, -1);
                 $stage = ['ids', 'plural'];
             } elseif (str_starts_with($line, 'msgstr[')) {
-                /** @var int $size */
                 $size = strpos($line, ']');
+                assert(is_int($size));
+
                 $row = (int)substr($line, 7, 1);
                 $item['translated'][$row] = substr($line, $size + 3, -1);
                 $stage = ['translated', $row];

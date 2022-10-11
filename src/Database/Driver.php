@@ -606,8 +606,8 @@ abstract class Driver
             );
         }
 
-        /** @var \Cake\Database\ExpressionInterface|null $conditions */
         $conditions = $query->clause('where');
+        assert($conditions === null || $conditions instanceof ExpressionInterface);
         if ($conditions) {
             $conditions->traverse(function ($expression) {
                 if ($expression instanceof ComparisonExpression) {

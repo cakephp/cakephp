@@ -118,8 +118,7 @@ class ErrorTrap
             throw new FatalErrorException($description, $code, $file, $line);
         }
 
-        /** @var array $trace */
-        $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
+        $trace = (array)Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
         $debug = Configure::read('debug');

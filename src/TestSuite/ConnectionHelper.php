@@ -88,22 +88,21 @@ class ConnectionHelper
      */
     public function dropTables(string $connectionName, ?array $tables = null): void
     {
-        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
+        assert($connection instanceof Connection);
         $collection = $connection->getSchemaCollection();
         $allTables = $collection->listTablesWithoutViews();
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
-        /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
                 $connection->execute($statement);
             }
         }
-        /** @var \Cake\Database\Schema\TableSchema $schema */
         foreach ($schemas as $schema) {
             foreach ($dialect->dropTableSql($schema) as $statement) {
                 $connection->execute($statement);
@@ -120,17 +119,17 @@ class ConnectionHelper
      */
     public function truncateTables(string $connectionName, ?array $tables = null): void
     {
-        /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get($connectionName);
+        assert($connection instanceof Connection);
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
-            /** @var \Cake\Database\Schema\TableSchema $schema */
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
                     $connection->execute($statement);

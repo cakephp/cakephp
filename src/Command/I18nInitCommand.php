@@ -72,7 +72,6 @@ class I18nInitCommand extends Command
 
         $count = 0;
         $iterator = new DirectoryIterator($sourceFolder);
-        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             if (!$fileInfo->isFile()) {
                 continue;

@@ -883,7 +883,7 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                /** @var array|false $data */
+                /** @var array|false $data Coerce phpstan to accept failure case */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new CakeException(

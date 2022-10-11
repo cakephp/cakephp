@@ -459,13 +459,13 @@ class Hash
 
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
-            /** @var array $keys */
             $keys = static::format($data, $keyPath, $format);
+            assert(is_array($keys));
         } elseif ($keyPath === null) {
             $keys = $keyPath;
         } else {
-            /** @var array $keys */
             $keys = static::extract($data, $keyPath);
+            assert(is_array($keys));
         }
         if ($keyPath !== null && empty($keys)) {
             return [];
@@ -474,11 +474,11 @@ class Hash
         $vals = null;
         if (!empty($valuePath) && is_array($valuePath)) {
             $format = array_shift($valuePath);
-            /** @var array $vals */
             $vals = static::format($data, $valuePath, $format);
+            assert(is_array($vals));
         } elseif (!empty($valuePath)) {
-            /** @var array $vals */
             $vals = static::extract($data, $valuePath);
+            assert(is_array($vals));
         }
         if (empty($vals)) {
             $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
@@ -986,8 +986,8 @@ class Hash
         if ($numeric) {
             $data = array_values($data);
         }
-        /** @var array $sortValues */
         $sortValues = static::extract($data, $path);
+        assert(is_array($sortValues));
         $dataCount = count($data);
 
         // Make sortValues match the data length, as some keys could be missing
@@ -1003,10 +1003,11 @@ class Hash
             $sortValues = array_pad($sortValues, $dataCount, null);
         }
         $result = static::_squash($sortValues);
-        /** @var array $keys */
         $keys = static::extract($result, '{n}.id');
-        /** @var array $values */
+        assert(is_array($keys));
+
         $values = static::extract($result, '{n}.value');
+        assert(is_array($values));
 
         if (is_string($dir)) {
             $dir = strtolower($dir);
@@ -1213,8 +1214,8 @@ class Hash
         ];
 
         $return = $idMap = [];
-        /** @var array $ids */
         $ids = static::extract($data, $options['idPath']);
+        assert(is_array($ids));
 
         $idKeys = explode('.', $options['idPath']);
         array_shift($idKeys);

@@ -118,8 +118,8 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         if ($includeTrace) {
-            /** @var array $trace */
             $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {
                 if (is_string($line)) {
