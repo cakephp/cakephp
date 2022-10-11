@@ -40,6 +40,7 @@ use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
@@ -1718,6 +1719,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Creates a new InsertQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\InsertQuery
+     */
+    public function insertQuery(): InsertQuery
+    {
+        return new InsertQuery($this->getConnection(), $this);
+    }
+
+    /**
      * Creates a new DeleteQuery instance for a table.
      *
      * @return \Cake\ORM\Query\DeleteQuery
@@ -2098,7 +2109,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $statement = $this->query()->insert(array_keys($data))
+        $statement = $this->insertQuery()
+            ->insert(array_keys($data))
             ->values($data)
             ->execute();
 
