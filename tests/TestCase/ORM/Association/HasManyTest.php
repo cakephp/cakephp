@@ -616,6 +616,27 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Tests propertyName is used during marshalling and validation
+     */
+    public function testPropertyOptionMarshalAndValidation(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', [
+            'propertyName' => 'blogs',
+        ]);
+        $authors->getValidator()
+            ->requirePresence('blogs', true, 'blogs must be set');
+
+        $data = [
+            'name' => 'corey',
+        ];
+        $author = $authors->newEntity($data);
+        $this->assertEmpty($author->blogs, 'No blogs set');
+        $this->assertTrue($author->hasErrors(), 'Should have validation errors');
+        $this->assertArrayHasKey('blogs', $author->getErrors());
+    }
+
+    /**
      * Test that plugin names are omitted from property()
      */
     public function testPropertyNoPlugin(): void
