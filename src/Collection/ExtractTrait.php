@@ -61,7 +61,7 @@ trait ExtractTrait
      * by iterating over the column names contained in $path.
      * It will return arrays for elements in represented with `{*}`
      *
-     * @param \ArrayAccess|array $data Data.
+     * @param \ArrayAccess<string|int, mixed>|array $data Data.
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
@@ -107,7 +107,7 @@ trait ExtractTrait
      * Returns a column from $data that can be extracted
      * by iterating over the column names contained in $path
      *
-     * @param \ArrayAccess|array $data Data.
+     * @param \ArrayAccess<string|int, mixed>|array $data Data.
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */

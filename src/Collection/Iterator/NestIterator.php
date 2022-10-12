@@ -51,7 +51,7 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * Returns a traversable containing the children for the current item
      *
-     * @return \RecursiveIterator
+     * @return \RecursiveIterator<mixed, mixed>
      */
     public function getChildren(): RecursiveIterator
     {

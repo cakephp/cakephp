@@ -117,7 +117,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
@@ -155,7 +155,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
     public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
@@ -175,7 +175,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
     public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void

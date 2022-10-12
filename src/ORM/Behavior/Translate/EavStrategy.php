@@ -162,7 +162,7 @@ class EavStrategy implements TranslateStrategyInterface
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query\SelectQuery $query Query
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
@@ -226,7 +226,7 @@ class EavStrategy implements TranslateStrategyInterface
      *
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options the options passed to the save method
+     * @param \ArrayObject<string, mixed> $options the options passed to the save method
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void

@@ -52,7 +52,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var \SplFixedArray
+     * @var \SplFixedArray<\Cake\Datasource\EntityInterface|array>
      */
     protected SplFixedArray $_results;
 

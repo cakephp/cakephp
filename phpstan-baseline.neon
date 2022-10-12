@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Property Cake\\\\Collection\\\\Iterator\\\\BufferedIterator\\:\\:\\$_buffer with generic class SplDoublyLinkedList does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Collection/Iterator/BufferedIterator.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
@@ -9,11 +14,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$items of class Cake\\\\Collection\\\\Iterator\\\\TreePrinter constructor expects RecursiveIterator, Iterator\\<mixed, mixed\\> given\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreeIterator.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -139,6 +139,26 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
+
+		-
+			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:_matches\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Utility/Hash.php
+
+		-
+			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:extract\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Utility/Hash.php
+
+		-
+			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:extract\\(\\) return type with generic interface ArrayAccess does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Utility/Hash.php
+
+		-
+			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:get\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Utility/Hash.php
 
 		-
 			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"

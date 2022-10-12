@@ -77,6 +77,7 @@ abstract class BaseApplication implements
      * Controller factory
      *
      * @var \Cake\Http\ControllerFactoryInterface|null
+     * @phpstan-ignore-next-line
      */
     protected ?ControllerFactoryInterface $controllerFactory = null;
 
@@ -93,6 +94,7 @@ abstract class BaseApplication implements
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface|null $eventManager Application event manager instance.
      * @param \Cake\Http\ControllerFactoryInterface|null $controllerFactory Controller factory.
+     * @phpstan-ignore-next-line
      */
     public function __construct(
         string $configDir,

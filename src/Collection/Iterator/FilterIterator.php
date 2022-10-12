@@ -64,7 +64,7 @@ class FilterIterator extends Collection
      */
     public function unwrap(): Iterator
     {
-        /** @var \IteratorIterator $filter */
+        /** @var \IteratorIterator<mixed, mixed, \Iterator> $filter */
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
 
