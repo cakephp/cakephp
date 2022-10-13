@@ -146,6 +146,7 @@ class LazyEagerLoader
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
+        /** @var array<string, \Cake\Datasource\EntityInterface> $results */
         $results = $results
             ->all()
             ->indexBy(fn(EntityInterface $e) => implode(';', $e->extract($primaryKey)))
@@ -159,7 +160,6 @@ class LazyEagerLoader
             }
 
             $loaded = $results[$key];
-            assert($loaded instanceof EntityInterface);
             foreach ($associations as $assoc) {
                 $property = $properties[$assoc];
                 $object->set($property, $loaded->get($property), ['useSetters' => false]);

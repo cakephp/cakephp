@@ -1074,7 +1074,10 @@ class Response implements ResponseInterface, Stringable
             $result = new DateTime($time ?? 'now');
         }
 
-        /** @psalm-suppress UndefinedInterfaceMethod */
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         * @phpstan-ignore-next-line
+         */
         return $result->setTimezone(new DateTimeZone('UTC'));
     }
 
@@ -1282,7 +1285,6 @@ class Response implements ResponseInterface, Stringable
     {
         $out = [];
         foreach ($this->_cookies as $cookie) {
-            assert($cookie instanceof CookieInterface);
             $out[$cookie->getName()] = $cookie->toArray();
         }
 

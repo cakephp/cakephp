@@ -317,6 +317,7 @@ abstract class BaseApplication implements
         $this->controllerFactory ??= new ControllerFactory($container);
 
         if (Router::getRequest() !== $request) {
+            assert($request instanceof ServerRequest);
             Router::setRequest($request);
         }
 

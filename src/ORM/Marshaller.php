@@ -311,7 +311,8 @@ class Marshaller
             }
         }
         if ($type === Association::MANY_TO_MANY) {
-            /** @psalm-suppress ArgumentTypeCoercion */
+            assert($assoc instanceof BelongsToMany);
+
             return $marshaller->_belongsToMany($assoc, $value, $options);
         }
 
@@ -402,14 +403,15 @@ class Marshaller
         }
 
         if (!empty($conditions)) {
-            $query = $target->find();
-            $query->andWhere(fn(QueryExpression $exp) => $exp->or($conditions));
+            /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
+            $results = $target->find()
+                ->andWhere(fn(QueryExpression $exp) => $exp->or($conditions))
+                ->all();
 
             $keyFields = array_keys($primaryKey);
 
             $existing = [];
-            foreach ($query as $row) {
-                assert($row instanceof EntityInterface);
+            foreach ($results as $row) {
                 $k = implode(';', $row->extract($keyFields));
                 $existing[$k] = $row;
             }
@@ -689,8 +691,9 @@ class Marshaller
         $maybeExistentQuery = $this->_table->find()->where($conditions);
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
-            foreach ($maybeExistentQuery as $entity) {
-                assert($entity instanceof EntityInterface);
+            /** @var \Traversable<\Cake\Datasource\EntityInterface> $existent */
+            $existent = $maybeExistentQuery->all();
+            foreach ($existent as $entity) {
                 $key = implode(';', $entity->extract($primary));
                 if (isset($indexed[$key])) {
                     $output[] = $this->merge($entity, $indexed[$key], $options);

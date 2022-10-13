@@ -325,7 +325,7 @@ class Xml
                         $value = '';
                     }
                     if (str_contains($key, 'xmlns:')) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
+                        assert($node instanceof DOMElement);
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, (string)$value);
                         continue;
                     }
@@ -375,25 +375,20 @@ class Xml
      *
      * @param array<string, mixed> $data Array with information to create children
      * @return void
+     * @psalm-param {dom: \DOMDocument, node: \DOMDocument|\DOMElement, key: string, format: string, ?value: mixed} $data
      */
     protected static function _createChild(array $data): void
     {
         $data += [
-            'dom' => null,
-            'node' => null,
-            'key' => null,
             'value' => null,
-            'format' => null,
         ];
 
         $key = $data['key'];
         $format = $data['format'];
         $value = $data['value'];
         $dom = $data['dom'];
-        assert($dom instanceof DOMDocument);
 
         $node = $data['node'];
-        assert($node instanceof DOMElement || $node instanceof DOMDocument);
 
         $childNS = $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
@@ -436,7 +431,14 @@ class Xml
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);
         }
-        assert($obj instanceof SimpleXMLElement);
+
+        /**
+         * @psalm-suppress TypeDoesNotContainNull Psalm has simplexml_import_dom()'s return incorrectly typed as SimpleXMLElement|false
+         */
+        if ($obj === null) {
+            throw new XmlException('Failed converting DOMNode to SimpleXMLElement');
+        }
+
         $result = [];
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
         static::_toArray($obj, $result, '', array_keys($namespaces));

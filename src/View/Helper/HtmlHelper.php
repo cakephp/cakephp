@@ -1034,7 +1034,6 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                /** @var string $mimeType */
                 $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
                 assert(is_string($mimeType));
             }

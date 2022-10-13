@@ -114,6 +114,7 @@ class Hash
      * @return \ArrayAccess|array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::extract
+     * @psalm-return ($path is non-empty-string ? array : \ArrayAccess|array)
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -534,13 +535,14 @@ class Hash
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
+     * @psalm-return ($paths is non-empty-array ? array : null)
      */
     public static function format(array $data, array $paths, string $format): ?array
     {
         $extracted = [];
         $count = count($paths);
 
-        if (!$count) {
+        if ($count === 0) {
             return null;
         }
 
@@ -1004,10 +1006,8 @@ class Hash
         }
         $result = static::_squash($sortValues);
         $keys = static::extract($result, '{n}.id');
-        assert(is_array($keys));
 
         $values = static::extract($result, '{n}.value');
-        assert(is_array($values));
 
         if (is_string($dir)) {
             $dir = strtolower($dir);
@@ -1192,11 +1192,12 @@ class Hash
      * - `root` The id of the desired top-most result.
      *
      * @param array $data The data to nest.
-     * @param array<string, mixed> $options Options are:
+     * @param array<string, string|null> $options Options.
      * @return array<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::nest
+     * @psalm-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
      * @psalm-return list<array>
      */
     public static function nest(array $data, array $options = []): array
@@ -1230,10 +1231,8 @@ class Hash
             $parentId = static::get($result, $parentKeys);
 
             if (isset($idMap[$id][$options['children']])) {
-                /** @psalm-suppress PossiblyInvalidArgument psalm thinks $result could be ArrayAccess */
                 $idMap[$id] = array_merge($result, $idMap[$id]);
             } else {
-                /** @psalm-suppress PossiblyInvalidArgument psalm thinks $result could be ArrayAccess */
                 $idMap[$id] = array_merge($result, [$options['children'] => []]);
             }
             if (!$parentId || !in_array($parentId, $ids)) {

@@ -285,6 +285,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $preexistent = [];
         if ($key) {
+            /** @var \Traversable<string, \Cake\Datasource\EntityInterface> $preexistent */
             $preexistent = $this->translationTable->find()
                 ->select(['id', 'field'])
                 ->where([
@@ -299,8 +300,6 @@ class EavStrategy implements TranslateStrategyInterface
 
         $modified = [];
         foreach ($preexistent as $field => $translation) {
-            assert($translation instanceof EntityInterface);
-
             $translation->set('content', $values[$field]);
             $modified[$field] = $translation;
         }

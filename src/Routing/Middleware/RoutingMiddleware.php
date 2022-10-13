@@ -87,6 +87,7 @@ class RoutingMiddleware implements MiddlewareInterface
     {
         $this->loadRoutes();
         try {
+            assert($request instanceof ServerRequest);
             Router::setRequest($request);
             $params = (array)$request->getAttribute('params', []);
             $middleware = [];

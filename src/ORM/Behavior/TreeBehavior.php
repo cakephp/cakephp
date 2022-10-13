@@ -196,14 +196,15 @@ class TreeBehavior extends Behavior
         $primaryKeyValue = $entity->get($primaryKey);
         $depths = [$primaryKeyValue => $entity->get($config['level'])];
 
+        /** @var \Traversable<\Cake\Datasource\EntityInterface> $children */
         $children = $this->_table->find('children', [
             'for' => $primaryKeyValue,
             'fields' => [$this->_getPrimaryKey(), $config['parent'], $config['level']],
             'order' => $config['left'],
-        ]);
+        ])
+        ->all();
 
         foreach ($children as $node) {
-            assert($node instanceof EntityInterface);
             $parentIdValue = $node->get($config['parent']);
             $depth = $depths[$parentIdValue] + 1;
             $depths[$node->get($primaryKey)] = $depth;
@@ -733,10 +734,12 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
+        assert(is_string($parent) && is_string($left) && is_string($right));
         [$nodeParent, $nodeLeft, $nodeRight] = array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -747,6 +750,7 @@ class TreeBehavior extends Behavior
                 ->first();
         }
         if (!$targetNode) {
+            /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
@@ -759,7 +763,6 @@ class TreeBehavior extends Behavior
                 return $node;
             }
         }
-        assert($targetNode instanceof EntityInterface);
 
         [, $targetRight] = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
@@ -773,7 +776,6 @@ class TreeBehavior extends Behavior
         $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
         $this->_sync($nodeToHole, '-', "> {$edge}");
 
-        assert(is_string($left) && is_string($right));
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
         $node->set($right, $targetRight);
 

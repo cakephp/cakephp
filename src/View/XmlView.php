@@ -153,7 +153,6 @@ class XmlView extends SerializedView
                 'XML serialization of View data failed.'
             );
         }
-        assert(is_string($result));
 
         return $result;
     }

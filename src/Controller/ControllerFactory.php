@@ -68,6 +68,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     public function create(ServerRequestInterface $request): Controller
     {
+        assert($request instanceof ServerRequest);
         $className = $this->getControllerClass($request);
         if ($className === null) {
             throw $this->missingController($request);
