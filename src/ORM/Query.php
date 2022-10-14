@@ -1440,4 +1440,19 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         return $result;
     }
+
+    /**
+     * Helper for ORM\Query exceptions
+     *
+     * @param string $method The method that is invalid.
+     * @param string $message An additional message.
+     * @return void
+     * @internal
+     */
+    protected function _deprecatedMethod($method, $message = '')
+    {
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
+    }
 }
