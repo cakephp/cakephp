@@ -76,13 +76,6 @@ interface PaginatedInterface extends Countable, Traversable
     public function items(): iterable;
 
     /**
-     * Get items as array.
-     *
-     * @return array
-     */
-    public function toArray(): array;
-
-    /**
      * Get paging param.
      *
      * @param string $name
