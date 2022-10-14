@@ -79,6 +79,11 @@
       <code>pid Dev</code>
     </MethodSignatureMustProvideReturnType>
   </file>
+  <file src="src/Datasource/Paging/PaginatedResultSet.php">
+    <MethodSignatureMustProvideReturnType occurrences="1">
+      <code>://cakephp.org)</code>
+    </MethodSignatureMustProvideReturnType>
+  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
     <InternalMethod occurrences="1"/>

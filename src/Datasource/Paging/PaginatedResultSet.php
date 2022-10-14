@@ -22,6 +22,7 @@ use IteratorIterator;
 /**
  * Paginated resultset.
  *
+ * @method \Cake\Datasource\ResultSetInterface getInnerIterator()
  * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
  */
 class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
@@ -60,14 +61,6 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     public function items(): ResultSetInterface
     {
         return $this->getInnerIterator();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function toArray(): array
-    {
-        return $this->getInnerIterator()->toArray();
     }
 
     /**
@@ -132,14 +125,5 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     public function pagingParams(): array
     {
         return $this->params;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getInnerIterator(): ResultSetInterface
-    {
-        /** @var \Cake\Datasource\ResultSetInterface */
-        return parent::getInnerIterator();
     }
 }
