@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\QueryTests;
 
 use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -30,6 +31,7 @@ class ForwardsCompatibilityTest extends TestCase
     {
         return [
             [fn (Table $table) => new DeleteQuery($table->getConnection(), $table)],
+            [fn (Table $table) => new InsertQuery($table->getConnection(), $table)],
         ];
     }
 
