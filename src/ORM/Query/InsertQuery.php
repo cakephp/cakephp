@@ -44,6 +44,16 @@ class InsertQuery extends Query
     /**
      * @inheritDoc
      */
+    public function into(string $table)
+    {
+        $this->_deprecatedMethod('into()', 'Remove this method call');
+
+        return parent::into($table);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function cache($key, $config = 'default')
     {
         $this->_deprecatedMethod('cache()', 'Use execute() instead.');

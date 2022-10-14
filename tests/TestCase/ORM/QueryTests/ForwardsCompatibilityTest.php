@@ -25,6 +25,7 @@ class ForwardsCompatibilityTest extends TestCase
 {
     protected $fixtures = [
         'core.Articles',
+        'core.Authors',
     ];
 
     public static function queryProvider()
@@ -103,6 +104,26 @@ class ForwardsCompatibilityTest extends TestCase
                 ->execute();
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
+        });
+    }
+
+    /**
+     * @dataProvider queryProvider
+     */
+    public function testAsSelectWithContain($queryFactory)
+    {
+        $table = $this->fetchTable('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $queryFactory($table);
+        $this->deprecated(function () use ($query, $table) {
+            $results = $query
+                ->select()
+                ->where(['title' => 'First Article'])
+                ->contain('Authors')
+                ->all();
+            $this->assertCount(1, $results);
+            $this->assertNotEmpty($results->first()->author);
         });
     }
 }
