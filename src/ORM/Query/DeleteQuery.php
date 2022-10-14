@@ -158,16 +158,6 @@ class DeleteQuery extends Query
     /**
      * @inheritDoc
      */
-    public function rightJoinWith(string $assoc, ?callable $builder = null)
-    {
-        $this->_deprecatedMethod('rightJoinWith()');
-
-        return parent::rightJoinWith($assoc, $builder);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function innerJoin($table, $conditions = [], $types = [])
     {
         $this->_deprecatedMethod('innerJoin()');
@@ -333,16 +323,6 @@ class DeleteQuery extends Query
         $this->_deprecatedMethod('getContain()');
 
         return parent::getContain();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function cleanContain()
-    {
-        $this->_deprecatedMethod('cleanContain()');
-
-        return parent::cleanContain();
     }
 
     /**
