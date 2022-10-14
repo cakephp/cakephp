@@ -43,7 +43,7 @@ class ForwardsCompatibilityTest extends TestCase
     {
         $table = $this->fetchTable('Articles');
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query, $table) {
+        $scenario = function () use ($query, $table) {
             $statement = $query
                 ->insert(['author_id', 'title', 'body', 'published'])
                 ->into($table->getTable())
@@ -51,7 +51,11 @@ class ForwardsCompatibilityTest extends TestCase
                 ->execute();
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
-        });
+        };
+        if ($query instanceof InsertQuery) {
+            return $scenario();
+        }
+        $this->deprecated($scenario);
     }
 
     /**
