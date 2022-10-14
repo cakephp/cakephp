@@ -50,7 +50,7 @@ class Curl implements AdapterInterface
         curl_setopt_array($ch, $options);
 
         $body = $this->exec($ch);
-        assert($body === false || is_string($body));
+        assert($body !== true);
         if ($body === false) {
             $errorCode = curl_errno($ch);
             $error = curl_error($ch);

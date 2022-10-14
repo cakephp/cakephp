@@ -211,7 +211,7 @@ class CommandRunner implements EventDispatcherInterface
     public function setEventManager(EventManagerInterface $eventManager)
     {
         assert(
-            $this->app instanceof PluginApplicationInterface,
+            $this->app instanceof EventDispatcherInterface,
             'Cannot set the event manager, the application does not support events.'
         );
 

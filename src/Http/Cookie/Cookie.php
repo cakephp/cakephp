@@ -167,7 +167,10 @@ class Cookie implements CookieInterface
         $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
 
         if ($expiresAt) {
-            /** @psalm-suppress UndefinedInterfaceMethod */
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             * @phpstan-ignore-next-line
+             */
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         } else {
             $expiresAt = static::$defaults['expires'];
@@ -242,7 +245,10 @@ class Cookie implements CookieInterface
         }
 
         if ($expires instanceof DateTimeInterface) {
-            /** @psalm-suppress UndefinedInterfaceMethod */
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             * @phpstan-ignore-next-line
+             */
             return $expires->setTimezone(new DateTimeZone('GMT'));
         }
 
@@ -533,7 +539,10 @@ class Cookie implements CookieInterface
     public function withExpiry(DateTimeInterface $dateTime): static
     {
         $new = clone $this;
-        /** @psalm-suppress UndefinedInterfaceMethod */
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         * @phpstan-ignore-next-line
+         */
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
 
         return $new;

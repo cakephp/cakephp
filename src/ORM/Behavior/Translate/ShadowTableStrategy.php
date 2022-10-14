@@ -249,10 +249,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function iterateClause(SelectQuery $query, string $name = '', array $config = []): bool
     {
         $clause = $query->clause($name);
+        assert($clause === null || $clause instanceof QueryExpression);
         if (!$clause || !$clause->count()) {
             return false;
         }
-        assert($clause instanceof QueryExpression);
 
         $alias = $config['hasOneAlias'];
         $fields = $this->translatedFields();
@@ -415,7 +415,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 ]
             );
         }
-        assert($translation instanceof EntityInterface);
 
         $entity->set('_i18n', array_merge($bundled, [$translation]));
         $entity->set('_locale', $locale, ['setter' => false]);

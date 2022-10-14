@@ -29,7 +29,8 @@ class BufferedIterator extends Collection implements Countable
     /**
      * The in-memory cache containing results from previous iterators
      *
-     * @var \SplDoublyLinkedList
+     * @var \SplDoublyLinkedList<mixed>
+     * @psalm-suppress MissingTemplateParam
      */
     protected SplDoublyLinkedList $_buffer;
 

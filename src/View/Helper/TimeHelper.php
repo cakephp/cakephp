@@ -284,8 +284,11 @@ class TimeHelper extends Helper
             'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
-        /** @psalm-suppress UndefinedInterfaceMethod */
         if ($options['timezone'] && $dateTime instanceof DateTimeInterface) {
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             * @phpstan-ignore-next-line
+             */
             $dateTime = $dateTime->setTimezone($options['timezone']);
             unset($options['timezone']);
         }

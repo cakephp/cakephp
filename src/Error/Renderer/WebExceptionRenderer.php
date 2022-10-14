@@ -172,8 +172,8 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                 $class = App::className('Error', 'Controller', 'Controller');
             }
 
+            assert(is_subclass_of($class, Controller::class));
             $controller = new $class($request);
-            assert($controller instanceof Controller);
             $controller->startupProcess();
         } catch (Throwable $e) {
         }

@@ -484,7 +484,6 @@ class EventManager implements EventManagerInterface
             $count = count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
                 $event = $this->_eventList[$i];
-                assert($event instanceof EventInterface);
                 try {
                     $subject = $event->getSubject();
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;

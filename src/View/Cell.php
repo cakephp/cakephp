@@ -267,6 +267,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             ), E_USER_WARNING);
 
             return '';
+        /** @phpstan-ignore-next-line */
         } catch (Error $e) {
             throw new Error(sprintf(
                 'Could not render cell - %s [%s, line %d]',
