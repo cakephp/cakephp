@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\QueryTests;
 
 use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -24,12 +25,14 @@ class ForwardsCompatibilityTest extends TestCase
 {
     protected $fixtures = [
         'core.Articles',
+        'core.Authors',
     ];
 
     public static function queryProvider()
     {
         return [
             [fn (Table $table) => new DeleteQuery($table->getConnection(), $table)],
+            [fn (Table $table) => new InsertQuery($table->getConnection(), $table)],
         ];
     }
 
@@ -40,7 +43,7 @@ class ForwardsCompatibilityTest extends TestCase
     {
         $table = $this->fetchTable('Articles');
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query, $table) {
+        $scenario = function () use ($query, $table) {
             $statement = $query
                 ->insert(['author_id', 'title', 'body', 'published'])
                 ->into($table->getTable())
@@ -48,7 +51,11 @@ class ForwardsCompatibilityTest extends TestCase
                 ->execute();
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
-        });
+        };
+        if ($query instanceof InsertQuery) {
+            return $scenario();
+        }
+        $this->deprecated($scenario);
     }
 
     /**
@@ -101,6 +108,26 @@ class ForwardsCompatibilityTest extends TestCase
                 ->execute();
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
+        });
+    }
+
+    /**
+     * @dataProvider queryProvider
+     */
+    public function testAsSelectWithContain($queryFactory)
+    {
+        $table = $this->fetchTable('Articles');
+        $table->belongsTo('Authors');
+
+        $query = $queryFactory($table);
+        $this->deprecated(function () use ($query) {
+            $results = $query
+                ->select()
+                ->where(['title' => 'First Article'])
+                ->contain('Authors')
+                ->all();
+            $this->assertCount(1, $results);
+            $this->assertNotEmpty($results->first()->author);
         });
     }
 }
