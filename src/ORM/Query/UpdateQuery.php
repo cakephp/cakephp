@@ -21,25 +21,25 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Query;
 
 /**
- * Delete Query forward compatibility shim.
+ * Update Query forward compatibility shim.
  */
-class DeleteQuery extends Query
+class UpdateQuery extends Query
 {
     /**
      * Type of this query (select, insert, update, delete).
      *
      * @var string
      */
-    protected $_type = 'delete';
+    protected $_type = 'update';
 
     /**
      * @inheritDoc
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        if ($this->_type === 'delete' && empty($this->_parts['from'])) {
+        if ($this->_type === 'update' && empty($this->_parts['update'])) {
             $repository = $this->getRepository();
-            $this->from([$repository->getAlias() => $repository->getTable()]);
+            $this->update($repository->getTable());
         }
 
         return parent::sql($binder);
@@ -50,7 +50,7 @@ class DeleteQuery extends Query
      */
     public function delete(?string $table = null)
     {
-        $this->_deprecatedMethod('delete()', 'Remove this method call.');
+        $this->_deprecatedMethod('delete()', 'Create your query with deleteQuery() instead.');
 
         return parent::delete($table);
     }
@@ -108,76 +108,6 @@ class DeleteQuery extends Query
     /**
      * @inheritDoc
      */
-    public function join($tables, $types = [], $overwrite = false)
-    {
-        $this->_deprecatedMethod('join()');
-
-        return parent::join($tables, $types, $overwrite);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function removeJoin(string $name)
-    {
-        $this->_deprecatedMethod('removeJoin()');
-
-        return parent::removeJoin($name);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function leftJoin($table, $conditions = [], $types = [])
-    {
-        $this->_deprecatedMethod('leftJoin()');
-
-        return parent::leftJoin($table, $conditions, $types);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function rightJoin($table, $conditions = [], $types = [])
-    {
-        $this->_deprecatedMethod('rightJoin()');
-
-        return parent::rightJoin($table, $conditions, $types);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function leftJoinWith(string $assoc, ?callable $builder = null)
-    {
-        $this->_deprecatedMethod('leftJoinWith()');
-
-        return parent::leftJoinWith($assoc, $builder);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function innerJoin($table, $conditions = [], $types = [])
-    {
-        $this->_deprecatedMethod('innerJoin()');
-
-        return parent::innerJoin($table, $conditions, $types);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function innerJoinWith(string $assoc, ?callable $builder = null)
-    {
-        $this->_deprecatedMethod('innerJoinWith()');
-
-        return parent::innerJoinWith($assoc, $builder);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function group($fields, $overwrite = false)
     {
         $this->_deprecatedMethod('group()');
@@ -218,6 +148,16 @@ class DeleteQuery extends Query
     /**
      * @inheritDoc
      */
+    public function offset($offset)
+    {
+        $this->_deprecatedMethod('offset()');
+
+        return parent::offset($offset);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function union($query, $overwrite = false)
     {
         $this->_deprecatedMethod('union()');
@@ -250,7 +190,7 @@ class DeleteQuery extends Query
      */
     public function into(string $table)
     {
-        $this->_deprecatedMethod('into()', 'Use from() instead.');
+        $this->_deprecatedMethod('into()', 'Use update() instead.');
 
         return parent::into($table);
     }
@@ -268,21 +208,11 @@ class DeleteQuery extends Query
     /**
      * @inheritDoc
      */
-    public function update($table = null)
+    public function from($tables = [], $overwrite = false)
     {
-        $this->_deprecatedMethod('update()', 'Create your query with updateQuery() instead.');
+        $this->_deprecatedMethod('from()', 'Use update() instead.');
 
-        return parent::update($table);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function set($key, $value = null, $types = [])
-    {
-        $this->_deprecatedMethod('set()');
-
-        return parent::set($key, $value, $types);
+        return parent::from($tables, $overwrite);
     }
 
     /**
