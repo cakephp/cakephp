@@ -51,7 +51,7 @@ class Xml
      * Building XML from a file path:
      *
      * ```
-     * $xml = Xml::build('/path/to/an/xml/file.xml');
+     * $xml = Xml::build('/path/to/an/xml/file.xml', ['readFile' => true]);
      * ```
      *
      * Building XML from a remote URL:
