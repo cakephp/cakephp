@@ -120,7 +120,7 @@ class ForwardsCompatibilityTest extends TestCase
         $table->belongsTo('Authors');
 
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query, $table) {
+        $this->deprecated(function () use ($query) {
             $results = $query
                 ->select()
                 ->where(['title' => 'First Article'])
