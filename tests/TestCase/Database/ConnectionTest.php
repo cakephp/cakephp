@@ -96,13 +96,15 @@ class ConnectionTest extends TestCase
 
     public function tearDown(): void
     {
+        parent::tearDown();
         $this->connection->disableSavePoints();
         $this->connection->setLogger($this->defaultLogger);
         $this->connection->enableQueryLogging($this->logState);
+        ConnectionManager::dropAlias('test:read');
+        ConnectionManager::drop('test:read');
 
         Log::reset();
         unset($this->connection);
-        parent::tearDown();
     }
 
     /**
@@ -1354,5 +1356,17 @@ class ConnectionTest extends TestCase
 
         $prop->setValue($conn, $oldDriver);
         $conn->rollback();
+    }
+
+    public function testRoles(): void
+    {
+        $this->assertSame(Connection::ROLE_WRITE, $this->connection->role());
+
+        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
+        $this->assertSame(Connection::ROLE_READ, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
+
+        // when read connection is only an alias, it should resolve as the write connection
+        ConnectionManager::alias('test', 'test:read');
+        $this->assertSame(Connection::ROLE_WRITE, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
     }
 }

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -92,6 +93,28 @@ class QueryTest extends TestCase
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
         unset($this->connection);
+
+        ConnectionManager::drop('test:read');
+    }
+
+    public function testConnectionRoles(): void
+    {
+        $query = new Query($this->connection);
+
+        // Defaults to "test" write connection
+        $query->useRole(Connection::ROLE_READ);
+        $this->assertSame('test', $query->getConnection()->configName());
+        $this->assertSame('write', $query->getConnection()->role());
+
+        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
+
+        $query->useRole(Connection::ROLE_READ);
+        $this->assertSame('test:read', $query->getConnection()->configName());
+        $this->assertSame('read', $query->getConnection()->role());
+
+        $query->useRole(Connection::ROLE_WRITE);
+        $this->assertSame('test', $query->getConnection()->configName());
+        $this->assertSame('write', $query->getConnection()->role());
     }
 
     /**
