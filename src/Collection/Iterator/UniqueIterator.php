@@ -20,9 +20,13 @@ class UniqueIterator extends FilterIterator
 {
     protected array $_exists = [];
 
-    public function __construct($items, $key)
+    /**
+     * @param \Traversable|array $items
+     * @param string|null $key
+     */
+    public function __construct($items, ?string $key)
     {
-        return parent::__construct($items, function($item) use ($key) {
+        parent::__construct($items, function($item) use ($key) {
 
             if (is_null($key)) {
                 $key = $value = $item;
