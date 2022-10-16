@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
-use Cake\Collection\Iterator\UniqueIterator;
 use Iterator;
 use JsonSerializable;
 use Traversable;
