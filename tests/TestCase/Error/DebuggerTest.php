@@ -28,6 +28,7 @@ use Cake\Error\Debugger;
 use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Form\Form;
 use Cake\Log\Log;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use MyClass;
@@ -642,6 +643,15 @@ TEXT;
         $result = Debugger::exportVar(new ThrowsDebugInfo());
         $expected = '(unable to export object: from __debugInfo)';
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * Test exportVar with a mock
+     */
+    public function testExportVarMockObject(): void
+    {
+        $result = Debugger::exportVar($this->getMockBuilder(Table::class)->getMock());
+        $this->assertStringContainsString('object(Mock_Table', $result);
     }
 
     /**
