@@ -41,6 +41,7 @@ use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
@@ -1719,6 +1720,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Creates a new DeleteQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\DeleteQuery
+     */
+    public function deleteQuery(): DeleteQuery
+    {
+        return new DeleteQuery($this->getConnection(), $this);
+    }
+
+    /**
      * Creates a new InsertQuery instance for a table.
      *
      * @return \Cake\ORM\Query\InsertQuery
@@ -1729,13 +1740,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Creates a new DeleteQuery instance for a table.
+     * Creates a new UpdateQuery instance for a table.
      *
-     * @return \Cake\ORM\Query\DeleteQuery
+     * @return \Cake\ORM\Query\UpdateQuery
      */
-    public function deleteQuery(): DeleteQuery
+    public function updateQuery(): UpdateQuery
     {
-        return new DeleteQuery($this->getConnection(), $this);
+        return new UpdateQuery($this->getConnection(), $this);
     }
 
     /**
@@ -1754,8 +1765,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function updateAll($fields, $conditions): int
     {
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($fields)
             ->where($conditions)
             ->execute();
@@ -2191,8 +2201,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException($message);
         }
 
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($data)
             ->where($primaryKey)
             ->execute();

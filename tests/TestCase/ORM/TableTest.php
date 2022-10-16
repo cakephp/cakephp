@@ -1015,20 +1015,16 @@ class TableTest extends TestCase
     public function testUpdateAllFailure(): void
     {
         $this->expectException(DatabaseException::class);
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
-            ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->connection, $table])
-            ->getMock();
-        $table->expects($this->once())
-            ->method('query')
-            ->will($this->returnValue($query));
 
-        $query->expects($this->once())
-            ->method('execute')
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
+            ->getMock();
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
+
+        $connection->expects($this->once())->method('run')
             ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->updateAll(['username' => 'mark'], []);
@@ -2566,32 +2562,21 @@ class TableTest extends TestCase
      */
     public function testSaveUpdatePrimaryKeyNotModified(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute', 'addDefaultTypes', 'set'])
-            ->setConstructorArgs([$this->connection, $table])
-            ->getMock();
-
-        $table->expects($this->once())->method('query')
-            ->will($this->returnValue($query));
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
 
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
 
-        $query->expects($this->once())
-            ->method('execute')
+        $connection->expects($this->once())->method('run')
             ->will($this->returnValue($statement));
-
-        $query->expects($this->once())->method('set')
-            ->with(['username' => 'baggins'])
-            ->will($this->returnValue($query));
 
         $entity = new Entity([
             'id' => 2,
