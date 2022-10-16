@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
+use Cake\Collection\Iterator\UniqueIterator;
 use Iterator;
 use JsonSerializable;
 use Traversable;
@@ -94,6 +95,14 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return self
      */
     public function reject(callable $callback): CollectionInterface;
+
+    /**
+     * Returns unique elements
+     *
+     * @param string|null $key
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function unique(?string $key = null): CollectionInterface;
 
     /**
      * Returns true if all values in this collection pass the truth test provided

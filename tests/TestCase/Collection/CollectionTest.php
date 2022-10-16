@@ -2584,4 +2584,64 @@ class CollectionTest extends TestCase
         $callable->expects($this->never())->method('__invoke');
         $collection->filter($callable)->filter($callable);
     }
+
+    public function testUnique()
+    {
+        $items = [
+            [
+                'category' => 'tag',
+                'title' => 'Cars',
+            ],
+            [
+                'category' => 'tag',
+                'title' => 'Cars',
+            ],
+            [
+                'category' => 'tag',
+                'title' => 'Parts',
+            ],
+        ];
+
+        $unique = (new Collection($items))->unique('title');
+        $this->assertCount(2, $unique);
+
+        $items2 = [
+            [
+                'category' => 'tag',
+                'title' => 'Cars',
+            ],
+            [
+                'category' => 'tag',
+                'title' => 'Tires',
+            ],
+        ];
+        $unique = (new Collection($items))->append($items2)->unique('title');
+        $this->assertCount(3, $unique);
+        $this->assertEquals(
+            [
+                [
+                    'category' => 'tag',
+                    'title' => 'Cars',
+                ],
+                [
+                    'category' => 'tag',
+                    'title' => 'Parts',
+                ],
+                [
+                    'category' => 'tag',
+                    'title' => 'Tires',
+                ],
+            ],
+            (new Collection($items))->append($items2)->unique('title')->toList()
+        );
+
+        $this->assertCount(
+            3,
+            (new Collection([1, 2, 2, 3]))->unique()
+        );
+        $this->assertEquals(
+            [1, 2, 3],
+            (new Collection([1, 2, 2, 3]))->unique()->toList()
+        );
+    }
 }
