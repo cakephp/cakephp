@@ -43,7 +43,7 @@ class ConnectionManager
     /**
      * A map of connection aliases.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected static $_aliasMap = [];
 
@@ -184,6 +184,16 @@ class ConnectionManager
     public static function dropAlias(string $alias): void
     {
         unset(static::$_aliasMap[$alias]);
+    }
+
+    /**
+     * Returns the current connection aliases and what they alias.
+     *
+     * @return array<string, string>
+     */
+    public static function aliases(): array
+    {
+        return static::$_aliasMap;
     }
 
     /**
