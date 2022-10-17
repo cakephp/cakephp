@@ -1687,8 +1687,7 @@ class QueryTest extends TestCase
     public function testSelectRandom(): void
     {
         $table = $this->getTableLocator()->get('articles');
-        $query = $table
-            ->query();
+        $query = $table->selectQuery();
 
         $query->select(['s' => $query->func()->rand()]);
         $result = $query
@@ -1707,7 +1706,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->updateQuery()
             ->update()
             ->set(['title' => 'First'])
             ->execute();
@@ -1724,7 +1723,7 @@ class QueryTest extends TestCase
         $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
-        $query = $table->query();
+        $query = $table->updateQuery();
         $result = $query->update($query->newExpr('articles, authors'))
             ->set(['title' => 'First'])
             ->where(['articles.author_id = authors.id'])
@@ -1742,7 +1741,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->insertQuery()
             ->insert(['title'])
             ->values(['title' => 'First'])
             ->values(['title' => 'Second'])
@@ -1761,8 +1760,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->delete()
+        $result = $table->deleteQuery()
             ->where(['id >=' => 1])
             ->execute();
 

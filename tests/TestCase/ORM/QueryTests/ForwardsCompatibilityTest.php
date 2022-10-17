@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\QueryTests;
 
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -35,6 +36,7 @@ class ForwardsCompatibilityTest extends TestCase
             [fn (Table $table) => new DeleteQuery($table->getConnection(), $table), 'delete'],
             [fn (Table $table) => new InsertQuery($table->getConnection(), $table), 'insert'],
             [fn (Table $table) => new UpdateQuery($table->getConnection(), $table), 'update'],
+            [fn (Table $table) => new SelectQuery($table->getConnection(), $table), 'select'],
         ];
     }
 
@@ -107,7 +109,7 @@ class ForwardsCompatibilityTest extends TestCase
     {
         $table = $this->fetchTable('Articles');
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query, $table) {
+        $scenario = function () use ($query, $table) {
             $statement = $query
                 ->select(['title', 'body'])
                 ->from(['Articles' => $table->getTable()])
@@ -115,7 +117,11 @@ class ForwardsCompatibilityTest extends TestCase
                 ->execute();
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
-        });
+        };
+        if ($query instanceof SelectQuery) {
+            return $scenario();
+        }
+        $this->deprecated($scenario);
     }
 
     /**
@@ -127,7 +133,7 @@ class ForwardsCompatibilityTest extends TestCase
         $table->belongsTo('Authors');
 
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query) {
+        $scenario = function () use ($query) {
             $results = $query
                 ->select()
                 ->where(['title' => 'First Article'])
@@ -135,7 +141,11 @@ class ForwardsCompatibilityTest extends TestCase
                 ->all();
             $this->assertCount(1, $results);
             $this->assertNotEmpty($results->first()->author);
-        });
+        };
+        if ($query instanceof SelectQuery) {
+            return $scenario();
+        }
+        $this->deprecated($scenario);
     }
 
     /**
@@ -147,7 +157,7 @@ class ForwardsCompatibilityTest extends TestCase
         $table->belongsTo('Authors');
 
         $query = $queryFactory($table);
-        $this->deprecated(function () use ($query) {
+        $scenario = function () use ($query) {
             $results = $query
                 ->select()
                 ->matching('Authors', function ($q) {
@@ -156,6 +166,10 @@ class ForwardsCompatibilityTest extends TestCase
                 ->all();
             $this->assertCount(2, $results);
             $this->assertNotEmpty($results->first()->_matchingData);
-        });
+        };
+        if ($query instanceof SelectQuery) {
+            return $scenario();
+        }
+        $this->deprecated($scenario);
     }
 }

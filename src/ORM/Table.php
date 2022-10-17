@@ -41,6 +41,7 @@ use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1268,7 +1269,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find(string $type = 'all', array $options = []): Query
     {
-        return $this->callFinder($type, $this->query()->select(), $options);
+        return $this->callFinder($type, $this->selectQuery()->select(), $options);
     }
 
     /**
@@ -1713,9 +1714,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function query(): Query
     {
-        // TODO(markstory) Add deprecation here to encourage new methods.
-        // Remember to remind people implementing this method to
-        // implement the new ones instead.
+        deprecationWarning(
+            'As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`, ' .
+            '`deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects ' .
+            'returned by these methods will emit deprecations that will become fatal errors in 5.0.' .
+            'See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.'
+        );
+
         return new Query($this->getConnection(), $this);
     }
 
@@ -1737,6 +1742,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function insertQuery(): InsertQuery
     {
         return new InsertQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new SelectQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function selectQuery(): SelectQuery
+    {
+        return new SelectQuery($this->getConnection(), $this);
     }
 
     /**
