@@ -1135,7 +1135,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * $usersQuery
      *     ->select(['total_articles' => $query->func()->count('Articles.id')])
      *     ->leftJoinWith('Articles')
-     *     ->group(['Users.id'])
+     *     ->groupBy(['Users.id'])
      *     ->enableAutoFields();
      * ```
      *
@@ -1148,7 +1148,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *     ->leftJoinWith('Articles', function ($q) {
      *         return $q->where(['Articles.votes >=' => 5]);
      *     })
-     *     ->group(['Users.id'])
+     *     ->groupBy(['Users.id'])
      *     ->enableAutoFields();
      * ```
      *
@@ -1172,7 +1172,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *     ->leftJoinWith('Comments.Users', function ($q) {
      *         return $q->where(['username' => 'markstory']);
      *     })
-     *    ->group(['Users.id']);
+     *    ->groupBy(['Users.id']);
      * ```
      *
      * Please note that the query passed to the closure will only accept calling
@@ -1335,7 +1335,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $clone->triggerBeforeFind();
         $clone->disableAutoFields();
         $clone->limit(null);
-        $clone->order([], true);
+        $clone->orderBy([], true);
         $clone->offset(null);
         $clone->mapReduce(null, null, true);
         $clone->formatResults(null, self::OVERWRITE);

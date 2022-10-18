@@ -530,7 +530,7 @@ abstract class Driver
     protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         if (is_array($query->clause('distinct'))) {
-            $query->group($query->clause('distinct'), true);
+            $query->groupBy($query->clause('distinct'), true);
             $query->distinct(false);
         }
 

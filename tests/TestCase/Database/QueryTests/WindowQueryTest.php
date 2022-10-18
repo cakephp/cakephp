@@ -122,16 +122,16 @@ class WindowQueryTest extends TestCase
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->partition('article_id')])
             ->from('comments')
-            ->order(['article_id'])
+            ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
         $this->assertEquals(4, $result[0]['num_rows']);
 
         $query = new SelectQuery($this->connection);
         $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->partition('article_id')->order('updated')])
+            ->select(['num_rows' => $query->func()->count('*')->partition('article_id')->orderBy('updated')])
             ->from('comments')
-            ->order(['updated'])
+            ->orderBy(['updated'])
             ->execute()
             ->fetchAll('assoc');
         $this->assertEquals(1, $result[0]['num_rows']);
@@ -155,7 +155,7 @@ class WindowQueryTest extends TestCase
             ->select(['num_rows' => $query->func()->count('*')->over('window1')])
             ->from('comments')
             ->window('window1', (new WindowExpression())->partition('article_id'))
-            ->order(['article_id'])
+            ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
         $this->assertEquals(4, $result[0]['num_rows']);
@@ -179,7 +179,7 @@ class WindowQueryTest extends TestCase
             ->from('comments')
             ->window('window1', (new WindowExpression())->partition('article_id'))
             ->window('window2', new WindowExpression('window1'))
-            ->order(['article_id'])
+            ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
         $this->assertEquals(4, $result[0]['num_rows']);

@@ -409,7 +409,7 @@ class TreeBehavior extends Behavior
                 "$left <=" => $node->get($config['left']),
                 "$right >=" => $node->get($config['right']),
             ])
-            ->order([$left => 'ASC']);
+            ->orderBy([$left => 'ASC']);
     }
 
     /**
@@ -470,7 +470,7 @@ class TreeBehavior extends Behavior
         }
 
         if ($query->clause('order') === null) {
-            $query->order([$left => 'ASC']);
+            $query->orderBy([$left => 'ASC']);
         }
 
         if ($direct) {
@@ -655,7 +655,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
-                ->orderDesc($config['leftField'])
+                ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
                 ->first();
@@ -666,7 +666,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
-                ->orderAsc($config['leftField'])
+                ->orderByAsc($config['leftField'])
                 ->limit(1)
                 ->first();
 
@@ -744,7 +744,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
-                ->orderAsc($config['leftField'])
+                ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
                 ->first();
@@ -755,7 +755,7 @@ class TreeBehavior extends Behavior
                 ->select([$left, $right])
                 ->where(["$parent IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
-                ->orderDesc($config['leftField'])
+                ->orderByDesc($config['leftField'])
                 ->limit(1)
                 ->first();
 
@@ -845,7 +845,7 @@ class TreeBehavior extends Behavior
         $nodes = $this->_scope($this->_table->query())
             ->select($primaryKey)
             ->where([$parent . ' IS' => $parentId])
-            ->order($order)
+            ->orderBy($order)
             ->disableHydration()
             ->all();
 
@@ -878,7 +878,7 @@ class TreeBehavior extends Behavior
         $rightField = $this->_config['rightField'];
         $edge = $this->_scope($this->_table->find())
             ->select([$field])
-            ->orderDesc($rightField)
+            ->orderByDesc($rightField)
             ->first();
 
         if ($edge === null || empty($edge[$field])) {

@@ -190,7 +190,7 @@ class SelectLoader
         }
 
         if (!empty($options['sort'])) {
-            $fetchQuery->order($options['sort']);
+            $fetchQuery->orderBy($options['sort']);
         }
 
         if (!empty($options['contain'])) {
@@ -418,12 +418,12 @@ class SelectLoader
         // Ignore limit if there is no order since we need all rows to find matches
         if (!$filterQuery->clause('limit') || !$filterQuery->clause('order')) {
             $filterQuery->limit(null);
-            $filterQuery->order([], true);
+            $filterQuery->orderBy([], true);
             $filterQuery->offset(null);
         }
 
         $fields = $this->_subqueryFields($query);
-        $filterQuery->select($fields['select'], true)->group($fields['group']);
+        $filterQuery->select($fields['select'], true)->groupBy($fields['group']);
 
         return $filterQuery;
     }

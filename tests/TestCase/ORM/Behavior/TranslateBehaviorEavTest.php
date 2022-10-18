@@ -165,7 +165,7 @@ class TranslateBehaviorEavTest extends TestCase
         $results = $table->find('all', ['locale' => 'cze'])
             ->select(['id', 'title', 'body'])
             ->disableHydration()
-            ->orderAsc('Articles.id')
+            ->orderByAsc('Articles.id')
             ->toArray();
         $expected = [
             ['id' => 1, 'title' => 'Titulek #1', 'body' => 'Obsah #1', '_locale' => 'cze'],
@@ -268,7 +268,7 @@ class TranslateBehaviorEavTest extends TestCase
                 ],
             ])
             ->enableHydration(false)
-            ->orderAsc('Articles.id')
+            ->orderByAsc('Articles.id')
             ->toArray();
 
         $expected = [
@@ -736,7 +736,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $results = $table->find()
             ->select(['title', 'body'])
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->contain(['Authors' => function (SelectQuery $q) {
                 return $q->select(['id', 'name']);
             }]);

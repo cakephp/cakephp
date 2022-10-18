@@ -148,14 +148,14 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         //Append more tables to next execution
-        $result = $query->select('name')->from(['authors'])->order(['name' => 'desc', 'articles.id' => 'asc'])->execute();
+        $result = $query->select('name')->from(['authors'])->orderBy(['name' => 'desc', 'articles.id' => 'asc'])->execute();
         $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
         $this->assertEquals(['body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'], $result->fetch('assoc'));
         $this->assertEquals(['body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
         $result->closeCursor();
 
         // Overwrite tables and only fetch from authors
-        $result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
+        $result = $query->select('name', true)->from('authors', true)->orderBy(['name' => 'desc'], true)->execute();
         $this->assertSame(['nate'], $result->fetch());
         $this->assertSame(['mariano'], $result->fetch());
         $result->closeCursor();
@@ -210,7 +210,7 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])
-            ->order(['text' => 'desc', 'name' => 'desc'])
+            ->orderBy(['text' => 'desc', 'name' => 'desc'])
             ->execute();
         $this->assertEquals(
             ['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'],
@@ -233,7 +233,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->execute();
 
         $rows = $result->fetchAll('assoc');
@@ -266,7 +266,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->newExpr()->equalFields('author_id ', 'a.id')]])
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
@@ -278,7 +278,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
@@ -306,7 +306,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name'])
             ->from('articles')
             ->join(['a' => 'authors'])
-            ->order(['name' => 'desc', 'articles.id' => 'asc'])
+            ->orderBy(['name' => 'desc', 'articles.id' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'nate'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'nate'], $result->fetch('assoc'));
@@ -318,7 +318,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name'])
             ->from('articles')
             ->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
         $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
@@ -357,7 +357,7 @@ class SelectQueryTest extends TestCase
             ->select(['title', 'name' => 'c.comment'])
             ->from('articles')
             ->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
-            ->order(['created' => 'asc'])
+            ->orderBy(['created' => 'asc'])
             ->execute();
         $this->assertEquals(
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
@@ -1579,7 +1579,7 @@ class SelectQueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->whereInList('id', [2, 3])
-            ->order(['id']);
+            ->orderBy(['id']);
 
         $sql = $query->sql();
         $this->assertQuotedQuery(
@@ -1642,7 +1642,7 @@ class SelectQueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->whereNotInList('id', [], ['allowEmpty' => true])
-            ->order(['id']);
+            ->orderBy(['id']);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
@@ -1683,7 +1683,7 @@ class SelectQueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->whereNotInListOrNull('id', [], ['allowEmpty' => true])
-            ->order(['id']);
+            ->orderBy(['id']);
 
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
@@ -1696,7 +1696,7 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests order() method both with simple fields and expressions
+     * Tests orderBy() method both with simple fields and expressions
      */
     public function testSelectOrderBy(): void
     {
@@ -1704,32 +1704,32 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->order(['id' => 'desc'])
+            ->orderBy(['id' => 'desc'])
             ->execute();
         $this->assertEquals(['id' => 6], $result->fetch('assoc'));
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
         $this->assertEquals(['id' => 4], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $result = $query->order(['id' => 'asc'])->execute();
+        $result = $query->orderBy(['id' => 'asc'])->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $result = $query->order(['comment' => 'asc'])->execute();
+        $result = $query->orderBy(['comment' => 'asc'])->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $result = $query->order(['comment' => 'asc'], true)->execute();
+        $result = $query->orderBy(['comment' => 'asc'], true)->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
         $this->assertEquals(['id' => 4], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $result = $query->order(['user_id' => 'asc', 'created' => 'desc'], true)
+        $result = $query->orderBy(['user_id' => 'asc', 'created' => 'desc'], true)
             ->execute();
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
         $this->assertEquals(['id' => 4], $result->fetch('assoc'));
@@ -1738,7 +1738,7 @@ class SelectQueryTest extends TestCase
 
         $expression = $query->newExpr(['(id + :offset) % 2']);
         $result = $query
-            ->order([$expression, 'id' => 'desc'], true)
+            ->orderBy([$expression, 'id' => 'desc'], true)
             ->bind(':offset', 1, null)
             ->execute();
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
@@ -1747,8 +1747,8 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $result = $query
-            ->order($expression, true)
-            ->order(['id' => 'asc'])
+            ->orderBy($expression, true)
+            ->orderBy(['id' => 'asc'])
             ->bind(':offset', 1, null)
             ->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
@@ -1757,15 +1757,42 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
     }
 
+    public function testSelectOrderDeprecated(): void
+    {
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->order(['id' => 'desc'])
+            ->execute();
+        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('comments')
+            ->orderDesc('id')
+            ->execute();
+        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select(['user_id'])
+            ->from('comments')
+            ->orderAsc('user_id')
+            ->execute();
+        $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+    }
+
     /**
-     * Test that order() being a string works.
+     * Test that orderBy() being a string works.
      */
     public function testSelectOrderByString(): void
     {
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->order('id asc');
+            ->orderBy('id asc');
         $result = $query->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
@@ -1774,7 +1801,7 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Test exception for order() with an associative array which contains extra values.
+     * Test exception for orderBy() with an associative array which contains extra values.
      */
     public function testSelectOrderByAssociativeArrayContainingExtraExpressions(): void
     {
@@ -1788,13 +1815,13 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->order([
+            ->orderBy([
                 'id' => 'desc -- Comment',
             ]);
     }
 
     /**
-     * Tests that order() works with closures.
+     * Tests that orderBy() works with closures.
      */
     public function testSelectOrderByClosure(): void
     {
@@ -1802,7 +1829,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->order(function ($exp, $q) use ($query) {
+            ->orderBy(function ($exp, $q) use ($query) {
                 $this->assertInstanceOf(QueryExpression::class, $exp);
                 $this->assertSame($query, $q);
 
@@ -1819,7 +1846,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->order(function ($exp) {
+            ->orderBy(function ($exp) {
                 return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
             });
 
@@ -1833,7 +1860,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->order(function ($exp) {
+            ->orderBy(function ($exp) {
                 return $exp->add('a + b');
             });
 
@@ -1847,7 +1874,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->order(function ($exp, $q) {
+            ->orderBy(function ($exp, $q) {
                 return $q->func()->sum('a');
             });
 
@@ -1859,14 +1886,14 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Test orderAsc() and its input types.
+     * Test orderByAsc() and its input types.
      */
-    public function testSelectOrderAsc(): void
+    public function testSelectOrderByAsc(): void
     {
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc('id');
+            ->orderByAsc('id');
 
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
@@ -1885,7 +1912,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc($query->func()->concat(['id' => 'identifier', '3']));
+            ->orderByAsc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1898,14 +1925,14 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderAsc(function (QueryExpression $exp, Query $query) {
+            ->orderByAsc(function (QueryExpression $exp, Query $query) {
                 return $exp
                     ->case()
                     ->when(['author_id' => 1])
                     ->then(1)
                     ->else($query->identifier('id'));
             })
-            ->orderAsc('id');
+            ->orderByAsc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1922,14 +1949,14 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Test orderDesc() and its input types.
+     * Test orderByDesc() and its input types.
      */
-    public function testSelectOrderDesc(): void
+    public function testSelectOrderByDesc(): void
     {
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc('id');
+            ->orderByDesc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1947,7 +1974,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc($query->func()->concat(['id' => 'identifier', '3']));
+            ->orderByDesc($query->func()->concat(['id' => 'identifier', '3']));
 
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1960,14 +1987,14 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderDesc(function (QueryExpression $exp, Query $query) {
+            ->orderByDesc(function (QueryExpression $exp, Query $query) {
                 return $exp
                     ->case()
                     ->when(['author_id' => 1])
                     ->then(1)
                     ->else($query->identifier('id'));
             })
-            ->orderDesc('id');
+            ->orderByDesc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
         $expected = [
@@ -1987,7 +2014,33 @@ class SelectQueryTest extends TestCase
      * Tests that group by fields can be passed similar to select fields
      * and that it sends the correct query to the database
      */
-    public function testSelectGroup(): void
+    public function testSelectGroupBy(): void
+    {
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select(['total' => 'count(author_id)', 'author_id'])
+            ->from('articles')
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+            ->groupBy('author_id')
+            ->orderBy(['total' => 'desc'])
+            ->execute();
+        $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
+        $this->assertEquals($expected, $result->fetchAll('assoc'));
+
+        $result = $query->select(['total' => 'count(title)', 'name'], true)
+            ->groupBy(['name'], true)
+            ->orderBy(['total' => 'asc'])
+            ->execute();
+        $expected = [['total' => 1, 'name' => 'larry'], ['total' => 2, 'name' => 'mariano']];
+        $this->assertEquals($expected, $result->fetchAll('assoc'));
+
+        $result = $query->select(['articles.id'])
+            ->groupBy(['articles.id'])
+            ->execute();
+        $this->assertCount(3, $result->fetchAll());
+    }
+
+    public function testSelectGroupDeprecated(): void
     {
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -1995,22 +2048,10 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
             ->group('author_id')
-            ->order(['total' => 'desc'])
+            ->orderBy(['total' => 'desc'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
-
-        $result = $query->select(['total' => 'count(title)', 'name'], true)
-            ->group(['name'], true)
-            ->order(['total' => 'asc'])
-            ->execute();
-        $expected = [['total' => 1, 'name' => 'larry'], ['total' => 2, 'name' => 'mariano']];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
-
-        $result = $query->select(['articles.id'])
-            ->group(['articles.id'])
-            ->execute();
-        $this->assertCount(3, $result->fetchAll());
     }
 
     /**
@@ -2042,7 +2083,7 @@ class SelectQueryTest extends TestCase
             ->select(['author_id'])
             ->distinct(['author_id'])
             ->from(['a' => 'articles'])
-            ->order(['author_id' => 'ASC'])
+            ->orderBy(['author_id' => 'ASC'])
             ->execute();
         $results = $result->fetchAll('assoc');
         $this->assertCount(2, $results);
@@ -2056,7 +2097,7 @@ class SelectQueryTest extends TestCase
             ->select(['author_id'])
             ->distinct('author_id')
             ->from(['a' => 'articles'])
-            ->order(['author_id' => 'ASC'])
+            ->orderBy(['author_id' => 'ASC'])
             ->execute();
         $results = $result->fetchAll('assoc');
         $this->assertCount(2, $results);
@@ -2140,7 +2181,7 @@ class SelectQueryTest extends TestCase
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
+            ->groupBy('author_id')
             ->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
         $expected = [['total' => 1, 'author_id' => 3]];
@@ -2170,7 +2211,7 @@ class SelectQueryTest extends TestCase
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
+            ->groupBy('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
@@ -2181,7 +2222,7 @@ class SelectQueryTest extends TestCase
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
+            ->groupBy('author_id')
             ->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
             ->execute();
@@ -2193,7 +2234,7 @@ class SelectQueryTest extends TestCase
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
+            ->groupBy('author_id')
             ->andHaving(function ($e) {
                 return $e->add('count(author_id) = 2 - 1');
             })
@@ -2249,7 +2290,7 @@ class SelectQueryTest extends TestCase
         $result = $query->select('id')->from('comments')
             ->limit(1)
             ->offset(0)
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
@@ -2275,7 +2316,7 @@ class SelectQueryTest extends TestCase
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('articles')
-            ->order(['id' => 'DESC'])
+            ->orderBy(['id' => 'DESC'])
             ->limit(1)
             ->offset(0)
             ->execute();
@@ -2334,7 +2375,7 @@ class SelectQueryTest extends TestCase
         $result = $query->select('id')->from('comments')
             ->limit(1)
             ->page(2)
-            ->order(['id' => 'asc'])
+            ->orderBy(['id' => 'asc'])
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
@@ -2368,7 +2409,7 @@ class SelectQueryTest extends TestCase
                 'ids_added' => $query->newExpr()->add('(user_id + article_id)'),
             ])
             ->from('comments')
-            ->order(['ids_added' => 'asc'])
+            ->orderBy(['ids_added' => 'asc'])
             ->limit(2)
             ->page(3)
             ->execute();
@@ -2584,7 +2625,7 @@ class SelectQueryTest extends TestCase
             ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
             ->from(['b' => 'authors'])
             ->where(['id ' => 1])
-            ->order(['id' => 'desc']);
+            ->orderBy(['id' => 'desc']);
 
         $query->select(['foo' => 'id', 'bar' => 'comment'])->union($union);
         $result = $query->execute();
@@ -2605,7 +2646,7 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to run unions with order statements
+     * Tests that it is possible to run unions with order by statements
      */
     public function testUnionOrderBy(): void
     {
@@ -2617,12 +2658,12 @@ class SelectQueryTest extends TestCase
         $union = (new SelectQuery($this->connection))
             ->select(['id', 'title'])
             ->from(['a' => 'articles'])
-            ->order(['a.id' => 'asc']);
+            ->orderBy(['a.id' => 'asc']);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select(['id', 'comment'])
             ->from(['c' => 'comments'])
-            ->order(['c.id' => 'asc'])
+            ->orderBy(['c.id' => 'asc'])
             ->union($union)
             ->execute();
         $this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result->fetchAll());
@@ -2648,7 +2689,7 @@ class SelectQueryTest extends TestCase
             ->select(['id', 'name', 'other' => 'id', 'nameish' => 'name'])
             ->from(['b' => 'authors'])
             ->where(['id ' => 1])
-            ->order(['id' => 'desc']);
+            ->orderBy(['id' => 'desc']);
 
         $query->select(['foo' => 'id', 'bar' => 'comment'])->unionAll($union);
         $result = $query->execute();
@@ -2667,7 +2708,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id', 'title'])
             ->from('articles')
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->decorateResults(function ($row) {
                 $row['modified_id'] = $row['id'] + 1;
 
@@ -2812,7 +2853,7 @@ class SelectQueryTest extends TestCase
                 'c' => $query->func()->concat(['comment' => 'literal', ' is appended']),
             ])
             ->from('comments')
-            ->order(['c' => 'ASC'])
+            ->orderBy(['c' => 'ASC'])
             ->limit(1)
             ->execute();
         $expected = [
@@ -3154,15 +3195,15 @@ class SelectQueryTest extends TestCase
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->group(['something'])->sql();
+        $sql = $query->select('*')->groupBy(['something'])->sql();
         $this->assertQuotedQuery('GROUP BY <something>', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->group([$query->newExpr('bar')])->sql();
+        $sql = $query->select('*')->groupBy([$query->newExpr('bar')])->sql();
         $this->assertQuotedQuery('GROUP BY \(bar\)', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->group([new IdentifierExpression('bar')])->sql();
+        $sql = $query->select('*')->groupBy([new IdentifierExpression('bar')])->sql();
         $this->assertQuotedQuery('GROUP BY \(<bar>\)', $sql);
     }
 
@@ -3509,7 +3550,7 @@ class SelectQueryTest extends TestCase
     public function testCloneGroupExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->group($query->newExpr('group'));
+        $query->groupBy($query->newExpr('group'));
 
         $clause = $query->clause('group');
         $clauseClone = (clone $query)->clause('group');
@@ -3563,9 +3604,9 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $query
-            ->order($query->newExpr('order'))
-            ->orderAsc($query->newExpr('order_asc'))
-            ->orderDesc($query->newExpr('order_desc'));
+            ->orderBy($query->newExpr('order'))
+            ->orderByAsc($query->newExpr('order_asc'))
+            ->orderByDesc($query->newExpr('order_desc'));
 
         $clause = $query->clause('order');
         $clauseClone = (clone $query)->clause('order');
@@ -3650,7 +3691,7 @@ class SelectQueryTest extends TestCase
             ->where(['Articles.id' => 1])
             ->offset(10)
             ->limit(1)
-            ->order(['Articles.id' => 'DESC']);
+            ->orderBy(['Articles.id' => 'DESC']);
         $dupe = clone $query;
 
         $this->assertEquals($query->clause('where'), $dupe->clause('where'));
@@ -3665,7 +3706,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($query->clause('order'), $dupe->clause('order'));
         $this->assertNotSame($query->clause('order'), $dupe->clause('order'));
 
-        $query->order(['Articles.title' => 'ASC']);
+        $query->orderBy(['Articles.title' => 'ASC']);
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
 
         $this->assertNotSame(
@@ -3993,8 +4034,8 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id'])
             ->from('articles')
-            ->orderDesc($subquery)
-            ->orderAsc('id')
+            ->orderByDesc($subquery)
+            ->orderByAsc('id')
             ->setSelectTypeMap(new TypeMap([
                 'id' => 'integer',
             ]));
@@ -4067,8 +4108,8 @@ class SelectQueryTest extends TestCase
                 'computedB' => $subqueryB,
             ])
             ->from('articles')
-            ->orderDesc($subqueryB)
-            ->orderAsc('id')
+            ->orderByDesc($subqueryB)
+            ->orderByAsc('id')
             ->setSelectTypeMap(new TypeMap([
                 'id' => 'integer',
                 'computedA' => 'integer',

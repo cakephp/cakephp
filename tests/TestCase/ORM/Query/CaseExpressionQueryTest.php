@@ -42,8 +42,8 @@ class CaseExpressionQueryTest extends TestCase
                         ->setReturnType('boolean'),
                 ];
             })
-            ->orderAsc('price')
-            ->orderAsc('name')
+            ->orderByAsc('price')
+            ->orderByAsc('name')
             ->disableHydration();
 
         $expected = [

@@ -379,7 +379,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
-        $query = $table->find()->select(['id'])->order(['title' => 'desc']);
+        $query = $table->find()->select(['id'])->orderBy(['title' => 'desc']);
         $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
@@ -523,21 +523,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     /**
      * testNoAmbiguousOrder
      */
-    public function testNoAmbiguousOrder(): void
+    public function testNoAmbiguousOrderBy(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
         $article = $table->find('all')
-            ->order(['id' => 'desc'])
+            ->orderBy(['id' => 'desc'])
             ->enableHydration(false)
             ->toArray();
 
         $this->assertSame([3, 2, 1], Hash::extract($article, '{n}.id'));
 
         $article = $table->find('all')
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->enableHydration(false)
             ->toArray();
 

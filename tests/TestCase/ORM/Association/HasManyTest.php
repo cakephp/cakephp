@@ -740,7 +740,7 @@ class HasManyTest extends TestCase
         $query = $Authors->find();
         $result = $query
             ->contain('Articles')
-            ->order(['name' => 'ASC'])
+            ->orderBy(['name' => 'ASC'])
             ->limit(2)
             ->toArray();
 
@@ -1350,7 +1350,7 @@ class HasManyTest extends TestCase
 
         $others = $articles->find('all')
             ->where(['Articles.author_id' => 1, 'published' => 'N'])
-            ->orderAsc('title')
+            ->orderByAsc('title')
             ->toArray();
         $this->assertCount(
             1,

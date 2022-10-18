@@ -83,7 +83,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder())
         );
 
-        $f = (new AggregateExpression('MyFunction'))->order('test');
+        $f = (new AggregateExpression('MyFunction'))->orderBy('test');
         $this->assertEqualsSql(
             'MyFunction() OVER (ORDER BY test)',
             $f->sql(new ValueBinder())

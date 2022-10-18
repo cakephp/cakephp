@@ -639,7 +639,7 @@ class TreeBehaviorTest extends TestCase
 
         $expectedLevels = $table
             ->find('list', ['valueField' => 'depth'])
-            ->order('lft')
+            ->orderBy('lft')
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
         $table->behaviors()->Tree->setConfig('level', 'depth');
@@ -662,7 +662,7 @@ class TreeBehaviorTest extends TestCase
 
         $result = $table
             ->find('list', ['valueField' => 'depth'])
-            ->order('lft')
+            ->orderBy('lft')
             ->toArray();
         $this->assertSame($expectedLevels, $result);
     }
@@ -978,7 +978,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(17, $entity->lft);
         $this->assertSame(18, $entity->rght);
 
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1265,7 +1265,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1291,11 +1291,11 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
+        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1320,7 +1320,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
+        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);

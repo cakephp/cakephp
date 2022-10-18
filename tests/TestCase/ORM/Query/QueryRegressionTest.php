@@ -208,7 +208,7 @@ class QueryRegressionTest extends TestCase
 
         $results = $table->find()
             ->contain(['Authors.Stuff', 'Things.Stuff'])
-            ->order(['Articles.id' => 'ASC'])
+            ->orderBy(['Articles.id' => 'ASC'])
             ->toArray();
 
         $this->assertCount(5, $results);
@@ -535,7 +535,7 @@ class QueryRegressionTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->setLocale('eng');
         $query = $table->find('translations')
-            ->order(['Articles.id' => 'ASC'])
+            ->orderBy(['Articles.id' => 'ASC'])
             ->limit(10)
             ->offset(1);
         $result = $query->toArray();
@@ -666,7 +666,7 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(['title', 'id'])
             ->where('title LIKE :val')
-            ->group(['id', 'title'])
+            ->groupBy(['id', 'title'])
             ->bind(':val', '%Second%');
         $count = $query->count();
         $this->assertSame(1, $count);
@@ -952,7 +952,7 @@ class QueryRegressionTest extends TestCase
             ->matching('Users', function ($q) {
                 return $q->where(['Users.id >=' => 1]);
             })
-            ->order(['Comments.id' => 'ASC'])
+            ->orderBy(['Comments.id' => 'ASC'])
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
@@ -1448,7 +1448,7 @@ class QueryRegressionTest extends TestCase
 
         $query->select(['inside.content'])
             ->from(['inside' => $inner->unionAll($inner2)])
-            ->orderAsc($order);
+            ->orderByAsc($order);
 
         $results = $query->toArray();
         $this->assertCount(5, $results);
@@ -1469,7 +1469,7 @@ class QueryRegressionTest extends TestCase
             ->enableAutoFields()
             ->contain(['Comments'])
             ->limit(5)
-            ->order(['score' => 'desc']);
+            ->orderBy(['score' => 'desc']);
         $result = $query->all();
         $this->assertCount(3, $result);
     }
@@ -1482,20 +1482,20 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
-        $query->orderDesc(
+        $query->orderByDesc(
             $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
         );
-        $query->order(['title' => 'desc']);
+        $query->orderBy(['title' => 'desc']);
         // Executing the normal query before getting the count
         $query->all();
         $this->assertSame(3, $query->count());
 
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
-        $query->orderDesc(
+        $query->orderByDesc(
             $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
         );
-        $query->orderDesc($query->newExpr()->add(['id' => 3]));
+        $query->orderByDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
         $this->assertSame(3, $query->count());
     }

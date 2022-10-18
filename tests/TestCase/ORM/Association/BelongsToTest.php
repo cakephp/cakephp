@@ -114,7 +114,7 @@ class BelongsToTest extends TestCase
             ->belongsTo('Authors')
             ->setForeignKey('author_id');
 
-        $article = $table->find()->contain(['Authors'])->orderAsc('Articles.id')->first();
+        $article = $table->find()->contain(['Authors'])->orderByAsc('Articles.id')->first();
         $this->assertSame('mariano', $article->author->name);
 
         $assoc
@@ -123,7 +123,7 @@ class BelongsToTest extends TestCase
                 'Authors.name' => 'larry',
             ]);
 
-        $article = $table->find()->contain(['Authors'])->orderAsc('Articles.id')->first();
+        $article = $table->find()->contain(['Authors'])->orderByAsc('Articles.id')->first();
         $this->assertSame('larry', $article->author->name);
     }
 

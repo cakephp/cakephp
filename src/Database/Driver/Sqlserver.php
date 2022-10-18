@@ -317,7 +317,7 @@ class Sqlserver extends Driver
         }
 
         if ($offset !== null && !$query->clause('order')) {
-            $query->order($query->newExpr()->add('(SELECT NULL)'));
+            $query->orderBy($query->newExpr()->add('(SELECT NULL)'));
         }
 
         if ($this->version() < 11 && $offset !== null) {
@@ -374,7 +374,7 @@ class Sqlserver extends Driver
                 '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
             ])->limit(null)
             ->offset(null)
-            ->order([], true);
+            ->orderBy([], true);
 
         $outer = $query->getConnection()->selectQuery();
         $outer->select('*')
@@ -432,7 +432,7 @@ class Sqlserver extends Driver
             })
             ->limit(null)
             ->offset(null)
-            ->order([], true);
+            ->orderBy([], true);
 
         $outer = new SelectQuery($query->getConnection());
         $outer->select('*')

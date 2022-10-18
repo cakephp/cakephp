@@ -104,7 +104,7 @@ class TupleComparisonQueryTest extends TestCase
                     'NOT IN'
                 ),
             ])
-            ->orderAsc('articles.id')
+            ->orderByAsc('articles.id')
             ->execute();
     }
 
@@ -130,7 +130,7 @@ class TupleComparisonQueryTest extends TestCase
                     'IN'
                 ),
             ])
-            ->orderAsc('articles.id')
+            ->orderByAsc('articles.id')
             ->setSelectTypeMap($typeMap);
 
         $expected = [
@@ -197,7 +197,7 @@ class TupleComparisonQueryTest extends TestCase
                     'IN'
                 ),
             ])
-            ->orderAsc('articles.id')
+            ->orderByAsc('articles.id')
             ->setSelectTypeMap($typeMap);
 
         $expected = [
@@ -245,7 +245,7 @@ class TupleComparisonQueryTest extends TestCase
                     '='
                 ),
             ])
-            ->orderAsc('articles.id')
+            ->orderByAsc('articles.id')
             ->execute();
     }
 
@@ -300,7 +300,7 @@ class TupleComparisonQueryTest extends TestCase
                     '='
                 ),
             ])
-            ->orderAsc('articles.id')
+            ->orderByAsc('articles.id')
             ->setSelectTypeMap($typeMap);
 
         $expected = [

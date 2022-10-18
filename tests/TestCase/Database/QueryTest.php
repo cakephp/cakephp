@@ -228,9 +228,9 @@ class QueryTest extends TestCase
     public function testCloneOrderExpression(): void
     {
         $this->query
-            ->order($this->query->newExpr('order'))
-            ->orderAsc($this->query->newExpr('order_asc'))
-            ->orderDesc($this->query->newExpr('order_desc'));
+            ->orderBy($this->query->newExpr('order'))
+            ->orderByAsc($this->query->newExpr('order_asc'))
+            ->orderByDesc($this->query->newExpr('order_desc'));
 
         $clause = $this->query->clause('order');
         $clauseClone = (clone $this->query)->clause('order');

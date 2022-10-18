@@ -215,7 +215,7 @@ interface QueryInterface
      * ### Examples:
      *
      * ```
-     * $query->order(['title' => 'DESC', 'author_id' => 'ASC']);
+     * $query->orderBy(['title' => 'DESC', 'author_id' => 'ASC']);
      * ```
      *
      * Produces:
@@ -224,8 +224,8 @@ interface QueryInterface
      *
      * ```
      * $query
-     *     ->order(['title' => $query->newExpr('DESC NULLS FIRST')])
-     *     ->order('author_id');
+     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy('author_id');
      * ```
      *
      * Will generate:
@@ -234,7 +234,7 @@ interface QueryInterface
      *
      * ```
      * $expression = $query->newExpr()->add(['id % 2 = 0']);
-     * $query->order($expression)->order(['title' => 'ASC']);
+     * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
      * Will become:
@@ -242,13 +242,65 @@ interface QueryInterface
      * `ORDER BY (id %2 = 0), title ASC`
      *
      * If you need to set complex expressions as order conditions, you
-     * should use `orderAsc()` or `orderDesc()`.
+     * should use `orderByAsc()` or `orderByDesc()`.
+     *
+     * @param \Closure|array|string $fields fields to be added to the list
+     * @param bool $overwrite whether to reset order with field list or not
+     * @return $this
+     * @deprecated 5.0.0 Use orderBy() instead now that CollectionInterface methods are no longer proxied.
+     */
+    public function order(Closure|array|string $fields, bool $overwrite = false);
+
+    /**
+     * Adds a single or multiple fields to be used in the ORDER clause for this query.
+     * Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * If an array is passed, keys will be used as the field itself and the value will
+     * represent the order in which such field should be ordered. When called multiple
+     * times with the same fields as key, the last order definition will prevail over
+     * the others.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be selected, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->orderBy(['title' => 'DESC', 'author_id' => 'ASC']);
+     * ```
+     *
+     * Produces:
+     *
+     * `ORDER BY title DESC, author_id ASC`
+     *
+     * ```
+     * $query
+     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy('author_id');
+     * ```
+     *
+     * Will generate:
+     *
+     * `ORDER BY title DESC NULLS FIRST, author_id`
+     *
+     * ```
+     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
+     * ```
+     *
+     * Will become:
+     *
+     * `ORDER BY (id %2 = 0), title ASC`
+     *
+     * If you need to set complex expressions as order conditions, you
+     * should use `orderByAsc()` or `orderByDesc()`.
      *
      * @param \Closure|array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
-    public function order(Closure|array|string $fields, bool $overwrite = false);
+    public function orderBy(Closure|array|string $fields, bool $overwrite = false);
 
     /**
      * Set the page of results you want.

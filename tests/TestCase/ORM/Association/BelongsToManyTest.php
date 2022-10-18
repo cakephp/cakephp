@@ -1719,7 +1719,7 @@ class BelongsToManyTest extends TestCase
 
         $results = $table->find()
             ->contain('SpecialTags', function ($query) {
-                return $query->order(['SpecialTags.tag_id']);
+                return $query->orderBy(['SpecialTags.tag_id']);
             })
             ->where(['id' => 2])
             ->toArray();
