@@ -243,6 +243,24 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Behaves the exact same as `select()` except adds the field to the list of fields selected and
+     * does not disable auto-selecting fields for Associations.
+     *
+     * Use this instead of calling `select()` then `enableAutoFields()` to re-enable auto-fields.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string $fields Fields
+     * to be added to the list.
+     * @return $this
+     */
+    public function selectAlso($fields)
+    {
+        $this->select($fields);
+        $this->_autoFields = true;
+
+        return $this;
+    }
+
+    /**
      * All the fields associated with the passed table except the excluded
      * fields will be added to the select clause of the query. Passed excluded fields should not be aliased.
      * After the first call to this method, a second call cannot be used to remove fields that have already
