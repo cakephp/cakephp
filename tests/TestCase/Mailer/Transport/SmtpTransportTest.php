@@ -315,6 +315,33 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
+     * testAuth method
+     */
+    public function testAuthXoauth2(): void
+    {
+        $authString = base64_encode(sprintf(
+            "user=%s\1auth=Bearer %s\1\1",
+            $this->credentials['username'],
+            $this->credentials['password']
+        ));
+
+        $this->socket->expects($this->exactly(1))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "235 OK\r\n"
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["AUTH XOAUTH2 {$authString}\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig($this->credentials);
+        $this->SmtpTransport->setAuthType('XOAUTH2');
+        $this->SmtpTransport->auth();
+    }
+
+    /**
      * testAuthNotRecognized method
      */
     public function testAuthNotRecognized(): void

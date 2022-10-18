@@ -30,6 +30,13 @@ class SmtpTransport extends AbstractTransport
 {
     protected const AUTH_PLAIN = 'PLAIN';
     protected const AUTH_LOGIN = 'LOGIN';
+    protected const AUTH_XOAUTH2 = 'XOAUTH2';
+
+    protected const SUPPORTED_AUTH_TYPES = [
+        self::AUTH_PLAIN,
+        self::AUTH_LOGIN,
+        self::AUTH_XOAUTH2,
+    ];
 
     /**
      * Default config for this class
@@ -240,16 +247,12 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
-        if (strpos($auth, self::AUTH_PLAIN) !== false) {
-            $this->authType = self::AUTH_PLAIN;
+        foreach (self::SUPPORTED_AUTH_TYPES as $type) {
+            if (strpos($auth, $type) !== false) {
+                $this->authType = $type;
 
-            return;
-        }
-
-        if (strpos($auth, self::AUTH_LOGIN) !== false) {
-            $this->authType = self::AUTH_LOGIN;
-
-            return;
+                return;
+            }
         }
     }
 
@@ -322,27 +325,27 @@ class SmtpTransport extends AbstractTransport
 
         $username = $this->_config['username'];
         $password = $this->_config['password'];
-        if (empty($this->authType)) {
-            $replyCode = $this->_authPlain($username, $password);
-            if ($replyCode === '235') {
-                return;
-            }
 
-            $this->_authLogin($username, $password);
+        switch ($this->authType) {
+            case self::AUTH_PLAIN:
+                $this->_authPlain($username, $password);
+                break;
 
-            return;
-        }
+            case self::AUTH_LOGIN:
+                $this->_authLogin($username, $password);
+                break;
 
-        if ($this->authType === self::AUTH_PLAIN) {
-            $this->_authPlain($username, $password);
+            case self::AUTH_XOAUTH2:
+                $this->_authXoauth2($username, $password);
+                break;
 
-            return;
-        }
+            default:
+                $replyCode = $this->_authPlain($username, $password);
+                if ($replyCode === '235') {
+                    break;
+                }
 
-        if ($this->authType === self::AUTH_LOGIN) {
-            $this->_authLogin($username, $password);
-
-            return;
+                $this->_authLogin($username, $password);
         }
     }
 
@@ -392,6 +395,26 @@ class SmtpTransport extends AbstractTransport
                 'AUTH command not recognized or not implemented, SMTP server may not require authentication.'
             );
         }
+    }
+
+    /**
+     * Authenticate using AUTH XOAUTH2 mechanism.
+     *
+     * @param string $username Username.
+     * @param string $token Token.
+     * @return void
+     * @see https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#smtp-protocol-exchange
+     * @see https://developers.google.com/gmail/imap/xoauth2-protocol#smtp_protocol_exchange
+     */
+    protected function _authXoauth2(string $username, string $token): void
+    {
+        $authString = base64_encode(sprintf(
+            "user=%s\1auth=Bearer %s\1\1",
+            $username,
+            $token
+        ));
+
+        $this->_smtpSend('AUTH XOAUTH2 ' . $authString, '235');
     }
 
     /**
