@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer\Transport;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
@@ -28,11 +29,11 @@ use RuntimeException;
  */
 class SmtpTransport extends AbstractTransport
 {
-    protected const AUTH_PLAIN = 'PLAIN';
-    protected const AUTH_LOGIN = 'LOGIN';
-    protected const AUTH_XOAUTH2 = 'XOAUTH2';
+    public const AUTH_PLAIN = 'PLAIN';
+    public const AUTH_LOGIN = 'LOGIN';
+    public const AUTH_XOAUTH2 = 'XOAUTH2';
 
-    protected const SUPPORTED_AUTH_TYPES = [
+    public const SUPPORTED_AUTH_TYPES = [
         self::AUTH_PLAIN,
         self::AUTH_LOGIN,
         self::AUTH_XOAUTH2,
@@ -52,6 +53,7 @@ class SmtpTransport extends AbstractTransport
         'client' => null,
         'tls' => false,
         'keepAlive' => false,
+        'authType' => null,
     ];
 
     /**
@@ -76,7 +78,7 @@ class SmtpTransport extends AbstractTransport
     protected $_lastResponse = [];
 
     /**
-     * Detected authentication type.
+     * Authentication type.
      *
      * @var string|null
      */
@@ -237,7 +239,18 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _parseAuthType(): void
     {
-        $this->authType = null;
+        $authType = $this->getConfig('authType');
+        if ($authType !== null) {
+            if (!in_array($authType, self::SUPPORTED_AUTH_TYPES)) {
+                throw new CakeException(
+                    'Unsupported auth type. Available types are: ' . implode(', ', self::SUPPORTED_AUTH_TYPES)
+                );
+            }
+
+            $this->authType = $authType;
+
+            return;
+        }
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
@@ -247,6 +260,10 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
+        if ($auth === '') {
+            return;
+        }
+
         foreach (self::SUPPORTED_AUTH_TYPES as $type) {
             if (strpos($auth, $type) !== false) {
                 $this->authType = $type;
@@ -254,6 +271,8 @@ class SmtpTransport extends AbstractTransport
                 return;
             }
         }
+
+        throw new CakeException('Unsupported auth type: ' . substr($auth, 5));
     }
 
     /**

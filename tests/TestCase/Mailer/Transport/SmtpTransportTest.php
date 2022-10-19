@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
+use Cake\Mailer\Transport\SmtpTransport;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
@@ -278,6 +280,79 @@ class SmtpTransportTest extends TestCase
         $this->assertSame('SMTP server did not accept the connection.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('200 Not Accepted', $e->getPrevious()->getMessage());
+    }
+
+    /**
+     * Test that when "authType" is specified that's that one used instead of the
+     * 1st one supported by the server
+     *
+     * @return void
+     */
+    public function testAuthTypeSet(): void
+    {
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
+        $this->SmtpTransport->connect();
+        $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
+    }
+
+    public function testExceptionInvalidAuthType(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unsupported auth type. Available types are: PLAIN, LOGIN, XOAUTH2');
+
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig(['authType' => 'invalid']);
+        $this->SmtpTransport->connect();
+    }
+
+    public function testAuthTypeUnsupported(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unsupported auth type: CRAM-MD5');
+
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->connect();
+        $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
     }
 
     public function testAuthPlain(): void
