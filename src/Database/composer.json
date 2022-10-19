@@ -29,7 +29,8 @@
         "cakephp/datasource": "^4.0"
     },
     "suggest": {
-        "cakephp/i18n": "If you are using locale-aware datetime formats or Chronos types."
+        "cakephp/i18n": "If you are using locale-aware datetime formats or Chronos types.",
+        "cakephp/log": "If you want to use query logging without providing a logger yourself."
     },
     "autoload": {
         "psr-4": {

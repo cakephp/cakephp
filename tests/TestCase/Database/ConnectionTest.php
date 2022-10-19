@@ -42,6 +42,7 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
+use TestApp\Log\Engine\TestBaseLog;
 
 /**
  * Tests Connection class
@@ -1354,5 +1355,63 @@ class ConnectionTest extends TestCase
 
         $prop->setValue($conn, $oldDriver);
         $conn->rollback();
+    }
+
+    public function testAutomaticReconnectWithoutQueryLogging(): void
+    {
+        $conn = clone $this->connection;
+
+        $logger = new TestBaseLog();
+        $conn->setLogger($logger);
+        $conn->disableQueryLogging();
+
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->exactly(2))
+            ->method('prepare')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new Exception('server gone away')),
+                $this->returnValue($statement)
+            ));
+
+        $conn->query('SELECT 1');
+
+        $this->assertEmpty($logger->getMessage());
+    }
+
+    public function testAutomaticReconnectWithQueryLogging(): void
+    {
+        $conn = clone $this->connection;
+
+        $logger = new TestBaseLog();
+        $conn->setLogger($logger);
+        $conn->enableQueryLogging();
+
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->exactly(2))
+            ->method('prepare')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new Exception('server gone away')),
+                $this->returnValue($statement)
+            ));
+
+        $conn->query('SELECT 1');
+
+        $this->assertSame('[RECONNECT]', $logger->getMessage());
     }
 }
