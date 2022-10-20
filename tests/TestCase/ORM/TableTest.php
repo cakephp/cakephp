@@ -42,6 +42,7 @@ use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
@@ -202,7 +203,12 @@ class TableTest extends TestCase
     {
         $table = new Table(['table' => 'users']);
 
-        $query = $table->query();
+        $this->deprecated(function () use ($table) {
+            $query = $table->query();
+            $this->assertEquals('users', $query->getRepository()->getTable());
+        });
+
+        $query = $table->selectQuery();
         $this->assertEquals('users', $query->getRepository()->getTable());
 
         $query = $table->subquery();
@@ -1096,14 +1102,14 @@ class TableTest extends TestCase
     public function testFindApplyOptions(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query', 'findAll'])
+            ->onlyMethods(['selectQuery', 'findAll'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
@@ -5226,7 +5232,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = (new Query($this->connection, $table))->select();
+        $query = (new SelectQuery($this->connection, $table))->select();
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, []);
         $table->find();
@@ -5250,7 +5256,7 @@ class TableTest extends TestCase
     public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5261,13 +5267,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])
@@ -5299,7 +5305,7 @@ class TableTest extends TestCase
     public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5310,13 +5316,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('custom', $query, ['fields' => ['id']])
@@ -5366,7 +5372,7 @@ class TableTest extends TestCase
     public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5378,13 +5384,13 @@ class TableTest extends TestCase
             ->getMock();
         $table->setTable('table_name');
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])

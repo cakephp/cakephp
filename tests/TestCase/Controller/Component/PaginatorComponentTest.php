@@ -165,11 +165,11 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -293,11 +293,11 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -325,11 +325,11 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -688,11 +688,11 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalid(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -1232,11 +1232,11 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'published',
             'limit' => 2,
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -1381,7 +1381,7 @@ class PaginatorComponentTest extends TestCase
     protected function _getMockFindQuery(?RepositoryInterface $table = null)
     {
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['all', 'count', 'applyOptions'])
             ->addMethods(['total'])
             ->disableOriginalConstructor()
