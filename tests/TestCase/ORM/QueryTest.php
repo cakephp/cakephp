@@ -160,6 +160,48 @@ class QueryTest extends TestCase
         $this->assertSame($this->table, $result);
     }
 
+    public function testSelectAlso(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->select('id')
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->select('id')
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+    }
+
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
