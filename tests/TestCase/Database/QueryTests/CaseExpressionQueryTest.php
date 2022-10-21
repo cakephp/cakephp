@@ -79,8 +79,8 @@ class CaseExpressionQueryTest extends TestCase
                 ];
             })
             ->from('products')
-            ->orderAsc('category')
-            ->orderAsc('name');
+            ->orderByAsc('category')
+            ->orderByAsc('name');
 
         $expected = [
             [
@@ -120,8 +120,8 @@ class CaseExpressionQueryTest extends TestCase
                 ];
             })
             ->from('products')
-            ->orderAsc('price')
-            ->orderAsc('name')
+            ->orderByAsc('price')
+            ->orderByAsc('name')
             ->setSelectTypeMap($typeMap);
 
         $expected = [
@@ -154,14 +154,14 @@ class CaseExpressionQueryTest extends TestCase
         $query = $this->query
             ->select(['article_id', 'user_id'])
             ->from('comments')
-            ->orderAsc('comments.article_id')
-            ->orderDesc(function (QueryExpression $exp, Query $query) {
+            ->orderByAsc('comments.article_id')
+            ->orderByDesc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(1)
                     ->then($query->identifier('comments.user_id'));
             })
-            ->orderAsc(function (QueryExpression $exp, Query $query) {
+            ->orderByAsc(function (QueryExpression $exp, Query $query) {
                 return $query->newExpr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(2)
@@ -204,7 +204,7 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['articles.title'])
             ->from('articles')
             ->leftJoin('comments', ['comments.article_id = articles.id'])
-            ->group(['articles.id', 'articles.title'])
+            ->groupBy(['articles.id', 'articles.title'])
             ->having(function (QueryExpression $exp, Query $query) {
                 $expression = $query->newExpr()
                     ->case()

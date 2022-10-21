@@ -175,7 +175,7 @@ class SelectQueryTest extends TestCase
         $results = $query->select()
             ->contain('authors')
             ->enableHydration(false)
-            ->order(['articles.id' => 'asc'])
+            ->orderBy(['articles.id' => 'asc'])
             ->toArray();
         $expected = [
             [
@@ -471,7 +471,7 @@ class SelectQueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['authors' => ['posts']])
-            ->order(['articles.id' => 'ASC'])
+            ->orderBy(['articles.id' => 'ASC'])
             ->enableHydration(false)
             ->toArray();
         $expected = [
@@ -1092,7 +1092,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new SelectQuery($table);
-        $query->select(['a' => 'id'])->limit(2)->order(['id' => 'ASC']);
+        $query->select(['a' => 'id'])->limit(2)->orderBy(['id' => 'ASC']);
         $query->mapReduce(function ($v, $k, $mr): void {
             $mr->emit($v['a']);
         });
@@ -1374,7 +1374,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('authors')
-            ->order(['articles.id' => 'asc'])
+            ->orderBy(['articles.id' => 'asc'])
             ->toArray();
 
         $this->assertCount(3, $results);
@@ -1493,7 +1493,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($table);
         $results = $query->select()
             ->contain('authors')
-            ->order(['articles.id' => 'asc'])
+            ->orderBy(['articles.id' => 'asc'])
             ->toArray();
 
         $first = $results[0];
@@ -1597,7 +1597,7 @@ class SelectQueryTest extends TestCase
             ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query
                     ->limit(1)
-                    ->order(['Articles.title' => 'DESC']);
+                    ->orderBy(['Articles.title' => 'DESC']);
             });
 
         $query = $table->find();
@@ -1633,7 +1633,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find('all');
         $query->select(['author_id', 's' => $query->func()->sum('id')])
-            ->group(['author_id']);
+            ->groupBy(['author_id']);
         $result = $query->count();
         $this->assertEquals(2, $result);
     }
@@ -1649,11 +1649,11 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['author_id', 's' => $query->func()->sum('id')])
             ->where(['id >' => 2])
-            ->group(['author_id'])
+            ->groupBy(['author_id'])
             ->counter(function ($q) use ($query) {
                 $this->assertNotSame($q, $query);
 
-                return $q->select([], true)->group([], true)->count();
+                return $q->select([], true)->groupBy([], true)->count();
             });
 
         $result = $query->count();
@@ -2372,7 +2372,7 @@ class SelectQueryTest extends TestCase
         };
         $query = $table->find()
             ->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
-            ->order(['ArticlesTags.article_id' => 'ASC']);
+            ->orderBy(['ArticlesTags.article_id' => 'ASC']);
 
         $query->formatResults(function ($results) {
             return $results->map(function ($row) {
@@ -2454,7 +2454,7 @@ class SelectQueryTest extends TestCase
 
         $query = $table->find()
             ->contain(['Authors'])
-            ->order(['Authors.id' => 'asc'])
+            ->orderBy(['Authors.id' => 'asc'])
             ->select(['Authors.id']);
         $results = $query->all()->extract('author.id')->toList();
         $expected = [1, 1, 3];
@@ -2472,7 +2472,7 @@ class SelectQueryTest extends TestCase
         $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $query = $table->find()
-            ->order(['Articles.id' => 'ASC'])
+            ->orderBy(['Articles.id' => 'ASC'])
             ->contain([
                 'Articles' => function ($q) {
                     return $q->contain('Authors');
@@ -2641,7 +2641,7 @@ class SelectQueryTest extends TestCase
                     'conditions' => [$query->newExpr()->equalFields('person.id', 'articles.author_id')],
                 ],
             ])
-            ->order(['articles.id' => 'ASC'])
+            ->orderBy(['articles.id' => 'ASC'])
             ->enableHydration(false)
             ->toArray();
         $expected = [
@@ -2798,7 +2798,7 @@ class SelectQueryTest extends TestCase
         $query = $table->find();
         $query->offset(10)
             ->limit(1)
-            ->order(['Articles.id' => 'DESC'])
+            ->orderBy(['Articles.id' => 'DESC'])
             ->contain(['Comments'])
             ->matching('Comments');
         $copy = $query->cleanCopy();
@@ -2830,7 +2830,7 @@ class SelectQueryTest extends TestCase
         $query->offset(10)
             ->limit(1)
             ->where(['Articles.id BETWEEN :start AND :end'])
-            ->order(['Articles.id' => 'DESC'])
+            ->orderBy(['Articles.id' => 'DESC'])
             ->bind(':start', 1)
             ->bind(':end', 2);
         $copy = $query->cleanCopy();
@@ -2849,13 +2849,13 @@ class SelectQueryTest extends TestCase
             ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query
                     ->limit(5)
-                    ->order(['Articles.title' => 'DESC']);
+                    ->orderBy(['Articles.title' => 'DESC']);
             });
 
         $query = $table->find();
         $query->offset(10)
             ->limit(1)
-            ->order(['Articles.id' => 'DESC'])
+            ->orderBy(['Articles.id' => 'DESC'])
             ->contain(['Comments']);
         $copy = $query->cleanCopy();
 
@@ -3216,7 +3216,7 @@ class SelectQueryTest extends TestCase
             ->select(['total_articles' => 'count(articles.id)'])
             ->enableAutoFields()
             ->leftJoinWith('articles')
-            ->group(['authors.id', 'authors.name']);
+            ->groupBy(['authors.id', 'authors.name']);
 
         $expected = [
             1 => 2,
@@ -3240,7 +3240,7 @@ class SelectQueryTest extends TestCase
             ->find()
             ->leftJoinWith('articles')
             ->where(['articles.id IS NOT' => null])
-            ->order(['authors.id']);
+            ->orderBy(['authors.id']);
 
         $this->assertEquals([1, 1, 3], $results->all()->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
@@ -3265,7 +3265,7 @@ class SelectQueryTest extends TestCase
             ->leftJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
-            ->group(['authors.id']);
+            ->groupBy(['authors.id']);
 
         $expected = [
             1 => 0,
@@ -3510,7 +3510,7 @@ class SelectQueryTest extends TestCase
         $results = $table->find()
             ->enableHydration(false)
             ->notMatching('articles')
-            ->order(['authors.id'])
+            ->orderBy(['authors.id'])
             ->toArray();
 
         $expected = [
@@ -3524,7 +3524,7 @@ class SelectQueryTest extends TestCase
             ->notMatching('articles', function ($q) {
                 return $q->where(['articles.author_id' => 1]);
             })
-            ->order(['authors.id'])
+            ->orderBy(['authors.id'])
             ->toArray();
         $expected = [
             ['id' => 2, 'name' => 'nate'],
@@ -3616,7 +3616,7 @@ class SelectQueryTest extends TestCase
                     return $q->where(['tags.name' => 'tag3']);
                 });
             })
-            ->order(['authors.id' => 'ASC', 'articles.id' => 'ASC']);
+            ->orderBy(['authors.id' => 'ASC', 'articles.id' => 'ASC']);
 
         $expected = [
             'id' => 1,
@@ -3741,7 +3741,7 @@ class SelectQueryTest extends TestCase
                 'posts.author_id',
                 'post_count' => $query->func()->count('posts.id'),
             ])
-            ->group(['posts.author_id'])
+            ->groupBy(['posts.author_id'])
             ->having([$query->newExpr()->gte('post_count', 2, 'integer')])
             ->enableHydration(false)
             ->toArray();
@@ -3787,7 +3787,7 @@ class SelectQueryTest extends TestCase
                             ->rowNumber()
                             ->over()
                             ->partition('author_id')
-                            ->order(['id' => 'ASC']),
+                            ->orderBy(['id' => 'ASC']),
                     ];
             });
 
@@ -3802,7 +3802,7 @@ class SelectQueryTest extends TestCase
             ->enableAutoFields()
             ->from([$table->getAlias() => 'cte'])
             ->where(['row_num' => 1], ['row_num' => 'integer'])
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->disableHydration();
 
         $expected = [

@@ -186,7 +186,7 @@ class PostgresTest extends TestCase
                 'posts.author_id',
                 'post_count' => $query->func()->count('posts.id'),
             ])
-            ->group(['posts.author_id'])
+            ->groupBy(['posts.author_id'])
             ->having([$query->newExpr()->gte('post_count', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
@@ -214,7 +214,7 @@ class PostgresTest extends TestCase
                 'posts.author_id',
                 'post_count' => $query->func()->count('posts.id'),
             ])
-            ->group(['posts.author_id'])
+            ->groupBy(['posts.author_id'])
             ->having([$query->newExpr()->gte('posts.author_id', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .

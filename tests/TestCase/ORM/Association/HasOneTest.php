@@ -86,7 +86,7 @@ class HasOneTest extends TestCase
             ->hasOne('Profiles')
             ->setForeignKey('user_id');
 
-        $user = $table->find()->contain(['Profiles'])->orderAsc('Users.id')->first();
+        $user = $table->find()->contain(['Profiles'])->orderByAsc('Users.id')->first();
         $this->assertSame('mariano', $user->profile->first_name);
 
         $assoc
@@ -95,7 +95,7 @@ class HasOneTest extends TestCase
                 'Profiles.first_name' => 'larry',
             ]);
 
-        $user = $table->find()->contain(['Profiles'])->orderAsc('Users.id')->first();
+        $user = $table->find()->contain(['Profiles'])->orderByAsc('Users.id')->first();
         $this->assertSame('larry', $user->profile->first_name);
     }
 
@@ -126,7 +126,7 @@ class HasOneTest extends TestCase
         $query = $this->user->find();
         $association->attachTo($query);
 
-        $results = $query->order('Users.id')->toArray();
+        $results = $query->orderBy('Users.id')->toArray();
         $this->assertCount(1, $results, 'Only one record because of conditions & join type');
         $this->assertSame('masters', $results[0]->Profiles['last_name']);
     }

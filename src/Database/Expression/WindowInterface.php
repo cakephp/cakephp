@@ -58,12 +58,21 @@ interface WindowInterface
     public function partition(ExpressionInterface|Closure|array|string $partitions);
 
     /**
-     * Adds one or more order clauses to the window.
+     * Adds one or more order by clauses to the window.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $fields Order expressions
+     * @return $this
+     * @deprecated 5.0.0 Use orderBy() instead.
+     */
+    public function order(ExpressionInterface|Closure|array|string $fields);
+
+    /**
+     * Adds one or more order by clauses to the window.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $fields Order expressions
      * @return $this
      */
-    public function order(ExpressionInterface|Closure|array|string $fields);
+    public function orderBy(ExpressionInterface|Closure|array|string $fields);
 
     /**
      * Adds a simple range frame to the window.

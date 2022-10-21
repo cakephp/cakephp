@@ -254,7 +254,7 @@ class TableTest extends TestCase
 
         $query = $this->getTableLocator()->get('Articles')->find()
             ->where(['Articles.author_id IN' => $subquery])
-            ->order(['Articles.id' => 'ASC']);
+            ->orderBy(['Articles.id' => 'ASC']);
 
         $results = $query->all()->toList();
         $this->assertCount(2, $results);
@@ -273,8 +273,8 @@ class TableTest extends TestCase
         $query
             ->select(['Authors.id', 'total_articles' => $query->func()->count('articles.author_id')])
             ->leftJoin(['articles' => $subquery], ['articles.author_id' => new IdentifierExpression('Authors.id')])
-            ->group(['Authors.id'])
-            ->order(['Authors.id' => 'ASC']);
+            ->groupBy(['Authors.id'])
+            ->orderBy(['Authors.id' => 'ASC']);
 
         $results = $query->all()->toList();
         $this->assertEquals(1, $results[0]->id);
@@ -538,7 +538,7 @@ class TableTest extends TestCase
         $results = $table
             ->find('all')
             ->where(['id IN' => [1, 2]])
-            ->order('id')
+            ->orderBy('id')
             ->enableHydration(false)
             ->toArray();
         $expected = [
@@ -572,7 +572,7 @@ class TableTest extends TestCase
         $results = $table->find('all')
             ->select(['username', 'password'])
             ->enableHydration(false)
-            ->order('username')->toArray();
+            ->orderBy('username')->toArray();
         $expected = [
             ['username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
             ['username' => 'larry', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
@@ -583,7 +583,7 @@ class TableTest extends TestCase
 
         $results = $table->find('all')
             ->select(['foo' => 'username', 'password'])
-            ->order('username')
+            ->orderBy('username')
             ->enableHydration(false)
             ->toArray();
         $expected = [
@@ -609,7 +609,7 @@ class TableTest extends TestCase
             ->select(['id', 'username'])
             ->where(['created >=' => new DateTime('2010-01-22 00:00')])
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             ['id' => 3, 'username' => 'larry'],
             ['id' => 4, 'username' => 'garrett'],
@@ -623,7 +623,7 @@ class TableTest extends TestCase
                 'created >=' => new DateTime('2010-01-22 00:00'),
                 'users.created' => new DateTime('2008-03-17 01:18:23'),
             ]])
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             ['id' => 2, 'username' => 'nate'],
             ['id' => 3, 'username' => 'larry'],
@@ -1056,7 +1056,7 @@ class TableTest extends TestCase
 
         $result = $table->find('all')
             ->select(['username'])
-            ->order(['id' => 'asc'])
+            ->orderBy(['id' => 'asc'])
             ->enableHydration(false)
             ->toArray();
         $expected = array_fill(0, 3, $fields);
@@ -1193,7 +1193,7 @@ class TableTest extends TestCase
         $table->setDisplayField('username');
         $query = $table->find('list')
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             1 => 'mariano',
             2 => 'nate',
@@ -1204,7 +1204,7 @@ class TableTest extends TestCase
 
         $query = $table->find('list', ['fields' => ['id', 'username']])
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             1 => 'mariano',
             2 => 'nate',
@@ -1216,7 +1216,7 @@ class TableTest extends TestCase
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             1 => [
                 1 => 'mariano',
@@ -1367,7 +1367,7 @@ class TableTest extends TestCase
         $table->setDisplayField('username');
         $query = $table
             ->find('list', ['fields' => ['id', 'username']])
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             1 => 'mariano',
             2 => 'nate',
@@ -1379,7 +1379,7 @@ class TableTest extends TestCase
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
             ->enableHydration(true)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             1 => [
                 1 => 'mariano',
@@ -1430,7 +1430,7 @@ class TableTest extends TestCase
         $this->assertSame($expected, $query->clause('select'));
 
         $query = $articles->find('list', ['valueField' => ['author_id', 'title']])
-            ->order('id');
+            ->orderBy('id');
         $expected = ['id', 'author_id', 'title'];
         $this->assertSame($expected, $query->clause('select'));
 
@@ -1445,7 +1445,7 @@ class TableTest extends TestCase
                 'valueField' => ['id', 'title'],
                 'valueSeparator' => ' : ',
             ])
-            ->order('id');
+            ->orderBy('id');
 
         $expected = [
             1 => '1 : First Article',
@@ -1469,7 +1469,7 @@ class TableTest extends TestCase
 
         $query = $table
             ->find('list')
-            ->order('id');
+            ->orderBy('id');
         $this->assertEmpty($query->clause('select'));
 
         $expected = [
@@ -1497,7 +1497,7 @@ class TableTest extends TestCase
         $articles->belongsTo('Authors');
         $query = $articles->find('list', ['valueField' => 'author.name'])
             ->contain(['Authors'])
-            ->order('articles.id');
+            ->orderBy('articles.id');
         $this->assertEmpty($query->clause('select'));
 
         $expected = [
@@ -2774,7 +2774,7 @@ class TableTest extends TestCase
         $table->hasMany('articles', ['sort' => 'articles.id']);
 
         $entities = $table->find()
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->contain(['articles'])
             ->all();
         $entities->first()->name = 'admad';
@@ -2805,7 +2805,7 @@ class TableTest extends TestCase
         $this->assertFalse($result->first()->articles[0]->isDirty());
 
         $first = $table->find()
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->first();
         $this->assertSame('admad', $first->name);
     }
@@ -2888,7 +2888,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
 
         $entities = $table->find()
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->all();
         $entities->first()->name = 'admad';
 
@@ -2896,7 +2896,7 @@ class TableTest extends TestCase
         $this->assertSame($entities, $result);
 
         $first = $table->find()
-            ->order(['id' => 'ASC'])
+            ->orderBy(['id' => 'ASC'])
             ->first();
         $this->assertSame('admad', $first->name);
     }

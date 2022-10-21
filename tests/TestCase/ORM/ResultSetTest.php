@@ -277,7 +277,7 @@ class ResultSetTest extends TestCase
         $query = $this->table->find();
         $query->select([
             'counter' => 'COUNT(*)',
-        ])->group('author_id');
+        ])->groupBy('author_id');
 
         $min = $query->all()->min('counter');
         $max = $query->all()->max('counter');

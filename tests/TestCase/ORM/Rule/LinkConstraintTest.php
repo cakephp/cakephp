@@ -614,7 +614,7 @@ class LinkConstraintTest extends TestCase
                             new IdentifierExpression('RecentComments.article_id')
                         );
                     })
-                    ->order(['RecentComments.created' => 'DESC'])
+                    ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
                 return $exp->add(['Comments.id' => $subQuery]);
@@ -650,7 +650,7 @@ class LinkConstraintTest extends TestCase
                             new IdentifierExpression('RecentComments.article_id')
                         );
                     })
-                    ->order(['RecentComments.created' => 'DESC'])
+                    ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
                 return $exp->add(['Comments.id' => $subQuery]);

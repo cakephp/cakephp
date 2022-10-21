@@ -524,7 +524,7 @@ class CompositeKeysTest extends TestCase
         $table->setDisplayField('name');
         $query = $table->find('list')
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             '1;1' => 'mark',
             '2;2' => 'juan',
@@ -536,7 +536,7 @@ class CompositeKeysTest extends TestCase
         $table->setDisplayField(['name', 'site_id']);
         $query = $table->find('list')
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             '1;1' => 'mark;1',
             '2;2' => 'juan;2',
@@ -547,7 +547,7 @@ class CompositeKeysTest extends TestCase
 
         $query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
             ->enableHydration(false)
-            ->order('id');
+            ->orderBy('id');
         $expected = [
             '1;1' => [
                 '1;1' => 'mark;1',

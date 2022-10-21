@@ -506,10 +506,41 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * ```
      * // Produces GROUP BY id, title
-     * $query->group(['id', 'title']);
+     * $query->groupBy(['id', 'title']);
      *
      * // Produces GROUP BY title
-     * $query->group('title');
+     * $query->groupBy('title');
+     * ```
+     *
+     * Group fields are not suitable for use with user supplied data as they are
+     * not sanitized by the query builder.
+     *
+     * @param \Cake\Database\ExpressionInterface|array|string $fields fields to be added to the list
+     * @param bool $overwrite whether to reset fields with passed list or not
+     * @return $this
+     * @deprecated 5.0.0 Use groupBy() instead now that CollectionInterface methods are no longer proxied.
+     */
+    public function group(ExpressionInterface|array|string $fields, bool $overwrite = false)
+    {
+        return $this->groupBy($fields, $overwrite);
+    }
+
+    /**
+     * Adds a single or multiple fields to be used in the GROUP BY clause for this query.
+     * Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be grouped, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * // Produces GROUP BY id, title
+     * $query->groupBy(['id', 'title']);
+     *
+     * // Produces GROUP BY title
+     * $query->groupBy('title');
      * ```
      *
      * Group fields are not suitable for use with user supplied data as they are
@@ -519,7 +550,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function group(ExpressionInterface|array|string $fields, bool $overwrite = false)
+    public function groupBy(ExpressionInterface|array|string $fields, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['group'] = [];

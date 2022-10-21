@@ -246,14 +246,14 @@ class SqlserverTest extends TestCase
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
-            ->order(['id'])
+            ->orderBy(['id'])
             ->offset(10);
         $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
 
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
-            ->order(['id'])
+            ->orderBy(['id'])
             ->limit(10)
             ->offset(50);
         $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
@@ -311,7 +311,7 @@ class SqlserverTest extends TestCase
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
-            ->order(['id'])
+            ->orderBy(['id'])
             ->offset(10);
         $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
@@ -321,7 +321,7 @@ class SqlserverTest extends TestCase
         $query = new SelectQuery($connection);
         $query->select(['id', 'title'])
             ->from('articles')
-            ->order(['id'])
+            ->orderBy(['id'])
             ->where(['title' => 'Something'])
             ->limit(10)
             ->offset(50);
@@ -339,7 +339,7 @@ class SqlserverTest extends TestCase
                 'computed' => $subquery,
             ])
             ->from('articles')
-            ->order([
+            ->orderBy([
                 'computed' => 'ASC',
             ])
             ->offset(10);
@@ -377,7 +377,7 @@ class SqlserverTest extends TestCase
                 'computedB' => $subqueryB,
             ])
             ->from('articles')
-            ->order([
+            ->orderBy([
                 'computedA' => 'ASC',
             ])
             ->offset(10);
@@ -437,7 +437,7 @@ class SqlserverTest extends TestCase
                 'posts.author_id',
                 'post_count' => $query->func()->count('posts.id'),
             ])
-            ->group(['posts.author_id'])
+            ->groupBy(['posts.author_id'])
             ->having([$query->newExpr()->gte('post_count', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
@@ -468,7 +468,7 @@ class SqlserverTest extends TestCase
                 'posts.author_id',
                 'post_count' => $query->func()->count('posts.id'),
             ])
-            ->group(['posts.author_id'])
+            ->groupBy(['posts.author_id'])
             ->having([$query->newExpr()->gte('posts.author_id', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
