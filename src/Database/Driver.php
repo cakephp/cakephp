@@ -109,6 +109,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Get the configuration data used to create the driver.
+     *
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return $this->_config;
+    }
+
+    /**
      * Establishes a connection to the database server
      *
      * @param string $dsn A Driver-specific PDO-DSN
