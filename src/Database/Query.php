@@ -237,13 +237,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function useReadRole()
     {
-        if ($this->_connection->role() !== Connection::ROLE_READ) {
-            /** @var \Cake\Database\Connection $read */
-            $read = ConnectionManager::get($this->_connection->configName(), true, Connection::ROLE_READ);
-            $this->setConnection($read);
-        }
-
-        return $this;
+        return $this->useRole(Connection::ROLE_READ);
     }
 
     /**
@@ -253,13 +247,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function useWriteRole()
     {
-        if ($this->_connection->role() !== Connection::ROLE_WRITE) {
-            /** @var \Cake\Database\Connection $write */
-            $write = ConnectionManager::get($this->_connection->configName(), true, Connection::ROLE_WRITE);
-            $this->setConnection($write);
-        }
-
-        return $this;
+        return $this->useRole(Connection::ROLE_WRITE);
     }
 
     /**
@@ -270,11 +258,21 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function useRole(string $role)
     {
-        if ($role === Connection::ROLE_READ) {
-            return $this->useReadRole();
+        assert(in_array($role, [Connection::ROLE_READ, Connection::ROLE_WRITE], true));
+        if ($this->_connection->role() === $role) {
+            return $this;
         }
 
-        return $this->useWriteRole();
+        $name = $this->_connection->configName();
+        $roleName = ConnectionManager::getName($role, $name);
+        if ($roleName === $name) {
+            return $this;
+        }
+
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get($roleName);
+
+        return $this->setConnection($connection);
     }
 
     /**
