@@ -214,14 +214,14 @@ class ConnectionManager
     public static function get(string $name, bool $useAliases = true, ?string $role = null)
     {
         if ($role) {
-            $name = static::getName($role, $name, $useAliases);
+            $roleName = static::getName($role, $name, $useAliases);
         }
 
         if ($useAliases && isset(static::$_aliasMap[$name])) {
             $name = static::$_aliasMap[$name];
         }
 
-        if (empty(static::$_config[$name])) {
+        if (!isset(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
 
@@ -242,6 +242,7 @@ class ConnectionManager
      */
     public static function getName(string $role, string $name, $useAliases = true): string
     {
+        assert(in_array($role, [ConnectionInterface::ROLE_READ, ConnectionInterface::ROLE_WRITE], true));
         if ($role === ConnectionInterface::ROLE_READ) {
             return static::getReadName($name, $useAliases);
         }
@@ -266,21 +267,11 @@ class ConnectionManager
             $readName = $name . ':read';
         }
 
-        if ($useAliases) {
-            if (isset(static::$_aliasMap[$readName])) {
-                return $readName;
-            }
-
-            if (isset(static::$_aliasMap[$writeName])) {
-                return $writeName;
-            }
-        }
-
-        if (isset(static::$_config[$readName])) {
+        if (($useAliases && isset(static::$_aliasMap[$readName])) || isset(static::$_config[$readName])) {
             return $readName;
         }
 
-        return isset(static::$_config[$writeName]) ? $writeName : $name;
+        return $writeName;
     }
 
     /**
@@ -297,6 +288,6 @@ class ConnectionManager
             $writeName = $matches[1];
         }
 
-        return $useAliases ? static::$_aliasMap[$writeName] ?? $writeName : $writeName;
+        return $writeName;
     }
 }

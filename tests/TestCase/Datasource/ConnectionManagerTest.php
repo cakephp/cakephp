@@ -216,8 +216,8 @@ class ConnectionManagerTest extends TestCase
         $writeRole = ConnectionInterface::ROLE_WRITE;
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test'));
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read'));
-        $this->assertSame('test', ConnectionManager::getName($writeRole, 'default'));
-        $this->assertSame('test', ConnectionManager::getName($writeRole, 'default:read'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read'));
 
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test', false));
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read', false));
@@ -226,7 +226,7 @@ class ConnectionManagerTest extends TestCase
 
         ConnectionManager::alias('test', 'test:read');
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read'));
-        $this->assertSame('test', ConnectionManager::getName($writeRole, 'default:read'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read'));
 
         $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read', false));
         $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read', false));
@@ -243,7 +243,7 @@ class ConnectionManagerTest extends TestCase
         $this->assertSame('test', ConnectionManager::getName($readRole, 'test', false));
         $this->assertSame('test', ConnectionManager::getName($readRole, 'test:read', false));
         $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
-        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default:read', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
 
         ConnectionManager::alias('test', 'test:read');
         $this->assertSame('test:read', ConnectionManager::getName($readRole, 'test'));
@@ -256,7 +256,13 @@ class ConnectionManagerTest extends TestCase
         // With no alias, defaults to the physical test connection
         $this->assertSame('test', ConnectionManager::getName($readRole, 'test:read', false));
         $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
-        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default:read', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
+
+        ConnectionManager::alias('test', 'default:read');
+        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
+        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default:read'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
     }
 
     public function testMissingWriteConnection(): void
