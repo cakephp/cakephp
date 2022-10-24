@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Chronos\Date;
-use Cake\Chronos\MutableDate;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\TypedResultInterface;
@@ -51,10 +50,7 @@ trait CaseExpressionTrait
             $type = 'float';
         } elseif (is_bool($value)) {
             $type = 'boolean';
-        } elseif (
-            $value instanceof Date ||
-            $value instanceof MutableDate
-        ) {
+        } elseif ($value instanceof Date) {
             $type = 'date';
         } elseif ($value instanceof DateTimeInterface) {
             $type = 'datetime';

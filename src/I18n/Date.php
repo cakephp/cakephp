@@ -26,7 +26,9 @@ use Stringable;
 /**
  * Extends the Date class provided by Chronos.
  *
- * Adds handy methods and locale-aware formatting helpers
+ * Adds handy methods and locale-aware formatting helpers.
+ *
+ * @psalm-immutable
  */
 class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
 {
@@ -176,7 +178,7 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
+        /** @psalm-suppress UndefinedInterfaceMethod,ImpureMethodCall */
         return static::getDiffFormatter()->dateAgoInWords($this, $options);
     }
 }
