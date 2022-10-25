@@ -25,7 +25,9 @@ use Stringable;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
- * formatting helpers
+ * formatting helpers.
+ *
+ * @psalm-immutable
  */
 class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
 {
@@ -126,11 +128,14 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      *
      * @param \DateTimeInterface|string|int|null $time Fixed or relative time
      * @param \DateTimeZone|string|null $tz The timezone for the instance
+     * @psalm-immutable
      */
     public function __construct(DateTimeInterface|string|int|null $time = null, DateTimeZone|string|null $tz = null)
     {
         if ($time instanceof DateTimeInterface) {
+            /** @psalm-suppress ImpureMethodCall */
             $tz = $time->getTimezone();
+            /** @psalm-suppress ImpureMethodCall */
             $time = $time->format('Y-m-d H:i:s.u');
         }
 
@@ -180,7 +185,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        /** @psalm-suppress UndefinedInterfaceMethod */
+        /** @psalm-suppress UndefinedInterfaceMethod,ImpureMethodCall */
         return static::getDiffFormatter()->timeAgoInWords($this, $options);
     }
 

@@ -534,6 +534,7 @@ trait DateFormatTrait
      * Returns the data that should be displayed when debugging this object
      *
      * @return array<string, mixed>
+     * @psalm-suppress MissingImmutableAnnotation
      */
     public function __debugInfo(): array
     {
