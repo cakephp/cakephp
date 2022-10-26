@@ -26,6 +26,7 @@ use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -487,6 +488,27 @@ class Connection implements ConnectionInterface
                 ->where($conditions, $types)
                 ->execute();
         });
+    }
+
+    /**
+     * Create a new DeleteQuery instance for this connection.
+     *
+     * @param string|null $table The table to delete rows from.
+     * @param array $conditions Conditions to be set for the delete statement.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @return \Cake\Database\Query\DeleteQuery
+     */
+    public function deleteQuery(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
+    {
+        $query = new DeleteQuery($this);
+        if ($table) {
+            $query->from($table);
+        }
+        if ($conditions) {
+            $query->where($conditions, $types);
+        }
+
+        return $query;
     }
 
     /**

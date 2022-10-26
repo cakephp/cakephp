@@ -2499,4 +2499,19 @@ class Query implements ExpressionInterface, IteratorAggregate
             'executed' => $this->_iterator ? true : false,
         ];
     }
+
+    /**
+     * Helper for Query deprecation methods.
+     *
+     * @param string $method The method that is invalid.
+     * @param string $message An additional message.
+     * @return void
+     * @internal
+     */
+    protected function _deprecatedMethod($method, $message = '')
+    {
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
+    }
 }

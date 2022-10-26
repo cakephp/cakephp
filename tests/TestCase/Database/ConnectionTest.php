@@ -516,12 +516,25 @@ class ConnectionTest extends TestCase
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '2'], ['id' => 'integer']);
+        $result = $this->connection->execute('SELECT * FROM things');
+        $this->assertCount(0, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests delete from table with conditions
+     */
+    public function testDeleteQuery(): void
+    {
+        $query = $this->connection->deleteQuery('things', ['id' => '1'], ['id' => 'integer']);
+        $query->execute()->closeCursor();
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '2'], ['id' => 'integer']);
+        $query = $this->connection->deleteQuery('things')->where(['id' => 2], ['id' => 'integer']);
+        $query->execute()->closeCursor();
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result);
         $result->closeCursor();
