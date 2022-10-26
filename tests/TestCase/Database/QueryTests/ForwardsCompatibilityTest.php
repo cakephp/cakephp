@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;
 use Cake\Database\Query\DeleteQuery;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 class ForwardsCompatibilityTest extends TestCase
