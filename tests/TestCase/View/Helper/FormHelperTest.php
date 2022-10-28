@@ -4439,19 +4439,6 @@ class FormHelperTest extends TestCase
      */
     public function testRadio(): void
     {
-        $result = $this->Form->radio('Model.field', ['option A']);
-        $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
-            'label' => ['for' => 'model-field-0'],
-            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
-            'option A',
-            '/label',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Form->radio('Model.field', new Collection(['option A']));
-        $this->assertHtml($expected, $result);
-
         $result = $this->Form->radio('Model.field', ['option A', 'option B']);
         $expected = [
             'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
@@ -4466,20 +4453,23 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Form->radio('Model.field', new Collection(['option A', 'option B']));
+        $this->assertHtml($expected, $result);
+
         $result = $this->Form->radio(
-            'Employee.gender',
-            ['male' => 'Male', 'female' => 'Female'],
-            ['form' => 'my-form']
+            'Employee.vegetarian',
+            ['yes' => 'Yes', 'no' => 'No'],
+            ['form' => 'my-form', 'id' => 'id-veg']
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form', 'id' => 'employee-gender'],
-            ['label' => ['for' => 'employee-gender-male']],
-            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form']],
-            'Male',
+            'input' => ['type' => 'hidden', 'name' => 'Employee[vegetarian]', 'value' => '', 'form' => 'my-form', 'id' => 'id-veg'],
+            ['label' => ['for' => 'id-veg-yes']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[vegetarian]', 'value' => 'yes', 'id' => 'id-veg-yes', 'form' => 'my-form']],
+            'Yes',
             '/label',
-            ['label' => ['for' => 'employee-gender-female']],
-            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female', 'form' => 'my-form']],
-            'Female',
+            ['label' => ['for' => 'id-veg-no']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[vegetarian]', 'value' => 'no', 'id' => 'id-veg-no', 'form' => 'my-form']],
+            'No',
             '/label',
         ];
         $this->assertHtml($expected, $result);

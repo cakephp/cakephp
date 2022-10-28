@@ -1552,10 +1552,11 @@ class FormHelper extends Helper
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
 
+        $generatedHiddenId = false;
         if (!isset($attributes['id'])) {
             $attributes['id'] = true;
+            $generatedHiddenId = true;
         }
-
         $attributes = $this->_initInputField($fieldName, $attributes);
 
         $hiddenField = $attributes['hiddenField'] ?? true;
@@ -1570,11 +1571,9 @@ class FormHelper extends Helper
                 'id' => $attributes['id'],
             ]);
         }
-
-        if (!isset($attributes['type']) && isset($attributes['name'])) {
-            unset($attributes['id']);
+        if ($generatedHiddenId) {
+         unset($attributes['id']);
         }
-
         $radio = $this->widget('radio', $attributes);
 
         return $hidden . $radio;
