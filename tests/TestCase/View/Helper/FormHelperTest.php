@@ -5657,6 +5657,42 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectCheckboxMultipleOverrideName method
+     *
+     * Test that select() with multiple = checkbox works with overriding name attribute.
+     */
+    public function testSelectCheckboxMultipleCustomId(): void
+    {
+        $result = $this->Form->select('category', ['1', '2'], [
+            'multiple' => 'checkbox',
+            'id' => 'cat',
+        ]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'cat'],
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'cat-0']],
+                    ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'cat-0']],
+                    '1',
+                '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'cat-1']],
+                    ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '1', 'id' => 'cat-1']],
+                    '2',
+                '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->multiCheckbox(
+            'category',
+            ['1', '2'],
+            ['id' => 'cat']
+        );
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testControlMultiCheckbox method
      *
      * Test that control() works with multicheckbox.

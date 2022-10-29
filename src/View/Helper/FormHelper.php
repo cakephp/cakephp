@@ -2118,8 +2118,10 @@ class FormHelper extends Helper
             'secure' => true,
         ];
 
+        $generatedHiddenId = false;
         if (!isset($attributes['id'])) {
             $attributes['id'] = true;
+            $generatedHiddenId = true;
         }
 
         $attributes = $this->_initInputField($fieldName, $attributes);
@@ -2139,7 +2141,7 @@ class FormHelper extends Helper
         }
         unset($attributes['hiddenField']);
 
-        if (!isset($attributes['type']) && isset($attributes['name'])) {
+        if ($generatedHiddenId) {
             unset($attributes['id']);
         }
 
