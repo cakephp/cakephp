@@ -27,6 +27,7 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -445,13 +446,31 @@ class Connection implements ConnectionInterface
     public function insert(string $table, array $values, array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $values, $types) {
-            $columns = array_keys($values);
-
-            return $this->newQuery()->insert($columns, $types)
-                ->into($table)
-                ->values($values)
-                ->execute();
+            return $this->insertQuery($table, $values, $types)->execute();
         });
+    }
+
+    /**
+     * Create a new InsertQuery instance for this connection.
+     *
+     * @param string|null $table The table to insert rows into.
+     * @param array $values Associative array of column => value to be inserted.
+     * @param array<int|string, string> $types Associative array containing the types to be used for casting.
+     * @return \Cake\Database\Query\InsertQuery
+     */
+    public function insertQuery(?string $table = null, array $values = [], array $types = []): InsertQuery
+    {
+        $query = new InsertQuery($this);
+        if ($table) {
+            $query->into($table);
+        }
+        if ($values) {
+            $columns = array_keys($values);
+            $query->insert($columns, $types)
+                ->values($values);
+        }
+
+        return $query;
     }
 
     /**
@@ -484,9 +503,7 @@ class Connection implements ConnectionInterface
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
-            return $this->newQuery()->delete($table)
-                ->where($conditions, $types)
-                ->execute();
+            return $this->deleteQuery($table, $conditions, $types)->execute();
         });
     }
 

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Connection;
 use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -32,6 +33,7 @@ class ForwardsCompatibilityTest extends TestCase
     {
         return [
             [fn (Connection $connection) => new DeleteQuery($connection), 'delete'],
+            [fn (Connection $connection) => new InsertQuery($connection), 'insert'],
         ];
     }
 
@@ -50,11 +52,9 @@ class ForwardsCompatibilityTest extends TestCase
             $this->assertEquals(1, $statement->rowCount());
             $statement->closeCursor();
         };
-        /*
         if ($query instanceof InsertQuery) {
             return $scenario();
         }
-         */
         $this->deprecated($scenario);
     }
 
