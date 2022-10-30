@@ -1572,7 +1572,7 @@ class FormHelper extends Helper
             ]);
         }
         if ($generatedHiddenId) {
-         unset($attributes['id']);
+            unset($attributes['id']);
         }
         $radio = $this->widget('radio', $attributes);
 
