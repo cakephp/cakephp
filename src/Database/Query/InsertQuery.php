@@ -203,7 +203,7 @@ class InsertQuery extends Query
     /**
      * @inheritDoc
      */
-    public function update($table = null)
+    public function update($table)
     {
         $this->_deprecatedMethod('update()', 'Create your query with updateQuery() instead.');
 

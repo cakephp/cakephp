@@ -380,7 +380,6 @@ class ConnectionTest extends TestCase
         $this->assertEquals($data, $row);
     }
 
-
     /**
      * Tests it is possible to insert data into a table using matching types by array position
      */
