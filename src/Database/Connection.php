@@ -33,6 +33,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Log\Engine\BaseLog;
 use Cake\Log\Log;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -968,7 +969,7 @@ class Connection implements ConnectionInterface
             return $this->_logger;
         }
 
-        if (!class_exists(QueryLogger::class)) {
+        if (!class_exists(BaseLog::class)) {
             throw new RuntimeException(
                 'For logging you must either set a logger using Connection::setLogger()' .
                 ' or require the cakephp/log package in your composer config.'

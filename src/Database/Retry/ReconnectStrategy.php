@@ -110,7 +110,9 @@ class ReconnectStrategy implements RetryStrategyInterface
 
         try {
             $this->connection->connect();
-            $this->connection->log('[RECONNECT]');
+            if ($this->connection->isQueryLoggingEnabled()) {
+                $this->connection->log('[RECONNECT]');
+            }
 
             return true;
         } catch (Exception $e) {

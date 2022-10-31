@@ -42,6 +42,7 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
+use TestApp\Log\Engine\TestBaseLog;
 
 /**
  * Tests Connection class
@@ -1403,5 +1404,63 @@ class ConnectionTest extends TestCase
         // when read connection is only an alias, it should resolve as the write connection
         ConnectionManager::alias('test', 'test:read');
         $this->assertSame(Connection::ROLE_WRITE, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
+    }
+
+    public function testAutomaticReconnectWithoutQueryLogging(): void
+    {
+        $conn = clone $this->connection;
+
+        $logger = new TestBaseLog();
+        $conn->setLogger($logger);
+        $conn->disableQueryLogging();
+
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->exactly(2))
+            ->method('prepare')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new Exception('server gone away')),
+                $this->returnValue($statement)
+            ));
+
+        $conn->query('SELECT 1');
+
+        $this->assertEmpty($logger->getMessage());
+    }
+
+    public function testAutomaticReconnectWithQueryLogging(): void
+    {
+        $conn = clone $this->connection;
+
+        $logger = new TestBaseLog();
+        $conn->setLogger($logger);
+        $conn->enableQueryLogging();
+
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->exactly(2))
+            ->method('prepare')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new Exception('server gone away')),
+                $this->returnValue($statement)
+            ));
+
+        $conn->query('SELECT 1');
+
+        $this->assertSame('[RECONNECT]', $logger->getMessage());
     }
 }

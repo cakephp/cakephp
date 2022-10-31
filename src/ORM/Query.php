@@ -43,7 +43,7 @@ use Traversable;
  * @method \Cake\ORM\Table getRepository() Returns the default table object that will be used by this query,
  *   that is, the table that will appear in the from clause.
  * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
- * @method \Cake\Collection\CollectionInterface sortBy($callback, int $dir) Sorts the query with the callback
+ * @method \Cake\Collection\CollectionInterface sortBy(callable|string $path, int $order = \SORT_DESC, int $sort = \SORT_NUMERIC) Sorts the query with the callback
  * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
  * @method \Cake\Collection\CollectionInterface reject(callable $c) Removes the results passing the callable test
  * @method bool every(callable $c) Returns true if all the results pass the callable test
