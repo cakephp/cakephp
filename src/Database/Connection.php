@@ -500,8 +500,12 @@ class Connection implements ConnectionInterface
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\UpdateQuery
      */
-    public function updateQuery($table = null, array $values = [], array $conditions = [], array $types = []): UpdateQuery
-    {
+    public function updateQuery(
+        $table = null,
+        array $values = [],
+        array $conditions = [],
+        array $types = []
+    ): UpdateQuery {
         $query = new UpdateQuery($this);
         if ($table) {
             $query->update($table);
