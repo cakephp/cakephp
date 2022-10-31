@@ -359,6 +359,28 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Tests insertQuery
+     */
+    public function testInsertQuery(): void
+    {
+        $data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
+        $query = $this->connection->insertQuery(
+            'things',
+            $data,
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+        );
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
+
+        $result = $this->connection->execute('SELECT * from things where id = 3');
+        $this->assertCount(1, $result);
+        $row = $result->fetch('assoc');
+        $result->closeCursor();
+        $this->assertEquals($data, $row);
+    }
+
+    /**
      * Tests it is possible to insert data into a table using matching types by array position
      */
     public function testInsertWithPositionalTypes(): void
