@@ -28,6 +28,7 @@ use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -486,11 +487,37 @@ class Connection implements ConnectionInterface
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $values, $conditions, $types) {
-            return $this->newQuery()->update($table)
-                ->set($values, $types)
-                ->where($conditions, $types)
-                ->execute();
+            return $this->updateQuery($table, $values, $conditions, $types)->execute();
         });
+    }
+
+    /**
+     * Create a new UpdateQuery instance for this connection.
+     *
+     * @param \Cake\Database\ExpressionInterface|string|null $table The table to update rows of.
+     * @param array $values Values to be updated.
+     * @param array $conditions Conditions to be set for the update statement.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @return \Cake\Database\Query\UpdateQuery
+     */
+    public function updateQuery(
+        $table = null,
+        array $values = [],
+        array $conditions = [],
+        array $types = []
+    ): UpdateQuery {
+        $query = new UpdateQuery($this);
+        if ($table) {
+            $query->update($table);
+        }
+        if ($values) {
+            $query->set($values, $types);
+        }
+        if ($conditions) {
+            $query->where($conditions, $types);
+        }
+
+        return $query;
     }
 
     /**
