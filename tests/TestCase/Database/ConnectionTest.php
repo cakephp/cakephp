@@ -582,6 +582,20 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Test basic selectQuery behavior
+     */
+    public function testSelectQuery(): void
+    {
+        $query = $this->connection->selectQuery(['*'], 'things');
+        $statement = $query->execute();
+        $row = $statement->fetchAssoc();
+        $statement->closeCursor();
+
+        $this->assertArrayHasKey('title', $row);
+        $this->assertArrayHasKey('body', $row);
+    }
+
+    /**
      * Tests that it is possible to use simple database transactions
      */
     public function testSimpleTransactions(): void
