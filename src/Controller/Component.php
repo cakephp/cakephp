@@ -87,13 +87,6 @@ class Component implements EventListenerInterface
     protected array $_defaultConfig = [];
 
     /**
-     * A component lookup table used to lazy load component objects.
-     *
-     * @var array<string, array>
-     */
-    protected array $_componentMap = [];
-
-    /**
      * Loaded component instances.
      *
      * @var array<string, \Cake\Controller\Component>
@@ -114,7 +107,7 @@ class Component implements EventListenerInterface
         $this->setConfig($config);
 
         if ($this->components) {
-            $this->_componentMap = $registry->normalizeArray($this->components);
+            $this->components = $registry->normalizeArray($this->components);
         }
         $this->initialize($config);
     }
@@ -154,11 +147,11 @@ class Component implements EventListenerInterface
             return $this->componentInstances[$name];
         }
 
-        if (isset($this->_componentMap[$name])) {
-            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
+        if (isset($this->components[$name])) {
+            $config = $this->components[$name] + ['enabled' => false];
 
             return $this->componentInstances[$name] = $this->_registry->load(
-                $this->_componentMap[$name]['class'],
+                $name,
                 $config
             );
         }

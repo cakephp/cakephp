@@ -144,7 +144,7 @@ class ComponentTest extends TestCase
 
         $expected = [
             'components' => [
-                'Orange',
+                'Orange' => [],
             ],
             'implementedEvents' => [
                 'Controller.startup' => 'startup',

@@ -323,25 +323,20 @@ class HelperRegistryTest extends TestCase
                 'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
-                'value' => 1,
-                'value2' => 2,
+                'value' => 3,
+                'value2' => 4,
             ],
         ];
         $result = $this->Helpers->normalizeArray($config);
         $expected = [
             'SomeHelper' => [
-                'class' => 'SomeHelper',
-                'config' => [
-                    'value' => 1,
-                    'value2' => 2,
-                ],
+                'value' => 1,
+                'value2' => 2,
             ],
             'SomeOtherHelper' => [
-                'class' => 'Plugin.SomeOtherHelper',
-                'config' => [
-                    'value' => 1,
-                    'value2' => 2,
-                ],
+                'className' => 'Plugin.SomeOtherHelper',
+                'value' => 3,
+                'value2' => 4,
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -363,7 +358,7 @@ class HelperRegistryTest extends TestCase
                 'value2' => 2,
             ],
             'SomeAliasesHelper' => [
-                'class' => 'Plugin.SomeHelper',
+                'className' => 'Plugin.SomeHelper',
             ],
         ];
 
@@ -371,22 +366,16 @@ class HelperRegistryTest extends TestCase
         $result2 = $this->Helpers->normalizeArray($result1);
         $expected = [
             'SomeHelper' => [
-                'class' => 'SomeHelper',
-                'config' => [
-                    'value' => 1,
-                    'value2' => 2,
-                ],
+                'value' => 1,
+                'value2' => 2,
             ],
             'SomeOtherHelper' => [
-                'class' => 'Plugin.SomeOtherHelper',
-                'config' => [
-                    'value' => 1,
-                    'value2' => 2,
-                ],
+                'className' => 'Plugin.SomeOtherHelper',
+                'value' => 1,
+                'value2' => 2,
             ],
             'SomeAliasesHelper' => [
-                'class' => 'Plugin.SomeHelper',
-                'config' => [],
+                'className' => 'Plugin.SomeHelper',
             ],
         ];
         $this->assertEquals($expected, $result2);

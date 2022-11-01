@@ -111,9 +111,9 @@ class View implements EventDispatcherInterface
     protected string $name = '';
 
     /**
-     * An array of names of built-in helpers to include.
+     * A configuration array for helpers to be loaded.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected array $helpers = [];
 
@@ -337,19 +337,26 @@ class View implements EventDispatcherInterface
         ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
+        if ($eventManager !== null) {
+            // Set the event manager before accessing the helper registry below
+            // to ensure that helpers are registered as listeners with the manager when loaded.
+            $this->setEventManager($eventManager);
+        }
+
         foreach ($this->_passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];
             }
         }
+        if ($this->helpers) {
+            $this->helpers = $this->helpers()->normalizeArray($this->helpers);
+        }
+
         $this->setConfig(array_diff_key(
             $viewOptions,
             array_flip($this->_passedVars)
         ));
 
-        if ($eventManager !== null) {
-            $this->setEventManager($eventManager);
-        }
         $request ??= Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         $this->request = $request;
         $this->response = $response ?: new Response();
@@ -1120,10 +1127,8 @@ class View implements EventDispatcherInterface
      */
     public function loadHelpers()
     {
-        $registry = $this->helpers();
-        $helpers = $registry->normalizeArray($this->helpers);
-        foreach ($helpers as $properties) {
-            $this->loadHelper($properties['class'], $properties['config']);
+        foreach ($this->helpers as $name => $config) {
+            $this->loadHelper($name, $config);
         }
 
         return $this;
