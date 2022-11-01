@@ -521,13 +521,13 @@ trait DateFormatTrait
      * 1 hour after
      * 5 months after
      *
-     * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare with.
+     * @param \Cake\Chronos\ChronosInterface|null $dateTime The datetime to compare with.
      * @param bool $absolute removes time difference modifiers ago, after, etc
      * @return string
      */
-    public function diffForHumans(?ChronosInterface $other = null, bool $absolute = false): string
+    public function diffForHumans(?ChronosInterface $dateTime = null, bool $absolute = false): string
     {
-        return static::getDiffFormatter()->diffForHumans($this, $other, $absolute);
+        return static::getDiffFormatter()->diffForHumans($this, $dateTime, $absolute);
     }
 
     /**

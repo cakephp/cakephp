@@ -74,7 +74,7 @@ class TimeHelper extends Helper
     ): DateTime {
         $time = new DateTime($dateString);
         if ($timezone !== null) {
-            $time = $time->timezone($timezone);
+            $time = $time->setTimezone($timezone);
         }
 
         return $time;

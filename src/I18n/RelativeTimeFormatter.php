@@ -29,23 +29,23 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Get the difference in a human readable format.
      *
-     * @param \Cake\Chronos\ChronosInterface $date The datetime to start with.
-     * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare against.
+     * @param \Cake\Chronos\ChronosInterface $dateTime1 The datetime to start with.
+     * @param \Cake\Chronos\ChronosInterface|null $dateTime2 The datetime to compare against.
      * @param bool $absolute Removes time difference modifiers ago, after, etc.
      * @return string The difference between the two days in a human readable format.
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
     public function diffForHumans(
-        ChronosInterface $date,
-        ?ChronosInterface $other = null,
+        ChronosInterface $dateTime1,
+        ?ChronosInterface $dateTime2 = null,
         bool $absolute = false
     ): string {
-        $isNow = $other === null;
+        $isNow = $dateTime2 === null;
         if ($isNow) {
-            $other = $date->now($date->getTimezone());
+            $dateTime2 = $dateTime1->now($dateTime1->getTimezone());
         }
         /** @psalm-suppress PossiblyNullArgument */
-        $diffInterval = $date->diff($other);
+        $diffInterval = $dateTime1->diff($dateTime2);
 
         switch (true) {
             case $diffInterval->y > 0:
