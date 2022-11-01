@@ -387,7 +387,7 @@ class Connection implements ConnectionInterface
      */
     public function selectQuery(
         $fields = [],
-        array|string $table = [],
+        $table = [],
         array $types = []
     ): SelectQuery {
         $query = new SelectQuery($this);
