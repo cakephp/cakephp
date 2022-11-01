@@ -395,7 +395,7 @@ class Connection implements ConnectionInterface
             $query->from($table);
         }
         if ($fields) {
-            $query->select($fields, false, $types);
+            $query->select($fields, false);
         }
         $query->setDefaultTypes($types);
 
