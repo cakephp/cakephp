@@ -1244,6 +1244,8 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Adds a helper from within `initialize()` method.
+     *
      * @param string $helper Helper.
      * @param array<string, mixed> $config Config.
      * @return void
@@ -1260,7 +1262,9 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
+     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper.
+     *
+     * Deprecated: The use within `initialize()` method is deprecated, use `addHelper()` instead.
      *
      * @param string $name Name of the helper to load.
      * @param array<string, mixed> $config Settings for the helper
