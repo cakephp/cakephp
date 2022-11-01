@@ -281,7 +281,7 @@ trait EntityTrait
         $value = null;
         $method = static::_accessor($field, 'get');
 
-        if (isset($this->_fields[$field])) {
+        if (array_key_exists($field, $this->_fields)) {
             $value = &$this->_fields[$field];
         }
 
