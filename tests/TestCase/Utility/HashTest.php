@@ -772,8 +772,16 @@ class HashTest extends TestCase
         $expected = ['one', 'two', 'three'];
         $this->assertSame($expected, $result);
 
+        $result = Hash::normalize(['one', 'two', 'three'], false, []);
+        $expected = ['one', 'two', 'three'];
+        $this->assertSame($expected, $result);
+
         $result = Hash::normalize(['one' => 1, 'two' => 2, 'three' => 3, 'four'], false);
         $expected = ['one' => 1, 'two' => 2, 'three' => 3, 'four' => null];
+        $this->assertSame($expected, $result);
+
+        $result = Hash::normalize(['one' => 1, 'two' => 2, 'three' => 3, 'four'], false, []);
+        $expected = ['one' => 1, 'two' => 2, 'three' => 3, 'four' => []];
         $this->assertSame($expected, $result);
 
         $result = Hash::normalize(['one' => 1, 'two' => 2, 'three' => 3, 'four']);
@@ -782,6 +790,10 @@ class HashTest extends TestCase
 
         $result = Hash::normalize(['one' => ['a', 'b', 'c' => 'cee'], 'two' => 2, 'three']);
         $expected = ['one' => ['a', 'b', 'c' => 'cee'], 'two' => 2, 'three' => null];
+        $this->assertSame($expected, $result);
+
+        $result = Hash::normalize(['one' => ['a', 'b', 'c' => 'cee'], 'two' => 2, 'three'], true, 'x');
+        $expected = ['one' => ['a', 'b', 'c' => 'cee'], 'two' => 2, 'three' => 'x'];
         $this->assertSame($expected, $result);
     }
 
