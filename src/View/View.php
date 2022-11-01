@@ -1244,6 +1244,22 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * @param string $helper Helper.
+     * @param array<string, mixed> $config Config.
+     * @return void
+     */
+    protected function addHelper(string $helper, array $config = []): void
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $config['class'] = $helper;
+            $config['config'] = $config;
+        }
+
+        $this->helpers[$name] = $config;
+    }
+
+    /**
      * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
      *
      * @param string $name Name of the helper to load.
