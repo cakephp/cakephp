@@ -380,7 +380,7 @@ class Connection implements ConnectionInterface
     /**
      * Create a new SelectQuery instance for this connection.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
+     * @param \Cake\Database\ExpressionInterface|callable|array|string $fields fields to be added to the list.
      * @param array|string $table The table or list of tables to query.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
      * @return \Cake\Database\Query\SelectQuery
