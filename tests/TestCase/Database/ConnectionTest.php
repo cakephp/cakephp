@@ -519,6 +519,24 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Tests you can bind types to update values
+     */
+    public function testUpdateQueryWithConditionsAndTypes(): void
+    {
+        $title = 'changed the title!';
+        $body = new DateTime('2012-01-01');
+        $values = compact('title', 'body');
+        $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
+        $query->execute()->closeCursor();
+
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $this->assertCount(1, $result);
+        $row = $result->fetch('assoc');
+        $this->assertSame('2012-01-01', $row['body']);
+        $result->closeCursor();
+    }
+
+    /**
      * Tests delete from table with no conditions
      */
     public function testDeleteNoConditions(): void
