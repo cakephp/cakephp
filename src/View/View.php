@@ -1263,7 +1263,7 @@ class View implements EventDispatcherInterface
     /**
      * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper.
      *
-     * Deprecated: The use within `initialize()` method is deprecated, use `addHelper()` instead.
+     * You should use `addHelper()` instead of this method from the `initialize()` hook of `AppView` or other custom View classes.
      *
      * @param string $name Name of the helper to load.
      * @param array<string, mixed> $config Settings for the helper
