@@ -281,8 +281,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Normalizes an object array, creates an array that makes lazy loading
-     * easier
+     * Normalizes an object configuration array into associative form for making
+     * lazy loading easier.
      *
      * @param array $objects Array of child objects to normalize.
      * @return array<string, array> Array of normalized objects.
@@ -290,18 +290,18 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function normalizeArray(array $objects): array
     {
         $normal = [];
-        foreach ($objects as $i => $objectName) {
-            $config = [];
-            if (!is_int($i)) {
-                $config = (array)$objectName;
-                $objectName = $i;
+        foreach ($objects as $objectName => $config) {
+            if (is_int($objectName)) {
+                $objectName = $config;
+                $config = [];
             }
-            [, $name] = pluginSplit($objectName);
-            if (isset($config['class'])) {
-                $normal[$name] = $config + ['config' => []];
-            } else {
-                $normal[$name] = ['class' => $objectName, 'config' => $config];
+
+            [$plugin, $name] = pluginSplit($objectName);
+            if ($plugin) {
+                $config['className'] = $objectName;
             }
+
+            $normal[$name] = $config;
         }
 
         return $normal;

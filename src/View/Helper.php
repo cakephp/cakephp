@@ -59,13 +59,6 @@ class Helper implements EventListenerInterface
     protected array $_defaultConfig = [];
 
     /**
-     * A helper lookup table used to lazy load helper objects.
-     *
-     * @var array<string, array>
-     */
-    protected array $_helperMap = [];
-
-    /**
      * Loaded helper instances.
      *
      * @var array<string, \Cake\View\Helper>
@@ -90,8 +83,8 @@ class Helper implements EventListenerInterface
         $this->_View = $view;
         $this->setConfig($config);
 
-        if (!empty($this->helpers)) {
-            $this->_helperMap = $view->helpers()->normalizeArray($this->helpers);
+        if ($this->helpers) {
+            $this->helpers = $view->helpers()->normalizeArray($this->helpers);
         }
 
         $this->initialize($config);
@@ -109,10 +102,10 @@ class Helper implements EventListenerInterface
             return $this->helperInstances[$name];
         }
 
-        if (isset($this->_helperMap[$name])) {
-            $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
+        if (isset($this->helpers[$name])) {
+            $config = ['enabled' => false] + $this->helpers[$name];
 
-            return $this->helperInstances[$name] = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
+            return $this->helperInstances[$name] = $this->_View->loadHelper($name, $config);
         }
 
         return null;
