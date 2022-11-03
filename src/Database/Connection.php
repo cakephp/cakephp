@@ -28,6 +28,7 @@ use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
@@ -374,6 +375,31 @@ class Connection implements ConnectionInterface
 
             return $statement;
         });
+    }
+
+    /**
+     * Create a new SelectQuery instance for this connection.
+     *
+     * @param \Cake\Database\ExpressionInterface|callable|array|string $fields fields to be added to the list.
+     * @param array|string $table The table or list of tables to query.
+     * @param array<string, string> $types Associative array containing the types to be used for casting.
+     * @return \Cake\Database\Query\SelectQuery
+     */
+    public function selectQuery(
+        $fields = [],
+        $table = [],
+        array $types = []
+    ): SelectQuery {
+        $query = new SelectQuery($this);
+        if ($table) {
+            $query->from($table);
+        }
+        if ($fields) {
+            $query->select($fields, false);
+        }
+        $query->setDefaultTypes($types);
+
+        return $query;
     }
 
     /**
