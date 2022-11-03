@@ -473,7 +473,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($cte instanceof Closure) {
-            $query = $this->getConnection()->newQuery();
+            $query = $this->getConnection()->selectQuery();
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new RuntimeException(

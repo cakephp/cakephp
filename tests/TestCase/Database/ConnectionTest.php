@@ -30,6 +30,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Query;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -246,7 +247,7 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertEquals($sql, $result->queryString);
 
-        $query = $this->connection->newQuery()->select('1 + 1');
+        $query = $this->connection->selectQuery('1 + 1');
         $result = $this->connection->prepare($query);
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
@@ -1494,5 +1495,13 @@ class ConnectionTest extends TestCase
         $conn->query('SELECT 1');
 
         $this->assertSame('[RECONNECT]', $logger->getMessage());
+    }
+
+    public function testNewQuery()
+    {
+        $this->deprecated(function () {
+            $query = $this->connection->newQuery();
+            $this->assertInstanceOf(Query::class, $query);
+        });
     }
 }

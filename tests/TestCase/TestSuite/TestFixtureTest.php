@@ -273,11 +273,11 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $query = $this->getMockBuilder('Cake\Database\Query')
+        $query = $this->getMockBuilder('Cake\Database\Query\InsertQuery')
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -324,11 +324,11 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $query = $this->getMockBuilder('Cake\Database\Query')
+        $query = $this->getMockBuilder('Cake\Database\Query\InsertQuery')
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -369,11 +369,11 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $query = $this->getMockBuilder('Cake\Database\Query')
+        $query = $this->getMockBuilder('Cake\Database\Query\InsertQuery')
             ->setConstructorArgs([$db])
             ->getMock();
         $db->expects($this->once())
-            ->method('newQuery')
+            ->method('insertQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
