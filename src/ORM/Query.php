@@ -995,8 +995,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
-                ->select($count)
+            $statement = $this->getConnection()
+                ->selectQuery($count)
                 ->from(['count_source' => $query])
                 ->execute();
         }
