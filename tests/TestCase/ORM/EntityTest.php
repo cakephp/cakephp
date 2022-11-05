@@ -460,18 +460,18 @@ class EntityTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
         $this->assertTrue($entity->has('id'));
         $this->assertTrue($entity->has('name'));
-        $this->assertFalse($entity->has('foo'));
+        $this->assertTrue($entity->has('foo'));
         $this->assertFalse($entity->has('last_name'));
 
         $this->assertTrue($entity->has(['id']));
         $this->assertTrue($entity->has(['id', 'name']));
-        $this->assertFalse($entity->has(['id', 'foo']));
+        $this->assertTrue($entity->has(['id', 'foo']));
         $this->assertFalse($entity->has(['id', 'nope']));
 
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getThings'])
             ->getMock();
-        $entity->expects($this->once())->method('_getThings')
+        $entity->expects($this->never())->method('_getThings')
             ->will($this->returnValue(0));
         $this->assertTrue($entity->has('things'));
     }

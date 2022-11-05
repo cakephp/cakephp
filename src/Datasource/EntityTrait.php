@@ -151,7 +151,7 @@ trait EntityTrait
      */
     public function __isset(string $field): bool
     {
-        return $this->has($field);
+        return $this->get($field) !== null;
     }
 
     /**
@@ -281,7 +281,7 @@ trait EntityTrait
 
         $value = null;
 
-        if (isset($this->_fields[$field])) {
+        if (array_key_exists($field, $this->_fields)) {
             $value = &$this->_fields[$field];
         }
 
@@ -333,15 +333,16 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether this entity contains a field named $field
-     * that contains a non-null value.
+     * Returns whether this entity contains a field named $field.
+     *
+     * It will return `true` even for fields set to `null`.
      *
      * ### Example:
      *
      * ```
      * $entity = new Entity(['id' => 1, 'name' => null]);
      * $entity->has('id'); // true
-     * $entity->has('name'); // false
+     * $entity->has('name'); // true
      * $entity->has('last_name'); // false
      * ```
      *
@@ -351,10 +352,8 @@ trait EntityTrait
      * $entity->has(['name', 'last_name']);
      * ```
      *
-     * All fields must not be null to get a truthy result.
-     *
-     * When checking multiple fields. All fields must not be null
-     * in order for true to be returned.
+     * When checking multiple fields all fields must have a value present for
+     * the method to return `true`.
      *
      * @param array<string>|string $field The field or fields to check.
      * @return bool
@@ -362,7 +361,7 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         foreach ((array)$field as $prop) {
-            if ($this->get($prop) === null) {
+            if (!array_key_exists($prop, $this->_fields) && !static::_accessor($prop, 'get')) {
                 return false;
             }
         }
@@ -579,7 +578,7 @@ trait EntityTrait
      */
     public function offsetExists(mixed $offset): bool
     {
-        return $this->has($offset);
+        return $this->__isset($offset);
     }
 
     /**
