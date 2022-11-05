@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -118,6 +119,8 @@ trait EntityTrait
      */
     protected string $_registryAlias = '';
 
+    protected bool $requireFieldPresence = false;
+
     /**
      * Magic getter to access fields that have been set in this entity
      *
@@ -147,7 +150,6 @@ trait EntityTrait
      *
      * @param string $field The field to check.
      * @return bool
-     * @see \Cake\ORM\Entity::has()
      */
     public function __isset(string $field): bool
     {
@@ -280,8 +282,9 @@ trait EntityTrait
         }
 
         $value = null;
-
+        $fieldIsPresent = false;
         if (array_key_exists($field, $this->_fields)) {
+            $fieldIsPresent = true;
             $value = &$this->_fields[$field];
         }
 
@@ -292,7 +295,26 @@ trait EntityTrait
             return $result;
         }
 
+        if (!$fieldIsPresent && $this->requireFieldPresence) {
+            throw new MissingPropertyException([
+                'property' => $field,
+                'entity' => $this::class,
+            ]);
+        }
+
         return $value;
+    }
+
+    /**
+     * Enable/disable field presence check when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @param bool $value `true` to enable, `false` to disable.
+     */
+    public function requireFieldPresence(bool $value = true): void
+    {
+        $this->requireFieldPresence = $value;
     }
 
     /**

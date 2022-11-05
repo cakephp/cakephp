@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
+use TestApp\Model\Entity\VirtualUser;
 
 /**
  * Entity test case.
@@ -271,6 +273,27 @@ class EntityTest extends TestCase
         $entity = new Entity(['id' => 1, 'foo' => 'bar']);
         $this->assertSame(1, $entity->get('id'));
         $this->assertSame('bar', $entity->get('foo'));
+    }
+
+    public function testRequirePresenceException(): void
+    {
+        $this->expectException(MissingPropertyException::class);
+        $this->expectExceptionMessage('Property `foo` does not exist for the entity `Cake\ORM\Entity`');
+
+        $entity = new Entity();
+        $entity->requireFieldPresence();
+        $entity->get('foo');
+    }
+
+    public function testRequirePresenceNoException(): void
+    {
+        $entity = new Entity(['foo' => null]);
+        $entity->requireFieldPresence();
+        $this->assertNull($entity->get('foo'));
+
+        $entity = new VirtualUser();
+        $entity->requireFieldPresence();
+        $this->assertSame('bonus', $entity->get('bonus'));
     }
 
     /**
