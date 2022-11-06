@@ -113,9 +113,9 @@ class FormHelper extends Helper
             // Wrapper content used to hide other content.
             'hiddenBlock' => '<div style="display:none;">{{content}}</div>',
             // Generic input element.
-            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}/>',
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
             // Submit input element.
-            'inputSubmit' => '<input type="{{type}}"{{attrs}}/>',
+            'inputSubmit' => '<input type="{{type}}"{{attrs}}>',
             // Container element used by control().
             'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
             // Container element used by control() when a field has an error.
@@ -1581,8 +1581,8 @@ class FormHelper extends Helper
 
     /**
      * Missing method handler - implements various simple input types. Is used to create inputs
-     * of various types. e.g. `$this->Form->text();` will create `<input type="text"/>` while
-     * `$this->Form->range();` will create `<input type="range"/>`
+     * of various types. e.g. `$this->Form->text();` will create `<input type="text">` while
+     * `$this->Form->range();` will create `<input type="range">`
      *
      * ### Usage
      *
@@ -1592,7 +1592,7 @@ class FormHelper extends Helper
      *
      * Will make an input like:
      *
-     * `<input type="search" id="UserQuery" name="User[query]" value="test"/>`
+     * `<input type="search" id="UserQuery" name="User[query]" value="test">`
      *
      * The first argument to an input type should always be the fieldname, in `Model.field` format.
      * The second argument should always be an array of attributes for the input.
@@ -1796,7 +1796,7 @@ class FormHelper extends Helper
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
-     * @return string An `<a />` element.
+     * @return string An `<a>` element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postLink(string $title, $url = null, array $options = []): string
@@ -1892,7 +1892,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Creates a submit button element. This method will generate `<input />` elements that
+     * Creates a submit button element. This method will generate `<input>` elements that
      * can be used to submit, and reset forms by using $options. image submits can be created by supplying an
      * image path for $caption.
      *

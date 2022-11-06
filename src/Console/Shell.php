@@ -719,7 +719,7 @@ class Shell
     }
 
     /**
-     * Convenience method for out() that wraps message between <info /> tag
+     * Convenience method for out() that wraps message between <info> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -733,7 +733,7 @@ class Shell
     }
 
     /**
-     * Convenience method for err() that wraps message between <warning /> tag
+     * Convenience method for err() that wraps message between <warning> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -746,7 +746,7 @@ class Shell
     }
 
     /**
-     * Convenience method for out() that wraps message between <success /> tag
+     * Convenience method for out() that wraps message between <success> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append

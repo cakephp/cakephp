@@ -1157,7 +1157,7 @@ class Debugger
      *
      * - HTML escape the message.
      * - Convert `bool` into `<code>bool</code>`
-     * - Convert newlines into `<br />`
+     * - Convert newlines into `<br>`
      *
      * @param string $message The string message to format.
      * @return string Formatted message.
