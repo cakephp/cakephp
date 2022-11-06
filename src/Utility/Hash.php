@@ -1112,6 +1112,7 @@ class Hash
             next($intersection);
         }
 
+        /** @phpstan-ignore-next-line */
         return $data + $compare;
     }
 

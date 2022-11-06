@@ -280,12 +280,12 @@ trait EntityTrait
         }
 
         $value = null;
-        $method = static::_accessor($field, 'get');
 
         if (isset($this->_fields[$field])) {
             $value = &$this->_fields[$field];
         }
 
+        $method = static::_accessor($field, 'get');
         if ($method) {
             $result = $this->{$method}($value);
 
