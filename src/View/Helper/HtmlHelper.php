@@ -46,11 +46,11 @@ class HtmlHelper extends Helper
      */
     protected $_defaultConfig = [
         'templates' => [
-            'meta' => '<meta{{attrs}}/>',
-            'metalink' => '<link href="{{url}}"{{attrs}}/>',
+            'meta' => '<meta{{attrs}}>',
+            'metalink' => '<link href="{{url}}"{{attrs}}>',
             'link' => '<a href="{{url}}"{{attrs}}>{{content}}</a>',
             'mailto' => '<a href="mailto:{{url}}"{{attrs}}>{{content}}</a>',
-            'image' => '<img src="{{url}}"{{attrs}}/>',
+            'image' => '<img src="{{url}}"{{attrs}}>',
             'tableheader' => '<th{{attrs}}>{{content}}</th>',
             'tableheaderrow' => '<tr{{attrs}}>{{content}}</tr>',
             'tablecell' => '<td{{attrs}}>{{content}}</td>',
@@ -64,9 +64,9 @@ class HtmlHelper extends Helper
             'tagselfclosing' => '<{{tag}}{{attrs}}/>',
             'para' => '<p{{attrs}}>{{content}}</p>',
             'parastart' => '<p{{attrs}}>',
-            'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
+            'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}>',
             'style' => '<style{{attrs}}>{{content}}</style>',
-            'charset' => '<meta charset="{{charset}}"/>',
+            'charset' => '<meta charset="{{charset}}">',
             'ul' => '<ul{{attrs}}>{{content}}</ul>',
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
