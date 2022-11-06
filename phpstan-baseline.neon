@@ -16,16 +16,6 @@ parameters:
 			path: src/Auth/Storage/StorageInterface.php
 
 		-
-			message: "#^Access to undefined constant Memcached\\:\\:DYNAMIC_CLIENT_MODE\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
-			message: "#^Access to undefined constant Memcached\\:\\:OPT_CLIENT_MODE\\.$#"
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Collection.php

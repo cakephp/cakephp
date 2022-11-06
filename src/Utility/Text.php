@@ -377,6 +377,7 @@ class Text
         }
         $options += ['width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0];
 
+        /** @phpstan-ignore-next-line */
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
             $options['width'] -= $indentLength;
