@@ -829,7 +829,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * Use this instead of calling `select()` then `enableAutoFields()` to re-enable auto-fields.
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|Closure|array|string|float|int $fields Fields
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|\Closure|array|string|float|int $fields Fields
      * to be added to the list.
      * @return $this
      */

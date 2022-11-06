@@ -31,7 +31,6 @@ class SqlserverStatement extends Statement
     protected function performBind(string|int $column, mixed $value, int $type): void
     {
         if ($type === PDO::PARAM_LOB) {
-            /** @psalm-suppress UndefinedConstant */
             $this->statement->bindParam($column, $value, $type, 0, PDO::SQLSRV_ENCODING_BINARY);
         } else {
             parent::performBind($column, $value, $type);
