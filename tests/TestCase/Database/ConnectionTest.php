@@ -38,6 +38,7 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
+use TestApp\Database\Driver\RetryDriver;
 
 /**
  * Tests Connection class
@@ -206,10 +207,10 @@ class ConnectionTest extends TestCase
         $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
         $connection = new Connection(['driver' => 'RetryDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
+        $this->assertInstanceOf(RetryDriver::class, $connection->getDriver());
 
         try {
-            $connection->connect();
+            $connection->execute('SELECT 1');
         } catch (MissingConnectionException $e) {
         }
 
