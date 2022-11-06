@@ -160,6 +160,48 @@ class SelectQueryTest extends TestCase
         $this->assertSame($this->table, $result);
     }
 
+    public function testSelectAlso(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $query = new SelectQuery($table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new SelectQuery($table);
+        $results = $query
+            ->select('id')
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new SelectQuery($table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->select('id')
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+    }
+
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
@@ -1666,8 +1708,7 @@ class SelectQueryTest extends TestCase
     public function testSelectRandom(): void
     {
         $table = $this->getTableLocator()->get('articles');
-        $query = $table
-            ->query();
+        $query = $table->selectQuery();
 
         $query->select(['s' => $query->func()->rand()]);
         $result = $query

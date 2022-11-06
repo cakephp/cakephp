@@ -88,11 +88,13 @@ class ConnectionTest extends TestCase
 
     public function tearDown(): void
     {
+        parent::tearDown();
         $this->connection->disableSavePoints();
 
+        ConnectionManager::drop('test:read');
+        ConnectionManager::dropAlias('test:read');
         Log::reset();
         unset($this->connection);
-        parent::tearDown();
     }
 
     /**
@@ -199,6 +201,21 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 
+    public function testConnectRetry(): void
+    {
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
+
+        $connection = new Connection(['driver' => 'RetryDriver']);
+        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
+
+        try {
+            $connection->connect();
+        } catch (MissingConnectionException $e) {
+        }
+
+        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
+    }
+
     /**
      * Tests executing a simple query using bound values
      */
@@ -279,6 +296,27 @@ class ConnectionTest extends TestCase
         $this->assertCount(1, $rows);
         $result->closeCursor();
         $this->assertEquals($data, $rows[0]);
+    }
+
+    /**
+     * Tests insertQuery
+     */
+    public function testInsertQuery(): void
+    {
+        $data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
+        $query = $this->connection->insertQuery(
+            'things',
+            $data,
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+        );
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
+
+        $result = $this->connection->execute('SELECT * from things where id = 3');
+        $row = $result->fetch('assoc');
+        $result->closeCursor();
+        $this->assertEquals($data, $row);
     }
 
     /**
@@ -418,6 +456,23 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Tests you can bind types to update values
+     */
+    public function testUpdateQueryWithConditionsAndTypes(): void
+    {
+        $title = 'changed the title!';
+        $body = new DateTime('2012-01-01');
+        $values = compact('title', 'body');
+        $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
+        $query->execute()->closeCursor();
+
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $row = $result->fetch('assoc');
+        $this->assertSame('2012-01-01', $row['body']);
+        $result->closeCursor();
+    }
+
+    /**
      * Tests delete from table with no conditions
      */
     public function testDeleteNoConditions(): void
@@ -442,6 +497,37 @@ class ConnectionTest extends TestCase
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
+    }
+
+    /**
+     * Tests delete from table with conditions
+     */
+    public function testDeleteQuery(): void
+    {
+        $query = $this->connection->deleteQuery('things', ['id' => '1'], ['id' => 'integer']);
+        $query->execute()->closeCursor();
+        $result = $this->connection->execute('SELECT * FROM things');
+        $result->closeCursor();
+
+        $query = $this->connection->deleteQuery('things')->where(['id' => 2], ['id' => 'integer']);
+        $query->execute()->closeCursor();
+        $result = $this->connection->execute('SELECT * FROM things');
+        $this->assertCount(0, $result->fetchAll());
+        $result->closeCursor();
+    }
+
+    /**
+     * Test basic selectQuery behavior
+     */
+    public function testSelectQuery(): void
+    {
+        $query = $this->connection->selectQuery(['*'], 'things');
+        $statement = $query->execute();
+        $row = $statement->fetchAssoc();
+        $statement->closeCursor();
+
+        $this->assertArrayHasKey('title', $row);
+        $this->assertArrayHasKey('body', $row);
     }
 
     /**
@@ -987,5 +1073,17 @@ class ConnectionTest extends TestCase
 
         $prop->setValue($conn, $oldDriver);
         $conn->rollback();
+    }
+
+    public function testRoles(): void
+    {
+        $this->assertSame(Connection::ROLE_WRITE, $this->connection->role());
+
+        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
+        $this->assertSame(Connection::ROLE_READ, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
+
+        // when read connection is only an alias, it should resolve as the write connection
+        ConnectionManager::alias('test', 'test:read');
+        $this->assertSame(Connection::ROLE_WRITE, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
     }
 }

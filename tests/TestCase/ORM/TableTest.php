@@ -210,6 +210,9 @@ class TableTest extends TestCase
         $query = $table->query();
         $this->assertEquals('users', $query->getRepository()->getTable());
 
+        $query = $table->selectQuery();
+        $this->assertEquals('users', $query->getRepository()->getTable());
+
         $query = $table->subquery();
         $this->assertEquals('users', $query->getRepository()->getTable());
 
@@ -2422,6 +2425,7 @@ class TableTest extends TestCase
     public function testAtomicSaveRollback(): void
     {
         $this->expectException(PDOException::class);
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
@@ -2462,6 +2466,7 @@ class TableTest extends TestCase
      */
     public function testAtomicSaveRollbackOnFailure(): void
     {
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->onlyMethods(['begin', 'rollback'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
@@ -2644,32 +2649,21 @@ class TableTest extends TestCase
      */
     public function testSaveUpdatePrimaryKeyNotModified(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['updateQuery'])
-            ->setConstructorArgs([['table' => 'users']])
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
 
-        $query = $this->getMockBuilder(UpdateQuery::class)
-            ->onlyMethods(['execute', 'addDefaultTypes', 'set'])
-            ->setConstructorArgs([$table])
-            ->getMock();
-
-        $table->expects($this->once())->method('updateQuery')
-            ->will($this->returnValue($query));
-
-        $statement = $this->createMock(StatementInterface::class);
+        $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
 
-        $query->expects($this->once())
-            ->method('execute')
+        $connection->expects($this->once())->method('run')
             ->will($this->returnValue($statement));
-
-        $query->expects($this->once())->method('set')
-            ->with(['username' => 'baggins'])
-            ->will($this->returnValue($query));
 
         $entity = new Entity([
             'id' => 2,

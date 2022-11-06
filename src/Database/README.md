@@ -35,35 +35,29 @@ to use:
 ```php
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlite;
 
-$driver = new Mysql([
+$connection = new Connection([
+	'driver' => Mysql::class,
 	'database' => 'test',
 	'username' => 'root',
-	'password' => 'secret'
+	'password' => 'secret',
 ]);
-$connection = new Connection([
-	'driver' => $driver
+
+$connection2 = new Connection([
+	'driver' => Sqlite::class,
+	'database' => '/path/to/file.db'
 ]);
 ```
 
 Drivers are classes responsible for actually executing the commands to the database and
-correctly building the SQL according to the database specific dialect. Drivers can also
-be specified by passing a class name. In that case, include all the connection details
-directly in the options array:
-
-```php
-use Cake\Database\Connection;
-
-$connection = new Connection([
-	'driver' => Cake\Database\Driver\Sqlite::class,
-	'database' => '/path/to/file.db'
-]);
-```
+correctly building the SQL according to the database specific dialect.
 
 ### Connection options
 
 This is a list of possible options that can be passed when creating a connection:
 
+* `driver`: Driver class name
 * `persistent`: Creates a persistent connection
 * `host`: The server host
 * `database`: The database name

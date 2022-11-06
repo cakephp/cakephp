@@ -24,6 +24,16 @@ use Psr\SimpleCache\CacheInterface;
 interface ConnectionInterface
 {
     /**
+     * @var string
+     */
+    public const ROLE_WRITE = 'write';
+
+    /**
+     * @var string
+     */
+    public const ROLE_READ = 'read';
+
+    /**
      * Gets the driver instance.
      *
      * @return object

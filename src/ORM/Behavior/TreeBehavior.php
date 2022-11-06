@@ -842,7 +842,7 @@ class TreeBehavior extends Behavior
         $primaryKey = $this->_getPrimaryKey();
         $order = $config['recoverOrder'] ?: $primaryKey;
 
-        $nodes = $this->_scope($this->_table->query())
+        $nodes = $this->_scope($this->_table->selectQuery())
             ->select($primaryKey)
             ->where([$parent . ' IS' => $parentId])
             ->orderBy($order)

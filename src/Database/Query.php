@@ -22,6 +22,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\ConnectionManager;
 use Closure;
 use InvalidArgumentException;
 use Stringable;
@@ -177,6 +178,51 @@ abstract class Query implements ExpressionInterface, Stringable
     public function getConnection(): Connection
     {
         return $this->_connection;
+    }
+
+    /**
+     * Sets the connection for this query to the read-only role for the current connection.
+     *
+     * @return $this
+     */
+    public function useReadRole()
+    {
+        return $this->useRole(Connection::ROLE_READ);
+    }
+
+    /**
+     * Sets the connection for this query to the write role for the current connection.
+     *
+     * @return $this
+     */
+    public function useWriteRole()
+    {
+        return $this->useRole(Connection::ROLE_WRITE);
+    }
+
+    /**
+     * Sets the connection for this query to the specified role for the current connection.
+     *
+     * @param string $role Connection role - read or write
+     * @return $this
+     */
+    public function useRole(string $role)
+    {
+        assert(in_array($role, [Connection::ROLE_READ, Connection::ROLE_WRITE], true));
+        if ($this->_connection->role() === $role) {
+            return $this;
+        }
+
+        $name = $this->_connection->configName();
+        $roleName = ConnectionManager::getName($role, $name);
+        if ($roleName === $name) {
+            return $this;
+        }
+
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get($roleName);
+
+        return $this->setConnection($connection);
     }
 
     /**

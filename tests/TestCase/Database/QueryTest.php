@@ -2,25 +2,28 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * cakephp(tm) : rapid development framework (https://cakephp.org)
+ * copyright (c) cake software foundation, inc. (https://cakefoundation.org)
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
+ * licensed under the mit license
+ * for full copyright and license information, please see the license.txt
+ * redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
+ * @copyright     copyright (c) cake software foundation, inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org cakephp(tm) project
  * @since         3.0.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php mit license
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Connection;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -65,6 +68,55 @@ class QueryTest extends TestCase
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
         unset($this->query);
         unset($this->connection);
+
+        ConnectionManager::drop('test:read');
+        ConnectionManager::dropAlias('test:read');
+    }
+
+    public function testConnectionRoles(): void
+    {
+        // Defaults to write "test" connection
+        $this->query->useReadRole();
+        $this->assertSame('test', $this->query->getConnection()->configName());
+        $this->assertSame(Connection::ROLE_WRITE, $this->query->getConnection()->role());
+
+        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
+        $this->query->useReadRole();
+        $this->assertSame('test:read', $this->query->getConnection()->configName());
+        $this->assertSame(Connection::ROLE_READ, $this->query->getConnection()->role());
+
+        $this->query->useWriteRole();
+        $this->assertSame('test', $this->query->getConnection()->configName());
+        $this->assertSame(Connection::ROLE_WRITE, $this->query->getConnection()->role());
+    }
+
+    public function testConnectionRolesManualWriteConnection(): void
+    {
+        $config = $this->connection->config();
+        $config['name'] = 'not-in-manager';
+
+        $query = new SelectQuery(new Connection($config));
+        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
+
+        $query->useWriteRole();
+        $this->assertSame('not-in-manager', $query->getConnection()->configName());
+        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
+
+        $query->useReadRole();
+        $this->assertSame('not-in-manager', $query->getConnection()->configName());
+        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
+    }
+
+    public function testConnectionRolesManualReadConnection(): void
+    {
+        $config = $this->connection->config();
+        $config['name'] = 'not-in-manager:read';
+
+        $query = new SelectQuery(new Connection($config));
+        $this->assertSame(Connection::ROLE_READ, $query->getConnection()->role());
+
+        $this->expectException(MissingDatasourceConfigException::class);
+        $query->useWriteRole();
     }
 
     protected function newQuery()

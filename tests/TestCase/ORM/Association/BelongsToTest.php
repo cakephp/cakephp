@@ -183,7 +183,7 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query);
 
         $expected = [
@@ -221,7 +221,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association = new BelongsTo('Companies', $config);
 
         $association->attachTo($query, ['includeFields' => false]);
@@ -242,7 +242,7 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query);
 
         $expected = [
@@ -276,7 +276,7 @@ class BelongsToTest extends TestCase
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Companies`, got `(company_id)` but expected foreign key for `(id, tenant_id)`');
         $this->company->setPrimaryKey(['id', 'tenant_id']);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
@@ -382,7 +382,7 @@ class BelongsToTest extends TestCase
             $called = true;
         });
         $association = new BelongsTo('Companies', $config);
-        $association->attachTo($this->client->query());
+        $association->attachTo($this->client->selectQuery());
         $this->assertTrue($called, 'Listener should be called.');
     }
 
@@ -403,7 +403,7 @@ class BelongsToTest extends TestCase
             $called = true;
         });
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);

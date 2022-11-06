@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.0.0
+ * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Query;
@@ -821,6 +821,25 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         return parent::select($fields, $overwrite);
+    }
+
+    /**
+     * Behaves the exact same as `select()` except adds the field to the list of fields selected and
+     * does not disable auto-selecting fields for Associations.
+     *
+     * Use this instead of calling `select()` then `enableAutoFields()` to re-enable auto-fields.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|Closure|array|string|float|int $fields Fields
+     * to be added to the list.
+     * @return $this
+     */
+    public function selectAlso(
+        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields
+    ) {
+        $this->select($fields);
+        $this->_autoFields = true;
+
+        return $this;
     }
 
     /**

@@ -15,7 +15,9 @@ namespace Cake\Test\TestCase\Datasource;
 
 use BadMethodCallException;
 use Cake\Core\Exception\CakeException;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -34,7 +36,10 @@ class ConnectionManagerTest extends TestCase
         parent::tearDown();
         $this->clearPlugins();
         ConnectionManager::drop('test_variant');
+        ConnectionManager::drop('missing_write:read');
         ConnectionManager::dropAlias('other_name');
+        ConnectionManager::dropAlias('test:read');
+        ConnectionManager::dropAlias('test2');
     }
 
     /**
@@ -183,6 +188,15 @@ class ConnectionManagerTest extends TestCase
         $this->assertFalse(ConnectionManager::drop('probably_does_not_exist'), 'Should return false on failure.');
     }
 
+    public function testAliases(): void
+    {
+        $this->assertSame(['default' => 'test'], ConnectionManager::aliases());
+        ConnectionManager::alias('test', 'test2');
+        $this->assertSame(['default' => 'test', 'test2' => 'test'], ConnectionManager::aliases());
+        ConnectionManager::dropAlias('test2');
+        $this->assertSame(['default' => 'test'], ConnectionManager::aliases());
+    }
+
     /**
      * Test aliasing connections.
      */
@@ -195,6 +209,69 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::alias('test_variant', 'other_name');
         $result = ConnectionManager::get('test_variant');
         $this->assertSame($result, ConnectionManager::get('other_name'));
+    }
+
+    public function testWriteRoleName(): void
+    {
+        $writeRole = ConnectionInterface::ROLE_WRITE;
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test'));
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read'));
+
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test', false));
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read', false));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default', false));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read', false));
+
+        ConnectionManager::alias('test', 'test:read');
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read'));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read'));
+
+        $this->assertSame('test', ConnectionManager::getName($writeRole, 'test:read', false));
+        $this->assertSame('default', ConnectionManager::getName($writeRole, 'default:read', false));
+    }
+
+    public function testReadRoleName(): void
+    {
+        $readRole = ConnectionInterface::ROLE_READ;
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test'));
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test:read'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read'));
+
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test', false));
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test:read', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
+
+        ConnectionManager::alias('test', 'test:read');
+        $this->assertSame('test:read', ConnectionManager::getName($readRole, 'test'));
+        $this->assertSame('test:read', ConnectionManager::getName($readRole, 'test:read'));
+        // The default alias does not know about test:read
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read'));
+
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test', false));
+        // With no alias, defaults to the physical test connection
+        $this->assertSame('test', ConnectionManager::getName($readRole, 'test:read', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
+
+        ConnectionManager::alias('test', 'default:read');
+        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default', false));
+        $this->assertSame('default:read', ConnectionManager::getName($readRole, 'default:read'));
+        $this->assertSame('default', ConnectionManager::getName($readRole, 'default:read', false));
+    }
+
+    public function testMissingWriteConnection(): void
+    {
+        $this->expectException(MissingDatasourceConfigException::class);
+        ConnectionManager::setConfig('missing_write:read', [
+            'className' => FakeConnection::class,
+            'database' => ':memory:',
+        ]);
     }
 
     /**

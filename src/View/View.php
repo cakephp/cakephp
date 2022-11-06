@@ -412,23 +412,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Allows adding helpers from initialize() hook, overwriting any previously set ones with the same name.
-     *
-     * @param string $helper The name of the helper
-     * @param array<string, mixed> $config The config associated to that helper
-     * @return void
-     */
-    protected function addHelper(string $helper, array $config = []): void
-    {
-        [$plugin, $name] = pluginSplit($helper);
-        if ($plugin) {
-            $config['className'] = $helper;
-        }
-
-        $this->helpers[$name] = $config;
-    }
-
-    /**
      * Gets the request instance.
      *
      * @return \Cake\Http\ServerRequest
@@ -1222,7 +1205,26 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
+     * Adds a helper from within `initialize()` method.
+     *
+     * @param string $helper Helper.
+     * @param array<string, mixed> $config Config.
+     * @return void
+     */
+    protected function addHelper(string $helper, array $config = []): void
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $config['className'] = $helper;
+        }
+
+        $this->helpers[$name] = $config;
+    }
+
+    /**
+     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper.
+     *
+     * You should use `addHelper()` instead of this method from the `initialize()` hook of `AppView` or other custom View classes.
      *
      * @param string $name Name of the helper to load.
      * @param array<string, mixed> $config Settings for the helper

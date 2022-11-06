@@ -375,7 +375,6 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->name('cte')
                     ->query($query);
             })
-            ->delete()
             ->from(['a' => 'articles'])
             ->where(function (QueryExpression $exp, Query $query) {
                 return $exp->in(

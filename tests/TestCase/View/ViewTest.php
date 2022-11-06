@@ -834,6 +834,18 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test adding helpers in initialize().
+     */
+    public function testAddHelper(): void
+    {
+        $View = new TestView();
+        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+
+        $config = $View->Html->getConfig();
+        $this->assertSame('myval', $config['mykey']);
+    }
+
+    /**
      * Test loading helper using loadHelper().
      */
     public function testLoadHelper(): void

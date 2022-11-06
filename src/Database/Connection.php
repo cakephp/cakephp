@@ -160,6 +160,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Returns the connection role: read or write.
+     *
+     * @return string
+     */
+    public function role(): string
+    {
+        return preg_match('/:read$/', $this->configName()) === 1 ? static::ROLE_READ : static::ROLE_WRITE;
+    }
+
+    /**
      * Creates driver from name, class name or instance.
      *
      * @param \Cake\Database\Driver|string $name Driver name, class name or instance.
@@ -748,6 +758,7 @@ class Connection implements ConnectionInterface
         return [
             'config' => $config,
             'driver' => $this->_driver,
+            'role' => $this->role(),
             'transactionLevel' => $this->_transactionLevel,
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,

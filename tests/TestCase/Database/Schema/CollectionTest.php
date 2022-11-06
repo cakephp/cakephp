@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Cache\Cache;
+use Cake\Database\Connection;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\Collection;
 use Cake\Datasource\ConnectionManager;
@@ -91,5 +92,20 @@ class CollectionTest extends TestCase
 
         $result = Cache::read('test_users', '_cake_model_');
         $this->assertEquals($table, $result);
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testListTables()
+    {
+        $config = $this->connection->config();
+        $driver = new $config['driver']($config);
+        $connection = new Connection([
+            'driver' => $driver,
+        ]);
+
+        $collection = new Collection($connection);
+        $collection->listTables();
     }
 }

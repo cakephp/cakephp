@@ -44,7 +44,7 @@ class ConnectionManager
     /**
      * A map of connection aliases.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected static array $_aliasMap = [];
 
@@ -86,6 +86,19 @@ class ConnectionManager
         }
 
         static::_setConfig($key, $config);
+
+        foreach (static::$_config as $name => $config) {
+            if (preg_match('/(.*):read$/', $name, $matches) === 1) {
+                $writeName = $matches[1];
+                if (empty(static::$_config[$writeName])) {
+                    throw new MissingDatasourceConfigException(sprintf(
+                        'Missing write datasource %s for read-only datasource %s',
+                        $writeName,
+                        $name
+                    ));
+                }
+            }
+        }
     }
 
     /**
@@ -175,6 +188,16 @@ class ConnectionManager
     }
 
     /**
+     * Returns the current connection aliases and what they alias.
+     *
+     * @return array<string, string>
+     */
+    public static function aliases(): array
+    {
+        return static::$_aliasMap;
+    }
+
+    /**
      * Get a connection.
      *
      * If the connection has not been constructed an instance will be added
@@ -183,22 +206,86 @@ class ConnectionManager
      * as second parameter.
      *
      * @param string $name The connection name.
-     * @param bool $useAliases Set to false to not use aliased connections.
-     * @return \Cake\Datasource\ConnectionInterface A connection object.
+     * @param bool $useAliases Whether connection aliases are used
+     * @param string|null $role Which connection role to get. Defaults to whatever role `$name` resolves to.
+     * @return \Cake\Datasource\ConnectionInterface
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */
-    public static function get(string $name, bool $useAliases = true): ConnectionInterface
+    public static function get(string $name, bool $useAliases = true, ?string $role = null): ConnectionInterface
     {
+        if ($role) {
+            $roleName = static::getName($role, $name, $useAliases);
+        }
+
         if ($useAliases && isset(static::$_aliasMap[$name])) {
             $name = static::$_aliasMap[$name];
         }
-        if (empty(static::$_config[$name])) {
+
+        if (!isset(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
         static::$_registry ??= new ConnectionRegistry();
 
-        return static::$_registry->{$name}
-            ?? static::$_registry->load($name, static::$_config[$name]);
+        return static::$_registry->{$name} ?? static::$_registry->load($name, static::$_config[$name]);
+    }
+
+    /**
+     * Gets the connection name (or alias if `$useAliases` is true) for a role.
+     *
+     * @param string $role Connection role - read or write
+     * @param string $name Connection name
+     * @param bool $useAliases Whether connection aliases are used
+     * @return string
+     */
+    public static function getName(string $role, string $name, bool $useAliases = true): string
+    {
+        assert(in_array($role, [ConnectionInterface::ROLE_READ, ConnectionInterface::ROLE_WRITE], true));
+        if ($role === ConnectionInterface::ROLE_READ) {
+            return static::getReadName($name, $useAliases);
+        }
+
+        return static::getWriteName($name, $useAliases);
+    }
+
+    /**
+     * Gets the read connection name (or alias if `$useAliases` is true).
+     *
+     * @param string $name Connection name
+     * @param bool $useAliases Whether connection aliases are used
+     * @return string
+     */
+    protected static function getReadName(string $name, bool $useAliases): string
+    {
+        $readName = $name;
+        $writeName = $name;
+        if (preg_match('/(.*):read$/', $name, $matches) === 1) {
+            $writeName = $matches[1];
+        } else {
+            $readName = $name . ':read';
+        }
+
+        if (($useAliases && isset(static::$_aliasMap[$readName])) || isset(static::$_config[$readName])) {
+            return $readName;
+        }
+
+        return $writeName;
+    }
+
+    /**
+     * Gets the write connection name (or alias if `$useAliases` is true).
+     *
+     * @param string $name Connection name
+     * @param bool $useAliases Whether connection aliases are used
+     * @return string
+     */
+    protected static function getWriteName(string $name, bool $useAliases): string
+    {
+        $writeName = $name;
+        if (preg_match('/(.*):read$/', $name, $matches) === 1) {
+            $writeName = $matches[1];
+        }
+
+        return $writeName;
     }
 }

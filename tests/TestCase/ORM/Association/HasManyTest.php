@@ -243,7 +243,7 @@ class HasManyTest extends TestCase
             'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -286,7 +286,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
 
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -373,7 +373,7 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -584,10 +584,10 @@ class HasManyTest extends TestCase
         $author = new Entity(['id' => 1, 'name' => 'mark']);
         $this->assertTrue($association->cascadeDelete($author));
 
-        $query = $articles->query()->where(['author_id' => 1]);
+        $query = $articles->find()->where(['author_id' => 1]);
         $this->assertSame(0, $query->count(), 'Cleared related rows');
 
-        $query = $articles->query()->where(['author_id' => 3]);
+        $query = $articles->find()->where(['author_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
     }
 
@@ -657,6 +657,27 @@ class HasManyTest extends TestCase
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasMany('Thing', $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
+    }
+
+    /**
+     * Tests propertyName is used during marshalling and validation
+     */
+    public function testPropertyOptionMarshalAndValidation(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', [
+            'propertyName' => 'blogs',
+        ]);
+        $authors->getValidator()
+            ->requirePresence('blogs', true, 'blogs must be set');
+
+        $data = [
+            'name' => 'corey',
+        ];
+        $author = $authors->newEntity($data);
+        $this->assertEmpty($author->blogs, 'No blogs set');
+        $this->assertTrue($author->hasErrors(), 'Should have validation errors');
+        $this->assertArrayHasKey('blogs', $author->getErrors());
     }
 
     /**
