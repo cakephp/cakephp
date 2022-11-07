@@ -19,7 +19,7 @@ namespace Cake\Datasource\Exception;
 use Cake\Core\Exception\CakeException;
 
 /**
- * Used when a property does not exist for an entity.
+ * A required property does not exist for an entity.
  */
 class MissingPropertyException extends CakeException
 {

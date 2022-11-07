@@ -119,6 +119,13 @@ trait EntityTrait
      */
     protected string $_registryAlias = '';
 
+    /**
+     * Whether the presence of a field is checked when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @var bool
+     */
     protected bool $requireFieldPresence = false;
 
     /**
@@ -374,8 +381,8 @@ trait EntityTrait
      * $entity->has(['name', 'last_name']);
      * ```
      *
-     * When checking multiple fields all fields must have a value present for
-     * the method to return `true`.
+     * When checking multiple fields all fields must have a value (even `null`)
+     * present for the method to return `true`.
      *
      * @param array<string>|string $field The field or fields to check.
      * @return bool
