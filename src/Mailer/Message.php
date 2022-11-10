@@ -301,6 +301,18 @@ class Message implements JsonSerializable, Serializable
      */
     protected $emailPattern = self::EMAIL_PATTERN;
 
+    /** 
+     * Properties that could be serialized
+     * 
+     * @var string[] 
+     */
+    protected $serializableProperties = [
+        'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
+        'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
+        'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
+        'textMessage', 'htmlMessage',
+    ];
+
     /**
      * Constructor
      *
@@ -1849,15 +1861,8 @@ class Message implements JsonSerializable, Serializable
      */
     public function jsonSerialize(): array
     {
-        $properties = [
-            'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
-            'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
-            'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
-            'textMessage', 'htmlMessage',
-        ];
-
         $array = [];
-        foreach ($properties as $property) {
+        foreach ($this->serializableProperties as $property) {
             $array[$property] = $this->{$property};
         }
 
