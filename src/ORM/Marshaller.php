@@ -76,7 +76,7 @@ class Marshaller
             $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
-                $map[$prop] = fn($value) => TypeFactory::build($columnType)->marshal($value);
+                $map[$prop] = fn ($value) => TypeFactory::build($columnType)->marshal($value);
             }
         }
 
@@ -405,7 +405,7 @@ class Marshaller
         if (!empty($conditions)) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
             $results = $target->find()
-                ->andWhere(fn(QueryExpression $exp) => $exp->or($conditions))
+                ->andWhere(fn (QueryExpression $exp) => $exp->or($conditions))
                 ->all();
 
             $keyFields = array_keys($primaryKey);

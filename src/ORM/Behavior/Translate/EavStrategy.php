@@ -217,7 +217,10 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $query->contain($contain);
-        $query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results, $locale), $query::PREPEND);
+        $query->formatResults(
+            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
+            $query::PREPEND
+        );
     }
 
     /**
