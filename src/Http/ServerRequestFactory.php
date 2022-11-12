@@ -94,6 +94,12 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ]);
 
         $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
+        // This is required as `ServerRequest::scheme()` ignores the value of
+        // `HTTP_X_FORWARDED_PROTO` unless `trustProxy` is enabled, while the
+        // `Uri` instance intially created always takes values of `HTTP_X_FORWARDED_PROTO`
+        // into account.
+        $uri = $request->getUri()->withScheme($request->scheme());
+        $request = $request->withUri($uri, true);
 
         return static::marshalFiles($files ?? $_FILES, $request);
     }
