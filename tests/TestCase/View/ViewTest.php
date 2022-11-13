@@ -1035,7 +1035,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1049,7 +1049,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
     }
 

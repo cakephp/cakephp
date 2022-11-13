@@ -64,6 +64,25 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame($files['image']['type'], $expected->getClientMediaType());
     }
 
+    public function testFromGlobalsUriScheme(): void
+    {
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/webroot',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_URI' => '/posts/add',
+            'HTTP_X_FORWARDED_PROTO' => 'https',
+        ];
+        $request = ServerRequestFactory::fromGlobals($server);
+
+        $this->assertSame('http', $request->scheme());
+        $this->assertSame('http', $request->getUri()->getScheme());
+
+        $request->setTrustedProxies([]);
+        // Yeah even setting an empty list of proxies does the trick.
+        $this->assertSame('https', $request->scheme());
+        $this->assertSame('https', $request->getUri()->getScheme());
+    }
+
     /**
      * Test fromGlobals includes the session
      *
@@ -989,6 +1008,7 @@ class ServerRequestFactoryTest extends TestCase
             'CONTENT_TYPE' => null,
             'HTTP_CONTENT_TYPE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
+            'HTTP_HOST' => 'localhost',
         ];
         $this->assertSame($expected, $request->getServerParams());
     }

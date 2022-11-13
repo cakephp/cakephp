@@ -207,7 +207,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for out() that wraps message between <info /> tag
+     * Convenience method for out() that wraps message between <info> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -225,7 +225,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for out() that wraps message between <comment /> tag
+     * Convenience method for out() that wraps message between <comment> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -243,7 +243,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for err() that wraps message between <warning /> tag
+     * Convenience method for err() that wraps message between <warning> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -259,7 +259,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for err() that wraps message between <error /> tag
+     * Convenience method for err() that wraps message between <error> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -275,7 +275,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for out() that wraps message between <success /> tag
+     * Convenience method for out() that wraps message between <success> tag
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
