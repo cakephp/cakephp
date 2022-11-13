@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use League\Container\DefinitionContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
  * Interface for the Dependency Injection Container in CakePHP applications
@@ -29,4 +30,9 @@ use League\Container\DefinitionContainerInterface;
  */
 interface ContainerInterface extends DefinitionContainerInterface
 {
+    /**
+     * @param \Psr\Container\ContainerInterface $container The container instance to use as delegation
+     * @return \Psr\Container\ContainerInterface
+     */
+    public function delegate(PsrContainerInterface $container): PsrContainerInterface;
 }
