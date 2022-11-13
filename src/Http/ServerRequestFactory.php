@@ -30,9 +30,9 @@ use function Laminas\Diactoros\normalizeUploadedFiles;
 /**
  * Factory for making ServerRequest instances.
  *
- * This subclass adds in CakePHP specific behavior to populate
- * the basePath and webroot attributes. Furthermore the Uri's path
- * is corrected to only contain the 'virtual' path for the request.
+ * This adds in CakePHP specific behavior to populate the basePath and webroot
+ * attributes. Furthermore the Uri's path is corrected to only contain the
+ * 'virtual' path for the request.
  */
 abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 {
@@ -42,10 +42,6 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * If any argument is not supplied, the corresponding superglobal value will
      * be used.
      *
-     * The ServerRequest created is then passed to the fromServer() method in
-     * order to marshal the request URI and headers.
-     *
-     * @see fromServer()
      * @param array|null $server $_SERVER superglobal
      * @param array|null $query $_GET superglobal
      * @param array|null $parsedBody $_POST superglobal
@@ -94,6 +90,12 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ]);
 
         $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
+        // This is required as `ServerRequest::scheme()` ignores the value of
+        // `HTTP_X_FORWARDED_PROTO` unless `trustProxy` is enabled, while the
+        // `Uri` instance intially created always takes values of `HTTP_X_FORWARDED_PROTO`
+        // into account.
+        $uri = $request->getUri()->withScheme($request->scheme());
+        $request = $request->withUri($uri, true);
 
         return static::marshalFiles($files ?? $_FILES, $request);
     }
