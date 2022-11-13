@@ -308,7 +308,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             if ($value instanceof NativeDateTime) {
                 $value = clone $value;
             }
-            assert($value instanceof DateTime || $value instanceof DateTimeImmutable);
 
             return $value->setTimezone($this->defaultTimezone);
         }
@@ -323,7 +322,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             if (is_int($value) || (is_string($value) && ctype_digit($value))) {
                 /** @var \DateTime|\DateTimeImmutable $dateTime */
                 $dateTime = new $class('@' . $value);
-                assert($dateTime instanceof DateTime || $dateTime instanceof DateTimeImmutable);
+                assert($dateTime instanceof NativeDateTime || $dateTime instanceof DateTimeImmutable);
 
                 return $dateTime->setTimezone($this->defaultTimezone);
             }
@@ -335,7 +334,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                     $dateTime = $this->_parseValue($value);
                 }
 
-                if ($dateTime instanceof DateTime || $dateTime instanceof DateTimeImmutable) {
+                if ($dateTime instanceof NativeDateTime || $dateTime instanceof DateTimeImmutable) {
                     $dateTime = $dateTime->setTimezone($this->defaultTimezone);
                 }
 
