@@ -20,6 +20,7 @@ use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
 use DateTimeImmutable;
 
 /**
@@ -138,6 +139,10 @@ class TimeTypeTest extends TestCase
             ['13:10:10', new DateTime('13:10:10')],
             ['14:15', new DateTime('14:15:00')],
 
+            [new DateTime('13:10:10'), new DateTime('13:10:10')],
+            [new NativeDateTime('13:10:10'), new DateTime('13:10:10')],
+            [new DateTimeImmutable('13:10:10'), new DateTime('13:10:10')],
+
             // valid array types
             [
                 ['hour' => '', 'minute' => '', 'second' => ''],
@@ -201,7 +206,6 @@ class TimeTypeTest extends TestCase
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
             $this->assertEquals($expected, $result);
-            $this->assertInstanceOf(DateTimeImmutable::class, $result);
         } else {
             $this->assertSame($expected, $result);
         }

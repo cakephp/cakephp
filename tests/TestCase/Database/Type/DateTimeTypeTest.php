@@ -19,6 +19,8 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 
 /**
@@ -204,6 +206,11 @@ class DateTimeTypeTest extends TestCase
             ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')],
             ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')],
             ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
+            ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
+
+            [new DateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
+            [new NativeDateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
+            [new DateTimeImmutable('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
 
             // valid array types
             [
@@ -266,10 +273,6 @@ class DateTimeTypeTest extends TestCase
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
                 new DateTime('2014-02-14 00:00:00'),
-            ],
-            [
-                DateTime::now(),
-                DateTime::now(),
             ],
         ];
     }
