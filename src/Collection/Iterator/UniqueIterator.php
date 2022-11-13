@@ -34,6 +34,21 @@ class UniqueIterator extends FilterIterator
                 $value = $item[$key] ?? null;
             }
 
+            if (is_object($value)) {
+                if ($value instanceof \DateTimeInterface) {
+                    $value = $value->format('Y-m-d\TH:i:sO');
+                } elseif (method_exists($value, '__toString')) {
+                    $value = (string)$value;
+                } elseif ($pValue = print_r($value, true)) {
+                    $value = md5($pValue);
+                } else {
+                    throw new \InvalidArgumentException(sprintf(
+                        "Value '%s' couldn't be used as array index, please implement __toString method first",
+                        get_class($value)
+                    ));
+                }
+            }
+
             if(isset($this->_exists[$value])) {
                 return false;
             }

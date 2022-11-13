@@ -2643,5 +2643,71 @@ class CollectionTest extends TestCase
             [1, 2, 3],
             (new Collection([1, 2, 2, 3]))->unique()->toList()
         );
+
+        $itemsWithObjects = [
+            [
+                'name' => 'User1',
+                'birthday' => new DateTime('1980-01-01'),
+            ],
+            [
+                'name' => 'User2',
+                'birthday' => new DateTime('1980-02-01'),
+            ],
+            [
+                'name' => 'User3',
+                'birthday' => new DateTime('1980-02-01'),
+            ],
+        ];
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'User1',
+                    'birthday' => new DateTime('1980-01-01'),
+                ],
+                [
+                    'name' => 'User2',
+                    'birthday' => new DateTime('1980-02-01'),
+                ],
+            ],
+            (new Collection($itemsWithObjects))->unique('birthday')->toList()
+        );
+
+        $itemsWithObjects2 = [
+            [
+                'name' => 'User1',
+                'object_field' => (object)[
+                    'key' => 'val'
+                ],
+            ],
+            [
+                'name' => 'User2',
+                'object_field' => (object)[
+                    'key' => 'val2'
+                ],
+            ],
+            [
+                'name' => 'User3',
+                'object_field' => (object)[
+                    'key' => 'val2'
+                ],
+            ],
+        ];
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'User1',
+                    'object_field' => (object)[
+                        'key' => 'val'
+                    ],
+                ],
+                [
+                    'name' => 'User2',
+                    'object_field' => (object)[
+                        'key' => 'val2'
+                    ],
+                ],
+            ],
+            (new Collection($itemsWithObjects2))->unique('object_field')->toList()
+        );
     }
 }
