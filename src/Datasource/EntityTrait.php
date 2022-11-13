@@ -1134,7 +1134,7 @@ trait EntityTrait
     public function setAccess(array|string $field, bool $set)
     {
         if ($field === '*') {
-            $this->_accessible = array_map(fn($p) => $set, $this->_accessible);
+            $this->_accessible = array_map(fn ($p) => $set, $this->_accessible);
             $this->_accessible['*'] = $set;
 
             return $this;

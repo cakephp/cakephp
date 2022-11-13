@@ -92,7 +92,7 @@ trait CollectionTrait
      */
     public function reject(callable $callback): CollectionInterface
     {
-        return new FilterIterator($this->unwrap(), fn($key, $value, $items) => !$callback($key, $value, $items));
+        return new FilterIterator($this->unwrap(), fn ($key, $value, $items) => !$callback($key, $value, $items));
     }
 
     /**
@@ -307,8 +307,8 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($path);
 
-        $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
-        $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
+        $mapper = fn ($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
+        $reducer = fn ($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
@@ -655,7 +655,7 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(fn($value) => $isObject ? $value : $value->getArrayCopy());
+            ->map(fn ($value) => $isObject ? $value : $value->getArrayCopy());
     }
 
     /**

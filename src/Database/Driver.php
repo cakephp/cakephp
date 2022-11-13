@@ -178,7 +178,7 @@ abstract class Driver
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn() => new PDO(
+        $action = fn () => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,

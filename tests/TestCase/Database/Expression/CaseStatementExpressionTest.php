@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Chronos\Chronos;
-use Cake\Chronos\Date as ChronosDate;
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\FunctionExpression;
