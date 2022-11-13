@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Http\Uri as CakeUri;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -58,18 +57,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
-        $uri = static::createUri($server);
-
-        $webroot = '';
-        $base = '';
-        if ($uri instanceof CakeUri) {
-            // Unwrap our shim for base and webroot.
-            // For 5.x we should change the interface on createUri() to return a
-            // tuple of [$uri, $base, $webroot] and remove the wrapper.
-            $webroot = $uri->getWebroot();
-            $base = $uri->getBase();
-            $uri->getUri();
-        }
+        [$uri, $base, $webroot] = static::createUri($server);
 
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
@@ -202,9 +190,10 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server Array of server data to build the Uri from.
      *   $_SERVER will be added into the $server parameter.
-     * @return \Psr\Http\Message\UriInterface New instance.
+     * @return array
+     * @psalm-return array{0: \Psr\Http\Message\UriInterface, 1: string, 2: string}
      */
-    public static function createUri(array $server = []): UriInterface
+    public static function createUri(array $server = []): array
     {
         $server += $_SERVER;
         $server = normalizeServer($server);
@@ -221,9 +210,10 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
-     * @return \Cake\Http\Uri A constructed Uri
+     * @return array
+     * @psalm-return array{0: \Psr\Http\Message\UriInterface, 1: string, 2: string}
      */
-    protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
+    protected static function marshalUriFromSapi(array $server, array $headers): array
     {
         /** @psalm-suppress DeprecatedFunction */
         $uri = marshalUriFromSapi($server, $headers);
@@ -242,7 +232,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = $uri->withHost('localhost');
         }
 
-        return new CakeUri($uri, $base, $webroot);
+        return [$uri, $base, $webroot];
     }
 
     /**
