@@ -410,6 +410,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $this->trustedProxies = $proxies;
         $this->trustProxy = true;
+        $this->uri = $this->uri->withScheme($this->scheme());
     }
 
     /**

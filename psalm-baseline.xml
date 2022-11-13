@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.x-dev@">
   <file src="src/Cache/Engine/RedisEngine.php">
-    <InvalidArgument occurrences="2">
-      <code>Redis::OPT_SCAN</code>
-    </InvalidArgument>
     <InvalidReturnStatement occurrences="4">
       <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
       <code>$this-&gt;_Redis-&gt;setEx($key, $duration, $value)</code>
@@ -138,9 +135,7 @@
     </DeprecatedClass>
   </file>
   <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <DeprecatedMethod occurrences="2">
-      <code>prefers</code>
-      <code>prefers</code>
+    <DeprecatedMethod occurrences="1">
       <code>prefers</code>
     </DeprecatedMethod>
   </file>
@@ -225,14 +220,11 @@
     </DeprecatedProperty>
   </file>
   <file src="src/Error/BaseErrorHandler.php">
-    <DeprecatedMethod occurrences="1">
-      <code>log</code>
-    </DeprecatedMethod>
     <DeprecatedMethod occurrences="2">
+      <code>log</code>
       <code>logMessage</code>
     </DeprecatedMethod>
   </file>
-
   <file src="src/Error/ErrorHandler.php">
     <DeprecatedClass occurrences="1">
       <code>ExceptionRenderer::class</code>
@@ -244,11 +236,13 @@
   <file src="src/Error/ErrorTrap.php">
     <DeprecatedMethod occurrences="2">
       <code>logMessage</code>
+      <code>logMessage</code>
     </DeprecatedMethod>
   </file>
   <file src="src/Error/ExceptionTrap.php">
     <DeprecatedClass occurrences="2">
-      <code>\Cake\Error\ExceptionRenderer</code>
+      <code>ExceptionRenderer::class</code>
+      <code>ExceptionRenderer::class</code>
     </DeprecatedClass>
     <DeprecatedMethod occurrences="1">
       <code>log</code>
@@ -265,15 +259,23 @@
       <code>new DoublePassDecoratorMiddleware($middleware)</code>
     </DeprecatedClass>
   </file>
-  <file src="src/Http/ServerRequest.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;data</code>
-    </ArgumentTypeCoercion>
-  </file>
   <file src="src/Http/Response.php">
     <DeprecatedMethod occurrences="1">
       <code>notModified</code>
     </DeprecatedMethod>
+  </file>
+  <file src="src/Http/ServerRequest.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;data</code>
+    </ArgumentTypeCoercion>
+    <PossiblyNullArgument occurrences="1">
+      <code>$this-&gt;scheme()</code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Http/ServerRequestFactory.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>$request-&gt;scheme()</code>
+    </PossiblyNullArgument>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
     <DeprecatedClass occurrences="5">
@@ -345,6 +347,11 @@
       <code>$instances</code>
     </NonInvariantDocblockPropertyType>
   </file>
+  <file src="src/ORM/Query.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;_repository</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="src/ORM/Table.php">
     <DeprecatedClass occurrences="6">
       <code>SaveOptionsBuilder</code>
@@ -354,11 +361,6 @@
       <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
       <code>new SaveOptionsBuilder($this, $options)</code>
     </DeprecatedClass>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;_repository</code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -479,7 +481,8 @@
     </DeprecatedMethod>
   </file>
   <file src="src/View/SerializedView.php">
-    <DeprecatedProperty occurrences="3">
+    <DeprecatedProperty occurrences="2">
+      <code>$this-&gt;_responseType</code>
       <code>$this-&gt;_responseType</code>
     </DeprecatedProperty>
   </file>
