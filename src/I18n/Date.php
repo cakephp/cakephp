@@ -18,9 +18,8 @@ namespace Cake\I18n;
 
 use Cake\Chronos\ChronosDate;
 use Closure;
-use DateTimeInterface;
-use DateTimeZone;
 use IntlDateFormatter;
+use JsonSerializable;
 use Stringable;
 
 /**
@@ -30,7 +29,7 @@ use Stringable;
  *
  * @psalm-immutable
  */
-class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
+class Date extends ChronosDate implements JsonSerializable, Stringable
 {
     use DateFormatTrait;
 
@@ -118,28 +117,46 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
     public static string $wordEnd = '+1 month';
 
     /**
-     * Create a new Date instance.
+     * Sets the default format used when type converting instances of this type to string
      *
-     * You can specify the timezone for the $time parameter. This timezone will
-     * not be used in any future modifications to the Date instance.
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * The `$timezone` parameter is ignored if `$time` is a DateTimeInterface
-     * instance.
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
      *
-     * Date instances lack time components, however due to limitations in PHP's
-     * internal Datetime object the time will always be set to 00:00:00, and the
-     * timezone will always be the server local time. Normalizing the timezone allows for
-     * subtraction/addition to have deterministic results.
-     *
-     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
-     * @param \DateTimeZone|string|null $tz The timezone in which the date is taken.
-     *                                  Ignored if `$time` is a DateTimeInterface instance.
+     * @param array<int>|string|int $format Format.
+     * @return void
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function __construct(
-        DateTimeInterface|string|int|null $time = 'now',
-        DateTimeZone|string|null $tz = null
-    ) {
-        parent::__construct($time, $tz);
+    public static function setToStringFormat($format): void
+    {
+        static::$_toStringFormat = $format;
+    }
+
+    /**
+     * Sets the default format used when converting this object to JSON
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * Alternatively, the format can provide a callback. In this case, the callback
+     * can receive this datetime object and return a formatted string.
+     *
+     * @see \Cake\I18n\Time::i18nFormat()
+     * @param \Closure|array|string|int $format Format.
+     * @return void
+     */
+    public static function setJsonEncodeFormat(Closure|array|string|int $format): void
+    {
+        static::$_jsonEncodeFormat = $format;
     }
 
     /**
@@ -178,7 +195,6 @@ class Date extends ChronosDate implements I18nDateTimeInterface, Stringable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        /** @psalm-suppress UndefinedInterfaceMethod,ImpureMethodCall */
-        return static::getDiffFormatter()->dateAgoInWords($this, $options);
+        return static::diffFormatter()->dateAgoInWords($this, $options);
     }
 }

@@ -57,7 +57,7 @@ class DateTypeTest extends TestCase
         $this->assertNull($this->type->toPHP('0000-00-00', $this->driver));
 
         $result = $this->type->toPHP('2001-01-04', $this->driver);
-        $this->assertInstanceOf(DateTimeImmutable::class, $result);
+        $this->assertInstanceOf(Date::class, $result);
         $this->assertSame('2001', $result->format('Y'));
         $this->assertSame('01', $result->format('m'));
         $this->assertSame('04', $result->format('d'));
@@ -127,8 +127,8 @@ class DateTypeTest extends TestCase
             ['2014-02-14', new Date('2014-02-14')],
 
             [new Date('2014-02-14'), new Date('2014-02-14')],
-            [new NativeDateTime('2014-02-14'), new Date('2014-02-14')],
-            [new DateTimeImmutable('2014-02-14'), new Date('2014-02-14')],
+            [new NativeDateTime('2014-02-14'), new NativeDateTime('2014-02-14')],
+            [new DateTimeImmutable('2014-02-14'), new DateTimeImmutable('2014-02-14')],
 
             // valid array types
             [
@@ -161,22 +161,22 @@ class DateTypeTest extends TestCase
                 ],
                 new Date('2014-02-14'),
             ],
-
-            // Invalid array types
-            [
-                ['year' => 'farts', 'month' => 'derp'],
-                new Date(date('Y-m-d')),
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Date(date('Y-m-d')),
-            ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
                 new Date('2014-02-14'),
+            ],
+
+            // Invalid array types
+            [
+                ['year' => 'farts', 'month' => 'derp'],
+                null,
+            ],
+            [
+                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+                null,
             ],
         ];
     }
@@ -218,14 +218,5 @@ class DateTypeTest extends TestCase
         $expected = new Date('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
         $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
-    }
-
-    /**
-     * Test that toImmutable changes all the methods to create frozen time instances.
-     */
-    public function testToImmutableAndToMutable(): void
-    {
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01', $this->driver));
     }
 }

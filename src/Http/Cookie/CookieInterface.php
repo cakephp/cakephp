@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
+use Cake\Chronos\Chronos;
 use DateTimeInterface;
 
 /**
@@ -142,9 +143,9 @@ interface CookieInterface
     /**
      * Get the current expiry time
      *
-     * @return \DateTimeInterface|null Timestamp of expiry or null
+     * @return \Cake\Chronos\Chronos|\DateTimeInterface|null Timestamp of expiry or null
      */
-    public function getExpiry(): ?DateTimeInterface;
+    public function getExpiry(): Chronos|DateTimeInterface|null;
 
     /**
      * Get the timestamp from the expiration time
@@ -163,10 +164,10 @@ interface CookieInterface
     /**
      * Create a cookie with an updated expiration date
      *
-     * @param \DateTimeInterface $dateTime Date time object
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface $dateTime Date time object
      * @return static
      */
-    public function withExpiry(DateTimeInterface $dateTime): static;
+    public function withExpiry(Chronos|DateTimeInterface $dateTime): static;
 
     /**
      * Create a new cookie that will virtually never expire.
@@ -189,10 +190,10 @@ interface CookieInterface
      *
      * Cookies without an expiration date always return false.
      *
-     * @param \DateTimeInterface $time The time to test against. Defaults to 'now' in UTC.
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface|null $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired(?DateTimeInterface $time = null): bool;
+    public function isExpired(Chronos|DateTimeInterface|null $time = null): bool;
 
     /**
      * Check if the cookie is HTTP only

@@ -197,7 +197,7 @@ class TimeHelperTest extends TestCase
         $dateTime = new DateTime();
         $vancouver = clone $dateTime;
         $vancouver = $vancouver->setTimezone('America/Vancouver');
-        $this->assertSame($vancouver->format(DateTime::ATOM), $this->Time->toAtom($vancouver));
+        $this->assertSame($vancouver->format(DATE_ATOM), $this->Time->toAtom($vancouver));
     }
 
     /**

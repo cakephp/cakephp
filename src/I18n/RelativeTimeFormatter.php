@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\ChronosInterface;
+use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
+use DateTimeInterface;
 
 /**
  * Helper class for formatting relative dates & times.
@@ -29,23 +31,26 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Get the difference in a human readable format.
      *
-     * @param \Cake\Chronos\ChronosInterface $dateTime1 The datetime to start with.
-     * @param \Cake\Chronos\ChronosInterface|null $dateTime2 The datetime to compare against.
+     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate $first The datetime to start with.
+     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTimeInterface|null $second The datetime to compare against.
      * @param bool $absolute Removes time difference modifiers ago, after, etc.
      * @return string The difference between the two days in a human readable format.
-     * @see \Cake\Chronos\ChronosInterface::diffForHumans
+     * @see \Cake\Chronos\Chronos::diffForHumans
      */
     public function diffForHumans(
-        ChronosInterface $dateTime1,
-        ?ChronosInterface $dateTime2 = null,
+        Chronos|ChronosDate $first,
+        Chronos|ChronosDate|DateTimeInterface|null $second = null,
         bool $absolute = false
     ): string {
-        $isNow = $dateTime2 === null;
-        if ($isNow) {
-            $dateTime2 = $dateTime1->now($dateTime1->getTimezone());
+        $isNow = $second === null;
+        if ($second === null) {
+            if ($first instanceof ChronosDate) {
+                $second = $first->now();
+            } else {
+                $second = $first->now($first->getTimezone());
+            }
         }
-        /** @psalm-suppress PossiblyNullArgument */
-        $diffInterval = $dateTime1->diff($dateTime2);
+        $diffInterval = $first->diff($second);
 
         switch (true) {
             case $diffInterval->y > 0:
@@ -58,8 +63,8 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 break;
             case $diffInterval->d > 0:
                 $count = $diffInterval->d;
-                if ($count >= I18nDateTimeInterface::DAYS_PER_WEEK) {
-                    $count = (int)($count / I18nDateTimeInterface::DAYS_PER_WEEK);
+                if ($count >= DateTime::DAYS_PER_WEEK) {
+                    $count = (int)($count / DateTime::DAYS_PER_WEEK);
                     $message = __dn('cake', '{0} week', '{0} weeks', $count, $count);
                 } else {
                     $message = __dn('cake', '{0} day', '{0} days', $count, $count);
@@ -92,12 +97,12 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Format a into a relative timestring.
      *
-     * @param \Cake\I18n\I18nDateTimeInterface $time The time instance to format.
+     * @param \Cake\I18n\DateTime|\Cake\I18n\Date $time The time instance to format.
      * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(I18nDateTimeInterface $time, array $options = []): string
+    public function timeAgoInWords(DateTime|Date $time, array $options = []): string
     {
         $options = $this->_options($options, DateTime::class);
         if ($options['timezone']) {
@@ -314,15 +319,15 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Format a into a relative date string.
      *
-     * @param \Cake\I18n\I18nDateTimeInterface $date The date to format.
+     * @param \Cake\I18n\DateTime|\Cake\I18n\Date $date The date to format.
      * @param array<string, mixed> $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(I18nDateTimeInterface $date, array $options = []): string
+    public function dateAgoInWords(DateTime|Date $date, array $options = []): string
     {
         $options = $this->_options($options, Date::class);
-        if ($options['timezone']) {
+        if ($date instanceof DateTime && $options['timezone']) {
             $date = $date->setTimezone($options['timezone']);
         }
 

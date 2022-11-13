@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Chronos\Chronos;
 use Cake\Database\Type\DateTimeType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
@@ -145,11 +146,11 @@ class TimestampBehavior extends Behavior
      * If an explicit date time is passed, the config option `refreshTimestamp` is
      * automatically set to false.
      *
-     * @param \DateTimeInterface|null $ts Timestamp
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
      * @return \Cake\I18n\DateTime
      */
-    public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTimeInterface
+    public function timestamp(Chronos|DateTimeInterface|null $ts = null, bool $refreshTimestamp = false): DateTime
     {
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {

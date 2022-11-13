@@ -18,9 +18,9 @@ namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
 use Closure;
-use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
+use JsonSerializable;
 use Stringable;
 
 /**
@@ -29,9 +29,27 @@ use Stringable;
  *
  * @psalm-immutable
  */
-class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
+class DateTime extends Chronos implements JsonSerializable, Stringable
 {
     use DateFormatTrait;
+
+    /**
+     * The default locale to be used for displaying formatted date strings.
+     *
+     * Use static::setDefaultLocale() and static::getDefaultLocale() instead.
+     *
+     * @var string|null
+     */
+    protected static ?string $defaultLocale = null;
+
+    /**
+     * Whether lenient parsing is enabled for IntlDateFormatter.
+     *
+     * Defaults to true which is the default for IntlDateFormatter.
+     *
+     * @var bool
+     */
+    protected static bool $lenientParsing = true;
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Time::i18nFormat()`
@@ -124,26 +142,110 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
     public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
-     * Create a new immutable time instance.
+     * Gets the default locale.
      *
-     * @param \DateTimeInterface|string|int|null $time Fixed or relative time
-     * @param \DateTimeZone|string|null $tz The timezone for the instance
-     * @psalm-immutable
+     * @return string|null The default locale string to be used or null.
      */
-    public function __construct(DateTimeInterface|string|int|null $time = null, DateTimeZone|string|null $tz = null)
+    public static function getDefaultLocale(): ?string
     {
-        if ($time instanceof DateTimeInterface) {
-            /** @psalm-suppress ImpureMethodCall */
-            $tz = $time->getTimezone();
-            /** @psalm-suppress ImpureMethodCall */
-            $time = $time->format('Y-m-d H:i:s.u');
-        }
+        return static::$defaultLocale;
+    }
 
-        if (is_numeric($time)) {
-            $time = '@' . $time;
-        }
+    /**
+     * Sets the default locale.
+     *
+     * Set to null to use IntlDateFormatter default.
+     *
+     * @param string|null $locale The default locale string to be used.
+     * @return void
+     */
+    public static function setDefaultLocale(?string $locale = null): void
+    {
+        static::$defaultLocale = $locale;
+    }
 
-        parent::__construct($time, $tz);
+    /**
+     * Gets whether locale format parsing is set to lenient.
+     *
+     * @return bool
+     */
+    public static function lenientParsingEnabled(): bool
+    {
+        return static::$lenientParsing;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function enableLenientParsing(): void
+    {
+        static::$lenientParsing = true;
+    }
+
+    /**
+     * Enables lenient parsing for locale formats.
+     *
+     * @return void
+     */
+    public static function disableLenientParsing(): void
+    {
+        static::$lenientParsing = false;
+    }
+
+    /**
+     * Sets the default format used when type converting instances of this type to string
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * @param array<int>|string|int $format Format.
+     * @return void
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+     */
+    public static function setToStringFormat($format): void
+    {
+        static::$_toStringFormat = $format;
+    }
+
+    /**
+     * Resets the format used to the default when converting an instance of this type to
+     * a string
+     *
+     * @return void
+     */
+    public static function resetToStringFormat(): void
+    {
+        static::setToStringFormat([IntlDateFormatter::SHORT, IntlDateFormatter::SHORT]);
+    }
+
+    /**
+     * Sets the default format used when converting this object to JSON
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * Alternatively, the format can provide a callback. In this case, the callback
+     * can receive this datetime object and return a formatted string.
+     *
+     * @see \Cake\I18n\Time::i18nFormat()
+     * @param \Closure|array|string|int $format Format.
+     * @return void
+     */
+    public static function setJsonEncodeFormat(Closure|array|string|int $format): void
+    {
+        static::$_jsonEncodeFormat = $format;
     }
 
     /**
@@ -185,8 +287,7 @@ class DateTime extends Chronos implements I18nDateTimeInterface, Stringable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        /** @psalm-suppress UndefinedInterfaceMethod,ImpureMethodCall */
-        return static::getDiffFormatter()->timeAgoInWords($this, $options);
+        return static::diffFormatter()->timeAgoInWords($this, $options);
     }
 
     /**
