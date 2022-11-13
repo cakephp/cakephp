@@ -1052,12 +1052,12 @@ class ServerRequest implements ServerRequestInterface
      *
      * e.g. 'http', or 'https'
      *
-     * @return string|null The scheme used for the request.
+     * @return string The scheme used for the request.
      */
-    public function scheme(): ?string
+    public function scheme(): string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PROTO')) {
-            return $this->getEnv('HTTP_X_FORWARDED_PROTO');
+            return (string)$this->getEnv('HTTP_X_FORWARDED_PROTO');
         }
 
         return $this->getEnv('HTTPS') ? 'https' : 'http';
