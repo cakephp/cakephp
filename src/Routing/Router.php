@@ -213,7 +213,7 @@ class Router
     {
         static::$_request = $request;
 
-        static::$_requestContext['_base'] = $request->getAttribute('base');
+        static::$_requestContext['_base'] = $request->getAttribute('base', '');
         static::$_requestContext['params'] = $request->getAttribute('params', []);
 
         $uri = $request->getUri();
@@ -385,7 +385,7 @@ class Router
         $context = static::$_requestContext;
         $request = static::getRequest();
 
-        $context['_base'] = $context['_base'] ?? Configure::read('App.base') ?: '';
+        $context['_base'] ??= '';
 
         if (empty($url)) {
             $here = $request ? $request->getRequestTarget() : '/';
