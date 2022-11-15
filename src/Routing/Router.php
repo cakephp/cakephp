@@ -212,16 +212,13 @@ class Router
     public static function setRequest(ServerRequest $request): void
     {
         static::$_request = $request;
-
-        static::$_requestContext['_base'] = $request->getAttribute('base');
-        static::$_requestContext['params'] = $request->getAttribute('params', []);
-
         $uri = $request->getUri();
-        static::$_requestContext += [
-            '_scheme' => $uri->getScheme(),
-            '_host' => $uri->getHost(),
-            '_port' => $uri->getPort(),
-        ];
+
+        static::$_requestContext['_base'] = $request->getAttribute('base', '');
+        static::$_requestContext['params'] = $request->getAttribute('params', []);
+        static::$_requestContext['_scheme'] ??= $uri->getScheme();
+        static::$_requestContext['_host'] ??= $uri->getHost();
+        static::$_requestContext['_port'] ??= $uri->getPort();
     }
 
     /**
@@ -383,12 +380,10 @@ class Router
     public static function url(UriInterface|array|string|null $url = null, bool $full = false): string
     {
         $context = static::$_requestContext;
-        $request = static::getRequest();
-
-        $context['_base'] = $context['_base'] ?? Configure::read('App.base') ?: '';
+        $context['_base'] ??= '';
 
         if (empty($url)) {
-            $here = $request ? $request->getRequestTarget() : '/';
+            $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
@@ -464,7 +459,7 @@ class Router
         } else {
             $url = (string)$url;
 
-            $plainString = (
+            if (
                 str_starts_with($url, 'javascript:') ||
                 str_starts_with($url, 'mailto:') ||
                 str_starts_with($url, 'tel:') ||
@@ -473,11 +468,10 @@ class Router
                 str_starts_with($url, '?') ||
                 str_starts_with($url, '//') ||
                 str_contains($url, '://')
-            );
-
-            if ($plainString) {
+            ) {
                 return $url;
             }
+
             $output = $context['_base'] . $url;
         }
 
