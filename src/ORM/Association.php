@@ -26,6 +26,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
@@ -977,41 +978,40 @@ abstract class Association
 
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
-        $query->formatResults(function (
-            CollectionInterface $results,
-            SelectQuery $query
-        ) use (
-            $formatters,
-            $property,
-            $propertyPath
-        ) {
-            $extracted = [];
-            foreach ($results as $result) {
-                foreach ($propertyPath as $propertyPathItem) {
-                    if (!isset($result[$propertyPathItem])) {
-                        $result = null;
-                        break;
+        $query->formatResults(
+            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath) {
+                $extracted = [];
+                foreach ($results as $result) {
+                    foreach ($propertyPath as $propertyPathItem) {
+                        if (!isset($result[$propertyPathItem])) {
+                            $result = null;
+                            break;
+                        }
+                        $result = $result[$propertyPathItem];
                     }
-                    $result = $result[$propertyPathItem];
+                    $extracted[] = $result;
                 }
-                $extracted[] = $result;
-            }
-            $extracted = new Collection($extracted);
-            foreach ($formatters as $callable) {
-                $extracted = new ResultSetDecorator($callable($extracted, $query));
-            }
+                $extracted = new Collection($extracted);
+                foreach ($formatters as $callable) {
+                    $extracted = $callable($extracted, $query);
+                    if (!$extracted instanceof ResultSetInterface) {
+                        $extracted = new ResultSetDecorator($extracted);
+                    }
+                }
 
-            $results = $results->insert($property, $extracted);
-            if ($query->isHydrationEnabled()) {
-                $results = $results->map(function (EntityInterface $result) {
-                    $result->clean();
+                $results = $results->insert($property, $extracted);
+                if ($query->isHydrationEnabled()) {
+                    $results = $results->map(function (EntityInterface $result) {
+                        $result->clean();
 
-                    return $result;
-                });
-            }
+                        return $result;
+                    });
+                }
 
-            return $results;
-        }, SelectQuery::PREPEND);
+                return $results;
+            },
+            SelectQuery::PREPEND
+        );
     }
 
     /**
