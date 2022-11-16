@@ -17,11 +17,13 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Closure;
@@ -1003,35 +1005,40 @@ abstract class Association
 
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
-        $query->formatResults(function ($results, $query) use ($formatters, $property, $propertyPath) {
-            $extracted = [];
-            foreach ($results as $result) {
-                foreach ($propertyPath as $propertyPathItem) {
-                    if (!isset($result[$propertyPathItem])) {
-                        $result = null;
-                        break;
+        $query->formatResults(
+            function (CollectionInterface $results, $query) use ($formatters, $property, $propertyPath) {
+                $extracted = [];
+                foreach ($results as $result) {
+                    foreach ($propertyPath as $propertyPathItem) {
+                        if (!isset($result[$propertyPathItem])) {
+                            $result = null;
+                            break;
+                        }
+                        $result = $result[$propertyPathItem];
                     }
-                    $result = $result[$propertyPathItem];
+                    $extracted[] = $result;
                 }
-                $extracted[] = $result;
-            }
-            $extracted = new Collection($extracted);
-            foreach ($formatters as $callable) {
-                $extracted = new ResultSetDecorator($callable($extracted, $query));
-            }
+                $extracted = new Collection($extracted);
+                foreach ($formatters as $callable) {
+                    $extracted = $callable($extracted, $query);
+                    if (!$extracted instanceof ResultSetInterface) {
+                        $extracted = new ResultSetDecorator($extracted);
+                    }
+                }
 
-            /** @var \Cake\Collection\CollectionInterface $results */
-            $results = $results->insert($property, $extracted);
-            if ($query->isHydrationEnabled()) {
-                $results = $results->map(function ($result) {
-                    $result->clean();
+                $results = $results->insert($property, $extracted);
+                if ($query->isHydrationEnabled()) {
+                    $results = $results->map(function ($result) {
+                        $result->clean();
 
-                    return $result;
-                });
-            }
+                        return $result;
+                    });
+                }
 
-            return $results;
-        }, Query::PREPEND);
+                return $results;
+            },
+            Query::PREPEND
+        );
     }
 
     /**
