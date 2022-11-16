@@ -39,11 +39,7 @@ trait ViewVarsTrait
      */
     public function viewBuilder(): ViewBuilder
     {
-        if (!isset($this->_viewBuilder)) {
-            $this->_viewBuilder = new ViewBuilder();
-        }
-
-        return $this->_viewBuilder;
+        return $this->_viewBuilder ??= new ViewBuilder();
     }
 
     /**

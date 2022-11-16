@@ -1594,11 +1594,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function resultSetFactory(): ResultSetFactory
     {
-        if (isset($this->resultSetFactory)) {
-            return $this->resultSetFactory;
-        }
-
-        return $this->resultSetFactory = new ResultSetFactory();
+        return $this->resultSetFactory ??= new ResultSetFactory();
     }
 
     /**

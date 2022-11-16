@@ -287,11 +287,7 @@ class Sqlserver extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new SqlserverSchemaDialect($this);
+        return $this->_schemaDialect ??= new SqlserverSchemaDialect($this);
     }
 
     /**
