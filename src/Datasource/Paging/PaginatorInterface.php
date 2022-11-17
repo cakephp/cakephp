@@ -41,3 +41,9 @@ interface PaginatorInterface
      */
     public function getPagingParams(): array;
 }
+
+// phpcs:disable
+// The old interface Cake\Datasource\PaginatorInterface will not get loaded during
+// instanceof / type checks so ensure it's loaded here.
+class_exists('Cake\Datasource\PaginatorInterface');
+// phpcs:enable
