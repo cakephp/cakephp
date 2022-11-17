@@ -83,11 +83,11 @@ jobs:
 
     - name: Get composer cache directory
       id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Get date part for cache key
       id: key-date
-      run: echo "::set-output name=date::$(date +'%Y-%m')"
+      run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
     - name: Cache composer dependencies
       uses: actions/cache@v3
@@ -155,11 +155,11 @@ jobs:
       PHP_VERSION: '8.0'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Get date part for cache key
       id: key-date
-      run: echo "::set-output name=date::$(date +'%Y-%m')"
+      run: echo "date=$(date +'%Y-%m')" >> $env:GITHUB_OUTPUT
 
     - name: Setup PHP extensions cache
       id: php-ext-cache
@@ -193,7 +193,7 @@ jobs:
 
     - name: Get composer cache directory
       id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $env:GITHUB_OUTPUT
 
     - name: Cache composer dependencies
       uses: actions/cache@v3
@@ -234,11 +234,11 @@ jobs:
 
     - name: Get composer cache directory
       id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Get date part for cache key
       id: key-date
-      run: echo "::set-output name=date::$(date +'%Y-%m')"
+      run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
     - name: Cache composer dependencies
       uses: actions/cache@v3
