@@ -40,3 +40,10 @@ class SimplePaginator extends NumericPaginator
         return null;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Datasource\Paging\SimplePaginator',
+    'Cake\Datasource\SimplePaginator'
+);
+// phpcs:enable

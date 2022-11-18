@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class_alias(
-    'Cake\Datasource\Paging\SimplePaginator',
-    'Cake\Datasource\SimplePaginator'
-);
+class_exists('Cake\Datasource\Paging\SimplePaginator');
 deprecationWarning(
     'Use Cake\Datasource\Paging\SimplePaginator instead of Cake\Datasource\SimplePaginator.'
 );

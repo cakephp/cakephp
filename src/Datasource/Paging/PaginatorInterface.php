@@ -43,7 +43,8 @@ interface PaginatorInterface
 }
 
 // phpcs:disable
-// The old interface Cake\Datasource\PaginatorInterface will not get loaded during
-// instanceof / type checks so ensure it's loaded here.
-class_exists('Cake\Datasource\PaginatorInterface');
+class_alias(
+    'Cake\Datasource\Paging\PaginatorInterface',
+    'Cake\Datasource\PaginatorInterface'
+);
 // phpcs:enable

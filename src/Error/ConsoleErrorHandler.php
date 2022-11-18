@@ -130,3 +130,10 @@ class ConsoleErrorHandler extends BaseErrorHandler
         exit($code);
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Error\ConsoleErrorHandler',
+    'Cake\Console\ConsoleErrorHandler'
+);
+// phpcs:enable
