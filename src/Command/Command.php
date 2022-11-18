@@ -68,3 +68,10 @@ class Command extends BaseCommand
     {
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Command\Command',
+    'Cake\Console\Command'
+);
+// phpcs:enable

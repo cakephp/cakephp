@@ -32,3 +32,10 @@ class MissingControllerException extends CakeException
      */
     protected $_messageTemplate = 'Controller class %s could not be found.';
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Http\Exception\MissingControllerException',
+    'Cake\Routing\Exception\MissingControllerException'
+);
+// phpcs:enable
