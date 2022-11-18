@@ -41,3 +41,10 @@ interface PaginatorInterface
      */
     public function getPagingParams(): array;
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Datasource\Paging\PaginatorInterface',
+    'Cake\Datasource\PaginatorInterface'
+);
+// phpcs:enable

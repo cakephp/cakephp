@@ -680,3 +680,10 @@ class NumericPaginator implements PaginatorInterface
         return $options;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Datasource\Paging\NumericPaginator',
+    'Cake\Datasource\Paginator'
+);
+// phpcs:enable

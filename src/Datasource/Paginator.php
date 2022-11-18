@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class_alias(
-    'Cake\Datasource\Paging\NumericPaginator',
-    'Cake\Datasource\Paginator'
-);
+class_exists('Cake\Datasource\Paging\NumericPaginator');
 deprecationWarning(
     'Use Cake\Datasource\Paging\NumericPaginator instead of Cake\Datasource\Paginator.'
 );
