@@ -28,6 +28,7 @@ use Closure;
  * @method bool supports(string $feature) Checks whether a feature is supported by the driver.
  * @method bool inTransaction() Returns whether a transaction is active.
  * @method array config() Get the configuration data used to create the driver.
+ * @method string getRole() Returns the connection role this driver prforms.
  */
 interface DriverInterface
 {

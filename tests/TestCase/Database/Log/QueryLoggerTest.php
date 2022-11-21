@@ -77,6 +77,6 @@ class QueryLoggerTest extends TestCase
         ]);
         $logger->log(LogLevel::DEBUG, '', compact('query'));
 
-        $this->assertStringContainsString('connection=test duration=', current(Log::engine('queryLoggerTest')->read()));
+        $this->assertStringContainsString('connection=test role= duration=', current(Log::engine('queryLoggerTest')->read()));
     }
 }

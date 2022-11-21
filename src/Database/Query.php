@@ -25,7 +25,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Datasource\ConnectionManager;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -62,6 +61,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var \Cake\Database\Connection
      */
     protected $_connection;
+
+    /**
+     * Connection role ('read' or 'write')
+     *
+     * @var string
+     */
+    protected $connectionRole = Connection::ROLE_WRITE;
 
     /**
      * Type of this query (select, insert, update, delete).
@@ -231,48 +237,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Sets the connection for this query to the read-only role for the current connection.
+     * Returns the connection role ('read' or 'write')
      *
-     * @return $this
+     * @return string
      */
-    public function useReadRole()
+    public function getConnectionRole(): string
     {
-        return $this->useRole(Connection::ROLE_READ);
-    }
-
-    /**
-     * Sets the connection for this query to the write role for the current connection.
-     *
-     * @return $this
-     */
-    public function useWriteRole()
-    {
-        return $this->useRole(Connection::ROLE_WRITE);
-    }
-
-    /**
-     * Sets the connection for this query to the specified role for the current connection.
-     *
-     * @param string $role Connection role - read or write
-     * @return $this
-     */
-    public function useRole(string $role)
-    {
-        assert(in_array($role, [Connection::ROLE_READ, Connection::ROLE_WRITE], true));
-        if ($this->_connection->role() === $role) {
-            return $this;
-        }
-
-        $name = $this->_connection->configName();
-        $roleName = ConnectionManager::getName($role, $name);
-        if ($roleName === $name) {
-            return $this;
-        }
-
-        /** @var \Cake\Database\Connection $connection */
-        $connection = ConnectionManager::get($roleName);
-
-        return $this->setConnection($connection);
+        return $this->connectionRole;
     }
 
     /**
@@ -2353,7 +2324,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _decorateStatement(StatementInterface $statement)
     {
         $typeMap = $this->getSelectTypeMap();
-        $driver = $this->getConnection()->getDriver();
+        $driver = $this->getConnection()->getDriver($this->connectionRole);
 
         if ($this->typeCastEnabled && $typeMap->toArray()) {
             $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));

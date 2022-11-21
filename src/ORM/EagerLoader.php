@@ -630,7 +630,7 @@ class EagerLoader
             return $statement;
         }
 
-        $driver = $query->getConnection()->getDriver();
+        $driver = $query->getConnection()->getDriver($query->getConnectionRole());
         [$collected, $statement] = $this->_collectKeys($external, $query, $statement);
 
         // No records found, skip trying to attach associations.

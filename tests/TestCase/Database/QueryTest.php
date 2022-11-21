@@ -36,7 +36,6 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use DateTimeImmutable;
@@ -94,57 +93,24 @@ class QueryTest extends TestCase
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
         unset($this->connection);
-
-        ConnectionManager::drop('test:read');
     }
 
     public function testConnectionRoles(): void
     {
-        $query = new Query($this->connection);
+        // Defaults to write role
+        $this->assertSame(Connection::ROLE_WRITE, (new Query($this->connection))->getConnectionRole());
 
-        // Defaults to write "test" connection
-        $query->useReadRole();
-        $this->assertSame('test', $query->getConnection()->configName());
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
+        $selectQuery = $this->connection->selectQuery();
+        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->getConnectionRole());
 
-        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
+        // Can set read role for select queries
+        $this->assertSame(Connection::ROLE_READ, $selectQuery->setConnectionRole(Connection::ROLE_READ)->getConnectionRole());
 
-        $query->useReadRole();
-        $this->assertSame('test:read', $query->getConnection()->configName());
-        $this->assertSame(Connection::ROLE_READ, $query->getConnection()->role());
+        // Can set read role for select queries
+        $this->assertSame(Connection::ROLE_READ, $selectQuery->useReadRole()->getConnectionRole());
 
-        $query->useWriteRole();
-        $this->assertSame('test', $query->getConnection()->configName());
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
-    }
-
-    public function testConnectionRolesManualWriteConnection(): void
-    {
-        $config = $this->connection->config();
-        $config['name'] = 'not-in-manager';
-
-        $query = new Query(new Connection($config));
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
-
-        $query->useWriteRole();
-        $this->assertSame('not-in-manager', $query->getConnection()->configName());
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
-
-        $query->useReadRole();
-        $this->assertSame('not-in-manager', $query->getConnection()->configName());
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnection()->role());
-    }
-
-    public function testConnectionRolesManualReadConnection(): void
-    {
-        $config = $this->connection->config();
-        $config['name'] = 'not-in-manager:read';
-
-        $query = new Query(new Connection($config));
-        $this->assertSame(Connection::ROLE_READ, $query->getConnection()->role());
-
-        $this->expectException(MissingDatasourceConfigException::class);
-        $query->useWriteRole();
+        // Can set write role for select queries
+        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
     /**

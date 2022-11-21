@@ -201,7 +201,7 @@ class QueryCompiler
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
 
-        $driver = $query->getConnection()->getDriver();
+        $driver = $query->getConnection()->getDriver($query->getConnectionRole());
         $quoteIdentifiers = $driver->isAutoQuotingEnabled() || $this->_quotedSelectAliases;
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $binder);

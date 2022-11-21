@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Query;
 
+use Cake\Database\Connection;
 use Cake\Database\Query;
 
 /**
@@ -88,5 +89,39 @@ class SelectQuery extends Query
         $this->_deprecatedMethod('set()');
 
         return parent::set($key, $value, $types);
+    }
+
+    /**
+     * Sets the connection role.
+     *
+     * @param string $role Connection role ('read' or 'write')
+     * @return $this
+     */
+    public function setConnectionRole(string $role)
+    {
+        assert($role === Connection::ROLE_READ || $role === Connection::ROLE_WRITE);
+        $this->connectionRole = $role;
+
+        return $this;
+    }
+
+    /**
+     * Sets the connection role to read.
+     *
+     * @return $this
+     */
+    public function useReadRole()
+    {
+        return $this->setConnectionRole(Connection::ROLE_READ);
+    }
+
+    /**
+     * Sets the connection role to write.
+     *
+     * @return $this
+     */
+    public function useWriteRole()
+    {
+        return $this->setConnectionRole(Connection::ROLE_WRITE);
     }
 }

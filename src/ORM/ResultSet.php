@@ -161,7 +161,7 @@ class ResultSet implements ResultSetInterface
     {
         $repository = $query->getRepository();
         $this->_statement = $statement;
-        $this->_driver = $query->getConnection()->getDriver();
+        $this->_driver = $query->getConnection()->getDriver($query->getConnectionRole());
         $this->_defaultTable = $repository;
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
