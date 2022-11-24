@@ -175,11 +175,11 @@ trait EmailTrait
     /**
      * Asserts an email was sent from an address
      *
-     * @param string $address Email address
+     * @param array<string>|string $address Email address
      * @param string $message Message
      * @return void
      */
-    public function assertMailSentFrom(string $address, string $message = ''): void
+    public function assertMailSentFrom($address, string $message = ''): void
     {
         $this->assertThat($address, new MailSentFrom(), $message);
     }
