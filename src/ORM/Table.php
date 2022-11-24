@@ -20,6 +20,7 @@ use ArrayObject;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
@@ -387,9 +388,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_table === null) {
             $table = namespaceSplit(static::class);
-            $table = substr(end($table), 0, -5);
+            $table = substr(end($table), 0, -5) ?: $this->_alias;
             if (!$table) {
-                $table = $this->getAlias();
+                throw new CakeException(
+                    'You must specify either the `alias` or the `table` option for the constructor.'
+                );
             }
             $this->_table = Inflector::underscore($table);
         }
@@ -419,7 +422,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr(end($alias), 0, -5) ?: $this->getTable();
+            $alias = substr(end($alias), 0, -5) ?: $this->_table;
+            if (!$alias) {
+                throw new CakeException(
+                    'You must specify either the `alias` or the `table` option for the constructor.'
+                );
+            }
             $this->_alias = $alias;
         }
 
