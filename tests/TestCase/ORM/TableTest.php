@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use ArrayObject;
 use BadMethodCallException;
 use Cake\Collection\Collection;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\QueryExpression;
@@ -267,6 +268,24 @@ class TableTest extends TestCase
 
         $table->setAlias('AnotherOne');
         $this->assertSame('AnotherOne', $table->getAlias());
+    }
+
+    public function testGetAliasException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must specify either the `alias` or the `table` option for the constructor.');
+
+        $table = new Table();
+        $table->getAlias();
+    }
+
+    public function testGetTableException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must specify either the `alias` or the `table` option for the constructor.');
+
+        $table = new Table();
+        $table->getTable();
     }
 
     /**
