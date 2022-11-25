@@ -301,10 +301,10 @@ class Message implements JsonSerializable, Serializable
      */
     protected $emailPattern = self::EMAIL_PATTERN;
 
-    /** 
+    /**
      * Properties that could be serialized
-     * 
-     * @var string[] 
+     *
+     * @var string[]
      */
     protected $serializableProperties = [
         'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
