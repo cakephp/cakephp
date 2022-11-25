@@ -27,7 +27,6 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\QueryInterface;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Association;
 use Cake\ORM\EagerLoader;
@@ -734,7 +733,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function _decorateResults(iterable $result): ResultSetInterface
     {
-        $decorator = $this->_decoratorClass();
+        $decorator = $this->resultSetFactory()->decoratorClass();
 
         if ($this->_mapReduce) {
             foreach ($this->_mapReduce as $functions) {
@@ -758,16 +757,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         return $result;
-    }
-
-    /**
-     * Returns the name of the class to be used for decorating results
-     *
-     * @return class-string<\Cake\Datasource\ResultSetInterface>
-     */
-    protected function _decoratorClass(): string
-    {
-        return ResultSetDecorator::class;
     }
 
     /**
@@ -1591,7 +1580,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
-        return $this->resultSetFactory()->createResultSet($this, $results);
+        return $this->resultSetFactory()->createResultSet($results, $this);
     }
 
     /**
@@ -1599,7 +1588,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return \Cake\ORM\ResultSetFactory
      */
-    protected function resultSetFactory(): ResultSetFactory
+    public function resultSetFactory(): ResultSetFactory
     {
         return $this->resultSetFactory ??= new ResultSetFactory();
     }

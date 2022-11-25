@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
@@ -25,7 +24,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
@@ -996,11 +994,12 @@ abstract class Association
                     }
                     $extracted[] = $result;
                 }
-                $extracted = new Collection($extracted);
+                $extracted = $query->resultSetFactory()->createResultSet($extracted);
+                $decoratorClass = $query->resultSetFactory()->decoratorClass();
                 foreach ($formatters as $callable) {
                     $extracted = $callable($extracted, $query);
                     if (!$extracted instanceof ResultSetInterface) {
-                        $extracted = new ResultSetDecorator($extracted);
+                        $extracted = new $decoratorClass($extracted);
                     }
                 }
 
