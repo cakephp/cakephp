@@ -524,6 +524,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns the connection role this driver performs.
+     *
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
@@ -542,6 +552,7 @@ abstract class Driver implements DriverInterface
     {
         return [
             'connected' => $this->_connection !== null,
+            'role' => $this->getRole(),
         ];
     }
 }
