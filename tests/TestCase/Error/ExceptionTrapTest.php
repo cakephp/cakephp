@@ -24,6 +24,7 @@ use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -314,6 +315,35 @@ class ExceptionTrapTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertNotEmpty($out);
+    }
+
+    public function testBeforeRenderEventExceptionChanged(): void
+    {
+        $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
+            $event->setData('exception', new NotFoundException());
+        });
+        $error = new InvalidArgumentException('nope', 100);
+
+        ob_start();
+        $trap->handleException($error);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('404 : Not Found', $out);
+    }
+
+    public function testBeforeRenderEventReturnResponse(): void
+    {
+        $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
+            return 'Here B Erroz';
+        });
+
+        ob_start();
+        $trap->handleException(new NotFoundException());
+        $out = ob_get_clean();
+
+        $this->assertSame('Here B Erroz', $out);
     }
 
     public function testHandleShutdownNoOp()
