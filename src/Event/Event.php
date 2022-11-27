@@ -22,6 +22,7 @@ use Cake\Core\Exception\CakeException;
  * Class Event
  *
  * @template TSubject
+ * @implements \Cake\Event\EventInterface<TSubject>
  */
 class Event implements EventInterface
 {
@@ -105,7 +106,6 @@ class Event implements EventInterface
      * @return object
      * @throws \Cake\Core\Exception\CakeException
      * @psalm-return TSubject
-     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function getSubject()
     {
@@ -172,8 +172,7 @@ class Event implements EventInterface
             return $this->_data[$key] ?? null;
         }
 
-        /** @psalm-suppress RedundantCastGivenDocblockType */
-        return (array)$this->_data;
+        return $this->_data;
     }
 
     /**
