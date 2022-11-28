@@ -29,6 +29,9 @@ use SplFixedArray;
  * This object is responsible for correctly nesting result keys reported from
  * the query, casting each field to the correct type and executing the extra
  * queries required for eager loading external associations.
+ *
+ * @template T of \Cake\Datasource\EntityInterface|array
+ * @implements \Cake\Datasource\ResultSetInterface<T>
  */
 class ResultSet implements ResultSetInterface
 {
@@ -51,7 +54,8 @@ class ResultSet implements ResultSetInterface
     /**
      * Last record fetched from the statement
      *
-     * @var object|array
+     * @var \Cake\Datasource\EntityInterface|array
+     * @psalm-var T
      */
     protected $_current;
 
@@ -182,7 +186,8 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @return object|array
+     * @return \Cake\Datasource\EntityInterface|array
+     * @psalm-return T
      */
     #[\ReturnTypeWillChange]
     public function current()
@@ -276,7 +281,8 @@ class ResultSet implements ResultSetInterface
      *
      * This method will also close the underlying statement cursor.
      *
-     * @return object|array|null
+     * @return \Cake\Datasource\EntityInterface|array|null
+     * @psalm-return T|null
      */
     public function first()
     {
