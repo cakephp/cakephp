@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
+use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
@@ -175,20 +177,22 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats the passed date/time value into required string format.
      *
-     * @param \DateTimeInterface|string|int|null $value Value to deconstruct.
+     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $value Value to deconstruct.
      * @param array<string, mixed> $options Options for conversion.
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */
-    protected function formatDateTime(DateTimeInterface|string|int|null $value, array $options): string
-    {
+    protected function formatDateTime(
+        Chronos|ChronosDate|DateTimeInterface|string|int|null $value,
+        array $options
+    ): string {
         if ($value === '' || $value === null) {
             return '';
         }
 
         try {
-            if ($value instanceof DateTimeInterface) {
-                /** @var \DateTime|\DateTimeImmutable $dateTime Expand type for phpstan */
+            if ($value instanceof Chronos || $value instanceof ChronosDate || $value instanceof DateTimeInterface) {
+                /** @var \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTime|\DateTimeImmutable $dateTime Expand type for phpstan */
                 $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);

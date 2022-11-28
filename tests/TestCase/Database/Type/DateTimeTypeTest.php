@@ -209,8 +209,8 @@ class DateTimeTypeTest extends TestCase
             ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
 
             [new DateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
-            [new NativeDateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
-            [new DateTimeImmutable('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
+            [new NativeDateTime('2017-04-05T17:18:00+00:00'), new NativeDateTime('2017-04-05T17:18:00+00:00')],
+            [new DateTimeImmutable('2017-04-05T17:18:00+00:00'), new DateTimeImmutable('2017-04-05T17:18:00+00:00')],
 
             // valid array types
             [
@@ -261,18 +261,18 @@ class DateTimeTypeTest extends TestCase
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new DateTime(date('Y-m-d 00:00:00')),
+                null,
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new DateTime(date('Y-m-d 00:00:00')),
+                null,
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new DateTime('2014-02-14 00:00:00'),
+                null,
             ],
         ];
     }
@@ -376,14 +376,5 @@ class DateTimeTypeTest extends TestCase
         $expected = new DateTime('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test that toImmutable changes all the methods to create frozen time instances.
-     */
-    public function testToImmutableAndToMutable(): void
-    {
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
     }
 }

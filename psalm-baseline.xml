@@ -79,10 +79,39 @@
       <code>pid Dev</code>
     </MethodSignatureMustProvideReturnType>
   </file>
+  <file src="src/Database/Statement/SqlserverStatement.php">
+    <UndefinedConstant occurrences="1">
+      <code>PDO::SQLSRV_ENCODING_BINARY</code>
+    </UndefinedConstant>
+  </file>
   <file src="src/Datasource/Paging/PaginatedResultSet.php">
     <MethodSignatureMustProvideReturnType occurrences="1">
       <code>://cakephp.org)</code>
     </MethodSignatureMustProvideReturnType>
+  </file>
+  <file src="src/I18n/Date.php">
+    <ImpureMethodCall occurrences="2">
+      <code>dateAgoInWords</code>
+      <code>diffFormatter</code>
+    </ImpureMethodCall>
+  </file>
+  <file src="src/I18n/DateFormatTrait.php">
+    <InaccessibleProperty occurrences="2">
+      <code>$this-&gt;native</code>
+      <code>$time-&gt;native</code>
+    </InaccessibleProperty>
+    <RedundantCondition occurrences="1">
+      <code>$time instanceof DateTime</code>
+    </RedundantCondition>
+    <TypeDoesNotContainType occurrences="1">
+      <code>$time instanceof DateTime</code>
+    </TypeDoesNotContainType>
+  </file>
+  <file src="src/I18n/DateTime.php">
+    <ImpureMethodCall occurrences="2">
+      <code>diffFormatter</code>
+      <code>timeAgoInWords</code>
+    </ImpureMethodCall>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>

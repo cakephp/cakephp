@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\Cache\Cache;
 use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
@@ -53,7 +54,7 @@ class DateTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Date::setDefaultLocale(null);
+        DateTime::setDefaultLocale(null);
         date_default_timezone_set('UTC');
     }
 
@@ -87,7 +88,7 @@ class DateTest extends TestCase
         $expected = '00:00:00';
         $this->assertSame($expected, $result);
 
-        Date::setDefaultLocale('fr-FR');
+        DateTime::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
         $expected = 'jeudi 14 janvier 2010 00:00:00';
@@ -168,7 +169,7 @@ class DateTest extends TestCase
         $date = Date::parseDate('11/6/15');
         $this->assertSame('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        Date::setDefaultLocale('fr-FR');
+        DateTime::setDefaultLocale('fr-FR');
         $date = Date::parseDate('13 10, 2015');
         $this->assertSame('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
@@ -181,7 +182,7 @@ class DateTest extends TestCase
         $date = Date::parseDate('11/6/15 12:33:12');
         $this->assertSame('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        Date::setDefaultLocale('fr-FR');
+        DateTime::setDefaultLocale('fr-FR');
         $date = Date::parseDate('13 10, 2015 12:54:12');
         $this->assertSame('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
@@ -191,13 +192,13 @@ class DateTest extends TestCase
      */
     public function testLenientParseDate(): void
     {
-        Date::setDefaultLocale('pt_BR');
+        DateTime::setDefaultLocale('pt_BR');
 
-        Date::disableLenientParsing();
+        DateTime::disableLenientParsing();
         $date = Date::parseDate('04/21/2013');
         $this->assertSame(null, $date);
 
-        Date::enableLenientParsing();
+        DateTime::enableLenientParsing();
         $date = Date::parseDate('04/21/2013');
         $this->assertSame('2014-09-04', $date->format('Y-m-d'));
     }
@@ -482,21 +483,12 @@ class DateTest extends TestCase
     /**
      * Tests the default locale setter.
      */
-    public function testGetSetDefaultLocale(): void
-    {
-        Date::setDefaultLocale('fr-FR');
-        $this->assertSame('fr-FR', Date::getDefaultLocale());
-    }
-
-    /**
-     * Tests the default locale setter.
-     */
     public function testDefaultLocaleEffectsFormatting(): void
     {
         $result = Date::parseDate('12/03/2015');
         $this->assertSame('Dec 3, 2015', $result->nice());
 
-        Date::setDefaultLocale('fr-FR');
+        DateTime::setDefaultLocale('fr-FR');
 
         $result = Date::parseDate('12/03/2015');
         $this->assertSame('12 mars 2015', $result->nice());

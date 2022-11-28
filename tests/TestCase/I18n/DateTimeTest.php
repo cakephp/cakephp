@@ -685,20 +685,6 @@ class DateTimeTest extends TestCase
     }
 
     /**
-     * Tests debugInfo
-     */
-    public function testDebugInfo(): void
-    {
-        $time = new DateTime('2014-04-20 10:10:10');
-        $expected = [
-            'time' => '2014-04-20 10:10:10.000000+00:00',
-            'timezone' => 'UTC',
-            'fixedNowTime' => DateTime::getTestNow()->format('Y-m-d\TH:i:s.uP'),
-        ];
-        $this->assertEquals($expected, $time->__debugInfo());
-    }
-
-    /**
      * Tests parsing a string into a Time object based on the locale format.
      */
     public function testParseDateTime(): void

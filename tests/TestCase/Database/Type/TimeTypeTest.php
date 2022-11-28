@@ -71,7 +71,7 @@ class TimeTypeTest extends TestCase
         $this->assertSame('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf(DateTimeImmutable::class, $result);
+        $this->assertInstanceOf(DateTime::class, $result);
         $this->assertSame('16', $result->format('H'));
         $this->assertSame('30', $result->format('i'));
         $this->assertSame('15', $result->format('s'));
@@ -140,10 +140,44 @@ class TimeTypeTest extends TestCase
             ['14:15', new DateTime('14:15:00')],
 
             [new DateTime('13:10:10'), new DateTime('13:10:10')],
-            [new NativeDateTime('13:10:10'), new DateTime('13:10:10')],
-            [new DateTimeImmutable('13:10:10'), new DateTime('13:10:10')],
+            [new NativeDateTime('13:10:10'), new NativeDateTime('13:10:10')],
+            [new DateTimeImmutable('13:10:10'), new DateTimeImmutable('13:10:10')],
 
             // valid array types
+            [
+                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+                new DateTime('13:14:15'),
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'meridian' => 'am',
+                ],
+                new DateTime('01:14:15'),
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'meridian' => 'pm',
+                ],
+                new DateTime('13:14:15'),
+            ],
+            [
+                [
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                ],
+                new DateTime('01:14:15'),
+            ],
+            [
+                [
+                    'hour' => 1, 'minute' => 14,
+                ],
+                new DateTime('01:14:00'),
+            ],
+
+            // Invalid array types
             [
                 ['hour' => '', 'minute' => '', 'second' => ''],
                 null,
@@ -153,43 +187,15 @@ class TimeTypeTest extends TestCase
                 null,
             ],
             [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new DateTime('2014-02-14 13:14:15'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new DateTime('2014-02-14 01:14:15'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 13:14:15'),
-            ],
-            [
-                [
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                ],
-                new DateTime('01:14:15'),
-            ],
-
-            // Invalid array types
-            [
                 ['hour' => 'nope', 'minute' => 14, 'second' => 15],
-                new DateTime(date('Y-m-d 00:14:15')),
+                null,
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'nope', 'minute' => 'nope',
                 ],
-                new DateTime('2014-02-14 00:00:00'),
+                null,
             ],
         ];
     }
@@ -236,14 +242,5 @@ class TimeTypeTest extends TestCase
         $expected = new DateTime('03:20:00');
         $result = $this->type->useLocaleParser()->marshal('03.20');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
-    }
-
-    /**
-     * Test that toImmutable changes all the methods to create frozen time instances.
-     */
-    public function testToImmutableAndToMutable(): void
-    {
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));
-        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('11:23:12', $this->driver));
     }
 }

@@ -35,10 +35,9 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\I18n\DateTime;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
-use DateTime;
-use DateTimeImmutable;
 use InvalidArgumentException;
 use ReflectionProperty;
 use stdClass;
@@ -3749,8 +3748,8 @@ class SelectQueryTest extends TestCase
 
         $result = $query->execute()->fetchAll('assoc');
         $this->assertIsInt($result[0]['id']);
-        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
-        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['updated']);
+        $this->assertInstanceOf(DateTime::class, $result[0]['the_date']);
+        $this->assertInstanceOf(DateTime::class, $result[0]['updated']);
     }
 
     /**

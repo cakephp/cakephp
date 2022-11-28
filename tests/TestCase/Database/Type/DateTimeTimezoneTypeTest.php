@@ -403,22 +403,18 @@ class DateTimeTimezoneTypeTest extends TestCase
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new DateTime(date('Y-m-d 00:00:00')),
+                null,
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new DateTime(date('Y-m-d 00:00:00')),
+                null,
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new DateTime('2014-02-14 00:00:00'),
-            ],
-            [
-                DateTime::now(),
-                DateTime::now(),
+                null,
             ],
         ];
     }
