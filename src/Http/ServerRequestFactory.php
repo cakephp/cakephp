@@ -18,11 +18,11 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Laminas\Diactoros\UriFactory;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use function Laminas\Diactoros\marshalHeadersFromSapi;
-use function Laminas\Diactoros\marshalUriFromSapi;
 use function Laminas\Diactoros\normalizeServer;
 use function Laminas\Diactoros\normalizeUploadedFiles;
 
@@ -215,8 +215,8 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function marshalUriFromSapi(array $server, array $headers): array
     {
-        /** @psalm-suppress DeprecatedFunction */
-        $uri = marshalUriFromSapi($server, $headers);
+        /** @phpstan-ignore-next-line */
+        $uri = UriFactory::createFromSapi($server, $headers);
         [$base, $webroot] = static::getBase($uri, $server);
 
         // Look in PATH_INFO first, as this is the exact value we need prepared
