@@ -147,30 +147,32 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
+        $response = null;
         if ($this->errorHandler === null) {
             $handler = $this->getExceptionTrap();
             $handler->logException($exception, $request);
-        } else {
-            $handler = $this->getErrorHandler();
-            $handler->logException($exception, $request);
-        }
 
-        try {
             $event = $this->dispatchEvent(
                 'Exception.beforeRender',
                 ['exception' => $exception, 'request' => $request],
                 $handler
             );
 
+            $exception = $event->getData('exception');
+            assert($exception instanceof Throwable);
+            $renderer = $handler->renderer($exception, $request);
+
             $response = $event->getResult();
+        } else {
+            $handler = $this->getErrorHandler();
+            $handler->logException($exception, $request);
+
+            $renderer = $handler->getRenderer($exception, $request);
+        }
+
+        try {
             if ($response === null) {
-                $exception = $event->getData('exception');
-                assert($exception instanceof Throwable);
-                if ($handler instanceof ExceptionTrap) {
-                    $response = $handler->renderer($exception, $request)->render();
-                } else {
-                    $response = $handler->getRenderer($exception, $request)->render();
-                }
+                $response = $renderer->render();
             }
 
             return $response instanceof ResponseInterface
