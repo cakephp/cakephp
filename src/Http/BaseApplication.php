@@ -268,6 +268,8 @@ abstract class BaseApplication implements
     protected function buildContainer(): ContainerInterface
     {
         $container = new Container();
+        $container->add(ContainerInterface::class, $container);
+
         $this->services($container);
         foreach ($this->plugins->with('services') as $plugin) {
             $plugin->services($container);

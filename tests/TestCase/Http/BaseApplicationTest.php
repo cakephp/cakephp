@@ -235,6 +235,7 @@ class BaseApplicationTest extends TestCase
 
         $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertSame($container, $app->getContainer(), 'Should return a reference');
+        $this->assertTrue($container->has(ContainerInterface::class), 'Should have the container registered');
     }
 
     public function testBuildContainerEvent(): void
