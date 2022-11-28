@@ -221,15 +221,14 @@ trait PaginatorTestTrait
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
 
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertNull($pagingParams['PaginatorPosts']['direction']);
-        $this->assertFalse($pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertFalse($pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertEquals('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertEquals('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
     }
 
     /**

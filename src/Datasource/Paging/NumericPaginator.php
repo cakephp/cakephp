@@ -363,7 +363,7 @@ class NumericPaginator implements PaginatorInterface
         $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
 
-        if (!empty($defaults['order']) && count($defaults['order']) === 1) {
+        if (!empty($defaults['order']) && count($defaults['order']) >= 1) {
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
@@ -582,7 +582,7 @@ class NumericPaginator implements PaginatorInterface
 
         if (
             $options['sort'] === null
-            && count($options['order']) === 1
+            && count($options['order']) >= 1
             && !is_numeric(key($options['order']))
         ) {
             $options['sort'] = key($options['order']);
