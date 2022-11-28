@@ -55,6 +55,7 @@ class ResultSet implements ResultSetInterface
      * Last record fetched from the statement
      *
      * @var \Cake\Datasource\EntityInterface|array
+     * @psalm-var T
      */
     protected $_current;
 
@@ -186,6 +187,7 @@ class ResultSet implements ResultSetInterface
      * Part of Iterator interface.
      *
      * @return \Cake\Datasource\EntityInterface|array
+     * @psalm-return T
      */
     #[\ReturnTypeWillChange]
     public function current()
@@ -280,6 +282,7 @@ class ResultSet implements ResultSetInterface
      * This method will also close the underlying statement cursor.
      *
      * @return \Cake\Datasource\EntityInterface|array|null
+     * @psalm-return T|null
      */
     public function first()
     {
