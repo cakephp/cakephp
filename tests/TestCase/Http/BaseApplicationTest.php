@@ -75,7 +75,9 @@ class BaseApplicationTest extends TestCase
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame('Hello Jane', '' . $result->getBody());
-        $this->assertSame($request, $app->getContainer()->get(ServerRequest::class));
+        $container = $app->getContainer();
+        $this->assertSame($request, $container->get(ServerRequest::class));
+        $this->assertSame($container, $container->get(ContainerInterface::class));
     }
 
     /**
