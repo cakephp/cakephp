@@ -22,6 +22,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use InvalidArgumentException;
@@ -41,6 +42,7 @@ use Throwable;
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
     use InstanceConfigTrait;
+    use EventDispatcherTrait;
 
     /**
      * Default configuration values.
@@ -145,11 +147,22 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
+        $response = null;
         if ($this->errorHandler === null) {
             $handler = $this->getExceptionTrap();
             $handler->logException($exception, $request);
 
+            $event = $this->dispatchEvent(
+                'Exception.beforeRender',
+                ['exception' => $exception, 'request' => $request],
+                $handler
+            );
+
+            $exception = $event->getData('exception');
+            assert($exception instanceof Throwable);
             $renderer = $handler->renderer($exception, $request);
+
+            $response = $event->getResult();
         } else {
             $handler = $this->getErrorHandler();
             $handler->logException($exception, $request);
@@ -158,13 +171,13 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         }
 
         try {
-            /** @var \Psr\Http\Message\ResponseInterface|string $response */
-            $response = $renderer->render();
-            if (is_string($response)) {
-                return new Response(['body' => $response, 'status' => 500]);
+            if ($response === null) {
+                $response = $renderer->render();
             }
 
-            return $response;
+            return $response instanceof ResponseInterface
+                ? $response
+                : new Response(['body' => $response, 'status' => 500]);
         } catch (Throwable $internalException) {
             $handler->logException($internalException, $request);
 

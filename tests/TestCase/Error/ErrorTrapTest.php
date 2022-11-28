@@ -303,4 +303,19 @@ class ErrorTrapTest extends TestCase
         restore_error_handler();
         $this->assertSame('', $out);
     }
+
+    public function testEventReturnResponse(): void
+    {
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
+        $trap->register();
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+            return "This ain't so bad";
+        });
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $out = ob_get_clean();
+        restore_error_handler();
+        $this->assertSame("This ain't so bad", $out);
+    }
 }
