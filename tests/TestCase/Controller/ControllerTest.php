@@ -531,7 +531,7 @@ class ControllerTest extends TestCase
 
     public function testRedirectWithInvalidStatusCode(): void
     {
-        $Controller = new Controller();
+        $Controller = new Controller(new ServerRequest());
         $uri = new Uri('/foo/bar');
         $this->expectException(InvalidArgumentException::class);
         $Controller->redirect($uri, 200);

@@ -38,6 +38,7 @@ use Cake\Routing\Router;
 use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
