@@ -225,8 +225,8 @@ trait PaginatorTestTrait
         $result = $this->Paginator->paginate($table, [], $settings);
 
         $pagingParams = $result->pagingParams();
-        $this->assertEquals('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertEquals('PaginatorPosts.id', $pagingParams['sortDefault']);
+        $this->assertEquals('DESC', $pagingParams['directionDefault']);
     }
 
     /**
