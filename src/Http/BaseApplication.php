@@ -306,6 +306,7 @@ abstract class BaseApplication implements
     ): ResponseInterface {
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
+        $container->add(ContainerInterface::class, $container);
 
         if ($this->controllerFactory === null) {
             $this->controllerFactory = new ControllerFactory($container);
