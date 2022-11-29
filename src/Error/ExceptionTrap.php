@@ -111,36 +111,24 @@ class ExceptionTrap
      */
     public function renderer(Throwable $exception, ?ServerRequestInterface $request = null): ExceptionRendererInterface
     {
-        $trap = $this->getExceptionTrap();
-        $trap->logException($exception, $request);
+        $request = $request ?? Router::getRequest();
 
-        $event = $this->dispatchEvent(
-            'Exception.beforeRender',
-            ['exception' => $exception, 'request' => $request],
-            $trap
-        );
+        /** @var callable|class-string $class */
+        $class = $this->getConfig('exceptionRenderer') ?: $this->chooseRenderer();
 
-        $exception = $event->getData('exception');
-        assert($exception instanceof Throwable);
-        $renderer = $trap->renderer($exception, $request);
-
-        $response = $event->getResult();
-        try {
-            if ($response === null) {
-                $response = $renderer->render();
-            }
-            if (is_string($response)) {
-                return new Response(['body' => $response, 'status' => 500]);
+        if (is_string($class)) {
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
+            if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
+                throw new InvalidArgumentException(
+                    "Cannot use {$class} as an `exceptionRenderer`. " .
+                    'It must be an instance of Cake\Error\ExceptionRendererInterface.'
+                );
             }
 
-            return $response instanceof ResponseInterface
-                ? $response
-                : new Response(['body' => $response, 'status' => 500]);
-        } catch (Throwable $internalException) {
-            $trap->logException($internalException, $request);
-
-            return $this->handleInternalError();
+            return new $class($exception, $request, $this->_config);
         }
+
+        return $class($exception, $request);
     }
 
     /**

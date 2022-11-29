@@ -117,10 +117,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $trap = $this->getExceptionTrap();
         $trap->logException($exception, $request);
 
+        $event = $this->dispatchEvent(
+            'Exception.beforeRender',
+            ['exception' => $exception, 'request' => $request],
+            $trap
+        );
+
+        $exception = $event->getData('exception');
+        assert($exception instanceof Throwable);
         $renderer = $trap->renderer($exception, $request);
 
+        $response = $event->getResult();
         try {
-            $response = $renderer->render();
+            if ($response === null) {
+                $response = $renderer->render();
+            }
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);
             }
