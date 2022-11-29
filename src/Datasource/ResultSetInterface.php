@@ -19,7 +19,9 @@ namespace Cake\Datasource;
 use Cake\Collection\CollectionInterface;
 
 /**
- * Describes how a collection of datasource results should look like.
+ * Describes how a collection of datasource results should look like
+ *
+ * @template T
  */
 interface ResultSetInterface extends CollectionInterface
 {

@@ -331,7 +331,7 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 
     /**
@@ -365,7 +365,7 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
     }
 
     /**
@@ -395,7 +395,7 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
     }
 
     public function testGetLoggerDefault(): void
@@ -483,9 +483,9 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(4, $messages);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug: connection= duration=0 rows=0 ROLLBACK', $messages[1]);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[2]);
-        $this->assertSame('debug: connection= duration=0 rows=0 COMMIT', $messages[3]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[2]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[3]);
     }
 }

@@ -45,7 +45,7 @@ class EmailTraitTest extends TestCase
 
         Mailer::setConfig('default', [
             'transport' => 'test_tools',
-            'from' => 'default@example.com',
+            'from' => ['default@example.com' => 'Default Name'],
         ]);
         Mailer::setConfig('alternate', [
             'transport' => 'test_tools',
@@ -75,7 +75,7 @@ class EmailTraitTest extends TestCase
     {
         $this->sendEmails();
 
-        $this->assertMailSentFrom('default@example.com');
+        $this->assertMailSentFrom(['default@example.com' => 'Default Name']);
         $this->assertMailSentFrom('alternate@example.com');
 
         $this->assertMailSentTo('to@example.com');

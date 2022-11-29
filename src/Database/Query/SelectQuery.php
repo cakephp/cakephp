@@ -18,6 +18,7 @@ namespace Cake\Database\Query;
 
 use ArrayIterator;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Connection;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
@@ -915,5 +916,39 @@ class SelectQuery extends Query implements IteratorAggregate
         $return['decorators'] = count($this->_resultDecorators);
 
         return $return;
+    }
+
+    /**
+     * Sets the connection role.
+     *
+     * @param string $role Connection role ('read' or 'write')
+     * @return $this
+     */
+    public function setConnectionRole(string $role)
+    {
+        assert($role === Connection::ROLE_READ || $role === Connection::ROLE_WRITE);
+        $this->connectionRole = $role;
+
+        return $this;
+    }
+
+    /**
+     * Sets the connection role to read.
+     *
+     * @return $this
+     */
+    public function useReadRole()
+    {
+        return $this->setConnectionRole(Connection::ROLE_READ);
+    }
+
+    /**
+     * Sets the connection role to write.
+     *
+     * @return $this
+     */
+    public function useWriteRole()
+    {
+        return $this->setConnectionRole(Connection::ROLE_WRITE);
     }
 }

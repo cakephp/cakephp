@@ -622,10 +622,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->autoRender = false;
 
-        if ($status) {
-            $this->response = $this->response->withStatus($status);
+        if ($status < 300 || $status > 399) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid status code `%s`. It should be within the range ' .
+                    '`300` - `399` for redirect responses.', $status)
+            );
         }
 
+        $this->response = $this->response->withStatus($status);
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
         $result = $event->getResult();
         if ($result instanceof Response) {

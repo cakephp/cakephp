@@ -22,6 +22,8 @@ use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -33,7 +35,9 @@ use Cake\TestSuite\TestCase;
 use Error;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
+use Throwable;
 
 /**
  * Test for ErrorHandlerMiddleware
@@ -325,6 +329,28 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);
         $this->assertStringContainsString("'class' => 'Articles'", $logs[0]);
         $this->assertStringContainsString('Request URL:', $logs[0]);
+    }
+
+    public function testExceptionBeforeRenderEvent(): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
+            'exceptionRenderer' => WebExceptionRenderer::class,
+        ]));
+        $handler = new TestRequestHandler(function (): void {
+            throw new NotFoundException('whoops');
+        });
+
+        EventManager::instance()->on(
+            'Exception.beforeRender',
+            function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
+                return 'Response string from event';
+            }
+        );
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('Response string from event', (string)$result->getBody());
     }
 
     /**

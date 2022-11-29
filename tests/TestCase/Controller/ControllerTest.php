@@ -29,6 +29,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use InvalidArgumentException;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
 use RuntimeException;
@@ -460,7 +461,6 @@ class ControllerTest extends TestCase
             [304, 'Not Modified'],
             [305, 'Use Proxy'],
             [307, 'Temporary Redirect'],
-            [403, 'Forbidden'],
         ];
     }
 
@@ -527,6 +527,14 @@ class ControllerTest extends TestCase
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
         $this->assertSame($newResponse, $Controller->getResponse());
+    }
+
+    public function testRedirectWithInvalidStatusCode(): void
+    {
+        $Controller = new Controller();
+        $uri = new Uri('/foo/bar');
+        $this->expectException(InvalidArgumentException::class);
+        $Controller->redirect($uri, 200);
     }
 
     /**

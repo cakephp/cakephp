@@ -133,6 +133,7 @@ class LoggedQuery implements JsonSerializable, Stringable
         return [
             'numRows' => $this->numRows,
             'took' => $this->took,
+            'role' => $this->driver ? $this->driver->getRole() : '',
         ];
     }
 

@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -39,6 +40,7 @@ use Throwable;
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
     use InstanceConfigTrait;
+    use EventDispatcherTrait;
 
     /**
      * Default configuration values.
@@ -123,7 +125,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
                 return new Response(['body' => $response, 'status' => 500]);
             }
 
-            return $response;
+            return $response instanceof ResponseInterface
+                ? $response
+                : new Response(['body' => $response, 'status' => 500]);
         } catch (Throwable $internalException) {
             $trap->logException($internalException, $request);
 

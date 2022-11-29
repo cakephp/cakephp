@@ -44,7 +44,7 @@ class FakeConnection implements ConnectionInterface
         return $this->_config['name'];
     }
 
-    public function getDriver(): object
+    public function getDriver(string $role = self::ROLE_WRITE): object
     {
         throw new RuntimeException('Not implemented');
     }

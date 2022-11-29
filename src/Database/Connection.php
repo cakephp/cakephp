@@ -51,12 +51,14 @@ class Connection implements ConnectionInterface
     protected array $_config;
 
     /**
-     * Driver object, responsible for creating the real connection
-     * and provide specific SQL dialect.
-     *
      * @var \Cake\Database\Driver
      */
-    protected Driver $_driver;
+    protected Driver $readDriver;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    protected Driver $writeDriver;
 
     /**
      * Contains how many nested transactions have been started.
@@ -121,14 +123,60 @@ class Connection implements ConnectionInterface
     public function __construct(array $config)
     {
         $this->_config = $config;
+        [self::ROLE_READ => $this->readDriver, self::ROLE_WRITE => $this->writeDriver] = $this->createDrivers($config);
 
-        $driverConfig = array_diff_key($config, array_flip([
+        if (!empty($config['log'])) {
+            $this->enableQueryLogging((bool)$config['log']);
+        }
+    }
+
+    /**
+     * Creates read and write drivers.
+     *
+     * @param array $config Connection config
+     * @return array<string, \Cake\Database\DriverInterface>
+     * @psalm-return array{read: \Cake\Database\DriverInterface, write: \Cake\Database\DriverInterface}
+     */
+    protected function createDrivers(array $config): array
+    {
+        $driver = $config['driver'] ?? '';
+        if (!is_string($driver)) {
+            /** @var \Cake\Database\DriverInterface $driver */
+            if (!$driver->enabled()) {
+                throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $this->configName()]);
+            }
+
+            // Legacy support for setting instance instead of driver class
+            return [self::ROLE_READ => $driver, self::ROLE_WRITE => $driver];
+        }
+
+        /** @var class-string<\Cake\Database\DriverInterface>|null $driverClass */
+        $driverClass = App::className($driver, 'Database/Driver');
+        if ($driverClass === null) {
+            throw new MissingDriverException(['driver' => $driver, 'connection' => $this->configName()]);
+        }
+
+        $sharedConfig = array_diff_key($config, array_flip([
             'name',
             'driver',
             'cacheMetaData',
             'cacheKeyPrefix',
         ]));
-        $this->_driver = $this->createDriver($config['driver'] ?? '', $driverConfig);
+
+        $writeConfig = $config['write'] ?? [] + $sharedConfig;
+        $readConfig = $config['read'] ?? [] + $sharedConfig;
+        if ($readConfig == $writeConfig) {
+            $readDriver = $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+        } else {
+            $readDriver = new $driverClass(['_role' => self::ROLE_READ] + $readConfig);
+            $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+        }
+
+        if (!$writeDriver->enabled()) {
+            throw new MissingExtensionException(['driver' => get_class($writeDriver), 'name' => $this->configName()]);
+        }
+
+        return [self::ROLE_READ => $readDriver, self::ROLE_WRITE => $writeDriver];
     }
 
     /**
@@ -170,34 +218,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Creates driver from name, class name or instance.
-     *
-     * @param \Cake\Database\Driver|string $name Driver name, class name or instance.
-     * @param array $config Driver config if $name is not an instance.
-     * @return \Cake\Database\Driver
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     */
-    protected function createDriver(Driver|string $name, array $config): Driver
-    {
-        $driver = $name;
-        if (is_string($driver)) {
-            /** @psalm-var class-string<\Cake\Database\Driver>|null $className */
-            $className = App::className($driver, 'Database/Driver');
-            if ($className === null) {
-                throw new MissingDriverException(['driver' => $driver, 'connection' => $this->configName()]);
-            }
-            $driver = new $className($config);
-        }
-
-        if (!$driver->enabled()) {
-            throw new MissingExtensionException(['driver' => $driver::class, 'name' => $this->configName()]);
-        }
-
-        return $driver;
-    }
-
-    /**
      * Get the retry wrapper object that is allows recovery from server disconnects
      * while performing certain database actions, such as executing a query.
      *
@@ -211,11 +231,14 @@ class Connection implements ConnectionInterface
     /**
      * Gets the driver instance.
      *
+     * @param string $role Connection role ('read' or 'write')
      * @return \Cake\Database\Driver
      */
-    public function getDriver(): Driver
+    public function getDriver(string $role = self::ROLE_WRITE): Driver
     {
-        return $this->_driver;
+        assert($role === self::ROLE_READ || $role === self::ROLE_WRITE);
+
+        return $role === self::ROLE_READ ? $this->readDriver : $this->writeDriver;
     }
 
     /**
@@ -229,7 +252,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->_driver->execute($sql, $params, $types));
+        return $this->getDisconnectRetry()->run(fn () => $this->getDriver()->execute($sql, $params, $types));
     }
 
     /**
@@ -241,7 +264,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->_driver->run($query));
+        return $this->getDisconnectRetry()->run(fn () => $this->getDriver($query->getConnectionRole())->run($query));
     }
 
     /**
@@ -398,7 +421,7 @@ class Connection implements ConnectionInterface
     {
         if (!$this->_transactionStarted) {
             $this->getDisconnectRetry()->run(function (): void {
-                $this->_driver->beginTransaction();
+                $this->getDriver()->beginTransaction();
             });
 
             $this->_transactionLevel = 0;
@@ -436,7 +459,7 @@ class Connection implements ConnectionInterface
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
 
-            return $this->_driver->commitTransaction();
+            return $this->getDriver()->commitTransaction();
         }
         if ($this->isSavePointsEnabled()) {
             $this->releaseSavePoint((string)$this->_transactionLevel);
@@ -466,7 +489,7 @@ class Connection implements ConnectionInterface
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
-            $this->_driver->rollbackTransaction();
+            $this->getDriver()->rollbackTransaction();
 
             return true;
         }
@@ -495,7 +518,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->_driver->supports(DriverFeatureEnum::SAVEPOINT);
+            $this->_useSavePoints = $this->getDriver()->supports(DriverFeatureEnum::SAVEPOINT);
         }
 
         return $this;
@@ -531,7 +554,7 @@ class Connection implements ConnectionInterface
      */
     public function createSavePoint(string|int $name): void
     {
-        $this->execute($this->_driver->savePointSQL($name));
+        $this->execute($this->getDriver()->savePointSQL($name));
     }
 
     /**
@@ -542,7 +565,7 @@ class Connection implements ConnectionInterface
      */
     public function releaseSavePoint(string|int $name): void
     {
-        $sql = $this->_driver->releaseSavePointSQL($name);
+        $sql = $this->getDriver()->releaseSavePointSQL($name);
         if ($sql) {
             $this->execute($sql);
         }
@@ -556,7 +579,7 @@ class Connection implements ConnectionInterface
      */
     public function rollbackSavepoint(string|int $name): void
     {
-        $this->execute($this->_driver->rollbackSavePointSQL($name));
+        $this->execute($this->getDriver()->rollbackSavePointSQL($name));
     }
 
     /**
@@ -567,7 +590,7 @@ class Connection implements ConnectionInterface
     public function disableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->disableForeignKeySQL());
+            $this->execute($this->getDriver()->disableForeignKeySQL());
         });
     }
 
@@ -579,7 +602,7 @@ class Connection implements ConnectionInterface
     public function enableForeignKeys(): void
     {
         $this->getDisconnectRetry()->run(function (): void {
-            $this->execute($this->_driver->enableForeignKeySQL());
+            $this->execute($this->getDriver()->enableForeignKeySQL());
         });
     }
 
@@ -755,10 +778,19 @@ class Connection implements ConnectionInterface
         $replace = array_intersect_key($secrets, $this->_config);
         $config = $replace + $this->_config;
 
+        if (isset($config['read'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $config['read'] = array_intersect_key($secrets, $config['read']) + $config['read'];
+        }
+        if (isset($config['write'])) {
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $config['write'] = array_intersect_key($secrets, $config['write']) + $config['write'];
+        }
+
         return [
             'config' => $config,
-            'driver' => $this->_driver,
-            'role' => $this->role(),
+            'readDriver' => $this->readDriver,
+            'writeDriver' => $this->writeDriver,
             'transactionLevel' => $this->_transactionLevel,
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,

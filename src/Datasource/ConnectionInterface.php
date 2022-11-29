@@ -38,7 +38,7 @@ interface ConnectionInterface
      *
      * @return object
      */
-    public function getDriver(): object;
+    public function getDriver(string $role = self::ROLE_WRITE): object;
 
     /**
      * Set a cacher.

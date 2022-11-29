@@ -931,6 +931,16 @@ abstract class Driver
     }
 
     /**
+     * Returns the connection role this driver performs.
+     *
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
@@ -948,6 +958,7 @@ abstract class Driver
     {
         return [
             'connected' => $this->pdo !== null,
+            'role' => $this->getRole(),
         ];
     }
 }

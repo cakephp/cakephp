@@ -38,6 +38,7 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
+use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
 
 /**
@@ -174,6 +175,54 @@ class ConnectionTest extends TestCase
         [, $name] = namespaceSplit(get_class($this->connection->getDriver()));
         $connection = new Connection(['driver' => $name]);
         $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
+    }
+
+    /**
+     * Test providing a unique read config only creates separate drivers.
+     */
+    public function testDifferentReadDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test providing a unique write config only creates separate drivers.
+     */
+    public function testDifferentWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['write' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test providing the same read and write config uses a shared driver.
+     */
+    public function testSameReadWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    public function testDisabledReadWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ['driver' => DisabledDriver::class] + ConnectionManager::getConfig('test');
+
+        $this->expectException(MissingExtensionException::class);
+        $connection = new Connection($config);
     }
 
     /**
@@ -1021,16 +1070,19 @@ class ConnectionTest extends TestCase
      * Tests that the connection is restablished whenever it is interrupted
      * after having used the connection at least once.
      */
-    public function testAutomaticReconnect(): void
+    public function testAutomaticReconnect2(): void
     {
         $conn = clone $this->connection;
         $statement = $conn->execute('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
-        $prop = new ReflectionProperty($conn, '_driver');
-        $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setAccessible(true);
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
@@ -1057,9 +1109,13 @@ class ConnectionTest extends TestCase
 
         $conn->begin();
 
-        $prop = new ReflectionProperty($conn, '_driver');
-        $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setAccessible(true);
+        $oldDriver = $prop->getValue($conn);
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
@@ -1074,17 +1130,5 @@ class ConnectionTest extends TestCase
 
         $prop->setValue($conn, $oldDriver);
         $conn->rollback();
-    }
-
-    public function testRoles(): void
-    {
-        $this->assertSame(Connection::ROLE_WRITE, $this->connection->role());
-
-        ConnectionManager::setConfig('test:read', ['url' => getenv('DB_URL')]);
-        $this->assertSame(Connection::ROLE_READ, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
-
-        // when read connection is only an alias, it should resolve as the write connection
-        ConnectionManager::alias('test', 'test:read');
-        $this->assertSame(Connection::ROLE_WRITE, ConnectionManager::get(ConnectionManager::getName(Connection::ROLE_READ, 'test'))->role());
     }
 }

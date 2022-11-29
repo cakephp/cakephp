@@ -131,7 +131,7 @@ class ErrorTrap
             if ($event->isStopped()) {
                 return true;
             }
-            $renderer->write($renderer->render($error, $debug));
+            $renderer->write($event->getResult() ?: $renderer->render($error, $debug));
         } catch (Exception $e) {
             // Fatal errors always log.
             $this->logger()->logException($e);
