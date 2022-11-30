@@ -71,26 +71,6 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:_matches\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Utility/Hash.php
-
-		-
-			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:extract\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Utility/Hash.php
-
-		-
-			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:extract\\(\\) return type with generic interface ArrayAccess does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Utility/Hash.php
-
-		-
-			message: "#^Method Cake\\\\Utility\\\\Hash\\:\\:get\\(\\) has parameter \\$data with generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Utility/Hash.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/View/Form/ContextFactory.php

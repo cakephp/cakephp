@@ -24,6 +24,7 @@ use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;

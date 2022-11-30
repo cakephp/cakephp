@@ -21,7 +21,7 @@ use Cake\Core\Exception\CakeException;
 /**
  * Class Event
  *
- * @template TSubject
+ * @template TSubject of object
  * @implements \Cake\Event\EventInterface<TSubject>
  */
 class Event implements EventInterface

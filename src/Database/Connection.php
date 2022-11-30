@@ -124,24 +124,20 @@ class Connection implements ConnectionInterface
     {
         $this->_config = $config;
         [self::ROLE_READ => $this->readDriver, self::ROLE_WRITE => $this->writeDriver] = $this->createDrivers($config);
-
-        if (!empty($config['log'])) {
-            $this->enableQueryLogging((bool)$config['log']);
-        }
     }
 
     /**
      * Creates read and write drivers.
      *
      * @param array $config Connection config
-     * @return array<string, \Cake\Database\DriverInterface>
-     * @psalm-return array{read: \Cake\Database\DriverInterface, write: \Cake\Database\DriverInterface}
+     * @return array<string, \Cake\Database\Driver>
+     * @psalm-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
      */
     protected function createDrivers(array $config): array
     {
         $driver = $config['driver'] ?? '';
         if (!is_string($driver)) {
-            /** @var \Cake\Database\DriverInterface $driver */
+            assert($driver instanceof Driver);
             if (!$driver->enabled()) {
                 throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $this->configName()]);
             }
@@ -150,7 +146,7 @@ class Connection implements ConnectionInterface
             return [self::ROLE_READ => $driver, self::ROLE_WRITE => $driver];
         }
 
-        /** @var class-string<\Cake\Database\DriverInterface>|null $driverClass */
+        /** @var class-string<\Cake\Database\Driver>|null $driverClass */
         $driverClass = App::className($driver, 'Database/Driver');
         if ($driverClass === null) {
             throw new MissingDriverException(['driver' => $driver, 'connection' => $this->configName()]);
