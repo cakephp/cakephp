@@ -33,7 +33,7 @@ class ResultSetFactory
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Query from where results came.
+     * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
      * @param array $results Results array.
      * @return \Cake\ORM\ResultSet<T>
      */

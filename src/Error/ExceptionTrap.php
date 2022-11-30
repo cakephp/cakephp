@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cake\Error;
 
-use Cake\Cache\InvalidArgumentException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
