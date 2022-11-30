@@ -329,10 +329,10 @@ class Sqlserver extends Driver
      * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
      * be used.
      *
-     * @param \Cake\Database\Query\SelectQuery $original The query to wrap in a subquery.
+     * @param \Cake\Database\Query\SelectQuery<mixed> $original The query to wrap in a subquery.
      * @param int|null $limit The number of rows to fetch.
      * @param int|null $offset The number of rows to offset.
-     * @return \Cake\Database\Query\SelectQuery Modified query object.
+     * @return \Cake\Database\Query\SelectQuery<mixed> Modified query object.
      */
     protected function _pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
     {

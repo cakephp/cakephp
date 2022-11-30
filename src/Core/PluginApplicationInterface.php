@@ -26,6 +26,8 @@ use Cake\Routing\RouteBuilder;
  *
  * Events can be bound to the application event manager during
  * the application's bootstrap and plugin bootstrap.
+ *
+ * @template TSubject
  */
 interface PluginApplicationInterface extends EventDispatcherInterface
 {

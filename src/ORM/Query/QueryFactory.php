@@ -27,7 +27,7 @@ class QueryFactory
      * Create a new Query instance.
      *
      * @param \Cake\ORM\Table $table The table this query is starting on.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<mixed>
      */
     public function select(Table $table): SelectQuery
     {

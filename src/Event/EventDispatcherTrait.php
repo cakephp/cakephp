@@ -18,6 +18,8 @@ namespace Cake\Event;
 
 /**
  * Implements Cake\Event\EventDispatcherInterface.
+ *
+ * @template TSubject of object
  */
 trait EventDispatcherTrait
 {

@@ -33,6 +33,9 @@ use Cake\Utility\Inflector;
 
 /**
  * Run CLI commands for the provided application.
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Core\ConsoleApplicationInterface>
+ * @template-uses \Cake\Event\EventDispatcherInterface<\Cake\Core\ConsoleApplicationInterface>
  */
 class CommandRunner implements EventDispatcherInterface
 {

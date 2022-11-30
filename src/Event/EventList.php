@@ -29,7 +29,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Events list
      *
-     * @var array<\Cake\Event\EventInterface>
+     * @var array<\Cake\Event\EventInterface<object>>
      */
     protected array $_events = [];
 
@@ -46,8 +46,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Adds an event to the list when event listing is enabled.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event An event to the list of dispatched events.
+     * @param \Cake\Event\EventInterface<object> $event An event to the list of dispatched events.
      * @return void
      */
     public function add(EventInterface $event): void
@@ -70,10 +69,9 @@ class EventList implements ArrayAccess, Countable
     /**
      * Offset to retrieve
      *
-     * @template TSubject of object
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-     * @return \Cake\Event\EventInterface<TSubject>|null
+     * @return \Cake\Event\EventInterface<object>|null
      */
     public function offsetGet(mixed $offset): ?EventInterface
     {

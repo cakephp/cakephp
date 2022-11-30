@@ -27,6 +27,8 @@ use Cake\View\Exception\MissingHelperException;
  * and constructing helper class objects.
  *
  * @extends \Cake\Core\ObjectRegistry<\Cake\View\Helper>
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
+ * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\View\View>
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {

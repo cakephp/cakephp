@@ -70,6 +70,9 @@ use Throwable;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
+ * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+ * @uses \Cake\Event\EventDispatcherTrait<\Cake\View\View>
  */
 class View implements EventDispatcherInterface
 {

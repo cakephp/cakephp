@@ -149,6 +149,7 @@ use InvalidArgumentException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
@@ -1614,7 +1615,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1658,7 +1659,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing records by.
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing records by.
      * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery

@@ -25,6 +25,8 @@ use Cake\ORM\Query\SelectQuery;
  *
  * It is responsible for correctly nesting result keys reported from the query
  * and hydrating entities.
+ *
+ * @template T of array|\Cake\Datasource\EntityInterface
  */
 class ResultSetFactory
 {
@@ -33,7 +35,7 @@ class ResultSetFactory
      *
      * @param \Cake\ORM\Query\SelectQuery $query Query from where results came.
      * @param array $results Results array.
-     * @return \Cake\ORM\ResultSet
+     * @return \Cake\ORM\ResultSet<T>
      */
     public function createResultSet(SelectQuery $query, array $results): ResultSet
     {
