@@ -44,10 +44,10 @@ class ResultSet implements ResultSetInterface
     /**
      * Last record fetched from the statement
      *
-     * @var \Cake\Datasource\EntityInterface|array
-     * @psalm-var T
+     * @var \Cake\Datasource\EntityInterface|array|null
+     * @psalm-var T|null
      */
-    protected EntityInterface|array $_current = [];
+    protected EntityInterface|array|null $_current;
 
     /**
      * Holds the count of records in this result set
@@ -59,7 +59,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Results that have been fetched or hydrated into the results.
      *
-     * @var \SplFixedArray<\Cake\Datasource\EntityInterface|array>
+     * @var \SplFixedArray<T>
      */
     protected SplFixedArray $_results;
 
@@ -78,10 +78,10 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @return \Cake\Datasource\EntityInterface|array
-     * @psalm-return T
+     * @return \Cake\Datasource\EntityInterface|array|null
+     * @psalm-return T|null
      */
-    public function current(): EntityInterface|array
+    public function current(): EntityInterface|array|null
     {
         return $this->_current;
     }

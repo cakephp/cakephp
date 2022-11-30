@@ -4,6 +4,7 @@ includes:
 parameters:
 	level: 6
 	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
 		- tests/bootstrap.php
