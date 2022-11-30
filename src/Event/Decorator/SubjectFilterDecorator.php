@@ -46,7 +46,8 @@ class SubjectFilterDecorator extends AbstractDecorator
     /**
      * Checks if the event is triggered for this listener.
      *
-     * @param \Cake\Event\EventInterface $event Event object.
+     * @template TSubject of object
+     * @param \Cake\Event\EventInterface<TSubject> $event Event object.
      * @return bool
      */
     public function canTrigger(EventInterface $event): bool

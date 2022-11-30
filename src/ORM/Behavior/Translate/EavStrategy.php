@@ -160,7 +160,8 @@ class EavStrategy implements TranslateStrategyInterface
      * table. It modifies the passed query by eager loading the translated fields
      * and adding a formatter to copy the values into the main table records.
      *
-     * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
+     * @template TSubject of object
+     * @param \Cake\Event\EventInterface<TSubject> $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query\SelectQuery $query Query
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -227,7 +228,8 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
+     * @template TSubject of object
+     * @param \Cake\Event\EventInterface<TSubject> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject<string, mixed> $options the options passed to the save method
      * @return void

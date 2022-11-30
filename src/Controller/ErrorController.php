@@ -40,7 +40,8 @@ class ErrorController extends Controller
     /**
      * beforeRender callback.
      *
-     * @param \Cake\Event\EventInterface $event Event.
+     * @template TSubject of object
+     * @param \Cake\Event\EventInterface<TSubject> $event Event.
      * @return \Cake\Http\Response|null|void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */

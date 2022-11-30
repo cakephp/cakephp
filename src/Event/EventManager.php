@@ -318,8 +318,9 @@ class EventManager implements EventManagerInterface
     /**
      * Calls a listener.
      *
+     * @template TSubject of object
      * @param callable $listener The listener to trigger.
-     * @param \Cake\Event\EventInterface $event Event instance.
+     * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
      * @return mixed The result of the $listener function.
      */
     protected function _callListener(callable $listener, EventInterface $event): mixed
@@ -403,7 +404,8 @@ class EventManager implements EventManagerInterface
     /**
      * Adds an event to the list if the event list object is present.
      *
-     * @param \Cake\Event\EventInterface $event An event to add to the list.
+     * @template TSubject of object
+     * @param \Cake\Event\EventInterface<TSubject> $event An event to add to the list.
      * @return $this
      */
     public function addEventToList(EventInterface $event)

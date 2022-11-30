@@ -9,6 +9,7 @@ use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -118,7 +119,6 @@ class ExceptionTrap
         $class = $this->getConfig('exceptionRenderer') ?: $this->chooseRenderer();
 
         if (is_string($class)) {
-            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
                     "Cannot use {$class} as an `exceptionRenderer`. " .
