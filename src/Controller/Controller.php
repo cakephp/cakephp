@@ -90,7 +90,6 @@ use ReflectionMethod;
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @link https://book.cakephp.org/4/en/controllers.html
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
- * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {

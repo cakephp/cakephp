@@ -39,7 +39,6 @@ use Cake\Validation\ValidatorAwareTrait;
  * Forms are conventionally placed in the `App\Form` namespace.
  *
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Form\Form>
- * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\Form\Form>
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {

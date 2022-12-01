@@ -29,7 +29,6 @@ use Cake\Event\EventDispatcherTrait;
  *
  * @extends \Cake\Core\ObjectRegistry<\Cake\Controller\Component>
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
- * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {

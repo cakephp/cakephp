@@ -149,7 +149,7 @@ use InvalidArgumentException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {

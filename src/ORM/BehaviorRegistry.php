@@ -33,7 +33,6 @@ use LogicException;
  *
  * @extends \Cake\Core\ObjectRegistry<\Cake\ORM\Behavior>
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
- * @template-uses \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table>
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
