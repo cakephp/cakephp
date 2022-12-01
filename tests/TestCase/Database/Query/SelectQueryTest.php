@@ -3725,6 +3725,9 @@ class SelectQueryTest extends TestCase
         $another = clone $typeMap;
         $query->setSelectTypeMap($another);
         $this->assertSame($another, $query->getSelectTypeMap());
+
+        $query->setSelectTypeMap(['myid' => 'integer']);
+        $this->assertSame('integer', $query->getSelectTypeMap()->type('myid'));
     }
 
     /**
