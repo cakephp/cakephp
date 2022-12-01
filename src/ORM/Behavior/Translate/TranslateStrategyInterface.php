@@ -90,8 +90,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * table. It modifies the passed query by eager loading the translated fields
      * and adding a formatter to copy the values into the main table records.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The beforeFind event that was fired.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query\SelectQuery $query Query
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -102,8 +101,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject<string, mixed> $options the options passed to the save method
      * @return void
@@ -113,8 +111,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
     /**
      * Unsets the temporary `_i18n` property after the entity has been saved
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */

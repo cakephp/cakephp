@@ -87,8 +87,7 @@ class TimestampBehavior extends Behavior
     /**
      * There is only one event handler, it can be configured to be called for any event
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
      * @return true Returns true irrespective of the behavior logic, the save will not be prevented.

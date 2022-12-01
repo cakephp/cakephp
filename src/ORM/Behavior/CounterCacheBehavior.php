@@ -115,8 +115,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Check if a field, which should be ignored, is dirty
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -154,8 +153,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Makes sure to update counter cache when a new record is created or updated.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The afterSave event that was fired.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -175,8 +173,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Makes sure to update counter cache when a record is deleted.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event The afterDelete event that was fired.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -193,8 +190,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Iterate all associations and update counter caches.
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
@@ -209,8 +205,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Updates counter cache for a single association
      *
-     * @template TSubject of object
-     * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for counter cache for this association
