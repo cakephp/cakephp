@@ -819,12 +819,12 @@ class SelectQuery extends Query implements IteratorAggregate
      * Sets the TypeMap class where the types for each of the fields in the
      * select clause are stored.
      *
-     * @param \Cake\Database\TypeMap $typeMap The map object to use
+     * @param \Cake\Database\TypeMap|array $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap.
      * @return $this
      */
-    public function setSelectTypeMap(TypeMap $typeMap)
+    public function setSelectTypeMap(TypeMap|array $typeMap)
     {
-        $this->_selectTypeMap = $typeMap;
+        $this->_selectTypeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
         $this->_dirty();
 
         return $this;
