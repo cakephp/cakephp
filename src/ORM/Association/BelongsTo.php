@@ -143,7 +143,7 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @psalm-suppress InvalidArgument */
+        /** @psalm-suppress InvalidScalarArgument */
         $properties = array_combine(
             (array)$this->getForeignKey(),
             $targetEntity->extract((array)$this->getBindingKey())
