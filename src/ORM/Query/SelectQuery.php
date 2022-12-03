@@ -539,7 +539,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $this->_formatters = [];
         }
         if ($formatter === null) {
-            /** @psalm-suppress RedundantCondition */
             if ($mode !== self::OVERWRITE) {
                 throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
             }

@@ -138,7 +138,7 @@ class RadioWidget extends BasicWidget
         }
         $isNumeric = is_numeric($radio['value']);
 
-        /** @psalm-suppress DocblockTypeContradiction */
+        /** @psalm-suppress TypeDoesNotContainType */
         return !is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric);
     }
 

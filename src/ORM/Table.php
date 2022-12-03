@@ -332,6 +332,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
         $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
+        /** @psalm-suppress TypeDoesNotContainType */
         $this->queryFactory ??= new QueryFactory();
 
         $this->initialize($config);
