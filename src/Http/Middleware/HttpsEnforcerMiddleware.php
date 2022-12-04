@@ -39,6 +39,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      * - `statusCode` - Status code to use in case of redirect, defaults to 301 - Permanent redirect.
      * - `headers` - Array of response headers in case of redirect.
      * - `disableOnDebug` - Whether HTTPS check should be disabled when debug is on. Default `true`.
+     * - `trustedProxies` - Array of trusted proxies that will be passed to the request. Defaults to `null`.
      * - 'hsts' - Strict-Transport-Security header for HTTPS response configuration. Defaults to `null`.
      *    If enabled, an array of config options:
      *
@@ -53,6 +54,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         'statusCode' => 301,
         'headers' => [],
         'disableOnDebug' => true,
+        'trustedProxies' => null,
         'hsts' => null,
     ];
 
@@ -80,6 +82,10 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        if (is_array($this->config['trustedProxies'])) {
+            $request->setTrustedProxies($this->config['trustedProxies']);
+        }
+
         if (
             $request->getUri()->getScheme() === 'https'
             || ($this->config['disableOnDebug']
