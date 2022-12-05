@@ -44,7 +44,7 @@ class RoutesCommand extends Command
         $output = $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
-            $methods = $route->defaults['_method'] ?? '';
+            $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             $item = [
                 $route->options['_name'] ?? $route->getName(),
@@ -53,7 +53,7 @@ class RoutesCommand extends Command
                 $route->defaults['prefix'] ?? '',
                 $route->defaults['controller'] ?? '',
                 $route->defaults['action'] ?? '',
-                is_string($methods) ? $methods : implode(', ', $methods),
+                implode(', ', $methods),
             ];
 
             if ($args->getOption('verbose')) {
@@ -63,10 +63,13 @@ class RoutesCommand extends Command
 
             $output[] = $item;
 
-            if (!isset($duplicateRoutesCounter[$route->template])) {
-                $duplicateRoutesCounter[$route->template] = 0;
+            foreach ($methods as $method) {
+                if (!isset($duplicateRoutesCounter[$route->template][$method])) {
+                    $duplicateRoutesCounter[$route->template][$method] = 0;
+                }
+
+                $duplicateRoutesCounter[$route->template][$method]++;
             }
-            $duplicateRoutesCounter[$route->template]++;
         }
 
         if ($args->getOption('sort')) {
@@ -83,18 +86,26 @@ class RoutesCommand extends Command
         $duplicateRoutes = [];
 
         foreach ($availableRoutes as $route) {
-            if ($duplicateRoutesCounter[$route->template] > 1) {
-                $methods = $route->defaults['_method'] ?? '';
+            $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
-                $duplicateRoutes[] = [
-                    $route->options['_name'] ?? $route->getName(),
-                    $route->template,
-                    $route->defaults['plugin'] ?? '',
-                    $route->defaults['prefix'] ?? '',
-                    $route->defaults['controller'] ?? '',
-                    $route->defaults['action'] ?? '',
-                    is_string($methods) ? $methods : implode(', ', $methods),
-                ];
+            foreach ($methods as $method) {
+                if (
+                    $duplicateRoutesCounter[$route->template][$method] > 1 ||
+                    ($method === '' && count($duplicateRoutesCounter[$route->template]) > 1) ||
+                    ($method !== '' && isset($duplicateRoutesCounter[$route->template]['']))
+                ) {
+                    $duplicateRoutes[] = [
+                        $route->options['_name'] ?? $route->getName(),
+                        $route->template,
+                        $route->defaults['plugin'] ?? '',
+                        $route->defaults['prefix'] ?? '',
+                        $route->defaults['controller'] ?? '',
+                        $route->defaults['action'] ?? '',
+                        implode(', ', $methods),
+                    ];
+
+                    break;
+                }
             }
         }
 
