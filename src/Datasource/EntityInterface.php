@@ -234,7 +234,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Returns whether this entity contains a field named $field.
      *
-     * The mehod will return `true` even when the field is set to `null`.
+     * The method will return `true` even when the field is set to `null`.
      *
      * @param array<string>|string $field The field to check.
      * @return bool
