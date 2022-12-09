@@ -91,8 +91,6 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
-        elif ${{ matrix.php-version == '8.2' }}; then
-          composer update --ignore-platform-req=php
         else
           composer update
         fi

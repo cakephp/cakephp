@@ -298,6 +298,20 @@ class RoutesCommandTest extends TestCase
             new Route('/unique-path', [], ['_name' => '_bRoute'])
         );
 
+        $builder->connect(
+            new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
+        );
+        $builder->connect(
+            new Route('/blog', [], ['_name' => 'blog-all'])
+        );
+
+        $builder->connect(
+            new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
+        );
+        $builder->connect(
+            new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
+        );
+
         $this->exec('routes');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContainsRow([
@@ -321,6 +335,24 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContainsRow([
             '_bRoute',
             '/unique-path',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ]);
+        $this->assertOutputContainsRow([
+            'blog-get',
+            '/blog',
+            '',
+            '',
+            '',
+            '',
+            '',
+        ]);
+        $this->assertOutputContainsRow([
+            'blog-all',
+            '/blog',
             '',
             '',
             '',
