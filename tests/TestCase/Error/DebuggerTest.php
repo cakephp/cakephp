@@ -266,6 +266,7 @@ TEXT;
         // This is gross but was simpler than adding a fixture file.
         // phpcs:ignore
         eval('class MyClass { private string $field; }');
+        /** @phpstan-ignore-next-line */
         $obj = new MyClass();
         $out = Debugger::exportVar($obj);
         $this->assertTextContains('field => [uninitialized]', $out);

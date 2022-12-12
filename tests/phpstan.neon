@@ -7,10 +7,4 @@ parameters:
 		- TestCase/
 
 	excludePaths:
-		- TestCase/Error/DebuggerTest.php
-		- TestCase/Filesystem/FolderTest.php
 		- TestCase/Routing/RouterTest.php
-
-	earlyTerminatingMethodCalls:
-		Cake\Console\Shell:
-			- abort
