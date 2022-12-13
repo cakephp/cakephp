@@ -245,7 +245,6 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
 
-
         $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => []]);
         $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
