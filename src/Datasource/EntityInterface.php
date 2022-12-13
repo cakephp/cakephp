@@ -208,6 +208,15 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function &get(string $field): mixed;
 
     /**
+     * Enable/disable field presence check when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @param bool $value `true` to enable, `false` to disable.
+     */
+    public function requireFieldPresence(bool $value = true): void;
+
+    /**
      * Returns the original value of a field.
      *
      * @param string $field The name of the field.
@@ -223,8 +232,9 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function getOriginalValues(): array;
 
     /**
-     * Returns whether this entity contains a field named $field
-     * and is not set to null.
+     * Returns whether this entity contains a field named $field.
+     *
+     * The method will return `true` even when the field is set to `null`.
      *
      * @param array<string>|string $field The field to check.
      * @return bool

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -119,6 +120,15 @@ trait EntityTrait
     protected string $_registryAlias = '';
 
     /**
+     * Whether the presence of a field is checked when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @var bool
+     */
+    protected bool $requireFieldPresence = false;
+
+    /**
      * Magic getter to access fields that have been set in this entity
      *
      * @param string $field Name of the field to access
@@ -147,11 +157,10 @@ trait EntityTrait
      *
      * @param string $field The field to check.
      * @return bool
-     * @see \Cake\ORM\Entity::has()
      */
     public function __isset(string $field): bool
     {
-        return $this->has($field);
+        return $this->get($field) !== null;
     }
 
     /**
@@ -280,8 +289,9 @@ trait EntityTrait
         }
 
         $value = null;
-
-        if (isset($this->_fields[$field])) {
+        $fieldIsPresent = false;
+        if (array_key_exists($field, $this->_fields)) {
+            $fieldIsPresent = true;
             $value = &$this->_fields[$field];
         }
 
@@ -292,7 +302,26 @@ trait EntityTrait
             return $result;
         }
 
+        if (!$fieldIsPresent && $this->requireFieldPresence) {
+            throw new MissingPropertyException([
+                'property' => $field,
+                'entity' => $this::class,
+            ]);
+        }
+
         return $value;
+    }
+
+    /**
+     * Enable/disable field presence check when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @param bool $value `true` to enable, `false` to disable.
+     */
+    public function requireFieldPresence(bool $value = true): void
+    {
+        $this->requireFieldPresence = $value;
     }
 
     /**
@@ -333,15 +362,16 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether this entity contains a field named $field
-     * that contains a non-null value.
+     * Returns whether this entity contains a field named $field.
+     *
+     * It will return `true` even for fields set to `null`.
      *
      * ### Example:
      *
      * ```
      * $entity = new Entity(['id' => 1, 'name' => null]);
      * $entity->has('id'); // true
-     * $entity->has('name'); // false
+     * $entity->has('name'); // true
      * $entity->has('last_name'); // false
      * ```
      *
@@ -351,10 +381,8 @@ trait EntityTrait
      * $entity->has(['name', 'last_name']);
      * ```
      *
-     * All fields must not be null to get a truthy result.
-     *
-     * When checking multiple fields. All fields must not be null
-     * in order for true to be returned.
+     * When checking multiple fields all fields must have a value (even `null`)
+     * present for the method to return `true`.
      *
      * @param array<string>|string $field The field or fields to check.
      * @return bool
@@ -362,7 +390,7 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         foreach ((array)$field as $prop) {
-            if ($this->get($prop) === null) {
+            if (!array_key_exists($prop, $this->_fields) && !static::_accessor($prop, 'get')) {
                 return false;
             }
         }
@@ -579,7 +607,7 @@ trait EntityTrait
      */
     public function offsetExists(mixed $offset): bool
     {
-        return $this->has($offset);
+        return $this->__isset($offset);
     }
 
     /**
