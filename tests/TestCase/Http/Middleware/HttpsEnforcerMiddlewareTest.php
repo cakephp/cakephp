@@ -241,12 +241,16 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
+        $handler = new TestRequestHandler(function () {
+            return new Response();
+        });
+
         $middleware = new HttpsEnforcerMiddleware();
-        $middleware->process($request, $handler);
+        $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
 
         $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => []]);
-        $middleware->process($request, $handler);
+        $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
     }
 }
