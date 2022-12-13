@@ -18,6 +18,7 @@ namespace Cake\Http\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\ServerRequest;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -82,7 +83,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (is_array($this->config['trustedProxies'])) {
+        if ($request instanceof ServerRequest && is_array($this->config['trustedProxies'])) {
             $request->setTrustedProxies($this->config['trustedProxies']);
         }
 
