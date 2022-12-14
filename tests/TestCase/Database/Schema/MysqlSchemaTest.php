@@ -18,11 +18,13 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
 
 /**
@@ -30,6 +32,8 @@ use PDO;
  */
 class MysqlSchemaTest extends TestCase
 {
+    protected PDO $pdo;
+
     /**
      * Helper method for skipping tests that need a real connection.
      */
@@ -261,6 +265,7 @@ class MysqlSchemaTest extends TestCase
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
         $connection->execute('DROP TABLE IF EXISTS schema_json');
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
 
         $table = <<<SQL
             CREATE TABLE schema_authors (
@@ -289,7 +294,13 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->getDriver()->supportsNativeJson()) {
+        $table = <<<SQL
+            CREATE OR REPLACE VIEW schema_articles_v
+                AS SELECT 1
+SQL;
+        $connection->execute($table);
+
+        if ($connection->getDriver()->supports(DriverFeatureEnum::JSON)) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -307,13 +318,18 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables();
 
+        $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
+
+        $resultNoViews = $schema->listTablesWithoutViews();
+        $this->assertIsArray($resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
     }
 
     /**
@@ -400,9 +416,12 @@ SQL;
             ],
         ];
 
-        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
+        $driver = ConnectionManager::get('test')->getDriver();
+        if ($driver->isMariaDb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
+        }
+        if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
         }
@@ -471,6 +490,38 @@ SQL;
     }
 
     /**
+     * Test describing a table with conditional constraints
+     */
+    public function testDescribeTableConditionalConstraint(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
+        $table = <<<SQL
+CREATE TABLE conditional_constraint (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    config_id INT UNSIGNED NOT NULL,
+    status ENUM ('new', 'processing', 'completed', 'failed') DEFAULT 'new' NOT NULL,
+    CONSTRAINT unique_index UNIQUE (config_id, (
+        (CASE WHEN ((`status` = "new") OR (`status` = "processing")) THEN `status` END)
+    ))
+);
+SQL;
+        try {
+            $connection->execute($table);
+        } catch (Exception $e) {
+            $this->markTestSkipped('Could not create table with conditional constraint');
+        }
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('conditional_constraint');
+        $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
+
+        $constraint = $result->getConstraint('unique_index');
+        $this->assertNotEmpty($constraint);
+        $this->assertEquals('unique', $constraint['type']);
+        $this->assertEquals(['config_id'], $constraint['columns']);
+    }
+
+    /**
      * Test describing a table creates options
      */
     public function testDescribeTableOptions(): void
@@ -502,17 +553,8 @@ SQL;
         $table = $schema->describe('odd_primary_key');
         $connection->execute('DROP TABLE odd_primary_key');
 
-        $column = $table->getColumn('id');
-        $this->assertNull($column['autoIncrement'], 'should not autoincrement');
-        $this->assertTrue($column['unsigned'], 'should be unsigned');
-
         $column = $table->getColumn('other_field');
-        $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
-        $this->assertFalse($column['unsigned'], 'should not be unsigned');
-
-        $output = $table->createSql($connection);
-        $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
-        $this->assertStringContainsString('`other_field` INTEGER NOT NULL AUTO_INCREMENT,', $output[0]);
+        $this->assertTrue($column['autoIncrement']);
     }
 
     /**
@@ -1062,7 +1104,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
+        $this->assertSame('`id` INTEGER NOT NULL AUTO_INCREMENT', $result);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -1074,7 +1116,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '`id` BIGINT NOT NULL AUTO_INCREMENT');
+        $this->assertSame('`id` BIGINT NOT NULL AUTO_INCREMENT', $result);
     }
 
     /**
@@ -1089,7 +1131,7 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getConnection()
+        $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
@@ -1157,7 +1199,7 @@ SQL;
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->getConnection()
+        $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
@@ -1329,7 +1371,7 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supports(DriverFeatureEnum::JSON), 'Does not support native json');
         $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);
@@ -1355,18 +1397,28 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Mysql();
-        $mock = $this->getMockBuilder(PDO::class)
+        $this->_needsConnection();
+
+        $this->pdo = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote', 'getAttribute'])
             ->addMethods(['quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
+            $this->pdo->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Mysql::class)
+            ->onlyMethods(['createPdo'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($this->pdo);
+
+        $driver->connect();
 
         return $driver;
     }

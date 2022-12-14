@@ -34,31 +34,31 @@ class ConsoleInputSubcommand
      *
      * @var string
      */
-    protected $_name = '';
+    protected string $_name = '';
 
     /**
      * Help string for the subcommand
      *
      * @var string
      */
-    protected $_help = '';
+    protected string $_help = '';
 
     /**
      * The ConsoleOptionParser for this subcommand.
      *
      * @var \Cake\Console\ConsoleOptionParser|null
      */
-    protected $_parser;
+    protected ?ConsoleOptionParser $_parser = null;
 
     /**
      * Make a new Subcommand
      *
-     * @param array|string $name The long name of the subcommand, or an array with all the properties.
+     * @param array<string, mixed>|string $name The long name of the subcommand, or an array with all the properties.
      * @param string $help The help text for this option.
-     * @param \Cake\Console\ConsoleOptionParser|array|null $parser A parser for this subcommand.
+     * @param \Cake\Console\ConsoleOptionParser|array<string, mixed>|null $parser A parser for this subcommand.
      *   Either a ConsoleOptionParser, or an array that can be used with ConsoleOptionParser::buildFromArray().
      */
-    public function __construct($name, $help = '', $parser = null)
+    public function __construct(array|string $name, string $help = '', ConsoleOptionParser|array|null $parser = null)
     {
         if (is_array($name)) {
             $data = $name + ['name' => null, 'help' => '', 'parser' => null];

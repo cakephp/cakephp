@@ -17,8 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * An expression object for ORDER BY clauses
@@ -29,11 +30,14 @@ class OrderByExpression extends QueryExpression
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions The sort columns
-     * @param \Cake\Database\TypeMap|array $types The types for each column.
+     * @param \Cake\Database\TypeMap|array<string, string> $types The types for each column.
      * @param string $conjunction The glue used to join conditions together.
      */
-    public function __construct($conditions = [], $types = [], $conjunction = '')
-    {
+    public function __construct(
+        ExpressionInterface|array|string $conditions = [],
+        TypeMap|array $types = [],
+        string $conjunction = ''
+    ) {
         parent::__construct($conditions, $types, $conjunction);
     }
 
@@ -71,7 +75,7 @@ class OrderByExpression extends QueryExpression
                 is_string($val) &&
                 !in_array(strtoupper($val), ['ASC', 'DESC'], true)
             ) {
-                throw new RuntimeException(
+                throw new InvalidArgumentException(
                     sprintf(
                         'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
                         'is not allowed to avoid potential SQL injection. ' .

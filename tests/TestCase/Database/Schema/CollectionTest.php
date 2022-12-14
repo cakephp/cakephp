@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Cache\Cache;
+use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -32,9 +34,9 @@ class CollectionTest extends TestCase
     protected $connection;
 
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Users',
     ];
 
@@ -54,8 +56,8 @@ class CollectionTest extends TestCase
      */
     public function tearDown(): void
     {
-        parent::tearDown();
         $this->connection->cacheMetadata(false);
+        parent::tearDown();
         unset($this->connection);
     }
 
@@ -67,7 +69,7 @@ class CollectionTest extends TestCase
      */
     public function testDescribeIncorrectTable(): void
     {
-        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectException(DatabaseException::class);
         $schema = new Collection($this->connection);
         $this->assertNull($schema->describe('derp'));
     }
@@ -90,5 +92,20 @@ class CollectionTest extends TestCase
 
         $result = Cache::read('test_users', '_cake_model_');
         $this->assertEquals($table, $result);
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testListTables()
+    {
+        $config = $this->connection->config();
+        $driver = new $config['driver']($config);
+        $connection = new Connection([
+            'driver' => $driver,
+        ]);
+
+        $collection = new Collection($connection);
+        $collection->listTables();
     }
 }

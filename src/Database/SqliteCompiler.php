@@ -29,5 +29,5 @@ class SqliteCompiler extends QueryCompiler
      *
      * @var bool
      */
-    protected $_orderedUnion = false;
+    protected bool $_orderedUnion = false;
 }

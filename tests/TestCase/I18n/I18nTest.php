@@ -22,7 +22,6 @@ use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
-use Locale;
 
 /**
  * I18nTest class
@@ -30,19 +29,11 @@ use Locale;
 class I18nTest extends TestCase
 {
     /**
-     * Used to restore the internal locale after tests
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * Set Up
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = Locale::getDefault() ?: I18n::DEFAULT_LOCALE;
     }
 
     /**
@@ -53,7 +44,7 @@ class I18nTest extends TestCase
         parent::tearDown();
         I18n::clear();
         I18n::setDefaultFormatter('default');
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         $this->clearPlugins();
         Cache::clear('_cake_core_');
     }
@@ -63,10 +54,11 @@ class I18nTest extends TestCase
      */
     public function testDefaultLocale(): void
     {
+        $default = I18n::getDefaultLocale();
         $newLocale = 'de_DE';
         I18n::setLocale($newLocale);
         $this->assertSame($newLocale, I18n::getLocale());
-        $this->assertSame($this->locale, I18n::getDefaultLocale());
+        $this->assertSame($default, I18n::getDefaultLocale());
     }
 
     /**
@@ -157,7 +149,7 @@ class I18nTest extends TestCase
      * Tests that messages can also be loaded from plugins by using the
      * domain = plugin_name convention
      */
-    public function testPluginMesagesLoad(): void
+    public function testPluginMessagesLoad(): void
     {
         $this->loadPlugins([
             'TestPlugin',
@@ -178,7 +170,7 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Tests that messages messages from a plugin can be automatically
+     * Tests that messages from a plugin can be automatically
      * overridden by messages in app
      */
     public function testPluginOverride(): void
@@ -356,7 +348,7 @@ class I18nTest extends TestCase
         }, 'en_US');
         $this->assertSame('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
         $this->assertSame('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
-        $this->assertSame('{0} years', __dn('custom', '{0} year', '{0} years', 1));
+        $this->assertSame('{0} year', __dn('custom', '{0} year', '{0} years', 1));
         $this->assertSame('{0} years', __dn('custom', '{0} year', '{0} years', 2));
     }
 

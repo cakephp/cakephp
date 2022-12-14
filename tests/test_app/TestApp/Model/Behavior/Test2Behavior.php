@@ -7,7 +7,7 @@ use Cake\ORM\Behavior;
 
 class Test2Behavior extends Behavior
 {
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [
             'foo' => 'findFoo',
         ],

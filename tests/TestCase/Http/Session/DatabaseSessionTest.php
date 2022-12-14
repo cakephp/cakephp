@@ -33,7 +33,7 @@ class DatabaseSessionTest extends TestCase
      *
      * @var string
      */
-    protected $fixtures = ['core.Sessions'];
+    protected array $fixtures = ['core.Sessions'];
 
     /**
      * @var \Cake\Http\Session\DatabaseSession
@@ -48,9 +48,6 @@ class DatabaseSessionTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->storage = new DatabaseSession();
-
-        // With metadata caching on SQLServer/windows tests fail.
-        ConnectionManager::get('test')->cacheMetadata(false);
     }
 
     /**
@@ -82,7 +79,7 @@ class DatabaseSessionTest extends TestCase
      */
     public function testOpen(): void
     {
-        $this->assertTrue($this->storage->open(null, null));
+        $this->assertTrue($this->storage->open('', ''));
     }
 
     /**
@@ -119,7 +116,7 @@ class DatabaseSessionTest extends TestCase
         $this->assertSame($expected, $result);
 
         $result = $this->storage->read('made up value');
-        $this->assertFalse($result);
+        $this->assertSame('', $result);
     }
 
     /**
@@ -130,7 +127,7 @@ class DatabaseSessionTest extends TestCase
         $this->assertTrue($this->storage->write('foo', 'Some value'));
 
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy failed');
-        $this->assertFalse($this->storage->read('foo'), 'Value still present.');
+        $this->assertSame('', $this->storage->read('foo'), 'Value still present.');
         $this->assertTrue($this->storage->destroy('foo'), 'Destroy should always return true');
     }
 
@@ -147,7 +144,7 @@ class DatabaseSessionTest extends TestCase
 
         sleep(1);
         $storage->gc(0);
-        $this->assertFalse($storage->read('foo'));
+        $this->assertSame('', $storage->read('foo'));
     }
 
     /**

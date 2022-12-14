@@ -48,6 +48,6 @@ class SubjectFilterDecoratorTest extends TestCase
         ]);
 
         $this->assertFalse($decorator->canTrigger($event));
-        $this->assertFalse($decorator($event));
+        $this->assertSame(null, $decorator($event));
     }
 }

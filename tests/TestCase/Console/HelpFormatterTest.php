@@ -183,7 +183,7 @@ txt;
         $parser->addOption('test', ['help' => 'A test option.'])
                ->addOption('number', [
                    'help' => 'The number',
-                   'default' => 2,
+                   'default' => '2',
                ])
                 ->addOption('connection', [
                     'short' => 'c',

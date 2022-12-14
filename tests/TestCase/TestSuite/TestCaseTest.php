@@ -26,11 +26,9 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\TestSuite\Fixture\ResetStrategyInterface;
-use Cake\TestSuite\Fixture\TruncationResetStrategy;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PHPUnit\Framework\AssertionFailedError;
-use RuntimeException;
 use TestApp\Model\Table\SecondaryPostsTable;
 
 /**
@@ -43,7 +41,7 @@ class TestCaseTest extends TestCase
      */
     public function testEventFiredMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFired('my.event', $manager);
     }
@@ -53,7 +51,7 @@ class TestCaseTest extends TestCase
      */
     public function testEventFiredWithMisconfiguredEventList(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
     }
@@ -147,6 +145,68 @@ class TestCaseTest extends TestCase
         } finally {
             $this->assertSame($errorLevel, error_reporting());
         }
+    }
+
+    /**
+     * test deprecated
+     */
+    public function testDeprecated(): void
+    {
+        $this->deprecated(function () {
+            trigger_error('deprecation message', E_USER_DEPRECATED);
+        });
+    }
+
+    /**
+     * test deprecated with assert after trigger warning
+     */
+    public function testDeprecatedWithAssertAfterTriggerWarning(): void
+    {
+        try {
+            $this->deprecated(function () {
+                trigger_error('deprecation message', E_USER_DEPRECATED);
+                $this->assertTrue(false, 'A random message');
+            });
+
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertStringContainsString('A random message', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated
+     */
+    public function testDeprecatedWithNoDeprecation(): void
+    {
+        try {
+            $this->deprecated(function () {
+            });
+
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertStringStartsWith('Should have at least one deprecation warning', $e->getMessage());
+        }
+    }
+
+    /**
+     * test deprecated() with duplicate deprecation with same messsage and line
+     */
+    public function testDeprecatedWithDuplicatedDeprecation(): void
+    {
+        /**
+         * setting stackframe = 0 and having same method
+         * to have same deprecation message and same line for all cases
+         */
+        $fun = function () {
+            deprecationWarning('5.0.0', 'Test same deprecation message', 0);
+        };
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
+        $this->deprecated(function () use ($fun) {
+            $fun();
+        });
     }
 
     /**
@@ -281,8 +341,8 @@ class TestCaseTest extends TestCase
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->once())
             ->method('save')
-            ->will($this->returnValue('mocked'));
-        $this->assertSame('mocked', $Posts->save($entity));
+            ->will($this->returnValue(false));
+        $this->assertSame(false, $Posts->save($entity));
         $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
         $this->assertSame('test', $Posts->getConnection()->configName());
@@ -333,15 +393,11 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
         $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
-        $TestPluginComment->expects($this->exactly(2))
+        $TestPluginComment->expects($this->exactly(1))
             ->method('save')
-            ->will($this->onConsecutiveCalls(
-                $this->returnValue(true),
-                $this->returnValue(false)
-            ));
+            ->will($this->returnValue(false));
 
         $entity = new Entity([]);
-        $this->assertTrue($TestPluginComment->save($entity));
         $this->assertFalse($TestPluginComment->save($entity));
 
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['save']);
@@ -365,15 +421,11 @@ class TestCaseTest extends TestCase
         $this->assertInstanceOf(Table::class, $result);
         $this->assertSame('Comments', $Mock->getAlias());
 
-        $Mock->expects($this->exactly(2))
+        $Mock->expects($this->exactly(1))
             ->method('save')
-            ->will($this->onConsecutiveCalls(
-                $this->returnValue(true),
-                $this->returnValue(false)
-            ));
+            ->will($this->returnValue(false));
 
         $entity = new Entity([]);
-        $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
 
         $allMethodsStubs = $this->getMockForModel(
@@ -418,37 +470,5 @@ class TestCaseTest extends TestCase
 
         $result = Router::url($url);
         $this->assertSame('/app/articles', $result);
-    }
-
-    /**
-     * Test getting the state reset manager.
-     */
-    public function testGetResetStrategySuccess(): void
-    {
-        $instance = $this->getResetStrategy();
-        $this->assertInstanceOf(ResetStrategyInterface::class, $instance);
-        $this->assertInstanceOf(TruncationResetStrategy::class, $instance);
-    }
-
-    /**
-     * Test getting the state reset manager when class is invalid
-     */
-    public function testGetResetStrategyMissingClass(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot find class `NotThere`');
-        $this->stateResetStrategy = 'NotThere';
-        $this->getResetStrategy();
-    }
-
-    /**
-     * Test getting the state reset manager when class is invalid
-     */
-    public function testGetStateResetInvalidClass(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('does not implement the required');
-        $this->stateResetStrategy = static::class;
-        $this->getResetStrategy();
     }
 }

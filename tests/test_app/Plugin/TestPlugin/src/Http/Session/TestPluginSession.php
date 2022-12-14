@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TestPlugin\Http\Session;
 
-use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -30,8 +29,7 @@ class TestPluginSession implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[ReturnTypeWillChange]
-    public function read($id)
+    public function read($id): string|false
     {
     }
 
@@ -54,8 +52,7 @@ class TestPluginSession implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[ReturnTypeWillChange]
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         return 0;
     }

@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Rule;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use InvalidArgumentException;
 
 /**
  * Checks whether links to a given association exist / do not exist.
@@ -44,14 +46,14 @@ class LinkConstraint
      *
      * @var \Cake\ORM\Association|string
      */
-    protected $_association;
+    protected Association|string $_association;
 
     /**
      * The link status that is required to be present in order for the check to succeed.
      *
      * @var string
      */
-    protected $_requiredLinkState;
+    protected string $_requiredLinkState;
 
     /**
      * Constructor.
@@ -60,20 +62,10 @@ class LinkConstraint
      * @param string $requiredLinkStatus The link status that is required to be present in order for the check to
      *  succeed.
      */
-    public function __construct($association, string $requiredLinkStatus)
+    public function __construct(Association|string $association, string $requiredLinkStatus)
     {
-        if (
-            !is_string($association) &&
-            !($association instanceof Association)
-        ) {
-            throw new \InvalidArgumentException(sprintf(
-                'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-                getTypeName($association)
-            ));
-        }
-
         if (!in_array($requiredLinkStatus, [static::STATUS_LINKED, static::STATUS_NOT_LINKED], true)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.'
             );
         }
@@ -88,14 +80,14 @@ class LinkConstraint
      * Performs the actual link check.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity involved in the operation.
-     * @param array $options Options passed from the rules checker.
+     * @param array<string, mixed> $options Options passed from the rules checker.
      * @return bool Whether the check was successful.
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
         $table = $options['repository'] ?? null;
         if (!($table instanceof Table)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`.'
             );
         }
@@ -126,9 +118,9 @@ class LinkConstraint
     /**
      * Alias fields.
      *
-     * @param array $fields The fields that should be aliased.
+     * @param array<string> $fields The fields that should be aliased.
      * @param \Cake\ORM\Table $source The object to use for aliasing.
-     * @return array The aliased fields
+     * @return array<string> The aliased fields
      */
     protected function _aliasFields(array $fields, Table $source): array
     {
@@ -149,7 +141,7 @@ class LinkConstraint
     protected function _buildConditions(array $fields, array $values): array
     {
         if (count($fields) !== count($values)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'The number of fields is expected to match the number of values, got %d field(s) and %d value(s).',
                 count($fields),
                 count($values)
@@ -172,7 +164,7 @@ class LinkConstraint
 
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
-            throw new \RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'LinkConstraint rule on `%s` requires all primary key values for building the counting ' .
                 'conditions, expected values for `(%s)`, got `(%s)`.',
                 $source->getAlias(),

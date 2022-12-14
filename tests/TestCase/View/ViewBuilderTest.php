@@ -20,6 +20,7 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingViewException;
 use Cake\View\ViewBuilder;
 
 /**
@@ -111,7 +112,6 @@ class ViewBuilderTest extends TestCase
     public function arrayPropertyProvider(): array
     {
         return [
-            ['helpers', ['Html', 'Form']],
             ['options', ['key' => 'value']],
         ];
     }
@@ -177,11 +177,31 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->{$set}($value);
 
-        $builder->{$set}(['Merged'], true);
-        $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
+        $builder->{$set}(['merged' => 'Merged'], true);
+        $this->assertSame(['merged' => 'Merged'] + $value, $builder->{$get}(), 'Should merge');
 
         $builder->{$set}($value, false);
         $this->assertSame($value, $builder->{$get}(), 'Should replace');
+    }
+
+    /**
+     * Tests that adding non-assoc and assoc merge properly.
+     *
+     * @return void
+     */
+    public function testAddHelpers(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form');
+        $builder->addHelpers(['Form' => ['config' => 'value']]);
+
+        $helpers = $builder->getHelpers();
+        $expected = [
+            'Form' => [
+                'config' => 'value',
+            ],
+        ];
+        $this->assertSame($expected, $helpers);
     }
 
     /**
@@ -205,7 +225,6 @@ class ViewBuilderTest extends TestCase
             ->setPlugin('TestPlugin')
             ->setVars(['foo' => 'bar', 'x' => 'old']);
         $view = $builder->build(
-            ['one' => 'value', 'x' => 'new'],
             $request,
             $response,
             $events
@@ -220,8 +239,7 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($request, $view->getRequest());
         $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
-        $this->assertSame(['one', 'x', 'foo'], $view->getVars());
-        $this->assertSame('value', $view->get('one'));
+        $this->assertSame(['foo', 'x'], $view->getVars());
         $this->assertSame('bar', $view->get('foo'));
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
@@ -254,7 +272,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildMissingViewClass(): void
     {
-        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectException(MissingViewException::class);
         $this->expectExceptionMessage('View class "Foo" is missing.');
         $builder = new ViewBuilder();
         $builder->setClassName('Foo');
@@ -279,7 +297,7 @@ class ViewBuilderTest extends TestCase
         $expected = [
             '_template' => 'default',
             '_layout' => 'test',
-            '_helpers' => ['Html'],
+            '_helpers' => ['Html' => []],
             '_className' => 'JsonView',
             '_autoLayout' => true,
         ];
@@ -309,7 +327,7 @@ class ViewBuilderTest extends TestCase
 
         $this->assertSame('default', $builder->getTemplate());
         $this->assertSame('test', $builder->getLayout());
-        $this->assertEquals(['Html'], $builder->getHelpers());
+        $this->assertEquals(['Html' => []], $builder->getHelpers());
         $this->assertSame('JsonView', $builder->getClassName());
     }
 
@@ -324,19 +342,18 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
-     * test setOptions() with 2 strings in array, merge true.
+     * test setOptions() with 2 assoc strings in array, merge true.
      */
     public function testSetOptionsMultiple(): void
     {
         $builder = new ViewBuilder();
-        $builder->setOptions(['oldOption'], false);
+        $builder->setOptions(['key' => 'oldOption'], false);
 
-        $option = ['newOption', 'anotherOption'];
+        $option = ['anotherKey' => 'anotherOption', 'key' => 'newOption'];
         $builder->setOptions($option);
-        $expects = ['oldOption', 'newOption', 'anotherOption'];
+        $expects = ['key' => 'newOption', 'anotherKey' => 'anotherOption'];
 
         $result = $builder->getOptions();
-        $this->assertContainsOnly('string', $result);
         $this->assertEquals($expects, $result);
     }
 
@@ -407,9 +424,9 @@ class ViewBuilderTest extends TestCase
 
         $helpers = $builder->getHelpers();
         $expected = [
-            'Form',
-            'Time',
-            'Text',
+            'Form' => [],
+            'Time' => [],
+            'Text' => [],
         ];
         $this->assertSame($expected, $helpers);
     }
@@ -422,5 +439,28 @@ class ViewBuilderTest extends TestCase
 
         $helpers = $builder->getHelpers();
         $this->assertSame(['foo' => 'bar'], $helpers['Text']);
+    }
+
+    public function testAddHelperPluginOptions(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->addHelper('Form', ['some' => 'config']);
+        $builder->addHelper('Text', ['foo' => 'bar']);
+
+        $builder->addHelper('MyPlugin.Form');
+        $builder->addHelper('MyPlugin.Text', ['foo' => 'other']);
+
+        $helpers = $builder->getHelpers();
+        $expected = [
+            'Form' => [
+                'className' => 'MyPlugin.Form',
+            ],
+            'Text' => [
+                'foo' => 'other',
+                'className' => 'MyPlugin.Text',
+            ],
+        ];
+
+        $this->assertSame($expected, $helpers);
     }
 }

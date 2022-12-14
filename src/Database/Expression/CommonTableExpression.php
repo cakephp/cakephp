@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
-use RuntimeException;
 
 /**
  * An expression that represents a common table expression definition.
@@ -31,35 +31,35 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @var \Cake\Database\Expression\IdentifierExpression
      */
-    protected $name;
+    protected IdentifierExpression $name;
 
     /**
      * The field names to use for the CTE.
      *
      * @var array<\Cake\Database\Expression\IdentifierExpression>
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * The CTE query definition.
      *
      * @var \Cake\Database\ExpressionInterface|null
      */
-    protected $query;
+    protected ?ExpressionInterface $query = null;
 
     /**
      * Whether the CTE is materialized or not materialized.
      *
      * @var string|null
      */
-    protected $materialized = null;
+    protected ?string $materialized = null;
 
     /**
      * Whether the CTE is recursive.
      *
      * @var bool
      */
-    protected $recursive = false;
+    protected bool $recursive = false;
 
     /**
      * Constructor.
@@ -67,7 +67,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param string $name The CTE name.
      * @param \Cake\Database\ExpressionInterface|\Closure $query CTE query
      */
-    public function __construct(string $name = '', $query = null)
+    public function __construct(string $name = '', ExpressionInterface|Closure|null $query = null)
     {
         $this->name = new IdentifierExpression($name);
         if ($query) {
@@ -97,12 +97,12 @@ class CommonTableExpression implements ExpressionInterface
      * @param \Cake\Database\ExpressionInterface|\Closure $query CTE query
      * @return $this
      */
-    public function query($query)
+    public function query(ExpressionInterface|Closure $query)
     {
         if ($query instanceof Closure) {
             $query = $query();
             if (!($query instanceof ExpressionInterface)) {
-                throw new RuntimeException(
+                throw new DatabaseException(
                     'You must return an `ExpressionInterface` from a Closure passed to `query()`.'
                 );
             }
@@ -118,7 +118,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param \Cake\Database\Expression\IdentifierExpression|array<\Cake\Database\Expression\IdentifierExpression>|array<string>|string $fields Field names
      * @return $this
      */
-    public function field($fields)
+    public function field(IdentifierExpression|array|string $fields)
     {
         $fields = (array)$fields;
         foreach ($fields as &$field) {
@@ -184,9 +184,7 @@ class CommonTableExpression implements ExpressionInterface
     {
         $fields = '';
         if ($this->fields) {
-            $expressions = array_map(function (IdentifierExpression $e) use ($binder) {
-                return $e->sql($binder);
-            }, $this->fields);
+            $expressions = array_map(fn (IdentifierExpression $e) => $e->sql($binder), $this->fields);
             $fields = sprintf('(%s)', implode(', ', $expressions));
         }
 

@@ -16,10 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
+use TestApp\Model\Entity\VirtualUser;
 
 /**
  * Entity test case.
@@ -271,6 +275,27 @@ class EntityTest extends TestCase
         $this->assertSame('bar', $entity->get('foo'));
     }
 
+    public function testRequirePresenceException(): void
+    {
+        $this->expectException(MissingPropertyException::class);
+        $this->expectExceptionMessage('Property `not_present` does not exist for the entity `Cake\ORM\Entity`');
+
+        $entity = new Entity();
+        $entity->requireFieldPresence();
+        $entity->get('not_present');
+    }
+
+    public function testRequirePresenceNoException(): void
+    {
+        $entity = new Entity(['is_present' => null]);
+        $entity->requireFieldPresence();
+        $this->assertNull($entity->get('is_present'));
+
+        $entity = new VirtualUser();
+        $entity->requireFieldPresence();
+        $this->assertSame('bonus', $entity->get('bonus'));
+    }
+
     /**
      * Tests get with custom getter
      */
@@ -313,7 +338,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests that the get cache is cleared by unsetProperty.
+     * Tests that the get cache is cleared by unset.
      */
     public function testGetCacheClearedByUnset(): void
     {
@@ -458,24 +483,24 @@ class EntityTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
         $this->assertTrue($entity->has('id'));
         $this->assertTrue($entity->has('name'));
-        $this->assertFalse($entity->has('foo'));
+        $this->assertTrue($entity->has('foo'));
         $this->assertFalse($entity->has('last_name'));
 
         $this->assertTrue($entity->has(['id']));
         $this->assertTrue($entity->has(['id', 'name']));
-        $this->assertFalse($entity->has(['id', 'foo']));
+        $this->assertTrue($entity->has(['id', 'foo']));
         $this->assertFalse($entity->has(['id', 'nope']));
 
         $entity = $this->getMockBuilder(Entity::class)
             ->addMethods(['_getThings'])
             ->getMock();
-        $entity->expects($this->once())->method('_getThings')
+        $entity->expects($this->never())->method('_getThings')
             ->will($this->returnValue(0));
         $this->assertTrue($entity->has('things'));
     }
 
     /**
-     * Tests unsetProperty one property at a time
+     * Tests unset one property at a time
      */
     public function testUnset(): void
     {
@@ -499,7 +524,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests unsetProperty with multiple properties
+     * Tests unset with multiple properties
      */
     public function testUnsetMultiple(): void
     {
@@ -534,20 +559,6 @@ class EntityTest extends TestCase
             ->method('unset')
             ->with('foo');
         unset($entity->foo);
-    }
-
-    /**
-     * Tests the deprecated unsetProperty() method
-     */
-    public function testUnsetDeprecated(): void
-    {
-        $this->deprecated(function (): void {
-            $entity = new Entity();
-            $entity->foo = 'foo';
-
-            $entity->unsetProperty('foo');
-            $this->assertNull($entity->foo);
-        });
     }
 
     /**
@@ -1491,21 +1502,9 @@ class EntityTest extends TestCase
      */
     public function testEmptyProperties(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $entity = new Entity();
         $entity->get('');
-    }
-
-    /**
-     * Tests that setting an empty property name does nothing
-     *
-     * @dataProvider emptyNamesProvider
-     */
-    public function testSetEmptyPropertyName(?string $property): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $entity = new Entity();
-        $entity->set($property, 'bar');
     }
 
     /**
@@ -1597,7 +1596,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
             'emptyArray' => [],
-            'object' => new \stdClass(),
+            'object' => new stdClass(),
             'string' => 'string',
             'stringZero' => '0',
             'emptyString' => '',
@@ -1629,7 +1628,7 @@ class EntityTest extends TestCase
         $entity = new Entity([
             'array' => ['foo' => 'bar'],
             'emptyArray' => [],
-            'object' => new \stdClass(),
+            'object' => new stdClass(),
             'string' => 'string',
             'stringZero' => '0',
             'emptyString' => '',

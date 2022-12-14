@@ -16,14 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Database\TypeFactory;
+use AssertionError;
 use Cake\Event\Event;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use RuntimeException;
+use DateTime as NativeDateTime;
+use UnexpectedValueException;
 
 /**
  * Behavior test case
@@ -31,20 +32,11 @@ use RuntimeException;
 class TimestampBehaviorTest extends TestCase
 {
     /**
-     * autoFixtures
-     *
-     * Don't load fixtures for all tests
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * fixtures
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Users',
     ];
 
@@ -58,7 +50,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsDefault(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
@@ -74,7 +66,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsCustom(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
@@ -91,9 +83,9 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedAbsent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -101,7 +93,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->created);
+        $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame($ts->format('c'), $entity->created->format('c'), 'Created timestamp is not the same');
     }
 
@@ -112,13 +104,13 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedPresent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
-        $existingValue = new \DateTime('2011-11-11');
+        $existingValue = new NativeDateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'created' => $existingValue]);
 
         $return = $this->Behavior->handleEvent($event, $entity);
@@ -133,9 +125,9 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testCreatedNotNew(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -154,9 +146,9 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedAbsent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -165,7 +157,7 @@ class TimestampBehaviorTest extends TestCase
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is not the same');
     }
 
@@ -176,20 +168,20 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedPresent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
-        $existingValue = new \DateTime('2011-11-11');
+        $existingValue = new NativeDateTime('2011-11-11');
         $entity = new Entity(['name' => 'Foo', 'modified' => $existingValue]);
         $entity->clean();
         $entity->setNew(false);
 
         $return = $this->Behavior->handleEvent($event, $entity);
         $this->assertTrue($return, 'Handle Event is expected to always return true');
-        $this->assertInstanceOf(FrozenTime::class, $entity->modified);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
     }
 
@@ -198,10 +190,10 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testModifiedMissingColumn(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $table->getSchema()->removeColumn('created')->removeColumn('modified');
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $event = new Event('Model.beforeSave');
@@ -214,30 +206,20 @@ class TimestampBehaviorTest extends TestCase
     }
 
     /**
-     * testUseImmutable
+     * testTimeInstanceCreation
      *
      * @triggers Model.beforeSave
      */
-    public function testUseImmutable(): void
+    public function testTimeInstanceCreation(): void
     {
-        $this->deprecated(function () {
-            $table = $this->getTable();
-            $this->Behavior = new TimestampBehavior($table);
-            $entity = new Entity();
-            $event = new Event('Model.beforeSave');
+        $table = $this->getTableInstance();
+        $this->Behavior = new TimestampBehavior($table);
+        $entity = new Entity();
+        $event = new Event('Model.beforeSave');
 
-            $entity->clean();
-            $this->Behavior->handleEvent($event, $entity);
-            $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
-
-            TypeFactory::build('timestamp')->useMutable();
-            $entity->clean();
-            $this->Behavior->handleEvent($event, $entity);
-            $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
-            // Revert back to using immutable class to avoid causing problems in
-            // other test cases when running full test suite.
-            TypeFactory::build('timestamp')->useImmutable();
-        });
+        $entity->clean();
+        $this->Behavior->handleEvent($event, $entity);
+        $this->assertInstanceOf(DateTime::class, $entity->modified);
     }
 
     /**
@@ -245,10 +227,10 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testNonDateTimeTypeException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
 
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table, [
             'events' => [
                 'Model.beforeSave' => [
@@ -270,9 +252,9 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testInvalidEventConfig(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid');
-        $table = $this->getTable();
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value `fat fingers` is invalid.');
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
@@ -286,17 +268,17 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestamp(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $return = $behavior->timestamp();
         $this->assertInstanceOf(
-            'DateTimeImmutable',
+            DateTime::class,
             $return,
             'Should return a timestamp object'
         );
 
-        $now = FrozenTime::now();
+        $now = DateTime::now();
         $this->assertEquals($now, $return);
     }
 
@@ -305,7 +287,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestampPersists(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $initialValue = $behavior->timestamp();
@@ -323,7 +305,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestampRefreshes(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $behavior = new TimestampBehavior($table);
 
         $initialValue = $behavior->timestamp();
@@ -341,10 +323,10 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testSetTimestampExplicit(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
 
-        $ts = new \DateTime();
+        $ts = new NativeDateTime();
         $this->Behavior->timestamp($ts);
         $return = $this->Behavior->timestamp();
 
@@ -360,9 +342,9 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouch(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -381,7 +363,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouchNoop(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $config = [
             'events' => [
                 'Model.beforeSave' => [
@@ -391,7 +373,7 @@ class TimestampBehaviorTest extends TestCase
         ];
 
         $this->Behavior = new TimestampBehavior($table, $config);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -406,10 +388,10 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testTouchCustomEvent(): void
     {
-        $table = $this->getTable();
+        $table = $this->getTableInstance();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
-        $ts = new \DateTime('2000-01-01');
+        $ts = new NativeDateTime('2000-01-01');
         $this->Behavior->timestamp($ts);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -428,8 +410,6 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testSaveTriggersInsert(): void
     {
-        $this->loadFixtures('Users');
-
         $table = $this->getTableLocator()->get('users');
         $table->addBehavior('Timestamp', [
             'events' => [
@@ -446,7 +426,7 @@ class TimestampBehaviorTest extends TestCase
 
         $row = $table->find('all')->where(['id' => $entity->id])->first();
 
-        $now = FrozenTime::now();
+        $now = DateTime::now();
         $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
         $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
     }
@@ -454,7 +434,7 @@ class TimestampBehaviorTest extends TestCase
     /**
      * Helper method to get Table instance with created/modified column
      */
-    protected function getTable(): Table
+    protected function getTableInstance(): Table
     {
         $schema = [
             'created' => ['type' => 'datetime'],

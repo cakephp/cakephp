@@ -8,6 +8,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\AssertionFailedError;
 use stdClass;
 
 /**
@@ -61,7 +62,7 @@ class EventFiredWithTest extends TestCase
      */
     public function testMatchesInvalid(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $manager = EventManager::instance();
         $manager->setEventList(new EventList());
         $manager->trackEvents(true);

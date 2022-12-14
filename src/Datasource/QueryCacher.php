@@ -17,15 +17,15 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Cache\Cache;
+use Cake\Core\Exception\CakeException;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
-use RuntimeException;
 use Traversable;
 
 /**
  * Handles caching queries and loading results from the cache.
  *
- * Used by Cake\Datasource\QueryTrait internally.
+ * Used by {@link \Cake\Datasource\QueryTrait} internally.
  *
  * @internal
  * @see \Cake\Datasource\QueryTrait::cache() for the public interface.
@@ -37,14 +37,14 @@ class QueryCacher
      *
      * @var \Closure|string
      */
-    protected $_key;
+    protected Closure|string $_key;
 
     /**
      * Config for cache engine.
      *
      * @var \Psr\SimpleCache\CacheInterface|string
      */
-    protected $_config;
+    protected CacheInterface|string $_config;
 
     /**
      * Constructor.
@@ -53,16 +53,9 @@ class QueryCacher
      * @param \Psr\SimpleCache\CacheInterface|string $config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
-    public function __construct($key, $config)
+    public function __construct(Closure|string $key, CacheInterface|string $config)
     {
-        if (!is_string($key) && !($key instanceof Closure)) {
-            throw new RuntimeException('Cache keys must be strings or callables.');
-        }
         $this->_key = $key;
-
-        if (!is_string($config) && !($config instanceof CacheInterface)) {
-            throw new RuntimeException('Cache configs must be strings or \Psr\SimpleCache\CacheInterface instances.');
-        }
         $this->_config = $config;
     }
 
@@ -72,7 +65,7 @@ class QueryCacher
      * @param object $query The query the cache read is for.
      * @return mixed|null Either the cached results or null.
      */
-    public function fetch(object $query)
+    public function fetch(object $query): mixed
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
@@ -104,7 +97,7 @@ class QueryCacher
      *
      * @param object $query The query to generate a key for.
      * @return string
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      */
     protected function _resolveKey(object $query): string
     {
@@ -115,7 +108,7 @@ class QueryCacher
         $key = $func($query);
         if (!is_string($key)) {
             $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
-            throw new RuntimeException($msg);
+            throw new CakeException($msg);
         }
 
         return $key;
@@ -126,7 +119,7 @@ class QueryCacher
      *
      * @return \Psr\SimpleCache\CacheInterface
      */
-    protected function _resolveCacher()
+    protected function _resolveCacher(): CacheInterface
     {
         if (is_string($this->_config)) {
             return Cache::pool($this->_config);

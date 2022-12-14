@@ -15,9 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
+use InvalidArgumentException;
+use ReflectionMethod;
+use Transliterator;
 
 /**
  * TextTest class
@@ -180,16 +183,6 @@ class TextTest extends TestCase
         $result = Text::insert($string, ['src' => 'foo', 'extra' => 'bar'], ['clean' => 'html']);
         $this->assertSame($expected, $result);
 
-        $this->deprecated(function (): void {
-            $result = Text::insert('this is a ? string', ['test']);
-            $expected = 'this is a test string';
-            $this->assertSame($expected, $result);
-
-            $result = Text::insert('this is a ? string with a ? ? ?', ['long', 'few?', 'params', 'you know']);
-            $expected = 'this is a long string with a few? params you know';
-            $this->assertSame($expected, $result);
-        });
-
         $result = Text::insert('update saved_urls set url = :url where id = :id', ['url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1]);
         $expected = 'update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1';
         $this->assertSame($expected, $result);
@@ -213,12 +206,6 @@ class TextTest extends TestCase
         );
         $expected = 'We are passing.';
         $this->assertSame($expected, $result);
-
-        $this->deprecated(function (): void {
-            $result = Text::insert('?-pended result', ['Pre']);
-            $expected = 'Pre-pended result';
-            $this->assertSame($expected, $result);
-        });
 
         $string = 'switching :timeout / :timeout_count';
         $expected = 'switching 5 / 10';
@@ -244,7 +231,7 @@ class TextTest extends TestCase
         $result = Text::insert($string, [
             'user.email' => 'security@example.com',
             'user.id' => 2,
-            'user.created' => FrozenTime::parse('2016-01-01'),
+            'user.created' => DateTime::parse('2016-01-01'),
         ]);
         $this->assertSame($expected, $result);
 
@@ -737,7 +724,7 @@ HTML;
         $this->assertSame($expected, $result);
 
         $text = 'This is a test text';
-        $phrases = null;
+        $phrases = '';
         $result = $this->Text->highlight($text, $phrases, ['format' => '<b>\1</b>']);
         $this->assertSame($text, $result);
 
@@ -1561,7 +1548,7 @@ HTML;
      */
     public function testParseFileSizeException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Text::parseFileSize('bogus', false);
     }
 
@@ -1600,12 +1587,12 @@ HTML;
     {
         $this->assertNull(Text::getTransliterator());
 
-        $transliterator = \Transliterator::createFromRules('
+        $transliterator = Transliterator::createFromRules('
             $nonletter = [:^Letter:];
             $nonletter → \'*\';
             ::Latin-ASCII;
         ');
-        $this->assertInstanceOf(\Transliterator::class, $transliterator);
+        $this->assertInstanceOf(Transliterator::class, $transliterator);
         Text::setTransliterator($transliterator);
         $this->assertSame($transliterator, Text::getTransliterator());
     }
@@ -1622,7 +1609,7 @@ HTML;
         Text::setTransliteratorId($expected);
         $this->assertSame($expected, Text::getTransliteratorId());
 
-        $this->assertInstanceOf(\Transliterator::class, Text::getTransliterator());
+        $this->assertInstanceOf(Transliterator::class, Text::getTransliterator());
         $this->assertSame($expected, Text::getTransliterator()->id);
 
         Text::setTransliteratorId($defaultTransliteratorId);
@@ -1837,8 +1824,7 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new \ReflectionMethod('Cake\Utility\Text', '_strlen');
-        $method->setAccessible(true);
+        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
         $strlen = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
@@ -1861,8 +1847,7 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new \ReflectionMethod('Cake\Utility\Text', '_substr');
-        $method->setAccessible(true);
+        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
         $substr = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };

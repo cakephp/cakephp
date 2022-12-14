@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Exception;
 use JsonSerializable;
+use Stringable;
 
 /**
  * Contains a query string, the params used to executed it, time taken to do it
@@ -25,49 +28,49 @@ use JsonSerializable;
  *
  * @internal
  */
-class LoggedQuery implements JsonSerializable
+class LoggedQuery implements JsonSerializable, Stringable
 {
     /**
      * Driver executing the query
      *
-     * @var \Cake\Database\DriverInterface|null
+     * @var \Cake\Database\Driver|null
      */
-    public $driver = null;
+    protected ?Driver $driver = null;
 
     /**
      * Query string that was executed
      *
      * @var string
      */
-    public $query = '';
+    protected string $query = '';
 
     /**
      * Number of milliseconds this query took to complete
      *
      * @var float
      */
-    public $took = 0;
+    protected float $took = 0;
 
     /**
      * Associative array with the params bound to the query string
      *
      * @var array
      */
-    public $params = [];
+    protected array $params = [];
 
     /**
      * Number of rows affected or returned by the query execution
      *
      * @var int
      */
-    public $numRows = 0;
+    protected int $numRows = 0;
 
     /**
      * The exception that was thrown by the execution of this query
      *
      * @var \Exception|null
      */
-    public $error;
+    protected ?Exception $error = null;
 
     /**
      * Helper function used to replace query placeholders by the real
@@ -123,27 +126,41 @@ class LoggedQuery implements JsonSerializable
     /**
      * Get the logging context data for a query.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getContext(): array
     {
         return [
             'numRows' => $this->numRows,
             'took' => $this->took,
+            'role' => $this->driver ? $this->driver->getRole() : '',
         ];
+    }
+
+    /**
+     * Set logging context for this query.
+     *
+     * @param array $context Context data.
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        foreach ($context as $key => $val) {
+            $this->{$key} = $val;
+        }
     }
 
     /**
      * Returns data that will be serialized as JSON
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
         $error = $this->error;
         if ($error !== null) {
             $error = [
-                'class' => get_class($error),
+                'class' => $error::class,
                 'message' => $error->getMessage(),
                 'code' => $error->getCode(),
             ];

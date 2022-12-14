@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Http\Response;
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -41,7 +41,7 @@ class ComponentRegistryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $controller = new Controller(new ServerRequest(), new Response());
+        $controller = new Controller(new ServerRequest());
         $this->Components = new ComponentRegistry($controller);
     }
 
@@ -117,7 +117,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadMissingComponent(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->Components->load('ThisComponentShouldAlwaysBeMissing');
     }
 
@@ -161,10 +161,10 @@ class ComponentRegistryTest extends TestCase
     public function testReset(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
-        $instance = $this->Components->load('Auth');
+        $instance = $this->Components->load('FormProtection');
         $this->assertSame(
             $instance,
-            $this->Components->Auth,
+            $this->Components->FormProtection,
             'Instance in registry should be the same as previously loaded'
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
@@ -172,7 +172,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertSame($this->Components, $this->Components->reset());
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $this->assertNotSame($instance, $this->Components->load('Auth'));
+        $this->assertNotSame($instance, $this->Components->load('FormProtection'));
     }
 
     /**
@@ -182,11 +182,11 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('Auth');
-        $result = $this->Components->unload('Auth');
+        $this->Components->load('FormProtection');
+        $result = $this->Components->unload('FormProtection');
 
         $this->assertSame($this->Components, $result);
-        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -197,10 +197,10 @@ class ComponentRegistryTest extends TestCase
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
-        $this->Components->load('Auth');
-        unset($this->Components->Auth);
+        $this->Components->load('FormProtection');
+        unset($this->Components->FormProtection);
 
-        $this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -209,7 +209,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class FooComponent could not be found.');
         $this->Components->unload('Foo');
     }
@@ -222,11 +222,11 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $auth = new AuthComponent($this->Components);
-        $result = $this->Components->set('Auth', $auth);
+        $formProtection = new FormProtectionComponent($this->Components);
+        $result = $this->Components->set('FormProtection', $formProtection);
 
-        $this->assertSame($this->Components, $result);
-        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
+        $this->assertEquals($this->Components, $result);
+        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -238,10 +238,10 @@ class ComponentRegistryTest extends TestCase
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
-        $auth = new AuthComponent($this->Components);
-        $this->Components->Auth = $auth;
+        $formProtection = new FormProtectionComponent($this->Components);
+        $this->Components->FormProtection = $formProtection;
 
-        $this->assertTrue(isset($this->Components->Auth), 'Should be present');
+        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -250,7 +250,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testCountable(): void
     {
-        $this->Components->load('Auth');
+        $this->Components->load('FormProtection');
         $this->assertInstanceOf(Countable::class, $this->Components);
         $count = count($this->Components);
         $this->assertSame(1, $count);
@@ -261,7 +261,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testTraversable(): void
     {
-        $this->Components->load('Auth');
+        $this->Components->load('FormProtection');
         $this->assertInstanceOf(Traversable::class, $this->Components);
 
         $result = null;

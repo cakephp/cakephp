@@ -34,18 +34,11 @@ class Socket
     use InstanceConfigTrait;
 
     /**
-     * Object description
-     *
-     * @var string
-     */
-    public $description = 'Remote DataSource Network Socket Interface';
-
-    /**
      * Default configuration settings for the socket connection
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'persistent' => false,
         'host' => 'localhost',
         'protocol' => 'tcp',
@@ -58,36 +51,35 @@ class Socket
      *
      * @var resource|null
      */
-    public $connection;
+    protected $connection;
 
     /**
      * This boolean contains the current state of the Socket class
      *
      * @var bool
      */
-    public $connected = false;
+    protected bool $connected = false;
 
     /**
      * This variable contains an array with the last error number (num) and string (str)
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    public $lastError = [];
+    protected array $lastError = [];
 
     /**
-     * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
+     * True if the socket stream is encrypted after a {@link \Cake\Network\Socket::enableCrypto()} call
      *
      * @var bool
      */
-    public $encrypted = false;
+    protected bool $encrypted = false;
 
     /**
      * Contains all the encryption methods available
      *
-     * @var array
+     * @var array<string, int>
      */
-    protected $_encryptMethods = [
-        // phpcs:disable
+    protected array $_encryptMethods = [
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
@@ -97,23 +89,22 @@ class Socket
         'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
         'tlsv10_server' => STREAM_CRYPTO_METHOD_TLSv1_0_SERVER,
         'tlsv11_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
-        'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
-        // phpcs:enable
+        'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER,
     ];
 
     /**
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $_connectionErrors = [];
+    protected array $_connectionErrors = [];
 
     /**
      * Constructor.
      *
-     * @param array $config Socket configuration, which will be merged with the base configuration
-     * @see \Cake\Network\Socket::$_baseConfig
+     * @param array<string, mixed> $config Socket configuration, which will be merged with the base configuration
+     * @see \Cake\Network\Socket::$_defaultConfig
      */
     public function __construct(array $config = [])
     {
@@ -132,8 +123,7 @@ class Socket
             $this->disconnect();
         }
 
-        $hasProtocol = strpos($this->_config['host'], '://') !== false;
-        if ($hasProtocol) {
+        if (str_contains($this->_config['host'], '://')) {
             [$this->_config['protocol'], $this->_config['host']] = explode('://', $this->_config['host']);
         }
         $scheme = null;
@@ -153,8 +143,11 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
-        /** @psalm-suppress InvalidArgument */
-        set_error_handler([$this, '_connectionErrorHandler']);
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
+        set_error_handler($this->_connectionErrorHandler(...));
         $remoteSocketTarget = $scheme . $this->_config['host'];
         $port = (int)$this->_config['port'];
         if ($port > 0) {
@@ -193,6 +186,16 @@ class Socket
     }
 
     /**
+     * Check the connection status after calling `connect()`.
+     *
+     * @return bool
+     */
+    public function isConnected(): bool
+    {
+        return $this->connected;
+    }
+
+    /**
      * Create a stream socket client. Mock utility.
      *
      * @param string $remoteSocketTarget remote socket
@@ -203,8 +206,14 @@ class Socket
      * @param resource $context context
      * @return resource|null
      */
-    protected function _getStreamSocketClient($remoteSocketTarget, &$errNum, &$errStr, $timeout, $connectAs, $context)
-    {
+    protected function _getStreamSocketClient(
+        string $remoteSocketTarget,
+        int &$errNum,
+        string &$errStr,
+        int $timeout,
+        int $connectAs,
+        $context
+    ) {
         $resource = stream_socket_client(
             $remoteSocketTarget,
             $errNum,
@@ -214,11 +223,11 @@ class Socket
             $context
         );
 
-        if ($resource) {
-            return $resource;
+        if (!$resource) {
+            return null;
         }
 
-        return null;
+        return $resource;
     }
 
     /**
@@ -230,7 +239,7 @@ class Socket
     protected function _setSslContext(string $host): void
     {
         foreach ($this->_config as $key => $value) {
-            if (substr($key, 0, 4) !== 'ssl_') {
+            if (!str_starts_with($key, 'ssl_')) {
                 continue;
             }
             $contextKey = substr($key, 4);
@@ -332,11 +341,11 @@ class Socket
      */
     public function lastError(): ?string
     {
-        if (!empty($this->lastError)) {
-            return $this->lastError['num'] . ': ' . $this->lastError['str'];
+        if (empty($this->lastError)) {
+            return null;
         }
 
-        return null;
+        return $this->lastError['num'] . ': ' . $this->lastError['str'];
     }
 
     /**
@@ -390,19 +399,19 @@ class Socket
         }
 
         /** @psalm-suppress PossiblyNullArgument */
-        if (!feof($this->connection)) {
-            $buffer = fread($this->connection, $length);
-            $info = stream_get_meta_data($this->connection);
-            if ($info['timed_out']) {
-                $this->setLastError(E_WARNING, 'Connection timed out');
-
-                return null;
-            }
-
-            return $buffer;
+        if (feof($this->connection)) {
+            return null;
         }
 
-        return null;
+        $buffer = fread($this->connection, $length);
+        $info = stream_get_meta_data($this->connection);
+        if ($info['timed_out']) {
+            $this->setLastError(E_WARNING, 'Connection timed out');
+
+            return null;
+        }
+
+        return $buffer;
     }
 
     /**
@@ -444,11 +453,11 @@ class Socket
     public function reset(?array $state = null): void
     {
         if (empty($state)) {
-            static $initalState = [];
-            if (empty($initalState)) {
-                $initalState = get_class_vars(self::class);
+            static $initialState = [];
+            if (empty($initialState)) {
+                $initialState = get_class_vars(self::class);
             }
-            $state = $initalState;
+            $state = $initialState;
         }
 
         foreach ($state as $property => $value) {
@@ -500,5 +509,15 @@ class Socket
         $errorMessage = 'Unable to perform enableCrypto operation on the current socket';
         $this->setLastError(null, $errorMessage);
         throw new SocketException($errorMessage);
+    }
+
+    /**
+     * Check the encryption status after calling `enableCrypto()`.
+     *
+     * @return bool
+     */
+    public function isEncrypted(): bool
+    {
+        return $this->encrypted;
     }
 }

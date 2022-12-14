@@ -39,7 +39,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Constructor. Takes a name for the function to be invoked and a list of params
@@ -62,7 +62,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param string $name the name of the function to be constructed
      * @param array $params list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
-     * @param array $types associative array of types to be associated with the
+     * @param array<string, string>|array<string|null> $types Associative array of types to be associated with the
      * passed arguments
      * @param string $returnType The return type of this expression
      */
@@ -101,14 +101,14 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @param array $conditions list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
-     * @param array $types associative array of types to be associated with the
+     * @param array<string, string> $types Associative array of types to be associated with the
      * passed arguments
      * @param bool $prepend Whether to prepend or append to the list of arguments
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function add($conditions, array $types = [], bool $prepend = false)
+    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);

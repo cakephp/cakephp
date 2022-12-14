@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -34,28 +35,28 @@ class Route
      *
      * @var array
      */
-    public $keys = [];
+    public array $keys = [];
 
     /**
      * An array of additional parameters for the Route.
      *
      * @var array
      */
-    public $options = [];
+    public array $options = [];
 
     /**
      * Default parameters for a Route
      *
      * @var array
      */
-    public $defaults = [];
+    public array $defaults = [];
 
     /**
      * The routes template string.
      *
      * @var string
      */
-    public $template;
+    public string $template;
 
     /**
      * Is this route a greedy route? Greedy routes have a `/*` in their
@@ -63,52 +64,47 @@ class Route
      *
      * @var bool
      */
-    protected $_greedy = false;
+    protected bool $_greedy = false;
 
     /**
      * The compiled route regular expression
      *
      * @var string|null
      */
-    protected $_compiledRoute;
+    protected ?string $_compiledRoute = null;
 
     /**
      * The name for a route. Fetch with Route::getName();
      *
      * @var string|null
      */
-    protected $_name;
+    protected ?string $_name = null;
 
     /**
      * List of connected extensions for this route.
      *
      * @var array<string>
      */
-    protected $_extensions = [];
+    protected array $_extensions = [];
 
     /**
      * List of middleware that should be applied.
      *
      * @var array
      */
-    protected $middleware = [];
-
-    /**
-     * Track whether or not brace keys `{var}` were used.
-     *
-     * @var bool
-     */
-    protected $braceKeys = true;
+    protected array $middleware = [];
 
     /**
      * Valid HTTP methods.
      *
-     * @var array
+     * @var array<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
      * Regex for matching braced placholders in route template.
+     *
+     * @var string
      */
     protected const PLACEHOLDER_REGEX = '#\{([a-z][a-z0-9-_]*)\}#i';
 
@@ -120,15 +116,17 @@ class Route
      * - `_ext` - Defines the extensions used for this route.
      * - `_middleware` - Define the middleware names for this route.
      * - `pass` - Copies the listed parameters into params['pass'].
+     * - `_method` - Defines the HTTP method(s) the route applies to. It can be
+     *   a string or array of valid HTTP method name.
      * - `_host` - Define the host name pattern if you want this route to only match
      *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
      *   e.g. `*.example.com` matches all subdomains on `example.com`.
-     * - `_method` - Defines the HTTP method(s) the route applies to. It can be
-     *   a string or array of valid HTTP method name.
+     * - '_port` - Define the port if you want this route to only match specific port number.
+     * - '_urldecode' - Set to `false` to disable URL decoding before route parsing.
      *
      * @param string $template Template string with parameter placeholders
      * @param array $defaults Defaults for the route.
-     * @param array $options Array of additional options for the Route
+     * @param array<string, mixed> $options Array of additional options for the Route
      * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
@@ -189,7 +187,7 @@ class Route
      * @return array<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
-    protected function normalizeAndValidateMethods($methods)
+    protected function normalizeAndValidateMethods(array|string $methods): array|string
     {
         $methods = is_array($methods)
             ? array_map('strtoupper', $methods)
@@ -296,8 +294,8 @@ class Route
         if ($this->_compiledRoute === null) {
             $this->_writeRoute();
         }
+        assert($this->_compiledRoute !== null);
 
-        /** @var string */
         return $this->_compiledRoute;
     }
 
@@ -321,29 +319,22 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
-            preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements);
-        } else {
-            $hasMatches = preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
-            $this->braceKeys = false;
-            if ($hasMatches) {
-                deprecationWarning(
-                    'Colon prefixed route placeholders like `:foo` are deprecated.'
-                    . ' Use braced placeholders like `{foo}` instead.'
-                );
-            }
-        }
-        foreach ($namedElements[1] as $i => $name) {
-            $search = preg_quote($namedElements[0][$i]);
+        preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+
+        foreach ($namedElements as $matchArray) {
+            // Placeholder name, e.g. "foo"
+            $name = $matchArray[1][0];
+            // Placeholder with colon/braces, e.g. "{foo}"
+            $search = preg_quote($matchArray[0][0]);
             if (isset($this->options[$name])) {
                 $option = '';
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
-                $slashParam = '/' . $search;
                 // phpcs:disable Generic.Files.LineLength
-                if (strpos($parsed, $slashParam) !== false) {
-                    $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+                // Offset of the colon/braced placeholder in the full template string
+                if ($parsed[$matchArray[0][1] - 1] === '/') {
+                    $routeParams['/' . $search] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
                     $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 }
@@ -396,10 +387,7 @@ class Route
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
-            if (
-                strpos($this->template, '{' . $key . '}') !== false
-                || strpos($this->template, ':' . $key) !== false
-            ) {
+            if (str_contains($this->template, '{' . $key . '}')) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
                 $value = $this->defaults[$key];
@@ -421,10 +409,10 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
-     * false will be returned.
+     * `null` will be returned.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The URL to attempt to parse.
-     * @return array|null An array of request parameters, or null on failure.
+     * @return array|null An array of request parameters, or `null` on failure.
      */
     public function parseRequest(ServerRequestInterface $request): ?array
     {
@@ -440,22 +428,32 @@ class Route
      * Checks to see if the given URL can be parsed by this route.
      *
      * If the route can be parsed an array of parameters will be returned; if not
-     * false will be returned. String URLs are parsed if they match a routes regular expression.
+     * `null` will be returned. String URLs are parsed if they match a routes regular expression.
      *
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
-     * @return array|null An array of request parameters, or null on failure.
-     * @throws \InvalidArgumentException When method is not an empty string or in `VALID_METHODS` list.
+     * @return array|null An array of request parameters, or `null` on failure.
+     * @throws \Cake\Http\Exception\BadRequestException When method is not an empty string and not in `VALID_METHODS` list.
      */
     public function parse(string $url, string $method): ?array
     {
-        if ($method !== '') {
-            $method = $this->normalizeAndValidateMethods($method);
+        try {
+            if ($method !== '') {
+                $method = $this->normalizeAndValidateMethods($method);
+            }
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestException($e->getMessage());
         }
+
         $compiledRoute = $this->compile();
         [$url, $ext] = $this->_parseExtension($url);
 
-        if (!preg_match($compiledRoute, urldecode($url), $route)) {
+        $urldecode = $this->options['_urldecode'] ?? true;
+        if ($urldecode) {
+            $url = urldecode($url);
+        }
+
+        if (!preg_match($compiledRoute, $url, $route)) {
             return null;
         }
 
@@ -516,6 +514,8 @@ class Route
                 }
             }
         }
+
+        $route['_route'] = $this;
         $route['_matchedRoute'] = $this->template;
         if (count($this->middleware) > 0) {
             $route['_middleware'] = $this->middleware;
@@ -528,7 +528,7 @@ class Route
      * Check to see if the host matches the route requirements
      *
      * @param string $host The request's host name
-     * @return bool Whether or not the host matches any conditions set in for this route.
+     * @return bool Whether the host matches any conditions set in for this route.
      */
     public function hostMatches(string $host): bool
     {
@@ -546,7 +546,7 @@ class Route
      */
     protected function _parseExtension(string $url): array
     {
-        if (count($this->_extensions) && strpos($url, '.') !== false) {
+        if (count($this->_extensions) && str_contains($url, '.')) {
             foreach ($this->_extensions as $ext) {
                 $len = strlen($ext) + 1;
                 if (substr($url, -$len) === '.' . $ext) {
@@ -572,12 +572,13 @@ class Route
     {
         $pass = [];
         $args = explode('/', $args);
+        $urldecode = $this->options['_urldecode'] ?? true;
 
         foreach ($args as $param) {
             if (empty($param) && $param !== '0') {
                 continue;
             }
-            $pass[] = rawurldecode($param);
+            $pass[] = $urldecode ? rawurldecode($param) : $param;
         }
 
         return $pass;
@@ -635,7 +636,7 @@ class Route
 
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
-            if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
+            if (!isset($hostOptions['_host']) && !str_contains($this->options['_host'], '*')) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
             $hostOptions['_host'] = $hostOptions['_host'] ?? $context['_host'];
@@ -683,11 +684,6 @@ class Route
             return null;
         }
         unset($url['_method'], $url['[method]'], $defaults['_method']);
-
-        // Missing defaults is a fail.
-        if (array_diff_key($defaults, $url) !== []) {
-            return null;
-        }
 
         // Defaults with different values are a fail.
         if (array_intersect_key($url, $defaults) != $defaults) {
@@ -757,7 +753,7 @@ class Route
     }
 
     /**
-     * Check whether or not the URL's HTTP method matches.
+     * Check whether the URL's HTTP method matches.
      *
      * @param array $url The array for the URL being generated.
      * @return bool
@@ -794,27 +790,29 @@ class Route
      */
     protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $pass = implode('/', array_map('rawurlencode', $pass));
+        $pass = array_map(function ($value) {
+            return rawurlencode((string)$value);
+        }, $pass);
+        $pass = implode('/', $pass);
         $out = $this->template;
 
         $search = $replace = [];
         foreach ($this->keys as $key) {
             if (!array_key_exists($key, $params)) {
-                throw new InvalidArgumentException("Missing required route key `{$key}`");
+                throw new InvalidArgumentException(sprintf(
+                    'Missing required route key `%s`.',
+                    $key
+                ));
             }
             $string = $params[$key];
-            if ($this->braceKeys) {
-                $search[] = "{{$key}}";
-            } else {
-                $search[] = ':' . $key;
-            }
+            $search[] = "{{$key}}";
             $replace[] = $string;
         }
 
-        if (strpos($this->template, '**') !== false) {
+        if (str_contains($this->template, '**')) {
             array_push($search, '**', '%2F');
             array_push($replace, $pass, '/');
-        } elseif (strpos($this->template, '*') !== false) {
+        } elseif (str_contains($this->template, '*')) {
             $search[] = '*';
             $replace[] = $pass;
         }
@@ -872,11 +870,6 @@ class Route
             return substr($this->template, 0, $namedElements[0][1]);
         }
 
-        $routeKey = strpos($this->template, ':');
-        if ($routeKey !== false) {
-            return substr($this->template, 0, $routeKey);
-        }
-
         $star = strpos($this->template, '*');
         if ($star !== false) {
             $path = rtrim(substr($this->template, 0, $star), '/');
@@ -917,10 +910,10 @@ class Route
      * This method helps for applications that want to implement
      * router caching.
      *
-     * @param array $fields Key/Value of object attributes
+     * @param array<string, mixed> $fields Key/Value of object attributes
      * @return static A new instance of the route
      */
-    public static function __set_state(array $fields)
+    public static function __set_state(array $fields): static
     {
         $class = static::class;
         $obj = new $class('');

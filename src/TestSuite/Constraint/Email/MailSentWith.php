@@ -26,7 +26,7 @@ class MailSentWith extends MailConstraintBase
     /**
      * @var string
      */
-    protected $method;
+    protected string $method;
 
     /**
      * Constructor
@@ -50,18 +50,19 @@ class MailSentWith extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $emails = $this->getMessages();
         foreach ($emails as $email) {
             $value = $email->{'get' . ucfirst($this->method)}();
-            if (
-                in_array($this->method, ['to', 'cc', 'bcc', 'from', 'replyTo', 'sender'], true)
-                && array_key_exists($other, $value)
-            ) {
+            if ($value === $other) {
                 return true;
             }
-            if ($value === $other) {
+            if (
+                !is_array($other)
+                && in_array($this->method, ['to', 'cc', 'bcc', 'from', 'replyTo', 'sender'])
+                && array_key_exists($other, $value)
+            ) {
                 return true;
             }
         }

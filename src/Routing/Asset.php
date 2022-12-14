@@ -30,7 +30,7 @@ class Asset
      *
      * @var string
      */
-    protected static $inflectionType = 'underscore';
+    protected static string $inflectionType = 'underscore';
 
     /**
      * Set inflection type to use when inflecting plugin/theme name.
@@ -51,7 +51,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
@@ -75,7 +75,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -101,7 +101,7 @@ class Asset
      * `Asset::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -140,7 +140,7 @@ class Asset
      *    enable timestamping regardless of debug value.
      *
      * @param string $path Path string or URL array
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return string Generated URL
      */
     public static function url(string $path, array $options = []): string
@@ -149,7 +149,7 @@ class Asset
             return $path;
         }
 
-        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
+        if (str_contains($path, '://') || preg_match('/^[a-z]+:/i', $path)) {
             return ltrim(Router::url($path), '/');
         }
 
@@ -169,8 +169,8 @@ class Asset
         }
         if (
             !empty($options['ext']) &&
-            strpos($path, '?') === false &&
-            substr($path, -strlen($options['ext'])) !== $options['ext']
+            !str_contains($path, '?') &&
+            !str_ends_with($path, $options['ext'])
         ) {
             $path .= $options['ext'];
         }
@@ -234,15 +234,13 @@ class Asset
      * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public static function assetTimestamp(string $path, $timestamp = null): string
+    public static function assetTimestamp(string $path, string|bool|null $timestamp = null): string
     {
-        if (strpos($path, '?') !== false) {
+        if (str_contains($path, '?')) {
             return $path;
         }
 
-        if ($timestamp === null) {
-            $timestamp = Configure::read('Asset.timestamp');
-        }
+        $timestamp ??= Configure::read('Asset.timestamp');
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled) {
             $filepath = preg_replace(
@@ -284,7 +282,7 @@ class Asset
      * - `theme` Optional theme name
      *
      * @param string $file The file to create a webroot path to.
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return string Web accessible path to file.
      */
     public static function webroot(string $file, array $options = []): string
@@ -316,7 +314,7 @@ class Asset
                 }
             }
         }
-        if (strpos($webPath, '//') !== false) {
+        if (str_contains($webPath, '//')) {
             return str_replace('//', '/', $webPath . $asset[1]);
         }
 

@@ -16,13 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Filesystem;
+use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -43,84 +44,84 @@ class I18nExtractCommand extends Command
      *
      * @var array<string>
      */
-    protected $_paths = [];
+    protected array $_paths = [];
 
     /**
      * Files from where to extract
      *
      * @var array<string>
      */
-    protected $_files = [];
+    protected array $_files = [];
 
     /**
      * Merge all domain strings into the default.pot file
      *
      * @var bool
      */
-    protected $_merge = false;
+    protected bool $_merge = false;
 
     /**
      * Current file being processed
      *
      * @var string
      */
-    protected $_file = '';
+    protected string $_file = '';
 
     /**
-     * Contains all content waiting to be write
+     * Contains all content waiting to be written
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_storage = [];
+    protected array $_storage = [];
 
     /**
      * Extracted tokens
      *
      * @var array
      */
-    protected $_tokens = [];
+    protected array $_tokens = [];
 
     /**
      * Extracted strings indexed by domain.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_translations = [];
+    protected array $_translations = [];
 
     /**
      * Destination path
      *
      * @var string
      */
-    protected $_output = '';
+    protected string $_output = '';
 
     /**
      * An array of directories to exclude.
      *
      * @var array<string>
      */
-    protected $_exclude = [];
+    protected array $_exclude = [];
 
     /**
      * Holds whether this call should extract the CakePHP Lib messages
      *
      * @var bool
      */
-    protected $_extractCore = false;
+    protected bool $_extractCore = false;
 
     /**
      * Displays marker error(s) if true
      *
      * @var bool
      */
-    protected $_markerError = false;
+    protected bool $_markerError = false;
 
     /**
      * Count number of marker errors found
      *
      * @var int
      */
-    protected $_countMarkerError = 0;
+    protected int $_countMarkerError = 0;
 
     /**
      * Method to interact with the user and get path selections.
@@ -147,8 +148,6 @@ class I18nExtractCommand extends Command
             if (strtoupper($response) === 'Q') {
                 $io->err('Extract Aborted');
                 $this->abort();
-
-                return;
             }
             if (strtoupper($response) === 'D' && count($this->_paths)) {
                 $io->out();
@@ -404,8 +403,8 @@ class I18nExtractCommand extends Command
      */
     protected function _extractTokens(Arguments $args, ConsoleIo $io): void
     {
-        /** @var \Cake\Shell\Helper\ProgressHelper $progress */
         $progress = $io->helper('progress');
+        assert($progress instanceof ProgressHelper);
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $args->getOption('verbose');
 
@@ -492,7 +491,6 @@ class I18nExtractCommand extends Command
 
                 if ($mapCount === count($strings)) {
                     $singular = '';
-                    $plural = $context = null;
                     $vars = array_combine($map, $strings);
                     extract($vars);
                     $domain = $domain ?? 'default';
@@ -501,10 +499,10 @@ class I18nExtractCommand extends Command
                         'line' => $line,
                     ];
                     $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
-                    if ($plural !== null) {
+                    if (isset($plural)) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if ($context !== null) {
+                    if (isset($context)) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
@@ -618,12 +616,6 @@ class I18nExtractCommand extends Command
                 $output .= $header . $sentence;
             }
 
-            // Remove vendor prefix if present.
-            $slashPosition = strpos($domain, '/');
-            if ($slashPosition !== false) {
-                $domain = substr($domain, $slashPosition + 1);
-            }
-
             $filename = str_replace('/', '_', $domain) . '.pot';
             $outputPath = $this->_output . $filename;
 
@@ -692,7 +684,7 @@ class I18nExtractCommand extends Command
      * @param string $oldFile The existing file.
      * @param int $headerLength The length of the file header in bytes.
      * @param string $newFileContent The content of the new file.
-     * @return bool Whether or not the old and new file are unchanged.
+     * @return bool Whether the old and new file are unchanged.
      */
     protected function checkUnchanged(string $oldFile, int $headerLength, string $newFileContent): bool
     {
@@ -701,8 +693,8 @@ class I18nExtractCommand extends Command
         }
         $oldFileContent = file_get_contents($oldFile);
 
-        $oldChecksum = sha1((string)substr($oldFileContent, $headerLength));
-        $newChecksum = sha1((string)substr($newFileContent, $headerLength));
+        $oldChecksum = sha1(substr($oldFileContent, $headerLength));
+        $newChecksum = sha1(substr($newFileContent, $headerLength));
 
         return $oldChecksum === $newChecksum;
     }
@@ -717,7 +709,7 @@ class I18nExtractCommand extends Command
     protected function _getStrings(int &$position, int $target): array
     {
         $strings = [];
-        $count = count($strings);
+        $count = 0;
         while (
             $count < $target
             && ($this->_tokens[$position] === ','
@@ -779,9 +771,9 @@ class I18nExtractCommand extends Command
      * @param int $count Count
      * @return void
      */
-    protected function _markerError($io, string $file, int $line, string $marker, int $count): void
+    protected function _markerError(ConsoleIo $io, string $file, int $line, string $marker, int $count): void
     {
-        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+        if (!str_contains($this->_file, CAKE_CORE_INCLUDE_PATH)) {
             $this->_countMarkerError++;
         }
 
@@ -833,11 +825,15 @@ class I18nExtractCommand extends Command
 
         foreach ($this->_paths as $path) {
             $path = realpath($path) . DIRECTORY_SEPARATOR;
+            if (!is_dir($path)) {
+                continue;
+            }
+
             $fs = new Filesystem();
             $files = $fs->findRecursive($path, '/\.php$/');
             $files = array_keys(iterator_to_array($files));
             sort($files);
-            if (!empty($pattern)) {
+            if ($pattern) {
                 $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);
             }
@@ -859,12 +855,12 @@ class I18nExtractCommand extends Command
     }
 
     /**
-     * Checks whether or not a given path is usable for writing.
+     * Checks whether a given path is usable for writing.
      *
      * @param string $path Path to folder
      * @return bool true if it exists and is writable, false otherwise
      */
-    protected function _isPathUsable($path): bool
+    protected function _isPathUsable(string $path): bool
     {
         if (!is_dir($path)) {
             mkdir($path, 0770, true);

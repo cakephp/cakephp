@@ -18,13 +18,12 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Filesystem;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenDate;
+use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
@@ -84,9 +83,8 @@ class HtmlHelperTest extends TestCase
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks(DashedRoute::class);
-        });
+        $builder = Router::createRouteBuilder('/');
+        $builder->fallbacks(DashedRoute::class);
     }
 
     /**
@@ -105,8 +103,9 @@ class HtmlHelperTest extends TestCase
     public function testLink(): void
     {
         Router::reload();
-        Router::connect('/{controller}', ['action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/{controller}', ['action' => 'index']);
+        $builder->connect('/{controller}/{action}/*');
         Router::setRequest(new ServerRequest());
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));
@@ -347,8 +346,9 @@ class HtmlHelperTest extends TestCase
      */
     public function testImageTag(): void
     {
-        Router::connect('/:controller', ['action' => 'index']);
-        Router::connect('/:controller/:action/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/:controller', ['action' => 'index']);
+        $builder->connect('/:controller/:action/*');
 
         $result = $this->Html->image('test.gif');
         $expected = ['img' => ['src' => 'img/test.gif', 'alt' => '']];
@@ -615,8 +615,8 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->css('http://whatever.com/screen.css?1234');
-        $expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
+        $result = $this->Html->css('http://whatever.com/screen.css?1234&a=b');
+        $expected['link']['href'] = 'http://whatever.com/screen.css?1234&amp;a=b';
         $this->assertHtml($expected, $result);
 
         Configure::write('App.cssBaseUrl', '//cdn.cakephp.org/css/');
@@ -959,6 +959,18 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->script('test.json.js?foo=bar&other=test');
         $expected = [
             'script' => ['src' => 'js/test.json.js?foo=bar&amp;other=test'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('//domain.com/test.json.js?foo=bar&other=test');
+        $expected = [
+            'script' => ['src' => '//domain.com/test.json.js?foo=bar&amp;other=test'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('https://domain.com/test.json.js?foo=bar&other=test');
+        $expected = [
+            'script' => ['src' => 'https://domain.com/test.json.js?foo=bar&amp;other=test'],
         ];
         $this->assertHtml($expected, $result);
 
@@ -1489,7 +1501,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testMeta(): void
     {
-        Router::connect('/:controller', ['action' => 'index']);
+        Router::createRouteBuilder('/')->connect('/:controller', ['action' => 'index']);
 
         $result = $this->Html->meta('this is an rss feed', ['controller' => 'Posts', '_ext' => 'rss']);
         $expected = ['link' => ['href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed']];
@@ -1839,7 +1851,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = [
-            new FrozenDate('2020-08-27'),
+            new Date('2020-08-27'),
         ];
         $result = $this->Html->tableCells($tr);
         $expected = [
@@ -1945,7 +1957,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['video' => ['src' => 'files/video.webm'], 'Your browser does not support the HTML5 Video element.', '/video'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->media('video.webm', ['autoload', 'muted' => 'muted']);
+        $result = $this->Html->media('video.webm', ['autoload' => true, 'muted' => 'muted']);
         $expected = [
             'video' => [
                 'src' => 'files/video.webm',

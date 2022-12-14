@@ -87,6 +87,13 @@ class Message
     public const STATUS_TEMPORARY_REDIRECT = 307;
 
     /**
+     * HTTP 308 code
+     *
+     * @var int
+     */
+    public const STATUS_PERMANENT_REDIRECT = 308;
+
+    /**
      * HTTP GET method
      *
      * @var string
@@ -147,7 +154,7 @@ class Message
      *
      * @var array
      */
-    protected $_cookies = [];
+    protected array $_cookies = [];
 
     /**
      * Get all cookies

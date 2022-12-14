@@ -32,22 +32,22 @@ abstract class Helper
     /**
      * Default config for this helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * ConsoleIo instance.
      *
      * @var \Cake\Console\ConsoleIo
      */
-    protected $_io;
+    protected ConsoleIo $_io;
 
     /**
      * Constructor.
      *
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use.
-     * @param array $config The settings for this helper.
+     * @param array<string, mixed> $config The settings for this helper.
      */
     public function __construct(ConsoleIo $io, array $config = [])
     {

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\Database\Exception\DatabaseException;
+
 /**
  * Represents a single level in the associations tree to be eagerly loaded
  * for a specific query. This contains all the information required to
@@ -31,29 +33,29 @@ class EagerLoadable
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * A list of other associations to load from this level.
      *
      * @var array<\Cake\ORM\EagerLoadable>
      */
-    protected $_associations = [];
+    protected array $_associations = [];
 
     /**
      * The Association class instance to use for loading the records.
      *
      * @var \Cake\ORM\Association|null
      */
-    protected $_instance;
+    protected ?Association $_instance = null;
 
     /**
      * A list of options to pass to the association object for loading
      * the records.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_config = [];
+    protected array $_config = [];
 
     /**
      * A dotted separated string representing the path of associations
@@ -61,7 +63,7 @@ class EagerLoadable
      *
      * @var string
      */
-    protected $_aliasPath;
+    protected string $_aliasPath;
 
     /**
      * A dotted separated string representing the path of entity properties
@@ -77,22 +79,22 @@ class EagerLoadable
      *
      * @var string|null
      */
-    protected $_propertyPath;
+    protected ?string $_propertyPath = null;
 
     /**
-     * Whether or not this level can be fetched using a join.
+     * Whether this level can be fetched using a join.
      *
      * @var bool
      */
-    protected $_canBeJoined = false;
+    protected bool $_canBeJoined = false;
 
     /**
-     * Whether or not this level was meant for a "matching" fetch
+     * Whether this level was meant for a "matching" fetch
      * operation
      *
      * @var bool|null
      */
-    protected $_forMatching;
+    protected ?bool $_forMatching = null;
 
     /**
      * The property name where the association result should be nested
@@ -108,7 +110,7 @@ class EagerLoadable
      *
      * @var string|null
      */
-    protected $_targetProperty;
+    protected ?string $_targetProperty = null;
 
     /**
      * Constructor. The $config parameter accepts the following array
@@ -126,7 +128,7 @@ class EagerLoadable
      * The keys maps to the settable properties in this class.
      *
      * @param string $name The Association name.
-     * @param array $config The list of properties to set.
+     * @param array<string, mixed> $config The list of properties to set.
      */
     public function __construct(string $name, array $config = [])
     {
@@ -168,12 +170,12 @@ class EagerLoadable
      * Gets the Association class instance to use for loading the records.
      *
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function instance(): Association
     {
         if ($this->_instance === null) {
-            throw new \RuntimeException('No instance set.');
+            throw new DatabaseException('No instance set.');
         }
 
         return $this->_instance;
@@ -210,7 +212,7 @@ class EagerLoadable
     }
 
     /**
-     * Sets whether or not this level can be fetched using a join.
+     * Sets whether this level can be fetched using a join.
      *
      * @param bool $possible The value to set.
      * @return $this
@@ -223,7 +225,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level can be fetched using a join.
+     * Gets whether this level can be fetched using a join.
      *
      * @return bool
      */
@@ -236,7 +238,7 @@ class EagerLoadable
      * Sets the list of options to pass to the association object for loading
      * the records.
      *
-     * @param array $config The value to set.
+     * @param array<string, mixed> $config The value to set.
      * @return $this
      */
     public function setConfig(array $config)
@@ -250,7 +252,7 @@ class EagerLoadable
      * Gets the list of options to pass to the association object for loading
      * the records.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getConfig(): array
     {
@@ -258,7 +260,7 @@ class EagerLoadable
     }
 
     /**
-     * Gets whether or not this level was meant for a
+     * Gets whether this level was meant for a
      * "matching" fetch operation.
      *
      * @return bool|null
@@ -291,7 +293,7 @@ class EagerLoadable
      * Returns a representation of this object that can be passed to
      * Cake\ORM\EagerLoader::contain()
      *
-     * @return array
+     * @return array<string, array>
      */
     public function asContainArray(): array
     {

@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         4.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Cake\Test\TestCase\Http\Middleware;
@@ -60,14 +60,10 @@ class CspMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
-        $expected = [
-            'script-src \'self\' https://www.google-analytics.com',
-        ];
 
-        $this->assertNotEmpty($policy);
-        foreach ($expected as $match) {
-            $this->assertStringContainsString($match, $policy);
-        }
+        $expected = 'script-src \'self\' https://www.google-analytics.com';
+        $this->assertStringContainsString($expected, $policy);
+        $this->assertStringNotContainsString('nonce-', $policy);
     }
 
     /**
@@ -77,7 +73,7 @@ class CspMiddlewareTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $middleware = new CspMiddleware([
+        $policy = [
             'script-src' => [
                 'self' => true,
                 'unsafe-inline' => false,
@@ -88,6 +84,10 @@ class CspMiddlewareTest extends TestCase
                 'unsafe-inline' => false,
                 'unsafe-eval' => false,
             ],
+        ];
+        $middleware = new CspMiddleware($policy, [
+            'scriptNonce' => true,
+            'styleNonce' => true,
         ]);
 
         $handler = new TestRequestHandler(function ($request) {
@@ -133,13 +133,8 @@ class CspMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
-        $expected = [
-            'script-src \'self\' https://www.google-analytics.com',
-        ];
+        $expected = 'script-src \'self\' https://www.google-analytics.com';
 
-        $this->assertNotEmpty($policy);
-        foreach ($expected as $match) {
-            $this->assertStringContainsString($match, $policy);
-        }
+        $this->assertStringContainsString($expected, $policy);
     }
 }

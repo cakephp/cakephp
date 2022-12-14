@@ -17,14 +17,17 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Rule;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Association\HasMany;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use stdClass;
 
 /**
  * Tests the LinkConstraint rule.
@@ -36,7 +39,7 @@ class LinkConstraintTest extends TestCase
      *
      * @var string[]
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',
@@ -45,27 +48,12 @@ class LinkConstraintTest extends TestCase
     ];
 
     /**
-     * Do not load fixtures by default.
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
-
-    /**
      * Setup
      */
     public function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-
-        $this->loadFixtures(
-            'Articles',
-            'Comments',
-            'Attachments',
-            'Tags',
-            'ArticlesTags'
-        );
     }
 
     /**
@@ -84,35 +72,15 @@ class LinkConstraintTest extends TestCase
      */
     public function invalidConstructorArgumentOneDataProvider(): array
     {
-        return [[null, 'NULL'], [1, 'integer'], [[], 'array'], [new \stdClass(), 'stdClass']];
-    }
-
-    /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     *
-     * @dataProvider invalidConstructorArgumentOneDataProvider
-     * @param mixed $value
-     * @param string $actualType
-     */
-    public function testInvalidConstructorArgumentOne($value, $actualType): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `%s` given.',
-            $actualType
-        ));
-
-        new LinkConstraint($value, LinkConstraint::STATUS_LINKED);
+        return [[null, 'null'], [1, 'int'], [[], 'array'], [new stdClass(), 'stdClass']];
     }
 
     /**
      * Tests that an exception is thrown when passing an invalid value for the `$requiredLinkStatus` argument.
-     *
-     * @dataProvider invalidConstructorArgumentOneDataProvider
      */
     public function testInvalidConstructorArgumentTwo(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.');
 
         new LinkConstraint('Association', 'invalid');
@@ -123,7 +91,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testNonExistentAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `NonExistent` association is not defined on `Articles`.');
 
         $Articles = $this->getTableLocator()->get('Articles');
@@ -142,7 +110,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testMissingPrimaryKeyValues(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage(
             'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
             'conditions, expected values for `(id, nonexistent)`, got `(1, )`.'
@@ -170,7 +138,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testNonMatchingKeyFields(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The number of fields is expected to match the number of values, got 0 field(s) and 1 value(s).'
         );
@@ -205,7 +173,7 @@ class LinkConstraintTest extends TestCase
     {
         return [
             [['repository' => null]],
-            [['repository' => new \stdClass()]],
+            [['repository' => new stdClass()]],
             [[]],
         ];
     }
@@ -218,7 +186,7 @@ class LinkConstraintTest extends TestCase
      */
     public function testInvalidRepository($options): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');
 
         $Articles = $this->getMockForModel('Articles', ['buildRules'], ['table' => 'articles']);
@@ -635,11 +603,10 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, Query $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
-                    ->newQuery()
-                    ->select(['RecentComments.id'])
+                    ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(
@@ -647,7 +614,7 @@ class LinkConstraintTest extends TestCase
                             new IdentifierExpression('RecentComments.article_id')
                         );
                     })
-                    ->order(['RecentComments.created' => 'DESC'])
+                    ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
                 return $exp->add(['Comments.id' => $subQuery]);
@@ -672,11 +639,10 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, Query $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
-                    ->newQuery()
-                    ->select(['RecentComments.id'])
+                    ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(
@@ -684,7 +650,7 @@ class LinkConstraintTest extends TestCase
                             new IdentifierExpression('RecentComments.article_id')
                         );
                     })
-                    ->order(['RecentComments.created' => 'DESC'])
+                    ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
                 return $exp->add(['Comments.id' => $subQuery]);

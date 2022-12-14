@@ -39,21 +39,21 @@ class I18n
      *
      * @var \Cake\I18n\TranslatorRegistry|null
      */
-    protected static $_collection;
+    protected static ?TranslatorRegistry $_collection = null;
 
     /**
      * The environment default locale
      *
      * @var string|null
      */
-    protected static $_defaultLocale;
+    protected static ?string $_defaultLocale = null;
 
     /**
      * Returns the translators collection instance. It can be used
      * for getting specific translators based of their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
-     * @return \Cake\I18n\TranslatorRegistry The translators collection.
+     * @return \Cake\I18n\TranslatorRegistry The translator collection.
      */
     public static function translators(): TranslatorRegistry
     {
@@ -148,7 +148,7 @@ class I18n
         $translator = $translators->get($name);
         if ($translator === null) {
             throw new I18nException(sprintf(
-                'Translator for domain "%s" could not be found.',
+                'Translator for domain `%s` could not be found.',
                 $name
             ));
         }
@@ -253,11 +253,7 @@ class I18n
      */
     public static function getDefaultLocale(): string
     {
-        if (static::$_defaultLocale === null) {
-            static::$_defaultLocale = Locale::getDefault() ?: static::DEFAULT_LOCALE;
-        }
-
-        return static::$_defaultLocale;
+        return static::$_defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
     }
 
     /**
@@ -272,7 +268,7 @@ class I18n
 
     /**
      * Sets the name of the default messages formatter to use for future
-     * translator instances. By default the `default` and `sprintf` formatters
+     * translator instances. By default, the `default` and `sprintf` formatters
      * are available.
      *
      * @param string $name The name of the formatter to use.

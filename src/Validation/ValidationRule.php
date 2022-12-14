@@ -38,23 +38,23 @@ class ValidationRule
     /**
      * The 'on' key
      *
-     * @var callable|string
+     * @var callable|string|null
      */
-    protected $_on;
+    protected $_on = null;
 
     /**
      * The 'last' key
      *
      * @var bool
      */
-    protected $_last = false;
+    protected bool $_last = false;
 
     /**
      * The 'message' key
      *
-     * @var string
+     * @var string|null
      */
-    protected $_message;
+    protected ?string $_message = null;
 
     /**
      * Key under which the object or class where the method to be used for
@@ -62,21 +62,21 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_provider = 'default';
+    protected string $_provider = 'default';
 
     /**
      * Extra arguments to be passed to the validation method
      *
      * @var array
      */
-    protected $_pass = [];
+    protected array $_pass = [];
 
     /**
      * Constructor
      *
-     * @param array $validator [optional] The validator properties
+     * @param array<string, mixed> $validator The validator properties
      */
-    public function __construct(array $validator = [])
+    public function __construct(array $validator)
     {
         $this->_addValidatorProps($validator);
     }
@@ -98,11 +98,11 @@ class ValidationRule
      * it is assumed that the rule failed and the error message was given as a result.
      *
      * @param mixed $value The data to validate
-     * @param array $providers associative array with objects or class names that will
+     * @param array<string, mixed> $providers Associative array with objects or class names that will
      * be passed as the last argument for the validation method
-     * @param array $context A key value list of data that could be used as context
+     * @param array<string, mixed> $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
-     * - newRecord: (boolean) whether or not the data to be validated belongs to a
+     * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
      * - data: The full data that was passed to the validation process
      * - field: The name of the field that is being processed
@@ -110,7 +110,7 @@ class ValidationRule
      * @throws \InvalidArgumentException when the supplied rule is not a valid
      * callable for the configured scope
      */
-    public function process($value, array $providers, array $context = [])
+    public function process(mixed $value, array $providers, array $context = []): array|string|bool
     {
         $context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
 
@@ -118,13 +118,13 @@ class ValidationRule
             return true;
         }
 
-        if (!is_string($this->_rule) && is_callable($this->_rule)) {
-            $callable = $this->_rule;
-            $isCallable = true;
-        } else {
+        if (is_string($this->_rule)) {
             $provider = $providers[$this->_provider];
             $callable = [$provider, $this->_rule];
             $isCallable = is_callable($callable);
+        } else {
+            $callable = $this->_rule;
+            $isCallable = true;
         }
 
         if (!$isCallable) {
@@ -155,9 +155,9 @@ class ValidationRule
     /**
      * Checks if the validation rule should be skipped
      *
-     * @param array $context A key value list of data that could be used as context
+     * @param array<string, mixed> $context A key value list of data that could be used as context
      * during validation. Recognized keys are:
-     * - newRecord: (boolean) whether or not the data to be validated belongs to a
+     * - newRecord: (boolean) whether the data to be validated belongs to a
      *   new record
      * - data: The full data that was passed to the validation process
      * - providers associative array with objects or class names that will
@@ -166,16 +166,17 @@ class ValidationRule
      */
     protected function _skip(array $context): bool
     {
-        if (!is_string($this->_on) && is_callable($this->_on)) {
+        if (is_string($this->_on)) {
+            $newRecord = $context['newRecord'];
+
+            return ($this->_on === Validator::WHEN_CREATE && !$newRecord)
+                || ($this->_on === Validator::WHEN_UPDATE && $newRecord);
+        }
+
+        if ($this->_on !== null) {
             $function = $this->_on;
 
             return !$function($context);
-        }
-
-        $newRecord = $context['newRecord'];
-        if (!empty($this->_on)) {
-            return ($this->_on === Validator::WHEN_CREATE && !$newRecord)
-                || ($this->_on === Validator::WHEN_UPDATE && $newRecord);
         }
 
         return false;
@@ -184,13 +185,13 @@ class ValidationRule
     /**
      * Sets the rule properties from the rule entry in validate
      *
-     * @param array $validator [optional]
+     * @param array<string, mixed> $validator [optional]
      * @return void
      */
     protected function _addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
-            if (!isset($value) || empty($value)) {
+            if (empty($value)) {
                 continue;
             }
             if ($key === 'rule' && is_array($value) && !is_callable($value)) {
@@ -209,7 +210,7 @@ class ValidationRule
      * @param string $property The name of the property to retrieve.
      * @return mixed
      */
-    public function get(string $property)
+    public function get(string $property): mixed
     {
         $property = '_' . $property;
 

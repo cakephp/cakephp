@@ -19,25 +19,11 @@ use Cake\TestSuite\Fixture\TestFixture;
 class SiteArticlesFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'author_id' => ['type' => 'integer', 'null' => true],
-        'site_id' => ['type' => 'integer', 'null' => false],
-        'title' => ['type' => 'string', 'null' => true],
-        'body' => 'text',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         [
             'id' => 1,
             'author_id' => 1,

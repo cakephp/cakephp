@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Core\Configure;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
+use Stringable;
 
 /**
  * File Storage stream for Logging. Writes logs to different files
@@ -41,11 +42,10 @@ class FileLog extends BaseLog
      *   If value is 0, old versions are removed rather then rotated.
      * - `mask` A mask is applied when log files are created. Left empty no chmod
      *   is made.
-     * - `dateFormat` PHP date() format.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'path' => null,
         'file' => null,
         'types' => null,
@@ -64,26 +64,26 @@ class FileLog extends BaseLog
      *
      * @var string
      */
-    protected $_path;
+    protected string $_path;
 
     /**
      * The name of the file to save logs into.
      *
      * @var string|null
      */
-    protected $_file;
+    protected ?string $_file = null;
 
     /**
      * Max file size, used for log file rotation.
      *
      * @var int|null
      */
-    protected $_size;
+    protected ?int $_size = null;
 
     /**
      * Sets protected properties based on config provided
      *
-     * @param array $config Configuration array
+     * @param array<string, mixed> $config Configuration array
      */
     public function __construct(array $config = [])
     {
@@ -96,7 +96,7 @@ class FileLog extends BaseLog
 
         if (!empty($this->_config['file'])) {
             $this->_file = $this->_config['file'];
-            if (substr($this->_file, -4) !== '.log') {
+            if (!str_ends_with($this->_file, '.log')) {
                 $this->_file .= '.log';
             }
         }
@@ -108,25 +108,21 @@ class FileLog extends BaseLog
                 $this->_size = Text::parseFileSize($this->_config['size']);
             }
         }
-
-        if (isset($this->_config['dateFormat'])) {
-            deprecationWarning('`dateFormat` option should now be set in the formatter options.');
-            $this->formatter->setConfig('dateFormat', $this->_config['dateFormat']);
-        }
     }
 
     /**
      * Implements writing to log files.
      *
      * @param mixed $level The severity level of the message being written.
-     * @param string $message The message you want to log.
+     * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
-     * @see Cake\Log\Log::$_levels
+     * @see \Cake\Log\Log::$_levels
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
-        $message = $this->_format($message, $context);
+        $message = $this->interpolate($message, $context);
         $message = $this->formatter->format($level, $message, $context);
 
         $filename = $this->_getFilename($level);

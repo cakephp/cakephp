@@ -28,8 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class PoFileParserTest extends TestCase
 {
-    protected $locale;
-
     /**
      * Locale folder path
      *
@@ -43,7 +41,6 @@ class PoFileParserTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->locale = I18n::getLocale();
         $this->path = Configure::read('App.paths.locales.0');
     }
 
@@ -54,7 +51,7 @@ class PoFileParserTest extends TestCase
     {
         parent::tearDown();
         I18n::clear();
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         Cache::clear('_cake_core_');
     }
 

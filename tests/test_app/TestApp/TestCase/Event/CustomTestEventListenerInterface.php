@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\TestCase\Event;
 
 use Cake\Event\EventListenerInterface;
+use Closure;
 
 /**
  * Mock used for testing the subscriber objects
@@ -11,25 +12,18 @@ use Cake\Event\EventListenerInterface;
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
         return [
             'fake.event' => 'listenerFunction',
             'another.event' => ['callable' => 'secondListenerFunction'],
+            'closure.event' => Closure::fromCallable([$this, 'thirdlistenerFunction']),
             'multiple.handlers' => [
                 ['callable' => 'listenerFunction'],
-                ['callable' => 'thirdListenerFunction'],
+                ['callable' => Closure::fromCallable([$this, 'secondListenerFunction'])],
             ],
         ];
-    }
-
-    /**
-     * Test function to be used in event dispatching
-     */
-    public function thirdListenerFunction(): void
-    {
-        $this->callList[] = __FUNCTION__;
     }
 }

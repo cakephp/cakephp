@@ -27,6 +27,16 @@ use Cake\View\Widget\TextareaWidget;
 class TextareaWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup
      */
     public function setUp(): void

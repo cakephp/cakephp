@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Rule;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use RuntimeException;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -30,23 +30,23 @@ class ExistsIn
     /**
      * The list of fields to check
      *
-     * @var array
+     * @var array<string>
      */
-    protected $_fields;
+    protected array $_fields;
 
     /**
      * The repository where the field will be looked for
      *
      * @var \Cake\ORM\Table|\Cake\ORM\Association|string
      */
-    protected $_repository;
+    protected Table|Association|string $_repository;
 
     /**
      * Options for the constructor
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Constructor.
@@ -54,14 +54,14 @@ class ExistsIn
      * Available option for $options is 'allowNullableNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param array|string $fields The field or fields to check existence as primary key.
+     * @param array<string>|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
-     * @param array $options The options that modify the rules behavior.
+     * @param array<string, mixed> $options The options that modify the rule's behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
      *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
-    public function __construct($fields, $repository, array $options = [])
+    public function __construct(array|string $fields, Table|Association|string $repository, array $options = [])
     {
         $options += ['allowNullableNulls' => false];
         $this->_options = $options;
@@ -74,17 +74,17 @@ class ExistsIn
      * Performs the existence check
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
-     * @param array $options Options passed to the check,
+     * @param array<string, mixed> $options Options passed to the check,
      * where the `repository` key is required.
-     * @throws \RuntimeException When the rule refers to an undefined association.
+     * @throws \Cake\Database\Exception\DatabaseException When the rule refers to an undefined association.
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (is_string($this->_repository)) {
             if (!$options['repository']->hasAssociation($this->_repository)) {
-                throw new RuntimeException(sprintf(
-                    "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
+                throw new DatabaseException(sprintf(
+                    'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
                     get_class($options['repository'])
@@ -133,9 +133,7 @@ class ExistsIn
         }
 
         $primary = array_map(
-            function ($key) use ($target) {
-                return $target->aliasField($key) . ' IS';
-            },
+            fn ($key) => $target->aliasField($key) . ' IS',
             $bindingKey
         );
         $conditions = array_combine(
@@ -147,7 +145,7 @@ class ExistsIn
     }
 
     /**
-     * Checks whether or not the given entity fields are nullable and null.
+     * Checks whether the given entity fields are nullable and null.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check.
      * @param \Cake\ORM\Table $source The table to use schema from.

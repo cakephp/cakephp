@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use ArrayObject;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
@@ -31,9 +33,19 @@ class HasOneTest extends TestCase
     /**
      * Fixtures to load
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Users', 'core.Profiles'];
+    protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $user;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $profile;
 
     /**
      * @var bool
@@ -65,6 +77,29 @@ class HasOneTest extends TestCase
     }
 
     /**
+     * Tests that the default foreign key condition generation can be disabled.
+     */
+    public function testDisableForeignKey(): void
+    {
+        $table = $this->getTableLocator()->get('Users');
+        $assoc = $table
+            ->hasOne('Profiles')
+            ->setForeignKey('user_id');
+
+        $user = $table->find()->contain(['Profiles'])->orderByAsc('Users.id')->first();
+        $this->assertSame('mariano', $user->profile->first_name);
+
+        $assoc
+            ->setForeignKey(false)
+            ->setConditions([
+                'Profiles.first_name' => 'larry',
+            ]);
+
+        $user = $table->find()->contain(['Profiles'])->orderByAsc('Users.id')->first();
+        $this->assertSame('larry', $user->profile->first_name);
+    }
+
+    /**
      * Tests that the association reports it can be joined
      */
     public function testCanBeJoined(): void
@@ -91,7 +126,7 @@ class HasOneTest extends TestCase
         $query = $this->user->find();
         $association->attachTo($query);
 
-        $results = $query->order('Users.id')->toArray();
+        $results = $query->orderBy('Users.id')->toArray();
         $this->assertCount(1, $results, 'Only one record because of conditions & join type');
         $this->assertSame('masters', $results[0]->Profiles['last_name']);
     }
@@ -107,7 +142,7 @@ class HasOneTest extends TestCase
             'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
-        $query = $this->user->query();
+        $query = $this->user->find();
         $association->attachTo($query, ['includeFields' => false]);
         $this->assertEmpty($query->clause('select'));
     }
@@ -170,11 +205,11 @@ class HasOneTest extends TestCase
      */
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['join', 'select'])
-            ->disableOriginalConstructor()
+            ->setConstructorArgs([$this->user])
             ->getMock();
         $config = [
             'sourceTable' => $this->user,
@@ -248,7 +283,7 @@ class HasOneTest extends TestCase
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
-        $query = $this->user->query();
+        $query = $this->user->find();
 
         $this->listenerCalled = false;
         $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary): void {
@@ -275,7 +310,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $this->listenerCalled = false;
-        $opts = new \ArrayObject(['something' => 'more']);
+        $opts = new ArrayObject(['something' => 'more']);
         $this->profile->getEventManager()->on(
             'Model.beforeFind',
             function ($event, $query, $options, $primary) use ($opts): void {
@@ -315,16 +350,47 @@ class HasOneTest extends TestCase
         $entity = new Entity(['id' => 1]);
         $association->cascadeDelete($entity);
 
-        $query = $this->profile->query()->where(['user_id' => 1]);
+        $query = $this->profile->find()->where(['user_id' => 1]);
         $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
+    }
+
+    /**
+     * Tests cascading deletes on entities with null binding and foreign key.
+     */
+    public function testCascadeDeleteNullBindingNullForeign(): void
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Authors = $this->getTableLocator()->get('NullableAuthors');
+
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $Authors,
+            'targetTable' => $Articles,
+            'bindingKey' => 'author_id',
+            'foreignKey' => 'author_id',
+            'cascadeCallbacks' => false,
+        ];
+        $association = $Authors->hasOne('Articles', $config);
+
+        // create article with null foreign key
+        $entity = new Entity(['author_id' => null, 'title' => 'this has no author', 'body' => 'I am abandoned', 'published' => 'N']);
+        $Articles->save($entity);
+
+        // get author with null binding key
+        $entity = $Authors->get(2, ['contain' => 'Articles']);
+        $this->assertNull($entity->article);
+        $this->assertTrue($association->cascadeDelete($entity));
+
+        $query = $Articles->find();
+        $this->assertSame(4, $query->count(), 'No articles should be deleted');
     }
 
     /**
@@ -344,15 +410,15 @@ class HasOneTest extends TestCase
         $user = new Entity(['id' => 1]);
         $this->assertTrue($association->cascadeDelete($user));
 
-        $query = $this->profile->query()->where(['user_id' => 1]);
+        $query = $this->profile->find()->where(['user_id' => 1]);
         $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
     }
 

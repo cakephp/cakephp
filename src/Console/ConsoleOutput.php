@@ -88,14 +88,14 @@ class ConsoleOutput
      * @see setOutputAs() For manipulation.
      * @var int
      */
-    protected $_outputAs = self::COLOR;
+    protected int $_outputAs = self::COLOR;
 
     /**
      * text colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
-    protected static $_foregroundColors = [
+    protected static array $_foregroundColors = [
         'black' => 30,
         'red' => 31,
         'green' => 32,
@@ -109,9 +109,9 @@ class ConsoleOutput
     /**
      * background colors used in colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
-    protected static $_backgroundColors = [
+    protected static array $_backgroundColors = [
         'black' => 40,
         'red' => 41,
         'green' => 42,
@@ -125,9 +125,9 @@ class ConsoleOutput
     /**
      * Formatting options for colored output.
      *
-     * @var array
+     * @var array<string, int>
      */
-    protected static $_options = [
+    protected static array $_options = [
         'bold' => 1,
         'underline' => 4,
         'blink' => 5,
@@ -138,9 +138,9 @@ class ConsoleOutput
      * Styles that are available as tags in console output.
      * You can modify these styles with ConsoleOutput::styles()
      *
-     * @var array
+     * @var array<string, array>
      */
-    protected static $_styles = [
+    protected static array $_styles = [
         'emergency' => ['text' => 'red'],
         'alert' => ['text' => 'red'],
         'critical' => ['text' => 'red'],
@@ -158,7 +158,7 @@ class ConsoleOutput
      * Construct the output object.
      *
      * Checks for a pretty console environment. Ansicon and ConEmu allows
-     *  pretty consoles on windows, and is supported.
+     *  pretty consoles on Windows, and is supported.
      *
      * @param string $stream The identifier of the stream to write output to.
      */
@@ -169,8 +169,8 @@ class ConsoleOutput
         if (
             (
                 DIRECTORY_SEPARATOR === '\\' &&
-                strpos(strtolower(php_uname('v')), 'windows 10') === false &&
-                strpos(strtolower((string)env('SHELL')), 'bash.exe') === false &&
+                !str_contains(strtolower(php_uname('v')), 'windows 10') &&
+                !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
                 !(bool)env('ANSICON') &&
                 env('ConEmuANSI') !== 'ON'
             ) ||
@@ -194,7 +194,7 @@ class ConsoleOutput
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */
-    public function write($message, int $newlines = 1): int
+    public function write(array|string $message, int $newlines = 1): int
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
@@ -222,7 +222,7 @@ class ConsoleOutput
 
         return preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
-            [$this, '_replaceTags'],
+            $this->_replaceTags(...),
             $text
         );
     }
@@ -230,7 +230,7 @@ class ConsoleOutput
     /**
      * Replace tags with color codes.
      *
-     * @param array $matches An array of matches to replace.
+     * @param array<string, string> $matches An array of matches to replace.
      * @return string
      */
     protected function _replaceTags(array $matches): string
@@ -312,7 +312,7 @@ class ConsoleOutput
     /**
      * Gets all the style definitions.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function styles(): array
     {
@@ -339,7 +339,7 @@ class ConsoleOutput
     public function setOutputAs(int $type): void
     {
         if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
-            throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
+            throw new InvalidArgumentException(sprintf('Invalid output type `%s`.', $type));
         }
 
         $this->_outputAs = $type;
@@ -350,6 +350,7 @@ class ConsoleOutput
      */
     public function __destruct()
     {
+        /** @psalm-suppress RedundantCondition */
         if (is_resource($this->_output)) {
             fclose($this->_output);
         }

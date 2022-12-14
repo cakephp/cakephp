@@ -38,7 +38,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @var \Cake\Console\CommandCollection
      */
-    protected $commands;
+    protected CommandCollection $commands;
 
     /**
      * @inheritDoc
@@ -85,7 +85,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $invert = [];
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
-                $class = get_class($class);
+                $class = $class::class;
             }
             if (!isset($invert[$class])) {
                 $invert[$class] = [];
@@ -95,7 +95,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $grouped = [];
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
-            preg_match('/^(.+)\\\\(Command|Shell)\\\\/', $class, $matches);
+            preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
             if (empty($matches)) {
                 continue;
@@ -108,11 +108,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 $prefix = $namespace;
             }
             $shortestName = $this->getShortestName($names);
-            if (strpos($shortestName, '.') !== false) {
+            if (str_contains($shortestName, '.')) {
                 [, $shortestName] = explode('.', $shortestName, 2);
             }
 
-            $grouped[$prefix][] = $shortestName;
+            $grouped[$prefix][] = [
+                'name' => $shortestName,
+                'description' => is_subclass_of($class, BaseCommand::class) ? $class::getDescription() : '',
+            ];
         }
         ksort($grouped);
 
@@ -122,8 +125,11 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
             sort($names);
-            foreach ($names as $name) {
-                $io->out(' - ' . $name);
+            foreach ($names as $data) {
+                $io->out(' - ' . $data['name']);
+                if ($data['description']) {
+                    $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
+                }
             }
             $io->out('');
         }
@@ -192,7 +198,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
-                $class = get_class($class);
+                $class = $class::class;
             }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);

@@ -30,21 +30,21 @@ class Text
      *
      * @var \Transliterator|null Transliterator instance.
      */
-    protected static $_defaultTransliterator;
+    protected static ?Transliterator $_defaultTransliterator = null;
 
     /**
      * Default transliterator id string.
      *
      * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
-    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+    protected static string $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
-     * Default html tags who must not be count for truncate text.
+     * Default HTML tags which must not be counted for truncating text.
      *
-     * @var array
+     * @var array<string>
      */
-    protected static $_defaultHtmlNoCount = [
+    protected static array $_defaultHtmlNoCount = [
         'style',
         'script',
     ];
@@ -53,10 +53,10 @@ class Text
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
-     * Instead you should use the openssl or mcrypt extensions.
+     * Instead, you should use `Security::randomBytes()` or `Security::randomString()` instead.
      *
      * It should also not be used to create identifiers that have security implications, such as
-     * 'unguessable' URL identifiers. Instead you should use `Security::randomBytes()` for that.
+     * 'unguessable' URL identifiers. Instead, you should use {@link \Cake\Utility\Security::randomBytes()}` for that.
      *
      * @see https://www.ietf.org/rfc/rfc4122.txt
      * @return string RFC 4122 UUID
@@ -119,6 +119,7 @@ class Text
                 mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
+                /** @psalm-suppress InvalidArrayOffset */
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset === -1)) {
                     $tmpOffset = $offsets[$i];
                 }
@@ -189,7 +190,7 @@ class Text
      * @param string $str A string containing variable placeholders
      * @param array $data A key => val array where each key stands for a placeholder variable name
      *     to be replaced with val
-     * @param array $options An array of options, see description above
+     * @param array<string, mixed> $options An array of options, see description above
      * @return string
      */
     public static function insert(string $str, array $data, array $options = []): string
@@ -199,22 +200,6 @@ class Text
         ];
         $options += $defaults;
         if (empty($data)) {
-            return $options['clean'] ? static::cleanInsert($str, $options) : $str;
-        }
-
-        if (strpos($str, '?') !== false && is_numeric(key($data))) {
-            deprecationWarning(
-                'Using Text::insert() with `?` placeholders is deprecated. ' .
-                'Use sprintf() with `%s` placeholders instead.'
-            );
-
-            $offset = 0;
-            while (($pos = strpos($str, '?', $offset)) !== false) {
-                $val = array_shift($data);
-                $offset = $pos + strlen($val);
-                $str = substr_replace($str, $val, $pos, 1);
-            }
-
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
@@ -259,7 +244,7 @@ class Text
      * by Text::insert().
      *
      * @param string $str String to clean.
-     * @param array $options Options list.
+     * @param array<string, mixed> $options Options list.
      * @return string
      * @see \Cake\Utility\Text::insert()
      */
@@ -330,10 +315,10 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
-    public static function wrap(string $text, $options = []): string
+    public static function wrap(string $text, array|int $options = []): string
     {
         if (is_numeric($options)) {
             $options = ['width' => $options];
@@ -367,16 +352,17 @@ class Text
      * - `indentAt` 0 based index to start indenting at. Defaults to 0.
      *
      * @param string $text The text to format.
-     * @param array|int $options Array of options to use, or an integer to wrap the text to.
+     * @param array<string, mixed>|int $options Array of options to use, or an integer to wrap the text to.
      * @return string Formatted text.
      */
-    public static function wrapBlock(string $text, $options = []): string
+    public static function wrapBlock(string $text, array|int $options = []): string
     {
         if (is_numeric($options)) {
             $options = ['width' => $options];
         }
         $options += ['width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0];
 
+        /** @phpstan-ignore-next-line */
         if (!empty($options['indentAt']) && $options['indentAt'] === 0) {
             $indentLength = !empty($options['indent']) ? strlen($options['indent']) : 0;
             $options['width'] -= $indentLength;
@@ -413,6 +399,7 @@ class Text
     /**
      * Unicode and newline aware version of wordwrap.
      *
+     * @phpstan-param non-empty-string $break
      * @param string $text The text to format.
      * @param int $width The width to wrap to. Defaults to 72.
      * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.
@@ -440,8 +427,8 @@ class Text
      */
     protected static function _wordWrap(string $text, int $width = 72, string $break = "\n", bool $cut = false): string
     {
+        $parts = [];
         if ($cut) {
-            $parts = [];
             while (mb_strlen($text) > 0) {
                 $part = mb_substr($text, 0, $width);
                 $parts[] = trim($part);
@@ -451,7 +438,6 @@ class Text
             return implode($break, $parts);
         }
 
-        $parts = [];
         while (mb_strlen($text) > 0) {
             if ($width >= mb_strlen($text)) {
                 $parts[] = trim($text);
@@ -492,12 +478,12 @@ class Text
      * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
-     * @param array|string $phrase The phrase or phrases that will be searched.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string>|string $phrase The phrase or phrases that will be searched.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#highlighting-substrings
      */
-    public static function highlight(string $text, $phrase, array $options = []): string
+    public static function highlight(string $text, array|string $phrase, array $options = []): string
     {
         if (empty($phrase)) {
             return $text;
@@ -554,7 +540,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return string Trimmed string.
      */
     public static function tail(string $text, int $length = 100, array $options = []): string
@@ -593,7 +579,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#truncating-text
      */
@@ -602,7 +588,7 @@ class Text
         $default = [
             'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
-        if (!empty($options['html']) && strtolower((string)mb_internal_encoding()) === 'utf-8') {
+        if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
         $options += $default;
@@ -696,7 +682,7 @@ class Text
      *
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
-     * @param array $options An array of HTML attributes and options.
+     * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string Trimmed string.
      * @see \Cake\Utility\Text::truncate()
      */
@@ -714,7 +700,7 @@ class Text
      * - `trimWidth` If true, the width will return.
      *
      * @param string $text The string being checked for length
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return int
      */
     protected static function _strlen(string $text, array $options): int
@@ -754,7 +740,7 @@ class Text
      * @param string $text The input string.
      * @param int $start The position to begin extracting.
      * @param int|null $length The desired length.
-     * @param array $options An array of options.
+     * @param array<string, mixed> $options An array of options.
      * @return string
      */
     protected static function _substr(string $text, int $start, ?int $length, array $options): string
@@ -776,9 +762,7 @@ class Text
             return '';
         }
 
-        if ($length === null) {
-            $length = self::_strlen($text, $options);
-        }
+        $length ??= self::_strlen($text, $options);
 
         if ($length < 0) {
             $text = self::_substr($text, $start, null, $options);
@@ -817,7 +801,7 @@ class Text
             $len = self::_strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
                 if (
-                    strpos($part, '&') === 0
+                    str_starts_with($part, '&')
                     && preg_match($pattern, $part)
                     && $part !== html_entity_decode($part, ENT_HTML5 | ENT_QUOTES, 'UTF-8')
                 ) {
@@ -904,9 +888,8 @@ class Text
         }
 
         $excerpt = mb_substr($text, $startPos, $endPos - $startPos);
-        $excerpt = $prepend . $excerpt . $append;
 
-        return $excerpt;
+        return $prepend . $excerpt . $append;
     }
 
     /**
@@ -920,9 +903,7 @@ class Text
      */
     public static function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
-        if ($and === null) {
-            $and = __d('cake', 'and');
-        }
+        $and ??= __d('cake', 'and');
         if (count($list) > 1) {
             return implode($separator, array_slice($list, 0, -1)) . ' ' . $and . ' ' . array_pop($list);
         }
@@ -955,7 +936,7 @@ class Text
      * to the decimal value of the character
      *
      * @param string $string String to convert.
-     * @return array
+     * @return array<int>
      */
     public static function utf8(string $string): array
     {
@@ -1027,7 +1008,7 @@ class Text
      * @throws \InvalidArgumentException On invalid Unit type.
      * @link https://book.cakephp.org/4/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
      */
-    public static function parseFileSize(string $size, $default = false)
+    public static function parseFileSize(string $size, mixed $default = false): mixed
     {
         if (ctype_digit($size)) {
             return (int)$size;
@@ -1046,7 +1027,7 @@ class Text
             return (int)($size * pow(1024, $i + 1));
         }
 
-        if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
+        if (str_ends_with($size, 'B') && ctype_digit(substr($size, 0, -1))) {
             $size = substr($size, 0, -1);
 
             return (int)$size;
@@ -1100,7 +1081,7 @@ class Text
     {
         $transliterator = transliterator_create($transliteratorId);
         if ($transliterator === null) {
-            throw new CakeException('Unable to create transliterator for id: ' . $transliteratorId);
+            throw new CakeException(sprintf('Unable to create transliterator for id: %s.', $transliteratorId));
         }
 
         static::setTransliterator($transliterator);
@@ -1118,7 +1099,7 @@ class Text
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate(string $string, $transliterator = null): string
+    public static function transliterate(string $string, Transliterator|string|null $transliterator = null): string
     {
         if (empty($transliterator)) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
@@ -1147,13 +1128,13 @@ class Text
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array|string $options If string it will be use as replacement character
+     * @param array<string, mixed>|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
      * @see setTransliterator()
      * @see setTransliteratorId()
      */
-    public static function slug(string $string, $options = []): string
+    public static function slug(string $string, array|string $options = []): string
     {
         if (is_string($options)) {
             $options = ['replacement' => $options];
@@ -1180,8 +1161,7 @@ class Text
         if (is_string($options['replacement']) && $options['replacement'] !== '') {
             $map[sprintf('/[%s]+/mu', $quotedReplacement)] = $options['replacement'];
         }
-        $string = preg_replace(array_keys($map), $map, $string);
 
-        return $string;
+        return preg_replace(array_keys($map), $map, $string);
     }
 }

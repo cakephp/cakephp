@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
+use LogicException;
+use OutOfBoundsException;
 use TestApp\Middleware\DumbMiddleware;
 use TestApp\Middleware\SampleMiddleware;
 
@@ -26,6 +28,11 @@ use TestApp\Middleware\SampleMiddleware;
  */
 class MiddlewareQueueTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    protected $previousNamespace;
+
     /**
      * setUp
      */
@@ -71,7 +78,7 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testGetException(): void
     {
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Invalid current position (0)');
 
         $queue = new MiddlewareQueue();
@@ -295,8 +302,8 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertBeforeInvalid(): void
     {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('No middleware matching \'InvalidClassName\' could be found.');
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('No middleware matching `InvalidClassName` could be found.');
         $one = function (): void {
         };
         $two = new SampleMiddleware();
@@ -367,20 +374,5 @@ class MiddlewareQueueTest extends TestCase
         $this->assertSame($two, $queue->current()->getCallable());
         $queue->next();
         $this->assertSame($three, $queue->current()->getCallable());
-    }
-
-    /**
-     * @deprecated
-     */
-    public function testAddingDeprecatedDoublePassMiddleware(): void
-    {
-        $queue = new MiddlewareQueue();
-        $cb = function ($request, $response, $next) {
-            return $next($request, $response);
-        };
-        $queue->add($cb);
-        $this->deprecated(function () use ($queue, $cb): void {
-            $this->assertSame($cb, $queue->current()->getCallable());
-        });
     }
 }

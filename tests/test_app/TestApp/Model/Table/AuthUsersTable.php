@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace TestApp\Model\Table;
 
 use Cake\Core\Exception\CakeException;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
@@ -26,11 +26,11 @@ class AuthUsersTable extends Table
     /**
      * Custom finder
      *
-     * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
-     * @return \Cake\ORM\Query The query builder
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param array<string, mixed> $options The options to find with
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findAuth(Query $query, array $options): Query
+    public function findAuth(SelectQuery $query, array $options): SelectQuery
     {
         $query->select(['id', 'username', 'password']);
         if (!empty($options['return_created'])) {
@@ -43,11 +43,11 @@ class AuthUsersTable extends Table
     /**
      * Custom finder
      *
-     * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
-     * @return \Cake\ORM\Query The query builder
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param array<string, mixed> $options The options to find with
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findUsername(Query $query, array $options): Query
+    public function findUsername(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['username'])) {
             throw new CakeException(__('Username not defined'));

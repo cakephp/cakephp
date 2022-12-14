@@ -28,6 +28,11 @@ use Cake\TestSuite\TestCase;
 class RedirectRouteTest extends TestCase
 {
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -35,8 +40,9 @@ class RedirectRouteTest extends TestCase
         parent::setUp();
         Router::reload();
 
-        Router::connect('/{controller}', ['action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->connect('/{controller}', ['action' => 'index']);
+        $this->builder->connect('/{controller}/{action}/*');
     }
 
     /**
@@ -204,7 +210,8 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/nl/preferred_controllers');
         $this->expectExceptionCode(301);
-        Router::connect('/{lang}/preferred_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+
+        $this->builder->connect('/{lang}/preferred_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route = new RedirectRoute('/{lang}/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route->parse('/nl/my_controllers/');
     }

@@ -19,10 +19,12 @@ namespace Cake\Test\TestCase\View\Form;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use stdClass;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
 use TestApp\Model\Entity\Tag;
@@ -35,9 +37,9 @@ class EntityContextTest extends TestCase
     /**
      * Fixtures to use.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
+    protected array $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
 
     /**
      * tests getRequiredMessage
@@ -140,9 +142,9 @@ class EntityContextTest extends TestCase
      */
     public function testInvalidTable(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
-        $row = new \stdClass();
+        $row = new stdClass();
         $context = new EntityContext([
             'entity' => $row,
         ]);
@@ -153,7 +155,7 @@ class EntityContextTest extends TestCase
      */
     public function testDefaultEntityError(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
         $context = new EntityContext([
             'entity' => new Entity(),
@@ -234,6 +236,8 @@ class EntityContextTest extends TestCase
 
         $result = $context->error('1.body');
         $this->assertEquals(['Not long enough'], $result);
+
+        $this->assertNull($context->val('0'));
     }
 
     /**

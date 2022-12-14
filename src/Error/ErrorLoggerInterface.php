@@ -22,8 +22,7 @@ use Throwable;
 /**
  * Interface for error logging handlers.
  *
- * Used by the ErrorHandlerMiddleware and global
- * error handlers to log exceptions and errors.
+ * Used by the ErrorHandlerMiddleware and global error handlers to log exceptions and errors.
  */
 interface ErrorLoggerInterface
 {
@@ -32,20 +31,26 @@ interface ErrorLoggerInterface
      *
      * @param \Throwable $exception The exception to log a message for.
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
-     * @return bool
+     * @param bool $includeTrace Should the log message include a stacktrace.
+     * @return void
      */
-    public function log(
+    public function logException(
         Throwable $exception,
-        ?ServerRequestInterface $request = null
-    ): bool;
+        ?ServerRequestInterface $request = null,
+        bool $includeTrace = false
+    ): void;
 
     /**
-     * Log a an error message to the error logger.
+     * Log an error to Cake's Log subsystem
      *
-     * @param string|int $level The logging level
-     * @param string $message The message to be logged.
-     * @param array $context Context.
-     * @return bool
+     * @param \Cake\Error\PhpError $error The error to log.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if in an HTTP context.
+     * @param bool $includeTrace Should the log message include a stacktrace.
+     * @return void
      */
-    public function logMessage($level, string $message, array $context = []): bool;
+    public function logError(
+        PhpError $error,
+        ?ServerRequestInterface $request = null,
+        bool $includeTrace = false
+    ): void;
 }

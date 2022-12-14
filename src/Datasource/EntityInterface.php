@@ -18,15 +18,16 @@ namespace Cake\Datasource;
 
 use ArrayAccess;
 use JsonSerializable;
+use Stringable;
 
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
  *
  * @property mixed $id Alias for commonly used primary key.
- * @method bool[] getAccessible() Accessible configuration for this entity.
+ * @template-extends \ArrayAccess<string, mixed>
  */
-interface EntityInterface extends ArrayAccess, JsonSerializable
+interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 {
     /**
      * Sets hidden fields.
@@ -112,7 +113,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Sets error messages to the entity
      *
      * @param array $errors The array of errors to set.
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $fields
      * @return $this
      */
     public function setErrors(array $errors, bool $overwrite = false);
@@ -122,20 +123,27 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @param string $field The field to get errors for, or the array of errors to set.
      * @param array|string $errors The errors to be set for $field
-     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     * @param bool $overwrite Whether to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError(string $field, $errors, bool $overwrite = false);
+    public function setError(string $field, array|string $errors, bool $overwrite = false);
 
     /**
-     * Stores whether or not a field value can be changed or set in this entity.
+     * Stores whether a field value can be changed or set in this entity.
      *
-     * @param array|string $field single or list of fields to change its accessibility
+     * @param array<string>|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($field, bool $set);
+    public function setAccess(array|string $field, bool $set);
+
+    /**
+     * Accessible configuration for this entity.
+     *
+     * @return array<bool>
+     */
+    public function getAccessible(): array;
 
     /**
      * Checks if a field is accessible
@@ -181,15 +189,15 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets one or multiple fields to the specified value
      *
-     * @param array|string $field the name of field to set or a list of
+     * @param array<string, mixed>|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
-     * @param array $options options to be used for setting the field. Allowed option
+     * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return $this
      */
-    public function set($field, $value = null, array $options = []);
+    public function set(array|string $field, mixed $value = null, array $options = []);
 
     /**
      * Returns the value of a field by name
@@ -197,7 +205,16 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field the name of the field to retrieve
      * @return mixed
      */
-    public function &get(string $field);
+    public function &get(string $field): mixed;
+
+    /**
+     * Enable/disable field presence check when accessing a property.
+     *
+     * If enabled an exception will be thrown when trying to access a non-existent property.
+     *
+     * @param bool $value `true` to enable, `false` to disable.
+     */
+    public function requireFieldPresence(bool $value = true): void;
 
     /**
      * Returns the original value of a field.
@@ -205,7 +222,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field The name of the field.
      * @return mixed
      */
-    public function getOriginal(string $field);
+    public function getOriginal(string $field): mixed;
 
     /**
      * Gets all original values of the entity.
@@ -215,13 +232,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function getOriginalValues(): array;
 
     /**
-     * Returns whether this entity contains a field named $field
-     * regardless of if it is empty.
+     * Returns whether this entity contains a field named $field.
+     *
+     * The method will return `true` even when the field is set to `null`.
      *
      * @param array<string>|string $field The field to check.
      * @return bool
      */
-    public function has($field): bool;
+    public function has(array|string $field): bool;
 
     /**
      * Removes a field or list of fields from this entity
@@ -229,7 +247,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array<string>|string $field The field to unset.
      * @return $this
      */
-    public function unset($field);
+    public function unset(array|string $field);
 
     /**
      * Get the list of visible fields.
@@ -273,15 +291,15 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Using `true` means that the entity has not been persisted in the database,
      * `false` indicates that the entity has been persisted.
      *
-     * @param bool $new Indicate whether or not this entity has been persisted.
+     * @param bool $new Indicate whether this entity has been persisted.
      * @return $this
      */
     public function setNew(bool $new);
 
     /**
-     * Returns whether or not this entity has already been persisted.
+     * Returns whether this entity has already been persisted.
      *
-     * @return bool Whether or not the entity has been persisted.
+     * @return bool Whether the entity has been persisted.
      */
     public function isNew(): bool;
 }

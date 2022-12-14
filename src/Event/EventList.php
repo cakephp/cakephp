@@ -18,10 +18,11 @@ namespace Cake\Event;
 
 use ArrayAccess;
 use Countable;
-use ReturnTypeWillChange;
 
 /**
  * The Event List
+ *
+ * @template-implements \ArrayAccess<int, \Cake\Event\EventInterface>
  */
 class EventList implements ArrayAccess, Countable
 {
@@ -30,7 +31,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @var array<\Cake\Event\EventInterface>
      */
-    protected $_events = [];
+    protected array $_events = [];
 
     /**
      * Empties the list of dispatched events.
@@ -60,7 +61,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset An offset to check for.
      * @return bool True on success or false on failure.
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->_events[$offset]);
     }
@@ -70,16 +71,15 @@ class EventList implements ArrayAccess, Countable
      *
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-     * @return mixed Can return all value types.
+     * @return \Cake\Event\EventInterface|null
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): ?EventInterface
     {
-        if ($this->offsetExists($offset)) {
-            return $this->_events[$offset];
+        if (!$this->offsetExists($offset)) {
+            return null;
         }
 
-        return null;
+        return $this->_events[$offset];
     }
 
     /**
@@ -90,7 +90,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $value The value to set.
      * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->_events[$offset] = $value;
     }
@@ -102,7 +102,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset The offset to unset.
      * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->_events[$offset]);
     }

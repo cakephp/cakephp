@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,9 +32,9 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Articles', 'core.Tags'];
+    protected array $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * @var \Cake\Datasource\ConnectionInterface
@@ -53,7 +53,6 @@ class SchemaCacheCommandsTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->useCommandRunner();
 
         $this->cache = $this->getMockBuilder(NullEngine::class)
             ->onlyMethods(['set', 'get', 'delete'])
@@ -69,9 +68,9 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function tearDown(): void
     {
+        $this->connection->cacheMetadata(false);
         parent::tearDown();
 
-        $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
         Cache::drop('orm_cache');
     }

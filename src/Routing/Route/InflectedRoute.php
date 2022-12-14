@@ -25,14 +25,14 @@ use Cake\Utility\Inflector;
 class InflectedRoute extends Route
 {
     /**
-     * Flag for tracking whether or not the defaults have been inflected.
+     * Flag for tracking whether the defaults have been inflected.
      *
      * Default values need to be inflected so that they match the inflections that match()
      * will create.
      *
      * @var bool
      */
-    protected $_inflectedDefaults = false;
+    protected bool $_inflectedDefaults = false;
 
     /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
@@ -52,7 +52,7 @@ class InflectedRoute extends Route
             $params['controller'] = Inflector::camelize($params['controller']);
         }
         if (!empty($params['plugin'])) {
-            if (strpos($params['plugin'], '/') === false) {
+            if (!str_contains($params['plugin'], '/')) {
                 $params['plugin'] = Inflector::camelize($params['plugin']);
             } else {
                 [$vendor, $plugin] = explode('/', $params['plugin'], 2);

@@ -31,7 +31,7 @@ trait StringTemplateTrait
      *
      * @var \Cake\View\StringTemplate|null
      */
-    protected $_templater;
+    protected ?StringTemplate $_templater = null;
 
     /**
      * Sets templates to use.
@@ -52,7 +52,7 @@ trait StringTemplateTrait
      * @param string|null $template String for reading a specific template, null for all.
      * @return array|string
      */
-    public function getTemplates(?string $template = null)
+    public function getTemplates(?string $template = null): array|string
     {
         return $this->templater()->get($template);
     }
@@ -61,7 +61,7 @@ trait StringTemplateTrait
      * Formats a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string
      */
     public function formatTemplate(string $name, array $data): string

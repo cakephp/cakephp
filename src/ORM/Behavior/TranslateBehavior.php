@@ -16,13 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Datasource\QueryInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
-use Cake\ORM\Behavior\Translate\EavStrategy;
+use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -45,9 +46,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
         'implementedMethods' => [
             'setLocale' => 'setLocale',
@@ -62,6 +63,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'strategy' => 'subquery',
         'tableLocator' => null,
         'validator' => false,
+        'strategyClass' => null,
     ];
 
     /**
@@ -70,14 +72,14 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @var string
      * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
-    protected static $defaultStrategyClass = EavStrategy::class;
+    protected static string $defaultStrategyClass = ShadowTableStrategy::class;
 
     /**
      * Translation strategy instance.
      *
      * @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface|null
      */
-    protected $strategy;
+    protected ?TranslateStrategyInterface $strategy = null;
 
     /**
      * Constructor
@@ -103,7 +105,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *   are created/modified. Default `null`.
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -119,7 +121,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Initialize hook
      *
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
     public function initialize(array $config): void
@@ -135,7 +137,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @since 4.0.0
      * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
-    public static function setDefaultStrategyClass(string $class)
+    public static function setDefaultStrategyClass(string $class): void
     {
         static::$defaultStrategyClass = $class;
     }
@@ -173,7 +175,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
      * @since 4.0.0
      */
-    protected function createStrategy()
+    protected function createStrategy(): TranslateStrategyInterface
     {
         $config = array_diff_key(
             $this->_config,
@@ -202,7 +204,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Gets the Model callbacks this behavior is interested in.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -222,7 +224,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -305,25 +307,24 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * If the `locales` array is not passed, it will bring all translations found
      * for each record.
      *
-     * @param \Cake\ORM\Query $query The original query to modify
-     * @param array $options Options
-     * @return \Cake\ORM\Query
+     * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
+     * @param array<string, mixed> $options Options
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findTranslations(Query $query, array $options): Query
+    public function findTranslations(SelectQuery $query, array $options): SelectQuery
     {
         $locales = $options['locales'] ?? [];
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
 
         return $query
-            ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
-                /** @var \Cake\Datasource\QueryInterface $query */
+            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
                     $query->where(["$targetAlias.locale IN" => $locales]);
                 }
 
                 return $query;
             }])
-            ->formatResults([$this->getStrategy(), 'groupTranslations'], $query::PREPEND);
+            ->formatResults($this->getStrategy()->groupTranslations(...), $query::PREPEND);
     }
 
     /**
@@ -333,7 +334,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array $args Method arguments.
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         return $this->strategy->{$method}(...$args);
     }
@@ -351,7 +352,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     protected function referenceName(Table $table): string
     {
-        $name = namespaceSplit(get_class($table));
+        $name = namespaceSplit($table::class);
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
             $name = $table->getTable() ?: $table->getAlias();

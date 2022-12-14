@@ -24,7 +24,7 @@ class NotAcceptableException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 406;
+    protected int $_defaultCode = 406;
 
     /**
      * Constructor

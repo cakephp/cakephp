@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TestTable;
 
@@ -74,46 +76,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests that setName()
-     */
-    public function testSetName(): void
-    {
-        $this->assertSame('Foo', $this->association->getName());
-        $this->assertSame($this->association, $this->association->setName('Bar'));
-        $this->assertSame('Bar', $this->association->getName());
-    }
-
-    /**
-     * Tests that setName() succeeds before the target table is resolved.
-     */
-    public function testSetNameBeforeTarget(): void
-    {
-        $this->association->setName('Bar');
-        $this->assertSame('Bar', $this->association->getName());
-    }
-
-    /**
-     * Tests that setName() fails after the target table is resolved.
-     */
-    public function testSetNameAfterTarget(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Association name "Bar" does not match target table alias');
-        $this->association->getTarget();
-        $this->association->setName('Bar');
-    }
-
-    /**
-     * Tests that setName() succeeds if name equals target table alias.
-     */
-    public function testSetNameToTargetAlias(): void
-    {
-        $alias = $this->association->getTarget()->getAlias();
-        $this->association->setName($alias);
-        $this->assertSame($alias, $this->association->getName());
-    }
-
-    /**
      * Test that _className property is set to alias when "className" config
      * if not explicitly set.
      */
@@ -142,8 +104,8 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameAfterTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name "' . AuthorsTable::class . '" doesn\'t match the target table class name of');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name `' . AuthorsTable::class . '` doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName(AuthorsTable::class);
     }
@@ -153,8 +115,8 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameWithShortSyntaxAfterTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name "Authors" doesn\'t match the target table class name of');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name `Authors` doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName('Authors');
     }
@@ -208,8 +170,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidTableFetchedFromRegistry(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->getTableLocator()->get('Test');
+        $this->expectException(DatabaseException::class);
 
         $config = [
             'className' => TestTable::class,
@@ -221,6 +182,7 @@ class AssociationTest extends TestCase
             ])
             ->setConstructorArgs(['Test', $config])
             ->getMock();
+        $this->association->setSource($this->getTableLocator()->get('Test'));
 
         $this->association->getTarget();
     }
@@ -475,7 +437,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidStrategy(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->association->setStrategy('anotherThing');
     }
 

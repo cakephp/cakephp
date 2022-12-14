@@ -24,43 +24,14 @@ class OrdersFixture extends TestFixture
     /**
      * @inheritDoc
      */
-    public $table = 'orders';
-
-    /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'product_category' => ['type' => 'integer', 'null' => false],
-        'product_id' => ['type' => 'integer', 'null' => false],
-        '_indexes' => [
-            'product_category' => [
-                'type' => 'index',
-                'columns' => ['product_category', 'product_id'],
-            ],
-        ],
-        '_constraints' => [
-            'primary' => [
-                'type' => 'primary', 'columns' => ['id'],
-            ],
-            'product_category_fk' => [
-                'type' => 'foreign',
-                'columns' => ['product_category', 'product_id'],
-                'references' => ['products', ['category', 'id']],
-                'update' => 'cascade',
-                'delete' => 'cascade',
-            ],
-        ],
-    ];
+    public string $table = 'orders';
 
     /**
      * records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['product_category' => 1, 'product_id' => 1],
     ];
 }

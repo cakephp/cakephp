@@ -15,10 +15,12 @@ declare(strict_types=1);
  */
 namespace TestPlugin\View\Cell;
 
+use Cake\View\Cell;
+
 /**
  * DummyCell class
  */
-class DummyCell extends \Cake\View\Cell
+class DummyCell extends Cell
 {
     /**
      * Default cell action.

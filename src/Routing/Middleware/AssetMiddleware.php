@@ -40,12 +40,12 @@ class AssetMiddleware implements MiddlewareInterface
      *
      * @var string
      */
-    protected $cacheTime = '+1 day';
+    protected string $cacheTime = '+1 day';
 
     /**
      * Constructor.
      *
-     * @param array $options The options to use
+     * @param array<string, mixed> $options The options to use
      */
     public function __construct(array $options = [])
     {
@@ -64,11 +64,11 @@ class AssetMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $url = $request->getUri()->getPath();
-        if (strpos($url, '..') !== false || strpos($url, '.') === false) {
+        if (str_contains($url, '..') || !str_contains($url, '.')) {
             return $handler->handle($request);
         }
 
-        if (strpos($url, '/.') !== false) {
+        if (str_contains($url, '/.')) {
             return $handler->handle($request);
         }
 
@@ -150,13 +150,13 @@ class AssetMiddleware implements MiddlewareInterface
 
         $response = new Response(['stream' => $stream]);
 
-        $contentType = $response->getMimeType($file->getExtension()) ?: 'application/octet-stream';
+        $contentType = (array)($response->getMimeType($file->getExtension()) ?: 'application/octet-stream');
         $modified = $file->getMTime();
         $expire = strtotime($this->cacheTime);
         $maxAge = $expire - time();
 
         return $response
-            ->withHeader('Content-Type', $contentType)
+            ->withHeader('Content-Type', $contentType[0])
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
             ->withHeader('Date', gmdate(DATE_RFC7231, time()))
             ->withHeader('Last-Modified', gmdate(DATE_RFC7231, $modified))

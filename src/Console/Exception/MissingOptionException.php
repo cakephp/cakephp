@@ -27,14 +27,14 @@ class MissingOptionException extends ConsoleException
      *
      * @var string
      */
-    protected $requested = '';
+    protected string $requested = '';
 
     /**
      * The valid suggestions.
      *
      * @var array<string>
      */
-    protected $suggestions = [];
+    protected array $suggestions = [];
 
     /**
      * Constructor.
@@ -90,11 +90,11 @@ class MissingOptionException extends ConsoleException
      * @param array<string> $haystack Suggestions to look through.
      * @return string The best match
      */
-    protected function findClosestItem($needle, $haystack): ?string
+    protected function findClosestItem(string $needle, array $haystack): ?string
     {
         $bestGuess = null;
         foreach ($haystack as $item) {
-            if (preg_match('/^' . $needle . '/', $item)) {
+            if (str_starts_with($item, $needle)) {
                 return $item;
             }
         }

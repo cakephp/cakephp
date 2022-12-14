@@ -17,10 +17,11 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 use SessionHandlerInterface;
+use const PHP_SESSION_ACTIVE;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
@@ -40,30 +41,30 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var \SessionHandlerInterface
+     * @var \SessionHandlerInterface|null
      */
-    protected $_engine;
+    protected ?SessionHandlerInterface $_engine = null;
 
     /**
      * Indicates whether the sessions has already started
      *
      * @var bool
      */
-    protected $_started;
+    protected bool $_started = false;
 
     /**
      * The time in seconds the session will be valid for
      *
      * @var int
      */
-    protected $_lifetime;
+    protected int $_lifetime;
 
     /**
      * Whether this session is running under a CLI environment
      *
      * @var bool
      */
-    protected $_isCLI = false;
+    protected bool $_isCLI = false;
 
     /**
      * Returns a new instance of a session after building a configuration bundle for it.
@@ -92,7 +93,7 @@ class Session
      * @return static
      * @see \Cake\Http\Session::__construct()
      */
-    public static function create(array $sessionConfig = [])
+    public static function create(array $sessionConfig = []): static
     {
         if (isset($sessionConfig['defaults'])) {
             $defaults = static::_defaultConfig($sessionConfig['defaults']);
@@ -133,7 +134,7 @@ class Session
      * @param string $name Config name.
      * @return array|false
      */
-    protected static function _defaultConfig(string $name)
+    protected static function _defaultConfig(string $name): array|false
     {
         $tmp = defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR;
         $defaults = [
@@ -174,10 +175,7 @@ class Session
         ];
 
         if (isset($defaults[$name])) {
-            if (
-                PHP_VERSION_ID >= 70300
-                && ($name !== 'php' || empty(ini_get('session.cookie_samesite')))
-            ) {
+            if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
                 $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
             }
 
@@ -201,7 +199,7 @@ class Session
      *   the configuration array for the engine. You can set the `engine` key to an already
      *   instantiated session handler object.
      *
-     * @param array $config The Configuration to apply to this session object
+     * @param array<string, mixed> $config The Configuration to apply to this session object
      */
     public function __construct(array $config = [])
     {
@@ -251,34 +249,30 @@ class Session
      * or null if none exists.
      *
      * @param \SessionHandlerInterface|string|null $class The session handler to use
-     * @param array $options the options to pass to the SessionHandler constructor
+     * @param array<string, mixed> $options the options to pass to the SessionHandler constructor
      * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
      */
-    public function engine($class = null, array $options = []): ?SessionHandlerInterface
-    {
+    public function engine(
+        SessionHandlerInterface|string|null $class = null,
+        array $options = []
+    ): ?SessionHandlerInterface {
         if ($class === null) {
             return $this->_engine;
         }
         if ($class instanceof SessionHandlerInterface) {
             return $this->setEngine($class);
         }
-        $className = App::className($class, 'Http/Session');
 
-        if (!$className) {
+        /** @var class-string<\SessionHandlerInterface>|null $className */
+        $className = App::className($class, 'Http/Session');
+        if ($className === null) {
             throw new InvalidArgumentException(
                 sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
             );
         }
 
-        $handler = new $className($options);
-        if (!($handler instanceof SessionHandlerInterface)) {
-            throw new InvalidArgumentException(
-                'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
-            );
-        }
-
-        return $this->setEngine($handler);
+        return $this->setEngine(new $className($options));
     }
 
     /**
@@ -289,7 +283,7 @@ class Session
      */
     protected function setEngine(SessionHandlerInterface $handler): SessionHandlerInterface
     {
-        if (!headers_sent() && session_status() !== \PHP_SESSION_ACTIVE) {
+        if (!headers_sent() && session_status() !== PHP_SESSION_ACTIVE) {
             session_set_save_handler($handler, false);
         }
 
@@ -306,19 +300,19 @@ class Session
      * $session->options(['session.use_cookies' => 1]);
      * ```
      *
-     * @param array $options Ini options to set.
+     * @param array<string, mixed> $options Ini options to set.
      * @return void
-     * @throws \RuntimeException if any directive could not be set
+     * @throws \Cake\Core\Exception\CakeException if any directive could not be set
      */
     public function options(array $options): void
     {
-        if (session_status() === \PHP_SESSION_ACTIVE || headers_sent()) {
+        if (session_status() === PHP_SESSION_ACTIVE || headers_sent()) {
             return;
         }
 
         foreach ($options as $setting => $value) {
             if (ini_set($setting, (string)$value) === false) {
-                throw new RuntimeException(
+                throw new CakeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
             }
@@ -329,7 +323,7 @@ class Session
      * Starts the Session.
      *
      * @return bool True if session was started
-     * @throws \RuntimeException if the session was already started
+     * @throws \Cake\Core\Exception\CakeException if the session was already started
      */
     public function start(): bool
     {
@@ -344,8 +338,8 @@ class Session
             return $this->_started = true;
         }
 
-        if (session_status() === \PHP_SESSION_ACTIVE) {
-            throw new RuntimeException('Session was already started');
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            throw new CakeException('Session was already started');
         }
 
         if (ini_get('session.use_cookies') && headers_sent()) {
@@ -353,7 +347,7 @@ class Session
         }
 
         if (!session_start()) {
-            throw new RuntimeException('Could not start the session');
+            throw new CakeException('Could not start the session');
         }
 
         $this->_started = true;
@@ -385,7 +379,7 @@ class Session
         }
 
         if (!session_write_close()) {
-            throw new RuntimeException('Could not close the session');
+            throw new CakeException('Could not close the session');
         }
 
         $this->_started = false;
@@ -400,7 +394,7 @@ class Session
      */
     public function started(): bool
     {
-        return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
+        return $this->_started || session_status() === PHP_SESSION_ACTIVE;
     }
 
     /**
@@ -434,7 +428,7 @@ class Session
      * @return mixed|null The value of the session variable, or default value if a session
      *   is not available, can't be started, or provided $name is not found in the session.
      */
-    public function read(?string $name = null, $default = null)
+    public function read(?string $name = null, mixed $default = null): mixed
     {
         if ($this->_hasSession() && !$this->started()) {
             $this->start();
@@ -455,13 +449,13 @@ class Session
      * Returns given session variable, or throws Exception if not found.
      *
      * @param string $name The name of the session variable (or a path as sent to Hash.extract)
-     * @throws \RuntimeException
+     * @throws \Cake\Core\Exception\CakeException
      * @return mixed|null
      */
-    public function readOrFail(string $name)
+    public function readOrFail(string $name): mixed
     {
         if (!$this->check($name)) {
-            throw new RuntimeException(sprintf('Expected session key "%s" not found.', $name));
+            throw new CakeException(sprintf('Expected session key `%s` not found.', $name));
         }
 
         return $this->read($name);
@@ -474,13 +468,14 @@ class Session
      * @return mixed|null The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
-    public function consume(string $name)
+    public function consume(string $name): mixed
     {
         if (empty($name)) {
             return null;
         }
         $value = $this->read($name);
         if ($value !== null) {
+            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
 
@@ -494,7 +489,7 @@ class Session
      * @param mixed $value Value to write
      * @return void
      */
-    public function write($name, $value = null): void
+    public function write(array|string $name, mixed $value = null): void
     {
         if (!$this->started()) {
             $this->start();
@@ -509,7 +504,6 @@ class Session
             $data = Hash::insert($data, $key, $val);
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         $this->_overwrite($_SESSION, $data);
     }
 
@@ -545,6 +539,7 @@ class Session
     public function delete(string $name): void
     {
         if ($this->check($name)) {
+            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
     }
@@ -558,13 +553,12 @@ class Session
      */
     protected function _overwrite(array &$old, array $new): void
     {
-        if (!empty($old)) {
-            foreach ($old as $key => $var) {
-                if (!isset($new[$key])) {
-                    unset($old[$key]);
-                }
+        foreach ($old as $key => $var) {
+            if (!isset($new[$key])) {
+                unset($old[$key]);
             }
         }
+
         foreach ($new as $key => $var) {
             $old[$key] = $var;
         }
@@ -581,7 +575,7 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCLI && session_status() === \PHP_SESSION_ACTIVE) {
+        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 

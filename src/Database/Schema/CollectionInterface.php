@@ -21,6 +21,9 @@ namespace Cake\Database\Schema;
  *
  * Used to access information about the tables,
  * and other data in a database.
+ *
+ * @method array<string> listTablesWithoutViews() Get the list of tables available in the current connection.
+ * This will exclude any views in the schema.
  */
 interface CollectionInterface
 {
@@ -43,7 +46,7 @@ interface CollectionInterface
      *   Defaults to false.
      *
      * @param string $name The name of the table to describe.
-     * @param array $options The options to use, see above.
+     * @param array<string, mixed> $options The options to use, see above.
      * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */

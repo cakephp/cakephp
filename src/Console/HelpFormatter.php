@@ -35,28 +35,28 @@ class HelpFormatter
      *
      * @var int
      */
-    protected $_maxArgs = 6;
+    protected int $_maxArgs = 6;
 
     /**
      * The maximum number of options shown when generating usage.
      *
      * @var int
      */
-    protected $_maxOptions = 6;
+    protected int $_maxOptions = 6;
 
     /**
      * Option parser.
      *
      * @var \Cake\Console\ConsoleOptionParser
      */
-    protected $_parser;
+    protected ConsoleOptionParser $_parser;
 
     /**
      * Alias to display in the output.
      *
      * @var string
      */
-    protected $_alias = 'cake';
+    protected string $_alias = 'cake';
 
     /**
      * Build the help formatter for an OptionParser
@@ -118,7 +118,7 @@ class HelpFormatter
         }
 
         $options = $parser->options();
-        if (!empty($options)) {
+        if ($options) {
             $max = $this->_getMaxLength($options) + 8;
             $out[] = '<info>Options:</info>';
             $out[] = '';
@@ -192,7 +192,7 @@ class HelpFormatter
     /**
      * Iterate over a collection and find the longest named thing.
      *
-     * @param array $collection The collection to find a max length of.
+     * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument|\Cake\Console\ConsoleInputSubcommand> $collection The collection to find a max length of.
      * @return int
      */
     protected function _getMaxLength(array $collection): int
@@ -211,7 +211,7 @@ class HelpFormatter
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
      * @return \SimpleXMLElement|string See $string
      */
-    public function xml(bool $string = true)
+    public function xml(bool $string = true): SimpleXMLElement|string
     {
         $parser = $this->_parser;
         $xml = new SimpleXMLElement('<shell></shell>');

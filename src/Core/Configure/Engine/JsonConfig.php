@@ -47,7 +47,7 @@ class JsonConfig implements ConfigEngineInterface
      *
      * @var string
      */
-    protected $_extension = '.json';
+    protected string $_extension = '.json';
 
     /**
      * Constructor for JSON Config file reading.
@@ -56,10 +56,7 @@ class JsonConfig implements ConfigEngineInterface
      */
     public function __construct(?string $path = null)
     {
-        if ($path === null) {
-            $path = CONFIG;
-        }
-        $this->_path = $path;
+        $this->_path = $path ?? CONFIG;
     }
 
     /**

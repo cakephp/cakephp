@@ -25,5 +25,5 @@ class MissingResponseException extends CakeException
     /**
      * @var string
      */
-    protected $_messageTemplate = 'Unable to find a mocked response for `%s` to `%s`.';
+    protected string $_messageTemplate = 'Unable to find a mocked response for `%s` to `%s`.';
 }

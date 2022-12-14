@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
 use Cake\Core\Configure\Engine\IniConfig;
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -151,7 +152,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadWithExistentFileWithoutExtension(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new IniConfig($this->path);
         $engine->read('no_ini_extension');
     }
@@ -161,7 +162,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadWithNonExistentFile(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new IniConfig($this->path);
         $engine->read('fake_values');
     }
@@ -181,7 +182,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadWithDots(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $engine = new IniConfig($this->path);
         $engine->read('../empty');
     }

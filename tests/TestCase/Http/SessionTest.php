@@ -16,11 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Session;
-use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
 
@@ -30,25 +29,13 @@ use TestApp\Http\Session\TestWebSession;
 class SessionTest extends TestCase
 {
     /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionResetStrategy::class;
-
-    /**
-     * Fixtures used in the SessionTest
-     *
-     * @var array
-     */
-    protected $fixtures = ['core.CakeSessions', 'core.Sessions'];
-
-    /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
-        unset($_SESSION);
         parent::tearDown();
         $this->clearPlugins();
+        unset($_SESSION);
     }
 
     /**
@@ -185,7 +172,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
 
         $session->readOrFail('testing');
     }
@@ -502,6 +489,12 @@ class SessionTest extends TestCase
         $session = new Session();
         $session->engine($engine);
         $this->assertSame($engine, $session->engine());
+    }
+
+    public function testEngineIsNull()
+    {
+        $session = new Session();
+        $this->assertNull($session->engine());
     }
 
     /**

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -37,11 +36,36 @@ class CounterCacheBehaviorTest extends TestCase
     protected $post;
 
     /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $user;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $category;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $comment;
+
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $userCategoryPosts;
+
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
      * Fixture
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.CounterCacheCategories',
         'core.CounterCachePosts',
         'core.CounterCacheComments',
@@ -419,9 +443,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->addBehavior('CounterCache', [
             'Users' => [
                 'posts_published' => function (EventInterface $event, EntityInterface $entity, Table $table) {
-                    $query = new Query($this->connection);
-
-                    return $query->select(4);
+                    return $table->getConnection()->selectQuery(4);
                 },
             ],
         ]);

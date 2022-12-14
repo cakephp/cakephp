@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -24,6 +25,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqlserverSchemaDialect;
@@ -38,7 +40,6 @@ use PDO;
  */
 class Sqlserver extends Driver
 {
-    use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
 
     /**
@@ -54,11 +55,16 @@ class Sqlserver extends Driver
     ];
 
     /**
+     * @inheritDoc
+     */
+    protected const STATEMENT_CLASS = SqlserverStatement::class;
+
+    /**
      * Base configuration settings for Sqlserver driver
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'host' => 'localhost\SQLEXPRESS',
         'username' => '',
         'password' => '',
@@ -75,33 +81,23 @@ class Sqlserver extends Driver
         'failoverPartner' => null,
         'loginTimeout' => null,
         'multiSubnetFailover' => null,
+        'encrypt' => null,
+        'trustServerCertificate' => null,
     ];
-
-    /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\SqlserverSchemaDialect|null
-     */
-    protected $_schemaDialect;
 
     /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '[';
+    protected string $_startQuote = '[';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = ']';
-
-    /**
-     * @inheritDoc
-     */
-    protected $supportsCTEs = true;
+    protected string $_endQuote = ']';
 
     /**
      * Establishes a connection to the database server.
@@ -112,12 +108,12 @@ class Sqlserver extends Driver
      * information see: https://github.com/Microsoft/msphpsql/issues/65).
      *
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
-     * @return bool true on success
+     * @return void
      */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->pdo)) {
+            return;
         }
         $config = $this->_config;
 
@@ -156,26 +152,29 @@ class Sqlserver extends Driver
         if ($config['multiSubnetFailover'] !== null) {
             $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
         }
-        $this->_connect($dsn, $config);
+        if ($config['encrypt'] !== null) {
+            $dsn .= ";Encrypt={$config['encrypt']}";
+        }
+        if ($config['trustServerCertificate'] !== null) {
+            $dsn .= ";TrustServerCertificate={$config['trustServerCertificate']}";
+        }
 
-        $connection = $this->getConnection();
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $connection->exec($command);
+                $this->pdo->exec($command);
             }
         }
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
-                $connection->exec("SET {$key} {$value}");
+                $this->pdo->exec("SET {$key} {$value}");
             }
         }
         if (!empty($config['attributes']) && is_array($config['attributes'])) {
             foreach ($config['attributes'] as $key => $value) {
-                $connection->setAttribute($key, $value);
+                $this->pdo->setAttribute($key, $value);
             }
         }
-
-        return true;
     }
 
     /**
@@ -189,20 +188,11 @@ class Sqlserver extends Driver
     }
 
     /**
-     * Prepares a sql statement to be executed
-     *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
+     * @inheritDoc
      */
-    public function prepare($query): StatementInterface
+    public function prepare(Query|string $query): StatementInterface
     {
-        $this->connect();
-
         $sql = $query;
-        $options = [
-            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
-        ];
         if ($query instanceof Query) {
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
@@ -213,16 +203,24 @@ class Sqlserver extends Driver
                     'If using an Association, try changing the `strategy` from select to subquery.'
                 );
             }
-
-            if (!$query->isBufferedResultsEnabled()) {
-                $options = [];
-            }
         }
 
         /** @psalm-suppress PossiblyInvalidArgument */
-        $statement = $this->_connection->prepare($sql, $options);
+        $statement = $this->getPdo()->prepare(
+            $sql,
+            [
+                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+            ]
+        );
 
-        return new SqlserverStatement($statement, $this);
+        $typeMap = null;
+        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
+            $typeMap = $query->getSelectTypeMap();
+        }
+
+        /** @var \Cake\Database\StatementInterface */
+        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
     }
 
     /**
@@ -269,9 +267,19 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
-        return true;
+        return match ($feature) {
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeatureEnum::WINDOW => true,
+
+            DriverFeatureEnum::JSON => false,
+
+            default => false,
+        };
     }
 
     /**
@@ -279,11 +287,7 @@ class Sqlserver extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new SqlserverSchemaDialect($this);
-        }
-
-        return $this->_schemaDialect;
+        return $this->_schemaDialect ??= new SqlserverSchemaDialect($this);
     }
 
     /**
@@ -299,7 +303,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _selectQueryTranslator(Query $query): Query
+    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
@@ -309,7 +313,7 @@ class Sqlserver extends Driver
         }
 
         if ($offset !== null && !$query->clause('order')) {
-            $query->order($query->newExpr()->add('(SELECT NULL)'));
+            $query->orderBy($query->newExpr()->add('(SELECT NULL)'));
         }
 
         if ($this->version() < 11 && $offset !== null) {
@@ -325,12 +329,12 @@ class Sqlserver extends Driver
      * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
      * be used.
      *
-     * @param \Cake\Database\Query $original The query to wrap in a subquery.
+     * @param \Cake\Database\Query\SelectQuery $original The query to wrap in a subquery.
      * @param int|null $limit The number of rows to fetch.
      * @param int|null $offset The number of rows to offset.
-     * @return \Cake\Database\Query Modified query object.
+     * @return \Cake\Database\Query\SelectQuery Modified query object.
      */
-    protected function _pagingSubquery(Query $original, ?int $limit, ?int $offset): Query
+    protected function _pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
@@ -366,9 +370,9 @@ class Sqlserver extends Driver
                 '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
             ])->limit(null)
             ->offset(null)
-            ->order([], true);
+            ->orderBy([], true);
 
-        $outer = new Query($query->getConnection());
+        $outer = $query->getConnection()->selectQuery();
         $outer->select('*')
             ->from(['_cake_paging_' => $query]);
 
@@ -396,7 +400,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(Query $query): Query
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         if (!is_array($query->clause('distinct'))) {
             return $query;
@@ -424,9 +428,9 @@ class Sqlserver extends Driver
             })
             ->limit(null)
             ->offset(null)
-            ->order([], true);
+            ->orderBy([], true);
 
-        $outer = new Query($query->getConnection());
+        $outer = new SelectQuery($query->getConnection());
         $outer->select('*')
             ->from(['_cake_distinct_' => $query])
             ->where(['_cake_distinct_pivot_' => 1]);
@@ -470,7 +474,6 @@ class Sqlserver extends Driver
                 $expression->setName('')->setConjunction(' +');
                 break;
             case 'DATEDIFF':
-                /** @var bool $hasDay */
                 $hasDay = false;
                 $visitor = function ($value) use (&$hasDay) {
                     if ($value === 'day') {

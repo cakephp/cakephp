@@ -19,8 +19,10 @@ namespace Cake\Routing;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
+use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
+use Psr\Http\Server\MiddlewareInterface;
 
 /**
  * Contains a collection of routes.
@@ -37,48 +39,48 @@ class RouteCollection
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected $_routeTable = [];
+    protected array $_routeTable = [];
 
     /**
      * The hash map of named routes that are in this collection.
      *
      * @var array<\Cake\Routing\Route\Route>
      */
-    protected $_named = [];
+    protected array $_named = [];
 
     /**
      * Routes indexed by path prefix.
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected $_paths = [];
+    protected array $_paths = [];
 
     /**
      * A map of middleware names and the related objects.
      *
      * @var array
      */
-    protected $_middleware = [];
+    protected array $_middleware = [];
 
     /**
      * A map of middleware group names and the related middleware names.
      *
      * @var array
      */
-    protected $_middlewareGroups = [];
+    protected array $_middlewareGroups = [];
 
     /**
      * Route extensions
      *
      * @var array<string>
      */
-    protected $_extensions = [];
+    protected array $_extensions = [];
 
     /**
      * Add a route to the collection.
      *
      * @param \Cake\Routing\Route\Route $route The route object to add.
-     * @param array $options Additional options for the route. Primarily for the
+     * @param array<string, mixed> $options Additional options for the route. Primarily for the
      *   `_name` option, which enables named routes.
      * @return void
      */
@@ -128,12 +130,12 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($decoded, $path) !== 0) {
+            if (!str_starts_with($decoded, $path)) {
                 continue;
             }
 
             $queryParameters = [];
-            if (strpos($url, '?') !== false) {
+            if (str_contains($url, '?')) {
                 [$url, $qs] = explode('?', $url, 2);
                 parse_str($qs, $queryParameters);
             }
@@ -177,7 +179,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 
@@ -218,9 +220,9 @@ class RouteCollection
         $action = strtolower($url['action']);
 
         $names = [
-            "${controller}:${action}",
-            "${controller}:_action",
-            "_controller:${action}",
+            "{$controller}:{$action}",
+            "{$controller}:_action",
+            "_controller:{$action}",
             '_controller:_action',
         ];
 
@@ -232,13 +234,13 @@ class RouteCollection
         // Only a plugin
         if ($prefix === false) {
             return [
-                "${plugin}.${controller}:${action}",
-                "${plugin}.${controller}:_action",
-                "${plugin}._controller:${action}",
-                "${plugin}._controller:_action",
-                "_plugin.${controller}:${action}",
-                "_plugin.${controller}:_action",
-                "_plugin._controller:${action}",
+                "{$plugin}.{$controller}:{$action}",
+                "{$plugin}.{$controller}:_action",
+                "{$plugin}._controller:{$action}",
+                "{$plugin}._controller:_action",
+                "_plugin.{$controller}:{$action}",
+                "_plugin.{$controller}:_action",
+                "_plugin._controller:{$action}",
                 '_plugin._controller:_action',
             ];
         }
@@ -246,13 +248,13 @@ class RouteCollection
         // Only a prefix
         if ($plugin === false) {
             return [
-                "${prefix}:${controller}:${action}",
-                "${prefix}:${controller}:_action",
-                "${prefix}:_controller:${action}",
-                "${prefix}:_controller:_action",
-                "_prefix:${controller}:${action}",
-                "_prefix:${controller}:_action",
-                "_prefix:_controller:${action}",
+                "{$prefix}:{$controller}:{$action}",
+                "{$prefix}:{$controller}:_action",
+                "{$prefix}:_controller:{$action}",
+                "{$prefix}:_controller:_action",
+                "_prefix:{$controller}:{$action}",
+                "_prefix:{$controller}:_action",
+                "_prefix:_controller:{$action}",
                 '_prefix:_controller:_action',
             ];
         }
@@ -260,21 +262,21 @@ class RouteCollection
         // Prefix and plugin has the most options
         // as there are 4 factors.
         return [
-            "${prefix}:${plugin}.${controller}:${action}",
-            "${prefix}:${plugin}.${controller}:_action",
-            "${prefix}:${plugin}._controller:${action}",
-            "${prefix}:${plugin}._controller:_action",
-            "${prefix}:_plugin.${controller}:${action}",
-            "${prefix}:_plugin.${controller}:_action",
-            "${prefix}:_plugin._controller:${action}",
-            "${prefix}:_plugin._controller:_action",
-            "_prefix:${plugin}.${controller}:${action}",
-            "_prefix:${plugin}.${controller}:_action",
-            "_prefix:${plugin}._controller:${action}",
-            "_prefix:${plugin}._controller:_action",
-            "_prefix:_plugin.${controller}:${action}",
-            "_prefix:_plugin.${controller}:_action",
-            "_prefix:_plugin._controller:${action}",
+            "{$prefix}:{$plugin}.{$controller}:{$action}",
+            "{$prefix}:{$plugin}.{$controller}:_action",
+            "{$prefix}:{$plugin}._controller:{$action}",
+            "{$prefix}:{$plugin}._controller:_action",
+            "{$prefix}:_plugin.{$controller}:{$action}",
+            "{$prefix}:_plugin.{$controller}:_action",
+            "{$prefix}:_plugin._controller:{$action}",
+            "{$prefix}:_plugin._controller:_action",
+            "_prefix:{$plugin}.{$controller}:{$action}",
+            "_prefix:{$plugin}.{$controller}:_action",
+            "_prefix:{$plugin}._controller:{$action}",
+            "_prefix:{$plugin}._controller:_action",
+            "_prefix:_plugin.{$controller}:{$action}",
+            "_prefix:_plugin.{$controller}:_action",
+            "_prefix:_plugin._controller:{$action}",
             '_prefix:_plugin._controller:_action',
         ];
     }
@@ -394,7 +396,7 @@ class RouteCollection
      * @return $this
      * @throws \RuntimeException
      */
-    public function registerMiddleware(string $name, $middleware)
+    public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
         $this->_middleware[$name] = $middleware;
 
@@ -407,19 +409,19 @@ class RouteCollection
      * @param string $name Name of the middleware group
      * @param array<string> $middlewareNames Names of the middleware
      * @return $this
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
-            throw new RuntimeException($message);
+            throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
                 $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
-                throw new RuntimeException($message);
+                throw new InvalidArgumentException($message);
             }
         }
 
@@ -467,7 +469,7 @@ class RouteCollection
      * @param array<string> $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
-     * @throws \RuntimeException when a requested middleware does not exist.
+     * @throws \InvalidArgumentException when a requested middleware does not exist.
      */
     public function getMiddleware(array $names): array
     {
@@ -478,8 +480,8 @@ class RouteCollection
                 continue;
             }
             if (!$this->hasMiddleware($name)) {
-                throw new RuntimeException(sprintf(
-                    "The middleware named '%s' has not been registered. Use registerMiddleware() to define it.",
+                throw new InvalidArgumentException(sprintf(
+                    'The middleware named `%s` has not been registered. Use registerMiddleware() to define it.',
                     $name
                 ));
             }

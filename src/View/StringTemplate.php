@@ -20,7 +20,7 @@ use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Provides an interface for registering and inserting
@@ -38,12 +38,13 @@ class StringTemplate
     /**
      * List of attributes that can be made compact.
      *
-     * @var array
+     * @var array<string, bool>
      */
-    protected $_compactAttributes = [
+    protected array $_compactAttributes = [
         'allowfullscreen' => true,
         'async' => true,
         'autofocus' => true,
+        'autoload' => true,
         'autoplay' => true,
         'checked' => true,
         'compact' => true,
@@ -87,28 +88,28 @@ class StringTemplate
     /**
      * The default templates this instance holds.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * A stack of template sets that have been stashed temporarily.
      *
      * @var array
      */
-    protected $_configStack = [];
+    protected array $_configStack = [];
 
     /**
      * Contains the list of compiled templates
      *
-     * @var array
+     * @var array<string, array>
      */
-    protected $_compiled = [];
+    protected array $_compiled = [];
 
     /**
      * Constructor.
      *
-     * @param array $config A set of templates to add.
+     * @param array<string, mixed> $config A set of templates to add.
      */
     public function __construct(array $config = [])
     {
@@ -178,11 +179,11 @@ class StringTemplate
         foreach ($templates as $name) {
             $template = $this->get($name);
             if ($template === null) {
-                $this->_compiled[$name] = [null, null];
+                throw new InvalidArgumentException(sprintf('String template `%s` is not valid.', $name));
             }
 
             $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
+            preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1],
@@ -227,14 +228,14 @@ class StringTemplate
      * Format a template string with $data
      *
      * @param string $name The template name.
-     * @param array $data The data to insert.
+     * @param array<string, mixed> $data The data to insert.
      * @return string Formatted string
-     * @throws \RuntimeException If template not found.
+     * @throws \InvalidArgumentException If template not found.
      */
     public function format(string $name, array $data): string
     {
         if (!isset($this->_compiled[$name])) {
-            throw new RuntimeException("Cannot find template named '$name'.");
+            throw new InvalidArgumentException(sprintf('Cannot find template named `%s`.', $name));
         }
         [$template, $placeholders] = $this->_compiled[$name];
 
@@ -276,8 +277,8 @@ class StringTemplate
      * these templates uses the `name` and `value` variables. You can modify these
      * templates to change how attributes are formatted.
      *
-     * @param array|null $options Array of options.
-     * @param array|null $exclude Array of options to be excluded, the options here will not be part of the return.
+     * @param array<string, mixed>|null $options Array of options.
+     * @param array<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
      * @return string Composed attributes.
      */
     public function formatAttributes(?array $options, ?array $exclude = null): string
@@ -296,7 +297,7 @@ class StringTemplate
 
         foreach ($options as $key => $value) {
             if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-                $attributes[] = $this->_formatAttribute((string)$key, $value, $escape);
+                $attributes[] = $this->_formatAttribute($key, $value, $escape);
             }
         }
         $out = trim(implode(' ', $attributes));
@@ -309,11 +310,11 @@ class StringTemplate
      * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
      *
      * @param string $key The name of the attribute to create
-     * @param array<string>|string $value The value of the attribute to create.
+     * @param mixed $value The value of the attribute to create.
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
-    protected function _formatAttribute(string $key, $value, $escape = true): string
+    protected function _formatAttribute(string $key, mixed $value, bool $escape = true): string
     {
         if (is_array($value)) {
             $value = implode(' ', $value);
@@ -339,13 +340,16 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param array|string $input The array or string to add the class to
-     * @param array|string $newClass the new class or classes to add
+     * @param mixed $input The array or string to add the class to
+     * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string>|string
+     * @return array<string>|string|null
      */
-    public function addClass($input, $newClass, string $useIndex = 'class')
-    {
+    public function addClass(
+        mixed $input,
+        array|string|false|null $newClass,
+        string $useIndex = 'class'
+    ): array|string|null {
         // NOOP
         if (empty($newClass)) {
             return $input;
@@ -373,8 +377,6 @@ class StringTemplate
 
         $class = array_unique(array_merge($class, $newClass));
 
-        $input = Hash::insert($input, $useIndex, $class);
-
-        return $input;
+        return Hash::insert($input, $useIndex, $class);
     }
 }

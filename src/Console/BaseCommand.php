@@ -18,9 +18,8 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -38,18 +37,17 @@ abstract class BaseCommand implements CommandInterface
      *
      * @var string
      */
-    protected $name = 'cake unknown';
+    protected string $name = 'cake unknown';
 
     /**
      * @inheritDoc
      */
     public function setName(string $name)
     {
-        if (strpos($name, ' ') < 1) {
-            throw new InvalidArgumentException(
-                "The name '{$name}' is missing a space. Names should look like `cake routes`"
-            );
-        }
+        assert(
+            strpos($name, ' '),
+            "The name '{$name}' is missing a space. Names should look like `cake routes`"
+        );
         $this->name = $name;
 
         return $this;
@@ -63,6 +61,16 @@ abstract class BaseCommand implements CommandInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * Get the command description.
+     *
+     * @return string
+     */
+    public static function getDescription(): string
+    {
+        return '';
     }
 
     /**
@@ -91,9 +99,8 @@ abstract class BaseCommand implements CommandInterface
         $pos = strrpos(static::class, '\\');
         /** @psalm-suppress PossiblyFalseOperand */
         $name = substr(static::class, $pos + 1, -7);
-        $name = Inflector::underscore($name);
 
-        return $name;
+        return Inflector::underscore($name);
     }
 
     /**
@@ -102,17 +109,18 @@ abstract class BaseCommand implements CommandInterface
      * You can override buildOptionParser() to define your options & arguments.
      *
      * @return \Cake\Console\ConsoleOptionParser
-     * @throws \RuntimeException When the parser is invalid
+     * @throws \Cake\Core\Exception\CakeException When the parser is invalid
      */
     public function getOptionParser(): ConsoleOptionParser
     {
         [$root, $name] = explode(' ', $this->name, 2);
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
+        $parser->setDescription(static::getDescription());
 
         $parser = $this->buildOptionParser($parser);
         if ($parser->subcommands()) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
             );
         }
@@ -153,7 +161,7 @@ abstract class BaseCommand implements CommandInterface
 
         $parser = $this->getOptionParser();
         try {
-            [$options, $arguments] = $parser->parse($argv);
+            [$options, $arguments] = $parser->parse($argv, $io);
             $args = new Arguments(
                 $arguments,
                 $options,
@@ -224,6 +232,7 @@ abstract class BaseCommand implements CommandInterface
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null|void The exit code or null for success
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     abstract public function execute(Arguments $args, ConsoleIo $io);
 
@@ -232,9 +241,9 @@ abstract class BaseCommand implements CommandInterface
      *
      * @param int $code The exit code to use.
      * @throws \Cake\Console\Exception\StopException
-     * @return void
+     * @return never
      */
-    public function abort(int $code = self::CODE_ERROR): void
+    public function abort(int $code = self::CODE_ERROR): never
     {
         throw new StopException('Command aborted', $code);
     }
@@ -248,22 +257,18 @@ abstract class BaseCommand implements CommandInterface
      *
      * @param \Cake\Console\CommandInterface|string $command The command class name or command instance.
      * @param array $args The arguments to invoke the command with.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null): ?int
+    public function executeCommand(CommandInterface|string $command, array $args = [], ?ConsoleIo $io = null): ?int
     {
         if (is_string($command)) {
-            if (!class_exists($command)) {
-                throw new InvalidArgumentException("Command class '{$command}' does not exist.");
-            }
-            $command = new $command();
-        }
-        if (!$command instanceof CommandInterface) {
-            $commandType = getTypeName($command);
-            throw new InvalidArgumentException(
-                "Command '{$commandType}' is not a subclass of Cake\Console\CommandInterface."
+            assert(
+                is_subclass_of($command, CommandInterface::class),
+                "Command '{$command}' is not a subclass of Cake\Console\CommandInterface."
             );
+
+            $command = new $command();
         }
         $io = $io ?: new ConsoleIo();
 

@@ -23,7 +23,7 @@ use Cake\Mailer\Mailer;
  */
 class TestMailer extends Mailer
 {
-    protected $messageClass = TestMessage::class;
+    protected string $messageClass = TestMessage::class;
 
     public $boundary = null;
 

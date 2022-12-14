@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Debug;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A Debugger formatter for generating unstyled plain text output.
@@ -71,16 +71,12 @@ TEXT;
     protected function export(NodeInterface $var, int $indent): string
     {
         if ($var instanceof ScalarNode) {
-            switch ($var->getType()) {
-                case 'bool':
-                    return $var->getValue() ? 'true' : 'false';
-                case 'null':
-                    return 'null';
-                case 'string':
-                    return "'" . (string)$var->getValue() . "'";
-                default:
-                    return "({$var->getType()}) {$var->getValue()}";
-            }
+            return match ($var->getType()) {
+                'bool' => $var->getValue() ? 'true' : 'false',
+                'null' => 'null',
+                'string' => "'" . (string)$var->getValue() . "'",
+                default => "({$var->getType()}) {$var->getValue()}",
+            };
         }
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);
@@ -91,7 +87,7 @@ TEXT;
         if ($var instanceof SpecialNode) {
             return $var->getValue();
         }
-        throw new RuntimeException('Unknown node received ' . get_class($var));
+        throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
     /**
@@ -127,7 +123,7 @@ TEXT;
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected function exportObject($var, int $indent): string
+    protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
     {
         $out = '';
         $props = [];

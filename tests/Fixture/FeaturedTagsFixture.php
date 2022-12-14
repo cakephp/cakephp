@@ -22,24 +22,13 @@ use Cake\TestSuite\Fixture\TestFixture;
 class FeaturedTagsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'tag_id' => ['type' => 'integer', 'null' => false],
-        'priority' => ['type' => 'integer', 'null' => false],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['tag_id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array
      */
-    public $records = [
-        ['priority' => 1],
-        ['priority' => 2],
-        ['priority' => 3],
+    public array $records = [
+        ['tag_id' => 1, 'priority' => 1],
+        ['tag_id' => 2, 'priority' => 2],
+        ['tag_id' => 3, 'priority' => 3],
     ];
 }

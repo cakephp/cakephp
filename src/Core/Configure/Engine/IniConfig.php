@@ -62,14 +62,14 @@ class IniConfig implements ConfigEngineInterface
      *
      * @var string
      */
-    protected $_extension = '.ini';
+    protected string $_extension = '.ini';
 
     /**
      * The section to read, if null all sections will be read.
      *
      * @var string|null
      */
-    protected $_section;
+    protected ?string $_section = null;
 
     /**
      * Build and construct a new ini file parser. The parser can be used to read
@@ -81,10 +81,7 @@ class IniConfig implements ConfigEngineInterface
      */
     public function __construct(?string $path = null, ?string $section = null)
     {
-        if ($path === null) {
-            $path = CONFIG;
-        }
-        $this->_path = $path;
+        $this->_path = $path ?? CONFIG;
         $this->_section = $section;
     }
 
@@ -135,7 +132,7 @@ class IniConfig implements ConfigEngineInterface
                 $value = false;
             }
             unset($values[$key]);
-            if (strpos((string)$key, '.') !== false) {
+            if (str_contains((string)$key, '.')) {
                 $values = Hash::insert($values, $key, $value);
             } else {
                 $values[$key] = $value;
@@ -186,7 +183,7 @@ class IniConfig implements ConfigEngineInterface
      * @param mixed $value Value to export.
      * @return string String value for ini file.
      */
-    protected function _value($value): string
+    protected function _value(mixed $value): string
     {
         if ($value === null) {
             return 'null';

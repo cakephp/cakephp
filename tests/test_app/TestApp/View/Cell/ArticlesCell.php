@@ -15,17 +15,19 @@ declare(strict_types=1);
  */
 namespace TestApp\View\Cell;
 
+use Cake\View\Cell;
+
 /**
  * TagCloudCell class
  */
-class ArticlesCell extends \Cake\View\Cell
+class ArticlesCell extends Cell
 {
     /**
      * valid cell options.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $_validCellOptions = ['limit', 'page'];
+    protected array $_validCellOptions = ['limit', 'page'];
 
     /**
      * Counter used to test the cache cell feature
@@ -33,6 +35,8 @@ class ArticlesCell extends \Cake\View\Cell
      * @var int
      */
     public $counter = 0;
+
+    public $limit = 1;
 
     /**
      * Default cell action.

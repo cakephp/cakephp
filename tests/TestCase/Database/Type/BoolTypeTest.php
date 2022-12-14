@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -64,7 +65,7 @@ class BoolTypeTest extends TestCase
      */
     public function testToDatabaseInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase([1, 2], $this->driver);
     }
 
@@ -73,7 +74,7 @@ class BoolTypeTest extends TestCase
      */
     public function testToDatabaseInvalidArray(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 

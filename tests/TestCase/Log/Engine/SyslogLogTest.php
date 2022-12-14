@@ -43,7 +43,6 @@ class SyslogLogTest extends TestCase
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
-            'format' => '%s: %s',
         ]);
         $log->expects($this->once())->method('_open')
             ->with('thing', LOG_NDELAY, LOG_MAIL);
@@ -81,36 +80,6 @@ class SyslogLogTest extends TestCase
                 [LOG_DEBUG, 'debug: Bar']
             );
         $log->log('debug', "Foo\nBar");
-    }
-
-    /**
-     * Test deprecated format option
-     */
-    public function testDeprecatedFormat(): void
-    {
-        $this->deprecated(function (): void {
-            $log = $this->getMockBuilder(SyslogLog::class)
-                ->setConstructorArgs(['config' => ['format' => 'custom %s: %s']])
-                ->onlyMethods(['_open', '_write'])
-                ->getMock();
-            $log->expects($this->exactly(2))
-                ->method('_write')
-                ->withConsecutive(
-                    [LOG_DEBUG, 'custom debug: Foo'],
-                    [LOG_DEBUG, 'custom debug: Bar']
-                );
-            $log->log('debug', "Foo\nBar");
-        });
-    }
-
-    /**
-     * Test deprecated format option
-     */
-    public function testDeprecatedFormatMessage(): void
-    {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage('`format` option is now deprecated in favor of custom formatters');
-        new SyslogLog(['format' => 'custom %s: %s']);
     }
 
     /**

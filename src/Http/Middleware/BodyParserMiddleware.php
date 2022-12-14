@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.6.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Middleware;
 
@@ -28,9 +28,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Parse encoded request body data.
  *
- * Enables JSON and XML request payloads to be parsed into the request's
- * Provides CSRF protection & validation.
- *
+ * Enables JSON and XML request payloads to be parsed into the request's body.
  * You can also add your own request body parsers using the `addParser()` method.
  */
 class BodyParserMiddleware implements MiddlewareInterface
@@ -40,14 +38,14 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * @var array<\Closure>
      */
-    protected $parsers = [];
+    protected array $parsers = [];
 
     /**
      * The HTTP methods to parse data on.
      *
      * @var array<string>
      */
-    protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
+    protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
     /**
      * Constructor
@@ -59,7 +57,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *   handling requires more care than JSON does.
      * - `methods` The HTTP methods to parse on. Defaults to PUT, POST, PATCH DELETE.
      *
-     * @param array $options The options to use. See above.
+     * @param array<string, mixed> $options The options to use. See above.
      */
     public function __construct(array $options = [])
     {
@@ -67,13 +65,13 @@ class BodyParserMiddleware implements MiddlewareInterface
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
-                Closure::fromCallable([$this, 'decodeJson'])
+                $this->decodeJson(...)
             );
         }
         if ($options['xml']) {
             $this->addParser(
                 ['application/xml', 'text/xml'],
-                Closure::fromCallable([$this, 'decodeXml'])
+                $this->decodeXml(...)
             );
         }
         if ($options['methods']) {
@@ -180,17 +178,17 @@ class BodyParserMiddleware implements MiddlewareInterface
      * @param string $body The request body to decode
      * @return array|null
      */
-    protected function decodeJson(string $body)
+    protected function decodeJson(string $body): ?array
     {
         if ($body === '') {
             return [];
         }
         $decoded = json_decode($body, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return (array)$decoded;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
         }
 
-        return null;
+        return (array)$decoded;
     }
 
     /**
@@ -209,7 +207,7 @@ class BodyParserMiddleware implements MiddlewareInterface
             }
 
             return [];
-        } catch (XmlException $e) {
+        } catch (XmlException) {
             return [];
         }
     }

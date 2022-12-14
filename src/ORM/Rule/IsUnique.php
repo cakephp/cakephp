@@ -29,15 +29,15 @@ class IsUnique
      *
      * @var array<string>
      */
-    protected $_fields;
+    protected array $_fields;
 
     /**
      * The unique check options
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_options = [
-        'allowMultipleNulls' => false,
+    protected array $_options = [
+        'allowMultipleNulls' => true,
     ];
 
     /**
@@ -45,10 +45,10 @@ class IsUnique
      *
      * ### Options
      *
-     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to true.
      *
      * @param array<string> $fields The list of fields to check uniqueness for
-     * @param array $options The options for unique checks.
+     * @param array<string, mixed> $options The options for unique checks.
      */
     public function __construct(array $fields, array $options = [])
     {
@@ -61,7 +61,7 @@ class IsUnique
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      *   where the `repository` key is required.
-     * @param array $options Options passed to the check,
+     * @param array<string, mixed> $options Options passed to the check,
      * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options): bool
@@ -93,7 +93,7 @@ class IsUnique
      *
      * @param string $alias The alias to add.
      * @param array $conditions The conditions to alias.
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _alias(string $alias, array $conditions): array
     {

@@ -20,7 +20,7 @@ use Cake\Collection\CollectionInterface;
 
 if (!function_exists('collection')) {
     /**
-     * Returns a new Cake\Collection\Collection object wrapping the passed argument.
+     * Returns a new {@link \Cake\Collection\Collection} object wrapping the passed argument.
      *
      * @param iterable $items The items from which the collection will be built.
      * @return \Cake\Collection\Collection

@@ -2,18 +2,21 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Cookie;
+
+use Cake\Chronos\Chronos;
+use DateTimeInterface;
 
 /**
  * Cookie Interface
@@ -65,7 +68,7 @@ interface CookieInterface
      * @param string $name Name of the cookie
      * @return static
      */
-    public function withName(string $name);
+    public function withName(string $name): static;
 
     /**
      * Gets the cookie name
@@ -79,24 +82,24 @@ interface CookieInterface
      *
      * @return array|string
      */
-    public function getValue();
+    public function getValue(): array|string;
 
     /**
      * Gets the cookie value as scalar.
      *
      * This will collapse any complex data in the cookie with json_encode()
      *
-     * @return mixed
+     * @return string
      */
-    public function getScalarValue();
+    public function getScalarValue(): string;
 
     /**
      * Create a cookie with an updated value.
      *
-     * @param array|string $value Value of the cookie to set
+     * @param array|string|float|int|bool $value Value of the cookie to set
      * @return static
      */
-    public function withValue($value);
+    public function withValue(array|string|float|int|bool $value): static;
 
     /**
      * Get the id for a cookie
@@ -120,7 +123,7 @@ interface CookieInterface
      * @param string $path Sets the path
      * @return static
      */
-    public function withPath(string $path);
+    public function withPath(string $path): static;
 
     /**
      * Get the domain attribute.
@@ -135,14 +138,14 @@ interface CookieInterface
      * @param string $domain Domain to set
      * @return static
      */
-    public function withDomain(string $domain);
+    public function withDomain(string $domain): static;
 
     /**
      * Get the current expiry time
      *
-     * @return \DateTime|\DateTimeImmutable|null Timestamp of expiry or null
+     * @return \Cake\Chronos\Chronos|\DateTimeInterface|null Timestamp of expiry or null
      */
-    public function getExpiry();
+    public function getExpiry(): Chronos|DateTimeInterface|null;
 
     /**
      * Get the timestamp from the expiration time
@@ -161,17 +164,17 @@ interface CookieInterface
     /**
      * Create a cookie with an updated expiration date
      *
-     * @param \DateTime|\DateTimeImmutable $dateTime Date time object
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface $dateTime Date time object
      * @return static
      */
-    public function withExpiry($dateTime);
+    public function withExpiry(Chronos|DateTimeInterface $dateTime): static;
 
     /**
      * Create a new cookie that will virtually never expire.
      *
      * @return static
      */
-    public function withNeverExpire();
+    public function withNeverExpire(): static;
 
     /**
      * Create a new cookie that will expire/delete the cookie from the browser.
@@ -180,17 +183,17 @@ interface CookieInterface
      *
      * @return static
      */
-    public function withExpired();
+    public function withExpired(): static;
 
     /**
      * Check if a cookie is expired when compared to $time
      *
      * Cookies without an expiration date always return false.
      *
-     * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface|null $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired($time = null): bool;
+    public function isExpired(Chronos|DateTimeInterface|null $time = null): bool;
 
     /**
      * Check if the cookie is HTTP only
@@ -205,7 +208,7 @@ interface CookieInterface
      * @param bool $httpOnly HTTP Only
      * @return static
      */
-    public function withHttpOnly(bool $httpOnly);
+    public function withHttpOnly(bool $httpOnly): static;
 
     /**
      * Check if the cookie is secure
@@ -220,35 +223,34 @@ interface CookieInterface
      * @param bool $secure Secure attribute value
      * @return static
      */
-    public function withSecure(bool $secure);
+    public function withSecure(bool $secure): static;
 
     /**
      * Get the SameSite attribute.
      *
-     * @return string|null
+     * @return \Cake\Http\Cookie\SameSiteEnum|null
      */
-    public function getSameSite(): ?string;
+    public function getSameSite(): ?SameSiteEnum;
 
     /**
      * Create a cookie with an updated SameSite option.
      *
-     * @param string|null $sameSite Value for to set for Samesite option.
-     *   One of CookieInterface::SAMESITE_* constants.
+     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite Value for to set for Samesite option.
      * @return static
      */
-    public function withSameSite(?string $sameSite);
+    public function withSameSite(SameSiteEnum|string|null $sameSite): static;
 
     /**
      * Get cookie options
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOptions(): array;
 
     /**
      * Get cookie data as array.
      *
-     * @return array With keys `name`, `value`, `expires` etc. options.
+     * @return array<string, mixed> With keys `name`, `value`, `expires` etc. options.
      */
     public function toArray(): array;
 

@@ -30,12 +30,12 @@ class ErrorCodeWaitStrategy implements RetryStrategyInterface
     /**
      * @var array<int>
      */
-    protected $errorCodes;
+    protected array $errorCodes;
 
     /**
      * @var int
      */
-    protected $retryInterval;
+    protected int $retryInterval;
 
     /**
      * @param array<int> $errorCodes DB-specific error codes that allow retrying

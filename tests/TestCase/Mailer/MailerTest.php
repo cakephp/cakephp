@@ -14,8 +14,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
+use BadMethodCallException;
 use Cake\Core\Configure;
-use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Exception\MissingActionException;
@@ -25,6 +25,8 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
+use DateTime;
+use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Mailer\TestMailer;
 
@@ -96,28 +98,9 @@ class MailerTest extends TestCase
      */
     public function testTransportInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
         $this->mailer->setTransport('Invalid');
-    }
-
-    /**
-     * Test that using classes with no send method fails.
-     */
-    public function testTransportInstanceInvalid(): void
-    {
-        $this->expectException(CakeException::class);
-        $this->mailer->setTransport(new \stdClass());
-    }
-
-    /**
-     * Test that using unknown transports fails.
-     */
-    public function testTransportTypeInvalid(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
-        $this->mailer->setTransport(123);
     }
 
     /**
@@ -155,7 +138,7 @@ class MailerTest extends TestCase
      */
     public function testConfigErrorOnDuplicate(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $settings = [
             'to' => 'mark@example.com',
             'from' => 'noreply@example.com',
@@ -281,8 +264,8 @@ class MailerTest extends TestCase
      */
     public function testProfileInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown email configuration "derp".');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown email configuration `derp`.');
         $mailer = new Mailer();
         $mailer->setProfile('derp');
     }
@@ -299,6 +282,7 @@ class MailerTest extends TestCase
             'transport' => 'debug',
             'theme' => 'TestTheme',
             'helpers' => ['Html', 'Form'],
+            'autoLayout' => false,
         ];
         Mailer::setConfig('test', $config);
         $this->mailer->setProfile('test');
@@ -319,7 +303,9 @@ class MailerTest extends TestCase
         $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->viewBuilder()->getHelpers();
-        $this->assertEquals($config['helpers'], $result);
+        $this->assertEquals(['Html' => [], 'Form' => []], $result);
+
+        $this->assertFalse($this->mailer->viewBuilder()->isAutoLayoutEnabled());
 
         Mailer::drop('test');
     }
@@ -472,7 +458,7 @@ class MailerTest extends TestCase
      */
     public function testSendWithoutTransport(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
             'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.'
         );
@@ -755,7 +741,6 @@ class MailerTest extends TestCase
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
-        $this->mailer->setConfig(['empty']);
         $this->mailer->viewBuilder()
             ->setTemplate('default')
             ->setVar('content', 'message body.')
@@ -930,16 +915,16 @@ class MailerTest extends TestCase
         $this->mailer->viewBuilder()
             ->setTemplate('custom_helper')
             ->setLayout('default')
-            ->setHelpers(['Time'], false);
+            ->setHelpers(['Time']);
         $this->mailer->setViewVars(['time' => $timestamp]);
 
         $result = $this->mailer->send();
-        $dateTime = new \DateTime();
+        $dateTime = new DateTime();
         $dateTime->setTimestamp($timestamp);
         $this->assertStringContainsString('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
         $result = $this->mailer->viewBuilder()->getHelpers();
-        $this->assertEquals(['Time'], $result);
+        $this->assertEquals(['Time' => []], $result);
     }
 
     /**

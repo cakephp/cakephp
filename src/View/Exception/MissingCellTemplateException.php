@@ -24,12 +24,12 @@ class MissingCellTemplateException extends MissingTemplateException
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $type = 'Cell template';
+    protected string $type = 'Cell template';
 
     /**
      * Constructor
@@ -55,8 +55,7 @@ class MissingCellTemplateException extends MissingTemplateException
     /**
      * Get the passed in attributes
      *
-     * @return array
-     * @psalm-return array{name: string, file: string, paths: array}
+     * @return array<string, mixed>
      */
     public function getAttributes(): array
     {

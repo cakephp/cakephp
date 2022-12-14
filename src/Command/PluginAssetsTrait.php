@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Filesystem;
+use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -33,21 +35,21 @@ trait PluginAssetsTrait
      *
      * @var \Cake\Console\Arguments
      */
-    protected $args;
+    protected Arguments $args;
 
     /**
      * Console IO
      *
      * @var \Cake\Console\ConsoleIo
      */
-    protected $io;
+    protected ConsoleIo $io;
 
     /**
      * Get list of plugins to process. Plugins without a webroot directory are skipped.
      *
      * @param string|null $name Name of plugin for which to symlink assets.
      *   If null all plugins will be processed.
-     * @return array List of plugins with meta data.
+     * @return array<string, mixed> List of plugins with meta data.
      */
     protected function _list(?string $name = null): array
     {
@@ -74,7 +76,7 @@ trait PluginAssetsTrait
             $wwwRoot = Configure::read('App.wwwRoot');
             $dir = $wwwRoot;
             $namespaced = false;
-            if (strpos($link, '/') !== false) {
+            if (str_contains($link, '/')) {
                 $namespaced = true;
                 $parts = explode('/', $link);
                 $link = array_pop($parts);
@@ -95,7 +97,7 @@ trait PluginAssetsTrait
     /**
      * Process plugins
      *
-     * @param array $plugins List of plugins to process
+     * @param array<string, mixed> $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
      * @param bool $overwrite Overwrite existing files.
      * @return void
@@ -153,7 +155,7 @@ trait PluginAssetsTrait
     /**
      * Remove folder/symlink.
      *
-     * @param array $config Plugin config.
+     * @param array<string, mixed> $config Plugin config.
      * @return bool
      */
     protected function _remove(array $config): bool
@@ -180,7 +182,7 @@ trait PluginAssetsTrait
 
         if (is_link($dest)) {
             // phpcs:ignore
-            $success = DS === '\\' ? @rmdir($dest) : @unlink($dest);
+            $success = DIRECTORY_SEPARATOR === '\\' ? @rmdir($dest) : @unlink($dest);
             if ($success) {
                 $this->io->out('Unlinked ' . $dest);
 

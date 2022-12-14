@@ -24,7 +24,7 @@ class NotFoundException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 404;
+    protected int $_defaultCode = 404;
 
     /**
      * Constructor

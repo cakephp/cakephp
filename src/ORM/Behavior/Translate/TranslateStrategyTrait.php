@@ -32,7 +32,7 @@ trait TranslateStrategyTrait
      *
      * @var \Cake\ORM\Table
      */
-    protected $table;
+    protected Table $table;
 
     /**
      * The locale name that will be used to override fields in the bound table
@@ -40,14 +40,14 @@ trait TranslateStrategyTrait
      *
      * @var string|null
      */
-    protected $locale;
+    protected ?string $locale = null;
 
     /**
      * Instance of Table responsible for translating
      *
      * @var \Cake\ORM\Table
      */
-    protected $translationTable;
+    protected Table $translationTable;
 
     /**
      * Return translation table instance.
@@ -104,7 +104,7 @@ trait TranslateStrategyTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for empty translations fields inside.
      * @return void
      */
-    protected function unsetEmptyFields($entity)
+    protected function unsetEmptyFields(EntityInterface $entity): void
     {
         /** @var array<\Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
@@ -141,7 +141,7 @@ trait TranslateStrategyTrait
      *
      * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -151,16 +151,13 @@ trait TranslateStrategyTrait
         }
 
         return [
-            '_translations' => function ($value, $entity) use ($marshaller, $options) {
+            '_translations' => function ($value, EntityInterface $entity) use ($marshaller, $options) {
                 if (!is_array($value)) {
                     return null;
                 }
 
-                /** @var array<string, \Cake\Datasource\EntityInterface>|null $translations */
-                $translations = $entity->get('_translations');
-                if ($translations === null) {
-                    $translations = [];
-                }
+                /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
+                $translations = $entity->get('_translations') ?? [];
 
                 $options['validate'] = $this->_config['validator'];
                 $errors = [];
@@ -193,7 +190,7 @@ trait TranslateStrategyTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity)
+    public function afterSave(EventInterface $event, EntityInterface $entity): void
     {
         $entity->unset('_i18n');
     }

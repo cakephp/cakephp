@@ -33,22 +33,22 @@ class PackageLocator
      * key is a package name, the second key is a locale code, and the value
      * is a callable that returns a Package object for that name and locale.
      *
-     * @var array
+     * @var array<string, array<string, \Cake\I18n\Package|callable>>
      */
-    protected $registry = [];
+    protected array $registry = [];
 
     /**
-     * Tracks whether or not a registry entry has been converted from a
+     * Tracks whether a registry entry has been converted from a
      * callable to a Package object.
      *
-     * @var array
+     * @var array<string, array<string, bool>>
      */
-    protected $converted = [];
+    protected array $converted = [];
 
     /**
      * Constructor.
      *
-     * @param array $registry A registry of packages.
+     * @param array<string, array<string, \Cake\I18n\Package|callable>> $registry A registry of packages.
      * @see PackageLocator::$registry
      */
     public function __construct(array $registry = [])
@@ -68,7 +68,7 @@ class PackageLocator
      * @param \Cake\I18n\Package|callable $spec A callable that returns a package or Package instance.
      * @return void
      */
-    public function set(string $name, string $locale, $spec): void
+    public function set(string $name, string $locale, Package|callable $spec): void
     {
         $this->registry[$name][$locale] = $spec;
         $this->converted[$name][$locale] = $spec instanceof Package;
@@ -84,15 +84,17 @@ class PackageLocator
     public function get(string $name, string $locale): Package
     {
         if (!isset($this->registry[$name][$locale])) {
-            throw new I18nException("Package '$name' with locale '$locale' is not registered.");
+            throw new I18nException(sprintf('Package `%s` with locale `%s` is not registered.', $name, $locale));
         }
 
         if (!$this->converted[$name][$locale]) {
             $func = $this->registry[$name][$locale];
+            assert(is_callable($func));
             $this->registry[$name][$locale] = $func();
             $this->converted[$name][$locale] = true;
         }
 
+        /** @var \Cake\I18n\Package */
         return $this->registry[$name][$locale];
     }
 

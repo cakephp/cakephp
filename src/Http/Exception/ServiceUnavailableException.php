@@ -24,7 +24,7 @@ class ServiceUnavailableException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 503;
+    protected int $_defaultCode = 503;
 
     /**
      * Constructor

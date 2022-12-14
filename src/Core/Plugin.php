@@ -30,7 +30,7 @@ class Plugin
      *
      * @var \Cake\Core\PluginCollection|null
      */
-    protected static $plugins;
+    protected static ?PluginCollection $plugins = null;
 
     /**
      * Returns the filesystem path for a plugin
@@ -127,10 +127,6 @@ class Plugin
      */
     public static function getCollection(): PluginCollection
     {
-        if (!isset(static::$plugins)) {
-            static::$plugins = new PluginCollection();
-        }
-
-        return static::$plugins;
+        return static::$plugins ??= new PluginCollection();
     }
 }

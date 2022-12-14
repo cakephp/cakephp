@@ -30,9 +30,9 @@ class SchemaCacheTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Articles', 'core.Tags'];
+    protected array $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * Cache Engine Mock
@@ -65,9 +65,9 @@ class SchemaCacheTest extends TestCase
      */
     public function tearDown(): void
     {
+        $this->connection->cacheMetadata(false);
         parent::tearDown();
 
-        $this->connection->cacheMetadata(false);
         unset($this->connection);
         Cache::drop('orm_cache');
     }

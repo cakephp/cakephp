@@ -30,7 +30,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
     /**
      * implementedEvents method
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

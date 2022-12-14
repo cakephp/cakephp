@@ -26,8 +26,12 @@ use Cake\Error\Debug\SpecialNode;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Error\Debugger;
 use Cake\Form\Form;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use MyClass;
 use RuntimeException;
 use SplFixedArray;
 use stdClass;
@@ -128,153 +132,6 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test that setOutputFormat works.
-     */
-    public function testSetOutputFormat(): void
-    {
-        Debugger::setOutputFormat('html');
-        $this->assertSame('html', Debugger::getOutputFormat());
-    }
-
-    /**
-     * Test that getOutputFormat/setOutputFormat works.
-     */
-    public function testGetSetOutputFormat(): void
-    {
-        Debugger::setOutputFormat('html');
-        $this->assertSame('html', Debugger::getOutputFormat());
-    }
-
-    /**
-     * Test that choosing a nonexistent format causes an exception
-     */
-    public function testSetOutputAsException(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        Debugger::setOutputFormat('Invalid junk');
-    }
-
-    /**
-     * Test outputError with description encoding
-     */
-    public function testOutputErrorDescriptionEncoding(): void
-    {
-        Debugger::setOutputFormat('html');
-
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'error' => 'Notice',
-            'code' => E_NOTICE,
-            'level' => E_NOTICE,
-            'description' => 'Undefined index <script>alert(1)</script>',
-            'file' => __FILE__,
-            'line' => __LINE__,
-        ]);
-        $result = ob_get_clean();
-        $this->assertStringContainsString('&lt;script&gt;', $result);
-        $this->assertStringNotContainsString('<script>', $result);
-    }
-
-    /**
-     * Tests that the correct line is being highlighted.
-     */
-    public function testOutputErrorLineHighlight(): void
-    {
-        Debugger::setOutputFormat('js');
-
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $data = [
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Error description',
-            'start' => 1,
-        ];
-        $debugger->outputError($data);
-        $result = ob_get_clean();
-
-        $this->assertMatchesRegularExpression('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
-    }
-
-    /**
-     * Tests that changes in output formats using Debugger::output() change the templates used.
-     */
-    public function testAddFormat(): void
-    {
-        Debugger::addFormat('js', [
-            'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}',
-        ]);
-        Debugger::setOutputFormat('js');
-
-        $result = Debugger::trace();
-        $this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
-
-        Debugger::addFormat('xml', [
-            'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-                '{:description}</error>',
-        ]);
-        Debugger::setOutputFormat('xml');
-
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'level' => E_NOTICE,
-            'code' => E_NOTICE,
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'description' => 'Undefined variable: foo',
-        ]);
-        $result = ob_get_clean();
-
-        $expected = [
-            '<error',
-            '<code', '8', '/code',
-            '<file', 'preg:/[^<]+/', '/file',
-            '<line', '' . ((int)__LINE__ - 9), '/line',
-            'preg:/Undefined variable:\s+foo/',
-            '/error',
-        ];
-        $this->assertHtml($expected, $result, true);
-    }
-
-    /**
-     * Test adding a format that is handled by a callback.
-     */
-    public function testAddFormatCallback(): void
-    {
-        Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
-        Debugger::setOutputFormat('callback');
-
-        ob_start();
-        $debugger = Debugger::getInstance();
-        $debugger->outputError([
-            'error' => 'Notice',
-            'code' => E_NOTICE,
-            'level' => E_NOTICE,
-            'description' => 'Undefined variable $foo',
-            'file' => __FILE__,
-            'line' => __LINE__,
-        ]);
-        $result = ob_get_clean();
-        $this->assertStringContainsString('Notice: I eated an error', $result);
-        $this->assertStringContainsString('DebuggerTest.php', $result);
-
-        Debugger::setOutputFormat('js');
-    }
-
-    /**
-     * Test method for testing addFormat with callbacks.
-     */
-    public function customFormat(array $error, array $strings): void
-    {
-        echo $error['error'] . ': I eated an error ' . $error['file'];
-    }
-
-    /**
      * testTrimPath method
      */
     public function testTrimPath(): void
@@ -289,28 +146,39 @@ class DebuggerTest extends TestCase
      */
     public function testExportVar(): void
     {
-        $Controller = new Controller();
+        $std = new stdClass();
+        $std->int = 2;
+        $std->float = 1.333;
+        $std->string = '  ';
+
+        $result = Debugger::exportVar($std);
+        $expected = <<<TEXT
+object(stdClass) id:0 {
+  int => (int) 2
+  float => (float) 1.333
+  string => '  '
+}
+TEXT;
+        $this->assertTextEquals($expected, $result);
+
+        $Controller = new Controller(new ServerRequest());
         $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
         $View = $Controller->createView();
-        $View->int = 2;
-        $View->float = 1.333;
-        $View->string = '  ';
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) id:0 {
-  Html => object(Cake\View\Helper\HtmlHelper) id:1 {}
-  Form => object(Cake\View\Helper\FormHelper) id:2 {}
-  int => (int) 2
-  float => (float) 1.333
-  string => '  '
-  [protected] _helpers => object(Cake\View\HelperRegistry) id:3 {}
-  [protected] Blocks => object(Cake\View\ViewBlock) id:4 {}
+  [protected] _helpers => object(Cake\View\HelperRegistry) id:1 {}
+  [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
   [protected] plugin => null
   [protected] name => ''
   [protected] helpers => [
-    (int) 0 => 'Html',
-    (int) 1 => 'Form'
+    'Html' => [
+      '' => [maximum depth reached]
+    ],
+    'Form' => [
+      '' => [maximum depth reached]
+    ]
   ]
   [protected] templatePath => ''
   [protected] template => ''
@@ -321,8 +189,8 @@ object(Cake\View\View) id:0 {
   [protected] _ext => '.php'
   [protected] subDir => ''
   [protected] theme => null
-  [protected] request => object(Cake\Http\ServerRequest) id:5 {}
-  [protected] response => object(Cake\Http\Response) id:6 {}
+  [protected] request => object(Cake\Http\ServerRequest) id:3 {}
+  [protected] response => object(Cake\Http\Response) id:4 {}
   [protected] elementCache => 'default'
   [protected] _passedVars => [
     (int) 0 => 'viewVars',
@@ -340,11 +208,11 @@ object(Cake\View\View) id:0 {
   [protected] _paths => []
   [protected] _pathsForPlugin => []
   [protected] _parents => []
-  [protected] _current => null
+  [protected] _current => ''
   [protected] _currentType => ''
   [protected] _stack => []
   [protected] _viewBlockClass => 'Cake\View\ViewBlock'
-  [protected] _eventManager => object(Cake\Event\EventManager) id:7 {}
+  [protected] _eventManager => object(Cake\Event\EventManager) id:5 {}
   [protected] _eventClass => 'Cake\Event\Event'
   [protected] _config => []
   [protected] _configInitialized => true
@@ -395,11 +263,11 @@ TEXT;
 
     public function testExportVarTypedProperty(): void
     {
-        $this->skipIf(version_compare(PHP_VERSION, '7.4.0', '<'), 'typed properties require PHP7.4');
         // This is gross but was simpler than adding a fixture file.
         // phpcs:ignore
         eval('class MyClass { private string $field; }');
-        $obj = new \MyClass();
+        /** @phpstan-ignore-next-line */
+        $obj = new MyClass();
         $out = Debugger::exportVar($obj);
         $this->assertTextContains('field => [uninitialized]', $out);
     }
@@ -505,9 +373,19 @@ TEXT;
      */
     public function testExportVarInvalidDebugInfo(): void
     {
+        $this->skipIf(extension_loaded('xdebug'), 'Throwing exceptions inside __debugInfo breaks with xDebug');
         $result = Debugger::exportVar(new ThrowsDebugInfo());
         $expected = '(unable to export object: from __debugInfo)';
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * Test exportVar with a mock
+     */
+    public function testExportVarMockObject(): void
+    {
+        $result = Debugger::exportVar($this->getMockBuilder(Table::class)->getMock());
+        $this->assertStringContainsString('object(Mock_Table', $result);
     }
 
     /**
@@ -556,10 +434,10 @@ TEXT;
 
         $messages = Log::engine('test')->read();
         $this->assertCount(2, $messages);
-        $this->assertStringContainsString('DebuggerTest::testLog', $messages[0]);
+        $this->assertStringContainsString('DebuggerTest->testLog', $messages[0]);
         $this->assertStringContainsString('cool', $messages[0]);
 
-        $this->assertStringContainsString('DebuggerTest::testLog', $messages[1]);
+        $this->assertStringContainsString('DebuggerTest->testLog', $messages[1]);
         $this->assertStringContainsString('[main]', $messages[1]);
         $this->assertStringContainsString("'whatever'", $messages[1]);
         $this->assertStringContainsString("'here'", $messages[1]);
@@ -608,15 +486,15 @@ TEXT;
         Log::setConfig('test', [
             'className' => 'Array',
         ]);
-        $val = [
+        $veryRandomName = [
             'test' => ['key' => 'val'],
         ];
-        Debugger::log($val, 'debug', 0);
+        Debugger::log($veryRandomName, 'debug', 0);
 
         $messages = Log::engine('test')->read();
-        $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
+        $this->assertStringContainsString('DebuggerTest->testLogDepth', $messages[0]);
         $this->assertStringContainsString('test', $messages[0]);
-        $this->assertStringNotContainsString('val', $messages[0]);
+        $this->assertStringNotContainsString('veryRandomName', $messages[0]);
     }
 
     /**
@@ -713,12 +591,33 @@ TEXT;
     public function testTraceExclude(): void
     {
         $result = Debugger::trace();
-        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
 
         $result = Debugger::trace([
-            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
+            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest->testTraceExclude'],
         ]);
-        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
+    }
+
+    protected function _makeException()
+    {
+        return new RuntimeException('testing');
+    }
+
+    /**
+     * Test stack frame comparisons.
+     */
+    public function testGetUniqueFrames()
+    {
+        $parent = new RuntimeException('parent');
+        $child = $this->_makeException();
+
+        $result = Debugger::getUniqueFrames($child, $parent);
+        $this->assertCount(1, $result);
+        $this->assertEquals(__LINE__ - 4, $result[0]['line']);
+
+        $result = Debugger::getUniqueFrames($child, null);
+        $this->assertGreaterThan(1, count($result));
     }
 
     /**
@@ -747,7 +646,7 @@ eos;
         Debugger::setOutputMask(['serial' => 'XXXXXX']);
         $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
         Debugger::setOutputMask([], false);
-        $this->assertEquals([], Debugger::outputMask());
+        $this->assertSame([], Debugger::outputMask());
     }
 
     /**
@@ -818,7 +717,7 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
@@ -830,10 +729,9 @@ EXPECTED;
         $expected = <<<EXPECTED
 <div class="cake-debug-output cake-debug" style="direction:ltr">
 
-<div class="cake-dbg"><span class="cake-dbg-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
 </div>
 EXPECTED;
-        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertSame($expected, $result);
 
         ob_start();
@@ -859,7 +757,6 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertSame($expected, $result);
     }
 
@@ -869,25 +766,16 @@ EXPECTED;
     public function testFormatHtmlMessage(): void
     {
         $output = Debugger::formatHtmlMessage('Some `code` to `replace`');
-        $this->assertSame('Some <code>code</code> to <code>replace</code>', $output);
+        $this->assertSame('Some <code>`code`</code> to <code>`replace`</code>', $output);
 
         $output = Debugger::formatHtmlMessage("Some `co\nde` to `replace`\nmore");
-        $this->assertSame("Some <code>co<br />\nde</code> to <code>replace</code><br />\nmore", $output);
+        $this->assertSame("Some <code>`co<br />\nde`</code> to <code>`replace`</code><br />\nmore", $output);
 
         $output = Debugger::formatHtmlMessage("Some `code` to <script>alert(\"test\")</script>\nmore");
         $this->assertSame(
-            "Some <code>code</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
+            "Some <code>`code`</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
             $output
         );
-    }
-
-    /**
-     * test adding invalid editor
-     */
-    public function testAddEditorInvalid(): void
-    {
-        $this->expectException(RuntimeException::class);
-        Debugger::addEditor('nope', ['invalid']);
     }
 
     /**
@@ -895,7 +783,7 @@ EXPECTED;
      */
     public function testSetEditorInvalid(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         Debugger::setEditor('nope');
     }
 
@@ -941,7 +829,7 @@ EXPECTED;
     public function testEditorUrlClosure(): void
     {
         Debugger::addEditor('open', function (string $file, int $line) {
-            return "${file}/${line}";
+            return "{$file}/{$line}";
         });
         Debugger::setEditor('open');
         $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));

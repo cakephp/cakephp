@@ -18,10 +18,15 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
+use DateTime;
+use DOMDocument;
+use Exception;
+use SimpleXMLElement;
 use TypeError;
 
 /**
@@ -30,12 +35,17 @@ use TypeError;
 class XmlTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $appEncoding;
+
+    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->_appEncoding = Configure::read('App.encoding');
+        $this->appEncoding = Configure::read('App.encoding');
         Configure::write('App.encoding', 'UTF-8');
     }
 
@@ -45,7 +55,7 @@ class XmlTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Configure::write('App.encoding', $this->_appEncoding);
+        Configure::write('App.encoding', $this->appEncoding);
     }
 
     public function testExceptionChainingForInvalidInput(): void
@@ -57,7 +67,7 @@ class XmlTest extends TestCase
         } catch (XmlException $exception) {
             $cause = $exception->getPrevious();
             $this->assertNotNull($cause);
-            $this->assertInstanceOf(\Exception::class, $cause);
+            $this->assertInstanceOf(Exception::class, $cause);
         }
     }
 
@@ -68,7 +78,7 @@ class XmlTest extends TestCase
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tag', (string)$obj->getName());
         $this->assertSame('value', (string)$obj);
 
@@ -76,7 +86,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertInstanceOf(\DOMDocument::class, $obj);
+        $this->assertInstanceOf(DOMDocument::class, $obj);
         $this->assertSame('tag', $obj->firstChild->nodeName);
         $this->assertSame('value', $obj->firstChild->nodeValue);
 
@@ -127,7 +137,7 @@ class XmlTest extends TestCase
      */
     public function testBuildFromFileWhenDisabled(): void
     {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
+        $this->expectException(XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => false]);
     }
@@ -177,8 +187,6 @@ class XmlTest extends TestCase
     public static function invalidDataProvider(): array
     {
         return [
-            [null],
-            [false],
             [''],
             ['http://localhost/notthere.xml'],
         ];
@@ -192,7 +200,7 @@ class XmlTest extends TestCase
      */
     public function testBuildInvalidData($value): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         Xml::build($value);
     }
 
@@ -201,7 +209,7 @@ class XmlTest extends TestCase
      */
     public function testBuildInvalidDataSimpleXml(): void
     {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
+        $this->expectException(XmlException::class);
         $input = '<derp';
         Xml::build($input, ['return' => 'simplexml']);
     }
@@ -214,7 +222,7 @@ class XmlTest extends TestCase
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }
@@ -298,7 +306,7 @@ close to 5 million globally.
             ],
         ];
         $obj = Xml::fromArray($xml, ['format' => 'attributes']);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
         $this->assertSame(2, count($obj));
         $xmlText = <<<XML
@@ -311,7 +319,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
+        $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
         $this->assertSame(2, count($obj));
         $xmlText = <<<XML
@@ -573,9 +581,6 @@ XML;
     public static function invalidArrayDataProvider(): array
     {
         return [
-            [''],
-            [null],
-            [false],
             [[]],
             [['numeric key as root']],
             [['item1' => '', 'item2' => '']],
@@ -605,7 +610,7 @@ XML;
                     ],
                 ],
             ]],
-            [new \DateTime()],
+            [new DateTime()],
         ];
     }
 
@@ -617,7 +622,7 @@ XML;
      */
     public function testFromArrayFail($value): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         Xml::fromArray($value);
     }
 
@@ -1157,31 +1162,6 @@ XML;
 
         $result = Xml::build($xml);
         $this->assertSame(' Mark ', (string)$result->name);
-    }
-
-    /**
-     * data provider for toArray() failures
-     *
-     * @return array
-     */
-    public static function invalidToArrayDataProvider(): array
-    {
-        return [
-            [new \DateTime()],
-            [[]],
-        ];
-    }
-
-    /**
-     * testToArrayFail method
-     *
-     * @dataProvider invalidToArrayDataProvider
-     * @param mixed $value
-     */
-    public function testToArrayFail($value): void
-    {
-        $this->expectException(\Cake\Utility\Exception\XmlException::class);
-        Xml::toArray($value);
     }
 
     /**

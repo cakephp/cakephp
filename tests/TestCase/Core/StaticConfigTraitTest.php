@@ -72,10 +72,10 @@ class StaticConfigTraitTest extends TestCase
     public function testGetConfigOrFail(): void
     {
         $className = get_class($this->subject);
-        $className::setConfig('foo', 'bar');
+        $className::setConfig('foo', ['bar' => true]);
 
         $result = $className::getConfigOrFail('foo');
-        $this->assertSame('bar', $result);
+        $this->assertSame(['bar' => true], $result);
     }
 
     public function testGetConfigOrFailException(): void

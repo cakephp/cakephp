@@ -19,8 +19,6 @@ use Throwable;
 
 /**
  * Base class that all CakePHP Exceptions extend.
- *
- * @method int getCode() Gets the Exception code.
  */
 class CakeException extends RuntimeException
 {
@@ -30,28 +28,21 @@ class CakeException extends RuntimeException
      *
      * @var array
      */
-    protected $_attributes = [];
+    protected array $_attributes = [];
 
     /**
      * Template string that has attributes sprintf()'ed into it.
      *
      * @var string
      */
-    protected $_messageTemplate = '';
-
-    /**
-     * Array of headers to be passed to Cake\Http\Response::header()
-     *
-     * @var array|null
-     */
-    protected $_responseHeaders;
+    protected string $_messageTemplate = '';
 
     /**
      * Default exception code
      *
      * @var int
      */
-    protected $_defaultCode = 0;
+    protected int $_defaultCode = 0;
 
     /**
      * Constructor.
@@ -64,7 +55,7 @@ class CakeException extends RuntimeException
      * @param int|null $code The error code
      * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct($message = '', ?int $code = null, ?Throwable $previous = null)
+    public function __construct(array|string $message = '', ?int $code = null, ?Throwable $previous = null)
     {
         if (is_array($message)) {
             $this->_attributes = $message;
@@ -82,38 +73,4 @@ class CakeException extends RuntimeException
     {
         return $this->_attributes;
     }
-
-    /**
-     * Get/set the response header to be used
-     *
-     * See also Cake\Http\Response::withHeader()
-     *
-     * @param array|string|null $header A single header string or an associative
-     *   array of "header name" => "header value"
-     * @param string|null $value The header value.
-     * @return array|null
-     * @deprecated 4.2.0 Use `HttpException::setHeaders()` instead. Response headers
-     *   should be set for HttpException only.
-     */
-    public function responseHeader($header = null, $value = null): ?array
-    {
-        if ($header === null) {
-            return $this->_responseHeaders;
-        }
-
-        deprecationWarning(
-            'Setting HTTP response headers from Exception directly is deprecated. ' .
-            'If your exceptions extend Exception, they must now extend HttpException. ' .
-            'You should only set HTTP headers on HttpException instances via the `setHeaders()` method.'
-        );
-        if (is_array($header)) {
-            return $this->_responseHeaders = $header;
-        }
-
-        return $this->_responseHeaders = [$header => $value];
-    }
 }
-
-// phpcs:disable
-class_exists('Cake\Core\Exception\Exception');
-// phpcs:enable

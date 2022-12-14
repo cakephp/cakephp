@@ -900,6 +900,80 @@ return [
         ],
     ],
     [
+        'table' => 'articles_tags_binding_keys',
+        'columns' => [
+            'article_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'tagname' => [
+                'type' => 'string',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'unique_tag' => [
+                'type' => 'primary',
+                'columns' => [
+                    'article_id',
+                    'tagname',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'composite_key_articles',
+        'columns' => [
+            'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'created' => [
+                'type' => 'datetime',
+                'null' => false,
+            ],
+            'body' => [
+                'type' => 'text',
+            ],
+        ],
+        'constraints' => [
+            'composite_article_pk' => [
+                'type' => 'primary',
+                'columns' => [
+                    'author_id',
+                    'created',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'composite_key_articles_tags',
+        'columns' => [
+            'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+            'created' => [
+                'type' => 'datetime',
+                'null' => false,
+            ],
+            'tag_id' => [
+                'type' => 'integer',
+                'null' => false,
+            ],
+        ],
+        'constraints' => [
+            'composite_article_tags_pk' => [
+                'type' => 'primary',
+                'columns' => [
+                    'author_id',
+                    'created',
+                    'tag_id',
+                ],
+            ],
+        ],
+    ],
+    [
         'table' => 'profiles',
         'columns' => [
             'id' => [
@@ -1238,6 +1312,36 @@ return [
         ],
     ],
     [
+        'table' => 'number_trees_articles',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'number_tree_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+            'title' => [
+                'type' => 'string',
+                'null' => true,
+            ],
+            'body' => 'text',
+            'published' => [
+                'type' => 'string',
+                'length' => 1,
+                'default' => 'N',
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+            ],
+        ],
+    ],
+    [
         'table' => 'composite_increments',
         'columns' => [
             'id' => [
@@ -1508,6 +1612,26 @@ return [
                 'columns' => [
                     'id',
                     'site_id',
+                ],
+            ],
+        ],
+    ],
+    [
+        'table' => 'nullable_authors',
+        'columns' => [
+            'id' => [
+                'type' => 'integer',
+            ],
+            'author_id' => [
+                'type' => 'integer',
+                'null' => true,
+            ],
+        ],
+        'constraints' => [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
                 ],
             ],
         ],

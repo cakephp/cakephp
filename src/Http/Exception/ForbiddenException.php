@@ -24,7 +24,7 @@ class ForbiddenException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 403;
+    protected int $_defaultCode = 403;
 
     /**
      * Constructor

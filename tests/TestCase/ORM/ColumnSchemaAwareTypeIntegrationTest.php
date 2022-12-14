@@ -3,18 +3,16 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Type\ColumnSchemaAwareType;
 
 class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.ColumnSchemaAwareTypeValues',
     ];
-
-    public $autoFixtures = false;
 
     /**
      * @var \Cake\Database\TypeInterface|null
@@ -23,14 +21,12 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->textType = TypeFactory::build('text');
         TypeFactory::map('text', ColumnSchemaAwareType::class);
         // For SQLServer.
         TypeFactory::map('nvarchar', ColumnSchemaAwareType::class);
 
-        $this->loadFixtures('ColumnSchemaAwareTypeValues');
+        parent::setUp();
     }
 
     public function tearDown(): void
@@ -51,7 +47,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
             'this text has been processed via a custom type',
             'this text also has been processed via a custom type',
         ];
-        $result = $table->find()->orderAsc('id')->all()->extract('val')->toArray();
+        $result = $table->find()->orderByAsc('id')->all()->extract('val')->toArray();
         $this->assertSame($expected, $result);
     }
 
@@ -77,7 +73,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         $type
             ->expects($this->once())
             ->method('convertColumnDefinition')
-            ->willReturnCallback(function (array $definition, DriverInterface $driver) {
+            ->willReturnCallback(function (array $definition, Driver $driver) {
                 $this->assertEquals(
                     [
                         'length',

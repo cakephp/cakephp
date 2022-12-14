@@ -29,14 +29,14 @@ trait IdGeneratorTrait
      *
      * @var string|null
      */
-    protected $_idPrefix;
+    protected ?string $_idPrefix = null;
 
     /**
      * A list of id suffixes used in the current rendering.
      *
      * @var array<string>
      */
-    protected $_idSuffixes = [];
+    protected array $_idSuffixes = [];
 
     /**
      * Clear the stored ID suffixes.

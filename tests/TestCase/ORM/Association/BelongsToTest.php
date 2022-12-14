@@ -17,13 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use ArrayObject;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -35,9 +36,24 @@ class BelongsToTest extends TestCase
     /**
      * Fixtures to use.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
+    protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $company;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $client;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $companiesTypeMap;
 
     /**
      * Set up
@@ -86,6 +102,29 @@ class BelongsToTest extends TestCase
         $this->assertSame('company_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
         $this->assertSame('another_key', $assoc->getForeignKey());
+    }
+
+    /**
+     * Tests that the default foreign key condition generation can be disabled.
+     */
+    public function testDisableForeignKey(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $assoc = $table
+            ->belongsTo('Authors')
+            ->setForeignKey('author_id');
+
+        $article = $table->find()->contain(['Authors'])->orderByAsc('Articles.id')->first();
+        $this->assertSame('mariano', $article->author->name);
+
+        $assoc
+            ->setForeignKey(false)
+            ->setConditions([
+                'Authors.name' => 'larry',
+            ]);
+
+        $article = $table->find()->contain(['Authors'])->orderByAsc('Articles.id')->first();
+        $this->assertSame('larry', $article->author->name);
     }
 
     /**
@@ -144,7 +183,7 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query);
 
         $expected = [
@@ -182,7 +221,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association = new BelongsTo('Companies', $config);
 
         $association->attachTo($query, ['includeFields' => false]);
@@ -203,7 +242,7 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true],
         ];
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query);
 
         $expected = [
@@ -234,10 +273,10 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for `Companies`, got `(company_id)` but expected foreign key for `(id, tenant_id)`');
         $this->company->setPrimaryKey(['id', 'tenant_id']);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
@@ -338,12 +377,12 @@ class BelongsToTest extends TestCase
         $called = false;
         $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
             $this->assertInstanceOf(Event::class, $event);
-            $this->assertInstanceOf(Query::class, $query);
+            $this->assertInstanceOf(SelectQuery::class, $query);
             $this->assertInstanceOf(ArrayObject::class, $options);
             $called = true;
         });
         $association = new BelongsTo('Companies', $config);
-        $association->attachTo($this->client->query());
+        $association->attachTo($this->client->selectQuery());
         $this->assertTrue($called, 'Listener should be called.');
     }
 
@@ -364,7 +403,7 @@ class BelongsToTest extends TestCase
             $called = true;
         });
         $association = new BelongsTo('Companies', $config);
-        $query = $this->client->query();
+        $query = $this->client->selectQuery();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);

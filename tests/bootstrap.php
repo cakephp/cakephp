@@ -17,9 +17,11 @@ use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FactoryLocator;
 use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
-use Cake\TestSuite\Fixture\SchemaGenerator;
+use Cake\ORM\Locator\TableLocator;
+use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
@@ -104,6 +106,10 @@ if (!getenv('DB_URL')) {
 
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
 
+if (env('CAKE_TEST_AUTOQUOTE')) {
+    ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
+}
+
 Configure::write('Session', [
     'defaults' => 'php',
 ]);
@@ -129,14 +135,17 @@ Security::setSalt('a-long-but-not-random-value');
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
+ini_set('assert.exception', '1');
 
 // Fixate sessionid early on, as php7.2+
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
 
-// Create test database schema as long as we are not in an isolated process test.
-if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP']) && env('FIXTURE_SCHEMA_METADATA')) {
-    $schema = new SchemaGenerator(env('FIXTURE_SCHEMA_METADATA'), 'test');
-    $schema->reload();
+// Create test database schema
+if (env('FIXTURE_SCHEMA_METADATA')) {
+    $loader = new SchemaLoader();
+    $loader->loadInternalFile(env('FIXTURE_SCHEMA_METADATA'));
 }
+
+FactoryLocator::add('Table', new TableLocator());

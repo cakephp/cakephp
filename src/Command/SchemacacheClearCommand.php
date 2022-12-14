@@ -19,6 +19,7 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Database\Connection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use RuntimeException;
@@ -48,8 +49,8 @@ class SchemacacheClearCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         try {
-            /** @var \Cake\Database\Connection $connection */
             $connection = ConnectionManager::get((string)$args->getOption('connection'));
+            assert($connection instanceof Connection);
 
             $cache = new SchemaCache($connection);
         } catch (RuntimeException $e) {
@@ -85,7 +86,7 @@ class SchemacacheClearCommand extends Command
             'default' => 'default',
         ])->addArgument('name', [
             'help' => 'A specific table you want to clear cached data for.',
-            'optional' => true,
+            'required' => false,
         ]);
 
         return $parser;

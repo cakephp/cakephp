@@ -26,14 +26,14 @@ use Cake\Utility\Inflector;
 class DashedRoute extends Route
 {
     /**
-     * Flag for tracking whether or not the defaults have been inflected.
+     * Flag for tracking whether the defaults have been inflected.
      *
      * Default values need to be inflected so that they match the inflections that
      * match() will create.
      *
      * @var bool
      */
-    protected $_inflectedDefaults = false;
+    protected bool $_inflectedDefaults = false;
 
     /**
      * Camelizes the previously dashed plugin route taking into account plugin vendors
@@ -44,7 +44,7 @@ class DashedRoute extends Route
     protected function _camelizePlugin(string $plugin): string
     {
         $plugin = str_replace('-', '_', $plugin);
-        if (strpos($plugin, '/') === false) {
+        if (!str_contains($plugin, '/')) {
             return Inflector::camelize($plugin);
         }
         [$vendor, $plugin] = explode('/', $plugin, 2);

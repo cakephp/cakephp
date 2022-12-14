@@ -32,38 +32,38 @@ class ConsoleInputArgument
      *
      * @var string
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * Help string
      *
      * @var string
      */
-    protected $_help;
+    protected string $_help;
 
     /**
      * Is this option required?
      *
      * @var bool
      */
-    protected $_required;
+    protected bool $_required;
 
     /**
      * An array of valid choices for this argument.
      *
      * @var array<string>
      */
-    protected $_choices;
+    protected array $_choices;
 
     /**
      * Make a new Input Argument
      *
-     * @param array|string $name The long name of the option, or an array with all the properties.
+     * @param array<string, mixed>|string $name The long name of the option, or an array with all the properties.
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
      * @param array<string> $choices Valid choices for this option.
      */
-    public function __construct($name, $help = '', $required = false, $choices = [])
+    public function __construct(array|string $name, string $help = '', bool $required = false, array $choices = [])
     {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
@@ -96,7 +96,8 @@ class ConsoleInputArgument
      */
     public function isEqualTo(ConsoleInputArgument $argument): bool
     {
-        return $this->usage() === $argument->usage();
+        return $this->name() === $argument->name() &&
+            $this->usage() === $argument->usage();
     }
 
     /**

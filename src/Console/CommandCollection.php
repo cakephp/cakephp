@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
 
@@ -28,22 +28,22 @@ use Traversable;
  * Used by Applications to specify their console commands.
  * CakePHP will use the mapped commands to construct and dispatch
  * shell commands.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
  */
 class CommandCollection implements IteratorAggregate, Countable
 {
     /**
      * Command list
      *
-     * @var array
-     * @psalm-var array<\Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
-     * @psalm-suppress DeprecatedClass
+     * @var array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
      */
-    protected $commands = [];
+    protected array $commands = [];
 
     /**
      * Constructor
      *
-     * @param array $commands The map of commands to add to the collection.
+     * @param array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>> $commands The map of commands to add to the collection.
      */
     public function __construct(array $commands = [])
     {
@@ -56,21 +56,23 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param \Cake\Console\CommandInterface|\Cake\Console\Shell|string $command The command to map.
-     *   Can be a FQCN, Shell instance or CommandInterface instance.
+     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> $command The command to map.
+     *   Can be a FQCN or CommandInterface instance.
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function add(string $name, $command)
+    public function add(string $name, CommandInterface|string $command)
     {
-        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, CommandInterface::class)) {
-            $class = is_string($command) ? $command : get_class($command);
-            throw new InvalidArgumentException(sprintf(
-                "Cannot use '%s' for command '%s'. " .
-                "It is not a subclass of Cake\Console\Shell or Cake\Command\CommandInterface.",
-                $class,
-                $name
-            ));
+        if (is_string($command)) {
+            assert(
+                is_subclass_of($command, CommandInterface::class),
+                sprintf(
+                    "Cannot use '%s' for command '%s'. " .
+                    "It is not a subclass of Cake\Console\CommandInterface.",
+                    $command,
+                    $name
+                )
+            );
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
             throw new InvalidArgumentException(
@@ -86,7 +88,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Add multiple commands at once.
      *
-     * @param array $commands A map of command names => command classes/instances.
+     * @param array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>> $commands A map of command names => command classes/instances.
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */
@@ -127,14 +129,13 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell|string Either the command class or an instance.
+     * @return \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
-     * @psalm-return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string
      */
-    public function get(string $name)
+    public function get(string $name): CommandInterface|string
     {
         if (!$this->has($name)) {
-            throw new InvalidArgumentException("The $name is not a known command name.");
+            throw new InvalidArgumentException(sprintf('The `%s` is not a known command name.', $name));
         }
 
         return $this->commands[$name];
@@ -144,7 +145,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Implementation of IteratorAggregate.
      *
      * @return \Traversable
-     * @psalm-return \Traversable<string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string>
+     * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
      */
     public function getIterator(): Traversable
     {
@@ -164,7 +165,7 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Auto-discover shell & commands from the named plugin.
+     * Auto-discover commands from the named plugin.
      *
      * Discovered commands will have their names de-duplicated with
      * existing commands in the collection. If a command is already
@@ -172,7 +173,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * the long name (`plugin.command`) will be returned.
      *
      * @param string $plugin The plugin to scan.
-     * @return array<string> Discovered plugin commands.
+     * @return array<string, class-string<\Cake\Console\CommandInterface>> Discovered plugin commands.
      */
     public function discoverPlugin(string $plugin): array
     {
@@ -186,7 +187,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Resolve names based on existing commands
      *
      * @param array $input The results of a CommandScanner operation.
-     * @return array<string> A flat map of command names => class names.
+     * @return array<string, class-string<\Cake\Console\CommandInterface>> A flat map of command names => class names.
      */
     protected function resolveNames(array $input): array
     {
@@ -212,7 +213,7 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Automatically discover shell commands in CakePHP, the application and all plugins.
+     * Automatically discover commands in CakePHP, the application and all plugins.
      *
      * Commands will be located using filesystem conventions. Commands are
      * discovered in the following order:
@@ -223,7 +224,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Commands defined in the application will overwrite commands with
      * the same name provided by CakePHP.
      *
-     * @return array<string> An array of command names and their classes.
+     * @return array<string, class-string<\Cake\Console\CommandInterface>> An array of command names and their classes.
      */
     public function autoDiscover(): array
     {
@@ -232,7 +233,7 @@ class CommandCollection implements IteratorAggregate, Countable
         $core = $this->resolveNames($scanner->scanCore());
         $app = $this->resolveNames($scanner->scanApp());
 
-        return array_merge($core, $app);
+        return $app + $core;
     }
 
     /**

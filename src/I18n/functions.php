@@ -17,13 +17,6 @@ declare(strict_types=1);
 
 use Cake\I18n\I18n;
 
-// Backwards compatibility alias for custom translation messages loaders which return a Package instance.
-// phpcs:disable
-if (!class_exists('Aura\Intl\Package')) {
-    class_alias('Cake\I18n\Package', 'Aura\Intl\Package');
-}
-// phpcs:enable
-
 if (!function_exists('__')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.
@@ -33,7 +26,7 @@ if (!function_exists('__')) {
      * @return string The translated text.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
      */
-    function __(string $singular, ...$args): string
+    function __(string $singular, mixed ...$args): string
     {
         if (!$singular) {
             return '';
@@ -42,6 +35,7 @@ if (!function_exists('__')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator()->translate($singular, $args);
     }
 
@@ -59,7 +53,7 @@ if (!function_exists('__n')) {
      * @return string Plural form of translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__n
      */
-    function __n(string $singular, string $plural, int $count, ...$args): string
+    function __n(string $singular, string $plural, int $count, mixed ...$args): string
     {
         if (!$singular) {
             return '';
@@ -68,6 +62,7 @@ if (!function_exists('__n')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $args
@@ -86,7 +81,7 @@ if (!function_exists('__d')) {
      * @return string Translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
      */
-    function __d(string $domain, string $msg, ...$args): string
+    function __d(string $domain, string $msg, mixed ...$args): string
     {
         if (!$msg) {
             return '';
@@ -95,6 +90,7 @@ if (!function_exists('__d')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator($domain)->translate($msg, $args);
     }
 
@@ -114,7 +110,7 @@ if (!function_exists('__dn')) {
      * @return string Plural form of translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dn
      */
-    function __dn(string $domain, string $singular, string $plural, int $count, ...$args): string
+    function __dn(string $domain, string $singular, string $plural, int $count, mixed ...$args): string
     {
         if (!$singular) {
             return '';
@@ -123,6 +119,7 @@ if (!function_exists('__dn')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular] + $args
@@ -143,7 +140,7 @@ if (!function_exists('__x')) {
      * @return string Translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__x
      */
-    function __x(string $context, string $singular, ...$args): string
+    function __x(string $context, string $singular, mixed ...$args): string
     {
         if (!$singular) {
             return '';
@@ -152,6 +149,7 @@ if (!function_exists('__x')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator()->translate($singular, ['_context' => $context] + $args);
     }
 
@@ -172,7 +170,7 @@ if (!function_exists('__xn')) {
      * @return string Plural form of translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__xn
      */
-    function __xn(string $context, string $singular, string $plural, int $count, ...$args): string
+    function __xn(string $context, string $singular, string $plural, int $count, mixed ...$args): string
     {
         if (!$singular) {
             return '';
@@ -181,6 +179,7 @@ if (!function_exists('__xn')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator()->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
@@ -202,7 +201,7 @@ if (!function_exists('__dx')) {
      * @return string Translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dx
      */
-    function __dx(string $domain, string $context, string $msg, ...$args): string
+    function __dx(string $domain, string $context, string $msg, mixed ...$args): string
     {
         if (!$msg) {
             return '';
@@ -211,6 +210,7 @@ if (!function_exists('__dx')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator($domain)->translate(
             $msg,
             ['_context' => $context] + $args
@@ -235,8 +235,14 @@ if (!function_exists('__dxn')) {
      * @return string Plural form of translated string.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dxn
      */
-    function __dxn(string $domain, string $context, string $singular, string $plural, int $count, ...$args): string
-    {
+    function __dxn(
+        string $domain,
+        string $context,
+        string $singular,
+        string $plural,
+        int $count,
+        mixed ...$args
+    ): string {
         if (!$singular) {
             return '';
         }
@@ -244,6 +250,7 @@ if (!function_exists('__dxn')) {
             $args = $args[0];
         }
 
+        /** @psalm-suppress InternalMethod */
         return I18n::getTranslator($domain)->translate(
             $plural,
             ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args

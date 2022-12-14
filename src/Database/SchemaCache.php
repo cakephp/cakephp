@@ -35,7 +35,7 @@ class SchemaCache
      *
      * @var \Cake\Database\Schema\CachedCollection
      */
-    protected $_schema;
+    protected CachedCollection $_schema;
 
     /**
      * Constructor
@@ -51,17 +51,17 @@ class SchemaCache
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
-     * @return array Returns a list build table caches
+     * @return array<string> Returns a list build table caches
      */
     public function build(?string $name = null): array
     {
-        $tables = [$name];
-        if (empty($name)) {
+        if ($name) {
+            $tables = [$name];
+        } else {
             $tables = $this->_schema->listTables();
         }
 
         foreach ($tables as $table) {
-            /** @psalm-suppress PossiblyNullArgument */
             $this->_schema->describe($table, ['forceRefresh' => true]);
         }
 
@@ -72,19 +72,19 @@ class SchemaCache
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return array Returns a list of cleared table caches
+     * @return array<string> Returns a list of cleared table caches
      */
     public function clear(?string $name = null): array
     {
-        $tables = [$name];
-        if (empty($name)) {
+        if ($name) {
+            $tables = [$name];
+        } else {
             $tables = $this->_schema->listTables();
         }
 
         $cacher = $this->_schema->getCacher();
 
         foreach ($tables as $table) {
-            /** @psalm-suppress PossiblyNullArgument */
             $key = $this->_schema->cacheKey($table);
             $cacher->delete($key);
         }
@@ -106,9 +106,7 @@ class SchemaCache
             $connection->cacheMetadata(true);
         }
 
-        /** @var \Cake\Database\Schema\CachedCollection $schemaCollection */
-        $schemaCollection = $connection->getSchemaCollection();
-
-        return $schemaCollection;
+        /** @var \Cake\Database\Schema\CachedCollection */
+        return $connection->getSchemaCollection();
     }
 }

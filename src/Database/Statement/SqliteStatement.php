@@ -21,50 +21,45 @@ namespace Cake\Database\Statement;
  *
  * @internal
  */
-class SqliteStatement extends StatementDecorator
+class SqliteStatement extends Statement
 {
-    use BufferResultsTrait;
+    /**
+     * @var int|null
+     */
+    protected ?int $affectedRows = null;
 
     /**
      * @inheritDoc
      */
     public function execute(?array $params = null): bool
     {
-        if ($this->_statement instanceof BufferedStatement) {
-            $this->_statement = $this->_statement->getInnerStatement();
-        }
+        $this->affectedRows = null;
 
-        if ($this->_bufferResults) {
-            $this->_statement = new BufferedStatement($this->_statement, $this->_driver);
-        }
-
-        return $this->_statement->execute($params);
+        return parent::execute($params);
     }
 
     /**
-     * Returns the number of rows returned of affected by last execution
-     *
-     * @return int
+     * @inheritDoc
      */
     public function rowCount(): int
     {
-        /** @psalm-suppress NoInterfaceProperties */
+        if ($this->affectedRows !== null) {
+            return $this->affectedRows;
+        }
+
         if (
-            $this->_statement->queryString &&
-            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
+            $this->statement->queryString &&
+            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->statement->queryString)
         ) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');
             $changes->execute();
             $row = $changes->fetch();
-            $changes->closeCursor();
 
-            if (!$row) {
-                return 0;
-            }
-
-            return (int)$row[0];
+            $this->affectedRows = $row ? (int)$row[0] : 0;
+        } else {
+            $this->affectedRows = parent::rowCount();
         }
 
-        return parent::rowCount();
+        return $this->affectedRows;
     }
 }

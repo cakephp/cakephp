@@ -38,7 +38,7 @@ class MiddlewareDispatcher
      *
      * @var \Cake\Core\HttpApplicationInterface
      */
-    protected $app;
+    protected HttpApplicationInterface $app;
 
     /**
      * Constructor
@@ -56,7 +56,7 @@ class MiddlewareDispatcher
      * @param array|string $url The URL array/string to resolve.
      * @return string
      */
-    public function resolveUrl($url): string
+    public function resolveUrl(array|string $url): string
     {
         // If we need to resolve a Route URL but there are no routes, load routes.
         if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
@@ -98,7 +98,7 @@ class MiddlewareDispatcher
     /**
      * Create a PSR7 request from the request spec.
      *
-     * @param array $spec The request spec.
+     * @param array<string, mixed> $spec The request spec.
      * @return \Cake\Http\ServerRequest
      */
     protected function _createRequest(array $spec): ServerRequest
@@ -111,7 +111,7 @@ class MiddlewareDispatcher
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
             $spec['environment']
         );
-        if (strpos($environment['PHP_SELF'], 'phpunit') !== false) {
+        if (str_contains($environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
         }
         $request = ServerRequestFactory::fromGlobals(
@@ -121,17 +121,16 @@ class MiddlewareDispatcher
             $spec['cookies'],
             $spec['files']
         );
-        $request = $request
+
+        return $request
             ->withAttribute('session', $spec['session'])
             ->withAttribute('flash', new FlashMessage($spec['session']));
-
-        return $request;
     }
 
     /**
      * Run a request and get the response.
      *
-     * @param array $requestSpec The request spec to execute.
+     * @param array<string, mixed> $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      * @throws \LogicException
      */

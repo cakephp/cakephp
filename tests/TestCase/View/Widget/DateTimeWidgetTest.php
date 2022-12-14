@@ -20,12 +20,28 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
+use DateTime;
 
 /**
  * DateTimeWidget test case
  */
 class DateTimeWidgetTest extends TestCase
 {
+    /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
+     * @var \Cake\View\Widget\DateTimeWidget
+     */
+    protected $DateTime;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -38,46 +54,13 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
-     * Data provider for testing various types of invalid selected values.
-     *
-     * @return array
-     */
-    public static function invalidSelectedValuesProvider(): array
-    {
-        return [
-            'false' => [false],
-            'true' => [true],
-            'string' => ['Bag of poop'],
-            'array' => [[
-                'derp' => 'hurt',
-            ]],
-        ];
-    }
-
-    /**
-     * test rendering selected values.
-     *
-     * @dataProvider invalidSelectedValuesProvider
-     * @param mixed $selected
-     */
-    public function testRenderInvalid($selected): void
-    {
-        $result = $this->DateTime->render(['val' => $selected, 'type' => 'month'], $this->context);
-        $now = new \DateTime();
-        $expected = [
-            'input' => ['type' => 'month', 'name' => '', 'value' => $now->format('Y-m')],
-        ];
-        $this->assertHtml($expected, $result);
-    }
-
-    /**
      * Data provider for testing various acceptable selected values.
      *
      * @return array
      */
     public static function selectedValuesProvider(): array
     {
-        $date = new \DateTime('2014-01-20 12:30:45');
+        $date = new DateTime('2014-01-20 12:30:45');
 
         return [
             'DateTime' => [$date],
@@ -241,7 +224,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid type `foo` for input tag, expected datetime-local, date, time, month or week');
-        $result = $this->DateTime->render(['type' => 'foo', 'val' => new \DateTime()], $this->context);
+        $result = $this->DateTime->render(['type' => 'foo', 'val' => new DateTime()], $this->context);
     }
 
     /**

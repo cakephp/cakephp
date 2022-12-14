@@ -34,7 +34,7 @@ class LocaleSelectorMiddleware implements MiddlewareInterface
      *
      * @var array
      */
-    protected $locales = [];
+    protected array $locales = [];
 
     /**
      * Constructor.

@@ -17,7 +17,13 @@ namespace Cake\Utility;
 
 use ArrayAccess;
 use InvalidArgumentException;
-use RuntimeException;
+use const SORT_ASC;
+use const SORT_DESC;
+use const SORT_LOCALE_STRING;
+use const SORT_NATURAL;
+use const SORT_NUMERIC;
+use const SORT_REGULAR;
+use const SORT_STRING;
 
 /**
  * Library of array functions for manipulating and extracting data
@@ -46,28 +52,15 @@ class Hash
      * @return mixed The value fetched from the array, or null.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::get
      */
-    public static function get($data, $path, $default = null)
+    public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
     {
-        if (!(is_array($data) || $data instanceof ArrayAccess)) {
-            throw new InvalidArgumentException(
-                'Invalid data type, must be an array or \ArrayAccess instance.'
-            );
-        }
-
         if (empty($data) || $path === null) {
             return $default;
         }
 
-        if (is_string($path) || is_numeric($path)) {
+        if (is_string($path) || is_int($path)) {
             $parts = explode('.', (string)$path);
         } else {
-            if (!is_array($path)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid Parameter %s, should be dot separated path or array.',
-                    $path
-                ));
-            }
-
             $parts = $path;
         }
 
@@ -121,15 +114,10 @@ class Hash
      * @return \ArrayAccess|array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::extract
+     * @psalm-return ($path is non-empty-string ? array : \ArrayAccess|array)
      */
-    public static function extract($data, string $path)
+    public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
-        if (!(is_array($data) || $data instanceof ArrayAccess)) {
-            throw new InvalidArgumentException(
-                'Invalid data type, must be an array or \ArrayAccess instance.'
-            );
-        }
-
         if (empty($path)) {
             return $data;
         }
@@ -144,7 +132,7 @@ class Hash
             return $data !== null ? (array)$data : [];
         }
 
-        if (strpos($path, '[') === false) {
+        if (!str_contains($path, '[')) {
             $tokens = explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
@@ -218,28 +206,24 @@ class Hash
      * @param string $token The token being matched.
      * @return bool
      */
-    protected static function _matchToken($key, string $token): bool
+    protected static function _matchToken(mixed $key, string $token): bool
     {
-        switch ($token) {
-            case '{n}':
-                return is_numeric($key);
-            case '{s}':
-                return is_string($key);
-            case '{*}':
-                return true;
-            default:
-                return is_numeric($token) ? ($key == $token) : $key === $token;
-        }
+        return match ($token) {
+            '{n}' => is_numeric($key),
+            '{s}' => is_string($key),
+            '{*}' => true,
+            default => is_numeric($token) ? ($key == $token) : $key === $token,
+        };
     }
 
     /**
-     * Checks whether or not $data matches the attribute patterns
+     * Checks whether $data matches the attribute patterns
      *
      * @param \ArrayAccess|array $data Array of data to match.
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
-    protected static function _matches($data, string $selector): bool
+    protected static function _matches(ArrayAccess|array $data, string $selector): bool
     {
         preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
@@ -310,10 +294,10 @@ class Hash
      * @return array The data with $values inserted.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
-    public static function insert(array $data, string $path, $values = null): array
+    public static function insert(array $data, string $path, mixed $values = null): array
     {
-        $noTokens = strpos($path, '[') === false;
-        if ($noTokens && strpos($path, '.') === false) {
+        $noTokens = !str_contains($path, '[');
+        if ($noTokens && !str_contains($path, '.')) {
             $data[$path] = $values;
 
             return $data;
@@ -325,7 +309,7 @@ class Hash
             $tokens = Text::tokenize($path, '.', '[', ']');
         }
 
-        if ($noTokens && strpos($path, '{') === false) {
+        if ($noTokens && !str_contains($path, '{')) {
             return static::_simpleOp('insert', $data, $tokens, $values);
         }
 
@@ -335,12 +319,13 @@ class Hash
         [$token, $conditions] = static::_splitConditions($token);
 
         foreach ($data as $k => $v) {
-            if (static::_matchToken($k, $token)) {
-                if (!$conditions || static::_matches($v, $conditions)) {
-                    $data[$k] = $nextPath
-                        ? static::insert($v, $nextPath, $values)
-                        : array_merge($v, (array)$values);
-                }
+            if (
+                static::_matchToken($k, $token) &&
+                (!$conditions || static::_matches($v, $conditions))
+            ) {
+                $data[$k] = $nextPath
+                    ? static::insert($v, $nextPath, $values)
+                    : array_merge($v, (array)$values);
             }
         }
 
@@ -356,7 +341,7 @@ class Hash
      * @param mixed $values The values to insert when doing inserts.
      * @return array data.
      */
-    protected static function _simpleOp(string $op, array $data, array $path, $values = null): array
+    protected static function _simpleOp(string $op, array $data, array $path, mixed $values = null): array
     {
         $_list = &$data;
 
@@ -404,10 +389,10 @@ class Hash
      */
     public static function remove(array $data, string $path): array
     {
-        $noTokens = strpos($path, '[') === false;
-        $noExpansion = strpos($path, '{') === false;
+        $noTokens = !str_contains($path, '[');
+        $noExpansion = !str_contains($path, '{');
 
-        if ($noExpansion && $noTokens && strpos($path, '.') === false) {
+        if ($noExpansion && $noTokens && !str_contains($path, '.')) {
             unset($data[$path]);
 
             return $data;
@@ -461,23 +446,27 @@ class Hash
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::combine
-     * @throws \RuntimeException When keys and values count is unequal.
+     * @throws \InvalidArgumentException When keys and values count is unequal.
      */
-    public static function combine(array $data, $keyPath, $valuePath = null, ?string $groupPath = null): array
-    {
+    public static function combine(
+        array $data,
+        array|string|null $keyPath,
+        array|string|null $valuePath = null,
+        ?string $groupPath = null
+    ): array {
         if (empty($data)) {
             return [];
         }
 
         if (is_array($keyPath)) {
             $format = array_shift($keyPath);
-            /** @var array $keys */
             $keys = static::format($data, $keyPath, $format);
+            assert(is_array($keys));
         } elseif ($keyPath === null) {
             $keys = $keyPath;
         } else {
-            /** @var array $keys */
             $keys = static::extract($data, $keyPath);
+            assert(is_array($keys));
         }
         if ($keyPath !== null && empty($keys)) {
             return [];
@@ -486,19 +475,19 @@ class Hash
         $vals = null;
         if (!empty($valuePath) && is_array($valuePath)) {
             $format = array_shift($valuePath);
-            /** @var array $vals */
             $vals = static::format($data, $valuePath, $format);
+            assert(is_array($vals));
         } elseif (!empty($valuePath)) {
-            /** @var array $vals */
             $vals = static::extract($data, $valuePath);
+            assert(is_array($vals));
         }
         if (empty($vals)) {
             $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
         if (is_array($keys) && count($keys) !== count($vals)) {
-            throw new RuntimeException(
-                'Hash::combine() needs an equal number of keys + values.'
+            throw new InvalidArgumentException(
+                '`Hash::combine()` needs an equal number of keys + values.'
             );
         }
 
@@ -546,13 +535,14 @@ class Hash
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
+     * @psalm-return ($paths is non-empty-array ? array : null)
      */
     public static function format(array $data, array $paths, string $format): ?array
     {
         $extracted = [];
         $count = count($paths);
 
-        if (!$count) {
+        if ($count === 0) {
             return null;
         }
 
@@ -618,7 +608,7 @@ class Hash
     }
 
     /**
-     * Test whether or not a given path exists in $data.
+     * Test whether a given path exists in $data.
      * This method uses the same path syntax as Hash::extract()
      *
      * Checking for paths that could target more than one element will
@@ -644,12 +634,12 @@ class Hash
      * Recursively filters a data set.
      *
      * @param array $data Either an array to filter, or value when in callback
-     * @param callable|array $callback A function to filter the data with. Defaults to
-     *   `static::_filter()` Which strips out all non-zero empty values.
+     * @param callable|null $callback A function to filter the data with. Defaults to
+     *   all non-empty or zero values.
      * @return array Filtered array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::filter
      */
-    public static function filter(array $data, $callback = ['self', '_filter']): array
+    public static function filter(array $data, ?callable $callback = null): array
     {
         foreach ($data as $k => $v) {
             if (is_array($v)) {
@@ -657,7 +647,7 @@ class Hash
             }
         }
 
-        return array_filter($data, $callback);
+        return array_filter($data, $callback ?? [static::class, '_filter']);
     }
 
     /**
@@ -666,7 +656,7 @@ class Hash
      * @param mixed $var Array to filter.
      * @return bool
      */
-    protected static function _filter($var): bool
+    protected static function _filter(mixed $var): bool
     {
         return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
     }
@@ -720,6 +710,7 @@ class Hash
      * into a multi-dimensional array. So, `['0.Foo.Bar' => 'Far']` becomes
      * `[['Foo' => ['Bar' => 'Far']]]`.
      *
+     * @phpstan-param non-empty-string $separator
      * @param array $data Flattened array
      * @param string $separator The delimiter used
      * @return array
@@ -727,25 +718,28 @@ class Hash
      */
     public static function expand(array $data, string $separator = '.'): array
     {
-        $result = [];
-        foreach ($data as $flat => $value) {
-            $keys = explode($separator, (string)$flat);
-            $keys = array_reverse($keys);
-            $child = [
-                $keys[0] => $value,
-            ];
-            array_shift($keys);
-            foreach ($keys as $k) {
-                $child = [
-                    $k => $child,
-                ];
+        $hash = [];
+        foreach ($data as $path => $value) {
+            $keys = explode($separator, (string)$path);
+            if (count($keys) === 1) {
+                $hash[$path] = $value;
+                continue;
             }
 
-            $stack = [[$child, &$result]];
-            static::_merge($stack, $result);
+            $valueKey = end($keys);
+            $keys = array_slice($keys, 0, -1);
+
+            $keyHash = &$hash;
+            foreach ($keys as $key) {
+                if (!array_key_exists($key, $keyHash)) {
+                    $keyHash[$key] = [];
+                }
+                $keyHash = &$keyHash[$key];
+            }
+            $keyHash[$valueKey] = $value;
         }
 
-        return $result;
+        return $hash;
     }
 
     /**
@@ -762,7 +756,7 @@ class Hash
      * @return array Merged array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::merge
      */
-    public static function merge(array $data, $merge): array
+    public static function merge(array $data, mixed $merge): array
     {
         $args = array_slice(func_get_args(), 1);
         $return = $data;
@@ -908,7 +902,7 @@ class Hash
      * @return mixed The reduced value.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::reduce
      */
-    public static function reduce(array $data, string $path, callable $function)
+    public static function reduce(array $data, string $path, callable $function): mixed
     {
         $values = (array)static::extract($data, $path);
 
@@ -940,7 +934,7 @@ class Hash
      * @return mixed The results of the applied method.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::apply
      */
-    public static function apply(array $data, string $path, callable $function)
+    public static function apply(array $data, string $path, callable $function): mixed
     {
         $values = (array)static::extract($data, $path);
 
@@ -976,12 +970,16 @@ class Hash
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
      * @param string|int $dir See directions above. Defaults to 'asc'.
-     * @param array|string $type See direction types above. Defaults to 'regular'.
+     * @param array<string, mixed>|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
-    public static function sort(array $data, string $path, $dir = 'asc', $type = 'regular'): array
-    {
+    public static function sort(
+        array $data,
+        string $path,
+        string|int $dir = 'asc',
+        array|string $type = 'regular'
+    ): array {
         if (empty($data)) {
             return [];
         }
@@ -990,8 +988,8 @@ class Hash
         if ($numeric) {
             $data = array_values($data);
         }
-        /** @var array $sortValues */
         $sortValues = static::extract($data, $path);
+        assert(is_array($sortValues));
         $dataCount = count($data);
 
         // Make sortValues match the data length, as some keys could be missing
@@ -1007,16 +1005,15 @@ class Hash
             $sortValues = array_pad($sortValues, $dataCount, null);
         }
         $result = static::_squash($sortValues);
-        /** @var array $keys */
         $keys = static::extract($result, '{n}.id');
-        /** @var array $values */
+
         $values = static::extract($result, '{n}.value');
 
         if (is_string($dir)) {
             $dir = strtolower($dir);
         }
-        if (!in_array($dir, [\SORT_ASC, \SORT_DESC], true)) {
-            $dir = $dir === 'asc' ? \SORT_ASC : \SORT_DESC;
+        if (!in_array($dir, [SORT_ASC, SORT_DESC], true)) {
+            $dir = $dir === 'asc' ? SORT_ASC : SORT_DESC;
         }
 
         $ignoreCase = false;
@@ -1030,15 +1027,15 @@ class Hash
         $type = strtolower($type);
 
         if ($type === 'numeric') {
-            $type = \SORT_NUMERIC;
+            $type = SORT_NUMERIC;
         } elseif ($type === 'string') {
-            $type = \SORT_STRING;
+            $type = SORT_STRING;
         } elseif ($type === 'natural') {
-            $type = \SORT_NATURAL;
+            $type = SORT_NATURAL;
         } elseif ($type === 'locale') {
-            $type = \SORT_LOCALE_STRING;
+            $type = SORT_LOCALE_STRING;
         } else {
-            $type = \SORT_REGULAR;
+            $type = SORT_REGULAR;
         }
         if ($ignoreCase) {
             $values = array_map('mb_strtolower', $values);
@@ -1067,10 +1064,10 @@ class Hash
      * Squashes an array to a single hash so it can be sorted.
      *
      * @param array $data The data to squash.
-     * @param mixed $key The key for the data.
+     * @param string|int|null $key The key for the data.
      * @return array
      */
-    protected static function _squash(array $data, $key = null): array
+    protected static function _squash(array $data, string|int|null $key = null): array
     {
         $stack = [];
         foreach ($data as $k => $r) {
@@ -1115,6 +1112,7 @@ class Hash
             next($intersection);
         }
 
+        /** @phpstan-ignore-next-line */
         return $data + $compare;
     }
 
@@ -1195,11 +1193,13 @@ class Hash
      * - `root` The id of the desired top-most result.
      *
      * @param array $data The data to nest.
-     * @param array $options Options are:
+     * @param array<string, string|null> $options Options.
      * @return array<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::nest
+     * @psalm-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
+     * @psalm-return list<array>
      */
     public static function nest(array $data, array $options = []): array
     {
@@ -1216,8 +1216,8 @@ class Hash
         ];
 
         $return = $idMap = [];
-        /** @var array $ids */
         $ids = static::extract($data, $options['idPath']);
+        assert(is_array($ids));
 
         $idKeys = explode('.', $options['idPath']);
         array_shift($idKeys);
@@ -1261,6 +1261,7 @@ class Hash
             }
         }
 
+        /** @psalm-var list<array> */
         return array_values($return);
     }
 }

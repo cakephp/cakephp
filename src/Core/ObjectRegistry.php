@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventListenerInterface;
 use Countable;
 use IteratorAggregate;
-use RuntimeException;
 use Traversable;
 
 /**
@@ -39,17 +39,18 @@ use Traversable;
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
- * @template TObject
+ * @template TObject of object
+ * @template-implements \IteratorAggregate<string, TObject>
  */
 abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
     /**
      * Map of loaded objects.
      *
-     * @var array<object>
-     * @psalm-var array<array-key, TObject>
+     * @var array<string, object>
+     * @psalm-var array<string, TObject>
      */
-    protected $_loaded = [];
+    protected array $_loaded = [];
 
     /**
      * Loads/constructs an object instance.
@@ -58,7 +59,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * If a subclass provides event support, you can use `$config['enabled'] = false`
      * to exclude constructed objects from being registered for events.
      *
-     * Using Cake\Controller\Controller::$components as an example. You can alias
+     * Using {@link \Cake\Controller\Component::$components} as an example. You can alias
      * an object by setting the 'className' key, i.e.,
      *
      * ```
@@ -72,12 +73,12 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * All calls to the `Email` component would use `AliasedEmail` instead.
      *
      * @param string $name The name/class of the object to load.
-     * @param array $config Additional settings to use when loading the object.
-     * @return mixed
+     * @param array<string, mixed> $config Additional settings to use when loading the object.
+     * @return object
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
      */
-    public function load(string $name, array $config = [])
+    public function load(string $name, array $config = []): object
     {
         if (isset($config['className'])) {
             $objName = $name;
@@ -103,10 +104,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             }
         }
 
-        /**
-         * @psalm-var TObject $instance
-         * @psalm-suppress PossiblyNullArgument
-         **/
         $instance = $this->_create($className, $objName, $config);
         $this->_loaded[$objName] = $instance;
 
@@ -125,9 +122,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * logic dependent on the configuration.
      *
      * @param string $name The name of the alias in the registry.
-     * @param array $config The config data for the new instance.
+     * @param array<string, mixed> $config The config data for the new instance.
      * @return void
-     * @throws \RuntimeException When a duplicate is found.
+     * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      */
     protected function _checkDuplicate(string $name, array $config): void
     {
@@ -135,7 +132,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         $msg = sprintf('The "%s" alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'getConfig');
         if (!$hasConfig) {
-            throw new RuntimeException($msg);
+            throw new CakeException($msg);
         }
         if (empty($config)) {
             return;
@@ -153,14 +150,14 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                 $failure = sprintf(
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
                     $key,
-                    json_encode($value),
-                    json_encode($existingConfig[$key])
+                    json_encode($value, JSON_THROW_ON_ERROR),
+                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR)
                 );
                 break;
             }
         }
         if ($failure) {
-            throw new RuntimeException($msg . $failure);
+            throw new CakeException($msg . $failure);
         }
     }
 
@@ -168,8 +165,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Should resolve the classname for a given object type.
      *
      * @param string $class The class to resolve.
-     * @return string|null The resolved name or null for failure.
-     * @psalm-return class-string|null
+     * @return class-string|null The resolved name or null for failure.
+     * @psalm-return class-string<TObject>|null
      */
     abstract protected function _resolveClassName(string $class): ?string;
 
@@ -191,12 +188,12 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param object|string $class The class to build.
      * @param string $alias The alias of the object.
-     * @param array $config The Configuration settings for construction
+     * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
-     * @psalm-param TObject|string $class
+     * @psalm-param TObject|class-string<TObject> $class
      * @psalm-return TObject
      */
-    abstract protected function _create($class, string $alias, array $config);
+    abstract protected function _create(object|string $class, string $alias, array $config): object;
 
     /**
      * Get the list of loaded objects.
@@ -209,7 +206,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Check whether or not a given object is loaded.
+     * Check whether a given object is loaded.
      *
      * @param string $name The object name to check for.
      * @return bool True is object is loaded else false.
@@ -224,13 +221,13 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of object.
      * @return object Object instance.
-     * @throws \RuntimeException If not loaded or found.
+     * @throws \Cake\Core\Exception\CakeException If not loaded or found.
      * @psalm-return TObject
      */
-    public function get(string $name)
+    public function get(string $name): object
     {
         if (!isset($this->_loaded[$name])) {
-            throw new RuntimeException(sprintf('Unknown object "%s"', $name));
+            throw new CakeException(sprintf('Unknown object `%s`.', $name));
         }
 
         return $this->_loaded[$name];
@@ -243,7 +240,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return object|null
      * @psalm-return TObject|null
      */
-    public function __get(string $name)
+    public function __get(string $name): ?object
     {
         return $this->_loaded[$name] ?? null;
     }
@@ -267,7 +264,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @psalm-param TObject $object
      * @return void
      */
-    public function __set(string $name, $object): void
+    public function __set(string $name, object $object): void
     {
         $this->set($name, $object);
     }
@@ -284,27 +281,27 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Normalizes an object array, creates an array that makes lazy loading
-     * easier
+     * Normalizes an object configuration array into associative form for making
+     * lazy loading easier.
      *
      * @param array $objects Array of child objects to normalize.
-     * @return array<array> Array of normalized objects.
+     * @return array<string, array> Array of normalized objects.
      */
     public function normalizeArray(array $objects): array
     {
         $normal = [];
-        foreach ($objects as $i => $objectName) {
-            $config = [];
-            if (!is_int($i)) {
-                $config = (array)$objectName;
-                $objectName = $i;
+        foreach ($objects as $objectName => $config) {
+            if (is_int($objectName)) {
+                $objectName = $config;
+                $config = [];
             }
-            [, $name] = pluginSplit($objectName);
-            if (isset($config['class'])) {
-                $normal[$name] = $config + ['config' => []];
-            } else {
-                $normal[$name] = ['class' => $objectName, 'config' => $config];
+
+            [$plugin, $name] = pluginSplit($objectName);
+            if ($plugin) {
+                $config['className'] = $objectName;
             }
+
+            $normal[$name] = $config;
         }
 
         return $normal;
@@ -320,6 +317,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function reset()
     {
         foreach (array_keys($this->_loaded) as $name) {
+            /** @psalm-suppress RedundantCast Required because PHP converts numeric indexes to int */
             $this->unload((string)$name);
         }
 
@@ -336,7 +334,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object $object instance to store in the registry
      * @return $this
      * @psalm-param TObject $object
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function set(string $name, object $object)
     {
@@ -351,7 +348,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
         $this->_loaded[$objName] = $object;
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $this;
     }
 
@@ -362,7 +358,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name The name of the object to remove from the registry.
      * @return $this
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function unload(string $name)
     {
@@ -377,7 +372,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
         unset($this->_loaded[$name]);
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $this;
     }
 
@@ -405,7 +399,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Debug friendly object properties.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

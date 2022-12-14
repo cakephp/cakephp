@@ -25,8 +25,12 @@ use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
+use DateTime as NativeDateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
 
 /**
@@ -196,8 +200,8 @@ class ResponseTest extends TestCase
      */
     public function testWithTypeInvalidType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('"beans" is an invalid content type');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`beans` is an invalid content type');
         $response = new Response();
         $response->withType('beans');
     }
@@ -427,19 +431,19 @@ class ResponseTest extends TestCase
     public function testWithExpires(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
 
         $new = $response->withExpires($now);
         $this->assertFalse($response->hasHeader('Expires'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
         $now = time();
         $new = $response->withExpires($now);
         $this->assertSame(gmdate(DATE_RFC7231), $new->getHeaderLine('Expires'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withExpires('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
     }
@@ -450,22 +454,22 @@ class ResponseTest extends TestCase
     public function testWithModified(): void
     {
         $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
         $new = $response->withModified($now);
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $now->setTimeZone(new \DateTimeZone('UTC'));
+        $now->setTimeZone(new DateTimeZone('UTC'));
         $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
 
         $now = time();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now), $new->getHeaderLine('Last-Modified'));
 
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $new = $response->withModified($now);
         $this->assertSame(gmdate(DATE_RFC7231, $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
 
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
         $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
     }
@@ -569,25 +573,6 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Tests that the response is able to be marked as not modified
-     */
-    public function testNotModified(): void
-    {
-        $response = new Response();
-        $response = $response->withStringBody('something')
-            ->withStatus(200)
-            ->withLength(100)
-            ->withModified('now');
-
-        $response->notModified();
-
-        $this->assertFalse($response->hasHeader('Content-Length'));
-        $this->assertFalse($response->hasHeader('Modified'));
-        $this->assertEmpty((string)$response->getBody());
-        $this->assertSame(304, $response->getStatusCode());
-    }
-
-    /**
      * Tests withNotModified()
      */
     public function testWithNotModified(): void
@@ -625,8 +610,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withEtag('something')
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
     }
 
     /**
@@ -640,8 +624,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
     }
 
     /**
@@ -657,8 +640,7 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
+        $this->assertTrue($response->isNotModified($request));
     }
 
     /**
@@ -674,8 +656,7 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:01')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
+        $this->assertFalse($response->isNotModified($request));
     }
 
     /**
@@ -691,8 +672,7 @@ class ResponseTest extends TestCase
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withEtag('something', true)
             ->withHeader('Content-Length', 99);
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
+        $this->assertFalse($response->isNotModified($request));
     }
 
     /**
@@ -706,8 +686,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $response = $response->withModified('2012-01-01 00:00:00')
             ->withHeader('Content-Length', 99);
-        $this->assertTrue($response->checkNotModified($request));
-        $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
+        $this->assertTrue($response->isNotModified($request));
     }
 
     /**
@@ -719,8 +698,7 @@ class ResponseTest extends TestCase
         $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
         $response = new Response();
-        $this->assertFalse($response->checkNotModified($request));
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertFalse($response->isNotModified($request));
     }
 
     /**
@@ -755,14 +733,17 @@ class ResponseTest extends TestCase
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
         $this->assertSame('abc123', $new->getCookie('testing')['value']);
 
+        $new = $response->withCookie(new Cookie('testing', 0.99));
+        $this->assertEquals(0.99, $new->getCookie('testing')['value']);
+
         $new = $response->withCookie(new Cookie('testing', 99));
-        $this->assertSame(99, $new->getCookie('testing')['value']);
+        $this->assertEquals(99, $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', false));
-        $this->assertFalse($new->getCookie('testing')['value']);
+        $this->assertEquals(false, $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', true));
-        $this->assertTrue($new->getCookie('testing')['value']);
+        $this->assertEquals(true, $new->getCookie('testing')['value']);
     }
 
     /**
@@ -772,7 +753,7 @@ class ResponseTest extends TestCase
      */
     public function testWithDuplicateCookie(): void
     {
-        $expiry = new \DateTimeImmutable('+24 hours');
+        $expiry = new DateTimeImmutable('+24 hours');
 
         $response = new Response();
         $cookie = new Cookie(
@@ -826,7 +807,7 @@ class ResponseTest extends TestCase
         $new = $response->withExpiredCookie(new Cookie('testing'));
 
         $this->assertSame(0, $response->getCookie('testing')['expires']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$new->getCookie('testing')['expires']);
+        $this->assertLessThan(DateTime::createFromTimestamp(1), (string)$new->getCookie('testing')['expires']);
     }
 
     /**
@@ -842,7 +823,7 @@ class ResponseTest extends TestCase
                 'path' => '/custompath/',
                 'secure' => true,
                 'httponly' => true,
-                'expires' => new \DateTimeImmutable('+14 days'),
+                'expires' => new DateTimeImmutable('+14 days'),
             ],
         ];
 
@@ -862,7 +843,7 @@ class ResponseTest extends TestCase
         $expiredCookie = $response->withExpiredCookie($cookie);
 
         $this->assertSame($expected['expires'], (string)$response->getCookie('testing')['expires']);
-        $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
+        $this->assertLessThan(DateTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
     }
 
     public function testWithExpiredCookieObject(): void
@@ -987,7 +968,7 @@ class ResponseTest extends TestCase
      */
     public function testWithFileNotFound(): void
     {
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file /some/missing/folder/file.jpg was not found');
 
         $response = new Response();
@@ -1001,7 +982,7 @@ class ResponseTest extends TestCase
     {
         Configure::write('debug', 0);
 
-        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file was not found');
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
@@ -1359,7 +1340,7 @@ class ResponseTest extends TestCase
      */
     public function testWithStatusInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
         $response = new Response();
         $response->withStatus(1001);

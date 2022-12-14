@@ -110,8 +110,7 @@ class HelperTest extends TestCase
         $resultA = $Helper->Html;
         $resultB = $Helper->Html;
 
-        $resultA->testprop = 1;
-        $this->assertSame($resultA->testprop, $resultB->testprop);
+        $this->assertSame($resultA, $resultB);
     }
 
     /**
@@ -132,8 +131,8 @@ class HelperTest extends TestCase
 
         $expected = [
             'helpers' => [
-                'Html',
-                'TestPlugin.OtherHelper',
+                'Html' => [],
+                'OtherHelper' => ['className' => 'TestPlugin.OtherHelper'],
             ],
             'implementedEvents' => [
             ],

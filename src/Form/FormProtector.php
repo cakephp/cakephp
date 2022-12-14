@@ -37,33 +37,21 @@ class FormProtector
      *
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * Unlocked fields.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $unlockedFields = [];
+    protected array $unlockedFields = [];
 
     /**
      * Error message providing detail for failed validation.
      *
      * @var string|null
      */
-    protected $debugMessage;
-
-    /**
-     * Construct.
-     *
-     * @param array $data Data array, can contain key `unlockedFields` with list of unlocked fields.
-     */
-    public function __construct(array $data = [])
-    {
-        if (!empty($data['unlockedFields'])) {
-            $this->unlockedFields = $data['unlockedFields'];
-        }
-    }
+    protected ?string $debugMessage = null;
 
     /**
      * Validate submitted form data.
@@ -73,7 +61,7 @@ class FormProtector
      * @param string $sessionId Session id for hash generation.
      * @return bool
      */
-    public function validate($formData, string $url, string $sessionId): bool
+    public function validate(mixed $formData, string $url, string $sessionId): bool
     {
         $this->debugMessage = null;
 
@@ -105,16 +93,28 @@ class FormProtector
     }
 
     /**
+     * Construct.
+     *
+     * @param array<string, mixed> $data Data array, can contain key `unlockedFields` with list of unlocked fields.
+     */
+    public function __construct(array $data = [])
+    {
+        if (!empty($data['unlockedFields'])) {
+            $this->unlockedFields = $data['unlockedFields'];
+        }
+    }
+
+    /**
      * Determine which fields of a form should be used for hash.
      *
-     * @param array|string $field Reference to field to be secured. Can be dot
+     * @param array<string>|string $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param bool $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields. Default `true`.
      * @param mixed $value Field value, if value should not be tampered with.
      * @return $this
      */
-    public function addField($field, bool $lock = true, $value = null)
+    public function addField(array|string $field, bool $lock = true, mixed $value = null)
     {
         if (is_string($field)) {
             $field = $this->getFieldNameArray($field);
@@ -168,7 +168,7 @@ class FormProtector
             return [];
         }
 
-        if (strpos($name, '[') === false) {
+        if (!str_contains($name, '[')) {
             return Hash::filter(explode('.', $name));
         }
         $parts = explode('[', $name);
@@ -187,7 +187,7 @@ class FormProtector
      * @param string $name The dot separated name for the field.
      * @return $this
      */
-    public function unlockField($name)
+    public function unlockField(string $name)
     {
         if (!in_array($name, $this->unlockedFields, true)) {
             $this->unlockedFields[] = $name;
@@ -218,7 +218,7 @@ class FormProtector
      * @param mixed $formData Data to validate.
      * @return string|null Fields token on success, null on failure.
      */
-    protected function extractToken($formData): ?string
+    protected function extractToken(mixed $formData): ?string
     {
         if (!is_array($formData)) {
             $this->debugMessage = 'Request data is not an array.';
@@ -259,7 +259,7 @@ class FormProtector
         }
 
         $token = urldecode($formData['_Token']['fields']);
-        if (strpos($token, ':')) {
+        if (str_contains($token, ':')) {
             [$token, ] = explode(':', $token, 2);
         }
 
@@ -269,8 +269,8 @@ class FormProtector
     /**
      * Return hash parts for the token generation
      *
-     * @param array $formData Form data.
-     * @return array
+     * @param array<string, array> $formData Form data.
+     * @return array<string, array>
      * @psalm-return array{fields: array, unlockedFields: array}
      */
     protected function extractHashParts(array $formData): array
@@ -296,7 +296,7 @@ class FormProtector
         $token = urldecode($formData['_Token']['fields']);
         $unlocked = urldecode($formData['_Token']['unlocked']);
 
-        if (strpos($token, ':')) {
+        if (str_contains($token, ':')) {
             [, $locked] = explode(':', $token, 2);
         }
         unset($formData['_Token']);
@@ -380,7 +380,7 @@ class FormProtector
      *
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
-     * @return array The token data.
+     * @return array<string, string> The token data.
      * @psalm-return array{fields: string, unlocked: string, debug: string}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
@@ -422,12 +422,12 @@ class FormProtector
      * Generate validation hash.
      *
      * @param array $fields Fields list.
-     * @param array $unlockedFields Unlocked fields.
+     * @param array<string> $unlockedFields Unlocked fields.
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return string
      */
-    protected function generateHash(array $fields, array $unlockedFields, string $url, string $sessionId)
+    protected function generateHash(array $fields, array $unlockedFields, string $url, string $sessionId): string
     {
         $hashParts = [
             $url,
@@ -578,7 +578,7 @@ class FormProtector
     /**
      * Return debug info
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

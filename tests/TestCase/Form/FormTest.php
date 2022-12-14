@@ -29,29 +29,6 @@ use TestApp\Form\FormSchema;
 class FormTest extends TestCase
 {
     /**
-     * Test schema()
-     *
-     * @group deprecated
-     */
-    public function testSchema(): void
-    {
-        $this->deprecated(function (): void {
-            $form = new Form();
-            $schema = $form->schema();
-
-            $this->assertInstanceOf('Cake\Form\Schema', $schema);
-            $this->assertSame($schema, $form->schema(), 'Same instance each time');
-
-            $schema = new Schema();
-            $this->assertSame($schema, $form->schema($schema));
-            $this->assertSame($schema, $form->schema());
-
-            $form = new AppForm();
-            $this->assertInstanceOf(FormSchema::class, $form->schema());
-        });
-    }
-
-    /**
      * Test setSchema() and getSchema()
      */
     public function testSetGetSchema(): void
@@ -120,6 +97,23 @@ class FormTest extends TestCase
         ];
         $this->assertTrue($form->validate($data));
         $this->assertCount(0, $form->getErrors());
+    }
+
+    /**
+     * Test validate with custom validator
+     */
+    public function testValidateCustomValidator(): void
+    {
+        $form = new Form();
+
+        $validator = clone $form->getValidator();
+        $validator->add('email', 'format', ['rule' => 'email']);
+
+        $form->setValidator('custom', $validator);
+
+        $data = ['email' => 'wrong'];
+
+        $this->assertFalse($form->validate($data, 'custom'));
     }
 
     /**
@@ -195,6 +189,21 @@ class FormTest extends TestCase
         ];
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * test execute() when data is valid.
+     */
+    public function testExecuteSkipValidation(): void
+    {
+        $form = new Form();
+        $form->getValidator()
+            ->add('email', 'format', ['rule' => 'email']);
+        $data = [
+            'email' => 'wrong',
+        ];
+
+        $this->assertTrue($form->execute($data, ['validate' => false]));
     }
 
     /**

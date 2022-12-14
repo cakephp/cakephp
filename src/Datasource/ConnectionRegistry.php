@@ -19,6 +19,7 @@ namespace Cake\Datasource;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Datasource\Exception\MissingDatasourceException;
+use Closure;
 
 /**
  * A registry object for connection instances.
@@ -34,11 +35,11 @@ class ConnectionRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string|null
+     * @return class-string<\Cake\Datasource\ConnectionInterface>|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
+        /** @var class-string<\Cake\Datasource\ConnectionInterface>|null */
         return App::className($class, 'Datasource');
     }
 
@@ -65,28 +66,27 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * If a callable is passed as first argument, The returned value of this
-     * function will be the result of the callable.
+     * If a closure is passed as first argument, The returned value of this
+     * function will be the result from calling the closure.
      *
-     * @param \Cake\Datasource\ConnectionInterface|callable|string $class The classname or object to make.
+     * @param \Cake\Datasource\ConnectionInterface|\Closure|class-string<\Cake\Datasource\ConnectionInterface> $class The classname or object to make.
      * @param string $alias The alias of the object.
-     * @param array $config An array of settings to use for the datasource.
+     * @param array<string, mixed> $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $config)
+    protected function _create(object|string $class, string $alias, array $config): ConnectionInterface
     {
-        if (is_callable($class)) {
+        if (is_string($class)) {
+            unset($config['className']);
+
+            return new $class($config);
+        }
+
+        if ($class instanceof Closure) {
             return $class($alias);
         }
 
-        if (is_object($class)) {
-            return $class;
-        }
-
-        unset($config['className']);
-
-        /** @var \Cake\Datasource\ConnectionInterface */
-        return new $class($config);
+        return $class;
     }
 
     /**

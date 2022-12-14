@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\Container;
@@ -28,12 +29,15 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
+use Cake\Core\PluginInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -51,6 +55,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     ContainerApplicationInterface,
+    EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
     RoutingApplicationInterface
@@ -60,35 +65,35 @@ abstract class BaseApplication implements
     /**
      * @var string Contains the path of the config directory
      */
-    protected $configDir;
+    protected string $configDir;
 
     /**
      * Plugin Collection
      *
      * @var \Cake\Core\PluginCollection
      */
-    protected $plugins;
+    protected PluginCollection $plugins;
 
     /**
      * Controller factory
      *
      * @var \Cake\Http\ControllerFactoryInterface|null
      */
-    protected $controllerFactory;
+    protected ?ControllerFactoryInterface $controllerFactory = null;
 
     /**
      * Container
      *
      * @var \Cake\Core\ContainerInterface|null
      */
-    protected $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
-     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-     * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Application event manager instance.
+     * @param \Cake\Http\ControllerFactoryInterface|null $controllerFactory Controller factory.
      */
     public function __construct(
         string $configDir,
@@ -140,14 +145,14 @@ abstract class BaseApplication implements
      * If it isn't available, ignore it.
      *
      * @param \Cake\Core\PluginInterface|string $name The plugin name or plugin object.
-     * @param array $config The configuration data for the plugin if using a string for $name
+     * @param array<string, mixed> $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
-    public function addOptionalPlugin($name, array $config = [])
+    public function addOptionalPlugin(PluginInterface|string $name, array $config = [])
     {
         try {
             $this->addPlugin($name, $config);
-        } catch (MissingPluginException $e) {
+        } catch (MissingPluginException) {
             // Do not halt if the plugin is missing
         }
 
@@ -170,6 +175,12 @@ abstract class BaseApplication implements
     public function bootstrap(): void
     {
         require_once $this->configDir . 'bootstrap.php';
+
+        // phpcs:ignore
+        $plugins = @include_once $this->configDir . 'plugins.php';
+        if (is_array($plugins)) {
+            $this->plugins->addFromConfig($plugins);
+        }
     }
 
     /**
@@ -185,7 +196,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      *
-     * By default this will load `config/routes.php` for ease of use and backwards compatibility.
+     * By default, this will load `config/routes.php` for ease of use and backwards compatibility.
      *
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
@@ -194,7 +205,10 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            require $this->configDir . 'routes.php';
+            $return = require $this->configDir . 'routes.php';
+            if ($return instanceof Closure) {
+                $return($routes);
+            }
         }
     }
 
@@ -213,7 +227,7 @@ abstract class BaseApplication implements
     /**
      * Define the console commands for an application.
      *
-     * By default all commands in CakePHP, plugins and the application will be
+     * By default, all commands in CakePHP, plugins and the application will be
      * loaded using conventions based names.
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
@@ -246,11 +260,7 @@ abstract class BaseApplication implements
      */
     public function getContainer(): ContainerInterface
     {
-        if ($this->container === null) {
-            $this->container = $this->buildContainer();
-        }
-
-        return $this->container;
+        return $this->container ??= $this->buildContainer();
     }
 
     /**
@@ -290,7 +300,7 @@ abstract class BaseApplication implements
     /**
      * Invoke the application.
      *
-     * - Convert the PSR response into CakePHP equivalents.
+     * - Add the request to the container, enabling its injection into other services.
      * - Create the controller that will handle this request.
      * - Invoke the controller.
      *
@@ -300,15 +310,21 @@ abstract class BaseApplication implements
     public function handle(
         ServerRequestInterface $request
     ): ResponseInterface {
-        if ($this->controllerFactory === null) {
-            $this->controllerFactory = new ControllerFactory($this->getContainer());
-        }
+        $container = $this->getContainer();
+        $container->add(ServerRequest::class, $request);
+        $container->add(ContainerInterface::class, $container);
+
+        $this->controllerFactory ??= new ControllerFactory($container);
 
         if (Router::getRequest() !== $request) {
+            assert($request instanceof ServerRequest);
             Router::setRequest($request);
         }
 
         $controller = $this->controllerFactory->create($request);
+
+        // This is needed for auto-wiring. Should be removed in 5.x
+        $container->add(ComponentRegistry::class, $controller->components());
 
         return $this->controllerFactory->invoke($controller);
     }

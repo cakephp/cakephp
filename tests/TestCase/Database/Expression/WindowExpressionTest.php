@@ -37,7 +37,7 @@ class WindowExpressionTest extends TestCase
         $w = new WindowExpression();
         $this->assertSame('', $w->sql(new ValueBinder()));
 
-        $w->partition('')->order([]);
+        $w->partition('')->orderBy([]);
         $this->assertSame('', $w->sql(new ValueBinder()));
     }
 
@@ -76,15 +76,15 @@ class WindowExpressionTest extends TestCase
     /**
      * Tests windows with order by
      */
-    public function testOrder(): void
+    public function testOrderBy(): void
     {
-        $w = (new WindowExpression())->order('test');
+        $w = (new WindowExpression())->orderBy('test');
         $this->assertEqualsSql(
             'ORDER BY test',
             $w->sql(new ValueBinder())
         );
 
-        $w->order(['test2' => 'DESC']);
+        $w->orderBy(['test2' => 'DESC']);
         $this->assertEqualsSql(
             'ORDER BY test, test2 DESC',
             $w->sql(new ValueBinder())
@@ -97,14 +97,23 @@ class WindowExpressionTest extends TestCase
         );
 
         $w = (new WindowExpression())
-            ->order(function () {
+            ->orderBy(function () {
                 return 'test';
             })
-            ->order(function (QueryExpression $expr) {
+            ->orderBy(function (QueryExpression $expr) {
                 return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
             });
         $this->assertEqualsSql(
             'ORDER BY test, test2, test3 DESC',
+            $w->sql(new ValueBinder())
+        );
+    }
+
+    public function testOrderDeprecated(): void
+    {
+        $w = (new WindowExpression())->order('test');
+        $this->assertEqualsSql(
+            'ORDER BY test',
             $w->sql(new ValueBinder())
         );
     }
@@ -344,19 +353,19 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->order('test')->range(null);
+        $w = (new WindowExpression())->orderBy('test')->range(null);
         $this->assertEqualsSql(
             'ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->partition('test')->order('test')->range(null);
+        $w = (new WindowExpression())->partition('test')->orderBy('test')->range(null);
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->partition('test')->order('test')->range(null)->excludeCurrent();
+        $w = (new WindowExpression())->partition('test')->orderBy('test')->range(null)->excludeCurrent();
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW',
             $w->sql(new ValueBinder())
@@ -384,7 +393,7 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w->order('test');
+        $w->orderBy('test');
         $this->assertFalse($w->isNamedOnly());
         $this->assertEqualsSql(
             'new_name ORDER BY test',
@@ -399,7 +408,7 @@ class WindowExpressionTest extends TestCase
     {
         $w = (new WindowExpression('test1'))
             ->partition('test2')
-            ->order('test3')
+            ->orderBy('test3')
             ->range(new QueryExpression("'1 day'"));
 
         $expressions = [];
@@ -436,8 +445,8 @@ class WindowExpressionTest extends TestCase
         $w2 = (clone $w1)->partition('new');
         $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
 
-        $w1 = (new WindowExpression())->order('test');
-        $w2 = (clone $w1)->order('new');
+        $w1 = (new WindowExpression())->orderBy('test');
+        $w2 = (clone $w1)->orderBy('new');
         $this->assertNotSame($w1->sql(new ValueBinder()), $w2->sql(new ValueBinder()));
 
         $w1 = (new WindowExpression())->rows(0, null);

@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -35,16 +37,6 @@ class RouteTest extends TestCase
     {
         parent::setUp();
         Configure::write('Routing', ['prefixes' => []]);
-    }
-
-    public function testDeprecatedPlaceholders(): void
-    {
-        $this->deprecated(function (): void {
-            $route = new Route('/:controller/:action/:id');
-            $route->compile();
-
-            $this->assertTrue($route->compiled());
-        });
     }
 
     /**
@@ -62,7 +54,7 @@ class RouteTest extends TestCase
 
     public function testConstructionWithInvalidMethod(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index', '_method' => 'nope']);
     }
@@ -494,14 +486,15 @@ class RouteTest extends TestCase
         $this->assertMatchesRegularExpression($result, '/posts/08/01/2007/title-of-post');
         $result = $route->parse('/posts/08/01/2007/title-of-post', 'GET');
 
-        $this->assertCount(7, $result);
-        $this->assertEquals($result['controller'], 'Posts');
-        $this->assertEquals($result['action'], 'view');
-        $this->assertEquals($result['year'], '2007');
-        $this->assertEquals($result['month'], '08');
-        $this->assertEquals($result['day'], '01');
-        $this->assertEquals($result['pass'][0], 'title-of-post');
-        $this->assertEquals($result['_matchedRoute'], '/posts/{month}/{day}/{year}/*');
+        $this->assertCount(8, $result);
+        $this->assertSame('Posts', $result['controller']);
+        $this->assertSame('view', $result['action']);
+        $this->assertSame('2007', $result['year']);
+        $this->assertSame('08', $result['month']);
+        $this->assertSame('01', $result['day']);
+        $this->assertSame('title-of-post', $result['pass'][0]);
+        $this->assertSame($route, $result['_route']);
+        $this->assertSame('/posts/{month}/{day}/{year}/*', $result['_matchedRoute']);
 
         $route = new Route(
             '/{extra}/page/{slug}/*',
@@ -1088,6 +1081,7 @@ class RouteTest extends TestCase
             'controller' => 'Articles',
             'action' => 'index',
             'pass' => [],
+            '_route' => $route,
             '_matchedRoute' => '/fallback',
         ];
         $this->assertEquals($expected, $result, 'Should match, domain is correct');
@@ -1154,6 +1148,24 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that parse() throws a BadRequestException instead of InvalidArgumentException
+     * for an invalid method.
+     *
+     * @return void
+     */
+    public function testParseException(): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
+
+        $route = new Route(
+            '/{controller}',
+            ['prefix' => 'Admin', 'action' => 'index']
+        );
+        $route->parse('/posts', 'NOPE');
+    }
+
+    /**
      * Test that :key elements are urldecoded
      */
     public function testParseUrlDecodeElements(): void
@@ -1185,6 +1197,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'display',
             'pass' => ['home'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}',
         ];
         $this->assertEquals($expected, $result);
@@ -1202,6 +1215,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'display',
             'pass' => ['home'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}',
             '_middleware' => ['auth', 'cookie'],
         ];
@@ -1221,6 +1235,7 @@ class RouteTest extends TestCase
             'action' => 'index',
             'pass' => [],
             '_method' => 'POST',
+            '_route' => $route,
             '_matchedRoute' => '/sample',
         ];
         $this->assertEquals($expected, $route->parse('/sample', 'post'));
@@ -1244,6 +1259,7 @@ class RouteTest extends TestCase
             'action' => 'index',
             'pass' => [],
             '_method' => ['PUT', 'POST'],
+            '_route' => $route,
             '_matchedRoute' => '/sample',
         ];
         $this->assertEquals($expected, $route->parse('/sample', 'POST'));
@@ -1315,6 +1331,7 @@ class RouteTest extends TestCase
             'controller' => 'BlogPosts',
             'action' => 'other',
             'pass' => [],
+            '_route' => $route,
             '_matchedRoute' => '/blog/{action}/*',
         ];
         $this->assertEquals($expected, $result);
@@ -1334,6 +1351,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'edit',
             'pass' => ['1', '2', '0'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}/{action}/*',
         ];
         $this->assertEquals($expected, $result);
@@ -1410,6 +1428,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             'slug' => 'my-title',
             'pass' => ['my-title'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}/{action}/{slug}',
         ];
         $this->assertEquals($expected, $result, 'Slug should have moved');
@@ -1426,6 +1445,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             'pass' => ['1/2/3/foo:bar'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}/{action}/**',
         ];
         $this->assertEquals($expected, $result);
@@ -1435,6 +1455,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             'pass' => ['http://example.com'],
+            '_route' => $route,
             '_matchedRoute' => '/{controller}/{action}/**',
         ];
         $this->assertEquals($expected, $result);
@@ -1451,6 +1472,7 @@ class RouteTest extends TestCase
             'controller' => 'Categories',
             'action' => 'index',
             'pass' => ['موبایل'],
+            '_route' => $route,
             '_matchedRoute' => '/category/**',
         ];
         $this->assertEquals($expected, $result);
@@ -1561,6 +1583,7 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             'pass' => [],
+            '_route' => $route,
             '_matchedRoute' => '/{section}',
         ];
         $this->assertEquals($expected, $result);
@@ -1572,26 +1595,46 @@ class RouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'index',
             'pass' => [],
+            '_route' => $route,
             '_matchedRoute' => '/{section}',
         ];
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * Test getting the static path for a route.
-     *
-     * @deprecated
-     */
-    public function testStaticPath(): void
+    public function testUrlWithEncodedSlash(): void
     {
-        $route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertSame('/pages/', $route->staticPath());
+        $route = new Route(
+            '/products/tests/*',
+            ['controller' => 'Products', 'action' => 'test'],
+            ['_urldecode' => false]
+        );
 
-        $route = new Route('/:controller/:action/*');
-        $this->assertSame('/', $route->staticPath());
+        $result = $route->parse('/products/tests/xx%2Fyy', 'GET');
+        $expected = [
+            'controller' => 'Products',
+            'action' => 'test',
+            'pass' => ['xx%2Fyy'],
+            '_route' => $route,
+            '_matchedRoute' => '/products/tests/*',
+        ];
+        $this->assertEquals($expected, $result);
 
-        $route = new Route('/api/{/:action/*');
-        $this->assertSame('/api/{/', $route->staticPath());
+        $route = new Route(
+            '/products/view/{slug}',
+            ['controller' => 'Products', 'action' => 'view'],
+            ['_urldecode' => false]
+        );
+
+        $result = $route->parse('/products/view/xx%2Fyy', 'GET');
+        $expected = [
+            'controller' => 'Products',
+            'action' => 'view',
+            'slug' => 'xx%2Fyy',
+            'pass' => [],
+            '_route' => $route,
+            '_matchedRoute' => '/products/view/{slug}',
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1642,6 +1685,7 @@ class RouteTest extends TestCase
             'controller' => 'Pages',
             'action' => 'display',
             'pass' => ['home'],
+            '_route' => $route,
             '_matchedRoute' => '/',
         ];
         $this->assertEquals($expected, $route->parse('/', 'GET'));
@@ -1667,7 +1711,7 @@ class RouteTest extends TestCase
      */
     public function testSetMethodsInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);

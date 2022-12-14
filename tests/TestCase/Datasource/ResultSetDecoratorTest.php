@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use ArrayIterator;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\TestSuite\TestCase;
 
@@ -29,7 +30,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testDecorateSimpleIterator(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals([1, 2, 3], iterator_to_array($decorator));
     }
@@ -39,7 +40,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testToArray(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals([1, 2, 3], $decorator->toArray());
     }
@@ -49,7 +50,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testToJson(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $this->assertEquals(json_encode([1, 2, 3]), json_encode($decorator));
     }
@@ -59,7 +60,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testSerialization(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $serialized = serialize($decorator);
         $this->assertEquals([1, 2, 3], unserialize($serialized)->toArray());
@@ -70,7 +71,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testFirst(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
         $this->assertSame(1, $decorator->first());
@@ -82,7 +83,7 @@ class ResultSetDecoratorTest extends TestCase
      */
     public function testCount(): void
     {
-        $data = new \ArrayIterator([1, 2, 3]);
+        $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
 
         $this->assertSame(3, $decorator->count());

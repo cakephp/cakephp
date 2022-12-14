@@ -52,14 +52,14 @@ class ViewBlock
      *
      * @var array<string>
      */
-    protected $_blocks = [];
+    protected array $_blocks = [];
 
     /**
      * The active blocks being captured.
      *
      * @var array<string>
      */
-    protected $_active = [];
+    protected array $_active = [];
 
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
@@ -67,7 +67,7 @@ class ViewBlock
      * @see \Cake\View\ViewBlock::end()
      * @var bool
      */
-    protected $_discardActiveBufferOnEnd = false;
+    protected bool $_discardActiveBufferOnEnd = false;
 
     /**
      * Start capturing output for a 'block'
@@ -88,7 +88,7 @@ class ViewBlock
     public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
     {
         if (array_key_exists($name, $this->_active)) {
-            throw new CakeException(sprintf("A view block with the name '%s' is already/still open.", $name));
+            throw new CakeException(sprintf('A view block with the name `%s` is already/still open.', $name));
         }
         $this->_active[$name] = $mode;
         ob_start();
@@ -139,7 +139,7 @@ class ViewBlock
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
      */
-    public function concat(string $name, $value = null, $mode = ViewBlock::APPEND): void
+    public function concat(string $name, mixed $value = null, string $mode = ViewBlock::APPEND): void
     {
         if ($value === null) {
             $this->start($name, $mode);
@@ -166,7 +166,7 @@ class ViewBlock
      *   to string.
      * @return void
      */
-    public function set(string $name, $value): void
+    public function set(string $name, mixed $value): void
     {
         $this->_blocks[$name] = (string)$value;
     }

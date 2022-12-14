@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use ReturnTypeWillChange;
 
 /**
  * This iterator will insert values into a property of each of the records returned.
@@ -32,29 +31,29 @@ class InsertIterator extends Collection
      *
      * @var \Cake\Collection\Collection
      */
-    protected $_values;
+    protected Collection $_values;
 
     /**
      * Holds whether the values collection is still valid. (has more records)
      *
      * @var bool
      */
-    protected $_validValues = true;
+    protected bool $_validValues = true;
 
     /**
      * An array containing each of the properties to be traversed to reach the
      * point where the values should be inserted.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $_path;
+    protected array $_path;
 
     /**
      * The property name to which values will be assigned
      *
      * @var string
      */
-    protected $_target;
+    protected string $_target;
 
     /**
      * Constructs a new collection that will dynamically add properties to it out of
@@ -102,8 +101,7 @@ class InsertIterator extends Collection
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         $row = parent::current();
 

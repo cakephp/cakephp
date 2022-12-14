@@ -27,12 +27,12 @@ interface LocatorInterface
      * Get a repository instance from the registry.
      *
      * @param string $alias The alias name you want to get.
-     * @param array $options The options you want to build the table with.
+     * @param array<string, mixed> $options The options you want to build the table with.
      * @return \Cake\Datasource\RepositoryInterface
      * @throws \RuntimeException When trying to get alias for which instance
      *   has already been created with different options.
      */
-    public function get(string $alias, array $options = []);
+    public function get(string $alias, array $options = []): RepositoryInterface;
 
     /**
      * Set a repository instance.
@@ -41,7 +41,7 @@ interface LocatorInterface
      * @param \Cake\Datasource\RepositoryInterface $repository The repository to set.
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function set(string $alias, RepositoryInterface $repository);
+    public function set(string $alias, RepositoryInterface $repository): RepositoryInterface;
 
     /**
      * Check to see if an instance exists in the registry.

@@ -21,14 +21,7 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CounterCacheCommentsFixture extends TestFixture
 {
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'title' => ['type' => 'string', 'length' => 255],
-        'user_id' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    public $records = [
+    public array $records = [
         ['title' => 'First Comment', 'user_id' => 1],
         ['title' => 'Second Comment', 'user_id' => 1],
         ['title' => 'Third Comment', 'user_id' => 2],

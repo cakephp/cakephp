@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Widget;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
@@ -27,6 +26,16 @@ use Cake\View\Widget\FileWidget;
  */
 class FileWidgetTest extends TestCase
 {
+    /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
     /**
      * setup
      */
@@ -101,9 +110,8 @@ class FileWidgetTest extends TestCase
         $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
         $this->assertEquals(['image'], $input->secureFields($data));
 
-        Configure::write('App.uploadedFilesAsObjects', false);
         $this->assertEquals(
-            ['image[name]', 'image[type]', 'image[tmp_name]', 'image[error]', 'image[size]'],
+            ['image'],
             $input->secureFields($data)
         );
     }

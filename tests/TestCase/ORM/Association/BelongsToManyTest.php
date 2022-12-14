@@ -17,21 +17,26 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
+use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\TableLocator;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Model\Entity\ArticlesTag;
 
 /**
  * Tests BelongsToMany class
@@ -41,17 +46,30 @@ class BelongsToManyTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.SpecialTags',
         'core.ArticlesTags',
+        'core.ArticlesTagsBindingKeys',
         'core.BinaryUuidItems',
         'core.BinaryUuidTags',
         'core.BinaryUuidItemsBinaryUuidTags',
+        'core.CompositeKeyArticles',
+        'core.CompositeKeyArticlesTags',
     ];
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $tag;
+
+    /**
+     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $article;
 
     /**
      * Set up
@@ -113,8 +131,55 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test');
         $this->assertNull($assoc->getSort());
+
+        $assoc->setSort('id ASC');
+        $this->assertSame('id ASC', $assoc->getSort());
+
         $assoc->setSort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
+        $this->assertSame(['id' => 'ASC'], $assoc->getSort());
+
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
+        $assoc->setSort($closure);
+        $this->assertSame($closure, $assoc->getSort());
+
+        $expression = new OrderClauseExpression('id', 'ASC');
+        $assoc->setSort($expression);
+        $this->assertSame($expression, $assoc->getSort());
+    }
+
+    /**
+     * Tests that sorting works using the accepted types for `setSort()`.
+     */
+    public function testSorting(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $assoc = $articles->belongsToMany('Tags');
+
+        $field = 'Tags.id';
+        $driver = $articles->getConnection()->getDriver();
+        if ($driver->isAutoQuotingEnabled()) {
+            $field = $driver->quoteIdentifier($field);
+        }
+
+        $assoc->setSort("$field DESC");
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(['Tags.id' => 'DESC']);
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(function () {
+            return ['Tags.id' => 'DESC'];
+        });
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
+
+        $assoc->setSort(new OrderClauseExpression('Tags.id', 'DESC'));
+        $result = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertSame([2, 1], array_column($result['tags'], 'id'));
     }
 
     /**
@@ -137,8 +202,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testStrategyFailure(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid strategy "join" was provided');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
     }
@@ -190,9 +255,13 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunctionConnection(): void
     {
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->once())
+            ->method('enabled')
+            ->will($this->returnValue(true));
+
         $mock = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['setDriver'])
-            ->setConstructorArgs([['name' => 'other_source']])
+            ->setConstructorArgs([['name' => 'other_source', 'driver' => $driver]])
             ->getMock();
         ConnectionManager::setConfig('other_source', $mock);
         $this->article->setConnection(ConnectionManager::get('other_source'));
@@ -313,7 +382,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveStrategyInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid save strategy "depsert"');
         new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
@@ -461,7 +530,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkWithNotPersistedSource(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
@@ -479,7 +548,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkWithNotPersistedTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted yet');
         $config = [
             'sourceTable' => $this->article,
@@ -660,7 +729,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithNotPersistedSource(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
@@ -678,7 +747,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithNotPersistedTarget(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted');
         $config = [
             'sourceTable' => $this->article,
@@ -753,7 +822,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceWithMissingPrimaryKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find primary key value for source entity');
         $config = [
             'sourceTable' => $this->article,
@@ -901,6 +970,94 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test that replaceLinks() loads junction records with the correct entity class
+     */
+    public function testReplaceLinksFetchCorrectJunctionEntity(): void
+    {
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'sourceTable' => $articles,
+            'targetTable' => $tags,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+        ]);
+        $joint->setEntityClass(ArticlesTag::class);
+
+        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity) {
+            $this->assertInstanceOf(ArticlesTag::class, $entity);
+            $this->assertNotEmpty($entity->tag_id);
+            $this->assertNotEmpty($entity->article_id);
+        });
+
+        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $this->assertCount(2, $entity->tags);
+
+        $assoc->replaceLinks($entity, []);
+    }
+
+    /**
+     * Test that replaceLinks() loads junction records with the correct entity class
+     */
+    public function testReplaceLinksFinderCondition(): void
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+            'finder' => ['published' => ['title' => 'First Article']],
+        ]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles);
+
+        $assoc->replaceLinks($entity, []);
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(0, $fresh->articles, 'Association should be empty');
+
+        $other = $joint->find()->where(['tag_id' => 1])->toArray();
+        $this->assertCount(1, $other, 'Non matching joint record should remain.');
+        $this->assertSame(2, $other[0]->article_id);
+    }
+
+    /**
+     * Test that replace links use loads junction records with a concrete
+     * target table so that finders with contain will work.
+     */
+    public function testReplaceLinksFinderContain(): void
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'joinTable' => 'articles_tags',
+            'finder' => 'withAuthors',
+        ]);
+        $tag = $tags->get(1);
+        $article = $articles->get(1);
+
+        $assoc->replaceLinks($tag, [$article]);
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $fresh->articles);
+    }
+
+    /**
      * Tests replaceLinks with failing domain rules and new link targets.
      */
     public function testReplaceLinkFailingDomainRules(): void
@@ -968,6 +1125,78 @@ class BelongsToManyTest extends TestCase
 
         $refresh = $items->get($item->id, ['contain' => 'BinaryUuidTags']);
         $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
+    }
+
+    public function testReplaceLinksComplexTypeForeignKey()
+    {
+        $articles = $this->fetchTable('CompositeKeyArticles');
+        $tags = $this->fetchTable('Tags');
+
+        $articles->belongsToMany('Tags', [
+            'foreignKey' => ['author_id', 'created'],
+        ]);
+
+        $article = $articles->newEntity([
+            'author_id' => 1,
+            'body' => 'First post',
+            'created' => new DateTime(),
+        ]);
+        $articles->saveOrFail($article);
+        $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
+        $tag2 = $tags->find()->where(['Tags.name' => 'tag2'])->firstOrFail();
+
+        $findArticle = function ($article) use ($articles) {
+            return $articles->find()
+                ->where(['CompositeKeyArticles.author_id' => $article->author_id])
+                ->contain('Tags')
+                ->firstOrFail();
+        };
+
+        $article = $findArticle($article);
+        $this->assertEmpty($article->tags);
+
+        // Create the first link
+        $article = $articles->patchEntity($article, ['tags' => ['_ids' => [$tag1->id]]]);
+        $result = $articles->save($article, ['associated' => 'Tags']);
+        $this->assertNotEmpty($result);
+        $this->assertCount(1, $result->tags);
+        $this->assertEquals($tag1->id, $result->tags[0]->id);
+
+        // Add second tag. Reload tag objects so created fields have different
+        // instances.
+        $article = $findArticle($article);
+        $article = $articles->patchEntity($article, ['tags' => ['_ids' => [$tag1->id, $tag2->id]]]);
+        $result = $articles->save($article, ['associated' => 'Tags']);
+
+        // Check in memory entity.
+        $this->assertNotEmpty($result);
+        $this->assertCount(2, $result->tags);
+        $this->assertEquals('tag1', $result->tags[0]->name);
+        $this->assertEquals('tag2', $result->tags[1]->name);
+
+        // Reload to check persisted state.
+        $result = $findArticle($article);
+        $this->assertNotEmpty($result);
+        $this->assertCount(2, $result->tags);
+        $this->assertEquals('tag1', $result->tags[0]->name);
+        $this->assertEquals('tag2', $result->tags[1]->name);
+    }
+
+    public function testReplaceLinksMissingKeyData()
+    {
+        $articles = $this->fetchTable('Articles');
+        $tags = $this->fetchTable('Tags');
+
+        $articles->belongsToMany('Tags');
+        $article = $articles->find()->firstOrFail();
+
+        $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
+        $tag1->_joinData = new ArticlesTag(['tag_id' => 99]);
+
+        $article->tags = [$tag1];
+        $articles->saveOrFail($article, ['associated' => ['Tags']]);
+
+        $this->assertCount(1, $article->tags);
     }
 
     /**
@@ -1295,8 +1524,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testEagerLoadingRequiresPrimaryKey(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The "tags" table does not define a primary key');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('The `tags` table does not define a primary key');
         $table = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->getSchema()->dropConstraint('primary');
@@ -1317,7 +1546,7 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => function (Query $q) {
+            ->contain(['Tags' => function (SelectQuery $q) {
                 return $q->select(['id']);
             }])
             ->first();
@@ -1350,7 +1579,7 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => function (Query $q) {
+            ->contain(['Tags' => function (SelectQuery $q) {
                 return $q->select(['two' => $q->newExpr('1 + 1')])->enableAutoFields();
             }])
             ->first();
@@ -1429,7 +1658,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', function (Query $q) {
+        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
             return $q->where(['Tags.name' => 'tag1']);
         });
         $results = $query->toArray();
@@ -1449,7 +1678,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', function (Query $q) {
+        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
             return $q->where(['Tags.name' => 'tag1']);
         });
         $results = $query->toArray();
@@ -1469,7 +1698,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->Tags->find()->matching('Articles', function (Query $query) {
+        $query = $table->Tags->find()->matching('Articles', function (SelectQuery $query) {
             return $query->where(['Articles.id' => 1]);
         });
         // The inner join on special_tags excludes the results.
@@ -1495,7 +1724,7 @@ class BelongsToManyTest extends TestCase
 
         $results = $table->find()
             ->contain('SpecialTags', function ($query) {
-                return $query->order(['SpecialTags.tag_id']);
+                return $query->orderBy(['SpecialTags.tag_id']);
             })
             ->where(['id' => 2])
             ->toArray();
@@ -1543,5 +1772,27 @@ class BelongsToManyTest extends TestCase
 
         $this->assertCount(1, $results);
         $this->assertCount(3, $results[0]->special_tags);
+    }
+
+    /**
+     * Test custom binding key for target table association
+     */
+    public function testBindingKeyMatching(): void
+    {
+        $table = $this->getTableLocator()->get('Tags');
+        $table->belongsToMany('Articles', [
+            'through' => 'ArticlesTagsBindingKeys',
+            'foreignKey' => 'tagname',
+            'targetForeignKey' => 'article_id',
+            'bindingKey' => 'name',
+        ]);
+        $query = $table->find()
+            ->matching('Articles', function ($q) {
+                return $q->where(['Articles.id >' => 0]);
+            });
+        $results = $query->all();
+
+        // 4 records in the junction table.
+        $this->assertCount(4, $results);
     }
 }

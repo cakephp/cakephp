@@ -44,7 +44,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function sum($expression, $types = []): AggregateExpression
+    public function sum(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         $returnType = 'float';
         if (current($types) === 'integer') {
@@ -61,7 +61,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function avg($expression, $types = []): AggregateExpression
+    public function avg(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('AVG', $this->toLiteralParam($expression), $types, 'float');
     }
@@ -73,7 +73,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function max($expression, $types = []): AggregateExpression
+    public function max(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('MAX', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
@@ -85,7 +85,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function min($expression, $types = []): AggregateExpression
+    public function min(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('MIN', $this->toLiteralParam($expression), $types, current($types) ?: 'float');
     }
@@ -97,7 +97,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function count($expression, $types = []): AggregateExpression
+    public function count(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('COUNT', $this->toLiteralParam($expression), $types, 'integer');
     }
@@ -133,26 +133,13 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $type The SQL data type
+     * @param string $dataType The SQL data type
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function cast($field, string $type = ''): FunctionExpression
+    public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
-        if (is_array($field)) {
-            deprecationWarning(
-                'Build cast function by FunctionsBuilder::cast(array $args) is deprecated. ' .
-                'Use FunctionsBuilder::cast($field, string $type) instead.'
-            );
-
-            return new FunctionExpression('CAST', $field);
-        }
-
-        if (empty($type)) {
-            throw new InvalidArgumentException('The `$type` in a cast cannot be empty.');
-        }
-
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
-        $expression->setConjunction(' AS')->add([$type => 'literal']);
+        $expression->setConjunction(' AS')->add([$dataType => 'literal']);
 
         return $expression;
     }
@@ -178,8 +165,11 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function datePart(string $part, $expression, array $types = []): FunctionExpression
-    {
+    public function datePart(
+        string $part,
+        ExpressionInterface|string $expression,
+        array $types = []
+    ): FunctionExpression {
         return $this->extract($part, $expression, $types);
     }
 
@@ -191,7 +181,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function extract(string $part, $expression, array $types = []): FunctionExpression
+    public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
         $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
@@ -208,8 +198,12 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function dateAdd($expression, $value, string $unit, array $types = []): FunctionExpression
-    {
+    public function dateAdd(
+        ExpressionInterface|string $expression,
+        string|int $value,
+        string $unit,
+        array $types = []
+    ): FunctionExpression {
         if (!is_numeric($value)) {
             $value = 0;
         }
@@ -228,7 +222,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function dayOfWeek($expression, $types = []): FunctionExpression
+    public function dayOfWeek(ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
         return new FunctionExpression('DAYOFWEEK', $this->toLiteralParam($expression), $types, 'integer');
     }
@@ -241,7 +235,7 @@ class FunctionsBuilder
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    public function weekday($expression, $types = []): FunctionExpression
+    public function weekday(ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
         return $this->dayOfWeek($expression, $types);
     }
@@ -288,8 +282,12 @@ class FunctionsBuilder
      * @param string $type The output type of the lag expression. Defaults to float.
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function lag($expression, int $offset, $default = null, $type = null): AggregateExpression
-    {
+    public function lag(
+        ExpressionInterface|string $expression,
+        int $offset,
+        mixed $default = null,
+        ?string $type = null
+    ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
             $params[] = $default;
@@ -312,8 +310,12 @@ class FunctionsBuilder
      * @param string $type The output type of the lead expression. Defaults to float.
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function lead($expression, int $offset, $default = null, $type = null): AggregateExpression
-    {
+    public function lead(
+        ExpressionInterface|string $expression,
+        int $offset,
+        mixed $default = null,
+        ?string $type = null
+    ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
             $params[] = $default;
@@ -339,8 +341,12 @@ class FunctionsBuilder
      * @param string $return Return type of the entire expression. Defaults to float.
      * @return \Cake\Database\Expression\AggregateExpression
      */
-    public function aggregate(string $name, array $params = [], array $types = [], string $return = 'float')
-    {
+    public function aggregate(
+        string $name,
+        array $params = [],
+        array $types = [],
+        string $return = 'float'
+    ): AggregateExpression {
         return new AggregateExpression($name, $params, $types, $return);
     }
 
@@ -364,7 +370,7 @@ class FunctionsBuilder
      * @param \Cake\Database\ExpressionInterface|string $expression function argument
      * @return array<\Cake\Database\ExpressionInterface|string>
      */
-    protected function toLiteralParam($expression)
+    protected function toLiteralParam(ExpressionInterface|string $expression): array
     {
         if (is_string($expression)) {
             return [$expression => 'literal'];

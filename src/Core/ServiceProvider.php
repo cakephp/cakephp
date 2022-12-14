@@ -16,10 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use League\Container\DefinitionContainerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
-use Psr\Container\ContainerInterface as PsrContainerInterface;
-use RuntimeException;
 
 /**
  * Container ServiceProvider
@@ -28,31 +27,34 @@ use RuntimeException;
  * to organize your application's dependencies. They also help
  * improve performance of applications with many services by
  * allowing service registration to be deferred until services are needed.
- *
- * @experimental This class' interface is not stable and may change
- *   in future minor releases.
  */
 abstract class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
     /**
-     * Get the container.
+     * List of ids of services this provider provides.
      *
-     * This method's actual return type and documented return type differ
-     * because PHP 7.2 doesn't support return type narrowing.
+     * @var array<string>
+     * @see ServiceProvider::provides()
+     */
+    protected array $provides = [];
+
+    /**
+     * Get the container.
      *
      * @return \Cake\Core\ContainerInterface
      */
-    public function getContainer(): PsrContainerInterface
+    public function getContainer(): DefinitionContainerInterface
     {
         $container = parent::getContainer();
-        if (!($container instanceof ContainerInterface)) {
-            $message = sprintf(
+
+        assert(
+            $container instanceof ContainerInterface,
+            sprintf(
                 'Unexpected container type. Expected `%s` got `%s` instead.',
                 ContainerInterface::class,
-                getTypeName($container)
-            );
-            throw new RuntimeException($message);
-        }
+                get_debug_type($container)
+            )
+        );
 
         return $container;
     }
@@ -93,9 +95,24 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->services($this->getContainer());
+    }
+
+    /**
+     * The provides method is a way to let the container know that a service
+     * is provided by this service provider.
+     *
+     * Every service that is registered via this service provider must have an
+     * alias added to this array or it will be ignored.
+     *
+     * @param string $id Identifier.
+     * @return bool
+     */
+    public function provides(string $id): bool
+    {
+        return in_array($id, $this->provides, true);
     }
 
     /**

@@ -15,11 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\Exception\MissingHelperException;
 use Cake\Console\HelperRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
-use TestApp\Shell\Helper\SimpleHelper;
-use TestPlugin\Shell\Helper\ExampleHelper;
+use TestApp\Command\Helper\SimpleHelper;
+use TestPlugin\Command\Helper\ExampleHelper;
 
 /**
  * HelperRegistryTest
@@ -94,7 +95,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMissingHelper(): void
     {
-        $this->expectException(\Cake\Console\Exception\MissingHelperException::class);
+        $this->expectException(MissingHelperException::class);
         $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 

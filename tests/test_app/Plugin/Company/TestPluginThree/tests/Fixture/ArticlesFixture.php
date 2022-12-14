@@ -22,24 +22,11 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ArticlesFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'author_id' => ['type' => 'integer', 'null' => true],
-        'title' => ['type' => 'string', 'null' => true],
-        'body' => 'text',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
      * records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['author_id' => 1, 'title' => 'Plugin Article', 'body' => 'Plugin Article Body'],
     ];
 }

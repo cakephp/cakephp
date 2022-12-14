@@ -24,7 +24,7 @@ class UnavailableForLegalReasonsException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 451;
+    protected int $_defaultCode = 451;
 
     /**
      * Constructor

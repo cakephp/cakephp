@@ -20,7 +20,7 @@ use Cake\Http\Client\Request;
 /**
  * Basic authentication adapter for Cake\Http\Client
  *
- * Generally not directly constructed, but instead used by Cake\Http\Client
+ * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'basic'
  */
 class Basic
@@ -37,7 +37,6 @@ class Basic
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
-            /** @var \Cake\Http\Client\Request $request */
             $request = $request->withHeader('Authorization', $value);
         }
 
@@ -56,7 +55,6 @@ class Basic
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
-            /** @var \Cake\Http\Client\Request $request */
             $request = $request->withHeader('Proxy-Authorization', $value);
         }
 

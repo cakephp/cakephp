@@ -33,7 +33,7 @@ class ButtonWidget implements WidgetInterface
      *
      * @var \Cake\View\StringTemplate
      */
-    protected $_templates;
+    protected StringTemplate $_templates;
 
     /**
      * Constructor.
@@ -58,7 +58,7 @@ class ButtonWidget implements WidgetInterface
      *
      * Any other keys provided in $data will be converted into HTML attributes.
      *
-     * @param array $data The data to build a button with.
+     * @param array<string, mixed> $data The data to build a button with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */

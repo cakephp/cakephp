@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Security Library contains utility methods related to security
@@ -31,21 +31,21 @@ class Security
      *
      * @var string
      */
-    public static $hashType = 'sha1';
+    public static string $hashType = 'sha1';
 
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
      * @var string|null
      */
-    protected static $_salt;
+    protected static ?string $_salt = null;
 
     /**
      * The crypto implementation to use.
      *
      * @var object|null
      */
-    protected static $_instance;
+    protected static ?object $_instance = null;
 
     /**
      * Create a hash from string using given method.
@@ -54,13 +54,13 @@ class Security
      * @param string|null $algorithm Hashing algo to use (i.e. sha1, sha256 etc.).
      *   Can be any valid algo included in list returned by hash_algos().
      *   If no value is passed the type specified by `Security::$hashType` is used.
-     * @param mixed $salt If true, automatically prepends the value returned by
+     * @param string|bool $salt If true, automatically prepends the value returned by
      *   Security::getSalt() to $string.
      * @return string Hash
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @link https://book.cakephp.org/4/en/core-libraries/security.html#hashing-data
      */
-    public static function hash(string $string, ?string $algorithm = null, $salt = false): string
+    public static function hash(string $string, ?string $algorithm = null, string|bool $salt = false): string
     {
         if (empty($algorithm)) {
             $algorithm = static::$hashType;
@@ -69,8 +69,8 @@ class Security
 
         $availableAlgorithms = hash_algos();
         if (!in_array($algorithm, $availableAlgorithms, true)) {
-            throw new RuntimeException(sprintf(
-                'The hash type `%s` was not found. Available algorithms are: %s',
+            throw new InvalidArgumentException(sprintf(
+                'The hash type `%s` was not found. Available algorithms are: `%s`.',
                 $algorithm,
                 implode(', ', $availableAlgorithms)
             ));
@@ -110,6 +110,7 @@ class Security
      */
     public static function randomBytes(int $length): string
     {
+        /** @psalm-suppress ArgumentTypeCoercion */
         return random_bytes($length);
     }
 
@@ -158,21 +159,18 @@ class Security
      * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
      * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
-     * @psalm-suppress MoreSpecificReturnType
      */
-    public static function engine($instance = null)
+    public static function engine(?object $instance = null): object
     {
-        if ($instance === null && static::$_instance === null) {
-            if (extension_loaded('openssl')) {
-                $instance = new OpenSsl();
-            }
-        }
         if ($instance) {
-            static::$_instance = $instance;
+            return static::$_instance = $instance;
         }
         if (isset(static::$_instance)) {
-            /** @psalm-suppress LessSpecificReturnStatement */
+            /** @var \Cake\Utility\Crypto\OpenSsl */
             return static::$_instance;
+        }
+        if (extension_loaded('openssl')) {
+            return static::$_instance = new OpenSsl();
         }
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
@@ -198,9 +196,7 @@ class Security
     {
         self::_checkKey($key, 'encrypt()');
 
-        if ($hmacSalt === null) {
-            $hmacSalt = static::getSalt();
-        }
+        $hmacSalt ??= static::getSalt();
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
@@ -244,9 +240,7 @@ class Security
         if (empty($cipher)) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
-        if ($hmacSalt === null) {
-            $hmacSalt = static::getSalt();
-        }
+        $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
@@ -274,7 +268,7 @@ class Security
      * @return bool
      * @since 3.6.2
      */
-    public static function constantEquals($original, $compare): bool
+    public static function constantEquals(mixed $original, mixed $compare): bool
     {
         return is_string($original) && is_string($compare) && hash_equals($original, $compare);
     }
@@ -288,7 +282,7 @@ class Security
     public static function getSalt(): string
     {
         if (static::$_salt === null) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
             );
         }

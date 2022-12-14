@@ -34,19 +34,6 @@ class NullContext implements ContextInterface
     }
 
     /**
-     * Get the fields used in the context as a primary key.
-     *
-     * @return array<string>
-     * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
-     */
-    public function primaryKey(): array
-    {
-        deprecationWarning('`NullContext::primaryKey()` is deprecated. Use `NullContext::getPrimaryKey()`.');
-
-        return [];
-    }
-
-    /**
      * @inheritDoc
      */
     public function getPrimaryKey(): array
@@ -73,7 +60,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
-    public function val(string $field, array $options = [])
+    public function val(string $field, array $options = []): mixed
     {
         return null;
     }

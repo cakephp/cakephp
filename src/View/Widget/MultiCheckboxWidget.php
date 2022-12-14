@@ -33,9 +33,9 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'escape' => true,
         'options' => [],
@@ -51,7 +51,7 @@ class MultiCheckboxWidget extends BasicWidget
      *
      * @var \Cake\View\Widget\LabelWidget
      */
-    protected $_label;
+    protected LabelWidget $_label;
 
     /**
      * Render multi-checkbox widget.
@@ -113,7 +113,7 @@ class MultiCheckboxWidget extends BasicWidget
      * This form **requires** that both the `value` and `text` keys be defined.
      * If either is not set options will not be generated correctly.
      *
-     * @param array $data The data to generate a checkbox set with.
+     * @param array<string, mixed> $data The data to generate a checkbox set with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -130,7 +130,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render the checkbox inputs.
      *
-     * @param array $data The data array defining the checkboxes.
+     * @param array<string, mixed> $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return array<string> An array of rendered inputs.
      */
@@ -188,7 +188,7 @@ class MultiCheckboxWidget extends BasicWidget
     /**
      * Render a single checkbox & wrapper.
      *
-     * @param array $checkbox An array containing checkbox key/value option pairs
+     * @param array<string, mixed> $checkbox An array containing checkbox key/value option pairs
      * @param \Cake\View\Form\ContextInterface $context Context object.
      * @return string
      */
@@ -204,7 +204,7 @@ class MultiCheckboxWidget extends BasicWidget
             ),
         ]);
 
-        if ($checkbox['label'] === false && strpos($this->_templates->get('checkboxWrapper'), '{{input}}') === false) {
+        if ($checkbox['label'] === false && !str_contains($this->_templates->get('checkboxWrapper'), '{{input}}')) {
             $label = $input;
         } else {
             $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];
@@ -238,7 +238,7 @@ class MultiCheckboxWidget extends BasicWidget
      * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
-    protected function _isSelected(string $key, $selected): bool
+    protected function _isSelected(string $key, array|string|int|false|null $selected): bool
     {
         if ($selected === null) {
             return false;
@@ -258,7 +258,7 @@ class MultiCheckboxWidget extends BasicWidget
      * @param mixed $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled(string $key, $disabled): bool
+    protected function _isDisabled(string $key, mixed $disabled): bool
     {
         if ($disabled === null || $disabled === false) {
             return false;

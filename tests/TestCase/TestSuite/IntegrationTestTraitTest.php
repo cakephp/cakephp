@@ -24,17 +24,20 @@ use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
+use LogicException;
+use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
 use stdClass;
+use TestApp\ReflectionDependency;
 
 /**
  * Self test of the IntegrationTestTrait
@@ -51,6 +54,11 @@ class IntegrationTestTraitTest extends TestCase
     protected $key = 'abcdabcdabcdabcdabcdabcdabcdabcdabcd';
 
     /**
+     * @var \Cake\Routing\RouteBuilder
+     */
+    protected $builder;
+
+    /**
      * Setup method
      */
     public function setUp(): void
@@ -59,23 +67,23 @@ class IntegrationTestTraitTest extends TestCase
         static::setAppNamespace();
 
         Router::reload();
-        Router::extensions(['json']);
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
-            $routes->applyMiddleware('cookie');
+        $this->builder = Router::createRouteBuilder('/');
+        $this->builder->setExtensions(['json']);
+        $this->builder->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
+        $this->builder->applyMiddleware('cookie');
 
-            $routes->setRouteClass(InflectedRoute::class);
-            $routes->get('/get/{controller}/{action}', []);
-            $routes->head('/head/{controller}/{action}', []);
-            $routes->options('/options/{controller}/{action}', []);
-            $routes->connect('/{controller}/{action}/*', []);
-        });
-        Router::scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->setRouteClass(InflectedRoute::class);
+        $this->builder->get('/get/{controller}/{action}', []);
+        $this->builder->head('/head/{controller}/{action}', []);
+        $this->builder->options('/options/{controller}/{action}', []);
+        $this->builder->connect('/{controller}/{action}/*', []);
+
+        $this->builder->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
             $routes->applyMiddleware('cookieCsrf');
             $routes->connect('/posts/{action}', ['controller' => 'Posts']);
         });
-        Router::scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
             $routes->applyMiddleware('sessionCsrf');
             $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
@@ -283,7 +291,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
-        Router::connect('/json_response/api_get_data', [
+        $this->builder->connect('/json_response/api_get_data', [
             'controller' => 'JsonResponse',
             'action' => 'apiGetData',
         ]);
@@ -357,7 +365,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testConfigApplication(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot load `TestApp\MissingApp` for use in integration');
         $this->configApplication('TestApp\MissingApp', []);
         $this->get('/request_action/test_request_action');
@@ -611,7 +619,7 @@ class IntegrationTestTraitTest extends TestCase
             'controller' => 'Posts',
             'action' => 'hostData',
             '_host' => 'app.example.org',
-            '_ssl' => true,
+            '_https' => true,
         ]);
         $this->assertResponseOk();
         $this->assertResponseContains('"isSsl":true');
@@ -639,7 +647,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
-        $this->assertCookie(1, 'remember_me');
+        $this->assertCookie('1', 'remember_me');
         $this->assertCookieNotSet('user_id');
     }
 
@@ -652,7 +660,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
         $this->assertCookieNotSet('user_id');
-        $this->assertCookie(1, 'remember_me');
+        $this->assertCookie('1', 'remember_me');
     }
 
     /**
@@ -950,7 +958,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',
@@ -973,7 +981,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        Router::scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
             $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                 [
                     'cookieName' => 'customCsrfToken',
@@ -1136,18 +1144,6 @@ class IntegrationTestTraitTest extends TestCase
         $this->_response = new Response();
 
         $this->assertNoRedirect();
-    }
-
-    /**
-     * Test the location header assertion.
-     */
-    public function testAssertNoRedirectFail(): void
-    {
-        $test = new AssertIntegrationTestCase('testBadAssertNoRedirect');
-        $result = $test->run();
-
-        $this->assertFalse($result->wasSuccessful());
-        $this->assertSame(1, $result->failureCount());
     }
 
     /**
@@ -1350,6 +1346,23 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test sending file in requests.
+     */
+    public function testSendUnlinked(): void
+    {
+        $file = microtime(true) . 'txt';
+        $path = TMP . $file;
+        file_put_contents($path, 'testing unlink');
+
+        $this->get("/posts/file?file={$file}");
+        $this->assertResponseOk();
+        $this->assertFileResponse($path);
+        $this->assertFileExists($path);
+        system("rm -rf {$path}");
+        $this->assertFileDoesNotExist($path);
+    }
+
+    /**
      * Test sending file with psr7 stack
      */
     public function testSendFileHttpServer(): void
@@ -1385,7 +1398,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testDisableErrorHandlerMiddleware(): void
     {
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('oh no!');
         $this->disableErrorHandlerMiddleware();
         $this->get('/posts/throw_exception');
@@ -1463,7 +1476,21 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get($url);
 
-        call_user_func_array([$this, $assertion], $rest);
+        call_user_func_array($this->$assertion(...), $rest);
+    }
+
+    /**
+     * Test for assertion message generation for previous.
+     *
+     * @return void
+     */
+    public function testAssertMessagePrevious()
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Caused by RuntimeException');
+
+        $this->get('/posts/throw_chained');
+        $this->assertContentType('test');
     }
 
     /**
@@ -1618,7 +1645,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectExceptionMessage('Possibly related to OutOfBoundsException: "oh no!"');
         $this->get('/posts/throw_exception');
         $this->_requestSession = new Session();
-        call_user_func_array([$this, $assertMethod], $rest);
+        call_user_func_array($this->$assertMethod(...), $rest);
     }
 
     /**
@@ -1641,7 +1668,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testViewVariableNotFoundShouldReturnNull(): void
     {
-        $this->_controller = new Controller();
+        $this->_controller = new Controller(new ServerRequest());
         $this->assertNull($this->viewVariable('notFound'));
     }
 
@@ -1666,6 +1693,19 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
+    }
+
+    /**
+     * Test that mockService() injects into controllers.
+     */
+    public function testHandleWithMockServicesFromReflectionContainer(): void
+    {
+        $this->mockService(ReflectionDependency::class, function () {
+            return new ReflectionDependency();
+        });
+        $this->get('/dependencies/reflectionDep');
+        $this->assertResponseOk();
+        $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');
     }
 
     /**

@@ -33,28 +33,28 @@ class Translator
      *
      * @var \Cake\I18n\Translator|null
      */
-    protected $fallback;
+    protected ?Translator $fallback = null;
 
     /**
      * The formatter to use when translating messages.
      *
      * @var \Cake\I18n\FormatterInterface
      */
-    protected $formatter;
+    protected FormatterInterface $formatter;
 
     /**
      * The locale being used for translations.
      *
      * @var string
      */
-    protected $locale;
+    protected string $locale;
 
     /**
      * The Package containing keys and translations.
      *
      * @var \Cake\I18n\Package
      */
-    protected $package;
+    protected Package $package;
 
     /**
      * Constructor
@@ -62,7 +62,7 @@ class Translator
      * @param string $locale The locale being used.
      * @param \Cake\I18n\Package $package The Package containing keys and translations.
      * @param \Cake\I18n\FormatterInterface $formatter A message formatter.
-     * @param \Cake\I18n\Translator $fallback A fallback translator.
+     * @param \Cake\I18n\Translator|null $fallback A fallback translator.
      */
     public function __construct(
         string $locale,
@@ -82,7 +82,7 @@ class Translator
      * @param string $key The message key.
      * @return mixed The message translation string, or false if not found.
      */
-    protected function getMessage(string $key)
+    protected function getMessage(string $key): mixed
     {
         $message = $this->package->getMessage($key);
         if ($message) {
@@ -157,6 +157,11 @@ class Translator
 
         if ($message === '') {
             $message = $key;
+
+            // If singular haven't been translated, fallback to the key.
+            if (isset($tokensValues['_singular']) && $tokensValues['_count'] === 1) {
+                $message = $tokensValues['_singular'];
+            }
         }
 
         unset($tokensValues['_count'], $tokensValues['_singular']);
@@ -172,7 +177,7 @@ class Translator
      * @param array $vars The variables containing the `_context` key.
      * @return array|string
      */
-    protected function resolveContext(string $key, array $message, array $vars)
+    protected function resolveContext(string $key, array $message, array $vars): array|string
     {
         $context = $vars['_context'] ?? null;
 

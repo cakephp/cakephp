@@ -15,5 +15,5 @@ class MyUsersTable extends Table
      *
      * @var string
      */
-    protected $_table = 'users';
+    protected ?string $_table = 'users';
 }

@@ -21,27 +21,21 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieInterface;
 use Laminas\Diactoros\RelativeStream;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Emits a Response to the PHP Server API.
- *
- * This emitter offers a few changes from the emitters offered by
- * diactoros:
- *
- * - It logs headers sent using CakePHP's logging tools.
- * - Cookies are emitted using setcookie() to not conflict with ext/session
  */
-class ResponseEmitter implements EmitterInterface
+class ResponseEmitter
 {
     /**
      * Maximum output buffering size for each iteration.
      *
      * @var int
      */
-    protected $maxBufferLength;
+    protected int $maxBufferLength;
 
     /**
      * Constructor
@@ -183,7 +177,7 @@ class ResponseEmitter implements EmitterInterface
     protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
-        if (method_exists($response, 'getCookieCollection')) {
+        if ($response instanceof Response) {
             $cookies = iterator_to_array($response->getCookieCollection());
         }
 
@@ -225,34 +219,13 @@ class ResponseEmitter implements EmitterInterface
      * @param \Cake\Http\Cookie\CookieInterface|string $cookie Cookie.
      * @return bool
      */
-    protected function setCookie($cookie): bool
+    protected function setCookie(CookieInterface|string $cookie): bool
     {
         if (is_string($cookie)) {
             $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
         }
 
-        if (PHP_VERSION_ID >= 70300) {
-            /** @psalm-suppress InvalidArgument */
-            return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
-        }
-
-        $path = $cookie->getPath();
-        $sameSite = $cookie->getSameSite();
-        if ($sameSite !== null) {
-            // Temporary hack for PHP 7.2 to set "SameSite" attribute
-            // https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
-            $path .= '; samesite=' . $sameSite;
-        }
-
-        return setcookie(
-            $cookie->getName(),
-            $cookie->getScalarValue(),
-            $cookie->getExpiresTimestamp() ?: 0,
-            $path,
-            $cookie->getDomain(),
-            $cookie->isSecure(),
-            $cookie->isHttpOnly()
-        );
+        return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
     }
 
     /**
@@ -264,9 +237,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function flush(?int $maxBufferLevel = null): void
     {
-        if ($maxBufferLevel === null) {
-            $maxBufferLevel = ob_get_level();
-        }
+        $maxBufferLevel ??= ob_get_level();
 
         while (ob_get_level() > $maxBufferLevel) {
             ob_end_flush();
@@ -281,7 +252,7 @@ class ResponseEmitter implements EmitterInterface
      * @return array|false [unit, first, last, length]; returns false if no
      *     content range or an invalid content range is provided
      */
-    protected function parseContentRange(string $header)
+    protected function parseContentRange(string $header): array|false
     {
         if (preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)\/(?P<length>\d+|\*)/', $header, $matches)) {
             return [

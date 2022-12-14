@@ -19,6 +19,7 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Iterator;
 use Traversable;
 
 /**
@@ -43,7 +44,7 @@ class StoppableIterator extends Collection
      *
      * @var \Traversable
      */
-    protected $_innerIterator;
+    protected Traversable $_innerIterator;
 
     /**
      * Creates an iterator that can be stopped based on a condition provided by a callback.
@@ -66,7 +67,7 @@ class StoppableIterator extends Collection
 
     /**
      * Evaluates the condition and returns its result, this controls
-     * whether or not more results will be yielded.
+     * whether more results will be yielded.
      *
      * @return bool
      */
@@ -86,7 +87,7 @@ class StoppableIterator extends Collection
     /**
      * @inheritDoc
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         $iterator = $this->_innerIterator;
 
@@ -94,7 +95,7 @@ class StoppableIterator extends Collection
             $iterator = $iterator->unwrap();
         }
 
-        if (get_class($iterator) !== ArrayIterator::class) {
+        if ($iterator::class !== ArrayIterator::class) {
             return $this;
         }
 

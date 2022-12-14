@@ -26,9 +26,9 @@ class BindingKeyTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.AuthUsers',
         'core.SiteAuthors',
         'core.Users',

@@ -34,21 +34,24 @@ trait RulesAwareTrait
     /**
      * The domain rules to be applied to entities saved by this table
      *
-     * @var \Cake\Datasource\RulesChecker
+     * @var \Cake\Datasource\RulesChecker|null
      */
-    protected $_rulesChecker;
+    protected ?RulesChecker $_rulesChecker = null;
 
     /**
-     * Returns whether or not the passed entity complies with all the rules stored in
+     * Returns whether the passed entity complies with all the rules stored in
      * the rules checker.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
-     * @param \ArrayObject|array|null $options The options To be passed to the rules.
+     * @param \ArrayObject<string, mixed>|array|null $options The options To be passed to the rules.
      * @return bool
      */
-    public function checkRules(EntityInterface $entity, string $operation = RulesChecker::CREATE, $options = null): bool
-    {
+    public function checkRules(
+        EntityInterface $entity,
+        string $operation = RulesChecker::CREATE,
+        ArrayObject|array|null $options = null
+    ): bool {
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();
         $options = is_array($options) ? new ArrayObject($options) : $options;
@@ -97,7 +100,10 @@ trait RulesAwareTrait
         }
         /** @psalm-var class-string<\Cake\Datasource\RulesChecker> $class */
         $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : RulesChecker::class;
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /**
+         * @psalm-suppress ArgumentTypeCoercion
+         * @phpstan-ignore-next-line
+         */
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
         $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
 

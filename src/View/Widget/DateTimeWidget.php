@@ -16,9 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Database\Schema\TableSchema;
+use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosDate;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\View\Form\ContextInterface;
+use Cake\View\StringTemplate;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -37,14 +41,14 @@ class DateTimeWidget extends BasicWidget
      *
      * @var \Cake\View\StringTemplate
      */
-    protected $_templates;
+    protected StringTemplate $_templates;
 
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'val' => null,
         'type' => 'datetime-local',
@@ -58,7 +62,7 @@ class DateTimeWidget extends BasicWidget
      *
      * @var array<string>
      */
-    protected $formatMap = [
+    protected array $formatMap = [
         'datetime-local' => 'Y-m-d\TH:i:s',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
@@ -71,9 +75,9 @@ class DateTimeWidget extends BasicWidget
      *
      * If not set, defaults to browser default.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $defaultStep = [
+    protected array $defaultStep = [
         'datetime-local' => '1',
         'date' => null,
         'time' => '1',
@@ -94,14 +98,14 @@ class DateTimeWidget extends BasicWidget
      * - `step` The "step" attribute. Defaults to `1` for "time" and "datetime-local" type inputs.
      *   You can set it to `null` or `false` to prevent explicit step attribute being added in HTML.
      * - `format` A `date()` function compatible datetime format string.
-     *   By default the widget will use a suitable format based on the input type and
+     *   By default, the widget will use a suitable format based on the input type and
      *   database type for the context. If an explicit format is provided, then no
      *   default value will be set for the `step` attribute, and it needs to be
      *   explicitly set if required.
      *
      * All other keys will be converted into HTML attributes.
      *
-     * @param array $data The data to build a file input with.
+     * @param array<string, mixed> $data The data to build a file input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */
@@ -118,7 +122,7 @@ class DateTimeWidget extends BasicWidget
 
         $data = $this->setStep($data, $context, $data['fieldName'] ?? '');
 
-        $data['value'] = $this->formatDateTime($data['val'], $data);
+        $data['value'] = $this->formatDateTime($data['val'] === true ? new DateTimeImmutable() : $data['val'], $data);
         unset($data['val'], $data['timezone'], $data['format']);
 
         return $this->_templates->format('input', [
@@ -135,10 +139,10 @@ class DateTimeWidget extends BasicWidget
     /**
      * Set value for "step" attribute if applicable.
      *
-     * @param array $data Data array
+     * @param array<string, mixed> $data Data array
      * @param \Cake\View\Form\ContextInterface $context Context instance.
      * @param string $fieldName Field name.
-     * @return array Updated data array.
+     * @return array<string, mixed> Updated data array.
      */
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {
@@ -158,9 +162,9 @@ class DateTimeWidget extends BasicWidget
 
         $dbType = $context->type($fieldName);
         $fractionalTypes = [
-            TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
+            TableSchemaInterface::TYPE_DATETIME_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
 
         if (in_array($dbType, $fractionalTypes, true)) {
@@ -173,28 +177,31 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats the passed date/time value into required string format.
      *
-     * @param \DateTime|string|int|null $value Value to deconstruct.
-     * @param array $options Options for conversion.
+     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $value Value to deconstruct.
+     * @param array<string, mixed> $options Options for conversion.
      * @return string
      * @throws \InvalidArgumentException If invalid input type is passed.
      */
-    protected function formatDateTime($value, array $options): string
-    {
+    protected function formatDateTime(
+        Chronos|ChronosDate|DateTimeInterface|string|int|null $value,
+        array $options
+    ): string {
         if ($value === '' || $value === null) {
             return '';
         }
 
         try {
-            if ($value instanceof DateTimeInterface) {
+            if ($value instanceof Chronos || $value instanceof ChronosDate || $value instanceof DateTimeInterface) {
+                /** @var \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTime|\DateTimeImmutable $dateTime Expand type for phpstan */
                 $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);
-            } elseif (is_int($value) || is_numeric($value)) {
+            } elseif (is_numeric($value)) {
                 $dateTime = new DateTime('@' . $value);
             } else {
                 $dateTime = new DateTime();
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             $dateTime = new DateTime();
         }
 

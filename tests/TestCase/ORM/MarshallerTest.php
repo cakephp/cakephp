@@ -18,11 +18,12 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\EventInterface;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
@@ -33,7 +34,7 @@ use TestApp\Model\Table\GreedyCommentsTable;
  */
 class MarshallerTest extends TestCase
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Tags',
         'core.ArticlesTags',
@@ -152,8 +153,8 @@ class MarshallerTest extends TestCase
             'id' => '',
             'username' => 'superuser',
             'password' => 'root',
-            'created' => new FrozenTime('2013-10-10 00:00'),
-            'updated' => new FrozenTime('2013-10-10 00:00'),
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
@@ -178,7 +179,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->comments);
         $result = $marshall->one($data, []);
 
-        $this->assertEquals(new FrozenTime('2014-02-14 00:00:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 00:00:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -189,7 +190,7 @@ class MarshallerTest extends TestCase
             'meridian' => 'pm',
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new FrozenTime('2014-02-14 21:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 21:25:00'), $result->created);
 
         $data['created'] = [
             'year' => '2014',
@@ -199,15 +200,27 @@ class MarshallerTest extends TestCase
             'minute' => 25,
         ];
         $result = $marshall->one($data, []);
-        $this->assertEquals(new FrozenTime('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = '2014-02-14 09:25:00';
         $result = $marshall->one($data, []);
-        $this->assertEquals(new FrozenTime('2014-02-14 09:25:00'), $result->created);
+        $this->assertEquals(new DateTime('2014-02-14 09:25:00'), $result->created);
 
         $data['created'] = 1392387900;
         $result = $marshall->one($data, []);
         $this->assertSame($data['created'], $result->created->getTimestamp());
+    }
+
+    public function testOneWithFieldMatchingTableAlias(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->getSchema()->addColumn('Articles', ['type' => 'string']);
+
+        $data = ['Articles' => 'a title', 'title' => 'First post', 'body' => 'Content here', 'author_id' => 1];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertEquals($data['Articles'], $result->Articles);
     }
 
     /**
@@ -282,8 +295,8 @@ class MarshallerTest extends TestCase
      */
     public function testOneInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot marshal data for `Derp` association. It is not associated with `Articles`.');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -1116,7 +1129,7 @@ class MarshallerTest extends TestCase
      */
     public function testManyInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             [
                 'comment' => 'First post',
@@ -1300,7 +1313,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeWithSameObjectValue(): void
     {
-        $created = new FrozenTime('2020-10-29');
+        $created = new DateTime('2020-10-29');
         $entity = new Entity([
             'comment' => 'foo',
             'created' => $created,
@@ -1354,8 +1367,8 @@ class MarshallerTest extends TestCase
      */
     public function testMergeInvalidAssociation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot marshal data for `Derp` association. It is not associated with `Articles`.');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -1376,8 +1389,6 @@ class MarshallerTest extends TestCase
 
     /**
      * Test merge when fields contains an association.
-     *
-     * @param $fields
      */
     public function testMergeWithSingleAssociationAndFields(): void
     {
@@ -2400,7 +2411,7 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->comments);
         $result = $marshall->merge($entity, $data);
-        $this->assertInstanceOf(FrozenTime::class, $entity->created);
+        $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame('2014-02-14', $entity->created->format('Y-m-d'));
     }
 
@@ -2748,19 +2759,6 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Test that invalid validate options raise exceptions
-     */
-    public function testValidateInvalidType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $data = ['title' => 'foo'];
-        $marshaller = new Marshaller($this->articles);
-        $marshaller->one($data, [
-            'validate' => ['derp'],
-        ]);
-    }
-
-    /**
      * Tests that associations are validated and custom validators can be used
      */
     public function testValidateWithAssociationsAndCustomValidator(): void
@@ -2835,23 +2833,6 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to pass a validator directly in the options
-     */
-    public function testPassingCustomValidator(): void
-    {
-        $data = [
-            'title' => 'Thing',
-            'body' => 'hey',
-        ];
-
-        $validator = clone $this->articles->getValidator();
-        $validator->requirePresence('thing');
-        $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
-        $this->assertNotEmpty($entity->getError('thing'));
-    }
-
-    /**
      * Tests that invalid property is being filled when data cannot be patched into an entity.
      */
     public function testValidationWithInvalidFilled(): void
@@ -2860,9 +2841,12 @@ class MarshallerTest extends TestCase
             'title' => 'foo',
             'number' => 'bar',
         ];
-        $validator = (new Validator())->add('number', 'numeric', ['rule' => 'numeric']);
+        $this->articles->setValidator(
+            'custom',
+            (new Validator())->add('number', 'numeric', ['rule' => 'numeric'])
+        );
         $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, ['validate' => $validator]);
+        $entity = $marshall->one($data, ['validate' => 'custom']);
         $this->assertNotEmpty($entity->getError('number'));
         $this->assertNull($entity->number);
         $this->assertSame(['number' => 'bar'], $entity->getInvalid());
@@ -3282,13 +3266,13 @@ class MarshallerTest extends TestCase
                     'id' => 1,
                     'name' => 'tag1',
                     'description' => 'A big description',
-                    'created' => new FrozenTime('2016-01-01 00:00'),
+                    'created' => new DateTime('2016-01-01 00:00'),
                 ],
                 [
                     'id' => 2,
                     'name' => 'tag2',
                     'description' => 'Another big description',
-                    'created' => new FrozenTime('2016-01-01 00:00'),
+                    'created' => new DateTime('2016-01-01 00:00'),
                 ],
             ],
         ];
@@ -3300,7 +3284,7 @@ class MarshallerTest extends TestCase
      */
     public function testInvalidTypesWhenLoadingAssociatedByIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [
@@ -3320,7 +3304,7 @@ class MarshallerTest extends TestCase
      */
     public function testInvalidTypesWhenLoadingAssociatedByCompositeIds(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
 
         $data = [

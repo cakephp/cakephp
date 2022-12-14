@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
@@ -23,9 +24,7 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
-use Cake\Utility\Inflector;
 use Closure;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -43,12 +42,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * @var \Cake\Core\ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * @var \Cake\Controller\Controller
      */
-    protected $controller;
+    protected Controller $controller;
 
     /**
      * Constructor
@@ -69,6 +68,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     public function create(ServerRequestInterface $request): Controller
     {
+        assert($request instanceof ServerRequest);
         $className = $this->getControllerClass($request);
         if ($className === null) {
             throw $this->missingController($request);
@@ -79,10 +79,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             throw $this->missingController($request);
         }
 
-        // If the controller has a container definition
-        // add the request as a service.
+        // Get the controller from the container if defined.
+        // The request is in the container by default.
         if ($this->container->has($className)) {
-            $this->container->add(ServerRequest::class, $request);
             $controller = $this->container->get($className);
         } else {
             $controller = $reflection->newInstance($request);
@@ -94,13 +93,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param mixed $controller The controller to invoke.
+     * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
-     * @psalm-param \Cake\Controller\Controller $controller
      */
-    public function invoke($controller): ResponseInterface
+    public function invoke(mixed $controller): ResponseInterface
     {
         $this->controller = $controller;
 
@@ -124,12 +122,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        assert($request instanceof ServerRequest);
         $controller = $this->controller;
-        /** @psalm-suppress ArgumentTypeCoercion */
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();
-        if ($result instanceof ResponseInterface) {
+        if ($result !== null) {
             return $result;
         }
 
@@ -141,7 +139,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
-        if ($result instanceof ResponseInterface) {
+        if ($result !== null) {
             return $result;
         }
 
@@ -157,66 +155,128 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      */
     protected function getActionArgs(Closure $action, array $passedParams): array
     {
-        $args = [];
-        $reflection = new ReflectionFunction($action);
-
-        foreach ($reflection->getParameters() as $i => $parameter) {
-            $position = $parameter->getPosition();
-            $hasDefault = $parameter->isDefaultValueAvailable();
-
-            // If there is no type we can't look in the container
-            // assume the parameter is a passed param
+        $resolved = [];
+        $function = new ReflectionFunction($action);
+        foreach ($function->getParameters() as $parameter) {
             $type = $parameter->getType();
-            if (!$type) {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
+            if ($type && !$type instanceof ReflectionNamedType) {
+                // Only single types are supported
+                throw new InvalidParameterException([
+                    'template' => 'unsupported_type',
+                    'parameter' => $parameter->getName(),
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
+            }
+
+            // Check for dependency injection for classes
+            if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+                $typeName = $type->getName();
+                if ($this->container->has($typeName)) {
+                    $resolved[] = $this->container->get($typeName);
+                    continue;
                 }
+
+                // Use passedParams as a source of typed dependencies.
+                // The accepted types for passedParams was never defined and userland code relies on that.
+                if ($passedParams && is_object($passedParams[0]) && $passedParams[0] instanceof $typeName) {
+                    $resolved[] = array_shift($passedParams);
+                    continue;
+                }
+
+                // Add default value if provided
+                // Do not allow positional arguments for classes
+                if ($parameter->isDefaultValueAvailable()) {
+                    $resolved[] = $parameter->getDefaultValue();
+                    continue;
+                }
+
+                throw new InvalidParameterException([
+                    'template' => 'missing_dependency',
+                    'parameter' => $parameter->getName(),
+                    'type' => $typeName,
+                    'controller' => $this->controller->getName(),
+                    'action' => $this->controller->getRequest()->getParam('action'),
+                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                ]);
+            }
+
+            // Use any passed params as positional arguments
+            if ($passedParams) {
+                $argument = array_shift($passedParams);
+                if (is_string($argument) && $type instanceof ReflectionNamedType) {
+                    $typedArgument = $this->coerceStringToType($argument, $type);
+
+                    if ($typedArgument === null) {
+                        throw new InvalidParameterException([
+                            'template' => 'failed_coercion',
+                            'passed' => $argument,
+                            'type' => $type->getName(),
+                            'parameter' => $parameter->getName(),
+                            'controller' => $this->controller->getName(),
+                            'action' => $this->controller->getRequest()->getParam('action'),
+                            'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                            'plugin' => $this->controller->getRequest()->getParam('plugin'),
+                        ]);
+                    }
+                    $argument = $typedArgument;
+                }
+
+                $resolved[] = $argument;
                 continue;
             }
 
-            $typeName = $type instanceof ReflectionNamedType ? ltrim($type->getName(), '?') : null;
-
-            // Primitive types are passed args as they can't be looked up in the container.
-            // We only handle strings currently.
-            if ($typeName === 'string') {
-                if (count($passedParams)) {
-                    $args[$position] = array_shift($passedParams);
-                } elseif ($hasDefault) {
-                    $args[$position] = $parameter->getDefaultValue();
-                }
+            // Add default value if provided
+            if ($parameter->isDefaultValueAvailable()) {
+                $resolved[] = $parameter->getDefaultValue();
                 continue;
             }
 
-            // Check the container and parameter default value.
-            if ($typeName && $this->container->has($typeName)) {
-                $args[$position] = $this->container->get($typeName);
-            } elseif ($hasDefault) {
-                $args[$position] = $parameter->getDefaultValue();
+            // Variadic parameter can have 0 arguments
+            if ($parameter->isVariadic()) {
+                continue;
             }
 
-            if (!array_key_exists($position, $args)) {
-                throw new InvalidArgumentException(
-                    "Could not resolve action argument `{$parameter->getName()}`. " .
-                    'It has no definition in the container, no passed parameter, and no default value.'
-                );
-            }
+            throw new InvalidParameterException([
+                'template' => 'missing_parameter',
+                'parameter' => $parameter->getName(),
+                'controller' => $this->controller->getName(),
+                'action' => $this->controller->getRequest()->getParam('action'),
+                'prefix' => $this->controller->getRequest()->getParam('prefix'),
+                'plugin' => $this->controller->getRequest()->getParam('plugin'),
+            ]);
         }
 
-        if (count($passedParams)) {
-            $args = array_merge($args, $passedParams);
-        }
+        return array_merge($resolved, $passedParams);
+    }
 
-        return $args;
+    /**
+     * Coerces string argument to primitive type.
+     *
+     * @param string $argument Argument to coerce
+     * @param \ReflectionNamedType $type Parameter type
+     * @return array|string|float|int|bool|null
+     */
+    protected function coerceStringToType(string $argument, ReflectionNamedType $type): array|string|float|int|bool|null
+    {
+        return match ($type->getName()) {
+            'string' => $argument,
+            'float' => is_numeric($argument) ? (float)$argument : null,
+            'int' => filter_var($argument, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
+            'bool' => $argument === '0' ? false : ($argument === '1' ? true : null),
+            'array' => $argument === '' ? [] : explode(',', $argument),
+            default => null,
+        };
     }
 
     /**
      * Determine the controller class name based on current request and controller param
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @return string|null
-     * @psalm-return class-string<\Cake\Controller\Controller>|null
+     * @return class-string<\Cake\Controller\Controller>|null
      */
     public function getControllerClass(ServerRequest $request): ?string
     {
@@ -228,29 +288,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
         if ($request->getParam('prefix')) {
             $prefix = $request->getParam('prefix');
-
-            $firstChar = substr($prefix, 0, 1);
-            if ($firstChar !== strtoupper($firstChar)) {
-                deprecationWarning(
-                    "The `{$prefix}` prefix did not start with an upper case character. " .
-                    'Routing prefixes should be defined as CamelCase values. ' .
-                    'Prefix inflection will be removed in 5.0'
-                );
-
-                if (strpos($prefix, '/') === false) {
-                    $namespace .= '/' . Inflector::camelize($prefix);
-                } else {
-                    $prefixes = array_map(
-                        function ($val) {
-                            return Inflector::camelize($val);
-                        },
-                        explode('/', $prefix)
-                    );
-                    $namespace .= '/' . implode('/', $prefixes);
-                }
-            } else {
-                $namespace .= '/' . $prefix;
-            }
+            $namespace .= '/' . $prefix;
         }
         $firstChar = substr($controller, 0, 1);
 
@@ -258,9 +296,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // controller names as they allow direct references to
         // be created.
         if (
-            strpos($controller, '\\') !== false ||
-            strpos($controller, '/') !== false ||
-            strpos($controller, '.') !== false ||
+            str_contains($controller, '\\') ||
+            str_contains($controller, '/') ||
+            str_contains($controller, '.') ||
             $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);
@@ -276,7 +314,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @param \Cake\Http\ServerRequest $request The request.
      * @return \Cake\Http\Exception\MissingControllerException
      */
-    protected function missingController(ServerRequest $request)
+    protected function missingController(ServerRequest $request): MissingControllerException
     {
         return new MissingControllerException([
             'class' => $request->getParam('controller'),

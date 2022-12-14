@@ -46,15 +46,15 @@ use ReflectionMethod;
  *
  * ### Callback methods
  *
- * Behaviors can listen to any events fired on a Table. By default
+ * Behaviors can listen to any events fired on a Table. By default,
  * CakePHP provides a number of lifecycle events your behaviors can
  * listen to:
  *
- * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, boolean $primary)`
  *   Fired before each find operation. By stopping the event and supplying a
  *   return value you can bypass the find operation entirely. Any changes done
  *   to the $query instance will be retained for the rest of the find. The
- *   $primary parameter indicates whether or not this is the root query,
+ *   $primary parameter indicates whether this is the root query,
  *   or an associated query.
  *
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
@@ -106,7 +106,7 @@ use ReflectionMethod;
  * methods should expect the following arguments:
  *
  * ```
- * findSlugged(Query $query, array $options)
+ * findSlugged(SelectQuery $query, array $options)
  * ```
  *
  * @see \Cake\ORM\Table::addBehavior()
@@ -121,7 +121,7 @@ class Behavior implements EventListenerInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Reflection method cache for behaviors.
@@ -129,18 +129,18 @@ class Behavior implements EventListenerInterface
      * Stores the reflected method + finder methods per class.
      * This prevents reflecting the same class multiple times in a single process.
      *
-     * @var array
+     * @var array<string, array>
      */
-    protected static $_reflectionCache = [];
+    protected static array $_reflectionCache = [];
 
     /**
      * Default configuration
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * Constructor
@@ -148,7 +148,7 @@ class Behavior implements EventListenerInterface
      * Merges config with the default and store in the config property
      *
      * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -173,24 +173,11 @@ class Behavior implements EventListenerInterface
      * Implement this method to avoid having to overwrite
      * the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this behavior.
+     * @param array<string, mixed> $config The configuration settings provided to this behavior.
      * @return void
      */
     public function initialize(array $config): void
     {
-    }
-
-    /**
-     * Get the table instance this behavior is bound to.
-     *
-     * @return \Cake\ORM\Table The bound table instance.
-     * @deprecated 4.2.0 Use table() instead.
-     */
-    public function getTable(): Table
-    {
-        deprecationWarning('Behavior::getTable() is deprecated. Use table() instead.');
-
-        return $this->table();
     }
 
     /**
@@ -207,8 +194,8 @@ class Behavior implements EventListenerInterface
      * Removes aliased methods that would otherwise be duplicated by userland configuration.
      *
      * @param string $key The key to filter.
-     * @param array $defaults The default method mappings.
-     * @param array $config The customized method mappings.
+     * @param array<string, mixed> $defaults The default method mappings.
+     * @param array<string, mixed> $config The customized method mappings.
      * @return array A de-duped list of config data.
      */
     protected function _resolveMethodAliases(string $key, array $defaults, array $config): array
@@ -255,7 +242,7 @@ class Behavior implements EventListenerInterface
             foreach ($this->_config[$key] as $method) {
                 if (!is_callable([$this, $method])) {
                     throw new CakeException(sprintf(
-                        'The method %s is not callable on class %s',
+                        'The method `%s` is not callable on class `%s`.',
                         $method,
                         static::class
                     ));
@@ -273,7 +260,7 @@ class Behavior implements EventListenerInterface
      * Override this method if you need to add non-conventional event listeners.
      * Or if you want your behavior to listen to non-standard events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -398,8 +385,8 @@ class Behavior implements EventListenerInterface
         $eventMethods = [];
         foreach ($events as $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
-                /** @var string $callable */
                 $callable = $binding['callable'];
+                assert(is_string($callable));
                 $binding = $callable;
             }
             $eventMethods[$binding] = true;
@@ -429,7 +416,7 @@ class Behavior implements EventListenerInterface
                 continue;
             }
 
-            if (substr($methodName, 0, 4) === 'find') {
+            if (str_starts_with($methodName, 'find')) {
                 $return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
             } else {
                 $return['methods'][$methodName] = $methodName;

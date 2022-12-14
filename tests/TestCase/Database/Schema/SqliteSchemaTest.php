@@ -30,6 +30,8 @@ use PDO;
  */
 class SqliteSchemaTest extends TestCase
 {
+    protected PDO $pdo;
+
     /**
      * Helper method for skipping tests that need a real connection.
      */
@@ -283,13 +285,19 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables();
 
+        $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('view_schema_articles', $result);
+
+        $resultNoViews = $schema->listTablesWithoutViews();
+        $this->assertIsArray($resultNoViews);
+        $this->assertContains('schema_authors', $resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
+        $this->assertNotContains('view_schema_articles', $resultNoViews);
     }
 
     /**
@@ -728,7 +736,7 @@ SQL;
                 'columns' => ['id'],
             ]);
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
+        $this->assertSame('"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT', $result);
 
         $result = $schema->constraintSql($table, 'primary');
         $this->assertSame('', $result, 'Integer primary keys are special in sqlite.');
@@ -1032,14 +1040,14 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->getConnection()->expects($this->once())
+        $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
         $statement->expects($this->once())
-            ->method('fetchAll')
+            ->method('fetch')
             ->will($this->returnValue(['1']));
         $statement->method('execute')->will($this->returnValue(true));
 
@@ -1063,16 +1071,15 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->getConnection()
-            ->expects($this->once())
+        $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
         $statement->expects($this->once())
-            ->method('fetchAll')
-            ->will($this->returnValue([]));
+            ->method('fetch')
+            ->will($this->returnValue(false));
         $statement->method('execute')->will($this->returnValue(true));
 
         $table = new TableSchema('articles');
@@ -1086,17 +1093,27 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Sqlite();
-        $mock = $this->getMockBuilder(PDO::class)
+        $this->_needsConnection();
+
+        $this->pdo = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote', 'prepare'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
+        $this->pdo->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Sqlite::class)
+            ->onlyMethods(['createPdo'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($this->pdo);
+
+        $driver->connect();
 
         return $driver;
     }

@@ -16,9 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
 use TestApp\Config\TestInstanceConfig;
 
@@ -263,8 +264,8 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testSetClobber(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot set a.nested.value');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Cannot set `a.nested.value`');
         $this->object->setConfig(['a.nested.value' => 'not possible'], null, false);
         $this->object->getConfig();
     }
@@ -397,7 +398,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testReadOnlyConfig(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('This Instance is readonly');
         $object = new ReadOnlyTestInstanceConfig();
 
@@ -505,8 +506,8 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteClobber(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot unset `a.nested.value.whoops`');
         $this->object->setConfig('a.nested.value.whoops', null);
     }
 }

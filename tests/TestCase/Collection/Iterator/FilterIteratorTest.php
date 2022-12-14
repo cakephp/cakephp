@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\TestSuite\TestCase;
 
@@ -29,7 +30,7 @@ class FilterIteratorTest extends TestCase
      */
     public function testFilter(): void
     {
-        $items = new \ArrayIterator([1, 2, 3]);
+        $items = new ArrayIterator([1, 2, 3]);
         $callable = function ($value, $key, $itemArg) use ($items) {
             $this->assertSame($items, $itemArg);
             $this->assertContains($value, $items);

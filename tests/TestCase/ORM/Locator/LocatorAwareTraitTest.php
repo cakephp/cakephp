@@ -18,7 +18,11 @@ namespace Cake\Test\TestCase\ORM\Locator;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\PaginatorPostsTable;
+use TestApp\Stub\LocatorAwareStub;
+use UnexpectedValueException;
 
 /**
  * LocatorAwareTrait test case
@@ -58,5 +62,42 @@ class LocatorAwareTraitTest extends TestCase
         $this->subject->setTableLocator($newLocator);
         $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);
+    }
+
+    public function testFetchTable(): void
+    {
+        $stub = new LocatorAwareStub('Articles');
+
+        $result = $stub->fetchTable();
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->fetchTable('Comments');
+        $this->assertInstanceOf(Table::class, $result);
+
+        $result = $stub->fetchTable(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
+    }
+
+    public function testfetchTableException()
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+        );
+
+        $stub = new LocatorAwareStub();
+        $stub->fetchTable();
+    }
+
+    public function testfetchTableExceptionForEmptyString()
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+        );
+
+        $stub = new LocatorAwareStub('');
+        $stub->fetchTable();
     }
 }

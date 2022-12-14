@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
+use ArrayAccess;
 use Closure;
 use Traversable;
 
@@ -32,23 +33,25 @@ trait ExtractTrait
      * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
-     * @return callable
+     * @return \Closure
      */
-    protected function _propertyExtractor($path): callable
+    protected function _propertyExtractor(callable|string $path): Closure
     {
         if (!is_string($path)) {
-            return $path;
+            return $path(...);
         }
 
         $parts = explode('.', $path);
 
-        if (strpos($path, '{*}') !== false) {
-            return function ($element) use ($parts) {
-                return $this->_extract($element, $parts);
-            };
+        if (str_contains($path, '{*}')) {
+            return fn ($element) => $this->_extract($element, $parts);
         }
 
         return function ($element) use ($parts) {
+            if (!is_array($element) && !$element instanceof ArrayAccess) {
+                return null;
+            }
+
             return $this->_simpleExtract($element, $parts);
         };
     }
@@ -58,11 +61,11 @@ trait ExtractTrait
      * by iterating over the column names contained in $path.
      * It will return arrays for elements in represented with `{*}`
      *
-     * @param \ArrayAccess|array $data Data.
+     * @param \ArrayAccess<string|int, mixed>|array $data Data.
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _extract($data, array $parts)
+    protected function _extract(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         $collectionTransform = false;
@@ -104,11 +107,11 @@ trait ExtractTrait
      * Returns a column from $data that can be extracted
      * by iterating over the column names contained in $path
      *
-     * @param \ArrayAccess|array $data Data.
+     * @param \ArrayAccess<string|int, mixed>|array $data Data.
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _simpleExtract($data, array $parts)
+    protected function _simpleExtract(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         foreach ($parts as $column) {
@@ -123,7 +126,7 @@ trait ExtractTrait
     }
 
     /**
-     * Returns a callable that receives a value and will return whether or not
+     * Returns a callable that receives a value and will return whether
      * it matches certain condition.
      *
      * @param array $conditions A key-value list of conditions to match where the

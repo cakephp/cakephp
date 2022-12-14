@@ -24,7 +24,7 @@ class ConflictException extends HttpException
     /**
      * @inheritDoc
      */
-    protected $_defaultCode = 409;
+    protected int $_defaultCode = 409;
 
     /**
      * Constructor

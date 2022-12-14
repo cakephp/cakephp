@@ -17,16 +17,14 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\SqliteCompiler;
-use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
-use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -35,61 +33,60 @@ use PDO;
  */
 class Sqlite extends Driver
 {
-    use SqlDialectTrait;
     use TupleComparisonTranslatorTrait;
+
+    /**
+     * @inheritDoc
+     */
+    protected const STATEMENT_CLASS = SqliteStatement::class;
 
     /**
      * Base configuration settings for Sqlite driver
      *
      * - `mask` The mask used for created database
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'persistent' => false,
         'username' => null,
         'password' => null,
         'database' => ':memory:',
         'encoding' => 'utf8',
         'mask' => 0644,
+        'cache' => null,
+        'mode' => null,
         'flags' => [],
         'init' => [],
     ];
 
     /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\SqliteSchemaDialect|null
-     */
-    protected $_schemaDialect;
-
-    /**
-     * Whether or not the connected server supports window functions.
+     * Whether the connected server supports window functions.
      *
      * @var bool|null
      */
-    protected $_supportsWindowFunctions;
+    protected ?bool $_supportsWindowFunctions = null;
 
     /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '"';
+    protected string $_startQuote = '"';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = '"';
+    protected string $_endQuote = '"';
 
     /**
      * Mapping of date parts.
      *
-     * @var array
+     * @var array<string, string>
      */
-    protected $_dateParts = [
+    protected array $_dateParts = [
         'day' => 'd',
         'hour' => 'H',
         'month' => 'm',
@@ -100,14 +97,22 @@ class Sqlite extends Driver
     ];
 
     /**
-     * Establishes a connection to the database server
+     * Mapping of feature to db server version for feature availability checks.
      *
-     * @return bool true on success
+     * @var array<string, string>
      */
-    public function connect(): bool
+    protected array $featureVersions = [
+        'cte' => '3.8.3',
+        'window' => '3.28.0',
+    ];
+
+    /**
+     * @inheritDoc
+     */
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->pdo)) {
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -115,19 +120,34 @@ class Sqlite extends Driver
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        if (!is_string($config['database']) || !strlen($config['database'])) {
+        if (!is_string($config['database']) || $config['database'] === '') {
             $name = $config['name'] ?? 'unknown';
             throw new InvalidArgumentException(
                 "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."
             );
         }
 
-        $databaseExists = file_exists($config['database']);
+        $chmodFile = false;
+        if ($config['database'] !== ':memory:' && $config['mode'] !== 'memory') {
+            $chmodFile = !file_exists($config['database']);
+        }
 
-        $dsn = "sqlite:{$config['database']}";
-        $this->_connect($dsn, $config);
+        $params = [];
+        if ($config['cache']) {
+            $params[] = 'cache=' . $config['cache'];
+        }
+        if ($config['mode']) {
+            $params[] = 'mode=' . $config['mode'];
+        }
 
-        if (!$databaseExists && $config['database'] !== ':memory:') {
+        if ($params) {
+            $dsn = 'sqlite:file:' . $config['database'] . '?' . implode('&', $params);
+        } else {
+            $dsn = 'sqlite:' . $config['database'];
+        }
+
+        $this->pdo = $this->createPdo($dsn, $config);
+        if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);
             // phpcs:enable
@@ -135,11 +155,9 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->getConnection()->exec($command);
+                $this->pdo->exec($command);
             }
         }
-
-        return true;
     }
 
     /**
@@ -153,31 +171,9 @@ class Sqlite extends Driver
     }
 
     /**
-     * Prepares a sql statement to be executed
+     * Get the SQL for disabling foreign keys.
      *
-     * @param \Cake\Database\Query|string $query The query to prepare.
-     * @return \Cake\Database\StatementInterface
-     */
-    public function prepare($query): StatementInterface
-    {
-        $this->connect();
-        $isObject = $query instanceof Query;
-        /**
-         * @psalm-suppress PossiblyInvalidMethodCall
-         * @psalm-suppress PossiblyInvalidArgument
-         */
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
-        $result = new SqliteStatement(new PDOStatement($statement, $this), $this);
-        /** @psalm-suppress PossiblyInvalidMethodCall */
-        if ($isObject && $query->isBufferedResultsEnabled() === false) {
-            $result->bufferResults(false);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
+     * @return string
      */
     public function disableForeignKeySQL(): string
     {
@@ -195,9 +191,24 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
-        return false;
+        return match ($feature) {
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => true,
+
+            DriverFeatureEnum::JSON => false,
+
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::WINDOW => version_compare(
+                $this->version(),
+                $this->featureVersions[$feature->value],
+                '>='
+            ),
+
+            default => false,
+        };
     }
 
     /**
@@ -205,11 +216,11 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new SqliteSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new SqliteSchemaDialect($this);
     }
 
     /**
@@ -302,33 +313,5 @@ class Sqlite extends Driver
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
-    }
-
-    /**
-     * Returns true if the server supports common table expressions.
-     *
-     * @return bool
-     */
-    public function supportsCTEs(): bool
-    {
-        if ($this->supportsCTEs === null) {
-            $this->supportsCTEs = version_compare($this->version(), '3.8.3', '>=');
-        }
-
-        return $this->supportsCTEs;
-    }
-
-    /**
-     * Returns true if the connected server supports window functions.
-     *
-     * @return bool
-     */
-    public function supportsWindowFunctions(): bool
-    {
-        if ($this->_supportsWindowFunctions === null) {
-            $this->_supportsWindowFunctions = version_compare($this->version(), '3.25.0', '>=');
-        }
-
-        return $this->_supportsWindowFunctions;
     }
 }

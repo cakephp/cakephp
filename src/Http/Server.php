@@ -23,7 +23,6 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
-use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -37,12 +36,12 @@ class Server implements EventDispatcherInterface
     /**
      * @var \Cake\Core\HttpApplicationInterface
      */
-    protected $app;
+    protected HttpApplicationInterface $app;
 
     /**
      * @var \Cake\Http\Runner
      */
-    protected $runner;
+    protected Runner $runner;
 
     /**
      * Constructor
@@ -68,7 +67,7 @@ class Server implements EventDispatcherInterface
      * - Run the middleware queue including the application.
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue MiddlewareQueue or null.
+     * @param \Cake\Http\MiddlewareQueue|null $middlewareQueue MiddlewareQueue or null.
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
@@ -116,11 +115,11 @@ class Server implements EventDispatcherInterface
      * Emit the response using the PHP SAPI.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @param \Laminas\HttpHandlerRunner\Emitter\EmitterInterface|null $emitter The emitter to use.
+     * @param \Cake\Http\ResponseEmitter|null $emitter The emitter to use.
      *   When null, a SAPI Stream Emitter will be used.
      * @return void
      */
-    public function emit(ResponseInterface $response, ?EmitterInterface $emitter = null): void
+    public function emit(ResponseInterface $response, ?ResponseEmitter $emitter = null): void
     {
         if (!$emitter) {
             $emitter = new ResponseEmitter();

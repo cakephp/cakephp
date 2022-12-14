@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -26,7 +25,6 @@ use Closure;
 use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Http\Message\UploadedFileInterface;
-use Serializable;
 use SimpleXMLElement;
 
 /**
@@ -35,7 +33,7 @@ use SimpleXMLElement;
  * This class is used for sending Internet Message Format based
  * on the standard outlined in https://www.rfc-editor.org/rfc/rfc2822.txt
  */
-class Message implements JsonSerializable, Serializable
+class Message implements JsonSerializable
 {
     /**
      * Line length - no should more - RFC 2822 - 2.1.1
@@ -84,35 +82,35 @@ class Message implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $to = [];
+    protected array $to = [];
 
     /**
      * The mail which the email is sent from
      *
      * @var array
      */
-    protected $from = [];
+    protected array $from = [];
 
     /**
      * The sender email
      *
      * @var array
      */
-    protected $sender = [];
+    protected array $sender = [];
 
     /**
      * List of email(s) that the recipient will reply to
      *
      * @var array
      */
-    protected $replyTo = [];
+    protected array $replyTo = [];
 
     /**
      * The read receipt email
      *
      * @var array
      */
-    protected $readReceipt = [];
+    protected array $readReceipt = [];
 
     /**
      * The mail that will be used in case of any errors like
@@ -122,7 +120,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $returnPath = [];
+    protected array $returnPath = [];
 
     /**
      * Carbon Copy
@@ -132,7 +130,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $cc = [];
+    protected array $cc = [];
 
     /**
      * Blind Carbon Copy
@@ -142,14 +140,14 @@ class Message implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $bcc = [];
+    protected array $bcc = [];
 
     /**
      * Message ID
      *
      * @var string|bool
      */
-    protected $messageId = true;
+    protected string|bool $messageId = true;
 
     /**
      * Domain for messageId generation.
@@ -157,14 +155,14 @@ class Message implements JsonSerializable, Serializable
      *
      * @var string
      */
-    protected $domain = '';
+    protected string $domain = '';
 
     /**
      * The subject of the email
      *
      * @var string
      */
-    protected $subject = '';
+    protected string $subject = '';
 
     /**
      * Associative array of a user defined headers
@@ -172,49 +170,49 @@ class Message implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * Text message
      *
      * @var string
      */
-    protected $textMessage = '';
+    protected string $textMessage = '';
 
     /**
      * Html message
      *
      * @var string
      */
-    protected $htmlMessage = '';
+    protected string $htmlMessage = '';
 
     /**
      * Final message to send
      *
      * @var array
      */
-    protected $message = [];
+    protected array $message = [];
 
     /**
      * Available formats to be sent.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
+    protected array $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
     /**
      * What format should the email be sent in
      *
      * @var string
      */
-    protected $emailFormat = self::MESSAGE_TEXT;
+    protected string $emailFormat = self::MESSAGE_TEXT;
 
     /**
      * Charset the email body is sent in
      *
      * @var string
      */
-    protected $charset = 'utf-8';
+    protected string $charset = 'utf-8';
 
     /**
      * Charset the email header is sent in
@@ -222,7 +220,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    protected $headerCharset;
+    protected ?string $headerCharset = null;
 
     /**
      * The email transfer encoding used.
@@ -230,14 +228,14 @@ class Message implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    protected $transferEncoding;
+    protected ?string $transferEncoding = null;
 
     /**
      * Available encoding to be set for transfer.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $transferEncodingAvailable = [
+    protected array $transferEncodingAvailable = [
         '7bit',
         '8bit',
         'base64',
@@ -250,44 +248,44 @@ class Message implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    protected $appCharset;
+    protected ?string $appCharset = null;
 
     /**
      * List of files that should be attached to the email.
      *
      * Only absolute paths
      *
-     * @var array
+     * @var array<string, array>
      */
-    protected $attachments = [];
+    protected array $attachments = [];
 
     /**
      * If set, boundary to use for multipart mime messages
      *
      * @var string|null
      */
-    protected $boundary;
+    protected ?string $boundary = null;
 
     /**
      * Contains the optional priority of the email.
      *
      * @var int|null
      */
-    protected $priority;
+    protected ?int $priority = null;
 
     /**
      * 8Bit character sets
      *
-     * @var array
+     * @var array<string>
      */
-    protected $charset8bit = ['UTF-8', 'SHIFT_JIS'];
+    protected array $charset8bit = ['UTF-8', 'SHIFT_JIS'];
 
     /**
      * Define Content-Type charset name
      *
-     * @var array
+     * @var array<string, string>
      */
-    protected $contentTypeCharset = [
+    protected array $contentTypeCharset = [
         'ISO-2022-JP-MS' => 'ISO-2022-JP',
     ];
 
@@ -299,12 +297,12 @@ class Message implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    protected $emailPattern = self::EMAIL_PATTERN;
+    protected ?string $emailPattern = self::EMAIL_PATTERN;
 
     /**
      * Constructor
      *
-     * @param array|null $config Array of configs, or string to load configs from app.php
+     * @param array<string,mixed>|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct(?array $config = null)
     {
@@ -331,7 +329,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setFrom($email, ?string $name = null)
+    public function setFrom(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('from', $email, $name, 'From requires only 1 email address.');
     }
@@ -356,7 +354,7 @@ class Message implements JsonSerializable, Serializable
      * @throws \InvalidArgumentException
      * @link https://tools.ietf.org/html/rfc2822.html#section-3.6.2
      */
-    public function setSender($email, ?string $name = null)
+    public function setSender(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('sender', $email, $name, 'Sender requires only 1 email address.');
     }
@@ -381,7 +379,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReplyTo($email, ?string $name = null)
+    public function setReplyTo(array|string $email, ?string $name = null)
     {
         return $this->setEmail('replyTo', $email, $name);
     }
@@ -404,7 +402,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addReplyTo($email, ?string $name = null)
+    public function addReplyTo(array|string $email, ?string $name = null)
     {
         return $this->addEmail('replyTo', $email, $name);
     }
@@ -418,7 +416,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReadReceipt($email, ?string $name = null)
+    public function setReadReceipt(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle(
             'readReceipt',
@@ -447,7 +445,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setReturnPath($email, ?string $name = null)
+    public function setReturnPath(array|string $email, ?string $name = null)
     {
         return $this->setEmailSingle('returnPath', $email, $name, 'Return-Path requires only 1 email address.');
     }
@@ -470,7 +468,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setTo($email, ?string $name = null)
+    public function setTo(array|string $email, ?string $name = null)
     {
         return $this->setEmail('to', $email, $name);
     }
@@ -493,7 +491,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addTo($email, ?string $name = null)
+    public function addTo(array|string $email, ?string $name = null)
     {
         return $this->addEmail('to', $email, $name);
     }
@@ -506,7 +504,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setCc($email, ?string $name = null)
+    public function setCc(array|string $email, ?string $name = null)
     {
         return $this->setEmail('cc', $email, $name);
     }
@@ -529,7 +527,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addCc($email, ?string $name = null)
+    public function addCc(array|string $email, ?string $name = null)
     {
         return $this->addEmail('cc', $email, $name);
     }
@@ -542,7 +540,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function setBcc($email, ?string $name = null)
+    public function setBcc(array|string $email, ?string $name = null)
     {
         return $this->setEmail('bcc', $email, $name);
     }
@@ -565,7 +563,7 @@ class Message implements JsonSerializable, Serializable
      * @param string|null $name Name
      * @return $this
      */
-    public function addBcc($email, ?string $name = null)
+    public function addBcc(array|string $email, ?string $name = null)
     {
         return $this->addEmail('bcc', $email, $name);
     }
@@ -686,7 +684,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmail(string $varName, $email, ?string $name)
+    protected function setEmail(string $varName, array|string $email, ?string $name)
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
@@ -743,7 +741,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmailSingle(string $varName, $email, ?string $name, string $throwMessage)
+    protected function setEmailSingle(string $varName, array|string $email, ?string $name, string $throwMessage)
     {
         if ($email === []) {
             $this->{$varName} = $email;
@@ -771,13 +769,11 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function addEmail(string $varName, $email, ?string $name)
+    protected function addEmail(string $varName, array|string $email, ?string $name)
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
-            if ($name === null) {
-                $name = $email;
-            }
+            $name ??= $email;
             $this->{$varName}[$email] = $name;
 
             return $this;
@@ -955,7 +951,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
-     * @param \Closure $callback Callback to run each header value through before stringifying.
+     * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
      * @see Message::getHeaders()
      */
@@ -1060,7 +1056,7 @@ class Message implements JsonSerializable, Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setMessageId($message)
+    public function setMessageId(string|bool $message)
     {
         if (is_bool($message)) {
             $this->messageId = $message;
@@ -1081,7 +1077,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string|bool
      */
-    public function getMessageId()
+    public function getMessageId(): string|bool
     {
         return $this->messageId;
     }
@@ -1151,7 +1147,7 @@ class Message implements JsonSerializable, Serializable
      * ```
      *
      * The `contentId` key allows you to specify an inline attachment. In your email text, you
-     * can use `<img src="cid:abc123"/>` to display the image inline.
+     * can use `<img src="cid:abc123">` to display the image inline.
      *
      * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
      * attachment compatibility with outlook email clients.
@@ -1178,8 +1174,8 @@ class Message implements JsonSerializable, Serializable
             } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
                 $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
                 if (is_int($name)) {
-                    /** @var string $name */
                     $name = $fileInfo['file']->getClientFilename();
+                    assert(is_string($name));
                 }
             } elseif (is_string($fileInfo['file'])) {
                 $fileName = $fileInfo['file'];
@@ -1217,7 +1213,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Gets attachments to the email message.
      *
-     * @return array Array of attachments.
+     * @return array<string, array> Array of attachments.
      */
     public function getAttachments(): array
     {
@@ -1246,7 +1242,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return array
      */
-    public function getBody()
+    public function getBody(): array
     {
         if (empty($this->message)) {
             $this->message = $this->generateMessage();
@@ -1303,8 +1299,7 @@ class Message implements JsonSerializable, Serializable
         $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
-        /** @var string $boundary */
-        $boundary = $this->boundary;
+        $boundary = $this->boundary ?? '';
         $relBoundary = $textBoundary = $boundary;
 
         if ($hasInlineAttachments) {
@@ -1387,10 +1382,7 @@ class Message implements JsonSerializable, Serializable
      */
     protected function attachFiles(?string $boundary = null): array
     {
-        if ($boundary === null) {
-            /** @var string $boundary */
-            $boundary = $this->boundary;
-        }
+        $boundary ??= $this->boundary;
 
         $msg = [];
         foreach ($this->attachments as $filename => $fileInfo) {
@@ -1427,10 +1419,7 @@ class Message implements JsonSerializable, Serializable
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {
-        if ($boundary === null) {
-            /** @var string $boundary */
-            $boundary = $this->boundary;
-        }
+        $boundary ??= $this->boundary;
 
         $msg = [];
         foreach ($this->getAttachments() as $filename => $fileInfo) {
@@ -1478,7 +1467,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Sets the configuration for this instance.
      *
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      * @return $this
      */
     public function setConfig(array $config)
@@ -1504,7 +1493,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Set message body.
      *
-     * @param array $content Content array with keys "text" and/or "html" with
+     * @param array<string, string> $content Content array with keys "text" and/or "html" with
      *   content string of respective type.
      * @return $this
      */
@@ -1565,7 +1554,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getBodyText()
+    public function getBodyText(): string
     {
         return $this->textMessage;
     }
@@ -1575,7 +1564,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getBodyHtml()
+    public function getBodyHtml(): string
     {
         return $this->htmlMessage;
     }
@@ -1606,7 +1595,7 @@ class Message implements JsonSerializable, Serializable
      *
      * @param string|null $message Message to wrap
      * @param int $wrapLength The line length
-     * @return array Wrapped message
+     * @return array<string> Wrapped message
      */
     protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {
@@ -1754,7 +1743,6 @@ class Message implements JsonSerializable, Serializable
             return $text;
         }
 
-        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->appCharset);
         $return = mb_encode_mimeheader($text, $this->getHeaderCharset(), 'B');
@@ -1775,7 +1763,6 @@ class Message implements JsonSerializable, Serializable
             return $text;
         }
 
-        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->appCharset);
         $return = mb_decode_mimeheader($text);
@@ -1791,7 +1778,7 @@ class Message implements JsonSerializable, Serializable
      *   or UploadedFileInterface instance.
      * @return string File contents in base64 encoding
      */
-    protected function readFile($file): string
+    protected function readFile(UploadedFileInterface|string $file): string
     {
         if (is_string($file)) {
             $content = (string)file_get_contents($file);
@@ -1876,8 +1863,8 @@ class Message implements JsonSerializable, Serializable
     /**
      * Configures an email instance object from serialized config.
      *
-     * @param array $config Email configuration array.
-     * @return $this Configured email instance.
+     * @param array<string, mixed> $config Email configuration array.
+     * @return $this
      */
     public function createFromArray(array $config)
     {
@@ -1886,18 +1873,6 @@ class Message implements JsonSerializable, Serializable
         }
 
         return $this;
-    }
-
-    /**
-     * Serializes the Email object.
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        $array = $this->__serialize();
-
-        return serialize($array);
     }
 
     /**
@@ -1914,23 +1889,8 @@ class Message implements JsonSerializable, Serializable
             }
         });
 
+        /** @psalm-var array */
         return $array;
-    }
-
-    /**
-     * Unserializes the Message object.
-     *
-     * @param string $data Serialized string.
-     * @return void
-     */
-    public function unserialize($data)
-    {
-        $array = unserialize($data);
-        if (!is_array($array)) {
-            throw new CakeException('Unable to unserialize message.');
-        }
-
-        $this->createFromArray($array);
     }
 
     /**

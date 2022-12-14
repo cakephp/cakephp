@@ -20,7 +20,6 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\Utility\Hash;
@@ -30,9 +29,9 @@ use TestApp\Model\Entity\TranslateBakedArticle;
 /**
  * TranslateBehavior test case
  */
-class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
+class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 {
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles',
         'core.Authors',
         'core.Comments',
@@ -55,9 +54,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      */
     public static function setUpBeforeClass(): void
     {
-        TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
-
         parent::setUpBeforeClass();
+
+        TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
     }
 
     /**
@@ -65,9 +64,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      */
     public static function tearDownAfterClass(): void
     {
-        TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
-
         parent::tearDownAfterClass();
+
+        TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
     }
 
     /**
@@ -380,7 +379,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
-        $query = $table->find()->select(['id'])->order(['title' => 'desc']);
+        $query = $table->find()->select(['id'])->orderBy(['title' => 'desc']);
         $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
@@ -524,21 +523,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     /**
      * testNoAmbiguousOrder
      */
-    public function testNoAmbiguousOrder(): void
+    public function testNoAmbiguousOrderBy(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
         $article = $table->find('all')
-            ->order(['id' => 'desc'])
+            ->orderBy(['id' => 'desc'])
             ->enableHydration(false)
             ->toArray();
 
         $this->assertSame([3, 2, 1], Hash::extract($article, '{n}.id'));
 
         $article = $table->find('all')
-            ->order(['title' => 'asc'])
+            ->orderBy(['title' => 'asc'])
             ->enableHydration(false)
             ->toArray();
 
@@ -852,9 +851,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testSaveNewRecordWithTranslatesField(): void
     {
         $table = $this->getTableLocator()->get('Articles');
+        $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(TranslateArticle::class);
 

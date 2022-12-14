@@ -1,0 +1,10 @@
+parameters:
+	level: 1
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- bootstrap.php
+	paths:
+		- TestCase/
+
+	excludePaths:
+		- TestCase/Routing/RouterTest.php

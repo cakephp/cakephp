@@ -36,23 +36,35 @@ class HasOne extends Association
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
     ];
 
     /**
-     * Gets the name of the field representing the foreign key to the target table.
-     *
-     * @return array<string>|string
+     * @inheritDoc
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string|false
     {
-        if ($this->_foreignKey === null) {
+        if (!isset($this->_foreignKey)) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());
         }
 
         return $this->_foreignKey;
+    }
+
+    /**
+     * Sets the name of the field representing the foreign key to the target table.
+     *
+     * @param array<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
+     *  no join conditions will be generated automatically.
+     * @return $this
+     */
+    public function setForeignKey(array|string|false $key)
+    {
+        $this->_foreignKey = $key;
+
+        return $this;
     }
 
     /**
@@ -68,7 +80,7 @@ class HasOne extends Association
     }
 
     /**
-     * Returns whether or not the passed table is the owning side for this
+     * Returns whether the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
      *
@@ -97,18 +109,19 @@ class HasOne extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */
-    public function saveAssociated(EntityInterface $entity, array $options = [])
+    public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
+        /** @psalm-suppress InvalidScalarArgument */
         $properties = array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
@@ -137,7 +150,7 @@ class HasOne extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'finder' => [$this, 'find'],
+            'finder' => $this->find(...),
         ]);
 
         return $loader->buildEagerLoader($options);

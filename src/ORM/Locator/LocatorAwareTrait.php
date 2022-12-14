@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\ORM\Locator;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\ORM\Table;
+use UnexpectedValueException;
 
 /**
  * Contains method for setting and accessing LocatorInterface instance
@@ -24,11 +26,18 @@ use Cake\Datasource\FactoryLocator;
 trait LocatorAwareTrait
 {
     /**
+     * This object's default table alias.
+     *
+     * @var string|null
+     */
+    protected ?string $defaultTable = null;
+
+    /**
      * Table locator instance
      *
      * @var \Cake\ORM\Locator\LocatorInterface|null
      */
-    protected $_tableLocator;
+    protected ?LocatorInterface $_tableLocator = null;
 
     /**
      * Sets the table locator.
@@ -50,12 +59,34 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        if ($this->_tableLocator === null) {
-            /** @psalm-suppress InvalidPropertyAssignmentValue */
-            $this->_tableLocator = FactoryLocator::get('Table');
+        /**
+         * @var \Cake\ORM\Locator\LocatorInterface
+         * @psalm-suppress PropertyTypeCoercion
+         */
+        return $this->_tableLocator ??= FactoryLocator::get('Table');
+    }
+
+    /**
+     * Convenience method to get a table instance.
+     *
+     * @param string|null $alias The alias name you want to get. Should be in CamelCase format.
+     *  If `null` then the value of $defaultTable property is used.
+     * @param array<string, mixed> $options The options you want to build the table with.
+     *   If a table has already been loaded the registry options will be ignored.
+     * @return \Cake\ORM\Table
+     * @throws \Cake\Core\Exception\CakeException If `$alias` argument and `$defaultTable` property both are `null`.
+     * @see \Cake\ORM\TableLocator::get()
+     * @since 4.3.0
+     */
+    public function fetchTable(?string $alias = null, array $options = []): Table
+    {
+        $alias = $alias ?? $this->defaultTable;
+        if (empty($alias)) {
+            throw new UnexpectedValueException(
+                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+            );
         }
 
-        /** @var \Cake\ORM\Locator\LocatorInterface */
-        return $this->_tableLocator;
+        return $this->getTableLocator()->get($alias, $options);
     }
 }

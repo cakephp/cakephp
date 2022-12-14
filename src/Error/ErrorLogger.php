@@ -19,6 +19,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -33,21 +34,18 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * Default configuration values.
      *
-     * - `skipLog` List of exceptions to skip logging. Exceptions that
-     *   extend one of the listed exceptions will also not be logged.
      * - `trace` Should error logs include stack traces?
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
-        'skipLog' => [],
+    protected array $_defaultConfig = [
         'trace' => false,
     ];
 
     /**
      * Constructor
      *
-     * @param array $config Config array.
+     * @param array<string, mixed> $config Config array.
      */
     public function __construct(array $config = [])
     {
@@ -57,38 +55,39 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
-    public function logMessage($level, string $message, array $context = []): bool
+    public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
-        if (!empty($context['request'])) {
-            $message .= $this->getRequestContext($context['request']);
+        $message = $error->getMessage();
+        if ($request) {
+            $message .= $this->getRequestContext($request);
         }
-        if (!empty($context['trace'])) {
-            $message .= "\nTrace:\n" . $context['trace'] . "\n";
+        if ($includeTrace) {
+            $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
         }
+        $logMap = [
+            'strict' => LOG_NOTICE,
+            'deprecated' => LOG_NOTICE,
+        ];
+        $level = $error->getLabel();
+        $level = $logMap[$level] ?? $level;
 
-        return Log::write($level, $message);
+        Log::write($level, $message);
     }
 
     /**
      * @inheritDoc
      */
-    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
-    {
-        foreach ($this->getConfig('skipLog') as $class) {
-            if ($exception instanceof $class) {
-                return false;
-            }
-        }
-
-        $message = $this->getMessage($exception);
+    public function logException(
+        Throwable $exception,
+        ?ServerRequestInterface $request = null,
+        bool $includeTrace = false
+    ): void {
+        $message = $this->getMessage($exception, false, $includeTrace);
 
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
         }
-
-        $message .= "\n\n";
-
-        return Log::error($message);
+        Log::error($message);
     }
 
     /**
@@ -96,14 +95,15 @@ class ErrorLogger implements ErrorLoggerInterface
      *
      * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
+     * @param bool $includeTrace Whether or not to include a stack trace.
      * @return string Error message
      */
-    protected function getMessage(Throwable $exception, bool $isPrevious = false): string
+    protected function getMessage(Throwable $exception, bool $isPrevious = false, bool $includeTrace = false): string
     {
         $message = sprintf(
             '%s[%s] %s in %s on line %s',
             $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
+            $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine()
@@ -117,9 +117,9 @@ class ErrorLogger implements ErrorLoggerInterface
             }
         }
 
-        if ($this->getConfig('trace')) {
-            /** @var array $trace */
+        if ($includeTrace) {
             $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {
                 if (is_string($line)) {
@@ -132,7 +132,7 @@ class ErrorLogger implements ErrorLoggerInterface
 
         $previous = $exception->getPrevious();
         if ($previous) {
-            $message .= $this->getMessage($previous, true);
+            $message .= $this->getMessage($previous, true, $includeTrace);
         }
 
         return $message;
@@ -153,7 +153,7 @@ class ErrorLogger implements ErrorLoggerInterface
             $message .= "\nReferer URL: " . $referer;
         }
 
-        if (method_exists($request, 'clientIp')) {
+        if ($request instanceof ServerRequest) {
             $clientIp = $request->clientIp();
             if ($clientIp && $clientIp !== '::1') {
                 $message .= "\nClient IP: " . $clientIp;

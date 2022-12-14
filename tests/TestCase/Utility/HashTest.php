@@ -17,10 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 
 /**
  * HashTest
@@ -401,25 +402,6 @@ class HashTest extends TestCase
         ];
         $result = Hash::get($data, '');
         $this->assertSame($data[''], $result);
-    }
-
-    /**
-     * Test get() for invalid $data type
-     */
-    public function testGetInvalidData(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
-        Hash::get('string', 'path');
-    }
-
-    /**
-     * Test get() with an invalid path
-     */
-    public function testGetInvalidPath(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        Hash::get(['one' => 'two'], true);
     }
 
     /**
@@ -907,16 +889,6 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test passing invalid argument type
-     */
-    public function testExtractInvalidArgument(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
-        Hash::extract('foo', '');
-    }
-
-    /**
      * Test the extraction of a single value filtered by another field.
      *
      * @dataProvider articleDataSets
@@ -1387,7 +1359,7 @@ class HashTest extends TestCase
             ['value' => 0],
             ['value' => 3],
             ['value' => 'string-value'],
-            ['value' => new FrozenTime('2010-01-05 01:23:45')],
+            ['value' => new DateTime('2010-01-05 01:23:45')],
         ];
 
         // check _matches does not work as `0 == 'string-value'`
@@ -1482,7 +1454,7 @@ class HashTest extends TestCase
                 'array' => new ArrayObject([
                     'foo' => 'bar',
                 ]),
-                'created' => new FrozenTime('2010-01-05'),
+                'created' => new DateTime('2010-01-05'),
             ],
         ];
 
@@ -1719,8 +1691,7 @@ class HashTest extends TestCase
     public function testSortLocale(): void
     {
         // get the current locale
-        $oldLocale = setlocale(LC_COLLATE, '0');
-
+        $original = setlocale(LC_COLLATE, '0');
         $updated = setlocale(LC_COLLATE, 'de_DE.utf8');
         $this->skipIf($updated === false, 'Could not set locale to de_DE.utf8, skipping test.');
 
@@ -1738,10 +1709,9 @@ class HashTest extends TestCase
             ['Item' => ['entry' => 'Ostfriesland']],
             ['Item' => ['entry' => 'Übergabe']],
         ];
-        $this->assertSame($expected, $result);
 
-        // change to the original locale
-        setlocale(LC_COLLATE, $oldLocale);
+        setlocale(LC_COLLATE, $original);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2263,7 +2233,7 @@ class HashTest extends TestCase
      */
     public function testCombineErrorMissingValue(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['name' => 'jose']],
@@ -2276,7 +2246,7 @@ class HashTest extends TestCase
      */
     public function testCombineErrorMissingKey(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['id' => 2]],
@@ -2535,7 +2505,7 @@ class HashTest extends TestCase
     {
         $data = static::articleData();
 
-        $result = Hash::map($data, '{n}.Article.id', [$this, 'mapCallback']);
+        $result = Hash::map($data, '{n}.Article.id', $this->mapCallback(...));
         $expected = [2, 4, 6, 8, 10];
         $this->assertSame($expected, $result);
     }
@@ -2558,7 +2528,7 @@ class HashTest extends TestCase
     {
         $data = static::articleData();
 
-        $result = Hash::reduce($data, '{n}.Article.id', [$this, 'reduceCallback']);
+        $result = Hash::reduce($data, '{n}.Article.id', $this->reduceCallback(...));
         $this->assertSame(15, $result);
     }
 
@@ -3002,7 +2972,7 @@ class HashTest extends TestCase
      */
     public function testNestInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $input = [
             [
                 'ParentCategory' => [

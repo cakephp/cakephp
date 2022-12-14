@@ -21,7 +21,7 @@ use Cake\Http\Client\Request;
 /**
  * Digest authentication adapter for Cake\Http\Client
  *
- * Generally not directly constructed, but instead used by Cake\Http\Client
+ * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'digest'
  */
 class Digest
@@ -31,7 +31,7 @@ class Digest
      *
      * @var \Cake\Http\Client
      */
-    protected $_client;
+    protected Client $_client;
 
     /**
      * Constructor
@@ -48,7 +48,7 @@ class Digest
      * Add Authorization header to the request.
      *
      * @param \Cake\Http\Client\Request $request The request object.
-     * @param array $credentials Authentication credentials.
+     * @param array<string, mixed> $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
@@ -110,7 +110,7 @@ class Digest
      * Generate the header Authorization
      *
      * @param \Cake\Http\Client\Request $request The request object.
-     * @param array $credentials Authentication credentials.
+     * @param array<string, mixed> $credentials Authentication credentials.
      * @return string
      */
     protected function _generateHeader(Request $request, array $credentials): string

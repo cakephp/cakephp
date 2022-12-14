@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         4.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Middleware;
 
@@ -23,6 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use UnexpectedValueException;
 
 /**
  * Enforces use of HTTPS (SSL) for requests.
@@ -38,22 +39,28 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      * - `statusCode` - Status code to use in case of redirect, defaults to 301 - Permanent redirect.
      * - `headers` - Array of response headers in case of redirect.
      * - `disableOnDebug` - Whether HTTPS check should be disabled when debug is on. Default `true`.
+     * - 'hsts' - Strict-Transport-Security header for HTTPS response configuration. Defaults to `null`.
+     *    If enabled, an array of config options:
      *
-     * @var array
-     * @psalm-var array{redirect: bool, statusCode: int, headers: array, disableOnDebug: bool}
+     *        - 'maxAge' - `max-age` directive value in seconds.
+     *        - 'includeSubDomains' - Whether to include `includeSubDomains` directive. Defaults to `false`.
+     *        - 'preload' - Whether to include 'preload' directive. Defauls to `false`.
+     *
+     * @var array<string, mixed>
      */
-    protected $config = [
+    protected array $config = [
         'redirect' => true,
         'statusCode' => 301,
         'headers' => [],
         'disableOnDebug' => true,
+        'hsts' => null,
     ];
 
     /**
      * Constructor
      *
-     * @param array $config The options to use.
-     * @see self::$config
+     * @param array<string, mixed> $config The options to use.
+     * @see \Cake\Http\Middleware\HttpsEnforcerMiddleware::$config
      */
     public function __construct(array $config = [])
     {
@@ -78,11 +85,20 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
             || ($this->config['disableOnDebug']
                 && Configure::read('debug'))
         ) {
-            return $handler->handle($request);
+            $response = $handler->handle($request);
+            if ($this->config['hsts']) {
+                $response = $this->addHsts($response);
+            }
+
+            return $response;
         }
 
         if ($this->config['redirect'] && $request->getMethod() === 'GET') {
             $uri = $request->getUri()->withScheme('https');
+            $base = $request->getAttribute('base');
+            if ($base) {
+                $uri = $uri->withPath($base . $uri->getPath());
+            }
 
             return new RedirectResponse(
                 $uri,
@@ -94,5 +110,29 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         throw new BadRequestException(
             'Requests to this URL must be made with HTTPS.'
         );
+    }
+
+    /**
+     * Adds Strict-Transport-Security header to response.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response Response
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function addHsts(ResponseInterface $response): ResponseInterface
+    {
+        $config = $this->config['hsts'];
+        if (!is_array($config)) {
+            throw new UnexpectedValueException('The `hsts` config must be an array.');
+        }
+
+        $value = 'max-age=' . $config['maxAge'];
+        if ($config['includeSubDomains'] ?? false) {
+            $value .= '; includeSubDomains';
+        }
+        if ($config['preload'] ?? false) {
+            $value .= '; preload';
+        }
+
+        return $response->withHeader('strict-transport-security', $value);
     }
 }

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Parser;
 
-use RuntimeException;
+use Cake\Core\Exception\CakeException;
 
 /**
  * Parses file in MO format
@@ -30,7 +30,7 @@ class MoFileParser
      * Magic used for validating the format of a MO file as well as
      * detecting if the machine used to create that file was little endian.
      *
-     * @var float
+     * @var int
      */
     public const MO_LITTLE_ENDIAN_MAGIC = 0x950412de;
 
@@ -38,7 +38,7 @@ class MoFileParser
      * Magic used for validating the format of a MO file as well as
      * detecting if the machine used to create that file was big endian.
      *
-     * @var float
+     * @var int
      */
     public const MO_BIG_ENDIAN_MAGIC = 0xde120495;
 
@@ -55,16 +55,16 @@ class MoFileParser
      *
      * @param string $file The file to be parsed.
      * @return array List of messages extracted from the file
-     * @throws \RuntimeException If stream content has an invalid format.
+     * @throws \Cake\Core\Exception\CakeException If stream content has an invalid format.
      */
-    public function parse($file): array
+    public function parse(string $file): array
     {
         $stream = fopen($file, 'rb');
 
         $stat = fstat($stream);
 
         if ($stat['size'] < self::MO_HEADER_SIZE) {
-            throw new RuntimeException('Invalid format for MO translations file');
+            throw new CakeException('Invalid format for MO translations file');
         }
         $magic = unpack('V1', fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
@@ -74,7 +74,7 @@ class MoFileParser
         } elseif ($magic === self::MO_BIG_ENDIAN_MAGIC) {
             $isBigEndian = true;
         } else {
-            throw new RuntimeException('Invalid format for MO translations file');
+            throw new CakeException('Invalid format for MO translations file');
         }
 
         // offset formatRevision
@@ -105,11 +105,11 @@ class MoFileParser
             fseek($stream, $offset);
             $singularId = fread($stream, $length);
 
-            if (strpos($singularId, "\x04") !== false) {
+            if (str_contains($singularId, "\x04")) {
                 [$context, $singularId] = explode("\x04", $singularId);
             }
 
-            if (strpos($singularId, "\000") !== false) {
+            if (str_contains($singularId, "\000")) {
                 [$singularId, $pluralId] = explode("\000", $singularId);
             }
 
@@ -119,7 +119,7 @@ class MoFileParser
             fseek($stream, $offset);
             $translated = fread($stream, $length);
 
-            if ($pluralId !== null || strpos($translated, "\000") !== false) {
+            if ($pluralId !== null || str_contains($translated, "\000")) {
                 $translated = explode("\000", $translated);
                 $plurals = $pluralId !== null ? $translated : null;
                 $translated = $translated[0];
@@ -149,10 +149,10 @@ class MoFileParser
      * Reads an unsigned long from stream respecting endianess.
      *
      * @param resource $stream The File being read.
-     * @param bool $isBigEndian Whether or not the current platform is Big Endian
+     * @param bool $isBigEndian Whether the current platform is Big Endian
      * @return int
      */
-    protected function _readLong($stream, $isBigEndian): int
+    protected function _readLong($stream, bool $isBigEndian): int
     {
         $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
         $result = current($result);

@@ -73,9 +73,9 @@ class ArrayContext implements ContextInterface
     /**
      * Context data for this object.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_context;
+    protected array $_context;
 
     /**
      * Constructor.
@@ -92,19 +92,6 @@ class ArrayContext implements ContextInterface
             'errors' => [],
         ];
         $this->_context = $context;
-    }
-
-    /**
-     * Get the fields used in the context as a primary key.
-     *
-     * @return array<string>
-     * @deprecated 4.0.0 Renamed to {@link getPrimaryKey()}.
-     */
-    public function primaryKey(): array
-    {
-        deprecationWarning('`ArrayContext::primaryKey()` is deprecated. Use `ArrayContext::getPrimaryKey()`.');
-
-        return $this->getPrimaryKey();
     }
 
     /**
@@ -140,7 +127,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * Returns whether or not this form is for a create operation.
+     * Returns whether this form is for a create operation.
      *
      * For this method to return true, both the primary key constraint
      * must be defined in the 'schema' data, and the 'defaults' data must
@@ -167,7 +154,7 @@ class ArrayContext implements ContextInterface
      *
      * @param string $field A dot separated path to the field a value
      *   is needed for.
-     * @param array $options Options:
+     * @param array<string, mixed> $options Options:
      *
      *   - `default`: Default value to return if no value found in data or
      *     context record.
@@ -175,7 +162,7 @@ class ArrayContext implements ContextInterface
      *     context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
-    public function val(string $field, array $options = [])
+    public function val(string $field, array $options = []): mixed
     {
         $options += [
             'default' => null,
@@ -215,11 +202,8 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        $required = Hash::get($this->_context['required'], $field);
-
-        if ($required === null) {
-            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
-        }
+        $required = Hash::get($this->_context['required'], $field)
+            ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
         if (!empty($required) || $required === '0') {
             return true;
@@ -236,10 +220,8 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['required'])) {
             return null;
         }
-        $required = Hash::get($this->_context['required'], $field);
-        if ($required === null) {
-            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
-        }
+        $required = Hash::get($this->_context['required'], $field)
+            ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
         if ($required === false) {
             return null;
@@ -277,6 +259,7 @@ class ArrayContext implements ContextInterface
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
 
+        /** @psalm-var list<string> */
         return array_keys($schema);
     }
 
@@ -293,10 +276,8 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        $schema = Hash::get($this->_context['schema'], $field);
-        if ($schema === null) {
-            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
-        }
+        $schema = Hash::get($this->_context['schema'], $field)
+            ?? Hash::get($this->_context['schema'], $this->stripNesting($field));
 
         return $schema['type'] ?? null;
     }
@@ -312,10 +293,8 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['schema'])) {
             return [];
         }
-        $schema = Hash::get($this->_context['schema'], $field);
-        if ($schema === null) {
-            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
-        }
+        $schema = Hash::get($this->_context['schema'], $field)
+            ?? Hash::get($this->_context['schema'], $this->stripNesting($field));
 
         return array_intersect_key(
             (array)$schema,
@@ -324,7 +303,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * Check whether or not a field has an error attached to it
+     * Check whether a field has an error attached to it
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.

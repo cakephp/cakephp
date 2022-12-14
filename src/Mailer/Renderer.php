@@ -49,7 +49,7 @@ class Renderer
      *
      * @param string $content The content.
      * @param array<string> $types Content types to render. Valid array values are Message::MESSAGE_HTML, Message::MESSAGE_TEXT.
-     * @return array The rendered content with "html" and/or "text" keys.
+     * @return array<string, string> The rendered content with "html" and/or "text" keys.
      * @psalm-param array<\Cake\Mailer\Message::MESSAGE_HTML|\Cake\Mailer\Message::MESSAGE_TEXT> $types
      * @psalm-return array{html?: string, text?: string}
      */
@@ -101,7 +101,7 @@ class Renderer
         $this->viewBuilder()
             ->setClassName(View::class)
             ->setLayout('default')
-            ->setHelpers(['Html'], false);
+            ->setHelpers(['Html']);
 
         return $this;
     }

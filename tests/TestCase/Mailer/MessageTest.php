@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use TestApp\Mailer\TestMessage;
 
@@ -358,7 +359,7 @@ HTML;
         $this->assertSame($expected, $this->message->getFrom());
         $this->assertSame($this->message, $result);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $result = $this->message->setFrom(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
     }
 
@@ -486,7 +487,7 @@ HTML;
      */
     public function testInvalidEmail($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setTo($value);
     }
 
@@ -498,7 +499,7 @@ HTML;
      */
     public function testInvalidEmailAdd($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->addTo($value);
     }
 
@@ -568,7 +569,7 @@ HTML;
      */
     public function testUnsetEmailPattern(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid email set for "to". You passed "fail.@example.com".');
         $email = new Message();
         $this->assertSame(Message::EMAIL_PATTERN, $email->getEmailPattern());
@@ -585,7 +586,7 @@ HTML;
      */
     public function testEmptyTo(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The email set for "to" is empty.');
         $email = new Message();
         $email->setTo('');
@@ -783,7 +784,7 @@ HTML;
      */
     public function testMessageIdInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setMessageId('my-email@localhost');
     }
 
@@ -908,7 +909,7 @@ HTML;
             'license' => ['file' => CORE_PATH . 'LICENSE', 'mimetype' => 'text/plain'],
         ];
         $this->assertSame($expected, $this->message->getAttachments());
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setAttachments([['nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain']]);
     }
 
@@ -932,7 +933,7 @@ HTML;
 
     public function testSetAttachmentInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.'
         );
@@ -982,7 +983,7 @@ HTML;
         $result = $this->message->getEmailFormat();
         $this->assertSame('html', $result);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setEmailFormat('invalid');
     }
 
@@ -1182,7 +1183,7 @@ HTML;
         $this->assertSame($expected, $this->message->getContentTransferEncoding());
 
         //Test wrong encoding
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->message->setTransferEncoding('invalid');
     }
 

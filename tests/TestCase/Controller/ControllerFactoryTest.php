@@ -16,14 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use ArgumentCountError;
 use Cake\Controller\ControllerFactory;
+use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use stdClass;
 use TestApp\Controller\DependenciesController;
 
@@ -36,6 +35,11 @@ class ControllerFactoryTest extends TestCase
      * @var \Cake\Controller\ControllerFactory
      */
     protected $factory;
+
+    /**
+     * @var \Cake\Core\Container
+     */
+    protected $container;
 
     /**
      * Setup
@@ -68,24 +72,22 @@ class ControllerFactoryTest extends TestCase
     /**
      * Test building a prefixed app controller.
      */
-    public function testPrefixedAppControllerDeprecated(): void
+    public function testPrefixedAppController(): void
     {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'url' => 'admin/posts/index',
-                'params' => [
-                    'prefix' => 'Admin',
-                    'controller' => 'Posts',
-                    'action' => 'index',
-                ],
-            ]);
-            $result = $this->factory->create($request);
-            $this->assertInstanceOf(
-                'TestApp\Controller\Admin\PostsController',
-                $result
-            );
-            $this->assertSame($request, $result->getRequest());
-        });
+        $request = new ServerRequest([
+            'url' => 'admin/posts/index',
+            'params' => [
+                'prefix' => 'Admin',
+                'controller' => 'Posts',
+                'action' => 'index',
+            ],
+        ]);
+        $result = $this->factory->create($request);
+        $this->assertInstanceOf(
+            'TestApp\Controller\Admin\PostsController',
+            $result
+        );
+        $this->assertSame($request, $result->getRequest());
     }
 
     /**
@@ -244,7 +246,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesNoController(): void
     {
@@ -263,19 +265,10 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Test create() injecting dependcies on defined controllers.
+     * Test create() injecting dependencies on defined controllers.
      */
     public function testCreateWithContainerDependenciesWithController(): void
     {
-        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
-        $this->container->add(DependenciesController::class)
-            ->addArgument(ServerRequest::class)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(null)
-            ->addArgument(stdClass::class);
-
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/index',
             'params' => [
@@ -284,6 +277,14 @@ class ControllerFactoryTest extends TestCase
                 'action' => 'index',
             ],
         ]);
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $this->container->add(ServerRequest::class, $request);
+        $this->container->add(DependenciesController::class)
+            ->addArgument(ServerRequest::class)
+            ->addArgument(null)
+            ->addArgument(null)
+            ->addArgument(stdClass::class);
+
         $controller = $this->factory->create($request);
         $this->assertInstanceOf(DependenciesController::class, $controller);
         $this->assertSame($controller->inject, $this->container->get(stdClass::class));
@@ -437,7 +438,7 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * Ensure that a controllers startup process can emit a response
+     * Test invoke passing basic typed data from pass parameters.
      */
     public function testInvokeInjectParametersOptionalWithPassedParameters(): void
     {
@@ -459,6 +460,52 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame($data->any, 'one');
         $this->assertSame($data->str, 'two');
         $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke() injecting dependencies that exist in passed params as objects.
+     * The accepted types of `params.pass` was never enforced and userland code has
+     * creative uses of this previously unspecified behavior.
+     */
+    public function testCreateWithContainerDependenciesWithObjectRouteParam(): void
+    {
+        $inject = new stdClass();
+        $inject->id = uniqid();
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredDep',
+                'pass' => [$inject],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $data = json_decode((string)$response->getBody());
+        $this->assertNotNull($data);
+        $this->assertEquals($data->dep->id, $inject->id);
+    }
+
+    public function testCreateWithNonStringScalarRouteParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/required_typed',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => [1.1, 2, true, ['foo' => 'bar']],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $expected = ['one' => 1.1, 'two' => 2, 'three' => true, 'four' => ['foo' => 'bar']];
+        $data = json_decode((string)$response->getBody(), true);
+        $this->assertSame($expected, $data);
     }
 
     /**
@@ -500,8 +547,10 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Could not resolve action argument `dep`');
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage(
+            'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action Dependencies::requiredDep()'
+        );
         $this->factory->invoke($controller);
     }
 
@@ -517,8 +566,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Missing passed parameter for `one` in action Dependencies::requiredParam()');
         $this->factory->invoke($controller);
     }
 
@@ -666,8 +715,186 @@ class ControllerFactoryTest extends TestCase
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Too few arguments');
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Missing passed parameter for `str` in action Dependencies::requiredString()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test that coercing string to float, int and bool params
+     */
+    public function testInvokePassedParametersCoercion(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '2', '0', '8,9'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => false, 'four' => ['8', '9']], $data);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '0', '0', ''],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+        $this->assertSame(['one' => 1.0, 'two' => 0, 'three' => false, 'four' => []], $data);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1.0', '-1', '0', ''],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+        $this->assertSame(['one' => 1.0, 'two' => -1, 'three' => false, 'four' => []], $data);
+    }
+
+    /**
+     * Test that default values work for typed parameters
+     */
+    public function testInvokeOptionalTypedParam(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'optionalTyped',
+                'pass' => ['1.0'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['one' => 1.0, 'two' => 2, 'three' => true], $data);
+    }
+
+    /**
+     * Test using invalid value for supported type
+     */
+    public function testInvokePassedParametersUnsupportedFloatCoercion(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['true', '2', '1'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "true" to `float` for `one` in action Dependencies::requiredTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using invalid value for supported type
+     */
+    public function testInvokePassedParametersUnsupportedIntCoercion(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1', '2.0', '1'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "2.0" to `int` for `two` in action Dependencies::requiredTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using invalid value for supported type
+     */
+    public function testInvokePassedParametersUnsupportedBoolCoercion(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => ['1', '1', 'true'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "true" to `bool` for `three` in action Dependencies::requiredTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using an unsupported type.
+     */
+    public function testInvokePassedParamUnsupportedType(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/unsupportedTyped',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'unsupportedTyped',
+                'pass' => ['test'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Unable to coerce "test" to `iterable` for `one` in action Dependencies::unsupportedTyped()');
+        $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test using an unsupported reflection type.
+     */
+    public function testInvokePassedParamUnsupportedReflectionType(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/unsupportedTypedUnion',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'unsupportedTypedUnion',
+                'pass' => ['test'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Type declaration for `one` in action Dependencies::unsupportedTypedUnion() is unsupported.');
         $this->factory->invoke($controller);
     }
 

@@ -20,6 +20,8 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
+use InvalidArgumentException;
 
 /**
  * Provides a translator method for tuple comparisons
@@ -55,14 +57,24 @@ trait TupleComparisonTranslatorTrait
             return;
         }
 
+        $operator = strtoupper($expression->getOperator());
+        if (!in_array($operator, ['IN', '='])) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Tuple comparison transform only supports the `IN` and `=` operators, `%s` given.',
+                    $operator
+                )
+            );
+        }
+
         $value = $expression->getValue();
-        $op = $expression->getOperator();
         $true = new QueryExpression('1');
 
-        if ($value instanceof Query) {
+        if ($value instanceof SelectQuery) {
+            /** @var array<string> $selected */
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
-                $value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
+                $value->andWhere([$field => new IdentifierExpression($selected[$i])]);
             }
             $value->select($true, true);
             $expression->setField($true);
@@ -73,13 +85,14 @@ trait TupleComparisonTranslatorTrait
 
         $type = $expression->getType();
         if ($type) {
-            $typeMap = array_combine($fields, $type);
+            /** @var array<string, string> $typeMap */
+            $typeMap = array_combine($fields, $type) ?: [];
         } else {
             $typeMap = [];
         }
 
         $surrogate = $query->getConnection()
-            ->newQuery()
+            ->selectQuery()
             ->select($true);
 
         if (!is_array(current($value))) {

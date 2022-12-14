@@ -30,14 +30,14 @@ class ValueBinder
      *
      * @var array
      */
-    protected $_bindings = [];
+    protected array $_bindings = [];
 
     /**
      * A counter of the number of parameters bound in this expression object
      *
      * @var int
      */
-    protected $_bindingsCount = 0;
+    protected int $_bindingsCount = 0;
 
     /**
      * Associates a query placeholder to a value and a type
@@ -49,7 +49,7 @@ class ValueBinder
      * to database
      * @return void
      */
-    public function bind($param, $value, $type = null): void
+    public function bind(string|int $param, mixed $value, string|int|null $type = null): void
     {
         $this->_bindings[$param] = compact('value', 'type') + [
             'placeholder' => is_int($param) ? $param : substr($param, 1),
@@ -83,7 +83,7 @@ class ValueBinder
      * @param string|int|null $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */
-    public function generateManyNamed(iterable $values, $type = null): array
+    public function generateManyNamed(iterable $values, string|int|null $type = null): array
     {
         $placeholders = [];
         foreach ($values as $k => $value) {

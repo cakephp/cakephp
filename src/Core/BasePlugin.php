@@ -18,14 +18,15 @@ namespace Cake\Core;
 use Cake\Console\CommandCollection;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
+use Closure;
 use InvalidArgumentException;
 use ReflectionClass;
 
 /**
  * Base Plugin Class
  *
- * Every plugin should extends from this class or implement the interfaces and
- * include a plugin class in it's src root folder.
+ * Every plugin should extend from this class or implement the interfaces and
+ * include a plugin class in its src root folder.
  */
 class BasePlugin implements PluginInterface
 {
@@ -34,75 +35,75 @@ class BasePlugin implements PluginInterface
      *
      * @var bool
      */
-    protected $bootstrapEnabled = true;
+    protected bool $bootstrapEnabled = true;
 
     /**
      * Console middleware
      *
      * @var bool
      */
-    protected $consoleEnabled = true;
+    protected bool $consoleEnabled = true;
 
     /**
      * Enable middleware
      *
      * @var bool
      */
-    protected $middlewareEnabled = true;
+    protected bool $middlewareEnabled = true;
 
     /**
      * Register container services
      *
      * @var bool
      */
-    protected $servicesEnabled = true;
+    protected bool $servicesEnabled = true;
 
     /**
      * Load routes or not
      *
      * @var bool
      */
-    protected $routesEnabled = true;
+    protected bool $routesEnabled = true;
 
     /**
      * The path to this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $path;
+    protected ?string $path = null;
 
     /**
      * The class path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $classPath;
+    protected ?string $classPath = null;
 
     /**
      * The config path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $configPath;
+    protected ?string $configPath = null;
 
     /**
      * The templates path for this plugin.
      *
-     * @var string
+     * @var string|null
      */
-    protected $templatePath;
+    protected ?string $templatePath = null;
 
     /**
      * The name of this plugin
      *
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * Constructor
      *
-     * @param array $options Options
+     * @param array<string, mixed> $options Options
      */
     public function __construct(array $options = [])
     {
@@ -134,7 +135,7 @@ class BasePlugin implements PluginInterface
      */
     public function getName(): string
     {
-        if ($this->name) {
+        if ($this->name !== null) {
             return $this->name;
         }
         $parts = explode('\\', static::class);
@@ -149,14 +150,14 @@ class BasePlugin implements PluginInterface
      */
     public function getPath(): string
     {
-        if ($this->path) {
+        if ($this->path !== null) {
             return $this->path;
         }
         $reflection = new ReflectionClass($this);
         $path = dirname($reflection->getFileName());
 
         // Trim off src
-        if (substr($path, -3) === 'src') {
+        if (str_ends_with($path, 'src')) {
             $path = substr($path, 0, -3);
         }
         $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -169,7 +170,7 @@ class BasePlugin implements PluginInterface
      */
     public function getConfigPath(): string
     {
-        if ($this->configPath) {
+        if ($this->configPath !== null) {
             return $this->configPath;
         }
         $path = $this->getPath();
@@ -182,7 +183,7 @@ class BasePlugin implements PluginInterface
      */
     public function getClassPath(): string
     {
-        if ($this->classPath) {
+        if ($this->classPath !== null) {
             return $this->classPath;
         }
         $path = $this->getPath();
@@ -195,7 +196,7 @@ class BasePlugin implements PluginInterface
      */
     public function getTemplatePath(): string
     {
-        if ($this->templatePath) {
+        if ($this->templatePath !== null) {
             return $this->templatePath;
         }
         $path = $this->getPath();
@@ -245,9 +246,11 @@ class BasePlugin implements PluginInterface
     protected function checkHook(string $hook): void
     {
         if (!in_array($hook, static::VALID_HOOKS, true)) {
-            throw new InvalidArgumentException(
-                "`$hook` is not a valid hook name. Must be one of " . implode(', ', static::VALID_HOOKS)
-            );
+            throw new InvalidArgumentException(sprintf(
+                '`%s` is not a valid hook name. Must be one of `%s.`',
+                $hook,
+                implode(', ', static::VALID_HOOKS)
+            ));
         }
     }
 
@@ -258,7 +261,10 @@ class BasePlugin implements PluginInterface
     {
         $path = $this->getConfigPath() . 'routes.php';
         if (is_file($path)) {
-            require $path;
+            $return = require $path;
+            if ($return instanceof Closure) {
+                $return($routes);
+            }
         }
     }
 

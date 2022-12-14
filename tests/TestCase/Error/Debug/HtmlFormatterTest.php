@@ -53,16 +53,16 @@ class HtmlFormatterTest extends TestCase
         $result = $formatter->dump($node);
 
         // Check important classnames
-        $this->assertStringContainsString('class="cake-dbg-const"', $result);
-        $this->assertStringContainsString('class="cake-dbg-string"', $result);
-        $this->assertStringContainsString('class="cake-dbg-number"', $result);
-        $this->assertStringContainsString('class="cake-dbg-array-items"', $result);
-        $this->assertStringContainsString('class="cake-dbg-array-item"', $result);
-        $this->assertStringContainsString('class="cake-dbg-array"', $result);
-        $this->assertStringContainsString('class="cake-dbg-object"', $result);
-        $this->assertStringContainsString('class="cake-dbg-object-props"', $result);
-        $this->assertStringContainsString('class="cake-dbg-special"', $result);
-        $this->assertStringContainsString('class="cake-dbg-ref"', $result);
+        $this->assertStringContainsString('class="cake-debug-const"', $result);
+        $this->assertStringContainsString('class="cake-debug-string"', $result);
+        $this->assertStringContainsString('class="cake-debug-number"', $result);
+        $this->assertStringContainsString('class="cake-debug-array-items"', $result);
+        $this->assertStringContainsString('class="cake-debug-array-item"', $result);
+        $this->assertStringContainsString('class="cake-debug-array"', $result);
+        $this->assertStringContainsString('class="cake-debug-object"', $result);
+        $this->assertStringContainsString('class="cake-debug-object-props"', $result);
+        $this->assertStringContainsString('class="cake-debug-special"', $result);
+        $this->assertStringContainsString('class="cake-debug-ref"', $result);
 
         // Check valid HTML
         $dom = new DomDocument();

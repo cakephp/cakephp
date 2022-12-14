@@ -2,32 +2,33 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 /**
  * Provides CSRF protection & validation.
@@ -53,17 +54,17 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *  - `cookieName` The name of the cookie to send.
      *  - `expiry` A strotime compatible value of how long the CSRF token should last.
      *    Defaults to browser session.
-     *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
-     *  - `httponly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `secure` Whether the cookie will be set with the Secure flag. Defaults to false.
+     *  - `httponly` Whether the cookie will be set with the HttpOnly flag. Defaults to false.
      *  - `samesite` "SameSite" attribute for cookies. Defaults to `null`.
      *    Valid values: `CookieInterface::SAMESITE_LAX`, `CookieInterface::SAMESITE_STRICT`,
      *    `CookieInterface::SAMESITE_NONE` or `null`.
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_config = [
+    protected array $_config = [
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
@@ -73,7 +74,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * Callback for deciding whether or not to skip the token check for particular request.
+     * Callback for deciding whether to skip the token check for particular request.
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *
@@ -102,15 +103,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array $config Config options. See $_config for valid keys.
+     * @param array<string, mixed> $config Config options. See $_config for valid keys.
      */
     public function __construct(array $config = [])
     {
-        if (array_key_exists('httpOnly', $config)) {
-            $config['httponly'] = $config['httpOnly'];
-            deprecationWarning('Option `httpOnly` is deprecated. Use lowercased `httponly` instead.');
-        }
-
         $this->_config = $config + $this->_config;
     }
 
@@ -137,7 +133,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
         if ($request->getAttribute('csrfToken')) {
-            throw new RuntimeException(
+            throw new CakeException(
                 'A CSRF token is already set in the request.' .
                 "\n" .
                 'Ensure you do not have the CSRF middleware applied more than once. ' .
@@ -148,14 +144,17 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (is_string($cookieData) && strlen($cookieData) > 0) {
-            $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+        if (is_string($cookieData) && $cookieData !== '') {
+            try {
+                $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
+            } catch (InvalidArgumentException $e) {
+                $cookieData = null;
+            }
         }
 
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->createToken();
             $request = $request->withAttribute('csrfToken', $this->saltToken($token));
-            /** @var mixed $response */
             $response = $handler->handle($request);
 
             return $this->_addTokenCookie($token, $request, $response);
@@ -167,24 +166,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         }
 
         return $handler->handle($request);
-    }
-
-    /**
-     * Set callback for allowing to skip token check for particular request.
-     *
-     * The callback will receive request instance as argument and must return
-     * `true` if you want to skip token check for the current request.
-     *
-     * @deprecated 4.1.0 Use skipCheckCallback instead.
-     * @param callable $callback A callable.
-     * @return $this
-     */
-    public function whitelistCallback(callable $callback)
-    {
-        deprecationWarning('`whitelistCallback()` is deprecated. Use `skipCheckCallback()` instead.');
-        $this->skipCheckCallback = $callback;
-
-        return $this;
     }
 
     /**
@@ -218,19 +199,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         }
 
         return $request;
-    }
-
-    /**
-     * Create a new token to be used for CSRF protection
-     *
-     * @return string
-     * @deprecated 4.0.6 Use {@link createToken()} instead.
-     */
-    protected function _createToken(): string
-    {
-        deprecationWarning('_createToken() is deprecated. Use createToken() instead.');
-
-        return $this->createToken();
     }
 
     /**
@@ -277,6 +245,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return $token;
         }
         $decoded = base64_decode($token, true);
+        if ($decoded === false) {
+            throw new InvalidArgumentException('Invalid token data.');
+        }
+
         $length = strlen($decoded);
         $salt = Security::randomBytes($length);
         $salted = '';
@@ -333,7 +305,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         } else {
             $decoded = base64_decode($token, true);
         }
-        if (strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
+        if (!$decoded || strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
             return false;
         }
 
@@ -420,7 +392,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function _createCookie(string $value, ServerRequestInterface $request): CookieInterface
     {
-        $cookie = Cookie::create(
+        return Cookie::create(
             $this->_config['cookieName'],
             $value,
             [
@@ -431,7 +403,5 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'samesite' => $this->_config['samesite'],
             ]
         );
-
-        return $cookie;
     }
 }

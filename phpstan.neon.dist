@@ -1,0 +1,19 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+	level: 6
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tests/bootstrap.php
+	paths:
+		- src/
+
+services:
+	-
+		class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
+		tags:
+			- phpstan.broker.methodsClassReflectionExtension
+			- phpstan.broker.propertiesClassReflectionExtension

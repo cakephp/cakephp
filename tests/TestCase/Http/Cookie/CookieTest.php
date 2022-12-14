@@ -2,23 +2,26 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Cookie\SameSiteEnum;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
+use InvalidArgumentException;
+use ValueError;
 
 /**
  * HTTP cookies test.
@@ -49,7 +52,7 @@ class CookieTest extends TestCase
      */
     public function testValidateNameInvalidChars(string $name): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('contains invalid characters.');
         new Cookie($name, 'value');
     }
@@ -59,7 +62,7 @@ class CookieTest extends TestCase
      */
     public function testValidateNameEmptyName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The cookie name cannot be empty.');
         new Cookie('', '');
     }
@@ -114,23 +117,6 @@ class CookieTest extends TestCase
     }
 
     /**
-     * Test getting the value from the cookie
-     */
-    public function testGetStringValue(): void
-    {
-        $this->deprecated(function (): void {
-            $cookie = new Cookie('cakephp', 'thing');
-            $this->assertSame('thing', $cookie->getStringValue());
-
-            $value = ['user_id' => 1, 'token' => 'abc123'];
-            $cookie = new Cookie('cakephp', $value);
-
-            $this->assertSame($value, $cookie->getValue());
-            $this->assertSame(json_encode($value), $cookie->getStringValue());
-        });
-    }
-
-    /**
      * Test setting domain in cookies
      */
     public function testWithDomain(): void
@@ -164,6 +150,9 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertStringNotContainsString('samesite=Lax', $cookie->toHeaderValue(), 'old instance not modified');
         $this->assertStringContainsString('samesite=Lax', $new->toHeaderValue());
+
+        $new = $cookie->withSameSite(SameSiteEnum::STRICT);
+        $this->assertStringContainsString('samesite=Strict', $new->toHeaderValue());
     }
 
     /**
@@ -171,11 +160,16 @@ class CookieTest extends TestCase
      */
     public function testWithSameSiteException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+        $this->expectException(ValueError::class);
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withSameSite('invalid');
+    }
+
+    public function testGetSameSite(): void
+    {
+        $cookie = new Cookie(name: 'cakephp', value: 'cakephp-rocks', sameSite: 'NONE');
+        $this->assertSame(SameSiteEnum::NONE, $cookie->getSameSite());
     }
 
     /**
@@ -473,19 +467,9 @@ class CookieTest extends TestCase
         $this->assertNull($cookie->getExpiry());
     }
 
-    public function testInvalidExpiresForDefaults(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid type `array` for expire');
-
-        Cookie::setDefaults(['expires' => ['ompalompa']]);
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-    }
-
     public function testInvalidSameSiteForDefaults(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Samesite value must be either of: ' . implode(', ', CookieInterface::SAMESITE_VALUES));
+        $this->expectException(ValueError::class);
 
         Cookie::setDefaults(['samesite' => 'ompalompa']);
         $cookie = new Cookie('cakephp', 'cakephp-rocks');

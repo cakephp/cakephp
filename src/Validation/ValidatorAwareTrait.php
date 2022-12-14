@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Validation;
 
 use Cake\Event\EventDispatcherInterface;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * A trait that provides methods for building and
@@ -45,14 +45,14 @@ trait ValidatorAwareTrait
      *
      * @var string
      */
-    protected $_validatorClass = Validator::class;
+    protected string $_validatorClass = Validator::class;
 
     /**
      * A list of validation objects indexed by name
      *
      * @var array<\Cake\Validation\Validator>
      */
-    protected $_validators = [];
+    protected array $_validators = [];
 
     /**
      * Returns the validation rules tagged with $name. It is possible to have
@@ -68,11 +68,12 @@ trait ValidatorAwareTrait
      * ```
      * public function validationForSubscription($validator)
      * {
-     *  return $validator
-     *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notBlank'])
-     *  ->requirePresence('username');
+     *     return $validator
+     *         ->add('email', 'valid-email', ['rule' => 'email'])
+     *         ->add('password', 'valid', ['rule' => 'notBlank'])
+     *         ->requirePresence('username');
      * }
+     *
      * $validator = $this->getValidator('forSubscription');
      * ```
      *
@@ -106,14 +107,14 @@ trait ValidatorAwareTrait
      *
      * @param string $name The name of the validation set to create.
      * @return \Cake\Validation\Validator
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function createValidator(string $name): Validator
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
-            $message = sprintf('The %s::%s() validation method does not exists.', static::class, $method);
-            throw new RuntimeException($message);
+            $message = sprintf('The `%s::%s()` validation method does not exists.', static::class, $method);
+            throw new InvalidArgumentException($message);
         }
 
         $validator = new $this->_validatorClass();
@@ -125,14 +126,15 @@ trait ValidatorAwareTrait
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
 
-        if (!$validator instanceof Validator) {
-            throw new RuntimeException(sprintf(
-                'The %s::%s() validation method must return an instance of %s.',
+        assert(
+            $validator instanceof Validator,
+            sprintf(
+                'The `%s::%s()` validation method must return an instance of `%s`.',
                 static::class,
                 $method,
                 Validator::class
-            ));
-        }
+            )
+        );
 
         return $validator;
     }
@@ -143,11 +145,11 @@ trait ValidatorAwareTrait
      * You can build the object by yourself and store it in your object:
      *
      * ```
-     * $validator = new \Cake\Validation\Validator($table);
+     * $validator = new \Cake\Validation\Validator();
      * $validator
-     *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notBlank'])
-     *  ->allowEmpty('bio');
+     *     ->add('email', 'valid-email', ['rule' => 'email'])
+     *     ->add('password', 'valid', ['rule' => 'notBlank'])
+     *     ->allowEmpty('bio');
      * $this->setValidator('forSubscription', $validator);
      * ```
      *
@@ -164,7 +166,7 @@ trait ValidatorAwareTrait
     }
 
     /**
-     * Checks whether or not a validator has been set.
+     * Checks whether a validator has been set.
      *
      * @param string $name The name of a validator.
      * @return bool

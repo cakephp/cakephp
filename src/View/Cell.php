@@ -18,7 +18,6 @@ namespace Cake\View;
 
 use BadMethodCallException;
 use Cake\Cache\Cache;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManagerInterface;
@@ -32,15 +31,15 @@ use Error;
 use Exception;
 use ReflectionException;
 use ReflectionMethod;
+use Stringable;
 
 /**
  * Cell base.
  */
-abstract class Cell implements EventDispatcherInterface
+abstract class Cell implements EventDispatcherInterface, Stringable
 {
     use EventDispatcherTrait;
     use LocatorAwareTrait;
-    use ModelAwareTrait;
     use ViewVarsTrait;
 
     /**
@@ -56,7 +55,7 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @var \Cake\View\View
      */
-    protected $View;
+    protected View $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -65,52 +64,52 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @var \Cake\Http\ServerRequest
      */
-    protected $request;
+    protected ServerRequest $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
      */
-    protected $response;
+    protected Response $response;
 
     /**
      * The cell's action to invoke.
      *
      * @var string
      */
-    protected $action;
+    protected string $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    protected $args = [];
+    protected array $args = [];
 
     /**
      * List of valid options (constructor's fourth arguments)
      * Override this property in subclasses to allow
      * which options you want set as properties in your Cell.
      *
-     * @var array
+     * @var array<string>
      */
-    protected $_validCellOptions = [];
+    protected array $_validCellOptions = [];
 
     /**
      * Caching setup.
      *
      * @var array|bool
      */
-    protected $_cache = false;
+    protected array|bool $_cache = false;
 
     /**
      * Constructor.
      *
      * @param \Cake\Http\ServerRequest $request The request to use in the cell.
      * @param \Cake\Http\Response $response The response to use in the cell.
-     * @param \Cake\Event\EventManagerInterface $eventManager The eventManager to bind events to.
-     * @param array $cellOptions Cell options to apply.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
+     * @param array<string, mixed> $cellOptions Cell options to apply.
      */
     public function __construct(
         ServerRequest $request,
@@ -123,7 +122,6 @@ abstract class Cell implements EventDispatcherInterface
         }
         $this->request = $request;
         $this->response = $response;
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
 
         $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {
@@ -156,8 +154,7 @@ abstract class Cell implements EventDispatcherInterface
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
      * @return string The rendered cell.
-     * @throws \Cake\View\Exception\MissingCellTemplateException
-     *   When a MissingTemplateException is raised during rendering.
+     * @throws \Cake\View\Exception\MissingCellTemplateException|\BadMethodCallException
      */
     public function render(?string $template = null): string
     {
@@ -172,7 +169,7 @@ abstract class Cell implements EventDispatcherInterface
                 $reflect->invokeArgs($this, $this->args);
             } catch (ReflectionException $e) {
                 throw new BadMethodCallException(sprintf(
-                    'Class %s does not have a "%s" method.',
+                    'Class `%s` does not have a `%s` method.',
                     static::class,
                     $this->action
                 ));
@@ -243,7 +240,6 @@ abstract class Cell implements EventDispatcherInterface
             return $default;
         }
 
-        /** @psalm-suppress PossiblyFalseOperand */
         return $this->_cache + $default;
     }
 
@@ -271,6 +267,7 @@ abstract class Cell implements EventDispatcherInterface
             ), E_USER_WARNING);
 
             return '';
+        /** @phpstan-ignore-next-line */
         } catch (Error $e) {
             throw new Error(sprintf(
                 'Could not render cell - %s [%s, line %d]',
@@ -284,7 +281,7 @@ abstract class Cell implements EventDispatcherInterface
     /**
      * Debug info.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

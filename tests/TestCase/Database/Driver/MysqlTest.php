@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -43,7 +43,7 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault(): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
@@ -57,6 +57,7 @@ class MysqlTest extends TestCase
             'encoding' => 'utf8mb4',
             'timezone' => null,
             'init' => [],
+            'log' => false,
         ];
 
         $expected['flags'] += [
@@ -64,16 +65,10 @@ class MysqlTest extends TestCase
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $connection = $this->getMockBuilder('StdClass')
-            ->addMethods(['exec'])
-            ->getMock();
 
-        $driver->expects($this->once())->method('_connect')
+        $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
 
-        $driver->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($connection));
         $driver->connect([]);
     }
 
@@ -96,9 +91,10 @@ class MysqlTest extends TestCase
                 'Execute this',
                 'this too',
             ],
+            'log' => false,
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->onlyMethods(['_connect', 'getConnection'])
+            ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
@@ -111,16 +107,16 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('StdClass')
-            ->addMethods(['exec'])
+        $connection = $this->getMockBuilder('PDO')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['exec'])
             ->getMock();
         $connection->expects($this->exactly(3))
             ->method('exec')
             ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]);
 
-        $driver->expects($this->once())->method('_connect')
-            ->with($dsn, $expected);
-        $driver->expects($this->any())->method('getConnection')
+        $driver->expects($this->once())->method('createPdo')
+            ->with($dsn, $expected)
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
@@ -141,17 +137,17 @@ class MysqlTest extends TestCase
     public function testIsConnected(): void
     {
         $connection = ConnectionManager::get('test');
-        $connection->disconnect();
-        $this->assertFalse($connection->isConnected(), 'Not connected now.');
+        $connection->getDriver()->disconnect();
+        $this->assertFalse($connection->getDriver()->isConnected(), 'Not connected now.');
 
-        $connection->connect();
-        $this->assertTrue($connection->isConnected(), 'Should be connected.');
+        $connection->getDriver()->connect();
+        $this->assertTrue($connection->getDriver()->isConnected(), 'Should be connected.');
     }
 
     public function testRollbackTransactionAutoConnect(): void
     {
         $connection = ConnectionManager::get('test');
-        $connection->disconnect();
+        $connection->getDriver()->disconnect();
 
         $driver = $connection->getDriver();
         $this->assertFalse($driver->rollbackTransaction());
@@ -174,10 +170,10 @@ class MysqlTest extends TestCase
      */
     public function testVersion($dbVersion, $expectedVersion): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Connection $connection */
-        $connection = $this->getMockBuilder(Connection::class)
+        /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getAttribute'])
+            ->onlyMethods(['getAttribute'])
             ->getMock();
         $connection->expects($this->once())
             ->method('getAttribute')
@@ -186,10 +182,12 @@ class MysqlTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['connect'])
+            ->onlyMethods(['createPdo'])
             ->getMock();
 
-        $driver->setConnection($connection);
+        $driver->expects($this->once())
+            ->method('createPdo')
+            ->willReturn($connection);
 
         $result = $driver->version();
         $this->assertSame($expectedVersion, $result);
@@ -203,5 +201,143 @@ class MysqlTest extends TestCase
             ['5.5.5-10.4.13-MariaDB-1:10.4.13+maria~focal', '10.4.13-MariaDB-1'],
             ['8.0.0', '8.0.0'],
         ];
+    }
+
+    /**
+     * Tests driver-specific feature support check.
+     */
+    public function testSupports(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Mysql);
+
+        $serverType = $driver->isMariadb() ? 'mariadb' : 'mysql';
+        $featureVersions = [
+            'mysql' => [
+                'json' => '5.7.0',
+                'cte' => '8.0.0',
+                'window' => '8.0.0',
+            ],
+            'mariadb' => [
+                'json' => '10.2.7',
+                'cte' => '10.2.1',
+                'window' => '10.2.0',
+            ],
+        ];
+        foreach ($featureVersions[$serverType] as $feature => $version) {
+            $this->assertSame(
+                version_compare($driver->version(), $version, '>='),
+                $driver->supports(DriverFeatureEnum::from($feature))
+            );
+        }
+
+        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+
+        $this->assertFalse($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+    }
+
+    /**
+     * Tests identifier quoting
+     */
+    public function testQuoteIdentifier(): void
+    {
+        $driver = new Mysql();
+
+        $result = $driver->quoteIdentifier('name');
+        $expected = '`name`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Model.*');
+        $expected = '`Model`.*';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Items.No_ 2');
+        $expected = '`Items`.`No_ 2`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Items.No_ 2 thing');
+        $expected = '`Items`.`No_ 2 thing`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Items.No_ 2 thing AS thing');
+        $expected = '`Items`.`No_ 2 thing` AS `thing`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Items.Item Category Code = :c1');
+        $expected = '`Items`.`Item Category Code` = :c1';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('MTD()');
+        $expected = 'MTD()';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('(sm)');
+        $expected = '(sm)';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('name AS x');
+        $expected = '`name` AS `x`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Model.name AS x');
+        $expected = '`Model`.`name` AS `x`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Function(Something.foo)');
+        $expected = 'Function(`Something`.`foo`)';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Function(SubFunction(Something.foo))');
+        $expected = 'Function(SubFunction(`Something`.`foo`))';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Function(Something.foo) AS x');
+        $expected = 'Function(`Something`.`foo`) AS `x`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('name-with-minus');
+        $expected = '`name-with-minus`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('my-name');
+        $expected = '`my-name`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Foo-Model.*');
+        $expected = '`Foo-Model`.*';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Team.P%');
+        $expected = '`Team`.`P%`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Team.G/G');
+        $expected = '`Team`.`G/G`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Model.name as y');
+        $expected = '`Model`.`name` AS `y`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('nämé');
+        $expected = '`nämé`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('aßa.nämé');
+        $expected = '`aßa`.`nämé`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('aßa.*');
+        $expected = '`aßa`.*';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Modeß.nämé as y');
+        $expected = '`Modeß`.`nämé` AS `y`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('Model.näme Datum as y');
+        $expected = '`Model`.`näme Datum` AS `y`';
+        $this->assertEquals($expected, $result);
     }
 }

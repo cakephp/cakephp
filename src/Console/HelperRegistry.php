@@ -29,11 +29,11 @@ use Cake\Core\ObjectRegistry;
 class HelperRegistry extends ObjectRegistry
 {
     /**
-     * Shell to use to set params to tasks.
+     * IO instance.
      *
      * @var \Cake\Console\ConsoleIo
      */
-    protected $_io;
+    protected ConsoleIo $_io;
 
     /**
      * Sets The IO instance that should be passed to the shell helpers
@@ -52,20 +52,15 @@ class HelperRegistry extends ObjectRegistry
      * Will prefer helpers defined in Command\Helper over those
      * defined in Shell\Helper.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}.
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
-     * @psalm-return class-string
+     * @return class-string<\Cake\Console\Helper>|null Either the correct class name or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
-        $name = App::className($class, 'Command/Helper', 'Helper');
-        if ($name === null) {
-            return App::className($class, 'Shell/Helper', 'Helper');
-        }
-
-        return $name;
+        /** @var class-string<\Cake\Console\Helper>|null */
+        return App::className($class, 'Command/Helper', 'Helper');
     }
 
     /**
@@ -92,15 +87,17 @@ class HelperRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string $class The classname to create.
+     * @param \Cake\Console\Helper|class-string<\Cake\Console\Helper> $class The classname to create.
      * @param string $alias The alias of the helper.
-     * @param array $config An array of settings to use for the helper.
+     * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    protected function _create($class, string $alias, array $config): Helper
+    protected function _create(object|string $class, string $alias, array $config): Helper
     {
-        /** @var \Cake\Console\Helper */
+        if (is_object($class)) {
+            return $class;
+        }
+
         return new $class($this->_io, $config);
     }
 }

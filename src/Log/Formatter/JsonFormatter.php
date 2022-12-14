@@ -21,15 +21,16 @@ class JsonFormatter extends AbstractFormatter
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'dateFormat' => DATE_ATOM,
-        'flags' => JSON_UNESCAPED_UNICODE,
+        'flags' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+        'appendNewline' => true,
     ];
 
     /**
-     * @param array $config Formatter config
+     * @param array<string, mixed> $config Formatter config
      */
     public function __construct(array $config = [])
     {
@@ -42,7 +43,8 @@ class JsonFormatter extends AbstractFormatter
     public function format($level, string $message, array $context = []): string
     {
         $log = ['date' => date($this->_config['dateFormat']), 'level' => (string)$level, 'message' => $message];
+        $json = json_encode($log, JSON_THROW_ON_ERROR | $this->_config['flags']);
 
-        return json_encode($log, $this->_config['flags']);
+        return $this->_config['appendNewline'] ? $json . "\n" : $json;
     }
 }

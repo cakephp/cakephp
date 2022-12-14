@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Utility\Hash;
 use Countable;
 use Generator;
 use InvalidArgumentException;
@@ -34,6 +35,8 @@ use Iterator;
  *
  * While its implementation supported nested iteration it does not
  * support using `continue` or `break` inside loops.
+ *
+ * @template-implements \Iterator<string, \Cake\Core\PluginInterface>
  */
 class PluginCollection implements Iterator, Countable
 {
@@ -42,28 +45,28 @@ class PluginCollection implements Iterator, Countable
      *
      * @var array<\Cake\Core\PluginInterface>
      */
-    protected $plugins = [];
+    protected array $plugins = [];
 
     /**
      * Names of plugins
      *
      * @var array<string>
      */
-    protected $names = [];
+    protected array $names = [];
 
     /**
      * Iterator position stack.
      *
      * @var array<int>
      */
-    protected $positions = [];
+    protected array $positions = [];
 
     /**
      * Loop depth
      *
      * @var int
      */
-    protected $loopDepth = -1;
+    protected int $loopDepth = -1;
 
     /**
      * Constructor
@@ -76,6 +79,49 @@ class PluginCollection implements Iterator, Countable
             $this->add($plugin);
         }
         $this->loadConfig();
+    }
+
+    /**
+     * Add plugins from config array.
+     *
+     * @param array $config Configuration array. For e.g.:
+     *   ```
+     *   [
+     *       'Company/TestPluginThree',
+     *       'TestPlugin' => ['onlyDebug' => true, 'onlyCli' => true],
+     *       'Nope' => ['optional' => true],
+     *       'Named' => ['routes' => false, 'bootstrap' => false],
+     *   ]
+     *   ```
+     * @return void
+     */
+    public function addFromConfig(array $config): void
+    {
+        $debug = Configure::read('debug');
+        $cli = PHP_SAPI === 'cli';
+
+        foreach (Hash::normalize($config) as $name => $options) {
+            $options = (array)$options;
+            $onlyDebug = $options['onlyDebug'] ?? false;
+            $onlyCli = $options['onlyCli'] ?? false;
+            $optional = $options['optional'] ?? false;
+
+            if (
+                ($onlyDebug && !$debug)
+                || ($onlyCli && !$cli)
+            ) {
+                continue;
+            }
+
+            try {
+                $plugin = $this->create($name, $options);
+                $this->add($plugin);
+            } catch (MissingPluginException $e) {
+                if (!$optional) {
+                    throw $e;
+                }
+            }
+        }
     }
 
     /**
@@ -115,7 +161,7 @@ class PluginCollection implements Iterator, Countable
      * This method is not part of the official public API as plugins with
      * no plugin class are being phased out.
      *
-     * @param string $name The plugin name to locate a path for. Will return '' when a plugin cannot be found.
+     * @param string $name The plugin name to locate a path for.
      * @return string
      * @throws \Cake\Core\Exception\MissingPluginException when a plugin path cannot be resolved.
      * @internal
@@ -226,27 +272,46 @@ class PluginCollection implements Iterator, Countable
      * Create a plugin instance from a name/classname and configuration.
      *
      * @param string $name The plugin name or classname
-     * @param array $config Configuration options for the plugin.
+     * @param array<string, mixed> $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
+     * @throws \InvalidArgumentException When class name cannot be found.
+     * @psalm-param class-string<\Cake\Core\PluginInterface>|string $name
      */
     public function create(string $name, array $config = []): PluginInterface
     {
-        if (strpos($name, '\\') !== false) {
+        if (str_contains($name, '\\')) {
+            if (!class_exists($name)) {
+                throw new InvalidArgumentException(sprintf('Class `%s` does not exist.', $name));
+            }
+
             /** @var \Cake\Core\PluginInterface */
             return new $name($config);
         }
 
         $config += ['name' => $name];
-        /** @var class-string<\Cake\Core\PluginInterface> $className */
-        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        $namespace = str_replace('/', '\\', $name);
+
+        $className = $namespace . '\\' . 'Plugin';
+        // Check for [Vendor/]Foo/Plugin class
         if (!class_exists($className)) {
-            $className = BasePlugin::class;
-            if (empty($config['path'])) {
-                $config['path'] = $this->findPath($name);
+            $pos = strpos($name, '/');
+            if ($pos === false) {
+                $className = $namespace . '\\' . $name . 'Plugin';
+            } else {
+                $className = $namespace . '\\' . substr($name, $pos + 1) . 'Plugin';
+            }
+
+            // Check for [Vendor/]Foo/FooPlugin
+            if (!class_exists($className)) {
+                $className = BasePlugin::class;
+                if (empty($config['path'])) {
+                    $config['path'] = $this->findPath($name);
+                }
             }
         }
 
+        /** @var class-string<\Cake\Core\PluginInterface> $className */
         return new $className($config);
     }
 
@@ -326,14 +391,13 @@ class PluginCollection implements Iterator, Countable
      * Filter the plugins to those with the named hook enabled.
      *
      * @param string $hook The hook to filter plugins by
-     * @return \Generator&\Cake\Core\PluginInterface[] A generator containing matching plugins.
+     * @return \Generator<\Cake\Core\PluginInterface> A generator containing matching plugins.
      * @throws \InvalidArgumentException on invalid hooks
-     * @psalm-return \Generator<\Cake\Core\PluginInterface>
      */
     public function with(string $hook): Generator
     {
         if (!in_array($hook, PluginInterface::VALID_HOOKS, true)) {
-            throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
+            throw new InvalidArgumentException(sprintf('The `%s` hook is not a known plugin hook.', $hook));
         }
         foreach ($this as $plugin) {
             if ($plugin->isEnabled($hook)) {

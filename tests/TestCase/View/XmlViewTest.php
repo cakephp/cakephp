@@ -20,7 +20,6 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
@@ -30,7 +29,7 @@ use Cake\Utility\Xml;
  */
 class XmlViewTest extends TestCase
 {
-    protected $fixtures = ['core.Authors'];
+    protected array $fixtures = ['core.Authors'];
 
     public function setUp(): void
     {
@@ -44,8 +43,7 @@ class XmlViewTest extends TestCase
     public function testRenderWithoutView(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = ['users' => ['user' => ['user1', 'user2']]];
         $Controller->set(['users' => $data]);
         $Controller->viewBuilder()
@@ -95,8 +93,7 @@ class XmlViewTest extends TestCase
     public function testRenderSerializeNoHelpers(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $Controller->set([
             'tags' => ['cakephp', 'framework'],
         ]);
@@ -114,8 +111,7 @@ class XmlViewTest extends TestCase
     public function testRenderSerializeWithOptions(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = [
             'tags' => [
                     'tag' => [
@@ -130,7 +126,7 @@ class XmlViewTest extends TestCase
                     ],
             ],
         ];
-        $xmlOptions = ['format' => ['format' => 'attributes', 'return' => 'domdocument']];
+        $xmlOptions = ['format' => 'attributes', 'return' => 'domdocument'];
 
         $Controller->set($data);
         $Controller->viewBuilder()
@@ -150,8 +146,7 @@ class XmlViewTest extends TestCase
     public function testRenderSerializeWithString(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = [
             'tags' => [
                 'tags' => [
@@ -188,8 +183,7 @@ class XmlViewTest extends TestCase
     public function testRenderWithoutViewMultiple(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
         $Controller->set($data);
         $Controller->viewBuilder()
@@ -220,8 +214,7 @@ class XmlViewTest extends TestCase
     public function testRenderWithoutViewMultipleAndAlias(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = ['original_name' => 'my epic name', 'user' => 'fake', 'list' => ['item1', 'item2']];
         $Controller->set($data);
         $Controller->viewBuilder()
@@ -252,8 +245,7 @@ class XmlViewTest extends TestCase
     public function testRenderWithSerializeTrue(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $data = ['users' => ['user' => ['user1', 'user2']]];
         $Controller->set(['users' => $data]);
         $Controller->viewBuilder()
@@ -266,7 +258,7 @@ class XmlViewTest extends TestCase
         $this->assertSame('application/xml', $View->getResponse()->getType());
 
         $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $Controller->viewBuilder()
             ->setClassName('Xml')
             ->setOption('serialize', true);
@@ -285,8 +277,7 @@ class XmlViewTest extends TestCase
     public function testRenderWithView(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
         $Controller->setName('Posts');
 
         $data = [
@@ -319,8 +310,7 @@ class XmlViewTest extends TestCase
     public function testSerializingResultSet(): void
     {
         $Request = new ServerRequest();
-        $Response = new Response();
-        $Controller = new Controller($Request, $Response);
+        $Controller = new Controller($Request);
 
         $data = $this->getTableLocator()->get('Authors')
             ->find('all')

@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -43,11 +45,6 @@ class DecimalTypeTest extends TestCase
     protected $numberClass;
 
     /**
-     * @var string
-     */
-    protected $localeString;
-
-    /**
      * Setup
      */
     public function setUp(): void
@@ -55,10 +52,7 @@ class DecimalTypeTest extends TestCase
         parent::setUp();
         $this->type = new DecimalType();
         $this->driver = $this->getMockBuilder(Driver::class)->getMock();
-        $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;
-
-        I18n::setLocale($this->localeString);
     }
 
     /**
@@ -67,7 +61,7 @@ class DecimalTypeTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        I18n::setLocale($this->localeString);
+        I18n::setLocale(I18n::getDefaultLocale());
         DecimalType::$numberClass = $this->numberClass;
     }
 
@@ -143,7 +137,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testToDatabaseInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
@@ -152,7 +146,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testToDatabaseInvalid2(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase('some data', $this->driver);
     }
 
@@ -235,7 +229,7 @@ class DecimalTypeTest extends TestCase
      */
     public function testUseLocaleParsingInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

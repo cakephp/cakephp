@@ -80,7 +80,7 @@ class PluginAssetsRemoveCommand extends Command
             'Remove plugin assets from app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to remove.',
-            'optional' => true,
+            'required' => false,
         ]);
 
         return $parser;

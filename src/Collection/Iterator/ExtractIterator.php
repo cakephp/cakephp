@@ -19,8 +19,7 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use ReturnTypeWillChange;
-use Traversable;
+use Iterator;
 
 /**
  * Creates an iterator from another iterator that extract the requested column
@@ -57,7 +56,7 @@ class ExtractIterator extends Collection
      * so that the final one can be returned or a callable that will take care
      * of doing that.
      */
-    public function __construct(iterable $items, $path)
+    public function __construct(iterable $items, callable|string $path)
     {
         $this->_extractor = $this->_propertyExtractor($path);
         parent::__construct($items);
@@ -69,8 +68,7 @@ class ExtractIterator extends Collection
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         $extractor = $this->_extractor;
 
@@ -80,7 +78,7 @@ class ExtractIterator extends Collection
     /**
      * @inheritDoc
      */
-    public function unwrap(): Traversable
+    public function unwrap(): Iterator
     {
         $iterator = $this->getInnerIterator();
 
@@ -88,7 +86,7 @@ class ExtractIterator extends Collection
             $iterator = $iterator->unwrap();
         }
 
-        if (get_class($iterator) !== ArrayIterator::class) {
+        if ($iterator::class !== ArrayIterator::class) {
             return $this;
         }
 

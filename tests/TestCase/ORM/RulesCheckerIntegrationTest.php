@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use ArrayObject;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -25,6 +27,8 @@ use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Closure;
+use stdClass;
 
 /**
  * Tests the integration between the ORM and the domain checker
@@ -34,12 +38,12 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles', 'core.Tags', 'core.ArticlesTags', 'core.Authors', 'core.Comments',
         'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
-        'core.Comments', 'core.UniqueAuthors',
+        'core.UniqueAuthors',
     ];
 
     /**
@@ -390,7 +394,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
-            ['first_author_id', 'second_author_id']
+            ['first_author_id', 'second_author_id'],
+            ['allowMultipleNulls' => false]
         ));
 
         $entity = new Entity([
@@ -413,8 +418,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
-            ['first_author_id', 'second_author_id'],
-            ['allowMultipleNulls' => true]
+            ['first_author_id', 'second_author_id']
         ));
 
         $entity = new Entity([
@@ -572,8 +576,8 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testExistsInInvalidAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('ExistsIn rule for `author_id` is invalid. `NotValid` is not associated with `Cake\ORM\Table`.');
         $entity = new Entity([
             'title' => 'An Article',
             'author_id' => 500,
@@ -680,7 +684,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -688,6 +692,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'checkRules' => true,
                         'checkExisting' => true,
                         '_primary' => true,
+                        '_cleanOnSuccess' => true,
                     ],
                     $options->getArrayCopy()
                 );
@@ -719,7 +724,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -727,6 +732,7 @@ class RulesCheckerIntegrationTest extends TestCase
                         'checkRules' => true,
                         'checkExisting' => true,
                         '_primary' => true,
+                        '_cleanOnSuccess' => true,
                     ],
                     $options->getArrayCopy()
                 );
@@ -1317,7 +1323,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity->tags = null;
         $this->assertFalse($table->save($entity));
 
-        $entity->tags = new \stdClass();
+        $entity->tags = new stdClass();
         $this->assertFalse($table->save($entity));
 
         $entity->tags = 'string';
@@ -1328,36 +1334,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $entity->tags = 0.512;
         $this->assertFalse($table->save($entity));
-    }
-
-    /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     */
-    public function testIsLinkedToInvalidArgumentOne(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
-
-        $Comments = $this->getTableLocator()->get('Comments');
-
-        /** @var \Cake\ORM\RulesChecker $rulesChecker */
-        $rulesChecker = $Comments->rulesChecker();
-        $rulesChecker->isLinkedTo(null);
-    }
-
-    /**
-     * Tests that an exception is thrown when passing an invalid value for the `$association` argument.
-     */
-    public function testIsNotLinkedToInvalidArgumentOne(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 1 is expected to be of type `\Cake\ORM\Association|string`, `NULL` given.');
-
-        $Comments = $this->getTableLocator()->get('Comments');
-
-        /** @var \Cake\ORM\RulesChecker $rulesChecker */
-        $rulesChecker = $Comments->rulesChecker();
-        $rulesChecker->isNotLinkedTo(null);
     }
 
     /**
@@ -1763,7 +1739,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
+        Closure::bind(
             function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
@@ -1808,7 +1784,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
 
-        \Closure::bind(
+        Closure::bind(
             function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },

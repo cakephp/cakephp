@@ -21,7 +21,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -30,6 +30,51 @@ use InvalidArgumentException;
  */
 class EagerLoaderTest extends TestCase
 {
+    /**
+     * @var \Cake\Datasource\ConnectionInterface
+     */
+    protected $connection;
+
+    /**
+     * @var \Cake\ORM\Table
+     */
+    protected $table;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $clientsTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $ordersTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $orderTypesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $stuffTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $stuffTypesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $companiesTypeMap;
+
+    /**
+     * @var \Cake\Database\TypeMap
+     */
+    protected $categoriesTypeMap;
+
     /**
      * setUp method
      */
@@ -144,9 +189,9 @@ class EagerLoaderTest extends TestCase
             ],
         ];
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
 
         $query->setTypeMap($this->clientsTypeMap);
@@ -365,7 +410,7 @@ class EagerLoaderTest extends TestCase
         ]);
         $builder = $loader->getContain()['clients']['queryBuilder'];
         $table = $this->getTableLocator()->get('foo');
-        $query = new Query($this->connection, $table);
+        $query = new SelectQuery($table);
         $query = $builder($query);
         $this->assertEquals(['a', 'b'], $query->clause('select'));
     }
@@ -385,7 +430,7 @@ class EagerLoaderTest extends TestCase
         ];
 
         $table = $this->getTableLocator()->get('foo');
-        $query = new Query($this->connection, $table);
+        $query = new SelectQuery($table);
         $loader = new EagerLoader();
         $loader->contain($contains);
         $query->select('foo.id');
@@ -409,7 +454,7 @@ class EagerLoaderTest extends TestCase
     {
         $contains = ['clients' => ['orders']];
 
-        $query = new Query($this->connection, $this->table);
+        $query = new SelectQuery($this->table);
         $query->select()->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = [
@@ -422,7 +467,7 @@ class EagerLoaderTest extends TestCase
         $this->assertEquals($expected, $select);
 
         $contains['clients']['fields'] = ['name'];
-        $query = new Query($this->connection, $this->table);
+        $query = new SelectQuery($this->table);
         $query->select('foo.id')->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = ['foo__id' => 'foo.id', 'clients__name' => 'clients.name'];
@@ -431,7 +476,7 @@ class EagerLoaderTest extends TestCase
 
         $contains['clients']['fields'] = [];
         $contains['clients']['orders']['fields'] = false;
-        $query = new Query($this->connection, $this->table);
+        $query = new SelectQuery($this->table);
         $query->select()->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = [
@@ -462,9 +507,9 @@ class EagerLoaderTest extends TestCase
             ],
         ];
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->connection, $this->table])
+            ->setConstructorArgs([$this->table])
             ->getMock();
 
         $loader = new EagerLoader();

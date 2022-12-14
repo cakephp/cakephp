@@ -39,7 +39,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testGetNonExistent(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::get('Test');
     }
@@ -49,28 +49,9 @@ class FactoryLocatorTest extends TestCase
      */
     public function testAdd(): void
     {
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new \stdClass();
-            $mock->name = $name;
-
-            return $mock;
-        });
-        $this->assertIsCallable(FactoryLocator::get('Test'));
-
         $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         FactoryLocator::add('MyType', $locator);
         $this->assertInstanceOf(LocatorInterface::class, FactoryLocator::get('MyType'));
-    }
-
-    public function testFactoryAddException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-            . ' Got type `string` instead.'
-        );
-
-        FactoryLocator::add('Test', 'fail');
     }
 
     /**
@@ -78,7 +59,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testDrop(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::drop('Test');
 

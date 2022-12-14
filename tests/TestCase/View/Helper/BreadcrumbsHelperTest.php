@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\BreadcrumbsHelper;
 use Cake\View\View;
+use LogicException;
 
 class BreadcrumbsHelperTest extends TestCase
 {
@@ -41,9 +41,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper($view);
 
         Router::reload();
-        Router::scope('/', function (RouteBuilder $routes): void {
-            $routes->fallbacks();
-        });
+        Router::createRouteBuilder('/')->fallbacks();
     }
 
     /**
@@ -266,7 +264,7 @@ class BreadcrumbsHelperTest extends TestCase
      */
     public function testInsertAtIndexOutOfBounds(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->insertAt(2, 'Insert At Again', ['controller' => 'Insert', 'action' => 'at_again']);
@@ -350,6 +348,33 @@ class BreadcrumbsHelperTest extends TestCase
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test adding crumbs after a specific one
+     */
+    public function testInsertAfterLastItem(): void
+    {
+        $this->breadcrumbs
+            ->add('Home', '/')
+            ->insertAfter('Home', 'Below Home', '/below', ['class' => 'second']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => [],
+            ],
+            [
+                'title' => 'Below Home',
+                'url' => '/below',
+                'options' => [
+                    'class' => 'second',
                 ],
             ],
         ];

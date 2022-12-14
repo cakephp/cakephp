@@ -19,9 +19,9 @@ namespace Cake\Core;
 /**
  * Read-only wrapper for configuration data
  *
- * Intended for use with Cake\Core\Container as
+ * Intended for use with {@link \Cake\Core\Container} as
  * a typehintable way for services to have application
- * confiugration injected as arrays cannot be typehinted.
+ * configuration injected as arrays cannot be typehinted.
  */
 class ServiceConfig
 {
@@ -32,7 +32,7 @@ class ServiceConfig
      * @param mixed $default The default value to use if $path does not exist.
      * @return mixed The configuration data or $default value.
      */
-    public function get(string $path, $default = null)
+    public function get(string $path, mixed $default = null): mixed
     {
         return Configure::read($path, $default);
     }

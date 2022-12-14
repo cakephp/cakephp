@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Middleware;
 
@@ -98,9 +98,9 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     /**
      * Security related headers to set
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * X-Content-Type-Options
@@ -164,7 +164,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
      * @param string $option Option value. Available Values: 'deny', 'sameorigin', 'allow-from <uri>'
-     * @param string $url URL if mode is `allow-from`
+     * @param string|null $url URL if mode is `allow-from`
      * @return $this
      */
     public function setXFrameOptions(string $option = self::SAMEORIGIN, ?string $url = null)
@@ -192,8 +192,6 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      */
     public function setXssProtection(string $mode = self::XSS_BLOCK)
     {
-        $mode = $mode;
-
         if ($mode === self::XSS_BLOCK) {
             $mode = self::XSS_ENABLED_BLOCK;
         }
@@ -237,8 +235,9 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     protected function checkValues(string $value, array $allowed): void
     {
         if (!in_array($value, $allowed, true)) {
+            array_walk($allowed, fn (&$x) => $x = "`$x`");
             throw new InvalidArgumentException(sprintf(
-                'Invalid arg `%s`, use one of these: %s',
+                'Invalid arg `%s`, use one of these: %s.',
                 $value,
                 implode(', ', $allowed)
             ));

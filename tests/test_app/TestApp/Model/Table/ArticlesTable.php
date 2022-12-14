@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Table;
 
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
@@ -32,10 +32,10 @@ class ArticlesTable extends Table
     /**
      * Find published
      *
-     * @param \Cake\ORM\Query $query The query
-     * @param array $options The options
+     * @param \Cake\ORM\Query\SelectQuery $query The query
+     * @param array<string, mixed> $options The options
      */
-    public function findPublished($query, array $options = []): Query
+    public function findPublished($query, array $options = []): SelectQuery
     {
         $query = $query->where([$this->aliasField('published') => 'Y']);
 
@@ -44,6 +44,17 @@ class ArticlesTable extends Table
         }
 
         return $query;
+    }
+
+    /**
+     * Find articles and eager load authors.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query The query
+     * @param array<string, mixed> $options The options
+     */
+    public function findWithAuthors($query, array $options = []): SelectQuery
+    {
+        return $query->contain('Authors');
     }
 
     /**

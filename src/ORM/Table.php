@@ -18,9 +18,13 @@ namespace Cake\ORM;
 
 use ArrayObject;
 use BadMethodCallException;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -39,13 +43,18 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
+use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\QueryFactory;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use Closure;
 use Exception;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Represents a single database table.
@@ -89,7 +98,7 @@ use RuntimeException;
  * - `Model.beforeFind` Fired before each find operation. By stopping the event and
  *   supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find. The
- *   `$primary` parameter indicates whether or not this is the root query, or an
+ *   `$primary` parameter indicates whether this is the root query, or an
  *   associated query.
  *
  * - `Model.buildValidator` Allows listeners to modify validation rules
@@ -124,7 +133,7 @@ use RuntimeException;
  * You can subscribe to the events listed above in your table classes by implementing the
  * lifecycle methods below:
  *
- * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, boolean $primary)`
  * - `beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options)`
  * - `afterMarshal(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
@@ -171,14 +180,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The rules class name that is used.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\RulesChecker>
      */
     public const RULES_CLASS = RulesChecker::class;
 
     /**
      * The IsUnique class name that is used.
      *
-     * @var string
+     * @var class-string<\Cake\ORM\Rule\IsUnique>
      */
     public const IS_UNIQUE_CLASS = IsUnique::class;
 
@@ -187,7 +196,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected $_table;
+    protected ?string $_table = null;
 
     /**
      * Human name giving to this particular instance. Multiple objects representing
@@ -195,64 +204,66 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string|null
      */
-    protected $_alias;
+    protected ?string $_alias = null;
 
     /**
      * Connection instance
      *
      * @var \Cake\Database\Connection|null
      */
-    protected $_connection;
+    protected ?Connection $_connection = null;
 
     /**
      * The schema object containing a description of this table fields
      *
      * @var \Cake\Database\Schema\TableSchemaInterface|null
      */
-    protected $_schema;
+    protected ?TableSchemaInterface $_schema = null;
 
     /**
      * The name of the field that represents the primary key in the table
      *
      * @var array<string>|string|null
      */
-    protected $_primaryKey;
+    protected array|string|null $_primaryKey = null;
 
     /**
-     * The name of the field that represents a human readable representation of a row
+     * The name of the field that represents a human-readable representation of a row
      *
      * @var array<string>|string|null
      */
-    protected $_displayField;
+    protected array|string|null $_displayField = null;
 
     /**
      * The associations container for this Table.
      *
      * @var \Cake\ORM\AssociationCollection
      */
-    protected $_associations;
+    protected AssociationCollection $_associations;
 
     /**
      * BehaviorRegistry for this table
      *
      * @var \Cake\ORM\BehaviorRegistry
      */
-    protected $_behaviors;
+    protected BehaviorRegistry $_behaviors;
 
     /**
      * The name of the class that represent a single row for this table
      *
-     * @var string
-     * @psalm-var class-string<\Cake\Datasource\EntityInterface>
+     * @var string|null
+     * @psalm-var class-string<\Cake\Datasource\EntityInterface>|null
      */
-    protected $_entityClass;
+    protected ?string $_entityClass = null;
 
     /**
      * Registry key used to create this table object
      *
      * @var string|null
      */
-    protected $_registryAlias;
+    protected ?string $_registryAlias = null;
+
+    protected QueryFactory $queryFactory;
 
     /**
      * Initializes a new instance
@@ -273,7 +284,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   validation set, or an associative array, where key is the name of the
      *   validation set and value the Validator instance.
      *
-     * @param array $config List of options for this table
+     * @param array<string, mixed> $config List of options for this table.
      */
     public function __construct(array $config = [])
     {
@@ -288,6 +299,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (!empty($config['connection'])) {
             $this->setConnection($config['connection']);
+        }
+        if (!empty($config['queryFactory'])) {
+            $this->queryFactory = $config['queryFactory'];
         }
         if (!empty($config['schema'])) {
             $this->setSchema($config['schema']);
@@ -318,6 +332,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
         $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
+        /** @psalm-suppress TypeDoesNotContainType */
+        $this->queryFactory ??= new QueryFactory();
 
         $this->initialize($config);
         $this->_eventManager->on($this);
@@ -353,7 +369,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *  }
      * ```
      *
-     * @param array $config Configuration options passed to the constructor
+     * @param array<string, mixed> $config Configuration options passed to the constructor
      * @return void
      */
     public function initialize(array $config): void
@@ -387,9 +403,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_table === null) {
             $table = namespaceSplit(static::class);
-            $table = substr(end($table), 0, -5);
+            $table = substr(end($table), 0, -5) ?: $this->_alias;
             if (!$table) {
-                $table = $this->getAlias();
+                throw new CakeException(
+                    'You must specify either the `alias` or the `table` option for the constructor.'
+                );
             }
             $this->_table = Inflector::underscore($table);
         }
@@ -419,7 +437,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr(end($alias), 0, -5) ?: $this->getTable();
+            $alias = substr(end($alias), 0, -5) ?: $this->_table;
+            if (!$alias) {
+                throw new CakeException(
+                    'You must specify either the `alias` or the `table` option for the constructor.'
+                );
+            }
             $this->_alias = $alias;
         }
 
@@ -436,7 +459,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function aliasField(string $field): string
     {
-        if (strpos($field, '.') !== false) {
+        if (str_contains($field, '.')) {
             return $field;
         }
 
@@ -463,11 +486,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getRegistryAlias(): string
     {
-        if ($this->_registryAlias === null) {
-            $this->_registryAlias = $this->getAlias();
-        }
-
-        return $this->_registryAlias;
+        return $this->_registryAlias ??= $this->getAlias();
     }
 
     /**
@@ -491,8 +510,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection(): Connection
     {
         if (!$this->_connection) {
-            /** @var \Cake\Database\Connection $connection */
             $connection = ConnectionManager::get(static::defaultConnectionName());
+            assert($connection instanceof Connection);
             $this->_connection = $connection;
         }
 
@@ -507,11 +526,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
-            $this->_schema = $this->_initializeSchema(
-                $this->getConnection()
-                    ->getSchemaCollection()
-                    ->describe($this->getTable())
-            );
+            $this->_schema = $this->getConnection()
+                ->getSchemaCollection()
+                ->describe($this->getTable());
             if (Configure::read('debug')) {
                 $this->checkAliasLengths();
             }
@@ -529,7 +546,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Schema\TableSchemaInterface|array $schema Schema to be used for this table
      * @return $this
      */
-    public function setSchema($schema)
+    public function setSchema(TableSchemaInterface|array $schema)
     {
         if (is_array($schema)) {
             $constraints = [];
@@ -559,18 +576,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * queries fit into the max length allowed by database driver.
      *
      * @return void
-     * @throws \RuntimeException When an alias combination is too long
+     * @throws \Cake\Database\Exception\DatabaseException When an alias combination is too long
      */
     protected function checkAliasLengths(): void
     {
         if ($this->_schema === null) {
-            throw new RuntimeException("Unable to check max alias lengths for  `{$this->getAlias()}` without schema.");
+            throw new DatabaseException(sprintf(
+                'Unable to check max alias lengths for `%s` without schema.',
+                $this->getAlias()
+            ));
         }
 
-        $maxLength = null;
-        if (method_exists($this->getConnection()->getDriver(), 'getMaxAliasLength')) {
-            $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
-        }
+        $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
         if ($maxLength === null) {
             return;
         }
@@ -579,7 +596,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         foreach ($this->_schema->columns() as $name) {
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
-                throw new RuntimeException(
+                throw new DatabaseException(
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
                     "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
                     'You must change the table schema in the database and shorten either the table or column ' .
@@ -587,30 +604,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 );
             }
         }
-    }
-
-    /**
-     * Override this function in order to alter the schema used by this table.
-     * This function is only called after fetching the schema out of the database.
-     * If you wish to provide your own schema to this table without touching the
-     * database, you can override schema() or inject the definitions though that
-     * method.
-     *
-     * ### Example:
-     *
-     * ```
-     * protected function _initializeSchema(\Cake\Database\Schema\TableSchemaInterface $schema) {
-     *  $schema->setColumnType('preferences', 'json');
-     *  return $schema;
-     * }
-     * ```
-     *
-     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table definition fetched from database.
-     * @return \Cake\Database\Schema\TableSchemaInterface the altered schema
-     */
-    protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface
-    {
-        return $schema;
     }
 
     /**
@@ -635,7 +628,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string>|string $key Sets a new name to be used as primary key
      * @return $this
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey(array|string $key)
     {
         $this->_primaryKey = $key;
 
@@ -647,7 +640,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array<string>|string
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): array|string
     {
         if ($this->_primaryKey === null) {
             $key = $this->getSchema()->getPrimaryKey();
@@ -666,7 +659,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string>|string $field Name to be used as display field.
      * @return $this
      */
-    public function setDisplayField($field)
+    public function setDisplayField(array|string $field)
     {
         $this->_displayField = $field;
 
@@ -678,7 +671,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array<string>|string|null
      */
-    public function getDisplayField()
+    public function getDisplayField(): array|string|null
     {
         if ($this->_displayField === null) {
             $schema = $this->getSchema();
@@ -697,8 +690,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the class used to hydrate rows for this table.
      *
-     * @return string
-     * @psalm-return class-string<\Cake\Datasource\EntityInterface>
+     * @return class-string<\Cake\Datasource\EntityInterface>
      */
     public function getEntityClass(): string
     {
@@ -768,7 +760,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Behaviors are generally loaded during Table::initialize().
      *
      * @param string $name The name of the behavior. Can be a short class reference.
-     * @param array $options The options for the behavior to use.
+     * @param array<string, mixed> $options The options for the behavior to use.
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
@@ -792,7 +784,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]);
      * ```
      *
-     * @param array $behaviors All of the behaviors to load.
+     * @param array $behaviors All the behaviors to load.
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      */
@@ -853,22 +845,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_behaviors->has($name)) {
             throw new InvalidArgumentException(sprintf(
-                'The %s behavior is not defined on %s.',
+                'The `%s` behavior is not defined on `%s`.',
                 $name,
                 static::class
             ));
         }
 
-        $behavior = $this->_behaviors->get($name);
-
-        return $behavior;
+        /** @var \Cake\ORM\Behavior */
+        return $this->_behaviors->get($name);
     }
 
     /**
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
-     * @return bool Whether or not the behavior exists.
+     * @return bool Whether the behavior exists.
      */
     public function hasBehavior(string $name): bool
     {
@@ -939,7 +930,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function findAssociation(string $name): ?Association
     {
-        if (strpos($name, '.') === false) {
+        if (!str_contains($name, '.')) {
             return $this->_associations->get($name);
         }
 
@@ -1035,17 +1026,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\BelongsTo
      */
     public function belongsTo(string $associated, array $options = []): BelongsTo
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\BelongsTo $association */
-        $association = $this->_associations->load(BelongsTo::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\BelongsTo */
+        return $this->_associations->load(BelongsTo::class, $associated, $options);
     }
 
     /**
@@ -1081,17 +1070,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\HasOne
      */
     public function hasOne(string $associated, array $options = []): HasOne
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\HasOne $association */
-        $association = $this->_associations->load(HasOne::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\HasOne */
+        return $this->_associations->load(HasOne::class, $associated, $options);
     }
 
     /**
@@ -1133,17 +1120,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\HasMany
      */
     public function hasMany(string $associated, array $options = []): HasMany
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\HasMany $association */
-        $association = $this->_associations->load(HasMany::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\HasMany */
+        return $this->_associations->load(HasMany::class, $associated, $options);
     }
 
     /**
@@ -1187,17 +1172,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
-     * @param array $options list of options to configure the association definition
+     * @param array<string, mixed> $options list of options to configure the association definition
      * @return \Cake\ORM\Association\BelongsToMany
      */
     public function belongsToMany(string $associated, array $options = []): BelongsToMany
     {
         $options += ['sourceTable' => $this];
 
-        /** @var \Cake\ORM\Association\BelongsToMany $association */
-        $association = $this->_associations->load(BelongsToMany::class, $associated, $options);
-
-        return $association;
+        /** @var \Cake\ORM\Association\BelongsToMany */
+        return $this->_associations->load(BelongsToMany::class, $associated, $options);
     }
 
     /**
@@ -1255,15 +1238,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Would invoke the `findPublished` method.
      *
      * @param string $type the type of query to perform
-     * @param array $options An array that will be passed to Query::applyOptions()
-     * @return \Cake\ORM\Query The query builder
+     * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function find(string $type = 'all', array $options = []): Query
+    public function find(string $type = 'all', array $options = []): SelectQuery
     {
-        $query = $this->query();
-        $query->select();
-
-        return $this->callFinder($type, $query, $options);
+        return $this->callFinder($type, $this->selectQuery(), $options);
     }
 
     /**
@@ -1272,11 +1252,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * By default findAll() applies no conditions, you
      * can override this method in subclasses to modify how `find('all')` works.
      *
-     * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to use for the find
-     * @return \Cake\ORM\Query The query builder
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param array<string, mixed> $options The options to use for the find
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findAll(Query $query, array $options): Query
+    public function findAll(SelectQuery $query, array $options): SelectQuery
     {
         return $query;
     }
@@ -1287,7 +1267,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * When calling this finder, the fields passed are used to determine what should
      * be used as the array key, value and optionally what to group the results by.
-     * By default the primary key for the model is used for the key, and the display
+     * By default, the primary key for the model is used for the key, and the display
      * field as value.
      *
      * The results of this finder will be in the following form:
@@ -1312,7 +1292,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * The `valueField` can also be an array, in which case you can also specify
-     * the `valueSeparator` option to control how the values will be concatinated:
+     * the `valueSeparator` option to control how the values will be concatenated:
      *
      * ```
      * $table->find('list', [
@@ -1353,11 +1333,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options for the find
-     * @return \Cake\ORM\Query The query builder
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param array<string, mixed> $options The options for the find
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findList(Query $query, array $options): Query
+    public function findList(SelectQuery $query, array $options): SelectQuery
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1388,14 +1368,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(function ($results) use ($options) {
-            /** @var \Cake\Collection\CollectionInterface $results */
-            return $results->combine(
+        return $query->formatResults(fn (CollectionInterface $results) =>
+            $results->combine(
                 $options['keyField'],
                 $options['valueField'],
                 $options['groupField']
-            );
-        });
+            ));
     }
 
     /**
@@ -1413,16 +1391,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      * $table->find('threaded', [
      *  'keyField' => 'id',
-     *  'parentField' => 'ancestor_id'
+     *  'parentField' => 'ancestor_id',
      *  'nestingKey' => 'children'
      * ]);
      * ```
      *
-     * @param \Cake\ORM\Query $query The query to find with
-     * @param array $options The options to find with
-     * @return \Cake\ORM\Query The query builder
+     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param array<string, mixed> $options The options to find with
+     * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findThreaded(Query $query, array $options): Query
+    public function findThreaded(SelectQuery $query, array $options): SelectQuery
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1432,10 +1410,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
-        return $query->formatResults(function ($results) use ($options) {
-            /** @var \Cake\Collection\CollectionInterface $results */
-            return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
-        });
+        return $query->formatResults(fn (CollectionInterface $results) =>
+            $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']));
     }
 
     /**
@@ -1446,10 +1422,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * This is an auxiliary function used for result formatters that can accept
      * composite keys when comparing values.
      *
-     * @param array $options the original options passed to a finder
+     * @param array<string, mixed> $options the original options passed to a finder
      * @param array<string> $keys the keys to check in $options to build matchers from
      * the associated value
-     * @return array
+     * @return array<string, mixed>
      */
     protected function _setFieldMatchers(array $options, array $keys): array
     {
@@ -1490,23 +1466,31 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param mixed $primaryKey primary key value to find
-     * @param array $options options accepted by `Table::find()`
+     * @param array<string, mixed> $options options accepted by `Table::find()`
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException if the record with such id
      * could not be found
      * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
-     * @psalm-suppress InvalidReturnType
      */
-    public function get($primaryKey, array $options = []): EntityInterface
+    public function get(mixed $primaryKey, array $options = []): EntityInterface
     {
+        if ($primaryKey === null) {
+            throw new InvalidPrimaryKeyException(sprintf(
+                'Record not found in table `%s` with primary key `[NULL]`.',
+                $this->getTable()
+            ));
+        }
+
         $key = (array)$this->getPrimaryKey();
         $alias = $this->getAlias();
         foreach ($key as $index => $keyname) {
             $key[$index] = $alias . '.' . $keyname;
         }
-        $primaryKey = (array)$primaryKey;
+        if (!is_array($primaryKey)) {
+            $primaryKey = [$primaryKey];
+        }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
             $primaryKey = array_map(function ($key) {
@@ -1514,7 +1498,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }, $primaryKey);
 
             throw new InvalidPrimaryKeyException(sprintf(
-                'Record not found in table "%s" with primary key [%s]',
+                'Record not found in table `%s` with primary key `[%s]`.',
                 $this->getTable(),
                 implode(', ', $primaryKey)
             ));
@@ -1531,16 +1515,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($cacheConfig) {
             if (!$cacheKey) {
                 $cacheKey = sprintf(
-                    'get:%s.%s%s',
+                    'get-%s-%s-%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
-                    json_encode($primaryKey)
+                    json_encode($primaryKey, JSON_THROW_ON_ERROR)
                 );
             }
             $query->cache($cacheKey, $cacheConfig);
         }
 
-        /** @psalm-suppress InvalidReturnStatement */
         return $query->firstOrFail();
     }
 
@@ -1551,12 +1534,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
      */
-    protected function _executeTransaction(callable $worker, bool $atomic = true)
+    protected function _executeTransaction(callable $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
-            return $this->getConnection()->transactional(function () use ($worker) {
-                return $worker();
-            });
+            return $this->getConnection()->transactional(fn () => $worker());
         }
 
         return $worker();
@@ -1587,7 +1568,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * entity will be saved and returned.
      *
      * If your find conditions require custom order, associations or conditions, then the $search
-     * parameter can be a callable that takes the Query as the argument, or a \Cake\ORM\Query object passed
+     * parameter can be a callable that takes the Query as the argument, or a \Cake\ORM\Query\SelectQuery object passed
      * as the $search parameter. Allowing you to customize the find results.
      *
      * ### Options
@@ -1598,26 +1579,30 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
-    public function findOrCreate($search, ?callable $callback = null, $options = []): EntityInterface
-    {
+    public function findOrCreate(
+        SelectQuery|callable|array $search,
+        ?callable $callback = null,
+        array $options = []
+    ): EntityInterface {
         $options = new ArrayObject($options + [
             'atomic' => true,
             'defaults' => true,
         ]);
 
-        $entity = $this->_executeTransaction(function () use ($search, $callback, $options) {
-            return $this->_processFindOrCreate($search, $callback, $options->getArrayCopy());
-        }, $options['atomic']);
+        $entity = $this->_executeTransaction(
+            fn () => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
+            $options['atomic']
+        );
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
@@ -1629,18 +1614,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|array An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @throws \InvalidArgumentException
      */
-    protected function _processFindOrCreate($search, ?callable $callback = null, $options = [])
-    {
+    protected function _processFindOrCreate(
+        SelectQuery|callable|array $search,
+        ?callable $callback = null,
+        array $options = []
+    ): EntityInterface|array {
         $query = $this->_getFindOrCreateQuery($search);
 
         $row = $query->first();
@@ -1670,74 +1658,127 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query|callable|array $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query
+     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _getFindOrCreateQuery($search): Query
+    protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
         if (is_callable($search)) {
             $query = $this->find();
             $search($query);
         } elseif (is_array($search)) {
             $query = $this->find()->where($search);
-        } elseif ($search instanceof Query) {
-            $query = $search;
         } else {
-            throw new InvalidArgumentException(sprintf(
-                'Search criteria must be an array, callable or Query. Got "%s"',
-                getTypeName($search)
-            ));
+            $query = $search;
         }
 
         return $query;
     }
 
     /**
-     * Creates a new Query instance for a table.
+     * Creates a new SelectQuery instance for a table.
      *
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function query(): Query
+    public function query(): SelectQuery
     {
-        return new Query($this->getConnection(), $this);
+        return $this->selectQuery();
     }
 
     /**
-     * Creates a new Query::subquery() instance for a table.
+     * Creates a new select query
      *
-     * @return \Cake\ORM\Query
-     * @see \Cake\ORM\Query::subquery()
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function subquery(): Query
+    public function selectQuery(): SelectQuery
     {
-        return Query::subquery($this);
+        return $this->queryFactory->select($this);
     }
 
     /**
-     * @inheritDoc
+     * Creates a new insert query
+     *
+     * @return \Cake\ORM\Query\InsertQuery
      */
-    public function updateAll($fields, $conditions): int
+    public function insertQuery(): InsertQuery
     {
-        $query = $this->query();
-        $query->update()
+        return $this->queryFactory->insert($this);
+    }
+
+    /**
+     * Creates a new update query
+     *
+     * @return \Cake\ORM\Query\UpdateQuery
+     */
+    public function updateQuery(): UpdateQuery
+    {
+        return $this->queryFactory->update($this);
+    }
+
+    /**
+     * Creates a new delete query
+     *
+     * @return \Cake\ORM\Query\DeleteQuery
+     */
+    public function deleteQuery(): DeleteQuery
+    {
+        return $this->queryFactory->delete($this);
+    }
+
+    /**
+     * Creates a new Query instance with field auto aliasing disabled.
+     *
+     * This is useful for subqueries.
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function subquery(): SelectQuery
+    {
+        return $this->queryFactory->select($this)->disableAutoAliasing();
+    }
+
+    /**
+     * Update all matching records.
+     *
+     * Sets the $fields to the provided values based on $conditions.
+     * This method will *not* trigger beforeSave/afterSave events. If you need those
+     * first load a collection of records and update them.
+     *
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @return int Count Returns the affected rows.
+     */
+    public function updateAll(
+        QueryExpression|Closure|array|string $fields,
+        QueryExpression|Closure|array|string|null $conditions
+    ): int {
+        $statement = $this->updateQuery()
             ->set($fields)
-            ->where($conditions);
-        $statement = $query->execute();
-        $statement->closeCursor();
+            ->where($conditions)
+            ->execute();
 
         return $statement->rowCount();
     }
 
     /**
-     * @inheritDoc
+     * Deletes all records matching the provided conditions.
+     *
+     * This method will *not* trigger beforeDelete/afterDelete events. If you
+     * need those first load a collection of records and delete them.
+     *
+     * This method will *not* execute on associations' `cascade` attribute. You should
+     * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
+     * with this method.
+     *
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * can take.
+     * @return int Returns the number of affected rows.
      */
-    public function deleteAll($conditions): int
+    public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
     {
-        $query = $this->query()
-            ->delete()
-            ->where($conditions);
-        $statement = $query->execute();
-        $statement->closeCursor();
+        $statement = $this->deleteQuery()
+            ->where($conditions)
+            ->execute();
 
         return $statement->rowCount();
     }
@@ -1745,7 +1786,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists($conditions): bool
+    public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
             $this->find('all')
@@ -1766,7 +1807,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * - atomic: Whether to execute the save and callbacks inside a database
      *   transaction (default: true)
-     * - checkRules: Whether or not to check the rules on entity before saving, if the checking
+     * - checkRules: Whether to check the rules on entity before saving, if the checking
      *   fails, it will abort the save operation. (default:true)
      * - associated: If `true` it will save 1st level associated entities as they are found
      *   in the passed `$entity` whenever the property defined for the association
@@ -1774,7 +1815,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   to be saved. It is possible to provide different options for saving on associated
      *   table objects using this key by making the custom options the array value.
      *   If `false` no associated records will be saved. (default: `true`)
-     * - checkExisting: Whether or not to check if the entity already exists, assuming that the
+     * - checkExisting: Whether to check if the entity already exists, assuming that the
      *   entity is marked as not new, and the primary key has been set.
      *
      * ### Events
@@ -1839,22 +1880,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array $options The options to use when saving.
+     * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
-    public function save(EntityInterface $entity, $options = [])
-    {
-        if ($options instanceof SaveOptionsBuilder) {
-            $options = $options->toArray();
-        }
-
-        $options = new ArrayObject((array)$options + [
+    public function save(
+        EntityInterface $entity,
+        array $options = []
+    ): EntityInterface|false {
+        $options = new ArrayObject($options + [
             'atomic' => true,
             'associated' => true,
             'checkRules' => true,
             'checkExisting' => true,
             '_primary' => true,
+            '_cleanOnSuccess' => true,
         ]);
 
         if ($entity->hasErrors((bool)$options['associated'])) {
@@ -1865,17 +1905,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        $success = $this->_executeTransaction(function () use ($entity, $options) {
-            return $this->_processSave($entity, $options);
-        }, $options['atomic']);
+        $success = $this->_executeTransaction(
+            fn () => $this->_processSave($entity, $options),
+            $options['atomic']
+        );
 
         if ($success) {
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
-                $entity->clean();
-                $entity->setNew(false);
+                if ($options['_cleanOnSuccess']) {
+                    $entity->clean();
+                    $entity->setNew(false);
+                }
                 $entity->setSource($this->getRegistryAlias());
             }
         }
@@ -1888,12 +1931,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the entity contains errors or the save was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayAccess|array $options The options to use when saving.
+     * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @see \Cake\ORM\Table::save()
      */
-    public function saveOrFail(EntityInterface $entity, $options = []): EntityInterface
+    public function saveOrFail(EntityInterface $entity, array $options = []): EntityInterface
     {
         $saved = $this->save($entity, $options);
         if ($saved === false) {
@@ -1907,13 +1950,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Performs the actual saving of an entity based on the passed options.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayObject $options the options to use for the save operation
+     * @param \ArrayObject<string, mixed> $options the options to use for the save operation
      * @return \Cake\Datasource\EntityInterface|false
-     * @throws \RuntimeException When an entity is missing some of the primary keys.
+     * @throws \Cake\Database\Exception\DatabaseException When an entity is missing some of the primary keys.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
      */
-    protected function _processSave(EntityInterface $entity, ArrayObject $options)
+    protected function _processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
     {
         $primaryColumns = (array)$this->getPrimaryKey();
 
@@ -1940,11 +1983,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return false;
             }
 
-            if ($result !== false && !($result instanceof EntityInterface)) {
-                throw new RuntimeException(sprintf(
-                    'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
-                    getTypeName($result)
-                ));
+            if ($result !== false) {
+                assert(
+                    $result instanceof EntityInterface,
+                    sprintf(
+                        'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
+                        get_debug_type($result)
+                    )
+                );
             }
 
             return $result;
@@ -1987,7 +2033,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * once the entity for this table has been saved successfully.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param \ArrayObject $options the options to use for the save operation
+     * @param \ArrayObject<string, mixed> $options the options to use for the save operation
      * @return bool True on success
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
@@ -2026,10 +2072,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
      * @param array $data The actual data that needs to be saved
      * @return \Cake\Datasource\EntityInterface|false
-     * @throws \RuntimeException if not all the primary keys where supplied or could
+     * @throws \Cake\Database\Exception\DatabaseException if not all the primary keys where supplied or could
      * be generated when the table has composite primary keys. Or when the table has no primary key.
      */
-    protected function _insert(EntityInterface $entity, array $data)
+    protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primary = (array)$this->getPrimaryKey();
         if (empty($primary)) {
@@ -2037,13 +2083,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->getTable()
             );
-            throw new RuntimeException($msg);
+            throw new DatabaseException($msg);
         }
         $keys = array_fill(0, count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
-        $primary = array_combine($primary, $id) ?: [];
+        $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
         $filteredKeys = array_filter($primary, function ($v) {
@@ -2061,20 +2107,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
                         implode(', ', array_keys($primary))
                     );
-                    throw new RuntimeException($msg);
+                    throw new DatabaseException($msg);
                 }
             }
         }
 
-        $success = false;
         if (empty($data)) {
-            return $success;
+            return false;
         }
 
-        $statement = $this->query()->insert(array_keys($data))
+        $statement = $this->insertQuery()->insert(array_keys($data))
             ->values($data)
             ->execute();
 
+        $success = false;
         if ($statement->rowCount() !== 0) {
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
@@ -2083,14 +2129,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
-                    /** @var string $type */
                     $type = $schema->getColumnType($key);
+                    assert($type !== null);
                     $entity->set($key, TypeFactory::build($type)->toPHP($id, $driver));
                     break;
                 }
             }
         }
-        $statement->closeCursor();
 
         return $success;
     }
@@ -2108,13 +2153,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string> $primary The primary key columns to get a new ID for.
      * @return string|null Either null or the primary key value or a list of primary key values.
      */
-    protected function _newId(array $primary)
+    protected function _newId(array $primary): ?string
     {
         if (!$primary || count($primary) > 1) {
             return null;
         }
-        /** @var string $typeName */
         $typeName = $this->getSchema()->getColumnType($primary[0]);
+        assert($typeName !== null);
         $type = TypeFactory::build($typeName);
 
         return $type->newId();
@@ -2128,7 +2173,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \InvalidArgumentException When primary key data is missing.
      */
-    protected function _update(EntityInterface $entity, array $data)
+    protected function _update(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primaryColumns = (array)$this->getPrimaryKey();
         $primaryKey = $entity->extract($primaryColumns);
@@ -2139,7 +2184,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if (count($primaryColumns) === 0) {
-            $entityClass = get_class($entity);
+            $entityClass = $entity::class;
             $table = $this->getTable();
             $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
             throw new InvalidArgumentException($message);
@@ -2147,23 +2192,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (!$entity->has($primaryColumns)) {
             $message = 'All primary key value(s) are needed for updating, ';
-            $message .= get_class($entity) . ' is missing ' . implode(', ', $primaryColumns);
+            $message .= $entity::class . ' is missing ' . implode(', ', $primaryColumns);
             throw new InvalidArgumentException($message);
         }
 
-        $query = $this->query();
-        $statement = $query->update()
+        $statement = $this->updateQuery()
             ->set($data)
             ->where($primaryKey)
             ->execute();
 
-        $success = false;
-        if ($statement->errorCode() === '00000') {
-            $success = $entity;
-        }
-        $statement->closeCursor();
-
-        return $success;
+        return $statement->errorCode() === '00000' ? $entity : false;
     }
 
     /**
@@ -2173,13 +2211,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to save due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param \Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
+     * @param array $options Options used when calling Table::save() for each entity.
+     * @return iterable<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
      * @throws \Exception
      */
-    public function saveMany(iterable $entities, $options = [])
-    {
+    public function saveMany(
+        iterable $entities,
+        array $options = []
+    ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
         } catch (PersistenceFailedException $exception) {
@@ -2194,38 +2234,40 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to save due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> Entities list.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
+     * @param array $options Options used when calling Table::save() for each entity.
+     * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
-    public function saveManyOrFail(iterable $entities, $options = []): iterable
+    public function saveManyOrFail(iterable $entities, array $options = []): iterable
     {
         return $this->_saveMany($entities, $options);
     }
 
     /**
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param \Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array $options Options used when calling Table::save() for each entity.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
+     * @param array $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
-     * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> Entities list.
+     * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      */
-    protected function _saveMany(iterable $entities, $options = []): iterable
-    {
+    protected function _saveMany(
+        iterable $entities,
+        array $options = []
+    ): iterable {
         $options = new ArrayObject(
-            (array)$options + [
+            $options + [
                 'atomic' => true,
                 'checkRules' => true,
                 '_primary' => true,
             ]
         );
+        $options['_cleanOnSuccess'] = false;
 
         /** @var array<bool> $isNew */
         $isNew = [];
-        $cleanup = function ($entities) use (&$isNew): void {
-            /** @var array<\Cake\Datasource\EntityInterface> $entities */
+        $cleanupOnFailure = function ($entities) use (&$isNew): void {
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
@@ -2234,11 +2276,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
-        /** @var \Cake\Datasource\EntityInterface|null $failed */
         $failed = null;
         try {
             $this->getConnection()
                 ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
+                    // Cache array cast since options are the same for each entity
+                    $options = (array)$options;
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
@@ -2249,20 +2292,40 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     }
                 });
         } catch (Exception $e) {
-            $cleanup($entities);
+            $cleanupOnFailure($entities);
 
             throw $e;
         }
 
         if ($failed !== null) {
-            $cleanup($entities);
+            $cleanupOnFailure($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
         }
 
+        $cleanupOnSuccess = function (EntityInterface $entity) use (&$cleanupOnSuccess): void {
+            $entity->clean();
+            $entity->setNew(false);
+
+            foreach (array_keys($entity->toArray()) as $field) {
+                $value = $entity->get($field);
+
+                if ($value instanceof EntityInterface) {
+                    $cleanupOnSuccess($value);
+                } elseif (is_array($value) && current($value) instanceof EntityInterface) {
+                    foreach ($value as $associated) {
+                        $cleanupOnSuccess($associated);
+                    }
+                }
+            }
+        };
+
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                if ($options['atomic'] || $options['_primary']) {
+                    $cleanupOnSuccess($entity);
+                }
             }
         }
 
@@ -2296,20 +2359,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the options used in the delete operation.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param \ArrayAccess|array $options The options for the delete.
+     * @param array $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []): bool
+    public function delete(EntityInterface $entity, array $options = []): bool
     {
-        $options = new ArrayObject((array)$options + [
+        $options = new ArrayObject($options + [
             'atomic' => true,
             'checkRules' => true,
             '_primary' => true,
         ]);
 
-        $success = $this->_executeTransaction(function () use ($entity, $options) {
-            return $this->_processDelete($entity, $options);
-        }, $options['atomic']);
+        $success = $this->_executeTransaction(
+            fn () => $this->_processDelete($entity, $options),
+            $options['atomic']
+        );
 
         if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
@@ -2328,13 +2392,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface>|false Entities list
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
+     * @param array $options Options used when calling Table::save() for each entity.
+     * @return iterable<\Cake\Datasource\EntityInterface>|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
-    public function deleteMany(iterable $entities, $options = [])
+    public function deleteMany(iterable $entities, array $options = []): iterable|false
     {
         $failed = $this->_deleteMany($entities, $options);
 
@@ -2352,13 +2416,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param \ArrayAccess|array $options Options used when calling Table::save() for each entity.
-     * @return \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> Entities list.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
+     * @param array $options Options used when calling Table::save() for each entity.
+     * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
-    public function deleteManyOrFail(iterable $entities, $options = []): iterable
+    public function deleteManyOrFail(iterable $entities, array $options = []): iterable
     {
         $failed = $this->_deleteMany($entities, $options);
 
@@ -2370,13 +2434,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param \Cake\Datasource\ResultSetInterface|array<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param \ArrayAccess|array $options Options used.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
+     * @param array $options Options used.
      * @return \Cake\Datasource\EntityInterface|null
      */
-    protected function _deleteMany(iterable $entities, $options = []): ?EntityInterface
+    protected function _deleteMany(iterable $entities, array $options = []): ?EntityInterface
     {
-        $options = new ArrayObject((array)$options + [
+        $options = new ArrayObject($options + [
                 'atomic' => true,
                 'checkRules' => true,
                 '_primary' => true,
@@ -2409,12 +2473,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * has no primary key value, application rules checks failed or the delete was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param \ArrayAccess|array $options The options for the delete.
+     * @param array $options The options for the delete.
      * @return true
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete()
      */
-    public function deleteOrFail(EntityInterface $entity, $options = []): bool
+    public function deleteOrFail(EntityInterface $entity, array $options = []): bool
     {
         $deleted = $this->delete($entity, $options);
         if ($deleted === false) {
@@ -2431,7 +2495,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * dependent associations, and clear out join tables for BelongsToMany associations.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to delete.
-     * @param \ArrayObject $options The options for the delete.
+     * @param \ArrayObject<string, mixed> $options The options for the delete.
      * @throws \InvalidArgumentException if there are no primary key values of the
      * passed entity
      * @return bool success
@@ -2469,15 +2533,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $query = $this->query();
-        $conditions = $entity->extract($primaryKey);
-        $statement = $query->delete()
-            ->where($conditions)
+        $statement = $this->deleteQuery()
+            ->where($entity->extract($primaryKey))
             ->execute();
 
-        $success = $statement->rowCount() > 0;
-        if (!$success) {
-            return $success;
+        if ($statement->rowCount() < 1) {
+            return false;
         }
 
         $this->dispatchEvent('Model.afterDelete', [
@@ -2485,7 +2546,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'options' => $options,
         ]);
 
-        return $success;
+        return true;
     }
 
     /**
@@ -2502,17 +2563,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Calls a finder method directly and applies it to the passed query,
-     * if no query is passed a new one will be created and returned
+     * Calls a finder method and applies it to the passed query.
      *
-     * @param string $type name of the finder to be called
-     * @param \Cake\ORM\Query $query The query object to apply the finder options to
-     * @param array $options List of options to pass to the finder
-     * @return \Cake\ORM\Query
+     * @param string $type Name of the finder to be called.
+     * @param \Cake\ORM\Query\SelectQuery $query The query object to apply the finder options to.
+     * @param array<string, mixed> $options List of options to pass to the finder.
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \BadMethodCallException
+     * @uses findAll()
+     * @uses findList()
+     * @uses findThreaded()
      */
-    public function callFinder(string $type, Query $query, array $options = []): Query
+    public function callFinder(string $type, SelectQuery $query, array $options = []): SelectQuery
     {
+        assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
+
         $query->applyOptions($options);
         $options = $query->getOptions();
         $finder = 'find' . $type;
@@ -2525,7 +2590,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(sprintf(
-            'Unknown finder method "%s" on %s.',
+            'Unknown finder method `%s` on `%s`.',
             $type,
             static::class
         ));
@@ -2536,11 +2601,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
-    protected function _dynamicFinder(string $method, array $args)
+    protected function _dynamicFinder(string $method, array $args): SelectQuery
     {
         $method = Inflector::underscore($method);
         preg_match('/^find_([\w]+)_by_/', $method, $matches);
@@ -2552,8 +2617,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $fields = substr($method, strlen($matches[0]));
             $findType = Inflector::variable($matches[1]);
         }
-        $hasOr = strpos($fields, '_or_');
-        $hasAnd = strpos($fields, '_and_');
+        $hasOr = str_contains($fields, '_or_');
+        $hasAnd = str_contains($fields, '_and_');
 
         $makeConditions = function ($fields, $args) {
             $conditions = [];
@@ -2605,7 +2670,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return mixed
      * @throws \BadMethodCallException
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         if ($this->_behaviors->hasMethod($method)) {
             return $this->_behaviors->call($method, $args);
@@ -2625,13 +2690,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $property the association name
      * @return \Cake\ORM\Association
-     * @throws \RuntimeException if no association with such name exists
+     * @throws \Cake\Database\Exception\DatabaseException if no association with such name exists
      */
-    public function __get($property)
+    public function __get(string $property): Association
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new RuntimeException(sprintf(
+            throw new DatabaseException(sprintf(
                 'Undefined property `%s`. ' .
                 'You have not defined the `%s` association on `%s`.',
                 $property,
@@ -2650,7 +2715,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $property the association name
      * @return bool
      */
-    public function __isset($property)
+    public function __isset(string $property): bool
     {
         return $this->_associations->has($property);
     }
@@ -2736,7 +2801,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * before it is converted into entities.
      *
      * @param array $data The data to build an entity with.
-     * @param array $options A list of options for the object hydration.
+     * @param array<string, mixed> $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::one()
      */
@@ -2777,7 +2842,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * before it is converted into entities.
      *
      * @param array $data The data to build an entity with.
-     * @param array $options A list of options for the objects hydration.
+     * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []): array
@@ -2835,7 +2900,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
-     * @param array $options A list of options for the object hydration.
+     * @param array<string, mixed> $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::merge()
      */
@@ -2872,10 +2937,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
      *
-     * @param \Traversable|array<\Cake\Datasource\EntityInterface> $entities the entities that will get the
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
-     * @param array $options A list of options for the objects hydration.
+     * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface>
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
@@ -2915,12 +2980,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the data to be validated.
      *
      * @param mixed $value The value of column to be checked for uniqueness.
-     * @param array $options The options array, optionally containing the 'scope' key.
+     * @param array<string, mixed> $options The options array, optionally containing the 'scope' key.
      *   May also be the validation context, if there are no options.
      * @param array|null $context Either the validation context or null.
      * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
-    public function validateUnique($value, array $options, ?array $context = null): bool
+    public function validateUnique(mixed $value, array $options, ?array $context = null): bool
     {
         if ($context === null) {
             $context = $options;
@@ -2974,7 +3039,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - Model.beforeRules => beforeRules
      * - Model.afterRules => afterRules
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -3016,17 +3081,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Gets a SaveOptionsBuilder instance.
-     *
-     * @param array $options Options to parse by the builder.
-     * @return \Cake\ORM\SaveOptionsBuilder
-     */
-    public function getSaveOptionsBuilder(array $options = []): SaveOptionsBuilder
-    {
-        return new SaveOptionsBuilder($this, $options);
-    }
-
-    /**
      * Loads the specified associations in the passed entity or list of entities
      * by executing extra queries in the database and merging the results in the
      * appropriate properties.
@@ -3056,7 +3110,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @see \Cake\ORM\Query::contain()
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
      */
-    public function loadInto($entities, array $contain)
+    public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
         return (new LazyEagerLoader())->loadInto($entities, $contain, $this);
     }
@@ -3073,9 +3127,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $conn = $this->getConnection();
 

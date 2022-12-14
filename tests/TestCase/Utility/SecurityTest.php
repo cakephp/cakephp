@@ -19,13 +19,27 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * SecurityTest class
  */
 class SecurityTest extends TestCase
 {
+    /**
+     * Test engine
+     */
+    public function testEngineEquivalence(): void
+    {
+        $restore = Security::engine();
+        $newEngine = new OpenSsl();
+
+        Security::engine($newEngine);
+
+        $this->assertSame($newEngine, Security::engine());
+        $this->assertNotSame($restore, Security::engine());
+    }
+
     /**
      * testHash method
      */
@@ -73,8 +87,8 @@ class SecurityTest extends TestCase
      */
     public function testInvalidHashTypeException(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/The hash type `doesnotexist` was not found. Available algorithms are: `\w+/');
 
         Security::hash('test', 'doesnotexist', false);
     }
@@ -139,7 +153,7 @@ class SecurityTest extends TestCase
      */
     public function testEncryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -165,7 +179,7 @@ class SecurityTest extends TestCase
      */
     public function testDecryptInvalidKey(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
@@ -177,25 +191,11 @@ class SecurityTest extends TestCase
      */
     public function testDecryptInvalidData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The data to decrypt cannot be empty.');
         $txt = '';
         $key = 'This is a key that is long enough to be ok.';
         Security::decrypt($txt, $key);
-    }
-
-    /**
-     * Test engine
-     */
-    public function testEngineEquivalence(): void
-    {
-        $restore = Security::engine();
-        $newEngine = new OpenSsl();
-
-        Security::engine($newEngine);
-
-        $this->assertSame($newEngine, Security::engine());
-        $this->assertNotSame($restore, Security::engine());
     }
 
     /**

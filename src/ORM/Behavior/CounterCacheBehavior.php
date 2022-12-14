@@ -106,9 +106,9 @@ class CounterCacheBehavior extends Behavior
     /**
      * Store the fields which should be ignored
      *
-     * @var array
+     * @var array<string, array<string, bool>>
      */
-    protected $_ignoreDirty = [];
+    protected array $_ignoreDirty = [];
 
     /**
      * beforeSave callback.
@@ -117,10 +117,10 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -155,7 +155,7 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
     public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
@@ -175,10 +175,10 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
-     * @param \ArrayObject $options The options for the query
+     * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
-    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)
+    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -208,7 +208,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Event\EventInterface $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param \Cake\ORM\Association $assoc The association object
-     * @param array $settings The settings for for counter cache for this association
+     * @param array $settings The settings for counter cache for this association
      * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
@@ -219,6 +219,7 @@ class CounterCacheBehavior extends Behavior
         array $settings
     ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
+        /** @psalm-suppress InvalidArgument */
         $countConditions = $entity->extract($foreignKeys);
 
         foreach ($countConditions as $field => $value) {
@@ -231,6 +232,7 @@ class CounterCacheBehavior extends Behavior
         $primaryKeys = (array)$assoc->getBindingKey();
         $updateConditions = array_combine($primaryKeys, $countConditions);
 
+        /** @psalm-suppress InvalidArgument */
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
@@ -279,7 +281,7 @@ class CounterCacheBehavior extends Behavior
      * @param array $conditions Conditions to update count.
      * @return bool True if the count update should happen, false otherwise.
      */
-    protected function _shouldUpdateCount(array $conditions)
+    protected function _shouldUpdateCount(array $conditions): bool
     {
         return !empty(array_filter($conditions, function ($value) {
             return $value !== null;
@@ -289,7 +291,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Fetches and returns the count for a single field in an association
      *
-     * @param array $config The counter cache configuration for a single field
+     * @param array<string, mixed> $config The counter cache configuration for a single field
      * @param array $conditions Additional conditions given to the query
      * @return int The number of relations matching the given config and conditions
      */

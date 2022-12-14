@@ -2,15 +2,15 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Cookie;
 
@@ -170,7 +170,7 @@ class CookieCollectionTest extends TestCase
      */
     public function testConstructorWithInvalidCookieObjects(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),
@@ -408,7 +408,7 @@ class CookieCollectionTest extends TestCase
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request, ['b' => 'B']);
-        $this->assertSame('api=A; b=B', $request->getHeaderLine('Cookie'));
+        $this->assertSame('b=B; api=A', $request->getHeaderLine('Cookie'));
 
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request, ['api' => 'custom']);
@@ -454,15 +454,19 @@ class CookieCollectionTest extends TestCase
     {
         $header = [
             'http=name; HttpOnly; Secure;',
-            'expires=expiring; Expires=Wed, 15-Jun-2022 10:22:22; Path=/api; HttpOnly; Secure;',
+            'expires=expiring; Expires=Mon, 17-Apr-2023 10:22:22; Path=/api; HttpOnly; Secure;',
             'expired=expired; version=1; Expires=Wed, 15-Jun-2015 10:22:22;',
+            'invalid=invalid-secure; Expires=Mon, 17-Apr-2023 10:22:22; Secure=true; SameSite=none',
+            '7=numeric',
         ];
         $cookies = CookieCollection::createFromHeader($header);
-        $this->assertCount(3, $cookies);
+        $this->assertCount(4, $cookies);
         $this->assertTrue($cookies->has('http'));
         $this->assertTrue($cookies->has('expires'));
         $this->assertFalse($cookies->has('version'));
         $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
+        $this->assertFalse($cookies->has('invalid'), 'Invalid cookies should not be present');
+        $this->assertTrue($cookies->has('7'));
     }
 
     /**

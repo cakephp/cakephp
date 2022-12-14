@@ -41,16 +41,16 @@ class Stream implements AdapterInterface
     /**
      * Array of options/content for the HTTP stream context.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_contextOptions = [];
+    protected array $_contextOptions = [];
 
     /**
      * Array of options/content for the SSL stream context.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_sslContextOptions = [];
+    protected array $_sslContextOptions = [];
 
     /**
      * The stream resource.
@@ -64,7 +64,7 @@ class Stream implements AdapterInterface
      *
      * @var array
      */
-    protected $_connectionErrors = [];
+    protected array $_connectionErrors = [];
 
     /**
      * @inheritDoc
@@ -117,7 +117,7 @@ class Stream implements AdapterInterface
      * Build the stream context out of the request object.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
-     * @param array $options Additional request options.
+     * @param array<string, mixed> $options Additional request options.
      * @return void
      */
     protected function _buildContext(RequestInterface $request, array $options): void
@@ -143,7 +143,7 @@ class Stream implements AdapterInterface
      * Creates cookies & headers.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildHeaders(RequestInterface $request, array $options): void
@@ -159,20 +159,15 @@ class Stream implements AdapterInterface
      * Builds the request content based on the request object.
      *
      * If the $request->body() is a string, it will be used as is.
-     * Array data will be processed with Cake\Http\Client\FormData
+     * Array data will be processed with {@link \Cake\Http\Client\FormData}
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildContent(RequestInterface $request, array $options): void
     {
         $body = $request->getBody();
-        if (empty($body)) {
-            $this->_contextOptions['content'] = '';
-
-            return;
-        }
         $body->rewind();
         $this->_contextOptions['content'] = $body->getContents();
     }
@@ -181,7 +176,7 @@ class Stream implements AdapterInterface
      * Build miscellaneous options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildOptions(RequestInterface $request, array $options): void
@@ -206,7 +201,7 @@ class Stream implements AdapterInterface
      * Build SSL options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function _buildSslContext(RequestInterface $request, array $options): void
@@ -319,13 +314,12 @@ class Stream implements AdapterInterface
             return true;
         });
         try {
-            /** @psalm-suppress PossiblyNullArgument */
             $this->_stream = fopen($url, 'rb', false, $this->_context);
         } finally {
             restore_error_handler();
         }
 
-        if (!$this->_stream || !empty($this->_connectionErrors)) {
+        if (!$this->_stream || $this->_connectionErrors) {
             throw new RequestException(implode("\n", $this->_connectionErrors), $request);
         }
     }
@@ -335,7 +329,7 @@ class Stream implements AdapterInterface
      *
      * Useful for debugging and testing context creation.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function contextOptions(): array
     {

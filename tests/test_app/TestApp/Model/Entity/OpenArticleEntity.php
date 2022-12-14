@@ -10,7 +10,7 @@ use Cake\ORM\Entity;
  */
 class OpenArticleEntity extends Entity
 {
-    protected $_accessible = [
+    protected array $_accessible = [
         '*' => true,
     ];
 }

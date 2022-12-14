@@ -44,21 +44,21 @@ class UnaryExpression implements ExpressionInterface
      *
      * @var string
      */
-    protected $_operator;
+    protected string $_operator;
 
     /**
      * Holds the value which the unary expression operates
      *
      * @var mixed
      */
-    protected $_value;
+    protected mixed $_value;
 
     /**
      * Where to place the operator
      *
      * @var int
      */
-    protected $position;
+    protected int $position;
 
     /**
      * Constructor
@@ -67,7 +67,7 @@ class UnaryExpression implements ExpressionInterface
      * @param mixed $value the value to use as the operand for the expression
      * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct(string $operator, $value, $position = self::PREFIX)
+    public function __construct(string $operator, mixed $value, int $position = self::PREFIX)
     {
         $this->_operator = $operator;
         $this->_value = $value;

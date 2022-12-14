@@ -28,7 +28,7 @@ class MailContainsText extends MailContains
     /**
      * @inheritDoc
      */
-    protected $type = Message::MESSAGE_TEXT;
+    protected ?string $type = Message::MESSAGE_TEXT;
 
     /**
      * Assertion message string

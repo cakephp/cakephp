@@ -16,16 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TransactionResetStrategy;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
@@ -33,6 +34,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use InvalidArgumentException;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
@@ -47,23 +49,11 @@ use TestApp\Model\Table\ValidateUsersTable;
 class FormHelperTest extends TestCase
 {
     /**
-     * @inheritDoc
-     */
-    protected $stateResetStrategy = TransactionResetStrategy::class;
-
-    /**
      * Fixtures to be used
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = ['core.Articles', 'core.Comments'];
-
-    /**
-     * Do not load the fixtures by default
-     *
-     * @var bool
-     */
-    public $autoFixtures = false;
+    protected array $fixtures = ['core.Articles', 'core.Comments'];
 
     /**
      * @var array
@@ -79,6 +69,11 @@ class FormHelperTest extends TestCase
      * @var \Cake\View\Helper\FormHelper
      */
     protected $Form;
+
+    /**
+     * @var \Cake\View\View
+     */
+    protected $View;
 
     /**
      * setUp method
@@ -108,15 +103,6 @@ class FormHelperTest extends TestCase
         $this->url = '/articles/add';
         $this->Form = new FormHelper($this->View);
 
-        $this->dateRegex = [
-            'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
-            'monthsRegex' => 'preg:/(?:<option value="[\d]+">[\w]+<\/option>[\r\n]*)*/',
-            'yearsRegex' => 'preg:/(?:<option value="([\d]+)">\\1<\/option>[\r\n]*)*/',
-            'hoursRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
-            'minutesRegex' => 'preg:/(?:<option value="([\d]+)">0?\\1<\/option>[\r\n]*)*/',
-            'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
-        ];
-
         $this->article = [
             'schema' => [
                 'id' => ['type' => 'integer'],
@@ -133,8 +119,9 @@ class FormHelperTest extends TestCase
         ];
 
         Security::setSalt('foo!');
-        Router::connect('/{controller}', ['action' => 'index']);
-        Router::connect('/{controller}/{action}/*');
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/{controller}', ['action' => 'index']);
+        $builder->connect('/{controller}/{action}/*');
     }
 
     /**
@@ -282,17 +269,6 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Test registering an invalid widget class.
-     */
-    public function testAddWidgetInvalid(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $mock = new \stdClass();
-        $this->Form->addWidget('test', $mock);
-        $this->Form->widget('test');
-    }
-
-    /**
      * Test adding a new context class.
      */
     public function testAddContextProvider(): void
@@ -352,7 +328,7 @@ class FormHelperTest extends TestCase
         $entity = new Article();
         $collection = new Collection([$entity]);
         $emptyCollection = new Collection([]);
-        $arrayObject = new \ArrayObject([]);
+        $arrayObject = new ArrayObject([]);
         $data = [
             'schema' => [
                 'title' => ['type' => 'string'],
@@ -368,7 +344,7 @@ class FormHelperTest extends TestCase
             'array' => [$data, 'Cake\View\Form\ArrayContext'],
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
-            'custom' => [$custom, get_class($custom)],
+            'custom' => [$custom, $custom::class],
         ];
     }
 
@@ -380,7 +356,6 @@ class FormHelperTest extends TestCase
      */
     public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
-        $this->loadFixtures('Articles');
         $this->Form->create($data);
         $this->assertInstanceOf($class, $this->Form->context());
     }
@@ -758,7 +733,8 @@ class FormHelperTest extends TestCase
      */
     public function testCreateCustomRoute(): void
     {
-        Router::connect('/login', ['controller' => 'Users', 'action' => 'login']);
+        $builder = Router::createRouteBuilder('/');
+        $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
         $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
@@ -773,7 +749,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        Router::connect(
+        $builder->connect(
             '/new-article',
             ['controller' => 'Articles', 'action' => 'myAction'],
             ['_name' => 'my-route']
@@ -2128,7 +2104,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->select('Model.select', $options, ['multiple' => true]);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
@@ -2160,30 +2135,6 @@ class FormHelperTest extends TestCase
             'disabled' => ['option1'],
         ]);
         $expected = ['Test.test', 'Test.all' => '', 'Test.some'];
-        $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * testFormSecuredAndDisabledNotAssoc method
-     *
-     * Test that when disabled is in a list based attribute array it works.
-     */
-    public function testFormSecuredAndDisabledNotAssoc(): void
-    {
-        $this->View->setRequest($this->View->getRequest()->withAttribute('formTokenData', []));
-        $this->Form->create();
-
-        $this->Form->select('Model.select', [1, 2], ['disabled']);
-        $this->Form->checkbox('Model.checkbox', ['disabled']);
-        $this->Form->text('Model.text', ['disabled']);
-        $this->Form->textarea('Model.textarea', ['disabled']);
-        $this->Form->password('Model.password', ['disabled']);
-        $this->Form->radio('Model.radio', [1, 2], ['disabled']);
-
-        $expected = [
-            'Model.radio' => '',
-        ];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
     }
@@ -2379,10 +2330,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             'error message',
             '/div',
             '/div',
@@ -2401,8 +2356,12 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                // No aria-describedby because error template is custom
+                'aria-invalid' => 'true',
             ],
             '/div',
         ];
@@ -2415,10 +2374,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
             '/div',
             '/div',
@@ -2432,10 +2395,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some &lt;strong&gt;test&lt;/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;/a&gt; chars',
             '/div',
             '/div',
@@ -2449,10 +2416,14 @@ class FormHelperTest extends TestCase
             'Content',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[content]',
-                'id' => 'article-content', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[content]',
+                'id' => 'article-content',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-content-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-content-error']],
             'some <strong>test</strong> data with <a href="#">HTML</a> chars',
             '/div',
             '/div',
@@ -2479,10 +2450,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             [],
             '/div',
             '/div',
@@ -2509,10 +2484,14 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Article[title]',
-                'id' => 'article-title', 'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'article-title-error',
+                'type' => 'text',
+                'name' => 'Article[title]',
+                'id' => 'article-title',
+                'class' => 'form-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-title-error']],
             [],
             '/div',
             '/div',
@@ -2541,14 +2520,19 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'title',
-                'id' => 'title', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'title',
+                'id' => 'title',
+                'class' => 'form-error',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'aria-required' => 'true',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'title-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'title-error']],
             'Custom error!',
             '/div',
             '/div',
@@ -2567,13 +2551,16 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
+                'aria-required' => 'true',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'title-error',
                 'class' => 'form-error',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'title-error']],
             'Custom error!',
             '/div',
             '/div',
@@ -2594,7 +2581,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
         $result = $this->Form->error('nested.foo');
-        $this->assertSame('<div class="error-message">not a valid bar</div>', $result);
+        $this->assertSame('<div class="error-message" id="nested-foo-error">not a valid bar</div>', $result);
     }
 
     /**
@@ -2610,7 +2597,7 @@ class FormHelperTest extends TestCase
         $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
-        $this->assertSame('<div class="error-message">not a valid one</div>', $result);
+        $this->assertSame('<div class="error-message" id="nested-foo-bar-error">not a valid one</div>', $result);
     }
 
     /**
@@ -2639,10 +2626,16 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'type' => 'email', 'name' => '0[email]', 'id' => '0-email',
-                'class' => 'form-error', 'maxlength' => 255, 'value' => '',
+                'type' => 'email',
+                'name' => '0[email]',
+                'id' => '0-email',
+                'class' => 'form-error',
+                'maxlength' => 255,
+                'value' => '',
+                'aria-invalid' => 'true',
+                'aria-describedby' => '0-email-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => '0-email-error']],
             'invalid email',
             '/div',
             '/div',
@@ -2656,10 +2649,16 @@ class FormHelperTest extends TestCase
             'Name',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => '1[name]', 'id' => '1-name',
-                'class' => 'form-error', 'maxlength' => 255, 'value' => '',
+                'type' => 'text',
+                'name' => '1[name]',
+                'id' => '1-name',
+                'class' => 'form-error',
+                'maxlength' => 255,
+                'value' => '',
+                'aria-invalid' => 'true',
+                'aria-describedby' => '1-name-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => '1-name-error']],
             'This is wrong',
             '/div',
             '/div',
@@ -2858,10 +2857,14 @@ class FormHelperTest extends TestCase
             'Field',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'field',
-                'id' => 'field', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
             ],
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'Badness!',
             '/div',
             '/div',
@@ -2879,8 +2882,12 @@ class FormHelperTest extends TestCase
             'Field',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'field',
-                'id' => 'field', 'class' => 'form-error',
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                // No aria-describedby because error template is custom
+                'aria-invalid' => 'true',
             ],
             ['span' => ['class' => 'error-message']],
             'Badness!',
@@ -2900,8 +2907,15 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'field'],
             'Field',
             '/label',
-            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'],
-            ['div' => ['class' => 'error-message']],
+            'input' => [
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
+            ],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'Le login doit contenir au moins 2 caractères',
             '/div',
             '/div',
@@ -2920,8 +2934,15 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'field'],
             'Field',
             '/label',
-            'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'],
-            ['div' => ['class' => 'error-message']],
+            'input' => [
+                'type' => 'text',
+                'name' => 'field',
+                'id' => 'field',
+                'class' => 'form-error',
+                'aria-invalid' => 'true',
+                'aria-describedby' => 'field-error',
+            ],
+            ['div' => ['class' => 'error-message', 'id' => 'field-error']],
             'login too large',
             '/div',
             '/div',
@@ -3008,7 +3029,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field'],
             'label' => ['for' => 'prefix-model-field-0'],
             ['input' => [
                 'type' => 'radio',
@@ -3023,7 +3044,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('Model.field', ['option A', 'option']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'prefix-model-field'],
             'label' => ['for' => 'prefix-model-field-0'],
             ['input' => [
                 'type' => 'radio',
@@ -3043,7 +3064,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'prefix-model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'prefix-model-multi-field-0']],
@@ -3221,7 +3242,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->control('prueba', [
             'type' => 'datetime',
-            'value' => new FrozenTime('2019-09-27 02:52:43'),
+            'value' => new DateTime('2019-09-27 02:52:43'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
@@ -3278,7 +3299,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->control('prueba', [
             'type' => 'datetime',
-            'value' => new FrozenTime('2019-09-27 02:52:43'),
+            'value' => new DateTime('2019-09-27 02:52:43'),
             'step' => '0.5',
         ]);
         $expected = [
@@ -3317,7 +3338,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'disabled' => 'disabled', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'disabled' => 'disabled', 'value' => '', 'id' => 'contact-multiple']],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'contact-multiple-1']],
             ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 1, 'disabled' => 'disabled', 'id' => 'contact-multiple-1']],
@@ -3349,7 +3370,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '', 'id' => 'contact-multiple']],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'contact-multiple-50']],
             ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 50, 'disabled' => 'disabled', 'id' => 'contact-multiple-50']],
@@ -3439,7 +3460,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->control('email', [
             'type' => 'select',
-            'options' => new \ArrayObject(['First', 'Second']),
+            'options' => new ArrayObject(['First', 'Second']),
             'empty' => true,
         ]);
         $this->assertHtml($expected, $result);
@@ -3531,7 +3552,7 @@ class FormHelperTest extends TestCase
                 ['label' => ['for' => 'publisher-id']],
                 'Publisher',
                 '/label',
-                'input' => ['type' => 'hidden', 'name' => 'Publisher[id]', 'value' => ''],
+                'input' => ['type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'publisher-id'],
                 ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'publisher-id-value-1']],
                 ['input' => ['type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'publisher-id-value-1']],
@@ -3651,7 +3672,7 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'tags-ids'],
             'Tags',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'tags[_ids]', 'value' => '', 'id' => 'tags-ids'],
 
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'tags-ids-1']],
@@ -3720,8 +3741,8 @@ class FormHelperTest extends TestCase
      */
     public function testInvalidControlTypeOption(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid type `input` used for field `text`.');
         $this->Form->control('text', ['type' => 'input']);
     }
 
@@ -3968,7 +3989,7 @@ class FormHelperTest extends TestCase
             ['multiple' => 'checkbox', 'value' => [0, 1]]
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0', 'class' => 'selected']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'model-multi-field-0']],
@@ -3996,7 +4017,7 @@ class FormHelperTest extends TestCase
             ['multiple' => 'checkbox']
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-1-2']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'model-multi-field-1-2']],
@@ -4191,7 +4212,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'email',
             '/div',
         ];
@@ -4199,7 +4220,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', '<strong>Badness!</strong>');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             '&lt;strong&gt;Badness!&lt;/strong&gt;',
             '/div',
         ];
@@ -4207,7 +4228,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', '<strong>Badness!</strong>', ['escape' => false]);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             '<strong', 'Badness!', '/strong',
             '/div',
         ];
@@ -4230,7 +4251,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field');
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Your email was not good',
             '/div',
         ];
@@ -4238,7 +4259,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', ['email' => 'Email in use']);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Email in use',
             '/div',
         ];
@@ -4246,7 +4267,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->error('Article.field', ['Your email was not good' => 'Email in use']);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Email in use',
             '/div',
         ];
@@ -4257,7 +4278,7 @@ class FormHelperTest extends TestCase
             'Your email was not good' => 'Email in use',
         ]);
         $expected = [
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'article-field-error']],
             'Key is preferred',
             '/div',
         ];
@@ -4280,7 +4301,7 @@ class FormHelperTest extends TestCase
             'email' => 'No good!',
         ]);
         $expected = [
-            'div' => ['class' => 'error-message'],
+            'div' => ['class' => 'error-message', 'id' => 'article-field-error'],
             'No good!',
             '/div',
         ];
@@ -4304,7 +4325,7 @@ class FormHelperTest extends TestCase
             'email' => 'No good!',
         ]);
         $expected = [
-            'div' => ['class' => 'error-message'],
+            'div' => ['class' => 'error-message', 'id' => 'field-error'],
             'ul' => [],
             '<li', 'Cannot be empty', '/li',
             '<li', 'No good!', '/li',
@@ -4347,22 +4368,9 @@ class FormHelperTest extends TestCase
      */
     public function testRadio(): void
     {
-        $result = $this->Form->radio('Model.field', ['option A']);
-        $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
-            'label' => ['for' => 'model-field-0'],
-            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
-            'option A',
-            '/label',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $result = $this->Form->radio('Model.field', new Collection(['option A']));
-        $this->assertHtml($expected, $result);
-
         $result = $this->Form->radio('Model.field', ['option A', 'option B']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['label' => ['for' => 'model-field-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             'option A',
@@ -4374,27 +4382,30 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Form->radio('Model.field', new Collection(['option A', 'option B']));
+        $this->assertHtml($expected, $result);
+
         $result = $this->Form->radio(
-            'Employee.gender',
-            ['male' => 'Male', 'female' => 'Female'],
-            ['form' => 'my-form']
+            'Employee.vegetarian',
+            ['yes' => 'Yes', 'no' => 'No'],
+            ['form' => 'my-form', 'id' => 'id-veg']
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form'],
-            ['label' => ['for' => 'employee-gender-male']],
-            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form']],
-            'Male',
+            'input' => ['type' => 'hidden', 'name' => 'Employee[vegetarian]', 'value' => '', 'form' => 'my-form', 'id' => 'id-veg'],
+            ['label' => ['for' => 'id-veg-yes']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[vegetarian]', 'value' => 'yes', 'id' => 'id-veg-yes', 'form' => 'my-form']],
+            'Yes',
             '/label',
-            ['label' => ['for' => 'employee-gender-female']],
-            ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female', 'form' => 'my-form']],
-            'Female',
+            ['label' => ['for' => 'id-veg-no']],
+            ['input' => ['type' => 'radio', 'name' => 'Employee[vegetarian]', 'value' => 'no', 'id' => 'id-veg-no', 'form' => 'my-form']],
+            'No',
             '/label',
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->radio('Model.field', ['option A', 'option B'], ['name' => 'Model[custom]']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'Model[custom]', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'Model[custom]', 'value' => '', 'id' => 'model-field']],
             ['label' => ['for' => 'model-custom-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-custom-0']],
             'option A',
@@ -4414,7 +4425,7 @@ class FormHelperTest extends TestCase
             ]
         );
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'id' => 'employee-gender'],
             ['label' => ['for' => 'employee-gender-male']],
             ['input' => ['type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male',
                 'id' => 'employee-gender-male', 'style' => 'width:20px']],
@@ -4441,7 +4452,7 @@ class FormHelperTest extends TestCase
         $attrs = ['disabled' => []];
         $result = $this->Form->radio('Model.field', $options, $attrs);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['label' => ['for' => 'model-field-r']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'r', 'id' => 'model-field-r']],
             'red',
@@ -4476,7 +4487,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->radio('title', ['option A', 'option B']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title']],
             ['label' => ['for' => 'title-0']],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
             'option A',
@@ -4496,7 +4507,17 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('title', ['option A'], ['hiddenField' => 'N']);
         $expected = [
-            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N']],
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N', 'id' => 'title']],
+            'label' => ['for' => 'title-0'],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
+            'option A',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->radio('title', ['option A'], ['hiddenField' => '']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => '', 'id' => 'title']],
             'label' => ['for' => 'title-0'],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
             'option A',
@@ -4521,7 +4542,7 @@ class FormHelperTest extends TestCase
                 '<label',
                 'Test',
                 '/label',
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4544,7 +4565,7 @@ class FormHelperTest extends TestCase
                 '<label',
                 'Test',
                 '/label',
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'checked' => 'checked', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4564,7 +4585,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
-                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+                ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
                 ['label' => ['for' => 'test-0']],
                     ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
                     'A',
@@ -4587,7 +4608,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
-                ['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => '']],
+                ['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => '', 'id' => 'accept']],
                 ['label' => ['for' => 'accept-1']],
                 ['input' => [
                     'type' => 'radio',
@@ -4620,7 +4641,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('Model.field', ['A', 'B'], ['label' => false]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
         ];
@@ -4645,7 +4666,8 @@ class FormHelperTest extends TestCase
             ['input' => [
                 'type' => 'hidden',
                 'name' => 'Model[field]',
-                'value' => ''
+                'value' => '',
+                'id' => 'model-field'
             ]],
             ['label' => ['for' => 'model-field-0']],
                 ['input' => [
@@ -4696,7 +4718,7 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->radio('Model.field', ['v' => 'value'], ['value' => 'nope']);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'model-field'],
             'label' => ['for' => 'model-field-v'],
             ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'v', 'id' => 'model-field-v']],
             'value',
@@ -4881,7 +4903,6 @@ class FormHelperTest extends TestCase
 
     public function testSelectEmptyWithRequiredFalse(): void
     {
-        $this->loadFixtures();
         $Articles = $this->getTableLocator()->get('Articles');
         $validator = $Articles->getValidator('default');
         $validator->allowEmptyString('user_id');
@@ -5020,6 +5041,28 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('User.get_spam', [
+            'type' => 'checkbox',
+            'value' => '0',
+            'hiddenField' => '',
+        ]);
+        $expected = [
+            'div' => ['class' => 'input checkbox'],
+            'label' => ['for' => 'user-get-spam'],
+            ['input' => [
+                'type' => 'hidden', 'name' => 'User[get_spam]',
+                'value' => '',
+            ]],
+            ['input' => [
+                'type' => 'checkbox', 'name' => 'User[get_spam]',
+                'value' => '0', 'id' => 'user-get-spam',
+            ]],
+            'Get Spam',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -5029,7 +5072,6 @@ class FormHelperTest extends TestCase
      */
     public function testHabtmSelectBox(): void
     {
-        $this->loadFixtures('Articles');
         $options = [
             1 => 'blue',
             2 => 'red',
@@ -5140,8 +5182,6 @@ class FormHelperTest extends TestCase
      */
     public function testErrorsForBelongsToManySelect(): void
     {
-        $this->loadFixtures();
-
         $spacecraft = [
             1 => 'Orion',
             2 => 'Helios',
@@ -5161,7 +5201,8 @@ class FormHelperTest extends TestCase
             '/label',
             'input' => ['type' => 'hidden', 'name' => 'spacecraft[_ids]', 'value' => ''],
             'select' => [
-                'name' => 'spacecraft[_ids][]', 'id' => 'spacecraft-ids',
+                'name' => 'spacecraft[_ids][]',
+                'id' => 'spacecraft-ids',
                 'multiple' => 'multiple',
             ],
             ['option' => ['value' => '1']],
@@ -5171,7 +5212,7 @@ class FormHelperTest extends TestCase
             'Helios',
             '/option',
             '/select',
-            ['div' => ['class' => 'error-message']],
+            ['div' => ['class' => 'error-message', 'id' => 'spacecraft-error']],
             'Invalid',
             '/div',
             '/div',
@@ -5194,7 +5235,7 @@ class FormHelperTest extends TestCase
 
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0']],
@@ -5233,7 +5274,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a+']],
@@ -5272,7 +5313,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '',
+                'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a-b']],
@@ -5320,7 +5361,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '',
+                'type' => 'hidden', 'name' => 'Model[tags]', 'value' => '', 'id' => 'model-tags',
             ],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-tags-1', 'class' => 'selected']],
@@ -5432,7 +5473,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-multi-field']],
             'Multi Field',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-0']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'model-multi-field-0']],
@@ -5464,7 +5505,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'model-multi-field']],
             'Multi Field',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'model-multi-field'],
             ['div' => ['class' => 'checkbox']],
             ['label' => ['for' => 'model-multi-field-a']],
             ['input' => ['type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'model-multi-field-a']],
@@ -5515,7 +5556,7 @@ class FormHelperTest extends TestCase
             'name' => 'fish',
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'fish-0']],
                     ['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'fish-0']],
@@ -5545,6 +5586,42 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testSelectCheckboxMultipleOverrideName method
+     *
+     * Test that select() with multiple = checkbox works with overriding name attribute.
+     */
+    public function testSelectCheckboxMultipleCustomId(): void
+    {
+        $result = $this->Form->select('category', ['1', '2'], [
+            'multiple' => 'checkbox',
+            'id' => 'cat',
+        ]);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'cat'],
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'cat-0']],
+                    ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'cat-0']],
+                    '1',
+                '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+                ['label' => ['for' => 'cat-1']],
+                    ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '1', 'id' => 'cat-1']],
+                    '2',
+                '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->multiCheckbox(
+            'category',
+            ['1', '2'],
+            ['id' => 'cat']
+        );
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testControlMultiCheckbox method
      *
      * Test that control() works with multicheckbox.
@@ -5560,7 +5637,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Category',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'category-0']],
                     ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
@@ -5724,6 +5801,22 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->checkbox('UserForm.something', [
             'value' => 'Y',
+            'hiddenField' => '',
+        ]);
+        $expected = [
+            ['input' => [
+                'type' => 'hidden', 'name' => 'UserForm[something]',
+                'value' => '',
+            ]],
+            ['input' => [
+                'type' => 'checkbox', 'name' => 'UserForm[something]',
+                'value' => 'Y',
+            ]],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->checkbox('UserForm.something', [
+            'value' => 'Y',
             'hiddenField' => 'N',
         ]);
         $expected = [
@@ -5782,7 +5875,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->date('start_day', [
-            'value' => new FrozenDate('2014-03-08'),
+            'value' => new Date('2014-03-08'),
         ]);
         $this->assertHtml($expected, $result);
     }
@@ -5822,7 +5915,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->date('published');
         $expected = ['date', 'published'];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
@@ -5846,7 +5938,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
 
-        $this->Form->fields = [];
         $this->Form->date('published', ['secure' => false]);
         $expected = [];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
@@ -5997,7 +6088,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->year('published', [
             'empty' => false,
-            'value' => new FrozenDate('2008-01-12'),
+            'value' => new Date('2008-01-12'),
             'min' => 2007,
             'max' => 2009,
         ]);
@@ -6093,6 +6184,34 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test control placeholder + label
+     */
+    public function testControlLabelAndPlaceholder(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title', ['label' => 'Title', 'placeholder' => 'Add title']);
+        $expected = [
+            'div' => ['class' => 'input text required'],
+            'label' => ['for' => 'title'],
+            'Title',
+            '/label',
+            'input' => [
+                'aria-required' => 'true',
+                'type' => 'text',
+                'required' => 'required',
+                'placeholder' => 'Add title',
+                'id' => 'title',
+                'name' => 'title',
+                'data-validity-message' => 'This field cannot be left empty',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+            ],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testControlLabelFalse method
      *
      * Test the label option being set to false.
@@ -6104,6 +6223,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['class' => 'input text required'],
             'input' => [
+                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'id' => 'title',
@@ -6113,6 +6233,14 @@ class FormHelperTest extends TestCase
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title', ['label' => false, 'placeholder' => 'Add title']);
+        $expected['input'] += [
+            'placeholder' => 'Add title',
+            'aria-label' => 'Add title',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -6748,7 +6876,6 @@ class FormHelperTest extends TestCase
         $this->assertEquals(['title'], $fields);
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
         $reflect = new ReflectionProperty($this->Form, '_lastAction');
-        $reflect->setAccessible(true);
         $this->assertSame('/Articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 
@@ -7112,7 +7239,7 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->datetime('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
+            'val' => new DateTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
             'input' => [
@@ -7141,7 +7268,7 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->control('created', [
-            'val' => new FrozenTime('2019-09-27 02:52:43.123'),
+            'val' => new DateTime('2019-09-27 02:52:43.123'),
         ]);
         $expected = [
             'div' => ['class' => 'input datetime'],
@@ -7228,8 +7355,10 @@ class FormHelperTest extends TestCase
             'My label',
             '/label',
             'input' => [
-                'type' => 'text', 'name' => 'Contacts[name]',
-                'id' => 'contacts-name', 'maxlength' => '255',
+                'type' => 'text',
+                'name' => 'Contacts[name]',
+                'id' => 'contacts-name',
+                'maxlength' => '255',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7312,7 +7441,6 @@ class FormHelperTest extends TestCase
      */
     public function testMultiRecordForm(): void
     {
-        $this->loadFixtures('Articles', 'Comments');
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
 
@@ -7368,11 +7496,13 @@ class FormHelperTest extends TestCase
                     'name',
                     'class' => 'form-error',
                     'id' => '0-comments-0-comment',
+                    'aria-invalid' => 'true',
+                    'aria-describedby' => '0-comments-0-comment-error',
                     'rows' => 5
                 ],
                 'Value',
                 '/textarea',
-                ['div' => ['class' => 'error-message']],
+                ['div' => ['class' => 'error-message', 'id' => '0-comments-0-comment-error']],
                 'Not valid',
                 '/div',
             '/div'
@@ -7392,6 +7522,7 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
+                    'aria-required' => 'true',
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
@@ -7465,7 +7596,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ControlException(): void
     {
-        $this->expectException(\Cake\Core\Exception\CakeException::class);
+        $this->expectException(CakeException::class);
         $this->Form->email();
     }
 
@@ -7476,7 +7607,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->setConfig('autoSetCustomValidity', true);
 
-        $validator = (new \Cake\Validation\Validator())
+        $validator = (new Validator())
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
@@ -7497,6 +7628,7 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7515,6 +7647,7 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7534,6 +7667,7 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7553,7 +7687,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ErrorMessageInTemplateVars(): void
     {
-        $validator = (new \Cake\Validation\Validator())
+        $validator = (new Validator())
             ->notEmptyString('email', 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')
@@ -7578,6 +7712,7 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7594,6 +7729,7 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7615,6 +7751,7 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7653,6 +7790,7 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
+                'aria-required' => 'true',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
@@ -7722,7 +7860,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'div' => ['class' => 'input radio'],
-            ['input' => ['type' => 'hidden', 'name' => 'confirm', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'confirm', 'value' => '', 'id' => 'confirm']],
             ['input' => ['type' => 'radio', 'name' => 'confirm', 'id' => 'confirm-y', 'value' => 'Y']],
             ['label' => ['for' => 'confirm-y']],
             'Yes',
@@ -7743,7 +7881,7 @@ class FormHelperTest extends TestCase
             'name' => 'fish',
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
                 ['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'fish-0']],
                 ['label' => ['for' => 'fish-0']],
@@ -7868,7 +8006,7 @@ class FormHelperTest extends TestCase
         // Ensure id => doesn't cause problem when multiple inputs are generated.
         $result = $this->Form->radio('field', ['option A', 'option B'], ['id' => true]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'field', 'value' => '', 'id' => 'field'],
             ['label' => ['for' => 'field-0']],
             ['input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'field-0']],
             'option A',
@@ -7887,7 +8025,7 @@ class FormHelperTest extends TestCase
         );
         $expected = [
             'input' => [
-                'type' => 'hidden', 'name' => 'multi_field', 'value' => '',
+                'type' => 'hidden', 'name' => 'multi_field', 'value' => '', 'id' => 'multi-field',
             ],
             ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'multi-field-0']],
@@ -7950,8 +8088,8 @@ class FormHelperTest extends TestCase
 
     public function testValueSourcesValidation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid value source(s): invalid, foo. Valid values are: context, data, query');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value source(s): `invalid`, `foo`. Valid values are: `context`, `data`, `query`.');
 
         $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
     }
@@ -7961,7 +8099,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSingleSwitchRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8016,7 +8153,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesListSwitchRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8060,7 +8196,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSwitchViaOptionsRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8115,7 +8250,6 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSwitchViaOptionsAndSetterRendering(): void
     {
-        $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
@@ -8259,7 +8393,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
             '/div',
@@ -8281,7 +8415,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['input' => ['type' => 'checkbox', 'name' => 'checkbox1[]', 'value' => '1', 'id' => 'checkbox1-1']],
             '/div',
@@ -8313,7 +8447,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8337,7 +8471,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8361,7 +8495,7 @@ class FormHelperTest extends TestCase
             '<label',
             'Test',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test']],
             ['label' => ['for' => 'test-0', 'class' => 'custom-class custom-class-array']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8382,7 +8516,7 @@ class FormHelperTest extends TestCase
             'value' => 1,
         ]);
         $expected = [
-            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'test', 'value' => '', 'id' => 'test'],
             ['label' => ['class' => 'custom-class another-class', 'data-name' => 'bob', 'for' => 'test-0']],
             ['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
             'A',
@@ -8427,7 +8561,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class selected',
@@ -8477,7 +8611,7 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'checkbox1']],
             'My checkboxes',
             '/label',
-            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => ''],
+            'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['label' => [
                 'class' => 'custom-class another-class selected',
@@ -8533,6 +8667,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8577,6 +8712,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8613,6 +8749,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8649,6 +8786,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8691,6 +8829,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8725,6 +8864,7 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
+                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',

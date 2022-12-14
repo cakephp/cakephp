@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache;
 
+use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
@@ -23,6 +24,7 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
+use stdClass;
 
 /**
  * CacheTest class
@@ -244,7 +246,7 @@ class CacheTest extends TestCase
         ]);
 
         $this->expectError();
-        $this->expectErrorMessage('Cache engines must use Cake\Cache\CacheEngine');
+        $this->expectErrorMessage('Cache engines must extend Cake\Cache\CacheEngine');
 
         Cache::pool('tests');
     }
@@ -386,7 +388,7 @@ class CacheTest extends TestCase
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::pool('test');
     }
@@ -396,11 +398,11 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject(): void
     {
-        $this->getMockBuilder(\stdClass::class)
+        $this->getMockBuilder(stdClass::class)
             ->setMockClassName('RubbishEngine')
             ->getMock();
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::setConfig('test', [
             'engine' => '\RubbishEngine',
@@ -414,7 +416,7 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('tests', ['engine' => 'File', 'path' => CACHE]);
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         Cache::setConfig('tests', ['engine' => 'Apc']);
     }
@@ -670,6 +672,25 @@ class CacheTest extends TestCase
         $this->assertNull($read['App.zeroTest']);
         $this->assertNull($read['App.zeroTest2']);
         $this->assertSame($read['App.keepTest'], 'keepMe');
+    }
+
+    /**
+     * testDeleteMany partial failure
+     */
+    public function testDeleteManyPartialFailure(): void
+    {
+        $this->_configCache();
+        $data = [
+            'App.exists' => 'yes',
+            'App.exists2' => 'yes',
+        ];
+        Cache::writeMany($data, 'tests');
+
+        $result = Cache::deleteMany(['App.exists', 'App.noExists', 'App.exists2'], 'tests');
+        $this->assertFalse($result);
+
+        $this->assertNull(Cache::read('App.exists', 'tests'));
+        $this->assertNull(Cache::read('App.exists2', 'tests'));
     }
 
     /**

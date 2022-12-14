@@ -47,6 +47,7 @@ class SqlserverSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
+        $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP VIEW schema_articles_v");
         $connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
         $connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
 
@@ -82,6 +83,12 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+
+        $table = <<<SQL
+CREATE VIEW schema_articles_v AS
+SELECT * FROM schema_articles
+SQL;
+        $connection->execute($table);
     }
 
     /**
@@ -334,12 +341,18 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
+
         $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
+
+        $resultNoViews = $schema->listTablesWithoutViews();
+        $this->assertIsArray($resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
     }
 
     /**
@@ -407,6 +420,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
+                'autoIncrement' => null,
             ],
             'created' => [
                 'type' => 'datetime',
@@ -1040,7 +1054,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE [schema_articles] (
-[id] INTEGER IDENTITY(1, 1),
+[id] INTEGER IDENTITY(1, 1) NOT NULL,
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
 [data] NVARCHAR(MAX),
@@ -1101,7 +1115,11 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertSame("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
+        $this->assertSame(
+            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
+            "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
+            $result[1]
+        );
     }
 
     /**
@@ -1109,7 +1127,8 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Sqlserver();
+        $this->_needsConnection();
+
         $mock = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote'])
             ->disableOriginalConstructor()
@@ -1119,7 +1138,16 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Sqlserver::class)
+            ->onlyMethods(['createPdo'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($mock);
+
+        $driver->connect();
 
         return $driver;
     }

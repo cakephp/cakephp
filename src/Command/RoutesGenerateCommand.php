@@ -49,7 +49,7 @@ class RoutesGenerateCommand extends Command
             $url = Router::url($args);
             $io->out("> $url");
             $io->out();
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException) {
             $io->err('<warning>The provided parameters do not match any routes.</warning>');
             $io->out();
 
@@ -69,7 +69,7 @@ class RoutesGenerateCommand extends Command
     {
         $out = [];
         foreach ($args as $arg) {
-            if (strpos($arg, ':') !== false) {
+            if (str_contains($arg, ':')) {
                 [$key, $value] = explode(':', $arg);
                 if (in_array($value, ['true', 'false'], true)) {
                     $value = $value === 'true';

@@ -43,6 +43,7 @@ class RoutesCheckCommand extends Command
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
+     * @throws \JsonException
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -58,12 +59,12 @@ class RoutesCheckCommand extends Command
                 }
             }
 
-            unset($route['_matchedRoute']);
+            unset($route['_route'], $route['_matchedRoute']);
             ksort($route);
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                [$name, $url, json_encode($route)],
+                [$name, $url, json_encode($route, JSON_THROW_ON_ERROR)],
             ];
             $io->helper('table')->output($output);
             $io->out();
@@ -74,7 +75,7 @@ class RoutesCheckCommand extends Command
             ];
             $io->helper('table')->output($output);
             $io->out();
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException) {
             $io->warning("'$url' did not match any routes.");
             $io->out();
 

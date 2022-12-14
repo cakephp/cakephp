@@ -25,7 +25,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
-use Company\TestPluginThree\Plugin as TestPluginThree;
+use Company\TestPluginThree\TestPluginThreePlugin;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -64,7 +64,7 @@ class BasePluginTest extends TestCase
         $plugin = new TestPlugin();
         $this->assertSame('TestPlugin', $plugin->getName());
 
-        $plugin = new TestPluginThree();
+        $plugin = new TestPluginThreePlugin();
         $this->assertSame('Company/TestPluginThree', $plugin->getName());
     }
 
@@ -102,8 +102,8 @@ class BasePluginTest extends TestCase
 
         $result = $plugin->console(new CommandCollection());
 
-        $this->assertTrue($result->has('widget'), 'Should have plugin command added');
-        $this->assertTrue($result->has('test_plugin.widget'), 'Should have long plugin name');
+        $this->assertTrue($result->has('sample'), 'Should have plugin command added');
+        $this->assertTrue($result->has('test_plugin.sample'), 'Should have long plugin name');
 
         $this->assertTrue($result->has('example'), 'Should have plugin shell added');
         $this->assertTrue($result->has('test_plugin.example'), 'Should have long plugin name');

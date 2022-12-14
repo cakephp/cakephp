@@ -25,13 +25,13 @@ abstract class AbstractFormatter
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
     ];
 
     /**
-     * @param array $config Config options
+     * @param array<string, mixed> $config Config options
      */
     public function __construct(array $config = [])
     {
@@ -46,5 +46,5 @@ abstract class AbstractFormatter
      * @param array $context Mesage context
      * @return string Formatted message
      */
-    abstract public function format($level, string $message, array $context = []): string;
+    abstract public function format(mixed $level, string $message, array $context = []): string;
 }

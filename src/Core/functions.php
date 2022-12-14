@@ -30,7 +30,7 @@ if (!function_exists('h')) {
      *
      * @param mixed $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
-     *    implement a `__toString` method. Otherwise the class name will be used.
+     *    implement a `__toString` method. Otherwise, the class name will be used.
      *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping.
@@ -38,7 +38,7 @@ if (!function_exists('h')) {
      * @return mixed Wrapped text.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#h
      */
-    function h($text, bool $double = true, ?string $charset = null)
+    function h(mixed $text, bool $double = true, ?string $charset = null): mixed
     {
         if (is_string($text)) {
             //optimize for strings
@@ -50,10 +50,10 @@ if (!function_exists('h')) {
 
             return $texts;
         } elseif (is_object($text)) {
-            if (method_exists($text, '__toString')) {
-                $text = $text->__toString();
+            if ($text instanceof Stringable) {
+                $text = (string)$text;
             } else {
-                $text = '(object)' . get_class($text);
+                $text = '(object)' . $text::class;
             }
         } elseif ($text === null || is_scalar($text)) {
             return $text;
@@ -88,7 +88,7 @@ if (!function_exists('pluginSplit')) {
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
     {
-        if (strpos($name, '.') !== false) {
+        if (str_contains($name, '.')) {
             $parts = explode('.', $name, 2);
             if ($dotAppend) {
                 $parts[0] .= '.';
@@ -138,7 +138,7 @@ if (!function_exists('pr')) {
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pr
      * @see debug()
      */
-    function pr($var)
+    function pr(mixed $var): mixed
     {
         if (!Configure::read('debug')) {
             return $var;
@@ -166,7 +166,7 @@ if (!function_exists('pj')) {
      * @see pr()
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pj
      */
-    function pj($var)
+    function pj(mixed $var): mixed
     {
         if (!Configure::read('debug')) {
             return $var;
@@ -189,17 +189,17 @@ if (!function_exists('env')) {
      *
      * @param string $key Environment variable name.
      * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
-     * @return string|bool|null Environment variable setting.
+     * @return string|float|int|bool|null Environment variable setting.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#env
      */
-    function env(string $key, $default = null)
+    function env(string $key, string|float|int|bool|null $default = null): string|float|int|bool|null
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
                 return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             }
 
-            return strpos((string)env('SCRIPT_URI'), 'https://') === 0;
+            return str_starts_with((string)env('SCRIPT_URI'), 'https://');
         }
 
         if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
@@ -207,8 +207,9 @@ if (!function_exists('env')) {
         }
 
         $val = $_SERVER[$key] ?? $_ENV[$key] ?? null;
+        assert($val === null || is_scalar($val));
         if ($val == null && getenv($key) !== false) {
-            $val = getenv($key);
+            $val = (string)getenv($key);
         }
 
         if ($key === 'REMOTE_ADDR' && $val === env('SERVER_ADDR')) {
@@ -227,7 +228,7 @@ if (!function_exists('env')) {
                 $name = (string)env('SCRIPT_NAME');
                 $filename = (string)env('SCRIPT_FILENAME');
                 $offset = 0;
-                if (!strpos($name, '.php')) {
+                if (!str_ends_with($name, '.php')) {
                     $offset = 4;
                 }
 
@@ -252,10 +253,9 @@ if (!function_exists('triggerWarning')) {
      */
     function triggerWarning(string $message): void
     {
-        $stackFrame = 1;
         $trace = debug_backtrace();
-        if (isset($trace[$stackFrame])) {
-            $frame = $trace[$stackFrame];
+        if (isset($trace[1])) {
+            $frame = $trace[1];
             $frame += ['file' => '[internal]', 'line' => '??'];
             $message = sprintf(
                 '%s - %s, line: %s',
@@ -272,12 +272,13 @@ if (!function_exists('deprecationWarning')) {
     /**
      * Helper method for outputting deprecation warnings
      *
+     * @param string $version The version that added this deprecation warning.
      * @param string $message The message to output as a deprecation warning.
      * @param int $stackFrame The stack frame to include in the error. Defaults to 1
      *   as that should point to application/plugin code.
      * @return void
      */
-    function deprecationWarning(string $message, int $stackFrame = 1): void
+    function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
@@ -298,10 +299,11 @@ if (!function_exists('deprecationWarning')) {
             }
 
             $message = sprintf(
-                '%s - %s, line: %s' . "\n" .
-                ' You can disable all deprecation warnings by setting `Error.errorLevel` to' .
-                ' `E_ALL & ~E_USER_DEPRECATED`, or add `%s` to ' .
-                ' `Error.ignoredDeprecationPaths` in your `config/app.php` to mute deprecations from only this file.',
+                "Since %s: %s\n%s, line: %s\n" .
+                'You can disable all deprecation warnings by setting `Error.errorLevel` to ' .
+                '`E_ALL & ~E_USER_DEPRECATED`. Adding `%s` to `Error.ignoredDeprecationPaths` ' .
+                'in your `config/app.php` config will mute deprecations from that file only.',
+                $version,
                 $message,
                 $frame['file'],
                 $frame['line'],
@@ -309,19 +311,16 @@ if (!function_exists('deprecationWarning')) {
             );
         }
 
-        trigger_error($message, E_USER_DEPRECATED);
-    }
-}
+        static $errors = [];
+        $checksum = md5($message);
+        $duplicate = (bool)Configure::read('Error.allowDuplicateDeprecations', false);
+        if (isset($errors[$checksum]) && !$duplicate) {
+            return;
+        }
+        if (!$duplicate) {
+            $errors[$checksum] = true;
+        }
 
-if (!function_exists('getTypeName')) {
-    /**
-     * Returns the objects class or var type of it's not an object
-     *
-     * @param mixed $var Variable to check
-     * @return string Returns the class name or variable type
-     */
-    function getTypeName($var): string
-    {
-        return is_object($var) ? get_class($var) : gettype($var);
+        trigger_error($message, E_USER_DEPRECATED);
     }
 }

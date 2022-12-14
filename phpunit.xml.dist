@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
     colors="true"
     bootstrap="tests/bootstrap.php"
     backupGlobals="true"
+    convertDeprecationsToExceptions="true"
     >
-
     <testsuites>
         <testsuite name="cakephp">
             <directory>tests/TestCase/</directory>
@@ -13,29 +13,28 @@
             <exclude>tests/TestCase/ORM/</exclude>
         </testsuite>
         <testsuite name="database">
-            <file>tests/TestCase/DatabaseSuite.php</file>
+            <directory>tests/TestCase/Database/</directory>
+            <directory>tests/TestCase/ORM/</directory>
         </testsuite>
     </testsuites>
 
     <extensions>
-        <extension class="Cake\TestSuite\FixtureSchemaExtension" />
+        <extension class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
     </extensions>
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory suffix=".php">src/</directory>
-            <exclude>
-                <!--
-                This file contains a few functions that cannot be tested
-                as they contain die; or breakpoint functionality.
-                -->
-                <file>src/basics.php</file>
-                <!-- This file is deprecated and unused -->
-                <file>src/Core/ClassLoader.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <!--
+            This file contains a few functions that cannot be tested
+            as they contain die; or breakpoint functionality.
+            -->
+            <file>src/basics.php</file>
+        </exclude>
+    </coverage>
 
     <php>
         <ini name="memory_limit" value="-1"/>

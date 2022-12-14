@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -77,7 +78,7 @@ class StringTypeTest extends TestCase
      */
     public function testToDatabaseInvalidArray(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 

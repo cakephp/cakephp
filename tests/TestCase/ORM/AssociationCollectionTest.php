@@ -105,17 +105,6 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     * Test load invalid class.
-     */
-    public function testLoadInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The association must extend `Cake\ORM\Association` class, `stdClass` given.');
-
-        $this->associations->load('stdClass', 'Users');
-    }
-
-    /**
      * Test removeAll method
      */
     public function testRemoveAll(): void
@@ -285,7 +274,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options)
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -333,7 +322,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, ['atomic' => true, 'associated' => ['Others']])
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -381,7 +370,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options + ['associated' => ['Other']])
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($entity));
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -400,8 +389,8 @@ class AssociationCollectionTest extends TestCase
      */
     public function testErrorOnUnknownAlias(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot save Profiles, it is not associated to Users');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot save `Profiles`, it is not associated to `Users`');
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->onlyMethods(['save'])
             ->setConstructorArgs([['alias' => 'Users']])

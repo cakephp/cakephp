@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
-use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TimeHelper;
 use Cake\View\View;
+use DateTime as NativeDateTime;
+use DateTimeZone;
+use IntlDateFormatter;
 
 /**
  * TimeHelperTest class
@@ -39,11 +41,6 @@ class TimeHelperTest extends TestCase
     protected $View;
 
     /**
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setUp method
      */
     public function setUp(): void
@@ -51,8 +48,6 @@ class TimeHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
-        Time::setDefaultLocale('en_US');
-        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -61,8 +56,8 @@ class TimeHelperTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Time::setDefaultLocale('en_US');
-        I18n::setLocale($this->locale);
+        DateTime::setDefaultLocale(null);
+        I18n::setLocale(I18n::getDefaultLocale());
     }
 
     /**
@@ -126,13 +121,13 @@ class TimeHelperTest extends TestCase
     public function testTimeAgoInWordsOutputTimezone(): void
     {
         $Time = new TimeHelper($this->View, ['outputTimezone' => 'America/Vancouver']);
-        $timestamp = new FrozenTime('+8 years, +4 months +2 weeks +3 days');
+        $timestamp = new DateTime('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
             'element' => 'span',
         ]);
         $vancouver = clone $timestamp;
-        $vancouver = $vancouver->timezone('America/Vancouver');
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
 
         $expected = [
             'span' => [
@@ -189,7 +184,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtom(): void
     {
-        $dateTime = new \DateTime();
+        $dateTime = new NativeDateTime();
         $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
@@ -199,10 +194,10 @@ class TimeHelperTest extends TestCase
     public function testToAtomOutputTimezone(): void
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new FrozenTime();
+        $dateTime = new DateTime();
         $vancouver = clone $dateTime;
-        $vancouver = $vancouver->timezone('America/Vancouver');
-        $this->assertSame($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
+        $this->assertSame($vancouver->format(DATE_ATOM), $this->Time->toAtom($vancouver));
     }
 
     /**
@@ -216,8 +211,8 @@ class TimeHelperTest extends TestCase
 
         $timezones = ['Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu'];
         foreach ($timezones as $timezone) {
-            $yourTimezone = new \DateTimeZone($timezone);
-            $yourTime = new \DateTime($date, $yourTimezone);
+            $yourTimezone = new DateTimeZone($timezone);
+            $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
             $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
         }
@@ -229,9 +224,9 @@ class TimeHelperTest extends TestCase
     public function testToRssOutputTimezone(): void
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new FrozenTime();
+        $dateTime = new DateTime();
         $vancouver = clone $dateTime;
-        $vancouver = $vancouver->timezone('America/Vancouver');
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
 
         $this->assertSame($vancouver->format('r'), $this->Time->toRss($vancouver));
     }
@@ -470,7 +465,7 @@ class TimeHelperTest extends TestCase
         $expected = '1/14/10, 1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $this->Time->format($time, \IntlDateFormatter::FULL);
+        $result = $this->Time->format($time, IntlDateFormatter::FULL);
         $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
         $this->assertStringStartsWith($expected, $result);
 
@@ -479,9 +474,9 @@ class TimeHelperTest extends TestCase
         $this->assertSame($expected, $result);
 
         I18n::setLocale('fr_FR');
-        Time::setDefaultLocale('fr_FR');
-        $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
-        $result = $this->Time->format($time, \IntlDateFormatter::FULL);
+        DateTime::setDefaultLocale('fr_FR');
+        $time = new DateTime('Thu Jan 14 13:59:28 2010');
+        $result = $this->Time->format($time, IntlDateFormatter::FULL);
         $this->assertStringContainsString('jeudi 14 janvier 2010', $result);
         $this->assertStringContainsString('13:59:28', $result);
     }
@@ -498,7 +493,7 @@ class TimeHelperTest extends TestCase
         $expected = '1/14/10, 12:59 AM';
         $this->assertTimeFormat($expected, $result);
 
-        $time = new FrozenTime('Thu Jan 14 8:59:28 2010', 'UTC');
+        $time = new DateTime('Thu Jan 14 8:59:28 2010', 'UTC');
         $result = $this->Time->format($time);
         $expected = '1/14/10, 12:59 AM';
         $this->assertTimeFormat($expected, $result);
@@ -512,7 +507,7 @@ class TimeHelperTest extends TestCase
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
-        $result = $this->Time->i18nFormat($time, [\IntlDateFormatter::SHORT, \IntlDateFormatter::FULL]);
+        $result = $this->Time->i18nFormat($time, [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
         $expected = '1/14/10, 12:59:28 AM';
         $this->assertStringStartsWith($expected, $result);
     }
@@ -526,7 +521,7 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format($time);
         $this->assertTimeFormat('1/14/10 1:59 PM', $result);
 
-        $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
+        $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
         $this->assertTimeFormat('08:59', $result);
     }
 
@@ -535,15 +530,13 @@ class TimeHelperTest extends TestCase
      */
     public function testFormatTimeInstance(): void
     {
-        $this->deprecated(function () {
-            $time = new Time('2010-01-14 13:59:28', 'America/New_York');
-            $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
-            $this->assertTimeFormat('13:59', $result);
+        $time = new DateTime('2010-01-14 13:59:28', 'America/New_York');
+        $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
+        $this->assertTimeFormat('13:59', $result);
 
-            $time = new Time('2010-01-14 13:59:28', 'UTC');
-            $result = $this->Time->format($time, 'HH:mm', null, 'America/New_York');
-            $this->assertTimeFormat('08:59', $result);
-        });
+        $time = new DateTime('2010-01-14 13:59:28', 'UTC');
+        $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
+        $this->assertTimeFormat('08:59', $result);
     }
 
     /**
@@ -570,7 +563,7 @@ class TimeHelperTest extends TestCase
         $this->assertFalse($result);
 
         $fallback = 'Date invalid or not set';
-        $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);
+        $result = $this->Time->format(null, IntlDateFormatter::FULL, $fallback);
         $this->assertSame($fallback, $result);
     }
 }

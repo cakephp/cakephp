@@ -19,11 +19,17 @@ namespace Cake\Test\TestCase\Collection;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\BufferedIterator;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use CallbackFilterIterator;
+use DateInterval;
 use DatePeriod;
+use DateTime;
+use Exception;
 use Generator;
 use InvalidArgumentException;
+use LogicException;
 use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
@@ -199,7 +205,7 @@ class CollectionTest extends TestCase
      */
     public function testIteratorIsWrapped(): void
     {
-        $items = new \ArrayObject([1, 2, 3]);
+        $items = new ArrayObject([1, 2, 3]);
         $collection = new Collection($items);
         $this->assertEquals(iterator_to_array($items), iterator_to_array($collection));
     }
@@ -988,9 +994,9 @@ class CollectionTest extends TestCase
         $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
         $result = $collection->take(3, 1)->toList();
         $expected = [
-            new \DateTime('2017-01-02'),
-            new \DateTime('2017-01-03'),
-            new \DateTime('2017-01-04'),
+            new DateTime('2017-01-02'),
+            new DateTime('2017-01-03'),
+            new DateTime('2017-01-04'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1178,7 +1184,7 @@ class CollectionTest extends TestCase
             ['myField' => '2'],
             ['myField' => '3'],
         ];
-        $buffered = (new \Cake\Collection\Collection($data))->buffered();
+        $buffered = (new Collection($data))->buffered();
         // Check going forwards
         $this->assertNotEmpty($buffered->firstMatch(['myField' => '1']));
         $this->assertNotEmpty($buffered->firstMatch(['myField' => '2']));
@@ -1868,6 +1874,18 @@ class CollectionTest extends TestCase
             'count' => 0,
         ];
         $this->assertSame($expected, $result);
+
+        $filter = function ($value) {
+            throw new Exception('filter exception');
+        };
+        $iterator = new CallbackFilterIterator(new ArrayIterator($items), $filter);
+        $collection = new Collection($iterator);
+
+        $result = $collection->__debugInfo();
+        $expected = [
+            'count' => 'An exception occurred while getting count',
+        ];
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1893,8 +1911,8 @@ class CollectionTest extends TestCase
      */
     public function testIsEmptyDoesNotConsume(): void
     {
-        $array = new \ArrayIterator([1, 2, 3]);
-        $inner = new \Cake\Collection\Iterator\BufferedIterator($array);
+        $array = new ArrayIterator([1, 2, 3]);
+        $inner = new BufferedIterator($array);
         $collection = new Collection($inner);
         $this->assertFalse($collection->isEmpty());
         $this->assertCount(3, $collection->toArray());
@@ -1969,9 +1987,9 @@ class CollectionTest extends TestCase
         $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
         $result = $collection->skip(3)->toList();
         $expected = [
-            new \DateTime('2017-01-04'),
-            new \DateTime('2017-01-05'),
-            new \DateTime('2017-01-06'),
+            new DateTime('2017-01-04'),
+            new DateTime('2017-01-05'),
+            new DateTime('2017-01-06'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2122,7 +2140,7 @@ class CollectionTest extends TestCase
     public function testLastNtWithNegative($data): void
     {
         $collection = new Collection($data);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The takeLast method requires a number greater than 0.');
         $collection->takeLast(-1)->toArray();
     }
@@ -2475,7 +2493,7 @@ class CollectionTest extends TestCase
      */
     public function testCartesianProductMultidimensionalArray(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $collection = new Collection([
             [
                 'names' => [
@@ -2517,7 +2535,7 @@ class CollectionTest extends TestCase
      */
     public function testTransposeUnEvenLengthShouldThrowException(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $collection = new Collection([
             ['Products', '2012', '2013', '2014'],
             ['Product A', '200', '100', '50'],
@@ -2549,7 +2567,7 @@ class CollectionTest extends TestCase
      */
     protected function datePeriod($start, $end): DatePeriod
     {
-        return new \DatePeriod(new \DateTime($start), new \DateInterval('P1D'), new \DateTime($end));
+        return new DatePeriod(new DateTime($start), new DateInterval('P1D'), new DateTime($end));
     }
 
     /**

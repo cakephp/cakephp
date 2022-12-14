@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
@@ -22,9 +22,8 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use stdClass;
 use TestApp\Command\DemoCommand;
-use TestApp\Shell\SampleShell;
+use TestApp\Command\SampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -43,25 +42,12 @@ class CommandCollectionTest extends TestCase
     public function testConstructor(): void
     {
         $collection = new CommandCollection([
-            'sample' => SampleShell::class,
+            'sample' => SampleCommand::class,
             'routes' => RoutesCommand::class,
         ]);
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('sample'));
         $this->assertCount(2, $collection);
-    }
-
-    /**
-     * Constructor with invalid class names should blow up
-     */
-    public function testConstructorInvalidClass(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\'. It is not a subclass of Cake\Console\Shell');
-        new CommandCollection([
-            'sample' => SampleShell::class,
-            'nope' => stdClass::class,
-        ]);
     }
 
     /**
@@ -93,9 +79,9 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
-        $this->assertSame($collection, $collection->add('routes', SampleShell::class));
+        $this->assertSame($collection, $collection->add('routes', SampleCommand::class));
         $this->assertTrue($collection->has('routes'));
-        $this->assertSame(SampleShell::class, $collection->get('routes'));
+        $this->assertSame(SampleCommand::class, $collection->get('routes'));
     }
 
     /**
@@ -109,18 +95,6 @@ class CommandCollectionTest extends TestCase
 
         $this->assertTrue($collection->has('routes'));
         $this->assertSame($command, $collection->get('routes'));
-    }
-
-    /**
-     * Instances that are not shells should fail.
-     */
-    public function testAddInvalidInstance(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\'. It is not a subclass of Cake\Console\Shell');
-        $collection = new CommandCollection();
-        $shell = new stdClass();
-        $collection->add('routes', $shell);
     }
 
     /**
@@ -156,17 +130,6 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
-     * Class names that are not shells should fail
-     */
-    public function testInvalidShellClassName(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\'. It is not a subclass of Cake\Console\Shell');
-        $collection = new CommandCollection();
-        $collection->add('routes', stdClass::class);
-    }
-
-    /**
      * Test removing a command
      */
     public function testRemove(): void
@@ -193,7 +156,7 @@ class CommandCollectionTest extends TestCase
     public function testGetIterator(): void
     {
         $in = [
-            'sample' => SampleShell::class,
+            'sample' => SampleCommand::class,
             'routes' => RoutesCommand::class,
         ];
         $collection = new CommandCollection($in);
@@ -212,16 +175,11 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
-        $this->assertTrue($collection->has('app'));
         $this->assertTrue($collection->has('demo'));
-        $this->assertTrue($collection->has('i18m'));
         $this->assertTrue($collection->has('sample'));
-        $this->assertTrue($collection->has('testing_dispatch'));
 
-        $this->assertSame('TestApp\Shell\AppShell', $collection->get('app'));
         $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
-        $this->assertSame('TestApp\Shell\I18mShell', $collection->get('i18m'));
-        $this->assertSame('TestApp\Shell\SampleShell', $collection->get('sample'));
+        $this->assertSame('TestApp\Command\SampleCommand', $collection->get('sample'));
     }
 
     /**
@@ -243,7 +201,7 @@ class CommandCollectionTest extends TestCase
 
         // These have to be strings as ::class uses the local namespace.
         $this->assertSame(RoutesCommand::class, $collection->get('routes'));
-        $this->assertSame(SampleShell::class, $collection->get('sample'));
+        $this->assertSame(SampleCommand::class, $collection->get('sample'));
         $this->assertSame(VersionCommand::class, $collection->get('version'));
     }
 
@@ -285,9 +243,9 @@ class CommandCollectionTest extends TestCase
             $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertSame('TestPlugin\Shell\ExampleShell', $result['example']);
+        $this->assertSame('TestPlugin\Command\ExampleCommand', $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
-        $this->assertSame('TestPlugin\Shell\SampleShell', $result['test_plugin.sample']);
+        $this->assertSame('TestPlugin\Command\SampleCommand', $result['test_plugin.sample']);
 
         $result = $collection->discoverPlugin('Company/TestPluginThree');
         $this->assertArrayHasKey(

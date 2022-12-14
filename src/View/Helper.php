@@ -49,73 +49,66 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    protected $helpers = [];
+    protected array $helpers = [];
 
     /**
      * Default config for this helper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
-     * A helper lookup table used to lazy load helper objects.
+     * Loaded helper instances.
      *
-     * @var array
+     * @var array<string, \Cake\View\Helper>
      */
-    protected $_helperMap = [];
+    protected array $helperInstances = [];
 
     /**
      * The View instance this helper is attached to
      *
      * @var \Cake\View\View
      */
-    protected $_View;
+    protected View $_View;
 
     /**
      * Default Constructor
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
+     * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
     {
         $this->_View = $view;
         $this->setConfig($config);
 
-        if (!empty($this->helpers)) {
-            $this->_helperMap = $view->helpers()->normalizeArray($this->helpers);
+        if ($this->helpers) {
+            $this->helpers = $view->helpers()->normalizeArray($this->helpers);
         }
 
         $this->initialize($config);
     }
 
     /**
-     * Provide non fatal errors on missing method calls.
-     *
-     * @param string $method Method to invoke
-     * @param array $params Array of params for the method.
-     * @return mixed|void
-     */
-    public function __call(string $method, array $params)
-    {
-        trigger_error(sprintf('Method %1$s::%2$s does not exist', static::class, $method), E_USER_WARNING);
-    }
-
-    /**
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper|null|void Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
      */
-    public function __get(string $name)
+    public function __get(string $name): ?Helper
     {
-        if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-            $config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
-            $this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
-
-            return $this->{$name};
+        if (isset($this->helperInstances[$name])) {
+            return $this->helperInstances[$name];
         }
+
+        if (isset($this->helpers[$name])) {
+            $config = ['enabled' => false] + $this->helpers[$name];
+
+            return $this->helperInstances[$name] = $this->_View->loadHelper($name, $config);
+        }
+
+        return null;
     }
 
     /**
@@ -143,10 +136,10 @@ class Helper implements EventListenerInterface
     /**
      * Adds the given class to the element options
      *
-     * @param array $options Array options/attributes to add a class to
+     * @param array<string, mixed> $options Array options/attributes to add a class to
      * @param string $class The class name being added.
      * @param string $key the key to use for class. Defaults to `'class'`.
-     * @return array Array of options with $key set.
+     * @return array<string, mixed> Array of options with $key set.
      */
     public function addClass(array $options, string $class, string $key = 'class'): array
     {
@@ -170,7 +163,7 @@ class Helper implements EventListenerInterface
      * Override this method if you need to add non-conventional event listeners.
      * Or if you want helpers to listen to non-standard events.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -197,7 +190,7 @@ class Helper implements EventListenerInterface
      *
      * Implement this method to avoid having to overwrite the constructor and call parent.
      *
-     * @param array $config The configuration settings provided to this helper.
+     * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
     public function initialize(array $config): void
@@ -208,7 +201,7 @@ class Helper implements EventListenerInterface
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

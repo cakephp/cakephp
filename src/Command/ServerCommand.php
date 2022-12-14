@@ -46,28 +46,28 @@ class ServerCommand extends Command
      *
      * @var string
      */
-    protected $_host = self::DEFAULT_HOST;
+    protected string $_host = self::DEFAULT_HOST;
 
     /**
      * listen port
      *
      * @var int
      */
-    protected $_port = self::DEFAULT_PORT;
+    protected int $_port = self::DEFAULT_PORT;
 
     /**
      * document root
      *
      * @var string
      */
-    protected $_documentRoot = WWW_ROOT;
+    protected string $_documentRoot = WWW_ROOT;
 
     /**
      * ini path
      *
      * @var string
      */
-    protected $_iniPath = '';
+    protected string $_iniPath = '';
 
     /**
      * Starts up the Command and displays the welcome message.
@@ -143,7 +143,7 @@ class ServerCommand extends Command
 
         $port = ':' . $this->_port;
         $io->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
-        $io->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
+        $io->out('You can exit with <info>`CTRL-C`</info>');
         system($command);
 
         return static::CODE_SUCCESS;

@@ -16,7 +16,7 @@ class CakesController extends Controller
      *
      * @var string
      */
-    protected $modelClass = 'Posts';
+    protected ?string $modelClass = 'Posts';
 
     /**
      * index method

@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\BetweenExpression;
-use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\ValuesExpression;
@@ -94,34 +93,6 @@ class ExpressionTypeCastingTest extends TestCase
 
         $expressions = [];
         $between->traverse(function ($exp) use (&$expressions): void {
-            $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
-        });
-
-        $result = array_sum($expressions);
-        $this->assertSame(2, $result, 'Missing expressions in the tree');
-    }
-
-    /**
-     * Tests that the Case expressions converts values to expressions correctly
-     */
-    public function testCaseExpression(): void
-    {
-        $case = new CaseExpression(
-            [new ComparisonExpression('foo', '1', 'string', '=')],
-            ['value1', 'value2'],
-            ['test', 'test']
-        );
-
-        $binder = new ValueBinder();
-        $sql = $case->sql($binder);
-        $this->assertSame('CASE WHEN foo = :c0 THEN CONCAT(:param1, :param2) ELSE CONCAT(:param3, :param4) END', $sql);
-
-        $this->assertSame('1', $binder->bindings()[':c0']['value']);
-        $this->assertSame('value1', $binder->bindings()[':param1']['value']);
-        $this->assertSame('value2', $binder->bindings()[':param3']['value']);
-
-        $expressions = [];
-        $case->traverse(function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 

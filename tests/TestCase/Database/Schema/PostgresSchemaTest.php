@@ -48,6 +48,7 @@ class PostgresSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
 
@@ -87,6 +88,12 @@ SQL;
         $connection->execute($table);
         $connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
         $connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
+
+        $table = <<<SQL
+CREATE VIEW schema_articles_v AS
+SELECT * FROM schema_articles
+SQL;
+        $connection->execute($table);
     }
 
     /**
@@ -284,12 +291,18 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-
         $schema = new SchemaCollection($connection);
+
         $result = $schema->listTables();
         $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_articles_v', $result);
         $this->assertContains('schema_authors', $result);
+
+        $resultNoViews = $schema->listTablesWithoutViews();
+        $this->assertIsArray($resultNoViews);
+        $this->assertNotContains('schema_articles_v', $resultNoViews);
+        $this->assertContains('schema_articles', $resultNoViews);
     }
 
     /**
@@ -371,6 +384,7 @@ SQL;
                 'precision' => null,
                 'unsigned' => null,
                 'comment' => null,
+                'autoIncrement' => null,
             ],
             'readingtime' => [
                 'type' => 'time',
@@ -791,7 +805,7 @@ SQL;
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
-                '"post_id" INTEGER',
+                '"post_id" INT',
             ],
             [
                 'post_id',
@@ -972,7 +986,7 @@ SQL;
             ]);
 
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame($result, '"id" SERIAL');
+        $this->assertSame('"id" SERIAL NOT NULL', $result);
     }
 
     /**
@@ -1188,7 +1202,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "schema_articles" (
-"id" SERIAL,
+"id" SERIAL NOT NULL,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
 "data" JSONB,
@@ -1262,8 +1276,8 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "articles_tags" (
-"article_id" INTEGER NOT NULL,
-"tag_id" INTEGER NOT NULL,
+"article_id" INT NOT NULL,
+"tag_id" INT NOT NULL,
 PRIMARY KEY ("article_id", "tag_id")
 )
 SQL;
@@ -1288,8 +1302,8 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "composite_key" (
-"id" SERIAL,
-"account_id" INTEGER NOT NULL,
+"id" SERIAL NOT NULL,
+"account_id" INT NOT NULL,
 PRIMARY KEY ("id", "account_id")
 )
 SQL;
@@ -1344,9 +1358,10 @@ SQL;
      */
     protected function _getMockedDriver(): Driver
     {
-        $driver = new Postgres();
+        $this->_needsConnection();
+
         $mock = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote'])
+            ->onlyMethods(['quote', 'exec'])
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->any())
@@ -1354,7 +1369,16 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->setConnection($mock);
+
+        $driver = $this->getMockBuilder(Postgres::class)
+            ->onlyMethods(['createPdo'])
+            ->getMock();
+
+        $driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($mock);
+
+        $driver->connect();
 
         return $driver;
     }

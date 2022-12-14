@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Cake\Datasource;
 
+use Closure;
+
 /**
  * The basis for every query object
  *
@@ -36,11 +38,11 @@ interface QueryInterface
      * If `true` is passed in the second argument, any previous selections will
      * be overwritten with the list passed in the first argument.
      *
-     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Association|\Cake\ORM\Table|callable|array|string $fields Fields.
+     * @param \Closure|array|string|float|int $fields Fields.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields, bool $overwrite = false);
+    public function select(Closure|array|string|float|int $fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -52,7 +54,7 @@ interface QueryInterface
      *
      * @param string $field The field to alias
      * @param string|null $alias the alias used to prefix the field
-     * @return array
+     * @return array<string, string>
      */
     public function aliasField(string $field, ?string $alias = null): array;
 
@@ -62,7 +64,7 @@ interface QueryInterface
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string>
+     * @return array<string, string>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 
@@ -115,7 +117,7 @@ interface QueryInterface
      *  ->limit(10)
      * ```
      *
-     * @param array $options list of query clauses to apply new parts to.
+     * @param array<string, mixed> $options list of query clauses to apply new parts to.
      * @return $this
      */
     public function applyOptions(array $options);
@@ -133,10 +135,10 @@ interface QueryInterface
      * a single query.
      *
      * @param string $finder The finder method to use.
-     * @param array $options The options for the finder.
+     * @param array<string, mixed> $options The options for the finder.
      * @return static Returns a modified query.
      */
-    public function find(string $finder, array $options = []);
+    public function find(string $finder, array $options = []): static;
 
     /**
      * Returns the first result out of executing this query, if the query has not been
@@ -148,9 +150,9 @@ interface QueryInterface
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return \Cake\Datasource\EntityInterface|array|null the first result from the ResultSet
+     * @return mixed the first result from the ResultSet
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * Returns the total amount of results for the query.
@@ -172,10 +174,10 @@ interface QueryInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $limit number of records to be returned
+     * @param int|null $limit number of records to be returned
      * @return $this
      */
-    public function limit($limit);
+    public function limit(?int $limit);
 
     /**
      * Sets the number of records that should be skipped from the original result set
@@ -192,10 +194,10 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param \Cake\Database\ExpressionInterface|int|null $offset number of records to be skipped
+     * @param int|null $offset number of records to be skipped
      * @return $this
      */
-    public function offset($offset);
+    public function offset(?int $offset);
 
     /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.
@@ -213,7 +215,7 @@ interface QueryInterface
      * ### Examples:
      *
      * ```
-     * $query->order(['title' => 'DESC', 'author_id' => 'ASC']);
+     * $query->orderBy(['title' => 'DESC', 'author_id' => 'ASC']);
      * ```
      *
      * Produces:
@@ -222,8 +224,8 @@ interface QueryInterface
      *
      * ```
      * $query
-     *     ->order(['title' => $query->newExpr('DESC NULLS FIRST')])
-     *     ->order('author_id');
+     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy('author_id');
      * ```
      *
      * Will generate:
@@ -232,7 +234,7 @@ interface QueryInterface
      *
      * ```
      * $expression = $query->newExpr()->add(['id % 2 = 0']);
-     * $query->order($expression)->order(['title' => 'ASC']);
+     * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
      * Will become:
@@ -240,13 +242,65 @@ interface QueryInterface
      * `ORDER BY (id %2 = 0), title ASC`
      *
      * If you need to set complex expressions as order conditions, you
-     * should use `orderAsc()` or `orderDesc()`.
+     * should use `orderByAsc()` or `orderByDesc()`.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields fields to be added to the list
+     * @param \Closure|array|string $fields fields to be added to the list
+     * @param bool $overwrite whether to reset order with field list or not
+     * @return $this
+     * @deprecated 5.0.0 Use orderBy() instead now that CollectionInterface methods are no longer proxied.
+     */
+    public function order(Closure|array|string $fields, bool $overwrite = false);
+
+    /**
+     * Adds a single or multiple fields to be used in the ORDER clause for this query.
+     * Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * If an array is passed, keys will be used as the field itself and the value will
+     * represent the order in which such field should be ordered. When called multiple
+     * times with the same fields as key, the last order definition will prevail over
+     * the others.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be selected, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->orderBy(['title' => 'DESC', 'author_id' => 'ASC']);
+     * ```
+     *
+     * Produces:
+     *
+     * `ORDER BY title DESC, author_id ASC`
+     *
+     * ```
+     * $query
+     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy('author_id');
+     * ```
+     *
+     * Will generate:
+     *
+     * `ORDER BY title DESC NULLS FIRST, author_id`
+     *
+     * ```
+     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
+     * ```
+     *
+     * Will become:
+     *
+     * `ORDER BY (id %2 = 0), title ASC`
+     *
+     * If you need to set complex expressions as order conditions, you
+     * should use `orderByAsc()` or `orderByDesc()`.
+     *
+     * @param \Closure|array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
-    public function order($fields, $overwrite = false);
+    public function orderBy(Closure|array|string $fields, bool $overwrite = false);
 
     /**
      * Set the page of results you want.
@@ -279,7 +333,7 @@ interface QueryInterface
      * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use
      * @return $this
      */
-    public function repository(RepositoryInterface $repository);
+    public function setRepository(RepositoryInterface $repository);
 
     /**
      * Returns the default repository object that will be used by this query,
@@ -361,7 +415,7 @@ interface QueryInterface
      *
      * ### Adding conditions in multiple steps:
      *
-     * You can use callable functions to construct complex expressions, functions
+     * You can use callback to construct complex expressions, functions
      * receive as first argument a new QueryExpression object and this query instance
      * as second argument. Functions must return an expression object, that will be
      * added the list of conditions for the query using the AND operator.
@@ -397,9 +451,9 @@ interface QueryInterface
      * The safest thing you can do is to never use string conditions.
      *
      * @param \Closure|array|string|null $conditions The conditions to filter on.
-     * @param array $types associative array of type names used to bind values to query
+     * @param array<string, string> $types Associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
      */
-    public function where($conditions = null, array $types = [], bool $overwrite = false);
+    public function where(Closure|array|string|null $conditions = null, array $types = [], bool $overwrite = false);
 }

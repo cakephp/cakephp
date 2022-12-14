@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Core\Configure;
 use Cake\View\Form\ContextInterface;
 
 /**
@@ -30,9 +29,9 @@ class FileWidget extends BasicWidget
     /**
      * Data defaults.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $defaults = [
+    protected array $defaults = [
         'name' => '',
         'escape' => true,
         'templateVars' => [],
@@ -50,7 +49,7 @@ class FileWidget extends BasicWidget
      * Unlike other input objects the `val` property will be specifically
      * ignored.
      *
-     * @param array $data The data to build a file input with.
+     * @param array<string, mixed> $data The data to build a file input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */
@@ -68,24 +67,5 @@ class FileWidget extends BasicWidget
                 ['name']
             ),
         ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function secureFields(array $data): array
-    {
-        // PSR7 UploadedFileInterface objects are used.
-        if (Configure::read('App.uploadedFilesAsObjects', true)) {
-            return [$data['name']];
-        }
-
-        // Backwards compatibility for array files.
-        $fields = [];
-        foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
-            $fields[] = $data['name'] . '[' . $suffix . ']';
-        }
-
-        return $fields;
     }
 }

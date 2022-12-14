@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\TestSuite\TestCase;
+use LogicException;
 
 /**
  * Tests MapReduce class
@@ -87,7 +88,7 @@ class MapReduceTest extends TestCase
      */
     public function testReducerRequired(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
         $mapper = function ($row, $key, $mr): void {
             foreach ($row as $number) {

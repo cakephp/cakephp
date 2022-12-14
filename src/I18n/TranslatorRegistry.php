@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
+use Cake\Cache\CacheEngineInterface;
+use Psr\SimpleCache\CacheInterface;
+
 /**
  * Constructs and stores instances of translators that can be
  * retrieved by name and locale.
@@ -32,31 +35,30 @@ class TranslatorRegistry
     /**
      * A registry to retain translator objects.
      *
-     * @var array
-     * @psalm-var array<string, array<string, \Cake\I18n\Translator>>
+     * @var array<string, array<string, \Cake\I18n\Translator>>
      */
-    protected $registry = [];
+    protected array $registry = [];
 
     /**
      * The current locale code.
      *
      * @var string
      */
-    protected $locale;
+    protected string $locale;
 
     /**
      * A package locator.
      *
      * @var \Cake\I18n\PackageLocator
      */
-    protected $packages;
+    protected PackageLocator $packages;
 
     /**
      * A formatter locator.
      *
      * @var \Cake\I18n\FormatterLocator
      */
-    protected $formatters;
+    protected FormatterLocator $formatters;
 
     /**
      * A list of loader functions indexed by domain name. Loaders are
@@ -66,7 +68,7 @@ class TranslatorRegistry
      *
      * @var array<callable>
      */
-    protected $_loaders = [];
+    protected array $_loaders = [];
 
     /**
      * The name of the default formatter to use for newly created
@@ -74,14 +76,14 @@ class TranslatorRegistry
      *
      * @var string
      */
-    protected $_defaultFormatter = 'default';
+    protected string $_defaultFormatter = 'default';
 
     /**
      * Use fallback-domain for translation loaders.
      *
      * @var bool
      */
-    protected $_useFallback = true;
+    protected bool $_useFallback = true;
 
     /**
      * A CacheEngine object that is used to remember translator across
@@ -169,7 +171,7 @@ class TranslatorRegistry
      * @param \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface $cacher The cacher instance.
      * @return void
      */
-    public function setCacher($cacher): void
+    public function setCacher(CacheInterface&CacheEngineInterface $cacher): void
     {
         $this->_cacher = $cacher;
     }
@@ -186,9 +188,7 @@ class TranslatorRegistry
      */
     public function get(string $name, ?string $locale = null): ?Translator
     {
-        if ($locale === null) {
-            $locale = $this->getLocale();
-        }
+        $locale ??= $this->getLocale();
 
         if (isset($this->registry[$name][$locale])) {
             return $this->registry[$name][$locale];
@@ -201,8 +201,14 @@ class TranslatorRegistry
         // Cache keys cannot contain / if they go to file engine.
         $keyName = str_replace('/', '.', $name);
         $key = "translations.{$keyName}.{$locale}";
+        /** @var \Cake\I18n\Translator|null $translator */
         $translator = $this->_cacher->get($key);
-        if (!$translator || !$translator->getPackage()) {
+
+        // PHP <8.1 does not correctly garbage collect strings created
+        // by unserialized arrays.
+        gc_collect_cycles();
+
+        if (!$translator) {
             $translator = $this->_getTranslator($name, $locale);
             $this->_cacher->set($key, $translator);
         }
@@ -336,7 +342,8 @@ class TranslatorRegistry
         if (!$this->_useFallback || $name === $fallbackDomain) {
             return $loader;
         }
-        $loader = function () use ($loader, $fallbackDomain) {
+
+        return function () use ($loader, $fallbackDomain) {
             /** @var \Cake\I18n\Package $package */
             $package = $loader();
             if (!$package->getFallback()) {
@@ -345,7 +352,5 @@ class TranslatorRegistry
 
             return $package;
         };
-
-        return $loader;
     }
 }

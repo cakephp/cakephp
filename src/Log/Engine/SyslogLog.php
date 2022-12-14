@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Log\Engine;
 
 use Cake\Log\Formatter\DefaultFormatter;
-use Cake\Log\Formatter\LegacySyslogFormatter;
+use Stringable;
 
 /**
  * Syslog stream for Logging. Writes logs to the system logger
@@ -49,9 +49,9 @@ class SyslogLog extends BaseLog
      *  ]);
      * ```
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'levels' => [],
         'scopes' => [],
         'flag' => LOG_ODELAY,
@@ -68,7 +68,7 @@ class SyslogLog extends BaseLog
      *
      * @var array<int>
      */
-    protected $_levelMap = [
+    protected array $_levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -84,26 +84,7 @@ class SyslogLog extends BaseLog
      *
      * @var bool
      */
-    protected $_open = false;
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct(array $config = [])
-    {
-        if (isset($config['format'])) {
-            deprecationWarning(
-                '`format` option is now deprecated in favor of custom formatters. ' .
-                'Switching to `LegacySyslogFormatter`.'
-            );
-            /** @psalm-suppress DeprecatedClass */
-            $config['formatter'] = [
-                'className' => LegacySyslogFormatter::class,
-                'format' => $config['format'],
-            ];
-        }
-        parent::__construct($config);
-    }
+    protected bool $_open = false;
 
     /**
      * Writes a message to syslog
@@ -112,12 +93,13 @@ class SyslogLog extends BaseLog
      * log messages, pass all messages through the format defined in the configuration
      *
      * @param mixed $level The severity level of log you are making.
-     * @param string $message The message you want to log.
+     * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
-     * @see Cake\Log\Log::$_levels
+     * @see \Cake\Log\Log::$_levels
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function log($level, $message, array $context = []): void
+    public function log($level, Stringable|string $message, array $context = []): void
     {
         if (!$this->_open) {
             $config = $this->_config;
@@ -130,7 +112,7 @@ class SyslogLog extends BaseLog
             $priority = $this->_levelMap[$level];
         }
 
-        $lines = explode("\n", $this->_format($message, $context));
+        $lines = explode("\n", $this->interpolate($message, $context));
         foreach ($lines as $line) {
             $this->_write($priority, $this->formatter->format($level, $line, $context));
         }

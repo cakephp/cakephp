@@ -21,8 +21,9 @@ use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\TestSuite\TestCase;
-use Company\TestPluginThree\Plugin as TestPluginThree;
+use Company\TestPluginThree\TestPluginThreePlugin;
 use InvalidArgumentException;
+use Named\NamedPlugin;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -47,6 +48,26 @@ class PluginCollectionTest extends TestCase
         $this->assertCount(1, $plugins);
     }
 
+    public function testAddFromConfig()
+    {
+        Configure::write('debug', false);
+
+        $config = [
+            'Company/TestPluginThree',
+            'TestPlugin' => ['onlyDebug' => true],
+            'Nope' => ['optional' => true],
+            'Named' => ['routes' => false],
+        ];
+
+        $plugins = new PluginCollection();
+        $plugins->addFromConfig($config);
+
+        $this->assertCount(2, $plugins);
+        $this->assertTrue($plugins->has('Company/TestPluginThree'));
+        $this->assertFalse($plugins->has('TestPlugin'));
+        $this->assertFalse($plugins->get('Named')->isEnabled('routes'));
+    }
+
     public function testAddOperations(): void
     {
         $plugins = new PluginCollection();
@@ -64,7 +85,7 @@ class PluginCollectionTest extends TestCase
     public function testAddVendoredPlugin(): void
     {
         $plugins = new PluginCollection();
-        $plugins->add(new TestPluginThree());
+        $plugins->add(new TestPluginThreePlugin());
 
         $this->assertTrue($plugins->has('Company/TestPluginThree'));
         $this->assertFalse($plugins->has('TestPluginThree'));
@@ -94,8 +115,8 @@ class PluginCollectionTest extends TestCase
     public function testGetAutoload(): void
     {
         $plugins = new PluginCollection();
-        $plugin = $plugins->get('ParentPlugin');
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $plugin = $plugins->get('Named');
+        $this->assertInstanceOf(NamedPlugin::class, $plugin);
     }
 
     public function testGetInvalid(): void
@@ -110,15 +131,18 @@ class PluginCollectionTest extends TestCase
     {
         $plugins = new PluginCollection();
 
-        $plugin = $plugins->create('ParentPlugin');
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $plugin = $plugins->create('Named');
+        $this->assertInstanceOf(NamedPlugin::class, $plugin);
 
-        $plugin = $plugins->create('ParentPlugin', ['name' => 'Granpa']);
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $plugin = $plugins->create('Named', ['name' => 'Granpa']);
+        $this->assertInstanceOf(NamedPlugin::class, $plugin);
         $this->assertSame('Granpa', $plugin->getName());
 
-        $plugin = $plugins->create(\ParentPlugin\Plugin::class);
-        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $plugin = $plugins->create(NamedPlugin::class);
+        $this->assertInstanceOf(NamedPlugin::class, $plugin);
+
+        $plugin = $plugins->create('Company/TestPluginThree');
+        $this->assertInstanceOf(TestPluginThreePlugin::class, $plugin);
 
         $plugin = $plugins->create('TestTheme');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
@@ -129,7 +153,7 @@ class PluginCollectionTest extends TestCase
     {
         $data = [
             new TestPlugin(),
-            new TestPluginThree(),
+            new TestPluginThreePlugin(),
         ];
         $plugins = new PluginCollection($data);
         $out = [];
@@ -146,7 +170,7 @@ class PluginCollectionTest extends TestCase
         $plugin = new TestPlugin();
         $plugin->disable('routes');
 
-        $pluginThree = new TestPluginThree();
+        $pluginThree = new TestPluginThreePlugin();
 
         $plugins->add($plugin);
         $plugins->add($pluginThree);
@@ -170,7 +194,7 @@ class PluginCollectionTest extends TestCase
     {
         $plugins = new PluginCollection();
         $plugin = new TestPlugin();
-        $pluginThree = new TestPluginThree();
+        $pluginThree = new TestPluginThreePlugin();
 
         $plugins->add($plugin);
         $plugins->add($pluginThree);

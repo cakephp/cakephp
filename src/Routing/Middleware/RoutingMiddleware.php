@@ -16,13 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Middleware;
 
-use Cake\Cache\Cache;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
-use Cake\Routing\Exception\RedirectException as DeprecatedRedirectException;
-use Cake\Routing\RouteCollection;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -49,73 +47,30 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @var \Cake\Routing\RoutingApplicationInterface
      */
-    protected $app;
-
-    /**
-     * The cache configuration name to use for route collection caching,
-     * null to disable caching
-     *
-     * @var string|null
-     */
-    protected $cacheConfig;
+    protected RoutingApplicationInterface $app;
 
     /**
      * Constructor
      *
      * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
-     * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(RoutingApplicationInterface $app, ?string $cacheConfig = null)
+    public function __construct(RoutingApplicationInterface $app)
     {
         $this->app = $app;
-        $this->cacheConfig = $cacheConfig;
     }
 
     /**
-     * Trigger the application's routes() hook if the application exists and Router isn't initialized.
-     * Uses the routes cache if enabled via configuration param "Router.cache"
-     *
-     * If the middleware is created without an Application, routes will be
-     * loaded via the automatic route loading that pre-dates the routes() hook.
+     * Trigger the application's and plugin's routes() hook.
      *
      * @return void
      */
     protected function loadRoutes(): void
-    {
-        $routeCollection = $this->buildRouteCollection();
-        Router::setRouteCollection($routeCollection);
-    }
-
-    /**
-     * Check if route cache is enabled and use the configured Cache to 'remember' the route collection
-     *
-     * @return \Cake\Routing\RouteCollection
-     */
-    protected function buildRouteCollection(): RouteCollection
-    {
-        if (Cache::enabled() && $this->cacheConfig !== null) {
-            return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
-                return $this->prepareRouteCollection();
-            }, $this->cacheConfig);
-        }
-
-        return $this->prepareRouteCollection();
-    }
-
-    /**
-     * Generate the route collection using the builder
-     *
-     * @return \Cake\Routing\RouteCollection
-     */
-    protected function prepareRouteCollection(): RouteCollection
     {
         $builder = Router::createRouteBuilder('/');
         $this->app->routes($builder);
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
-
-        return Router::getRouteCollection();
     }
 
     /**
@@ -132,6 +87,7 @@ class RoutingMiddleware implements MiddlewareInterface
     {
         $this->loadRoutes();
         try {
+            assert($request instanceof ServerRequest);
             Router::setRequest($request);
             $params = (array)$request->getAttribute('params', []);
             $middleware = [];
@@ -139,18 +95,17 @@ class RoutingMiddleware implements MiddlewareInterface
                 $params = Router::parseRequest($request) + $params;
                 if (isset($params['_middleware'])) {
                     $middleware = $params['_middleware'];
-                    unset($params['_middleware']);
                 }
-                /** @var \Cake\Http\ServerRequest $request */
+                $route = $params['_route'];
+                unset($params['_middleware'], $params['_route']);
+
+                $request = $request->withAttribute('route', $route);
                 $request = $request->withAttribute('params', $params);
+
+                assert($request instanceof ServerRequest);
                 Router::setRequest($request);
             }
         } catch (RedirectException $e) {
-            return new RedirectResponse(
-                $e->getMessage(),
-                $e->getCode()
-            );
-        } catch (DeprecatedRedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
                 $e->getCode()

@@ -37,35 +37,35 @@ class CorsBuilder
      *
      * @var \Psr\Http\Message\MessageInterface
      */
-    protected $_response;
+    protected MessageInterface $_response;
 
     /**
      * The request's Origin header value
      *
      * @var string
      */
-    protected $_origin;
+    protected string $_origin;
 
     /**
-     * Whether or not the request was over SSL.
+     * Whether the request was over SSL.
      *
      * @var bool
      */
-    protected $_isSsl;
+    protected bool $_isSsl;
 
     /**
      * The headers that have been queued so far.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_headers = [];
+    protected array $_headers = [];
 
     /**
      * Constructor.
      *
      * @param \Psr\Http\Message\MessageInterface $response The response object to add headers onto.
      * @param string $origin The request's Origin header.
-     * @param bool $isSsl Whether or not the request was over SSL.
+     * @param bool $isSsl Whether the request was over SSL.
      */
     public function __construct(MessageInterface $response, string $origin, bool $isSsl = false)
     {
@@ -107,7 +107,7 @@ class CorsBuilder
      * @param array<string>|string $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin($domains)
+    public function allowOrigin(array|string $domains)
     {
         $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
@@ -138,7 +138,7 @@ class CorsBuilder
             }
 
             $original = $preg = $domain;
-            if (strpos($domain, '://') === false) {
+            if (!str_contains($domain, '://')) {
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }
             $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';
@@ -205,7 +205,7 @@ class CorsBuilder
      * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
-    public function maxAge($age)
+    public function maxAge(string|int $age)
     {
         $this->_headers['Access-Control-Max-Age'] = $age;
 

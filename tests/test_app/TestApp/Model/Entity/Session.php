@@ -10,7 +10,7 @@ use Cake\ORM\Entity;
  */
 class Session extends Entity
 {
-    protected $_accessible = [
+    protected array $_accessible = [
         'id' => false,
         '*' => true,
     ];

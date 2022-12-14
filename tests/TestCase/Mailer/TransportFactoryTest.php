@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
+use BadMethodCallException;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * TransportFactory Test class
@@ -60,7 +62,7 @@ class TransportFactoryTest extends TestCase
      */
     public function testGetMissingClassName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
 
         TransportFactory::drop('debug');
@@ -113,7 +115,7 @@ class TransportFactoryTest extends TestCase
      */
     public function testSetConfigErrorOnDuplicate(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $settings = [
             'className' => 'Debug',
             'log' => true,

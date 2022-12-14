@@ -22,23 +22,11 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CommentsTranslationsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'locale' => ['type' => 'string', 'null' => false],
-        'comment' => 'text',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'locale']]],
-    ];
-
-    /**
      * records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['locale' => 'eng', 'id' => 1, 'comment' => 'Comment #1'],
         ['locale' => 'eng', 'id' => 2, 'comment' => 'Comment #2'],
         ['locale' => 'eng', 'id' => 3, 'comment' => 'Comment #3'],

@@ -29,7 +29,7 @@ abstract class MailConstraintBase extends Constraint
     /**
      * @var int|null
      */
-    protected $at;
+    protected ?int $at = null;
 
     /**
      * Constructor
@@ -47,7 +47,7 @@ abstract class MailConstraintBase extends Constraint
      *
      * @return array<\Cake\Mailer\Message>
      */
-    public function getMessages()
+    public function getMessages(): array
     {
         $messages = TestEmailTransport::getMessages();
 

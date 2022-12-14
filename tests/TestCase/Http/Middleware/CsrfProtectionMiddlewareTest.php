@@ -2,20 +2,21 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
@@ -28,7 +29,6 @@ use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -165,6 +165,27 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that the CSRF tokens are regenerated when token is not valid
+     *
+     * @return void
+     */
+    public function testRegenerateTokenOnGetWithInvalidData()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+            ],
+            'cookies' => ['csrfToken' => "\x20\x26"],
+        ]);
+
+        $middleware = new CsrfProtectionMiddleware();
+        /** @var \Cake\Http\Response $response */
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertGreaterThan(32, strlen($response->getCookie('csrfToken')['value']));
+    }
+
+    /**
      * Test that the CSRF tokens are set for redirect responses
      */
     public function testRedirectResponseCookies(): void
@@ -195,7 +216,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         });
 
         $middleware = new CsrfProtectionMiddleware();
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CakeException::class);
         $middleware->process($request, $handler);
     }
 
@@ -356,11 +377,50 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
+     * Test that invalid string cookies are rejected.
+     *
+     * @return void
+     */
+    public function testInvalidTokenStringCookies()
+    {
+        $this->expectException(InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => ["\x20\x26"]],
+            'cookies' => ['csrfToken' => ["\x20\x26"]],
+        ]);
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
+     * Test that empty value cookies are rejected
+     *
+     * @return void
+     */
+    public function testInvalidTokenEmptyStringCookies()
+    {
+        $this->expectException(InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+            'post' => ['_csrfToken' => '*(&'],
+            // Invalid data that can't be base64 decoded.
+            'cookies' => ['csrfToken' => '*(&'],
+        ]);
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->process($request, $this->_getRequestHandler());
+    }
+
+    /**
      * Test that request non string cookies are ignored.
      */
     public function testInvalidTokenNonStringCookies(): void
     {
-        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -497,28 +557,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertSame(CookieInterface::SAMESITE_STRICT, $cookie['samesite'], 'samesite attribute missing');
     }
 
-    public function testUsingDeprecatedConfigKey(): void
-    {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'environment' => ['REQUEST_METHOD' => 'GET'],
-                'webroot' => '/dir/',
-            ]);
-
-            $middleware = new CsrfProtectionMiddleware([
-                'cookieName' => 'token',
-                'expiry' => '+1 hour',
-                'secure' => true,
-                'httpOnly' => true,
-                'samesite' => CookieInterface::SAMESITE_STRICT,
-            ]);
-            $response = $middleware->process($request, $this->_getRequestHandler());
-
-            $cookie = $response->getCookie('token');
-            $this->assertTrue($cookie['httponly'], 'cookie httponly flag missing');
-        });
-    }
-
     /**
      * Test that the configuration options work.
      *
@@ -541,37 +579,6 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
-    }
-
-    public function testSkippingTokenCheckUsingWhitelistCallback(): void
-    {
-        $this->deprecated(function (): void {
-            $request = new ServerRequest([
-                'post' => [
-                    '_csrfToken' => 'foo',
-                ],
-                'environment' => [
-                    'REQUEST_METHOD' => 'POST',
-                ],
-            ]);
-            $response = new Response();
-
-            $middleware = new CsrfProtectionMiddleware();
-            $middleware->whitelistCallback(function (ServerRequestInterface $request) {
-                $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
-
-                return true;
-            });
-
-            $handler = new TestRequestHandler(function ($request) {
-                $this->assertEmpty($request->getParsedBody());
-
-                return new Response();
-            });
-
-            $response = $middleware->process($request, $handler);
-            $this->assertInstanceOf(Response::class, $response);
-        });
     }
 
     public function testSkippingTokenCheckUsingSkipCheckCallback(): void

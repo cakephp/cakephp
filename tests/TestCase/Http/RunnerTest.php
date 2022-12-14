@@ -29,6 +29,26 @@ use RuntimeException;
 class RunnerTest extends TestCase
 {
     /**
+     * @var \Cake\Http\MiddlewareQueue
+     */
+    protected $queue;
+
+    /**
+     * @var \Closure
+     */
+    protected $ok;
+
+    /**
+     * @var \Closure
+     */
+    protected $pass;
+
+    /**
+     * @var \Closure
+     */
+    protected $fail;
+
+    /**
      * setup
      */
     public function setUp(): void
@@ -98,7 +118,7 @@ class RunnerTest extends TestCase
      */
     public function testRunExceptionInMiddleware(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');
         $this->queue->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();

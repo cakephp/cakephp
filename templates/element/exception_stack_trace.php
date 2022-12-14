@@ -17,58 +17,64 @@
  */
 use Cake\Error\Debugger;
 
-foreach ($trace as $i => $stack):
-    $excerpt = $params = [];
+foreach ($exceptions as $level => $exc):
+    $stackTrace = Debugger::formatTrace($exc->getTrace(), [
+        'format' => 'array',
+        'args' => true,
+    ]);
+    foreach ($stackTrace as $i => $stack):
+        $excerpt = $params = [];
 
-    $line = null;
-    if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
-        $line = $stack['line'];
-        $excerpt = Debugger::excerpt($stack['file'], $line, 4);
-    endif;
-
-    if (isset($stack['file'])):
-        $file = $stack['file'];
-    else:
-        $file = '[internal function]';
-    endif;
-
-    if (isset($stack['function'])):
-        if (!empty($stack['args'])):
-            foreach ((array)$stack['args'] as $arg):
-                $params[] = Debugger::exportVar($arg, 4);
-            endforeach;
-        else:
-            $params[] = 'No arguments';
+        $line = null;
+        if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
+            $line = $stack['line'];
+            $excerpt = Debugger::excerpt($stack['file'], $line, 4);
         endif;
-    endif;
-?>
-    <div id="stack-frame-<?= $i ?>" style="display:<?= $i === 0 ? 'block' : 'none'; ?>;" class="stack-details">
-        <div class="stack-frame-header">
-            <span class="stack-frame-file">
-                <?php if ($line !== null): ?>
-                    <?= $this->Html->link(Debugger::trimPath($file), Debugger::editorUrl($file, $line)); ?>
-                <?php else: ?>
-                    <?= h(Debugger::trimPath($file)); ?>
-                <?php endif; ?>
-            </span>
-            <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>
-        </div>
 
-        <table class="code-excerpt" cellspacing="0" cellpadding="0">
-        <?php $lineno = isset($stack['line']) && is_numeric($stack['line']) ? $stack['line'] - 4 : 0 ?>
-        <?php foreach ($excerpt as $l => $line): ?>
-            <tr>
-                <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
-                <td class="excerpt-line"><?= $line ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </table>
+        if (isset($stack['file'])):
+            $file = $stack['file'];
+        else:
+            $file = '[internal function]';
+        endif;
 
-        <div id="stack-args-<?= $i ?>" class="cake-debug" style="display: none;">
-            <h4>Arguments</h4>
-            <?php foreach ($params as $param): ?>
-                <div class="cake-debug"><?= $param ?></div>
+        if (isset($stack['function'])):
+            if (!empty($stack['args'])):
+                foreach ((array)$stack['args'] as $arg):
+                    $params[] = Debugger::exportVar($arg, 4);
+                endforeach;
+            else:
+                $params[] = 'No arguments';
+            endif;
+        endif;
+    ?>
+        <div id="stack-frame-<?= $i ?>" style="display:<?= $i === 0 ? 'block' : 'none'; ?>;" class="stack-details">
+            <div class="stack-frame-header">
+                <span class="stack-frame-file">
+                    <?php if ($line !== null): ?>
+                        <?= $this->Html->link(Debugger::trimPath($file), Debugger::editorUrl($file, $line)); ?>
+                    <?php else: ?>
+                        <?= h(Debugger::trimPath($file)); ?>
+                    <?php endif; ?>
+                </span>
+                <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>
+            </div>
+
+            <table class="code-excerpt" cellspacing="0" cellpadding="0">
+            <?php $lineno = isset($stack['line']) && is_numeric($stack['line']) ? $stack['line'] - 4 : 0 ?>
+            <?php foreach ($excerpt as $l => $line): ?>
+                <tr>
+                    <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
+                    <td class="excerpt-line"><?= $line ?></td>
+                </tr>
             <?php endforeach; ?>
+            </table>
+
+            <div id="stack-args-<?= $i ?>" class="cake-debug" style="display: none;">
+                <h4>Arguments</h4>
+                <?php foreach ($params as $param): ?>
+                    <div class="cake-debug"><?= $param ?></div>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
+    <?php endforeach; ?>
 <?php endforeach; ?>

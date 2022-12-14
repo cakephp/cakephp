@@ -29,7 +29,7 @@ trait FileConfigTrait
      *
      * @var string
      */
-    protected $_path = '';
+    protected string $_path = '';
 
     /**
      * Get file path
@@ -43,7 +43,7 @@ trait FileConfigTrait
      */
     protected function _getFilePath(string $key, bool $checkExists = false): string
     {
-        if (strpos($key, '..') !== false) {
+        if (str_contains($key, '..')) {
             throw new CakeException('Cannot load/dump configuration files with ../ in them.');
         }
 
@@ -66,6 +66,6 @@ trait FileConfigTrait
             return $realPath;
         }
 
-        throw new CakeException(sprintf('Could not load configuration file: %s', $file));
+        throw new CakeException(sprintf('Could not load configuration file: `%s`.', $file));
     }
 }

@@ -41,21 +41,21 @@ class TestAppCacheEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): int|false
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): int|false
     {
     }
 
@@ -78,5 +78,16 @@ class TestAppCacheEngine extends CacheEngine
      */
     public function clearGroup(string $group): bool
     {
+    }
+
+    /**
+     * Return duration method result.
+     *
+     * @param mixed $ttl
+     * @return int
+     */
+    public function getDuration($ttl): int
+    {
+        return $this->duration($ttl);
     }
 }

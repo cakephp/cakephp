@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
-use Psy\Shell as PsyShell;
 
 define('SECOND', 1);
 define('MINUTE', 60);
@@ -41,7 +40,7 @@ if (!function_exists('debug')) {
      * @link https://book.cakephp.org/4/en/development/debugging.html#basic-debugging
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#debug
      */
-    function debug($var, $showHtml = null, $showFrom = true)
+    function debug(mixed $var, ?bool $showHtml = null, bool $showFrom = true): mixed
     {
         if (!Configure::read('debug')) {
             return $var;
@@ -49,12 +48,13 @@ if (!function_exists('debug')) {
 
         $location = [];
         if ($showFrom) {
-            $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
-            /** @psalm-suppress PossiblyInvalidArrayOffset */
-            $location = [
-                'line' => $trace[0]['line'],
-                'file' => $trace[0]['file'],
-            ];
+            $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
+            if (isset($trace[0]['line']) && isset($trace[0]['file'])) {
+                $location = [
+                    'line' => $trace[0]['line'],
+                    'file' => $trace[0]['file'],
+                ];
+            }
         }
 
         Debugger::printVar($var, $location, $showHtml);
@@ -75,7 +75,7 @@ if (!function_exists('stackTrace')) {
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 1
      *
-     * @param array $options Format for outputting stack trace
+     * @param array<string, mixed> $options Format for outputting stack trace
      * @return void
      */
     function stackTrace(array $options = []): void
@@ -87,38 +87,11 @@ if (!function_exists('stackTrace')) {
         $options += ['start' => 0];
         $options['start']++;
 
-        /** @var string $trace */
         $trace = Debugger::trace($options);
+        assert(is_string($trace));
         echo $trace;
     }
 
-}
-
-if (!function_exists('breakpoint')) {
-    /**
-     * Command to return the eval-able code to startup PsySH in interactive debugger
-     * Works the same way as eval(\Psy\sh());
-     * psy/psysh must be loaded in your project
-     *
-     * ```
-     * eval(breakpoint());
-     * ```
-     *
-     * @return string|null
-     * @link http://psysh.org/
-     */
-    function breakpoint(): ?string
-    {
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(PsyShell::class)) {
-            return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
-        }
-        trigger_error(
-            'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING
-        );
-
-        return null;
-    }
 }
 
 if (!function_exists('dd')) {
@@ -133,7 +106,7 @@ if (!function_exists('dd')) {
      * @return void
      * @link https://book.cakephp.org/4/en/development/debugging.html#basic-debugging
      */
-    function dd($var, $showHtml = null): void
+    function dd(mixed $var, ?bool $showHtml = null): void
     {
         if (!Configure::read('debug')) {
             return;

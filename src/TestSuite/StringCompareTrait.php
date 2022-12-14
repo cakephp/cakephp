@@ -31,7 +31,7 @@ trait StringCompareTrait
      *
      * @var string
      */
-    protected $_compareBasePath = '';
+    protected string $_compareBasePath = '';
 
     /**
      * Update comparisons to match test changes
@@ -40,7 +40,7 @@ trait StringCompareTrait
      *
      * @var bool
      */
-    protected $_updateComparisons;
+    protected bool $_updateComparisons;
 
     /**
      * Compare the result to the contents of the file
@@ -55,9 +55,7 @@ trait StringCompareTrait
             $path = $this->_compareBasePath . $path;
         }
 
-        if ($this->_updateComparisons === null) {
-            $this->_updateComparisons = env('UPDATE_TEST_COMPARISON_FILES');
-        }
+        $this->_updateComparisons ??= env('UPDATE_TEST_COMPARISON_FILES') ?: false;
 
         if ($this->_updateComparisons) {
             file_put_contents($path, $result);

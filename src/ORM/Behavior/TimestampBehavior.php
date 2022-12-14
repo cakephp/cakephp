@@ -16,14 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Chronos\Chronos;
 use Cake\Database\Type\DateTimeType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Behavior;
 use DateTimeInterface;
-use RuntimeException;
 use UnexpectedValueException;
 
 /**
@@ -44,9 +44,9 @@ class TimestampBehavior extends Behavior
      * the code is executed, to set to an explicit date time value - set refreshTimetamp to false
      * and call setTimestamp() on the behavior class before use.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
@@ -64,9 +64,9 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \Cake\I18n\FrozenTime|null
+     * @var \Cake\I18n\DateTime|null
      */
-    protected $_ts;
+    protected ?DateTime $_ts = null;
 
     /**
      * Initialize hook
@@ -74,7 +74,7 @@ class TimestampBehavior extends Behavior
      * If events are specified - do *not* merge them with existing events,
      * overwrite the events to listen on
      *
-     * @param array $config The config for this behavior.
+     * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
     public function initialize(array $config): void
@@ -104,7 +104,7 @@ class TimestampBehavior extends Behavior
         foreach ($events[$eventName] as $field => $when) {
             if (!in_array($when, ['always', 'new', 'existing'], true)) {
                 throw new UnexpectedValueException(sprintf(
-                    'When should be one of "always", "new" or "existing". The passed value "%s" is invalid',
+                    'When should be one of "always", "new" or "existing". The passed value `%s` is invalid.',
                     $when
                 ));
             }
@@ -131,10 +131,11 @@ class TimestampBehavior extends Behavior
      *
      * The implemented events of this behavior depend on configuration
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
+        /** @var array<string, mixed> */
         return array_fill_keys(array_keys($this->_config['events']), 'handleEvent');
     }
 
@@ -145,19 +146,19 @@ class TimestampBehavior extends Behavior
      * If an explicit date time is passed, the config option `refreshTimestamp` is
      * automatically set to false.
      *
-     * @param \DateTimeInterface|null $ts Timestamp
+     * @param \Cake\Chronos\Chronos|\DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\FrozenTime
+     * @return \Cake\I18n\DateTime
      */
-    public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTimeInterface
+    public function timestamp(Chronos|DateTimeInterface|null $ts = null, bool $refreshTimestamp = false): DateTime
     {
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
-            $this->_ts = new FrozenTime($ts);
+            $this->_ts = new DateTime($ts);
         } elseif ($this->_ts === null || $refreshTimestamp) {
-            $this->_ts = new FrozenTime();
+            $this->_ts = new DateTime();
         }
 
         return $this->_ts;
@@ -216,12 +217,11 @@ class TimestampBehavior extends Behavior
             return;
         }
 
-        /** @var \Cake\Database\Type\DateTimeType $type */
         $type = TypeFactory::build($columnType);
-
-        if (!$type instanceof DateTimeType) {
-            throw new RuntimeException('TimestampBehavior only supports columns of type DateTimeType.');
-        }
+        assert(
+            $type instanceof DateTimeType,
+            'TimestampBehavior only supports columns of type DateTimeType.'
+        );
 
         $class = $type->getDateTimeClassName();
 

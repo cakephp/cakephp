@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\CollectionInterface;
-use Countable;
-use Serializable;
 
 /**
  * Describes how a collection of datasource results should look like
+ *
+ * @template T
  */
-interface ResultSetInterface extends CollectionInterface, Countable, Serializable
+interface ResultSetInterface extends CollectionInterface
 {
 }

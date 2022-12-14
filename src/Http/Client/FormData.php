@@ -17,6 +17,8 @@ namespace Cake\Http\Client;
 
 use Countable;
 use finfo;
+use Psr\Http\Message\UploadedFileInterface;
+use Stringable;
 
 /**
  * Provides an interface for building
@@ -25,35 +27,35 @@ use finfo;
  * Used by Http\Client to upload POST/PUT data
  * and files.
  */
-class FormData implements Countable
+class FormData implements Countable, Stringable
 {
     /**
      * Boundary marker.
      *
      * @var string
      */
-    protected $_boundary;
+    protected string $_boundary = '';
 
     /**
-     * Whether or not this formdata object has attached files.
+     * Whether this formdata object has attached files.
      *
      * @var bool
      */
-    protected $_hasFile = false;
+    protected bool $_hasFile = false;
 
     /**
-     * Whether or not this formdata object has a complex part.
+     * Whether this formdata object has a complex part.
      *
      * @var bool
      */
-    protected $_hasComplexPart = false;
+    protected bool $_hasComplexPart = false;
 
     /**
      * The parts in the form data.
      *
      * @var array<\Cake\Http\Client\FormDataPart>
      */
-    protected $_parts = [];
+    protected array $_parts = [];
 
     /**
      * Get the boundary marker
@@ -96,12 +98,12 @@ class FormData implements Countable
      * @param mixed $value The value for the part.
      * @return $this
      */
-    public function add($name, $value = null)
+    public function add(FormDataPart|string $name, mixed $value = null)
     {
         if (is_string($name)) {
             if (is_array($value)) {
                 $this->addRecursive($name, $value);
-            } elseif (is_resource($value)) {
+            } elseif (is_resource($value) || $value instanceof UploadedFileInterface) {
                 $this->addFile($name, $value);
             } else {
                 $this->_parts[] = $this->newPart($name, (string)$value);
@@ -136,16 +138,21 @@ class FormData implements Countable
      * or a file handle.
      *
      * @param string $name The name to use.
-     * @param mixed $value Either a string filename, or a filehandle.
+     * @param \Psr\Http\Message\UploadedFileInterface|resource|string $value Either a string filename, or a filehandle,
+     *  or a UploadedFileInterface instance.
      * @return \Cake\Http\Client\FormDataPart
      */
-    public function addFile(string $name, $value): FormDataPart
+    public function addFile(string $name, mixed $value): FormDataPart
     {
         $this->_hasFile = true;
 
         $filename = false;
         $contentType = 'application/octet-stream';
-        if (is_resource($value)) {
+        if ($value instanceof UploadedFileInterface) {
+            $content = (string)$value->getStream();
+            $contentType = $value->getClientMediaType();
+            $filename = $value->getClientFilename();
+        } elseif (is_resource($value)) {
             $content = stream_get_contents($value);
             if (stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
@@ -177,7 +184,7 @@ class FormData implements Countable
      * @param mixed $value The value to add.
      * @return void
      */
-    public function addRecursive(string $name, $value): void
+    public function addRecursive(string $name, mixed $value): void
     {
         foreach ($value as $key => $value) {
             $key = $name . '[' . $key . ']';
@@ -196,10 +203,10 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * has any files.
      *
-     * @return bool Whether or not there is a file in this payload.
+     * @return bool Whether there is a file in this payload.
      */
     public function hasFile(): bool
     {
@@ -207,13 +214,13 @@ class FormData implements Countable
     }
 
     /**
-     * Check whether or not the current payload
+     * Check whether the current payload
      * is multipart.
      *
      * A payload will become multipart when you add files
      * or use add() with a Part instance.
      *
-     * @return bool Whether or not the payload is multipart.
+     * @return bool Whether the payload is multipart.
      */
     public function isMultipart(): bool
     {

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\TestSuite\TestCase;
 use TestApp\Core\TestApp;
@@ -70,6 +71,17 @@ class AppTest extends TestCase
     {
         $this->assertSame(TestCase::class, App::className(TestCase::class));
         $this->assertNull(App::className('\Foo'));
+    }
+
+    /**
+     * @link https://github.com/cakephp/cakephp/issues/16258
+     */
+    public function testClassNameWithAppNamespaceUnset(): void
+    {
+        Configure::delete('App.namespace');
+
+        $result = App::className('Mysql', 'Database/Driver');
+        $this->assertSame(Mysql::class, $result);
     }
 
     /**
@@ -241,8 +253,6 @@ class AppTest extends TestCase
 
     /**
      * test path() with a plugin.
-     *
-     * @deprecated
      */
     public function testPathWithPlugins(): void
     {
@@ -255,15 +265,13 @@ class AppTest extends TestCase
         $result = App::path('locales', 'Company/TestPluginThree');
         $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS;
         $this->assertPathEquals($expected, $result[0]);
+    }
 
-        $this->deprecated(function () use ($basepath): void {
-            $result = App::path('Controller', 'TestPlugin');
-            $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
+    public function testPathWithPluginsException(): void
+    {
+        $this->expectException(CakeException::class);
 
-            $result = App::path('Controller', 'Company/TestPluginThree');
-            $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
-            $this->assertPathEquals($expected, $result[0]);
-        });
+        App::path('invalid', 'TestPlugin');
     }
 
     /**

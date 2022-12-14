@@ -20,7 +20,6 @@ namespace Cake\Http\Session;
 
 use Cake\Cache\Cache;
 use InvalidArgumentException;
-use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 /**
@@ -33,14 +32,14 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Options for this session engine
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_options = [];
+    protected array $_options = [];
 
     /**
      * Constructor.
      *
-     * @param array $config The configuration to use for this engine
+     * @param array<string, mixed> $config The configuration to use for this engine
      * It requires the key 'config' which is the name of the Cache config to use for
      * storing the session
      * @throws \InvalidArgumentException if the 'config' key is not provided
@@ -60,7 +59,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $name The session name.
      * @return bool Success
      */
-    public function open($path, $name): bool
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -81,16 +80,9 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return string|false Session data or false if it does not exist.
      */
-    #[ReturnTypeWillChange]
-    public function read($id)
+    public function read(string $id): string|false
     {
-        $value = Cache::read($id, $this->_options['config']);
-
-        if ($value === null) {
-            return false;
-        }
-
-        return $value;
+        return Cache::read($id, $this->_options['config']) ?? '';
     }
 
     /**
@@ -100,7 +92,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
-    public function write($id, $data): bool
+    public function write(string $id, string $data): bool
     {
         if (!$id) {
             return false;
@@ -115,7 +107,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
-    public function destroy($id): bool
+    public function destroy(string $id): bool
     {
         Cache::delete($id, $this->_options['config']);
 
@@ -128,8 +120,7 @@ class CacheSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false
      */
-    #[ReturnTypeWillChange]
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime): int|false
     {
         return 0;
     }

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Mailer\Email;
+use Cake\Mailer\Mailer;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
@@ -31,8 +31,8 @@ class TestEmailTransportTest extends TestCase
     {
         parent::setUp();
 
-        Email::drop('default');
-        Email::drop('alternate');
+        Mailer::drop('default');
+        Mailer::drop('alternate');
         TransportFactory::drop('transport_default');
         TransportFactory::drop('transport_alternate');
 
@@ -43,11 +43,11 @@ class TestEmailTransportTest extends TestCase
             'className' => DebugTransport::class,
         ]);
 
-        Email::setConfig('default', [
+        Mailer::setConfig('default', [
             'transport' => 'transport_default',
             'from' => 'default@example.com',
         ]);
-        Email::setConfig('alternate', [
+        Mailer::setConfig('alternate', [
             'transport' => 'transport_alternate',
             'from' => 'alternate@example.com',
         ]);
@@ -60,8 +60,8 @@ class TestEmailTransportTest extends TestCase
     {
         parent::tearDown();
 
-        Email::drop('default');
-        Email::drop('alternate');
+        Mailer::drop('default');
+        Mailer::drop('alternate');
         TransportFactory::drop('transport_default');
         TransportFactory::drop('transport_alternate');
     }
@@ -87,9 +87,9 @@ class TestEmailTransportTest extends TestCase
     {
         TestEmailTransport::replaceAllTransports();
 
-        (new Email())
+        (new Mailer())
             ->setTo('test@example.com')
-            ->send('test');
+            ->deliver('test');
         $this->assertCount(1, TestEmailTransport::getMessages());
 
         TestEmailTransport::clearMessages();

@@ -22,26 +22,11 @@ use Cake\TestSuite\Fixture\TestFixture;
 class UniqueAuthorsFixture extends TestFixture
 {
     /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'first_author_id' => ['type' => 'integer', 'null' => true],
-        'second_author_id' => ['type' => 'integer', 'null' => false],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'nullable_non_nullable_unique' => ['type' => 'unique', 'columns' => ['first_author_id', 'second_author_id']],
-        ],
-    ];
-
-    /**
      * records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['first_author_id' => null, 'second_author_id' => 1],
     ];
 }

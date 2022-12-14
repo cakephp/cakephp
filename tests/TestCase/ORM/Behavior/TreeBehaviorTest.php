@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Exception\DatabaseException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -27,11 +29,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * fixtures
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.MenuLinkTrees',
         'core.NumberTrees',
+        'core.NumberTreesArticles',
     ];
 
     /**
@@ -239,7 +242,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testFindChildrenException(): void
     {
-        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
+        $this->expectException(RecordNotFoundException::class);
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $query = $table->find('children', ['for' => 500]);
@@ -636,7 +639,7 @@ class TreeBehaviorTest extends TestCase
 
         $expectedLevels = $table
             ->find('list', ['valueField' => 'depth'])
-            ->order('lft')
+            ->orderBy('lft')
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
         $table->behaviors()->Tree->setConfig('level', 'depth');
@@ -659,7 +662,7 @@ class TreeBehaviorTest extends TestCase
 
         $result = $table
             ->find('list', ['valueField' => 'depth'])
-            ->order('lft')
+            ->orderBy('lft')
             ->toArray();
         $this->assertSame($expectedLevels, $result);
     }
@@ -859,7 +862,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReParentSelf(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
@@ -871,7 +874,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReParentSelfNewEntity(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
@@ -975,7 +978,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(17, $entity->lft);
         $this->assertSame(18, $entity->rght);
 
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1086,8 +1089,8 @@ class TreeBehaviorTest extends TestCase
      */
     public function testReparentCycle(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Cannot use node "5" as parent for entity "2"');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Cannot use node `5` as parent for entity `2`.');
         $table = $this->table;
         $entity = $table->get(2);
         $entity->parent_id = 5;
@@ -1174,6 +1177,52 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
+     * Tests deleting a subtree with ORM delete callbacks
+     */
+    public function testDeleteSubTreeWithCallbacks(): void
+    {
+        $NumberTreesArticles = $this->getTableLocator()->get('NumberTreesArticles');
+        $newArticle = $NumberTreesArticles->newEntity([
+            'number_tree_id' => 7, // Link to sub-tree item
+            'title' => 'New Article',
+            'body' => 'New Article Body',
+            'published' => 'Y',
+        ]);
+        $NumberTreesArticles->save($newArticle);
+
+        $table = $this->table;
+        $table->addAssociations([
+            'hasMany' => [
+                'NumberTreesArticles' => [
+                    'cascadeCallbacks' => true,
+                    'dependent' => true,
+                ],
+            ],
+        ]);
+        $table->getBehavior('Tree')->setConfig(['cascadeCallbacks' => true]);
+
+        // Delete parent category
+        $entity = $table->get(6);
+        $this->assertTrue($table->delete($entity));
+
+        $expected = [
+            ' 1:12 -  1:electronics',
+            '_ 2: 9 -  2:televisions',
+            '__ 3: 4 -  3:tube',
+            '__ 5: 6 -  4:lcd',
+            '__ 7: 8 -  5:plasma',
+            '13:14 - 11:alien hardware',
+        ];
+        $this->assertMpttValues($expected, $this->table);
+
+        // Check if new article which was linked to sub-category was deleted
+        $count = $NumberTreesArticles->find()
+            ->where(['number_tree_id' => 7])
+            ->count();
+        $this->assertSame(0, $count);
+    }
+
+    /**
      * Test deleting a root node
      */
     public function testDeleteRoot(): void
@@ -1216,7 +1265,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1242,11 +1291,11 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
+        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->order('lft')->enableHydration(false);
+        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1271,7 +1320,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
+        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
@@ -1397,7 +1446,7 @@ class TreeBehaviorTest extends TestCase
      *
      * @param array $expected tree state to be expected
      * @param \Cake\ORM\Table $table Table instance
-     * @param \Cake\ORM\Query $query Optional query object
+     * @param \Cake\ORM\Query\SelectQuery $query Optional query object
      */
     public function assertMpttValues($expected, $table, $query = null): void
     {

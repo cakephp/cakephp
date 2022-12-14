@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Cache\Cache;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\QueryCacher;
 use Cake\TestSuite\TestCase;
 use stdClass;
@@ -74,7 +75,7 @@ class QueryCacherTest extends TestCase
      */
     public function testFetchFunctionKeyNoString(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Cache key functions must return a string. Got false.');
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();

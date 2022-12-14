@@ -27,6 +27,16 @@ use Cake\View\Widget\CheckboxWidget;
 class CheckboxWidgetTest extends TestCase
 {
     /**
+     * @var \Cake\View\Form\NullContext
+     */
+    protected $context;
+
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
      * setup method.
      */
     public function setUp(): void

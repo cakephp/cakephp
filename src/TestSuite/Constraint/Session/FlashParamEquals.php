@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         3.7.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite\Constraint\Session;
 
@@ -30,22 +30,22 @@ class FlashParamEquals extends Constraint
     /**
      * @var \Cake\Http\Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * @var string
      */
-    protected $key;
+    protected string $key;
 
     /**
      * @var string
      */
-    protected $param;
+    protected string $param;
 
     /**
      * @var int|null
      */
-    protected $at;
+    protected ?int $at = null;
 
     /**
      * Constructor
@@ -75,14 +75,15 @@ class FlashParamEquals extends Constraint
      * @param mixed $other Value to compare with
      * @return bool
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
         // Call to Session::read will start new session (and will erase the data).
-
+        /** @psalm-suppress InvalidScalarArgument */
         $messages = (array)Hash::get($_SESSION, 'Flash.' . $this->key);
         if ($this->at) {
+            /** @psalm-suppress InvalidScalarArgument */
             $messages = [Hash::get($_SESSION, 'Flash.' . $this->key . '.' . $this->at)];
         }
 

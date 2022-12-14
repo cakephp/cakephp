@@ -43,7 +43,7 @@ interface ContextInterface
     public function isPrimaryKey(string $field): bool;
 
     /**
-     * Returns whether or not this form is for a create operation.
+     * Returns whether this form is for a create operation.
      *
      * @return bool
      */
@@ -61,11 +61,11 @@ interface ContextInterface
      *     context's schema should be used if it's not explicitly provided.
      *
      * @param string $field A dot separated path to the field a value
-     * @param array $options Options.
+     * @param array<string, mixed> $options Options.
      *   is needed for.
      * @return mixed
      */
-    public function val(string $field, array $options = []);
+    public function val(string $field, array $options = []): mixed;
 
     /**
      * Check if a given field is 'required'.
@@ -97,6 +97,7 @@ interface ContextInterface
      * Get the field names of the top level object in this context.
      *
      * @return array<string> A list of the field names in the context.
+     * @psalm-return list<string>
      */
     public function fieldNames(): array;
 
@@ -118,7 +119,7 @@ interface ContextInterface
     public function attributes(string $field): array;
 
     /**
-     * Check whether or not a field has an error attached to it
+     * Check whether a field has an error attached to it
      *
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.

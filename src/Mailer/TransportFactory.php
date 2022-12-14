@@ -29,17 +29,17 @@ class TransportFactory
     /**
      * Transport Registry used for creating and using transport instances.
      *
-     * @var \Cake\Mailer\TransportRegistry|null
+     * @var \Cake\Mailer\TransportRegistry
      */
-    protected static $_registry;
+    protected static TransportRegistry $_registry;
 
     /**
      * An array mapping url schemes to fully qualified Transport class names
      *
-     * @var array<string>
+     * @var array<string, string>
      * @psalm-var array<string, class-string>
      */
-    protected static $_dsnClassMap = [
+    protected static array $_dsnClassMap = [
         'debug' => Transport\DebugTransport::class,
         'mail' => Transport\MailTransport::class,
         'smtp' => Transport\SmtpTransport::class,
@@ -52,11 +52,7 @@ class TransportFactory
      */
     public static function getRegistry(): TransportRegistry
     {
-        if (static::$_registry === null) {
-            static::$_registry = new TransportRegistry();
-        }
-
-        return static::$_registry;
+        return static::$_registry ??= new TransportRegistry();
     }
 
     /**
@@ -93,6 +89,7 @@ class TransportFactory
             );
         }
 
+        /** @phpstan-ignore-next-line */
         static::getRegistry()->load($name, static::$_config[$name]);
     }
 

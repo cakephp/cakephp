@@ -15,8 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\CommandInterface;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,12 +29,12 @@ class PluginLoadCommandTest extends TestCase
     /**
      * @var string
      */
-    protected $app;
+    protected $configFile;
 
     /**
      * @var string
      */
-    protected $originalAppContent;
+    protected $originalContent;
 
     /**
      * setUp method
@@ -43,10 +43,9 @@ class PluginLoadCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->app = APP . DS . 'Application.php';
-        $this->originalAppContent = file_get_contents($this->app);
+        $this->configFile = CONFIG . 'plugins.php';
+        $this->originalContent = file_get_contents($this->configFile);
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
     }
 
@@ -57,7 +56,7 @@ class PluginLoadCommandTest extends TestCase
     {
         parent::tearDown();
 
-        file_put_contents($this->app, $this->originalAppContent);
+        file_put_contents($this->configFile, $this->originalContent);
     }
 
     /**
@@ -66,20 +65,33 @@ class PluginLoadCommandTest extends TestCase
     public function testHelp(): void
     {
         $this->exec('plugin load --help');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('plugin load');
     }
 
     /**
-     * Test loading a plugin modifies the app
+     * Test loading a plugin modifies the config file
      */
-    public function testLoadModifiesApplication(): void
+    public function testLoad(): void
     {
         $this->exec('plugin load TestPlugin');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        $contents = file_get_contents($this->app);
-        $this->assertStringContainsString("\$this->addPlugin('TestPlugin');", $contents);
+        $this->exec('plugin load TestPluginTwo --no-bootstrap --no-console --no-middleware --no-routes --no-services');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $this->exec('plugin load Company/TestPluginThree --only-debug --only-cli');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $config = include $this->configFile;
+        $this->assertTrue(isset($config['TestPlugin']));
+        $this->assertTrue(isset($config['TestPluginTwo']));
+        $this->assertTrue(isset($config['Company/TestPluginThree']));
+        $this->assertSame(['onlyDebug' => true, 'onlyCli' => true], $config['Company/TestPluginThree']);
+        $this->assertSame(
+            ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
+            $config['TestPluginTwo']
+        );
     }
 
     /**
@@ -88,10 +100,22 @@ class PluginLoadCommandTest extends TestCase
     public function testLoadUnknownPlugin(): void
     {
         $this->exec('plugin load NopeNotThere');
-        $this->assertExitCode(Command::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Plugin NopeNotThere could not be found');
 
-        $contents = file_get_contents($this->app);
-        $this->assertStringNotContainsString("\$this->addPlugin('NopeNotThere');", $contents);
+        $config = include $this->configFile;
+        $this->assertFalse(isset($config['NopeNotThere']));
+    }
+
+    /**
+     * Test loading optional plugin
+     */
+    public function testLoadOptionalPlugin(): void
+    {
+        $this->exec('plugin load NopeNotThere --optional');
+
+        $config = include $this->configFile;
+        $this->assertTrue(isset($config['NopeNotThere']));
+        $this->assertSame(['optional' => true], $config['NopeNotThere']);
     }
 }

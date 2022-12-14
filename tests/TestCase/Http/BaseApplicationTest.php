@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -74,6 +76,10 @@ class BaseApplicationTest extends TestCase
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame('Hello Jane', '' . $result->getBody());
+        $container = $app->getContainer();
+        $this->assertSame($request, $container->get(ServerRequest::class));
+        $this->assertSame($container, $container->get(ContainerInterface::class));
+        $this->assertInstanceOf(ComponentRegistry::class, $container->get(ComponentRegistry::class));
     }
 
     /**
@@ -181,10 +187,10 @@ class BaseApplicationTest extends TestCase
             BaseApplication::class,
             [$this->path]
         );
-        $app->addPlugin('ParentPlugin');
+        $app->addPlugin('Named');
         $app->pluginBootstrap();
         $this->assertTrue(
-            Configure::check('ParentPlugin.bootstrap'),
+            Configure::check('Named.bootstrap'),
             'Plugin bootstrap should be run'
         );
         $this->assertTrue(

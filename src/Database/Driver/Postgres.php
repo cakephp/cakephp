@@ -17,11 +17,13 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
-use Cake\Database\Query;
+use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
@@ -32,8 +34,6 @@ use PDO;
  */
 class Postgres extends Driver
 {
-    use SqlDialectTrait;
-
     /**
      * @inheritDoc
      */
@@ -42,9 +42,9 @@ class Postgres extends Driver
     /**
      * Base configuration settings for Postgres driver
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_baseConfig = [
+    protected array $_baseConfig = [
         'persistent' => true,
         'host' => 'localhost',
         'username' => 'root',
@@ -59,40 +59,26 @@ class Postgres extends Driver
     ];
 
     /**
-     * The schema dialect class for this driver
-     *
-     * @var \Cake\Database\Schema\PostgresSchemaDialect|null
-     */
-    protected $_schemaDialect;
-
-    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_startQuote = '"';
+    protected string $_startQuote = '"';
 
     /**
      * String used to end a database identifier quoting to make it safe
      *
      * @var string
      */
-    protected $_endQuote = '"';
+    protected string $_endQuote = '"';
 
     /**
      * @inheritDoc
      */
-    protected $supportsCTEs = true;
-
-    /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
-     */
-    public function connect(): bool
+    public function connect(): void
     {
-        if ($this->_connection) {
-            return true;
+        if (isset($this->pdo)) {
+            return;
         }
         $config = $this->_config;
         $config['flags'] += [
@@ -106,8 +92,7 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
-        $this->_connect($dsn, $config);
-        $this->_connection = $connection = $this->getConnection();
+        $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }
@@ -117,14 +102,12 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $connection->quote($config['timezone']));
+            $config['init'][] = sprintf('SET timezone = %s', $this->pdo->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            $connection->exec($command);
+            $this->pdo->exec($command);
         }
-
-        return true;
     }
 
     /**
@@ -142,11 +125,11 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if ($this->_schemaDialect === null) {
-            $this->_schemaDialect = new PostgresSchemaDialect($this);
+        if (isset($this->_schemaDialect)) {
+            return $this->_schemaDialect;
         }
 
-        return $this->_schemaDialect;
+        return $this->_schemaDialect = new PostgresSchemaDialect($this);
     }
 
     /**
@@ -157,8 +140,8 @@ class Postgres extends Driver
      */
     public function setEncoding(string $encoding): void
     {
-        $this->connect();
-        $this->_connection->exec('SET NAMES ' . $this->_connection->quote($encoding));
+        $pdo = $this->getPdo();
+        $pdo->exec('SET NAMES ' . $pdo->quote($encoding));
     }
 
     /**
@@ -170,12 +153,14 @@ class Postgres extends Driver
      */
     public function setSchema(string $schema): void
     {
-        $this->connect();
-        $this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
+        $pdo = $this->getPdo();
+        $pdo->exec('SET search_path TO ' . $pdo->quote($schema));
     }
 
     /**
-     * @inheritDoc
+     * Get the SQL for disabling foreign keys.
+     *
+     * @return string
      */
     public function disableForeignKeySQL(): string
     {
@@ -193,15 +178,25 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    public function supportsDynamicConstraints(): bool
+    public function supports(DriverFeatureEnum $feature): bool
     {
-        return true;
+        return match ($feature) {
+            DriverFeatureEnum::CTE,
+            DriverFeatureEnum::JSON,
+            DriverFeatureEnum::SAVEPOINT,
+            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeatureEnum::WINDOW => true,
+
+            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
+
+            default => false,
+        };
     }
 
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(Query $query): Query
+    protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         return $query;
     }
@@ -209,7 +204,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _insertQueryTranslator(Query $query): Query
+    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');

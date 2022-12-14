@@ -32,6 +32,7 @@ class RoutesCommand extends Command
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
+     * @throws \JsonException
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -40,10 +41,11 @@ class RoutesCommand extends Command
             $header[] = 'Defaults';
         }
 
-        $output = [];
+        $availableRoutes = Router::routes();
+        $output = $duplicateRoutesCounter = [];
 
-        foreach (Router::routes() as $route) {
-            $methods = $route->defaults['_method'] ?? '';
+        foreach ($availableRoutes as $route) {
+            $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             $item = [
                 $route->options['_name'] ?? $route->getName(),
@@ -52,15 +54,23 @@ class RoutesCommand extends Command
                 $route->defaults['prefix'] ?? '',
                 $route->defaults['controller'] ?? '',
                 $route->defaults['action'] ?? '',
-                is_string($methods) ? $methods : implode(', ', $route->defaults['_method']),
+                implode(', ', $methods),
             ];
 
             if ($args->getOption('verbose')) {
                 ksort($route->defaults);
-                $item[] = json_encode($route->defaults);
+                $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
             }
 
             $output[] = $item;
+
+            foreach ($methods as $method) {
+                if (!isset($duplicateRoutesCounter[$route->template][$method])) {
+                    $duplicateRoutesCounter[$route->template][$method] = 0;
+                }
+
+                $duplicateRoutesCounter[$route->template][$method]++;
+            }
         }
 
         if ($args->getOption('sort')) {
@@ -73,6 +83,39 @@ class RoutesCommand extends Command
 
         $io->helper('table')->output($output);
         $io->out();
+
+        $duplicateRoutes = [];
+
+        foreach ($availableRoutes as $route) {
+            $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
+
+            foreach ($methods as $method) {
+                if (
+                    $duplicateRoutesCounter[$route->template][$method] > 1 ||
+                    ($method === '' && count($duplicateRoutesCounter[$route->template]) > 1) ||
+                    ($method !== '' && isset($duplicateRoutesCounter[$route->template]['']))
+                ) {
+                    $duplicateRoutes[] = [
+                        $route->options['_name'] ?? $route->getName(),
+                        $route->template,
+                        $route->defaults['plugin'] ?? '',
+                        $route->defaults['prefix'] ?? '',
+                        $route->defaults['controller'] ?? '',
+                        $route->defaults['action'] ?? '',
+                        implode(', ', $methods),
+                    ];
+
+                    break;
+                }
+            }
+        }
+
+        if ($duplicateRoutes) {
+            array_unshift($duplicateRoutes, $header);
+            $io->warning('The following possible route collisions were detected.');
+            $io->helper('table')->output($duplicateRoutes);
+            $io->out();
+        }
 
         return static::CODE_SUCCESS;
     }

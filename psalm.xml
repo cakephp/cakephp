@@ -1,32 +1,28 @@
 <?xml version="1.0"?>
 <psalm
-    allowStringToStandInForClass="true"
+    errorLevel="4"
     usePhpDocMethodsWithoutMagicCall="true"
+    findUnusedPsalmSuppress="true"
+    resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorBaseline="psalm-baseline.xml"
     autoloader="tests/bootstrap.php"
+    errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="src"/>
+        <directory name="src" />
         <ignoreFiles>
-            <directory name="src/Filesystem"/>
-            <directory name="src/Auth"/>
-            <directory name="vendor"/>
-            <file name="src/Controller/Component/AuthComponent.php"/>
+            <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
 
     <issueHandlers>
-        <RedundantConditionGivenDocblockType errorLevel="suppress"/>
-        <DocblockTypeContradiction errorLevel="suppress"/>
-        <MissingClosureParamType errorLevel="suppress"/>
-        <MissingClosureReturnType errorLevel="suppress"/>
         <UndefinedClass>
             <errorLevel type="suppress">
                 <referencedClass name="Memcached"/>
                 <referencedClass name="Redis"/>
+                <referencedClass name="RedisException"/>
             </errorLevel>
         </UndefinedClass>
         <UndefinedDocblockClass>
@@ -41,8 +37,7 @@
                 <file name="src/Database/Driver/Sqlserver.php" />
             </errorLevel>
         </UndefinedConstant>
-        <PropertyNotSetInConstructor errorLevel="suppress"/>
-        <UnresolvableInclude errorLevel="suppress"/>
-        <UnsafeInstantiation errorLevel="suppress"/>
+        <RedundantPropertyInitializationCheck errorLevel="suppress"/>
+        <UndefinedAttributeClass errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

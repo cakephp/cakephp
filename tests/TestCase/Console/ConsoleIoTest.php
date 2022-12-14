@@ -18,9 +18,9 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Filesystem\Filesystem;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 
 /**
  * ConsoleIo test.

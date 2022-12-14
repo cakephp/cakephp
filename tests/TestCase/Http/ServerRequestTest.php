@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
@@ -24,6 +25,7 @@ use Cake\Http\FlashMessage;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 
@@ -90,6 +92,12 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withEnv('HTTP_ACCEPT', 'text/plain, */*');
         $this->assertFalse($request->is('json'));
+
+        $request = new ServerRequest();
+        $request = $request->withEnv('HTTP_ACCEPT', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8');
+        $this->assertFalse($request->is('json'));
+        $this->assertFalse($request->is('xml'));
+        $this->assertFalse($request->is('xml'));
     }
 
     public function testConstructor(): void
@@ -218,29 +226,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test parsing JSON PUT data into the object.
-     *
-     * @group deprecated
-     */
-    public function testPutParsingJSON(): void
-    {
-        $data = '{"Article":["title"]}';
-        $request = new ServerRequest([
-            'input' => $data,
-            'environment' => [
-                'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/json',
-            ],
-        ]);
-        $this->assertEquals([], $request->getData());
-
-        $this->deprecated(function () use ($request): void {
-            $result = $request->input('json_decode', true);
-            $this->assertEquals(['title'], $result['Article']);
-        });
-    }
-
-    /**
      * Test that the constructor uses uploaded file objects
      * if they are present. This could happen in test scenarios.
      */
@@ -325,8 +310,8 @@ class ServerRequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid file at \'avatar\'');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid file at `avatar`');
         $request = new ServerRequest();
         $request->withUploadedFiles(['avatar' => 'not a file']);
     }
@@ -336,8 +321,8 @@ class ServerRequestTest extends TestCase
      */
     public function testWithUploadedFilesInvalidFileNested(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid file at `user.avatar`');
         $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
@@ -470,8 +455,6 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $this->assertFalse($request->is('undefined-behavior'));
-
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -488,6 +471,16 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('REQUEST_METHOD', 'delete');
         $this->assertFalse($request->is('delete'));
+    }
+
+    public function testExceptionForInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No detector set for type `nonexistent`');
+
+        $request = new ServerRequest();
+
+        $this->assertFalse($request->is('nonexistent'));
     }
 
     /**
@@ -570,8 +563,8 @@ class ServerRequestTest extends TestCase
      */
     public function testWithMethodInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported HTTP method "no good" provided');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported HTTP method `no good` provided');
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
@@ -610,8 +603,8 @@ class ServerRequestTest extends TestCase
      */
     public function testWithProtocolVersionInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported protocol version \'no good\' provided');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported protocol version `no good` provided');
         $request = new ServerRequest();
         $request->withProtocolVersion('no good');
     }
@@ -717,7 +710,7 @@ class ServerRequestTest extends TestCase
      */
     public function testMagicCallExceptionOnUnknownMethod(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $request = new ServerRequest();
         $request->IamABanana();
     }
@@ -730,19 +723,19 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
 
         $request = $request->withEnv('HTTPS', 'on');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
 
         $request = $request->withEnv('HTTPS', '1');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
 
         $request = $request->withEnv('HTTPS', 'I am not empty');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
 
         $request = $request->withEnv('HTTPS', 'off');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
 
         $request = $request->withEnv('HTTPS', '');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
     }
 
     /**
@@ -1062,75 +1055,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test the raw parsing of accept headers into the q value formatting.
-     */
-    public function testParseAcceptWithQValue(): void
-    {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png',
-        ]]);
-        $result = $request->parseAccept();
-        $expected = [
-            '1.0' => ['application/xml', 'image/png'],
-            '0.8' => ['text/html'],
-            '0.7' => ['application/json'],
-        ];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test parsing accept with a confusing accept value.
-     */
-    public function testParseAcceptNoQValues(): void
-    {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'application/json, text/plain, */*',
-        ]]);
-        $result = $request->parseAccept();
-        $expected = [
-            '1.0' => ['application/json', 'text/plain', '*/*'],
-        ];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test parsing accept ignores index param
-     */
-    public function testParseAcceptIgnoreAcceptExtensions(): void
-    {
-        $request = new ServerRequest(['environment' => [
-            'url' => '/',
-            'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*',
-        ]]);
-
-        $result = $request->parseAccept();
-        $expected = [
-            '1.0' => ['application/json', 'text/plain', '*/*'],
-        ];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test that parsing accept headers with invalid syntax works.
-     *
-     * The header used is missing a q value for application/xml.
-     */
-    public function testParseAcceptInvalidSyntax(): void
-    {
-        $request = new ServerRequest(['environment' => [
-            'url' => '/',
-            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8',
-        ]]);
-        $result = $request->parseAccept();
-        $expected = [
-            '1.0' => ['text/html', 'application/xhtml+xml', 'application/xml', 'image/jpeg'],
-            '0.9' => ['image/*'],
-            '0.8' => ['*/*'],
-        ];
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
      * Test the getQuery() method
      */
     public function testGetQuery(): void
@@ -1241,14 +1165,15 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test that getData() doesn't fail on scalar data.
+     * Test setting post data to a string throws exception.
      */
-    public function testGetDataOnStringData(): void
+    public function testInvalidStringData(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`post` key must be an array, object or null. Got `string` instead.');
+
         $post = 'strange, but could happen';
         $request = new ServerRequest(compact('post'));
-        $this->assertNull($request->getData('Model'));
-        $this->assertNull($request->getData('Model.field'));
     }
 
     /**
@@ -1432,66 +1357,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test the input() method.
-     */
-    public function testInput(): void
-    {
-        $request = new ServerRequest([
-            'input' => 'I came from stdin',
-        ]);
-
-        $this->deprecated(function () use ($request): void {
-            $result = $request->input();
-            $this->assertSame('I came from stdin', $result);
-        });
-    }
-
-    /**
-     * Test input() decoding.
-     *
-     * @group deprecated
-     */
-    public function testInputDecode(): void
-    {
-        $request = new ServerRequest([
-            'input' => '{"name":"value"}',
-        ]);
-
-        $this->deprecated(function () use ($request): void {
-            $result = $request->input('json_decode');
-            $this->assertEquals(['name' => 'value'], (array)$result);
-        });
-    }
-
-    /**
-     * Test input() decoding with additional arguments.
-     *
-     * @group deprecated
-     */
-    public function testInputDecodeExtraParams(): void
-    {
-        $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<post>
-	<title id="title">Test</title>
-</post>
-XML;
-
-        $request = new ServerRequest([
-            'input' => $xml,
-        ]);
-
-        $this->deprecated(function () use ($request): void {
-            $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
-            $this->assertInstanceOf('DOMDocument', $result);
-            $this->assertSame(
-                'Test',
-                $result->getElementsByTagName('title')->item(0)->childNodes->item(0)->wholeText
-            );
-        });
-    }
-
-    /**
      * Test getBody
      */
     public function testGetBody(): void
@@ -1641,7 +1506,7 @@ XML;
     public function testGetCookieCollection(): void
     {
         $cookies = [
-            'remember_me' => '1',
+            'remember_me' => 1,
             'color' => 'blue',
         ];
         $request = new ServerRequest(['cookies' => $cookies]);
@@ -1664,7 +1529,7 @@ XML;
         $this->assertNotSame($new, $request, 'Should clone');
 
         $this->assertSame(['bad' => 'goaway'], $request->getCookieParams());
-        $this->assertSame(['remember_me' => 1, 'color' => 'red'], $new->getCookieParams());
+        $this->assertSame(['remember_me' => '1', 'color' => 'red'], $new->getCookieParams());
         $cookies = $new->getCookieCollection();
         $this->assertCount(2, $cookies);
         $this->assertSame('red', $cookies->get('color')->getValue());
@@ -1962,7 +1827,7 @@ XML;
      */
     public function testWithoutAttributesDenyEmulatedProperties(string $prop): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $request = new ServerRequest([]);
         $request->withoutAttribute($prop);
     }

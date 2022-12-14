@@ -23,7 +23,7 @@ class TestController extends ControllerTestAppController
      *
      * @var string
      */
-    protected $modelClass = 'Comments';
+    protected ?string $modelClass = 'Comments';
 
     /**
      * beforeFilter handler

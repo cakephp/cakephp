@@ -15,9 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log;
 
+use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * LogTest class
@@ -70,7 +73,7 @@ class LogTest extends TestCase
      */
     public function testImportingLoggerFailure(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         Log::setConfig('fail', []);
         Log::engine('fail');
     }
@@ -99,18 +102,6 @@ class LogTest extends TestCase
     }
 
     /**
-     * test that loggers have to implement the correct interface.
-     */
-    public function testNotImplementingInterface(): void
-    {
-        Log::setConfig('fail', ['engine' => '\stdClass']);
-
-        $this->expectException(\RuntimeException::class);
-
-        Log::engine('fail');
-    }
-
-    /**
      * explicit tests for drop()
      */
     public function testDrop(): void
@@ -134,7 +125,7 @@ class LogTest extends TestCase
      */
     public function testInvalidLevel(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Log::setConfig('myengine', ['engine' => 'File']);
         Log::write('invalid', 'This will not be logged');
     }
@@ -188,28 +179,6 @@ class LogTest extends TestCase
     }
 
     /**
-     * Test that config() throws an exception when adding an
-     * adapter with the wrong type.
-     */
-    public function testConfigInjectErrorOnWrongType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \stdClass());
-        Log::info('testing');
-    }
-
-    /**
-     * Test that setConfig() throws an exception when adding an
-     * adapter with the wrong type.
-     */
-    public function testSetConfigInjectErrorOnWrongType(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        Log::setConfig('test', new \stdClass());
-        Log::info('testing');
-    }
-
-    /**
      * Test that config() can read data back
      */
     public function testConfigRead(): void
@@ -231,7 +200,7 @@ class LogTest extends TestCase
      */
     public function testConfigErrorOnReconfigure(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         Log::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
         Log::setConfig('tests', ['engine' => 'Apc']);
     }
@@ -439,7 +408,7 @@ class LogTest extends TestCase
             'path' => LOGS,
             'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-            'scopes' => false,
+            'scopes' => null,
         ]);
         Log::setConfig('shops', [
             'engine' => 'File',

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Routing;
 
+use BadMethodCallException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
@@ -169,8 +171,13 @@ class RouteBuilderTest extends TestCase
             'pass' => [],
             '_matchedRoute' => '/articles',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/articles'));
-        $this->assertEquals($expected, $this->collection->parse('/articles/'));
+        $result = $this->collection->parse('/articles');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/articles/');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -197,7 +204,9 @@ class RouteBuilderTest extends TestCase
             'plugin' => null,
             '_matchedRoute' => '/my-articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/my-articles/view'));
+        $result = $this->collection->parse('/my-articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -219,7 +228,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'index',
             '_matchedRoute' => '/admin/bookmarks',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/admin/bookmarks'));
+        $result = $this->collection->parse('/admin/bookmarks');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -240,7 +251,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'view',
             '_matchedRoute' => '/blog/articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/blog/articles/view'));
+        $result = $this->collection->parse('/blog/articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -262,7 +275,9 @@ class RouteBuilderTest extends TestCase
             'action' => 'view',
             '_matchedRoute' => '/admin/blog/articles/view',
         ];
-        $this->assertEquals($expected, $this->collection->parse('/admin/blog/articles/view'));
+        $result = $this->collection->parse('/admin/blog/articles/view');
+        unset($result['_route']);
+        $this->assertEquals($expected, $result);
 
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
@@ -348,27 +363,11 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test error on invalid route class
-     */
-    public function testConnectErrorInvalidRouteClass(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Route class not found, or route class is not a subclass of');
-        $routes = new RouteBuilder(
-            $this->collection,
-            '/l',
-            [],
-            ['extensions' => ['json']]
-        );
-        $routes->connect('/{controller}', [], ['routeClass' => '\stdClass']);
-    }
-
-    /**
      * Test conflicting parameters raises an exception.
      */
     public function testConnectConflictingParameters(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('You cannot define routes that conflict with the scope.');
         $routes = new RouteBuilder($this->collection, '/admin', ['plugin' => 'TestPlugin']);
         $routes->connect('/', ['plugin' => 'TestPlugin2', 'controller' => 'Dashboard', 'action' => 'view']);
@@ -693,7 +692,8 @@ class RouteBuilderTest extends TestCase
      */
     public function testResourcesInScope(): void
     {
-        Router::scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
+        $builder = Router::createRouteBuilder('/');
+        $builder->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
@@ -896,11 +896,11 @@ class RouteBuilderTest extends TestCase
      */
     public function testScopeException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Need a valid callable to connect routes. Got `string` instead.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Need a valid Closure to connect routes.');
 
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/v1', 'fail');
+        $routes->scope('/v1', ['fail'], null);
     }
 
     /**
@@ -977,7 +977,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testMiddlewareGroupOverlap(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
         $func = function (): void {
         };
@@ -991,7 +991,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareInvalidName(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
@@ -1150,7 +1150,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testLoadPluginBadPlugin(): void
     {
-        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
+        $this->expectException(MissingPluginException::class);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('Nope');
     }

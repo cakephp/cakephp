@@ -22,6 +22,8 @@ declare(strict_types=1);
  */
 namespace TestApp\Controller;
 
+use RuntimeException;
+
 class TestsAppsController extends AppController
 {
     public function index()
@@ -73,6 +75,6 @@ class TestsAppsController extends AppController
 
     public function throw_exception()
     {
-        throw new \RuntimeException('Foo');
+        throw new RuntimeException('Foo');
     }
 }

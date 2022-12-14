@@ -11,6 +11,9 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @var string $name
+ * @var string $file
+ * @var array<string> $paths
  */
 $this->layout = 'dev_error';
 
@@ -30,7 +33,7 @@ $this->start('file');
 <ul>
 <?php
     foreach ($paths as $path) :
-        if (strpos($path, CORE_PATH) !== false) {
+        if (str_contains($path, CORE_PATH)) {
             continue;
         }
         echo sprintf('<li>%sCell/%s/%s</li>', h($path), h($name), h($file));

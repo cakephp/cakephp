@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -39,7 +39,6 @@ class I18nCommandTest extends TestCase
         parent::setUp();
 
         $this->localeDir = TMP . 'Locale' . DS;
-        $this->useCommandRunner();
         $this->setAppNamespace();
     }
 

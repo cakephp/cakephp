@@ -26,7 +26,7 @@ trait TypedResultTrait
      *
      * @var string
      */
-    protected $_returnType = 'string';
+    protected string $_returnType = 'string';
 
     /**
      * Gets the type of the value this object will generate.

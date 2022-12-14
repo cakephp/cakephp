@@ -16,9 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -28,20 +33,72 @@ use Cake\Database\Expression\OrderByExpression;
 class IdentifierQuoter
 {
     /**
-     * The driver instance used to do the identifier quoting
-     *
-     * @var \Cake\Database\Driver
-     */
-    protected $_driver;
-
-    /**
      * Constructor
      *
-     * @param \Cake\Database\Driver $driver The driver instance used to do the identifier quoting
+     * @param string $startQuote String used to start a database identifier quoting to make it safe.
+     * @param string $endQuote String used to end a database identifier quoting to make it safe.
      */
-    public function __construct(Driver $driver)
+    public function __construct(
+        protected string $startQuote,
+        protected string $endQuote
+    ) {
+    }
+
+    /**
+     * Quotes a database identifier (a column name, table name, etc..) to
+     * be used safely in queries without the risk of using reserved words
+     *
+     * @param string $identifier The identifier to quote.
+     * @return string
+     */
+    public function quoteIdentifier(string $identifier): string
     {
-        $this->_driver = $driver;
+        $identifier = trim($identifier);
+
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
+        }
+
+        // string
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
+            return $this->startQuote . $identifier . $this->endQuote;
+        }
+
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
+            $items = explode('.', $identifier);
+
+            return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+        }
+
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
+            return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $identifier);
+        }
+
+        // Functions
+        if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
+            return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
+        }
+
+        // Alias.field AS thing
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
+            return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
+        }
+
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->endQuote . '.' . $this->startQuote, $items);
+
+            return $this->startQuote . $field . $this->endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w\s-]*[\w-]+/u', $identifier)) {
+            return $this->startQuote . $identifier . $this->endQuote;
+        }
+
+        return $identifier;
     }
 
     /**
@@ -56,15 +113,19 @@ class IdentifierQuoter
         $binder = $query->getValueBinder();
         $query->setValueBinder(null);
 
-        if ($query->type() === 'insert') {
-            $this->_quoteInsert($query);
-        } elseif ($query->type() === 'update') {
-            $this->_quoteUpdate($query);
-        } else {
-            $this->_quoteParts($query);
-        }
+        match (true) {
+            $query instanceof InsertQuery => $this->_quoteInsert($query),
+            $query instanceof SelectQuery => $this->_quoteSelect($query),
+            $query instanceof UpdateQuery => $this->_quoteUpdate($query),
+            $query instanceof DeleteQuery => $this->_quoteDelete($query),
+            default =>
+                throw new DatabaseException(sprintf(
+                    'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
+                    get_debug_type($query)
+                ))
+        };
 
-        $query->traverseExpressions([$this, 'quoteExpression']);
+        $query->traverseExpressions($this->quoteExpression(...));
         $query->setValueBinder($binder);
 
         return $query;
@@ -78,34 +139,24 @@ class IdentifierQuoter
      */
     public function quoteExpression(ExpressionInterface $expression): void
     {
-        if ($expression instanceof FieldInterface) {
-            $this->_quoteComparison($expression);
-
-            return;
-        }
-
-        if ($expression instanceof OrderByExpression) {
-            $this->_quoteOrderBy($expression);
-
-            return;
-        }
-
-        if ($expression instanceof IdentifierExpression) {
-            $this->_quoteIdentifierExpression($expression);
-
-            return;
-        }
+        match (true) {
+            $expression instanceof FieldInterface => $this->_quoteComparison($expression),
+            $expression instanceof OrderByExpression => $this->_quoteOrderBy($expression),
+            $expression instanceof IdentifierExpression => $this->_quoteIdentifierExpression($expression),
+            default => null // Nothing to do if there is no match
+        };
     }
 
     /**
-     * Quotes all identifiers in each of the clauses of a query
+     * Quotes all identifiers in each of the clauses/parts of a query
      *
      * @param \Cake\Database\Query $query The query to quote.
+     * @param array $parts Query clauses.
      * @return void
      */
-    protected function _quoteParts(Query $query): void
+    protected function _quoteParts(Query $query, array $parts): void
     {
-        foreach (['distinct', 'select', 'from', 'group'] as $part) {
+        foreach ($parts as $part) {
             $contents = $query->clause($part);
 
             if (!is_array($contents)) {
@@ -117,26 +168,20 @@ class IdentifierQuoter
                 $query->{$part}($result, true);
             }
         }
-
-        $joins = $query->clause('join');
-        if ($joins) {
-            $joins = $this->_quoteJoins($joins);
-            $query->join($joins, [], true);
-        }
     }
 
     /**
      * A generic identifier quoting function used for various parts of the query
      *
-     * @param array $part the part of the query to quote
-     * @return array
+     * @param array<string, mixed> $part the part of the query to quote
+     * @return array<string, mixed>
      */
     protected function _basicQuoter(array $part): array
     {
         $result = [];
         foreach ($part as $alias => $value) {
-            $value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
-            $alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
+            $value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+            $alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
             $result[$alias] = $value;
         }
 
@@ -148,7 +193,7 @@ class IdentifierQuoter
      * object
      *
      * @param array $joins The joins to quote.
-     * @return array
+     * @return array<string, array>
      */
     protected function _quoteJoins(array $joins): array
     {
@@ -156,12 +201,12 @@ class IdentifierQuoter
         foreach ($joins as $value) {
             $alias = '';
             if (!empty($value['alias'])) {
-                $alias = $this->_driver->quoteIdentifier($value['alias']);
+                $alias = $this->quoteIdentifier($value['alias']);
                 $value['alias'] = $alias;
             }
 
             if (is_string($value['table'])) {
-                $value['table'] = $this->_driver->quoteIdentifier($value['table']);
+                $value['table'] = $this->quoteIdentifier($value['table']);
             }
 
             $result[$alias] = $value;
@@ -171,22 +216,56 @@ class IdentifierQuoter
     }
 
     /**
-     * Quotes the table name and columns for an insert query
+     * Quotes all identifiers in each of the clauses of a SELECT query
      *
-     * @param \Cake\Database\Query $query The insert query to quote.
+     * @param \Cake\Database\Query\SelectQuery $query The query to quote.
      * @return void
      */
-    protected function _quoteInsert(Query $query): void
+    protected function _quoteSelect(SelectQuery $query): void
+    {
+        $this->_quoteParts($query, ['select', 'distinct', 'from', 'group']);
+
+        $joins = $query->clause('join');
+        if ($joins) {
+            $joins = $this->_quoteJoins($joins);
+            $query->join($joins, [], true);
+        }
+    }
+
+    /**
+     * Quotes all identifiers in each of the clauses of a DELETE query
+     *
+     * @param \Cake\Database\Query\DeleteQuery $query The query to quote.
+     * @return void
+     */
+    protected function _quoteDelete(DeleteQuery $query): void
+    {
+        $this->_quoteParts($query, ['from']);
+
+        $joins = $query->clause('join');
+        if ($joins) {
+            $joins = $this->_quoteJoins($joins);
+            $query->join($joins, [], true);
+        }
+    }
+
+    /**
+     * Quotes the table name and columns for an insert query
+     *
+     * @param \Cake\Database\Query\InsertQuery $query The insert query to quote.
+     * @return void
+     */
+    protected function _quoteInsert(InsertQuery $query): void
     {
         $insert = $query->clause('insert');
         if (!isset($insert[0]) || !isset($insert[1])) {
             return;
         }
         [$table, $columns] = $insert;
-        $table = $this->_driver->quoteIdentifier($table);
+        $table = $this->quoteIdentifier($table);
         foreach ($columns as &$column) {
             if (is_scalar($column)) {
-                $column = $this->_driver->quoteIdentifier((string)$column);
+                $column = $this->quoteIdentifier((string)$column);
             }
         }
         $query->insert($columns)->into($table);
@@ -195,15 +274,15 @@ class IdentifierQuoter
     /**
      * Quotes the table name for an update query
      *
-     * @param \Cake\Database\Query $query The update query to quote.
+     * @param \Cake\Database\Query\UpdateQuery $query The update query to quote.
      * @return void
      */
-    protected function _quoteUpdate(Query $query): void
+    protected function _quoteUpdate(UpdateQuery $query): void
     {
         $table = $query->clause('update')[0];
 
         if (is_string($table)) {
-            $query->update($this->_driver->quoteIdentifier($table));
+            $query->update($this->quoteIdentifier($table));
         }
     }
 
@@ -217,14 +296,14 @@ class IdentifierQuoter
     {
         $field = $expression->getField();
         if (is_string($field)) {
-            $expression->setField($this->_driver->quoteIdentifier($field));
+            $expression->setField($this->quoteIdentifier($field));
         } elseif (is_array($field)) {
             $quoted = [];
             foreach ($field as $f) {
-                $quoted[] = $this->_driver->quoteIdentifier($f);
+                $quoted[] = $this->quoteIdentifier($f);
             }
             $expression->setField($quoted);
-        } elseif ($field instanceof ExpressionInterface) {
+        } else {
             $this->quoteExpression($field);
         }
     }
@@ -242,12 +321,12 @@ class IdentifierQuoter
     {
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
-                $field = $this->_driver->quoteIdentifier($field);
+                $field = $this->quoteIdentifier($field);
 
                 return $part;
             }
-            if (is_string($part) && strpos($part, ' ') === false) {
-                return $this->_driver->quoteIdentifier($part);
+            if (is_string($part) && !str_contains($part, ' ')) {
+                return $this->quoteIdentifier($part);
             }
 
             return $part;
@@ -263,7 +342,7 @@ class IdentifierQuoter
     protected function _quoteIdentifierExpression(IdentifierExpression $expression): void
     {
         $expression->setIdentifier(
-            $this->_driver->quoteIdentifier($expression->getIdentifier())
+            $this->quoteIdentifier($expression->getIdentifier())
         );
     }
 }

@@ -72,7 +72,7 @@ class PluginAssetsSymlinkCommand extends Command
             'Symlink (copy as fallback) plugin assets to app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
-            'optional' => true,
+            'required' => false,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
             'default' => false,

@@ -33,9 +33,9 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * This is a static variable to enable opcache to inline the values.
      *
-     * @var array
+     * @var array<string>
      */
-    protected static $causes = [
+    protected static array $causes = [
         'gone away',
         'Lost connection',
         'Transaction() on null',
@@ -57,7 +57,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * @var \Cake\Database\Connection
      */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Creates the ReconnectStrategy object by storing a reference to the
@@ -74,7 +74,7 @@ class ReconnectStrategy implements RetryStrategyInterface
     /**
      * {@inheritDoc}
      *
-     * Checks whether or not the exception was caused by a lost connection,
+     * Checks whether the exception was caused by a lost connection,
      * and returns true if it was able to successfully reconnect.
      */
     public function shouldRetry(Exception $exception, int $retryCount): bool
@@ -82,7 +82,7 @@ class ReconnectStrategy implements RetryStrategyInterface
         $message = $exception->getMessage();
 
         foreach (static::$causes as $cause) {
-            if (strstr($message, $cause) !== false) {
+            if (str_contains($message, $cause)) {
                 return $this->reconnect();
             }
         }
@@ -93,7 +93,7 @@ class ReconnectStrategy implements RetryStrategyInterface
     /**
      * Tries to re-establish the connection to the server, if it is safe to do so
      *
-     * @return bool Whether or not the connection was re-established
+     * @return bool Whether the connection was re-established
      */
     protected function reconnect(): bool
     {
@@ -104,16 +104,19 @@ class ReconnectStrategy implements RetryStrategyInterface
 
         try {
             // Make sure we free any resources associated with the old connection
-            $this->connection->disconnect();
-        } catch (Exception $e) {
+            $this->connection->getDriver()->disconnect();
+        } catch (Exception) {
         }
 
         try {
-            $this->connection->connect();
-            $this->connection->log('[RECONNECT]');
+            $this->connection->getDriver()->connect();
+            $this->connection->getDriver()->log(
+                'connection={connection} [RECONNECT]',
+                ['connection' => $this->connection->configName()]
+            );
 
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If there was an error connecting again, don't report it back,
             // let the retry handler do it.
             return false;

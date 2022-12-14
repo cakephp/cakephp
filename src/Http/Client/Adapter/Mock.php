@@ -37,7 +37,7 @@ class Mock implements AdapterInterface
      *
      * @var array
      */
-    protected $responses = [];
+    protected array $responses = [];
 
     /**
      * Add a mocked response.
@@ -48,14 +48,17 @@ class Mock implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request A partial request to use for matching.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param array $options See above.
+     * @param array<string, mixed> $options See above.
      * @return void
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void
     {
         if (isset($options['match']) && !($options['match'] instanceof Closure)) {
-            $type = getTypeName($options['match']);
-            throw new InvalidArgumentException("The `match` option must be a `Closure`. Got `{$type}`.");
+            $type = get_debug_type($options['match']);
+            throw new InvalidArgumentException(sprintf(
+                'The `match` option must be a `Closure`. Got `%s`.',
+                $type
+            ));
         }
         $this->responses[] = [
             'request' => $request,
@@ -68,8 +71,8 @@ class Mock implements AdapterInterface
      * Find a response if one exists.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to match
-     * @param array $options Unused.
-     * @return \Cake\Http\Client\Response[] The matched response or an empty array for no matches.
+     * @param array<string, mixed> $options Unused.
+     * @return array<\Cake\Http\Client\Response> The matched response or an empty array for no matches.
      */
     public function send(RequestInterface $request, array $options): array
     {
@@ -126,7 +129,7 @@ class Mock implements AdapterInterface
         if ($starPosition === strlen($mockUri) - 4) {
             $mockUri = substr($mockUri, 0, $starPosition);
 
-            return strpos($requestUri, $mockUri) === 0;
+            return str_starts_with($requestUri, $mockUri);
         }
 
         return false;

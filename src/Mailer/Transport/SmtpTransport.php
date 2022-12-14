@@ -27,12 +27,15 @@ use Exception;
  */
 class SmtpTransport extends AbstractTransport
 {
+    protected const AUTH_PLAIN = 'PLAIN';
+    protected const AUTH_LOGIN = 'LOGIN';
+
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'host' => 'localhost',
         'port' => 25,
         'timeout' => 30,
@@ -46,23 +49,30 @@ class SmtpTransport extends AbstractTransport
     /**
      * Socket to SMTP server
      *
-     * @var \Cake\Network\Socket|null
+     * @var \Cake\Network\Socket
      */
-    protected $_socket;
+    protected Socket $_socket;
 
     /**
      * Content of email to return
      *
-     * @var array
+     * @var array<string, string>
      */
-    protected $_content = [];
+    protected array $_content = [];
 
     /**
      * The response of the last sent SMTP command.
      *
      * @var array
      */
-    protected $_lastResponse = [];
+    protected array $_lastResponse = [];
+
+    /**
+     * Detected authentication type.
+     *
+     * @var string|null
+     */
+    protected ?string $authType = null;
 
     /**
      * Destructor
@@ -74,7 +84,7 @@ class SmtpTransport extends AbstractTransport
     {
         try {
             $this->disconnect();
-        } catch (Exception $e) {
+        } catch (Exception) {
             // avoid fatal error on script termination
         }
     }
@@ -88,7 +98,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function __wakeup(): void
     {
-        $this->_socket = null;
+        unset($this->_socket);
     }
 
     /**
@@ -114,7 +124,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function connected(): bool
     {
-        return $this->_socket !== null && $this->_socket->connected;
+        return isset($this->_socket) && $this->_socket->isConnected();
     }
 
     /**
@@ -168,9 +178,8 @@ class SmtpTransport extends AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
-     * @return array
+     * @return array{headers: string, message: string}
      * @throws \Cake\Network\Exception\SocketException
-     * @psalm-return array{headers: string, message: string}
      */
     public function send(Message $message): array
     {
@@ -214,6 +223,36 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Parses the last response line and extract the preferred authentication type.
+     *
+     * @return void
+     */
+    protected function _parseAuthType(): void
+    {
+        $this->authType = null;
+
+        $auth = '';
+        foreach ($this->_lastResponse as $line) {
+            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+                $auth = $line['message'];
+                break;
+            }
+        }
+
+        if (strpos($auth, self::AUTH_PLAIN) !== false) {
+            $this->authType = self::AUTH_PLAIN;
+
+            return;
+        }
+
+        if (strpos($auth, self::AUTH_LOGIN) !== false) {
+            $this->authType = self::AUTH_LOGIN;
+
+            return;
+        }
+    }
+
+    /**
      * Connect to SMTP Server
      *
      * @return void
@@ -222,7 +261,7 @@ class SmtpTransport extends AbstractTransport
     protected function _connect(): void
     {
         $this->_generateSocket();
-        if (!$this->_socket()->connect()) {
+        if (!$this->_socket->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');
         }
         $this->_smtpSend(null, '220');
@@ -236,9 +275,8 @@ class SmtpTransport extends AbstractTransport
             }
             $host = $config['client'];
         } else {
-            /** @var string $httpHost */
             $httpHost = env('HTTP_HOST');
-            if ($httpHost) {
+            if (is_string($httpHost) && strlen($httpHost)) {
                 [$host] = explode(':', $httpHost);
             }
         }
@@ -247,7 +285,7 @@ class SmtpTransport extends AbstractTransport
             $this->_smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
                 $this->_smtpSend('STARTTLS', '220');
-                $this->_socket()->enableCrypto('tls');
+                $this->_socket->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }
         } catch (SocketException $e) {
@@ -264,6 +302,8 @@ class SmtpTransport extends AbstractTransport
                 throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
+
+        $this->_parseAuthType();
     }
 
     /**
@@ -280,13 +320,28 @@ class SmtpTransport extends AbstractTransport
 
         $username = $this->_config['username'];
         $password = $this->_config['password'];
+        if (empty($this->authType)) {
+            $replyCode = $this->_authPlain($username, $password);
+            if ($replyCode === '235') {
+                return;
+            }
 
-        $replyCode = $this->_authPlain($username, $password);
-        if ($replyCode === '235') {
+            $this->_authLogin($username, $password);
+
             return;
         }
 
-        $this->_authLogin($username, $password);
+        if ($this->authType === self::AUTH_PLAIN) {
+            $this->_authPlain($username, $password);
+
+            return;
+        }
+
+        if ($this->authType === self::AUTH_LOGIN) {
+            $this->_authLogin($username, $password);
+
+            return;
+        }
     }
 
     /**
@@ -414,7 +469,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send emails
      *
-     * @param \Cake\Mailer\Message $message Message message
+     * @param \Cake\Mailer\Message $message Message instance
      * @throws \Cake\Network\Exception\SocketException
      * @return void
      */
@@ -432,7 +487,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send Data
      *
-     * @param \Cake\Mailer\Message $message Message message
+     * @param \Cake\Mailer\Message $message Message instance
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
@@ -465,7 +520,8 @@ class SmtpTransport extends AbstractTransport
     protected function _disconnect(): void
     {
         $this->_smtpSend('QUIT', false);
-        $this->_socket()->disconnect();
+        $this->_socket->disconnect();
+        $this->authType = null;
     }
 
     /**
@@ -487,12 +543,12 @@ class SmtpTransport extends AbstractTransport
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _smtpSend(?string $data, $checkCode = '250'): ?string
+    protected function _smtpSend(?string $data, string|false $checkCode = '250'): ?string
     {
         $this->_lastResponse = [];
 
         if ($data !== null) {
-            $this->_socket()->write($data . "\r\n");
+            $this->_socket->write($data . "\r\n");
         }
 
         $timeout = $this->_config['timeout'];
@@ -500,15 +556,15 @@ class SmtpTransport extends AbstractTransport
         while ($checkCode !== false) {
             $response = '';
             $startTime = time();
-            while (substr($response, -2) !== "\r\n" && (time() - $startTime < $timeout)) {
-                $bytes = $this->_socket()->read();
+            while (!str_ends_with($response, "\r\n") && (time() - $startTime < $timeout)) {
+                $bytes = $this->_socket->read();
                 if ($bytes === null) {
                     break;
                 }
                 $response .= $bytes;
             }
             // Catch empty or malformed responses.
-            if (substr($response, -2) !== "\r\n") {
+            if (!str_ends_with($response, "\r\n")) {
                 // Use response message or assume operation timed out.
                 throw new SocketException($response ?: 'SMTP timeout.');
             }
@@ -528,20 +584,5 @@ class SmtpTransport extends AbstractTransport
         }
 
         return null;
-    }
-
-    /**
-     * Get socket instance.
-     *
-     * @return \Cake\Network\Socket
-     * @throws \RuntimeException If socket is not set.
-     */
-    protected function _socket(): Socket
-    {
-        if ($this->_socket === null) {
-            throw new \RuntimeException('Socket is null, but must be set.');
-        }
-
-        return $this->_socket;
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Table;
 
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
 /**
@@ -22,12 +22,21 @@ use Cake\ORM\Table;
  */
 class AuthorsTable extends Table
 {
+    /**
+     * @param array<string, mixed> $config
+     * @return void
+     */
     public function initialize(array $config): void
     {
         $this->hasMany('articles');
     }
 
-    public function findByAuthor(Query $query, array $options = []): Query
+    /**
+     * @param \Cake\ORM\Query\SelectQuery $query
+     * @param array<string, mixed> $options
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findByAuthor(SelectQuery $query, array $options = []): SelectQuery
     {
         if (isset($options['author_id'])) {
             $query->where(['Articles.id' => $options['author_id']]);
@@ -39,10 +48,10 @@ class AuthorsTable extends Table
     /**
      * Finder that applies a formatter to test dirty associations
      *
-     * @param \Cake\ORM\Query $query The query
-     * @param array $options The options
+     * @param \Cake\ORM\Query\SelectQuery $query The query
+     * @param array<string, mixed> $options The options
      */
-    public function findFormatted(Query $query, array $options = []): Query
+    public function findFormatted(SelectQuery $query, array $options = []): SelectQuery
     {
         return $query->formatResults(function ($results) {
             return $results->map(function ($author) {

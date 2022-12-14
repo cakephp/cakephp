@@ -2,23 +2,24 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Laminas\Diactoros\Response;
 use TestApp\Http\TestRequestHandler;
 
@@ -66,7 +67,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
      */
     public function testInvalidArgumentExceptionForsetXFrameOptionsUrl(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The 2nd arg $url can not be empty when `allow-from` is used');
         $middleware = new SecurityHeadersMiddleware();
         $middleware->setXFrameOptions('allow-from');
@@ -78,8 +79,8 @@ class SecurityHeadersMiddlewareTest extends TestCase
      */
     public function testCheckValues(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid arg `INVALID-VALUE!`, use one of these: all, none, master-only, by-content-type, by-ftp-filename');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid arg `INVALID-VALUE!`, use one of these: `all`, `none`, `master-only`, `by-content-type`, `by-ftp-filename`');
         $middleware = new SecurityHeadersMiddleware();
         $middleware->setCrossDomainPolicy('INVALID-VALUE!');
     }

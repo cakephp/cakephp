@@ -24,12 +24,14 @@ class DateTimeFractionalType extends DateTimeType
     /**
      * @inheritDoc
      */
-    protected $_format = 'Y-m-d H:i:s.u';
+    protected string $_format = 'Y-m-d H:i:s.u';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @var array<string>
      */
-    protected $_marshalFormats = [
+    protected array $_marshalFormats = [
         'Y-m-d H:i',
         'Y-m-d H:i:s',
         'Y-m-d H:i:s.u',

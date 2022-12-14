@@ -15,10 +15,12 @@ declare(strict_types=1);
  */
 namespace TestApp\View\Cell\Admin;
 
+use Cake\View\Cell;
+
 /**
  * Admin Menu Cell
  */
-class MenuCell extends \Cake\View\Cell
+class MenuCell extends Cell
 {
     /**
      * Default cell action.

@@ -18,20 +18,20 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Laminas\Diactoros\UriFactory;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use function Laminas\Diactoros\marshalHeadersFromSapi;
-use function Laminas\Diactoros\marshalUriFromSapi;
 use function Laminas\Diactoros\normalizeServer;
 use function Laminas\Diactoros\normalizeUploadedFiles;
 
 /**
  * Factory for making ServerRequest instances.
  *
- * This subclass adds in CakePHP specific behavior to populate
- * the basePath and webroot attributes. Furthermore the Uri's path
- * is corrected to only contain the 'virtual' path for the request.
+ * This adds in CakePHP specific behavior to populate the basePath and webroot
+ * attributes. Furthermore the Uri's path is corrected to only contain the
+ * 'virtual' path for the request.
  */
 abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 {
@@ -41,15 +41,11 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * If any argument is not supplied, the corresponding superglobal value will
      * be used.
      *
-     * The ServerRequest created is then passed to the fromServer() method in
-     * order to marshal the request URI and headers.
-     *
-     * @see fromServer()
-     * @param array $server $_SERVER superglobal
-     * @param array $query $_GET superglobal
-     * @param array $parsedBody $_POST superglobal
-     * @param array $cookies $_COOKIE superglobal
-     * @param array $files $_FILES superglobal
+     * @param array|null $server $_SERVER superglobal
+     * @param array|null $query $_GET superglobal
+     * @param array|null $parsedBody $_POST superglobal
+     * @param array|null $cookies $_COOKIE superglobal
+     * @param array|null $files $_FILES superglobal
      * @return \Cake\Http\ServerRequest
      * @throws \InvalidArgumentException for invalid file values
      */
@@ -61,31 +57,34 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $files = null
     ): ServerRequest {
         $server = normalizeServer($server ?: $_SERVER);
-        $uri = static::createUri($server);
+        [$uri, $base, $webroot] = static::createUri($server);
 
-        /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $uri->webroot,
+            'cookiePath' => $webroot,
         ];
         $session = Session::create($sessionConfig);
 
-        /** @psalm-suppress NoInterfaceProperties */
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
             'cookies' => $cookies ?: $_COOKIE,
             'query' => $query ?: $_GET,
-            'webroot' => $uri->webroot,
-            'base' => $uri->base,
+            'webroot' => $webroot,
+            'base' => $base,
             'session' => $session,
             'input' => $server['CAKEPHP_INPUT'] ?? null,
         ]);
 
         $request = static::marshalBodyAndRequestMethod($parsedBody ?? $_POST, $request);
-        $request = static::marshalFiles($files ?? $_FILES, $request);
+        // This is required as `ServerRequest::scheme()` ignores the value of
+        // `HTTP_X_FORWARDED_PROTO` unless `trustProxy` is enabled, while the
+        // `Uri` instance intially created always takes values of `HTTP_X_FORWARDED_PROTO`
+        // into account.
+        $uri = $request->getUri()->withScheme($request->scheme());
+        $request = $request->withUri($uri, true);
 
-        return $request;
+        return static::marshalFiles($files ?? $_FILES, $request);
     }
 
     /**
@@ -107,7 +106,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 
         if (
             in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            strpos((string)$request->contentType(), 'application/x-www-form-urlencoded') === 0
+            str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
         ) {
             $data = (string)$request->getBody();
             parse_str($data, $parsedBody);
@@ -151,26 +150,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             return $request;
         }
 
-        if (Configure::read('App.uploadedFilesAsObjects', true)) {
-            $parsedBody = Hash::merge($parsedBody, $files);
-        } else {
-            // Make a flat map that can be inserted into body for BC.
-            $fileMap = Hash::flatten($files);
-            foreach ($fileMap as $key => $file) {
-                $error = $file->getError();
-                $tmpName = '';
-                if ($error === UPLOAD_ERR_OK) {
-                    $tmpName = $file->getStream()->getMetadata('uri');
-                }
-                $parsedBody = Hash::insert($parsedBody, (string)$key, [
-                    'tmp_name' => $tmpName,
-                    'error' => $error,
-                    'name' => $file->getClientFilename(),
-                    'type' => $file->getClientMediaType(),
-                    'size' => $file->getSize(),
-                ]);
-            }
-        }
+        $parsedBody = Hash::merge($parsedBody, $files);
 
         return $request->withParsedBody($parsedBody);
     }
@@ -189,6 +169,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param array $serverParams Array of SAPI parameters with which to seed
      *     the generated request instance.
      * @return \Psr\Http\Message\ServerRequestInterface
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
@@ -209,9 +190,10 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server Array of server data to build the Uri from.
      *   $_SERVER will be added into the $server parameter.
-     * @return \Psr\Http\Message\UriInterface New instance.
+     * @return array
+     * @psalm-return array{0: \Psr\Http\Message\UriInterface, 1: string, 2: string}
      */
-    public static function createUri(array $server = []): UriInterface
+    public static function createUri(array $server = []): array
     {
         $server += $_SERVER;
         $server = normalizeServer($server);
@@ -228,11 +210,13 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
-     * @return \Psr\Http\Message\UriInterface a constructed Uri
+     * @return array
+     * @psalm-return array{0: \Psr\Http\Message\UriInterface, 1: string, 2: string}
      */
-    protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
+    protected static function marshalUriFromSapi(array $server, array $headers): array
     {
-        $uri = marshalUriFromSapi($server, $headers);
+        /** @phpstan-ignore-next-line */
+        $uri = UriFactory::createFromSapi($server, $headers);
         [$base, $webroot] = static::getBase($uri, $server);
 
         // Look in PATH_INFO first, as this is the exact value we need prepared
@@ -248,14 +232,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri = $uri->withHost('localhost');
         }
 
-        // Splat on some extra attributes to save
-        // some method calls.
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->base = $base;
-        /** @psalm-suppress NoInterfaceProperties */
-        $uri->webroot = $webroot;
-
-        return $uri;
+        return [$uri, $base, $webroot];
     }
 
     /**
@@ -268,7 +245,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
         $path = $uri->getPath();
-        if ($base !== '' && strpos($path, $base) === 0) {
+        if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
         if ($path === '/index.php' && $uri->getQuery()) {
@@ -341,12 +318,12 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         $webrootDir = $base . '/';
 
         $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
 
-        if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
-                $webrootDir .= $webroot . '/';
-            }
+        if (
+            (!empty($base) || !str_contains($docRoot, $webroot))
+            && !str_contains($webrootDir, '/' . $webroot . '/')
+        ) {
+            $webrootDir .= $webroot . '/';
         }
 
         return [$base . $file, $webrootDir];

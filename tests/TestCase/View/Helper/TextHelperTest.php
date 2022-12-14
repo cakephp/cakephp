@@ -20,10 +20,6 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
-use TestApp\Utility\TestAppEngine;
-use TestApp\Utility\TextMock;
-use TestApp\View\Helper\TextHelperTestObject;
-use TestPlugin\Utility\TestPluginEngine;
 
 /**
  * TextHelperTest class
@@ -41,6 +37,11 @@ class TextHelperTest extends TestCase
     protected $View;
 
     /**
+     * @var string
+     */
+    protected $appNamespace;
+
+    /**
      * setUp method
      */
     public function setUp(): void
@@ -49,7 +50,7 @@ class TextHelperTest extends TestCase
         $this->View = new View();
         $this->Text = new TextHelper($this->View);
 
-        $this->_appNamespace = Configure::read('App.namespace');
+        $this->appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
@@ -59,80 +60,33 @@ class TextHelperTest extends TestCase
     public function tearDown(): void
     {
         unset($this->Text, $this->View);
-        static::setAppNamespace($this->_appNamespace);
+        static::setAppNamespace($this->appNamespace);
         parent::tearDown();
     }
 
     /**
-     * test String class methods are called correctly
+     * Provider for method proxying.
+     *
+     * @return array
      */
-    public function testTextHelperProxyMethodCalls(): void
+    public function methodProvider(): array
     {
-        $methods = [
-            'stripLinks', 'toList',
+        return [
+            ['highlight', ['this is a test', 'test']],
+            ['slug', ['test']],
+            ['tail', ['test test']],
         ];
-        $String = $this->getMockBuilder(TextMock::class)
-            ->addMethods($methods)
-            ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
-        $Text->attach($String);
-        foreach ($methods as $method) {
-            $String->expects($this->once())->method($method)->willReturn('');
-            $Text->{$method}(['who'], 'what', 'when', 'where', 'how');
-        }
-
-        $methods = [
-            'excerpt',
-        ];
-        $String = $this->getMockBuilder(TextMock::class)
-            ->addMethods($methods)
-            ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
-        $Text->attach($String);
-        foreach ($methods as $method) {
-            $String->expects($this->once())->method($method)->willReturn('');
-            $Text->{$method}('who', 'what');
-        }
-
-        $methods = [
-            'highlight',
-        ];
-        $String = $this->getMockBuilder(TextMock::class)
-            ->addMethods($methods)
-            ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
-        $Text->attach($String);
-        foreach ($methods as $method) {
-            $String->expects($this->once())->method($method)->willReturn('');
-            $Text->{$method}('who', 'what');
-        }
-
-        $methods = [
-            'tail', 'truncate',
-        ];
-        $String = $this->getMockBuilder(TextMock::class)
-            ->addMethods($methods)
-            ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
-        $Text->attach($String);
-        foreach ($methods as $method) {
-            $String->expects($this->once())->method($method)->willReturn('');
-            $Text->{$method}('who', 1, ['what']);
-        }
     }
 
     /**
-     * test engine override
+     * Tests calls are proxied to Number class.
+     *
+     * @dataProvider methodProvider
      */
-    public function testEngineOverride(): void
+    public function testMethodProxying(string $method, mixed $arg): void
     {
-        $Text = new TextHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-        $this->assertInstanceOf(TestAppEngine::class, $Text->engine());
-
-        $this->loadPlugins(['TestPlugin']);
-        $Text = new TextHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
-        $this->assertInstanceOf(TestPluginEngine::class, $Text->engine());
-        $this->clearPlugins();
+        $helper = new TextHelper($this->View);
+        $this->assertNotNull($helper->{$method}(...$arg));
     }
 
     /**
@@ -605,36 +559,5 @@ TEXT;
         $expected = '';
         $result = $this->Text->autoParagraph(null);
         $this->assertTextEquals($expected, $result);
-    }
-
-    /**
-     * testSlug method
-     *
-     * @param string $string String
-     * @param array $options Options
-     * @param String $expected Expected string
-     * @dataProvider slugInputProvider
-     */
-    public function testSlug($string, $options, $expected): void
-    {
-        $result = $this->Text->slug($string, $options);
-        $this->assertSame($expected, $result);
-    }
-
-    /**
-     * @return array
-     */
-    public function slugInputProvider(): array
-    {
-        return [
-            [
-                'Foo Bar: Not just for breakfast any-more', [],
-                'Foo-Bar-Not-just-for-breakfast-any-more',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
-                'FooBarNotjustforbreakfastanymore',
-            ],
-        ];
     }
 }

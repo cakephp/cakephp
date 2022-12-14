@@ -19,11 +19,12 @@ namespace Cake\ORM\Association;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
@@ -39,30 +40,30 @@ class HasMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    protected $_sort;
+    protected ExpressionInterface|Closure|array|string|null $_sort = null;
 
     /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
      */
-    protected $_joinType = Query::JOIN_TYPE_INNER;
+    protected string $_joinType = SelectQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
      *
      * @var string
      */
-    protected $_strategy = self::STRATEGY_SELECT;
+    protected string $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Valid strategies for this type of association
      *
      * @var array<string>
      */
-    protected $_validStrategies = [
+    protected array $_validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
     ];
@@ -86,10 +87,10 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_saveStrategy = self::SAVE_APPEND;
+    protected string $_saveStrategy = self::SAVE_APPEND;
 
     /**
-     * Returns whether or not the passed table is the owning side for this
+     * Returns whether the passed table is the owning side for this
      * association. This means that rows in the 'target' table would miss important
      * or required information if the row in 'source' did not exist.
      *
@@ -137,13 +138,13 @@ class HasMany extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array $options options to be passed to the save method in the target table
+     * @param array<string, mixed> $options options to be passed to the save method in the target table
      * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
-    public function saveAssociated(EntityInterface $entity, array $options = [])
+    public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntities = $entity->get($this->getProperty());
 
@@ -165,6 +166,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
+        /** @psalm-suppress InvalidScalarArgument */
         $foreignKeyReference = array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
@@ -199,7 +201,7 @@ class HasMany extends Association
      * entities to be saved.
      * @param array $entities list of entities
      * to persist in target table and to link to the parent entity
-     * @param array $options list of options accepted by `Table::save()`.
+     * @param array<string, mixed> $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
     protected function _saveTarget(
@@ -267,7 +269,7 @@ class HasMany extends Association
      * of this association
      * @param array $targetEntities list of entities belonging to the `target` side
      * of this association
-     * @param array $options list of options to be passed to the internal `save` call
+     * @param array<string, mixed> $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = []): bool
@@ -285,10 +287,7 @@ class HasMany extends Association
 
         $sourceEntity->set($property, $currentEntities);
 
-        $savedEntity = $this->getConnection()->transactional(function () use ($sourceEntity, $options) {
-            return $this->saveAssociated($sourceEntity, $options);
-        });
-
+        $savedEntity = $this->getConnection()->transactional(fn () => $this->saveAssociated($sourceEntity, $options));
         $ok = ($savedEntity instanceof EntityInterface);
 
         $this->setSaveStrategy($saveStrategy);
@@ -311,7 +310,7 @@ class HasMany extends Association
      * Additionally to the default options accepted by `Table::delete()`, the following
      * keys are supported:
      *
-     * - cleanProperty: Whether or not to remove all the objects in `$targetEntities` that
+     * - cleanProperty: Whether to remove all the objects in `$targetEntities` that
      * are stored in `$sourceEntity` (default: true)
      *
      * By default this method will unset each of the entity objects stored inside the
@@ -335,13 +334,13 @@ class HasMany extends Association
      * this association
      * @param array $targetEntities list of entities persisted in the target table for
      * this association
-     * @param array|bool $options list of options to be passed to the internal `delete` call.
+     * @param array<string, mixed>|bool $options list of options to be passed to the internal `delete` call.
      *   If boolean it will be used a value for "cleanProperty" option.
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
      * @return void
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = []): void
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, array|bool $options = []): void
     {
         if (is_bool($options)) {
             $options = [
@@ -361,8 +360,9 @@ class HasMany extends Association
 
         $conditions = [
             'OR' => (new Collection($targetEntities))
-                ->map(function ($entity) use ($targetPrimaryKey) {
-                    /** @var \Cake\Datasource\EntityInterface $entity */
+                ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
+                    /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
+                    /** @var array<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),
@@ -424,7 +424,7 @@ class HasMany extends Association
      * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
      * this association
      * @param array $targetEntities list of entities from the target table to be linked
-     * @param array $options list of options to be passed to the internal `save`/`delete` calls
+     * @param array<string, mixed> $options list of options to be passed to the internal `save`/`delete` calls
      * when persisting/updating new links, or deleting existing ones
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
@@ -456,7 +456,7 @@ class HasMany extends Association
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
      * @param iterable $remainingEntities Entities that should not be deleted
-     * @param array $options list of options accepted by `Table::delete()`
+     * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
     protected function _unlinkAssociated(
@@ -469,8 +469,7 @@ class HasMany extends Association
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            function ($ent) use ($primaryKey) {
-                /** @var \Cake\Datasource\EntityInterface $ent */
+            function (EntityInterface $ent) use ($primaryKey) {
                 return $ent->extract($primaryKey);
             }
         )
@@ -504,7 +503,7 @@ class HasMany extends Association
      * @param array $foreignKey array of foreign key properties
      * @param \Cake\ORM\Table $target The associated table
      * @param array $conditions The conditions that specifies what are the objects to be unlinked
-     * @param array $options list of options accepted by `Table::delete()`
+     * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
@@ -524,7 +523,7 @@ class HasMany extends Association
                 });
                 $query = $this->find()->where($conditions);
                 $ok = true;
-                foreach ($query as $assoc) {
+                foreach ($query->all() as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
 
@@ -575,7 +574,7 @@ class HasMany extends Association
     /**
      * Whether this association can be expressed directly in a query join
      *
-     * @param array $options custom options key that could alter the return value
+     * @param array<string, mixed> $options custom options key that could alter the return value
      * @return bool if the 'matching' key in $option is true then this function
      * will return true, false otherwise
      */
@@ -585,13 +584,11 @@ class HasMany extends Association
     }
 
     /**
-     * Gets the name of the field representing the foreign key to the source table.
-     *
-     * @return array<string>|string
+     * @inheritDoc
      */
-    public function getForeignKey()
+    public function getForeignKey(): array|string|false
     {
-        if ($this->_foreignKey === null) {
+        if (!isset($this->_foreignKey)) {
             $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
         }
 
@@ -601,10 +598,10 @@ class HasMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param mixed $sort A find() compatible order clause
+     * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort($sort)
+    public function setSort(ExpressionInterface|Closure|array|string $sort)
     {
         $this->_sort = $sort;
 
@@ -614,9 +611,9 @@ class HasMany extends Association
     /**
      * Gets the sort order in which target records should be returned.
      *
-     * @return mixed
+     * @return \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string|null
      */
-    public function getSort()
+    public function getSort(): ExpressionInterface|Closure|array|string|null
     {
         return $this->_sort;
     }
@@ -637,7 +634,7 @@ class HasMany extends Association
     /**
      * Parse extra options passed in the constructor.
      *
-     * @param array $options original list of options passed in constructor
+     * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
     protected function _options(array $options): void
@@ -664,7 +661,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
-            'finder' => [$this, 'find'],
+            'finder' => $this->find(...),
         ]);
 
         return $loader->buildEagerLoader($options);

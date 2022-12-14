@@ -29,16 +29,16 @@ class SqliteSchemaDialect extends SchemaDialect
      * Array containing the foreign keys constraints names
      * Necessary for composite foreign keys to be handled
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_constraintsIdMap = [];
+    protected array $_constraintsIdMap = [];
 
     /**
      * Whether there is any table in this connection to SQLite containing sequences.
      *
      * @var bool
      */
-    protected $_hasSequences;
+    protected bool $_hasSequences;
 
     /**
      * Convert a column definition to the abstract types.
@@ -48,12 +48,12 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * @param string $column The column type + length
      * @throws \Cake\Database\Exception\DatabaseException when unable to parse column type
-     * @return array Array of column information.
+     * @return array<string, mixed> Array of column information.
      */
     protected function _convertColumn(string $column): array
     {
         if ($column === '') {
-            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
+            return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
         }
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
@@ -70,7 +70,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $length = $precision = $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
-            if (strpos($length, ',') !== false) {
+            if (str_contains($length, ',')) {
                 [$length, $precision] = explode(',', $length);
             }
             $length = (int)$length;
@@ -86,20 +86,20 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         if ($col === 'bigint') {
-            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col === 'smallint') {
-            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if ($col === 'tinyint') {
-            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
+            return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'int') !== false) {
-            return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
+        if (str_contains($col, 'int')) {
+            return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'decimal') !== false) {
+        if (str_contains($col, 'decimal')) {
             return [
-                'type' => TableSchema::TYPE_DECIMAL,
+                'type' => TableSchemaInterface::TYPE_DECIMAL,
                 'length' => $length,
                 'precision' => $precision,
                 'unsigned' => $unsigned,
@@ -107,32 +107,32 @@ class SqliteSchemaDialect extends SchemaDialect
         }
         if (in_array($col, ['float', 'real', 'double'])) {
             return [
-                'type' => TableSchema::TYPE_FLOAT,
+                'type' => TableSchemaInterface::TYPE_FLOAT,
                 'length' => $length,
                 'precision' => $precision,
                 'unsigned' => $unsigned,
             ];
         }
 
-        if (strpos($col, 'boolean') !== false) {
-            return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
+        if (str_contains($col, 'boolean')) {
+            return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
         if ($col === 'char' && $length === 36) {
-            return ['type' => TableSchema::TYPE_UUID, 'length' => null];
+            return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
-            return ['type' => TableSchema::TYPE_CHAR, 'length' => $length];
+            return ['type' => TableSchemaInterface::TYPE_CHAR, 'length' => $length];
         }
-        if (strpos($col, 'char') !== false) {
-            return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
+        if (str_contains($col, 'char')) {
+            return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
         if ($col === 'binary' && $length === 16) {
-            return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
+            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
         }
         if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
-            return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
+            return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
         }
 
         $datetimeTypes = [
@@ -148,13 +148,34 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => $col, 'length' => null];
         }
 
-        return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
+        return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
     }
 
     /**
-     * @inheritDoc
+     * Generate the SQL to list the tables and views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array An array of (sql, params) to execute.
      */
     public function listTablesSql(array $config): array
+    {
+        return [
+            'SELECT name FROM sqlite_master ' .
+            'WHERE (type="table" OR type="view") ' .
+            'AND name != "sqlite_sequence" ORDER BY name',
+            [],
+        ];
+    }
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array<mixed> An array of (sql, params) to execute.
+     */
+    public function listTablesWithoutViewsSql(array $config): array
     {
         return [
             'SELECT name FROM sqlite_master WHERE type="table" ' .
@@ -220,7 +241,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param string|int|null $default The default value.
      * @return string|int|null
      */
-    protected function _defaultValue($default)
+    protected function _defaultValue(string|int|null $default): string|int|null
     {
         if ($default === 'NULL' || $default === null) {
             return null;
@@ -269,11 +290,9 @@ class SqliteSchemaDialect extends SchemaDialect
         $statement = $this->_driver->prepare($sql);
         $statement->execute();
         $columns = [];
-        /** @psalm-suppress PossiblyFalseIterator */
         foreach ($statement->fetchAll('assoc') as $column) {
             $columns[] = $column['name'];
         }
-        $statement->closeCursor();
         if ($row['unique']) {
             $schema->addConstraint($row['name'], [
                 'type' => TableSchema::CONSTRAINT_UNIQUE,
@@ -333,8 +352,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getColumn($name);
+        assert($data !== null);
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
@@ -342,34 +361,34 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $typeMap = [
-            TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
-            TableSchema::TYPE_UUID => ' CHAR(36)',
-            TableSchema::TYPE_CHAR => ' CHAR',
-            TableSchema::TYPE_TINYINTEGER => ' TINYINT',
-            TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
-            TableSchema::TYPE_INTEGER => ' INTEGER',
-            TableSchema::TYPE_BIGINTEGER => ' BIGINT',
-            TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
-            TableSchema::TYPE_FLOAT => ' FLOAT',
-            TableSchema::TYPE_DECIMAL => ' DECIMAL',
-            TableSchema::TYPE_DATE => ' DATE',
-            TableSchema::TYPE_TIME => ' TIME',
-            TableSchema::TYPE_DATETIME => ' DATETIME',
-            TableSchema::TYPE_DATETIME_FRACTIONAL => ' DATETIMEFRACTIONAL',
-            TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
-            TableSchema::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
-            TableSchema::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
-            TableSchema::TYPE_JSON => ' TEXT',
+            TableSchemaInterface::TYPE_BINARY_UUID => ' BINARY(16)',
+            TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
+            TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',
+            TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchemaInterface::TYPE_INTEGER => ' INTEGER',
+            TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
+            TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
+            TableSchemaInterface::TYPE_DECIMAL => ' DECIMAL',
+            TableSchemaInterface::TYPE_DATE => ' DATE',
+            TableSchemaInterface::TYPE_TIME => ' TIME',
+            TableSchemaInterface::TYPE_DATETIME => ' DATETIME',
+            TableSchemaInterface::TYPE_DATETIME_FRACTIONAL => ' DATETIMEFRACTIONAL',
+            TableSchemaInterface::TYPE_TIMESTAMP => ' TIMESTAMP',
+            TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
+            TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
+            TableSchemaInterface::TYPE_JSON => ' TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
         $hasUnsigned = [
-            TableSchema::TYPE_TINYINTEGER,
-            TableSchema::TYPE_SMALLINTEGER,
-            TableSchema::TYPE_INTEGER,
-            TableSchema::TYPE_BIGINTEGER,
-            TableSchema::TYPE_FLOAT,
-            TableSchema::TYPE_DECIMAL,
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+            TableSchemaInterface::TYPE_FLOAT,
+            TableSchemaInterface::TYPE_DECIMAL,
         ];
 
         if (
@@ -377,7 +396,7 @@ class SqliteSchemaDialect extends SchemaDialect
             isset($data['unsigned']) &&
             $data['unsigned'] === true
         ) {
-            if ($data['type'] !== TableSchema::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
+            if ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
                 $out .= ' UNSIGNED';
             }
         }
@@ -386,18 +405,18 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
 
-        if ($data['type'] === TableSchema::TYPE_CHAR) {
+        if ($data['type'] === TableSchemaInterface::TYPE_CHAR) {
             $out .= '(' . $data['length'] . ')';
         }
 
         if (
-            $data['type'] === TableSchema::TYPE_STRING ||
+            $data['type'] === TableSchemaInterface::TYPE_STRING ||
             (
-                $data['type'] === TableSchema::TYPE_TEXT &&
+                $data['type'] === TableSchemaInterface::TYPE_TEXT &&
                 $data['length'] === TableSchema::LENGTH_TINY
             )
         ) {
@@ -408,7 +427,7 @@ class SqliteSchemaDialect extends SchemaDialect
             }
         }
 
-        if ($data['type'] === TableSchema::TYPE_BINARY) {
+        if ($data['type'] === TableSchemaInterface::TYPE_BINARY) {
             if (isset($data['length'])) {
                 $out .= ' BLOB(' . $data['length'] . ')';
             } else {
@@ -417,9 +436,9 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $integerTypes = [
-            TableSchema::TYPE_TINYINTEGER,
-            TableSchema::TYPE_SMALLINTEGER,
-            TableSchema::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
         ];
         if (
             in_array($data['type'], $integerTypes, true) &&
@@ -429,7 +448,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= '(' . (int)$data['length'] . ')';
         }
 
-        $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
+        $hasPrecision = [TableSchemaInterface::TYPE_FLOAT, TableSchemaInterface::TYPE_DECIMAL];
         if (
             in_array($data['type'], $hasPrecision, true) &&
             (
@@ -444,16 +463,23 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchema::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
-            $out .= ' PRIMARY KEY AUTOINCREMENT';
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
+            if ($schema->getPrimaryKey() === [$name]) {
+                $out .= ' PRIMARY KEY';
+
+                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                    $out .= ' AUTOINCREMENT';
+                    unset($data['default']);
+                }
+            }
         }
 
         $timestampTypes = [
-            TableSchema::TYPE_DATETIME,
-            TableSchema::TYPE_DATETIME_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP,
-            TableSchema::TYPE_TIMESTAMP_FRACTIONAL,
-            TableSchema::TYPE_TIMESTAMP_TIMEZONE,
+            TableSchemaInterface::TYPE_DATETIME,
+            TableSchemaInterface::TYPE_DATETIME_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP,
+            TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
+            TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes, true)) {
             $out .= ' DEFAULT NULL';
@@ -477,13 +503,12 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getConstraint($name);
-        /** @psalm-suppress PossiblyNullArrayAccess */
+        assert($data !== null);
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
-            $schema->getColumn($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
+            $schema->getColumn($data['columns'][0])['type'] === TableSchemaInterface::TYPE_INTEGER
         ) {
             return '';
         }
@@ -553,8 +578,8 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        /** @var array $data */
         $data = $schema->getIndex($name);
+        assert($data !== null);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -613,14 +638,8 @@ class SqliteSchemaDialect extends SchemaDialect
             'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"'
         );
         $result->execute();
-        $this->_hasSequences = (bool)$result->rowCount();
-        $result->closeCursor();
+        $this->_hasSequences = (bool)$result->fetch();
 
         return $this->_hasSequences;
     }
 }
-
-// phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SqliteSchemaDialect', 'Cake\Database\Schema\SqliteSchema');
-// phpcs:enable

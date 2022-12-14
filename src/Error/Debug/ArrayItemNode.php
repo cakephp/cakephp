@@ -24,12 +24,12 @@ class ArrayItemNode implements NodeInterface
     /**
      * @var \Cake\Error\Debug\NodeInterface
      */
-    private $key;
+    private NodeInterface $key;
 
     /**
      * @var \Cake\Error\Debug\NodeInterface
      */
-    private $value;
+    private NodeInterface $value;
 
     /**
      * Constructor
@@ -48,7 +48,7 @@ class ArrayItemNode implements NodeInterface
      *
      * @return \Cake\Error\Debug\NodeInterface
      */
-    public function getValue()
+    public function getValue(): NodeInterface
     {
         return $this->value;
     }
@@ -58,7 +58,7 @@ class ArrayItemNode implements NodeInterface
      *
      * @return \Cake\Error\Debug\NodeInterface
      */
-    public function getKey()
+    public function getKey(): NodeInterface
     {
         return $this->key;
     }

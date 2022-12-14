@@ -24,7 +24,7 @@ use Cake\Datasource\FixtureInterface;
  */
 class OtherArticlesFixture implements FixtureInterface
 {
-    public $table = 'other_articles';
+    public string $table = 'other_articles';
 
     public function create(ConnectionInterface $connection): bool
     {
@@ -36,8 +36,9 @@ class OtherArticlesFixture implements FixtureInterface
         return true;
     }
 
-    public function insert(ConnectionInterface $connection): void
+    public function insert(ConnectionInterface $connection): bool
     {
+        return true;
     }
 
     public function createConstraints(ConnectionInterface $connection): bool

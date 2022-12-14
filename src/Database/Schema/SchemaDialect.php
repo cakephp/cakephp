@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\TypeFactory;
 use InvalidArgumentException;
@@ -26,15 +26,17 @@ use InvalidArgumentException;
  *
  * This class contains methods that are common across
  * the various SQL dialects.
+ *
+ * @method array<mixed> listTablesWithoutViewsSql(array $config) Generate the SQL to list the tables, excluding all views.
  */
 abstract class SchemaDialect
 {
     /**
      * The driver instance being used.
      *
-     * @var \Cake\Database\DriverInterface
+     * @var \Cake\Database\Driver
      */
-    protected $_driver;
+    protected Driver $_driver;
 
     /**
      * Constructor
@@ -42,9 +44,9 @@ abstract class SchemaDialect
      * This constructor will connect the driver so that methods like columnSql() and others
      * will fail when the driver has not been connected.
      *
-     * @param \Cake\Database\DriverInterface $driver The driver to use.
+     * @param \Cake\Database\Driver $driver The driver to use.
      */
-    public function __construct(DriverInterface $driver)
+    public function __construct(Driver $driver)
     {
         $driver->connect();
         $this->_driver = $driver;
@@ -99,10 +101,10 @@ abstract class SchemaDialect
      * Convert foreign key constraints references to a valid
      * stringified list
      *
-     * @param array|string $references The referenced columns of a foreign key constraint statement
+     * @param array<string>|string $references The referenced columns of a foreign key constraint statement
      * @return string
      */
-    protected function _convertConstraintColumns($references): string
+    protected function _convertConstraintColumns(array|string $references): string
     {
         if (is_string($references)) {
             return $this->_driver->quoteIdentifier($references);
@@ -183,7 +185,7 @@ abstract class SchemaDialect
     /**
      * Generate the SQL to list the tables.
      *
-     * @param array $config The connection configuration to use for
+     * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
@@ -193,7 +195,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeColumnSql(string $tableName, array $config): array;
@@ -202,7 +204,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the indexes in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeIndexSql(string $tableName, array $config): array;
@@ -211,7 +213,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe the foreign keys in a table.
      *
      * @param string $tableName The table name to get information on.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array An array of (sql, params) to execute.
      */
     abstract public function describeForeignKeySql(string $tableName, array $config): array;
@@ -220,7 +222,7 @@ abstract class SchemaDialect
      * Generate the SQL to describe table options
      *
      * @param string $tableName Table name.
-     * @param array $config The connection configuration.
+     * @param array<string, mixed> $config The connection configuration.
      * @return array SQL statements to get options for a table.
      */
     public function describeOptionsSql(string $tableName, array $config): array
@@ -335,8 +337,3 @@ abstract class SchemaDialect
      */
     abstract public function truncateTableSql(TableSchema $schema): array;
 }
-
-// phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SchemaDialect', 'Cake\Database\Schema\BaseSchema');
-// phpcs:enable

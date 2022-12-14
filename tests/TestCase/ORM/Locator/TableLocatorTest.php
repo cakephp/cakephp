@@ -16,12 +16,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Core\Exception\CakeException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use ReflectionProperty;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\MyUsersTable;
@@ -102,8 +106,8 @@ class TableLocatorTest extends TestCase
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('You cannot configure `Users`, it has already been constructed.');
 
         $this->_locator->setConfig('Users', ['table' => 'my_users']);
     }
@@ -177,6 +181,10 @@ class TableLocatorTest extends TestCase
 
         $result = $this->_locator->get(ArticlesTable::class);
         $this->assertSame('Articles', $result->getAlias());
+        $this->assertSame(ArticlesTable::class, $result->getRegistryAlias());
+
+        $result2 = $this->_locator->get($result->getRegistryAlias());
+        $this->assertSame($result, $result2);
     }
 
     /**
@@ -276,7 +284,7 @@ class TableLocatorTest extends TestCase
         $users = $this->_locator->get('Users');
         $this->assertNotEmpty($users);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it already exists in the registry.');
 
         $this->_locator->get('Users', ['table' => 'my_users']);
@@ -299,13 +307,9 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithConventions(): void
     {
-        $table = $this->_locator->get('articles');
-        $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
         $table = $this->_locator->get('Articles');
         $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
 
-        $table = $this->_locator->get('authors');
-        $this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
         $table = $this->_locator->get('Authors');
         $this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
     }
@@ -659,5 +663,35 @@ class TableLocatorTest extends TestCase
 
         $table = $this->_locator->get('FooBar');
         $this->assertInstanceOf(ArticlesTable::class, $table);
+    }
+
+    /**
+     * testInstanceSetButNotOptions
+     *
+     * Tests that mock model will not throw an exception if model fetched with options.
+     */
+    public function testInstanceSetButNotOptions(): void
+    {
+        $this->setTableLocator($this->_locator);
+        $mock = $this->getMockForModel('Articles', ['findPublished']);
+        $table = $this->_locator->get('Articles', ['className' => ArticlesTable::class]);
+
+        $this->assertSame($table, $mock);
+    }
+
+    public function testQueryFactoryInstance()
+    {
+        $articles = $this->_locator->get(ArticlesTable::class);
+        $prop1 = new ReflectionProperty($articles, 'queryFactory');
+
+        $users = $this->_locator->get(MyUsersTable::class);
+        $prop2 = new ReflectionProperty($users, 'queryFactory');
+
+        $this->assertInstanceOf(QueryFactory::class, $prop1->getValue($articles));
+        $this->assertSame($prop1->getValue($articles), $prop2->getValue($users));
+
+        $addresses = $this->_locator->get(AddressesTable::class, ['queryFactory' => new QueryFactory()]);
+        $prop3 = new ReflectionProperty($addresses, 'queryFactory');
+        $this->assertNotSame($prop1->getValue($articles), $prop3->getValue($addresses));
     }
 }

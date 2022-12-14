@@ -2,21 +2,22 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         4.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Middleware;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Session;
 use Cake\Utility\Hash;
@@ -25,7 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 /**
  * Provides CSRF protection via session based tokens.
@@ -43,7 +43,7 @@ use RuntimeException;
  *
  * If you use this middleware *do not* also use CsrfProtectionMiddleware.
  *
- * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#sychronizer-token-pattern
+ * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
  */
 class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 {
@@ -54,15 +54,15 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_config = [
+    protected array $_config = [
         'key' => 'csrfToken',
         'field' => '_csrfToken',
     ];
 
     /**
-     * Callback for deciding whether or not to skip the token check for particular request.
+     * Callback for deciding whether to skip the token check for particular request.
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *
@@ -78,7 +78,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array $config Config options. See $_config for valid keys.
+     * @param array<string, mixed> $config Config options. See $_config for valid keys.
      */
     public function __construct(array $config = [])
     {
@@ -110,7 +110,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 
         $session = $request->getAttribute('session');
         if (!$session || !($session instanceof Session)) {
-            throw new RuntimeException('You must have a `session` attribute to use session based CSRF tokens');
+            throw new CakeException('You must have a `session` attribute to use session based CSRF tokens');
         }
 
         $token = $session->read($this->_config['key']);

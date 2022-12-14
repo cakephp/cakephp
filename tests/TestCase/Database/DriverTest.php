@@ -17,15 +17,24 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
-use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Statement\Statement;
 use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use DateTime;
+use Exception;
 use PDO;
+use PDOException;
 use PDOStatement;
+use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\StubDriver;
 
 /**
  * Tests Driver class
@@ -44,7 +53,26 @@ class DriverTest extends TestCase
     {
         parent::setUp();
 
-        $this->driver = $this->getMockForAbstractClass(Driver::class);
+        Log::setConfig('queries', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+
+        $this->driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['createPdo', 'prepare']
+        );
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        Log::drop('queries');
     }
 
     /**
@@ -56,7 +84,7 @@ class DriverTest extends TestCase
         $arg = ['login' => 'Bear'];
         try {
             $this->getMockForAbstractClass(Driver::class, [$arg]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
                 $e->getMessage()
@@ -78,37 +106,6 @@ class DriverTest extends TestCase
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
 
         $this->assertFalse($driver->isAutoQuotingEnabled());
-    }
-
-    /**
-     * Test supportsSavePoints().
-     */
-    public function testSupportsSavePoints(): void
-    {
-        $result = $this->driver->supportsSavePoints();
-        $this->assertTrue($result);
-    }
-
-    /**
-     * Test supportsQuoting().
-     */
-    public function testSupportsQuoting(): void
-    {
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttribute'])
-            ->getMock();
-
-        $connection
-            ->expects($this->once())
-            ->method('getAttribute')
-            ->with(PDO::ATTR_DRIVER_NAME)
-            ->willReturn('mysql');
-
-        $this->driver->setConnection($connection);
-
-        $result = $this->driver->supportsQuoting();
-        $this->assertTrue($result);
     }
 
     /**
@@ -143,7 +140,10 @@ class DriverTest extends TestCase
             ->with($value, PDO::PARAM_STR)
             ->will($this->returnValue('string'));
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($connection);
+
         $this->driver->schemaValue($value);
     }
 
@@ -152,7 +152,7 @@ class DriverTest extends TestCase
      */
     public function testLastInsertId(): void
     {
-        $connection = $this->getMockBuilder(Mysql::class)
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['lastInsertId'])
             ->getMock();
@@ -162,7 +162,10 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($connection);
+
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -183,7 +186,12 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(new PDOStatement());
 
-        $this->driver->setConnection($connection);
+        $this->driver->expects($this->any())
+            ->method('createPdo')
+            ->willReturn($connection);
+
+        $this->driver->connect();
+
         $this->assertTrue($this->driver->isConnected());
     }
 
@@ -216,7 +224,7 @@ class DriverTest extends TestCase
             ->willReturn('1');
 
         $driver = $this->getMockBuilder(Driver::class)
-            ->onlyMethods(['newCompiler', 'queryTranslator'])
+            ->onlyMethods(['newCompiler', 'transformQuery'])
             ->getMockForAbstractClass();
 
         $driver
@@ -224,23 +232,19 @@ class DriverTest extends TestCase
             ->method('newCompiler')
             ->willReturn($compiler);
 
-        $driver
-            ->expects($this->once())
-            ->method('queryTranslator')
-            ->willReturn(function ($query) {
-                return $query;
-            });
-
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();
         $query->method('type')->will($this->returnValue('select'));
 
+        $driver
+            ->expects($this->once())
+            ->method('transformQuery')
+            ->willReturn($query);
+
         $result = $driver->compileQuery($query, new ValueBinder());
 
-        $this->assertIsArray($result);
-        $this->assertSame($query, $result[0]);
-        $this->assertSame('1', $result[1]);
+        $this->assertSame('1', $result);
     }
 
     /**
@@ -262,16 +266,28 @@ class DriverTest extends TestCase
         $this->assertSame($tableName, $actual->name());
     }
 
+    public function testConnectRetry(): void
+    {
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
+
+        $driver = new RetryDriver();
+
+        try {
+            $driver->connect();
+        } catch (MissingConnectionException) {
+        }
+
+        $this->assertSame(4, $driver->getConnectRetries());
+    }
+
     /**
      * Test __destruct().
      */
     public function testDestructor(): void
     {
-        $this->driver->setConnection(true);
         $this->driver->__destruct();
 
-        $this->expectException(MissingConnectionException::class);
-        $this->driver->getConnection();
+        $this->assertFalse($this->driver->__debugInfo()['connected']);
     }
 
     /**
@@ -289,5 +305,187 @@ class DriverTest extends TestCase
             ['0', '0'],
             ['42', '42'],
         ];
+    }
+
+    /**
+     * Tests that queries are logged when executed without params
+     */
+    public function testExecuteNoParams(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo'));
+        $statement->method('rowCount')->will($this->returnValue(3));
+        $statement->method('execute')->will($this->returnValue(true));
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+
+        $this->driver->execute('SELECT bar FROM foo');
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+    }
+
+    /**
+     * Tests that queries are logged when executed with bound params
+     */
+    public function testExecuteWithBinding(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->method('rowCount')->will($this->returnValue(3));
+        $statement->method('execute')->will($this->returnValue(true));
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo WHERE a=:a AND b=:b'));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        $this->driver->execute(
+            'SELECT bar FROM foo WHERE a=:a AND b=:b',
+            [
+                'a' => 1,
+                'b' => new DateTime('2013-01-01'),
+            ],
+            ['b' => 'date']
+        );
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+    }
+
+    /**
+     * Tests that queries are logged despite database errors
+     */
+    public function testExecuteWithError(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->will($this->returnValue('SELECT bar FROM foo'));
+        $statement->method('rowCount')->will($this->returnValue(0));
+        $statement->method('execute')->will($this->throwException(new PDOException()));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT foo FROM bar');
+        } catch (PDOException $e) {
+        }
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
+    }
+
+    public function testGetLoggerDefault(): void
+    {
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['createPdo', 'prepare']
+        );
+        $this->assertNull($driver->getLogger());
+
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [['log' => true]],
+            '',
+            true,
+            true,
+            true,
+            ['createPdo']
+        );
+
+        $logger = $driver->getLogger();
+        $this->assertInstanceOf(QueryLogger::class, $logger);
+    }
+
+    public function testSetLogger(): void
+    {
+        $logger = new QueryLogger();
+        $this->driver->setLogger($logger);
+        $this->assertSame($logger, $this->driver->getLogger());
+    }
+
+    public function testLogTransaction(): void
+    {
+        $pdo = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['beginTransaction', 'commit', 'rollback', 'inTransaction'])
+            ->getMock();
+        $pdo
+            ->expects($this->any())
+            ->method('beginTransaction')
+            ->willReturn(true);
+        $pdo
+            ->expects($this->any())
+            ->method('commit')
+            ->willReturn(true);
+        $pdo
+            ->expects($this->any())
+            ->method('rollBack')
+            ->willReturn(true);
+        $pdo->expects($this->exactly(5))
+            ->method('inTransaction')
+            ->will($this->onConsecutiveCalls(
+                false,
+                true,
+                true,
+                false,
+                true,
+            ));
+
+        $driver = $this->getMockForAbstractClass(
+            StubDriver::class,
+            [['log' => true]],
+            '',
+            true,
+            true,
+            true,
+            ['getPdo']
+        );
+
+        $driver->expects($this->any())
+            ->method('getPdo')
+            ->willReturn($pdo);
+
+        $driver->beginTransaction();
+        $driver->beginTransaction(); //This one will not be logged
+        $driver->rollbackTransaction();
+
+        $driver->beginTransaction();
+        $driver->commitTransaction();
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(4, $messages);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[2]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[3]);
     }
 }

@@ -31,14 +31,14 @@ class Runner implements RequestHandlerInterface
      *
      * @var \Cake\Http\MiddlewareQueue
      */
-    protected $queue;
+    protected MiddlewareQueue $queue;
 
     /**
      * Fallback handler to use if middleware queue does not generate response.
      *
      * @var \Psr\Http\Server\RequestHandlerInterface|null
      */
-    protected $fallbackHandler;
+    protected ?RequestHandlerInterface $fallbackHandler = null;
 
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
@@ -77,12 +77,10 @@ class Runner implements RequestHandlerInterface
             return $this->fallbackHandler->handle($request);
         }
 
-        $response = new Response([
+        return new Response([
             'body' => 'Middleware queue was exhausted without returning a response '
                 . 'and no fallback request handler was set for Runner',
             'status' => 500,
         ]);
-
-        return $response;
     }
 }

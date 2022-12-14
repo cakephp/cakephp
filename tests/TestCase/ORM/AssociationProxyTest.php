@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Exception\DatabaseException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,9 +28,9 @@ class AssociationProxyTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array
+     * @var array<string>
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'core.Articles', 'core.Authors', 'core.Comments',
     ];
 
@@ -53,7 +54,7 @@ class AssociationProxyTest extends TestCase
      */
     public function testGetBadAssociation(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
@@ -67,7 +68,7 @@ class AssociationProxyTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
         $table->hasMany('Articles', [
             'foreignKey' => 'author_id',
-            'conditions' => '',
+            'conditions' => [],
         ]);
         $query = $table->Articles->find('list', ['limit' => 2]);
         $this->assertCount(2, $query->all());

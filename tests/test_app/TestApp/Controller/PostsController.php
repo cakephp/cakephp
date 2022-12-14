@@ -18,6 +18,9 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use Cake\View\JsonView;
+use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * PostsController class
@@ -30,7 +33,6 @@ class PostsController extends AppController
     public function initialize(): void
     {
         $this->loadComponent('Flash');
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('FormProtection');
 
         $this->middleware(function ($request, $handler) {
@@ -61,6 +63,11 @@ class PostsController extends AppController
         if ($this->request->getQuery('clear')) {
             $this->set('flash', $this->request->getSession()->consume('Flash'));
         }
+    }
+
+    public function viewClasses(): array
+    {
+        return [JsonView::class];
     }
 
     /**
@@ -137,6 +144,14 @@ class PostsController extends AppController
      */
     public function file()
     {
+        $filename = $this->request->getQuery('file');
+        if ($filename) {
+            $path = TMP . $filename;
+
+            return $this->response->withFile($path, ['download' => true])
+                ->withHeader('Content-Disposition', "attachment;filename=*UTF-8''{$filename}");
+        }
+
         return $this->response->withFile(__FILE__);
     }
 
@@ -155,7 +170,7 @@ class PostsController extends AppController
     {
         $data = [
             'host' => $this->request->host(),
-            'isSsl' => $this->request->is('ssl'),
+            'isSsl' => $this->request->is('https'),
         ];
 
         return $this->getResponse()->withStringBody(json_encode($data));
@@ -198,6 +213,15 @@ class PostsController extends AppController
     public function throw_exception()
     {
         $this->Flash->error('Error 1');
-        throw new \OutOfBoundsException('oh no!');
+        throw new OutOfBoundsException('oh no!');
+    }
+
+    /**
+     * @return \Cake\Http\Response
+     */
+    public function throw_chained()
+    {
+        $inner = new RuntimeException('inner badness');
+        throw new OutOfBoundsException('oh no!', 1, $inner);
     }
 }

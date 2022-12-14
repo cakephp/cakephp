@@ -16,14 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\Command;
+use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
-use Cake\Filesystem\Filesystem;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
+use SplFileInfo;
 
 /**
  * PluginAssetsCommandsTest class
@@ -38,7 +39,7 @@ class PluginAssetsCommandsTest extends TestCase
     protected $wwwRoot;
 
     /**
-     * @var \Cake\Filesystem\Filesystem
+     * @var \Cake\Utility\Filesystem
      */
     protected $fs;
 
@@ -56,7 +57,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->fs->deleteDir($this->wwwRoot);
         $this->fs->copyDir(WWW_ROOT, $this->wwwRoot);
 
-        $this->useCommandRunner();
         $this->setAppNamespace();
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', []);
     }
@@ -78,7 +78,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $path = $this->wwwRoot . 'test_plugin';
         $this->assertFileExists($path . DS . 'root.js');
@@ -96,7 +96,7 @@ class PluginAssetsCommandsTest extends TestCase
         mkdir($this->wwwRoot . 'company');
 
         $this->exec('plugin assets symlink');
-        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
@@ -110,13 +110,13 @@ class PluginAssetsCommandsTest extends TestCase
     {
         $this->loadPlugins(['TestTheme']);
 
-        $output = new ConsoleOutput();
+        $output = new StubConsoleOutput();
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->setConstructorArgs([$output, $output, null, null])
             ->addMethods(['in'])
             ->getMock();
         $parser = new ConsoleOptionParser('cake example');
-        $parser->addArgument('name', ['optional' => true]);
+        $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
         $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
@@ -152,7 +152,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
-        $link = new \SplFileInfo($path);
+        $link = new SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
@@ -190,7 +190,7 @@ class PluginAssetsCommandsTest extends TestCase
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
 
         $path = $this->wwwRoot . 'test_plugin';
-        $dir = new \SplFileInfo($path);
+        $dir = new SplFileInfo($path);
         $this->assertTrue($dir->isDir());
         $this->assertFileExists($path . DS . 'root.js');
 

@@ -58,9 +58,9 @@ class FormProtectionComponent extends Component
      *   failure. Must be a valid Closure. Unset by default in which case
      *   exception is thrown on validation failure.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'validate' => true,
         'unlockedFields' => [],
         'unlockedActions' => [],
@@ -118,7 +118,7 @@ class FormProtectionComponent extends Component
     /**
      * Events supported by this component.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
@@ -155,7 +155,7 @@ class FormProtectionComponent extends Component
     /**
      * Execute callback.
      *
-     * @param \Closure $callback A valid callable
+     * @param \Closure $callback Callback
      * @param \Cake\Http\Exception\BadRequestException $exception Exception instance.
      * @return \Cake\Http\Response|null
      */

@@ -30,9 +30,9 @@ class UrlHelper extends Helper
     /**
      * Default config for this class
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'assetUrlClassName' => Asset::class,
     ];
 
@@ -42,12 +42,12 @@ class UrlHelper extends Helper
      * @var string
      * @psalm-var class-string<\Cake\Routing\Asset>
      */
-    protected $_assetUrlClassName;
+    protected string $_assetUrlClassName;
 
     /**
      * Check proper configuration
      *
-     * @param array $config The configuration settings provided to this helper.
+     * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
     public function initialize(array $config): void
@@ -58,7 +58,7 @@ class UrlHelper extends Helper
         /** @psalm-var class-string<\Cake\Routing\Asset>|null $engineClass */
         $engineClass = App::className($engineClassConfig, 'Routing');
         if ($engineClass === null) {
-            throw new CakeException(sprintf('Class for %s could not be found', $engineClassConfig));
+            throw new CakeException(sprintf('Class for `%s` could not be found.', $engineClassConfig));
         }
 
         $this->_assetUrlClassName = $engineClass;
@@ -76,10 +76,10 @@ class UrlHelper extends Helper
      * @param array|string|null $url Either a relative string URL like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Full translated URL with base path.
      */
-    public function build($url = null, array $options = []): string
+    public function build(array|string|null $url = null, array $options = []): string
     {
         $defaults = [
             'fullBase' => false,
@@ -89,8 +89,7 @@ class UrlHelper extends Helper
 
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
-            /** @var string $url */
-            $url = h($url);
+            $url = (string)h($url);
         }
 
         return $url;
@@ -108,7 +107,7 @@ class UrlHelper extends Helper
      * @param string $path Cake-relative route path.
      * @param array $params An array specifying any additional parameters.
      *   Can be also any special parameters supported by `Router::url()`.
-     * @param array $options Array of options.
+     * @param array<string, mixed> $options Array of options.
      * @return string Full translated URL with base path.
      * @see \Cake\Routing\Router::pathUrl()
      */
@@ -124,7 +123,7 @@ class UrlHelper extends Helper
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
@@ -148,7 +147,7 @@ class UrlHelper extends Helper
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -173,7 +172,7 @@ class UrlHelper extends Helper
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
      * @param string $path Path string.
-     * @param array $options Options array. Possible keys:
+     * @param array<string, mixed> $options Options array. Possible keys:
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
@@ -210,7 +209,7 @@ class UrlHelper extends Helper
      *    enable timestamping regardless of debug value.
      *
      * @param string $path Path string or URL array
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return string Generated URL
      */
     public function assetUrl(string $path, array $options = []): string
@@ -229,7 +228,7 @@ class UrlHelper extends Helper
      * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp(string $path, $timestamp = null): string
+    public function assetTimestamp(string $path, string|bool|null $timestamp = null): string
     {
         return h($this->_assetUrlClassName::assetTimestamp($path, $timestamp));
     }
@@ -250,7 +249,7 @@ class UrlHelper extends Helper
     /**
      * Event listeners.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {

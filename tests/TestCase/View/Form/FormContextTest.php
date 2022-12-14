@@ -144,6 +144,18 @@ class FormContextTest extends TestCase
         $this->assertTrue($context->isRequired('email'));
         $this->assertNull($context->isRequired('body'));
         $this->assertNull($context->isRequired('Prefix.body'));
+
+        // Non-default validator name.
+        $form = new Form();
+        $form->setValidator('custom', new Validator());
+        $form->getValidator('custom')
+            ->notEmptyString('title');
+        $form->validate([
+            'title' => '',
+        ], 'custom');
+
+        $context = new FormContext(['entity' => $form, 'validator' => 'custom']);
+        $this->assertTrue($context->isRequired('title'));
     }
 
     /**

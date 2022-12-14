@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\I18n;
 use Cake\I18n\I18n;
 use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
+use NumberFormatter;
 
 /**
  * NumberTest class
@@ -33,20 +34,12 @@ class NumberTest extends TestCase
     protected $Number;
 
     /**
-     * Backup the locale property
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->Number = new Number();
-        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -56,7 +49,7 @@ class NumberTest extends TestCase
     {
         parent::tearDown();
         unset($this->Number);
-        I18n::setLocale($this->locale);
+        I18n::setLocale(I18n::getDefaultLocale());
         Number::setDefaultCurrency();
         Number::setDefaultCurrencyFormat();
     }
@@ -304,25 +297,6 @@ class NumberTest extends TestCase
     }
 
     /**
-     * Test default currency
-     *
-     * @group deprecated
-     */
-    public function testDefaultCurrency(): void
-    {
-        $this->deprecated(function (): void {
-            $this->assertSame('USD', $this->Number->defaultCurrency());
-
-            $this->Number->defaultCurrency(false);
-            I18n::setLocale('es_ES');
-            $this->assertSame('EUR', $this->Number->defaultCurrency());
-
-            $this->Number->defaultCurrency('JPY');
-            $this->assertSame('JPY', $this->Number->defaultCurrency());
-        });
-    }
-
-    /**
      * Test get default currency
      */
     public function testGetDefaultCurrency(): void
@@ -496,6 +470,10 @@ class NumberTest extends TestCase
         $result = $this->Number->toPercentage(0.13, 0, ['locale' => 'fi_FI', 'multiply' => true]);
         $expected = '13 %';
         $this->assertSame($expected, $result);
+
+        $result = $this->Number->toPercentage('0.13', 0, ['locale' => 'fi_FI', 'multiply' => true]);
+        $expected = '13 %';
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -585,7 +563,7 @@ class NumberTest extends TestCase
         $result = $this->Number->currency(150000, 'USD', ['locale' => 'en_US']);
         $this->assertSame('$150,000.00', $result);
 
-        Number::config('en_US', \NumberFormatter::CURRENCY, [
+        Number::config('en_US', NumberFormatter::CURRENCY, [
             'pattern' => '¤ #,##,##0',
         ]);
 
