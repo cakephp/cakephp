@@ -109,7 +109,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Marshals request data into PHP floats.
+     * Marshals request data into PHP integers.
      *
      * @param mixed $value The value to convert.
      * @return int|null Converted value.
