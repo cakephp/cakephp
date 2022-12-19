@@ -132,7 +132,7 @@ class ExceptionTrap
         }
 
         if (is_string($class)) {
-            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
+            /** @psalm-suppress ArgumentTypeCoercion */
             if (!(method_exists($class, 'render') && method_exists($class, 'write'))) {
                 throw new InvalidArgumentException(
                     "Cannot use {$class} as an `exceptionRenderer`. " .
@@ -140,6 +140,7 @@ class ExceptionTrap
                 );
             }
 
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             return new $class($exception, $request, $this->_config);
         }
 
