@@ -21,6 +21,7 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\Uri;
@@ -225,5 +226,31 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
         $this->assertSame('skipped', (string)$result->getBody());
+    }
+
+    /**
+     * Test that setting trustedProxies works correctly
+     */
+    public function testTrustedProxies(): void
+    {
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/webroot',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_URI' => '/posts/add',
+            'HTTP_X_FORWARDED_PROTO' => 'https',
+        ];
+        $request = ServerRequestFactory::fromGlobals($server);
+
+        $handler = new TestRequestHandler(function () {
+            return new Response();
+        });
+
+        $middleware = new HttpsEnforcerMiddleware();
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+
+        $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => []]);
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
     }
 }
