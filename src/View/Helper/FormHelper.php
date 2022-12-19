@@ -539,7 +539,6 @@ class FormHelper extends Helper
         return $this->hidden('_csrfToken', [
             'value' => $csrfToken,
             'secure' => static::SECURE_SKIP,
-            'autocomplete' => 'off',
         ]);
     }
 
@@ -608,7 +607,6 @@ class FormHelper extends Helper
             unset($secureAttributes['debugSecurity']);
         }
         $secureAttributes['secure'] = static::SECURE_SKIP;
-        $secureAttributes['autocomplete'] = 'off';
 
         $tokenData = $this->formProtector->buildTokenData(
             $this->_lastAction,
