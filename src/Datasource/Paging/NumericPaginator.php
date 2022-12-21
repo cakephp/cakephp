@@ -604,6 +604,13 @@ class NumericPaginator implements PaginatorInterface
     {
         $result = [];
         foreach ($fields as $field => $sort) {
+            if (is_int($field)) {
+                throw new CakeException(sprintf(
+                    'The `order` config must be an associative array. Found invalid value with numeric key: `%s`',
+                    $sort
+                ));
+            }
+
             if (strpos($field, '.') === false) {
                 $result[$field] = $sort;
                 continue;
