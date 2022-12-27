@@ -22,6 +22,9 @@ use Exception;
  */
 class ErrorTrap
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Error\ErrorTrap>
+     */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
 

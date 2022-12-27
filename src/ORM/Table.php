@@ -153,6 +153,9 @@ use InvalidArgumentException;
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table>
+     */
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;

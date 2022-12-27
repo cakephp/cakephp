@@ -36,6 +36,9 @@ use LogicException;
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table>
+     */
     use EventDispatcherTrait;
 
     /**

@@ -29,6 +29,9 @@ use Throwable;
  */
 class ExceptionTrap
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Error\ExceptionTrap>
+     */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
 

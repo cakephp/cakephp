@@ -31,6 +31,9 @@ use Cake\View\Exception\MissingHelperException;
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     */
     use EventDispatcherTrait;
 
     /**

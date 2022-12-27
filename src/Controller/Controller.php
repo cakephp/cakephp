@@ -93,6 +93,9 @@ use ReflectionMethod;
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
+     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;

@@ -28,6 +28,7 @@ use Cake\Routing\RouteBuilder;
  * the application's bootstrap and plugin bootstrap.
  *
  * @template TSubject
+ * @extends \Cake\Event\EventDispatcherInterface<\Cake\Http\BaseApplication>
  */
 interface PluginApplicationInterface extends EventDispatcherInterface
 {

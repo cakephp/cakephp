@@ -33,6 +33,9 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Server implements EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Core\HttpApplicationInterface>
+     */
     use EventDispatcherTrait;
 
     /**

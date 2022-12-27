@@ -40,6 +40,9 @@ use Stringable;
  */
 abstract class Cell implements EventDispatcherInterface, Stringable
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ViewVarsTrait;

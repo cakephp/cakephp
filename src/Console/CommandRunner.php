@@ -38,6 +38,9 @@ use Cake\Utility\Inflector;
  */
 class CommandRunner implements EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Core\ConsoleApplicationInterface>
+     */
     use EventDispatcherTrait;
 
     /**

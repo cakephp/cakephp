@@ -77,6 +77,9 @@ class View implements EventDispatcherInterface
     use CellTrait {
         cell as public;
     }
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     */
     use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as protected;

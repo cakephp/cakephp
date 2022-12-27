@@ -42,6 +42,9 @@ use Cake\Validation\ValidatorAwareTrait;
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Form\Form>
+     */
     use EventDispatcherTrait;
     use ValidatorAwareTrait;
 
