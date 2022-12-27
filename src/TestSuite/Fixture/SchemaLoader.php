@@ -116,8 +116,8 @@ class SchemaLoader
          */
         $connection = ConnectionManager::get($connectionName);
         $connection->disableConstraints(function (Connection $connection) use ($tables): void {
-            foreach ($tables as $table) {
-                $schema = new TableSchema($table['table'], $table['columns']);
+            foreach ($tables as $tableName => $table) {
+                $schema = new TableSchema($table['table'] ?? $tableName, $table['columns']);
                 if (isset($table['indexes'])) {
                     foreach ($table['indexes'] as $key => $index) {
                         $schema->addIndex($key, $index);
