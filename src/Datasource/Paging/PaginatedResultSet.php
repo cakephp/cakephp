@@ -57,8 +57,9 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     }
 
     /**
-     * @inheritDoc
-     * @return ResultSetInterface<T> The paginated items result set.
+     * Get paginated items.
+     *
+     * @return \Cake\Datasource\ResultSetInterface<T> The paginated items result set.
      */
     public function items(): ResultSetInterface
     {

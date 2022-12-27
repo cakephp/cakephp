@@ -226,7 +226,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface<Cake\Datasource\EntityInterface|mixed>
+     * @return \Cake\Datasource\ResultSetInterface<(\Cake\ORM\Query\Cake\Datasource\EntityInterface|mixed)>
      */
     public function getIterator(): ResultSetInterface
     {
@@ -1742,7 +1742,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * Part of JsonSerializable interface.
      *
-     * @return \Cake\Datasource\ResultSetInterface<Cake\Datasource\EntityInterface|mixed> The data to convert to JSON.
+     * @return \Cake\Datasource\ResultSetInterface<(\Cake\ORM\Query\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
      */
     public function jsonSerialize(): ResultSetInterface
     {
