@@ -120,7 +120,8 @@ class SchemaLoader
                 $name = $table['table'] ?? $tableName;
                 if (!is_string($name)) {
                     throw new InvalidArgumentException(
-                        sprintf('`%s` is not a valid table name. Either use a string key for the table definition ( `'articles' => [...]`) or define the `table` key in the table definition.', $name)
+                        sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
+                            . '(`\'articles\' => [...]`) or define the `table` key in the table definition.', $name)
                     );
                 }
                 $schema = new TableSchema($name, $table['columns']);
