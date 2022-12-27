@@ -44,7 +44,8 @@ use Psr\SimpleCache\CacheInterface;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @extends \Cake\Database\Query\SelectQuery<\Cake\Datasource\EntityInterface|mixed>
+ * @template TSubject of \Cake\Datasource\EntityInterface|array
+ * @extends \Cake\Database\Query\SelectQuery<TSubject>
  */
 class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterface
 {
@@ -226,7 +227,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface<(\Cake\ORM\Query\Cake\Datasource\EntityInterface|mixed)>
+     * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|array>
      */
     public function getIterator(): ResultSetInterface
     {
@@ -1742,7 +1743,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * Part of JsonSerializable interface.
      *
-     * @return \Cake\Datasource\ResultSetInterface<(\Cake\ORM\Query\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
+     * @return \Cake\Datasource\ResultSetInterface<(\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
      */
     public function jsonSerialize(): ResultSetInterface
     {
