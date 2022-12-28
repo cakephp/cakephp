@@ -96,7 +96,7 @@ class SchemaLoader
      *
      * @param string $file Schema file
      * @param string $connectionName Connection name
-     * @throws \Exception
+     * @throws \InvalidArgumentException For missing table name(s).
      * @return void
      */
     public function loadInternalFile(string $file, string $connectionName = 'test'): void
