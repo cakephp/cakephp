@@ -9,8 +9,7 @@ declare(strict_types=1);
  * features of the Database package.
  */
 return [
-    [
-        'table' => 'binary_uuid_items',
+    'binary_uuid_items' => [
         'columns' => [
             'id' => [
                 'type' => 'binaryuuid',
@@ -33,8 +32,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'unique_authors',
+    'unique_authors' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -64,8 +62,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'articles_more_translations',
+    'articles_more_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -94,8 +91,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'users',
+    'users' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -126,8 +122,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'featured_tags',
+    'featured_tags' => [
         'columns' => [
             'tag_id' => [
                 'type' => 'integer',
@@ -147,8 +142,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'column_schema_aware_type_values',
+    'column_schema_aware_type_values' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -168,8 +162,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'sections_members',
+    'sections_members' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -190,8 +183,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'site_articles_tags',
+    'site_articles_tags' => [
         'columns' => [
             'article_id' => [
                 'type' => 'integer',
@@ -217,8 +209,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'authors_translations',
+    'authors_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -242,8 +233,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'binary_uuid_items_binary_uuid_tags',
+    'binary_uuid_items_binary_uuid_tags' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -273,8 +263,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'auth_users',
+    'auth_users' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -299,8 +288,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'counter_cache_categories',
+    'counter_cache_categories' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -324,8 +312,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'date_keys',
+    'date_keys' => [
         'columns' => [
             'id' => [
                 'type' => 'date',
@@ -344,8 +331,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'counter_cache_posts',
+    'counter_cache_posts' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -377,8 +363,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'test_plugin_comments',
+    'test_plugin_comments' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -409,8 +394,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'members',
+    'members' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -428,8 +412,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'uuid_items',
+    'uuid_items' => [
         'columns' => [
             'id' => [
                 'type' => 'uuid',
@@ -452,8 +435,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'special_tags_translations',
+    'special_tags_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -476,8 +458,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'articles',
+    'articles' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -506,8 +487,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'articles_translations',
+    'articles_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -532,8 +512,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'products',
+    'products' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -560,8 +539,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'orders',
+    'orders' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -609,8 +587,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'comments',
+    'comments' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -647,8 +624,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'datatypes',
+    'datatypes' => [
         'columns' => [
             'id' => [
                 'type' => 'biginteger',
@@ -687,8 +663,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'authors',
+    'authors' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -707,8 +682,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'counter_cache_comments',
+    'counter_cache_comments' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -731,8 +705,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'special_tags',
+    'special_tags' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -777,8 +750,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'ordered_uuid_items',
+    'ordered_uuid_items' => [
         'columns' => [
             'id' => [
                 'type' => 'string',
@@ -802,8 +774,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'counter_cache_users',
+    'counter_cache_users' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -835,8 +806,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'tags',
+    'tags' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -865,8 +835,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'articles_tags',
+    'articles_tags' => [
         'columns' => [
             'article_id' => [
                 'type' => 'integer',
@@ -899,8 +868,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'articles_tags_binding_keys',
+    'articles_tags_binding_keys' => [
         'columns' => [
             'article_id' => [
                 'type' => 'integer',
@@ -921,8 +889,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'composite_key_articles',
+    'composite_key_articles' => [
         'columns' => [
             'author_id' => [
                 'type' => 'integer',
@@ -946,8 +913,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'composite_key_articles_tags',
+    'composite_key_articles_tags' => [
         'columns' => [
             'author_id' => [
                 'type' => 'integer',
@@ -973,8 +939,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'profiles',
+    'profiles' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1008,8 +973,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'sessions',
+    'sessions' => [
         'columns' => [
             'id' => [
                 'type' => 'string',
@@ -1035,8 +999,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'comments_translations',
+    'comments_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1057,8 +1020,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'menu_link_trees',
+    'menu_link_trees' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1092,8 +1054,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'polymorphic_tagged',
+    'polymorphic_tagged' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1121,8 +1082,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'things',
+    'things' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1137,8 +1097,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'site_articles',
+    'site_articles' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1167,8 +1126,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'sections_translations',
+    'sections_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1191,8 +1149,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'authors_tags',
+    'authors_tags' => [
         'columns' => [
             'author_id' => [
                 'type' => 'integer',
@@ -1220,8 +1177,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'site_authors',
+    'site_authors' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1245,8 +1201,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'i18n',
+    'i18n' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1281,8 +1236,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'number_trees',
+    'number_trees' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1311,8 +1265,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'number_trees_articles',
+    'number_trees_articles' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1341,8 +1294,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'composite_increments',
+    'composite_increments' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1368,8 +1320,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'tags_shadow_translations',
+    'tags_shadow_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1393,8 +1344,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'posts',
+    'posts' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1423,8 +1373,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'binary_uuid_tags',
+    'binary_uuid_tags' => [
         'columns' => [
             'id' => [
                 'type' => 'binaryuuid',
@@ -1443,8 +1392,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'tags_translations',
+    'tags_translations' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1469,8 +1417,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'cake_sessions',
+    'cake_sessions' => [
         'columns' => [
             'id' => [
                 'type' => 'string',
@@ -1495,8 +1442,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'attachments',
+    'attachments' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1521,8 +1467,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'categories',
+    'categories' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1547,8 +1492,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'sections',
+    'sections' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1566,8 +1510,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'counter_cache_user_category_posts',
+    'counter_cache_user_category_posts' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1592,8 +1535,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'site_tags',
+    'site_tags' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
@@ -1616,8 +1558,7 @@ return [
             ],
         ],
     ],
-    [
-        'table' => 'nullable_authors',
+    'nullable_authors' => [
         'columns' => [
             'id' => [
                 'type' => 'integer',
