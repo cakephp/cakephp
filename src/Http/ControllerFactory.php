@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 
-class_alias(
-    'Cake\Controller\ControllerFactory',
-    'Cake\Http\ControllerFactory'
-);
 deprecationWarning(
-    'Use Cake\Controller\ControllerFactory instead of Cake\Http\ControllerFactory.'
+    'Since 4.2.0: Cake\Http\ControllerFactory is deprecated. ' .
+    'Use Cake\Controller\ControllerFactory instead.'
 );
+class_exists('Cake\Controller\ControllerFactory');

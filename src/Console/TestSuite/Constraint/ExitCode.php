@@ -60,3 +60,10 @@ class ExitCode extends Constraint
         return sprintf('matches exit code %s', $this->exitCode ?? 'null');
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ExitCode',
+    'Cake\TestSuite\Constraint\Console\ExitCode'
+);
+// phpcs:enable

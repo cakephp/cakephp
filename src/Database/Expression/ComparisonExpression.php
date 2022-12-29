@@ -317,7 +317,8 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
 }
 
 // phpcs:disable
-// Comparison will not load during instanceof checks so ensure it's loaded here
-// @deprecated 4.1.0 Add backwards compatible alias.
-class_alias('Cake\Database\Expression\ComparisonExpression', 'Cake\Database\Expression\Comparison');
+class_alias(
+    'Cake\Database\Expression\ComparisonExpression',
+    'Cake\Database\Expression\Comparison'
+);
 // phpcs:enable

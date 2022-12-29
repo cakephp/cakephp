@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\Constraint\ContentsNotContain;
-
-class_alias(ContentsNotContain::class, 'Cake\TestSuite\Constraint\Console\ContentsNotContain');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\Constraint\Console\ContentsNotContain is deprecated. ' .
+    'Use Cake\Console\TestSuite\Constraint\ContentsNotContain instead.'
+);
+class_exists('Cake\Console\TestSuite\Constraint\ContentsNotContain');

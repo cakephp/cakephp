@@ -43,3 +43,10 @@ class ContentsNotContain extends ContentsBase
         return sprintf('is not in %s', $this->output);
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsNotContain',
+    'Cake\TestSuite\Constraint\Console\ContentsNotContain'
+);
+// phpcs:enable

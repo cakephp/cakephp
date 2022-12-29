@@ -353,3 +353,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         ]);
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Controller\ControllerFactory',
+    'Cake\Http\ControllerFactory'
+);
+// phpcs:enable

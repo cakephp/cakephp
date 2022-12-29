@@ -339,6 +339,8 @@ abstract class SchemaDialect
 }
 
 // phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SchemaDialect', 'Cake\Database\Schema\BaseSchema');
+class_alias(
+    'Cake\Database\Schema\SchemaDialect',
+    'Cake\Database\Schema\BaseSchema'
+);
 // phpcs:enable
