@@ -1215,7 +1215,6 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
@@ -1241,7 +1240,6 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
