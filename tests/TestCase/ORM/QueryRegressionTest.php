@@ -1183,7 +1183,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $query = $table->find()

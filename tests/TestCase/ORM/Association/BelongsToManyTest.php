@@ -1543,7 +1543,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'through' => 'ArticlesTags',
         ]);
         $table->Tags->junction()->deleteAll('1=1');
@@ -1561,7 +1561,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
@@ -1579,7 +1579,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'conditions' => [
                 'OR' => [
                     'SpecialTags.highlighted' => true,
@@ -1601,7 +1601,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
@@ -1621,7 +1621,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags',
         ]);
@@ -1641,7 +1641,7 @@ class BelongsToManyTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
+            'targetForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
