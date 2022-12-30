@@ -1189,9 +1189,7 @@ class QueryRegressionTest extends TestCase
     public function testComplexTypesInJoinedWhere(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $table->hasOne('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
+        $table->hasOne('Comments');
         $query = $table->find()
             ->contain('Comments')
             ->where([
@@ -1209,9 +1207,7 @@ class QueryRegressionTest extends TestCase
     public function testComplexNestedTypesInJoinedWhere(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $table->hasOne('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
+        $table->hasOne('Comments');
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
@@ -1234,9 +1230,7 @@ class QueryRegressionTest extends TestCase
     public function testComplexTypesInJoinedWhereWithMatching(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $table->hasOne('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
+        $table->hasOne('Comments');
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
@@ -1291,9 +1285,7 @@ class QueryRegressionTest extends TestCase
     public function testComplexTypesInJoinedWhereWithInnerJoinWith(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $table->hasOne('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
+        $table->hasOne('Comments');
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
@@ -1326,9 +1318,7 @@ class QueryRegressionTest extends TestCase
     public function testComplexTypesInJoinedWhereWithLeftJoinWith(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $table->hasOne('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
+        $table->hasOne('Comments');
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',

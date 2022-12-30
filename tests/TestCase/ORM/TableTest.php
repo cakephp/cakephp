@@ -708,9 +708,8 @@ class TableTest extends TestCase
      */
     public function testHasOne(): void
     {
-        $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
         $table = new Table(['table' => 'users']);
-        $hasOne = $table->hasOne('profile', $options);
+        $hasOne = $table->hasOne('profile', ['conditions' => ['b' => 'c']]);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame($hasOne, $table->getAssociation('profile'));
         $this->assertSame('profile', $hasOne->getName());
@@ -724,10 +723,9 @@ class TableTest extends TestCase
      */
     public function testHasOnePlugin(): void
     {
-        $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
-        $hasOne = $table->hasOne('Comments', $options);
+        $hasOne = $table->hasOne('Comments', ['className' => 'TestPlugin.Comments']);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
@@ -735,10 +733,9 @@ class TableTest extends TestCase
         $this->assertSame('Comments', $hasOne->getAlias());
         $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
 
-        $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
-        $hasOne = $table->hasOne('TestPlugin.Comments', $options);
+        $hasOne = $table->hasOne('TestPlugin.Comments', ['className' => 'TestPlugin.Comments']);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
@@ -2912,7 +2909,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
-            'foreignKey' => 'author_id',
             'dependent' => true,
         ]);
 
@@ -3173,7 +3169,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
-            'foreignKey' => 'author_id',
             'dependent' => true,
         ]);
 
