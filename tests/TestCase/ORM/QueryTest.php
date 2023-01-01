@@ -1238,7 +1238,6 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $query = new Query($this->connection, $table);
@@ -1415,7 +1414,6 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors', ['strategy' => $strategy]);
@@ -1474,7 +1472,6 @@ class QueryTest extends TestCase
             'entityClass' => '\\' . $articleEntity,
         ]);
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $query = new Query($this->connection, $table);
