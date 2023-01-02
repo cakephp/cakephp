@@ -700,6 +700,8 @@ class SqlserverSchemaDialect extends SchemaDialect
 }
 
 // phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\SqlserverSchemaDialect', 'Cake\Database\Schema\SqlserverSchema');
+class_alias(
+    'Cake\Database\Schema\SqlserverSchemaDialect', 
+    'Cake\Database\Schema\SqlserverSchema'
+);
 // phpcs:enable

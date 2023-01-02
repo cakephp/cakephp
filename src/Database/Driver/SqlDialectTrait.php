@@ -306,3 +306,10 @@ trait SqlDialectTrait
         return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Database\Driver\SqlDialectTrait',
+    'Cake\Database\SqlDialectTrait'
+);
+// phpcs:enable

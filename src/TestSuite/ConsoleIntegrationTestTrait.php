@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-
-class_alias(ConsoleIntegrationTestTrait::class, 'Cake\TestSuite\ConsoleIntegrationTestTrait');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\ConsoleIntegrationTestTrait is deprecated. ' .
+    'Use Cake\Console\TestSuite\ConsoleIntegrationTestTrait instead.'
+);
+class_exists('Cake\Console\TestSuite\ConsoleIntegrationTestTrait');
