@@ -449,13 +449,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Casts given value to Statement equivalent
-     *
-     * @param mixed $value value to be converted to PDO statement
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * @inheritDoc
      */
-    public function toStatement(mixed $value, Driver $driver): mixed
+    public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }
