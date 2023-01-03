@@ -215,7 +215,6 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function marshalUriFromSapi(array $server, array $headers): array
     {
-        /** @phpstan-ignore-next-line */
         $uri = UriFactory::createFromSapi($server, $headers);
         [$base, $webroot] = static::getBase($uri, $server);
 
