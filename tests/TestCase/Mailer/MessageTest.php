@@ -22,6 +22,7 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use ReflectionClass;
 use TestApp\Mailer\TestMessage;
 
 /**
@@ -1306,7 +1307,7 @@ HTML;
     public function testSerialization(): void
     {
         $message = new Message();
-        $reflection = new \ReflectionClass($message);
+        $reflection = new ReflectionClass($message);
         $property = $reflection->getProperty('serializableProperties');
         $property->setAccessible(true);
         $serializableProperties = $property->getValue($message);

@@ -304,7 +304,7 @@ class Message implements JsonSerializable
      *
      * @var array<string>
      */
-    protected $serializableProperties = [
+    protected array $serializableProperties = [
         'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
         'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
         'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
