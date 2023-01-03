@@ -1494,6 +1494,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function limit($num)
     {
+        if (is_string($limit) && !is_numeric($limit)) {
+            throw new InvalidArgumentException('Invalid value for `limit()`');
+        }
         $this->_dirty();
         $this->_parts['limit'] = $num;
 
@@ -1520,6 +1523,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function offset($num)
     {
+        if (is_string($offset) && !is_numeric($offset)) {
+            throw new InvalidArgumentException('Invalid value for `offset()`');
+        }
         $this->_dirty();
         $this->_parts['offset'] = $num;
 
