@@ -655,6 +655,33 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     }
 
     /**
+     * A find containing a translated association doesn't error on incomplete data
+     */
+    public function testFindTranslationsAssociatedContain(): void
+    {
+        $comments = $this->fetchTable('Comments');
+        $comments->belongsTo('Articles');
+
+        $articles = $this->fetchTable('Articles');
+
+        // Remove all articles so we have a missing record.
+        $articles->deleteAll('1=1');
+
+        $articles->addBehavior('Translate');
+        $articles->setLocale('eng');
+
+        $query = $comments
+            ->find()
+            ->where(['Comments.id' => 1])
+            ->contain([
+                'Articles' => function ($q) {
+                    return $q->find('translations');
+                }]);
+        $record = $query->firstOrFail();
+        $this->assertNull($record->article);
+    }
+
+    /**
      * testFindTranslations
      *
      * The parent test expects description translations in only some of the records

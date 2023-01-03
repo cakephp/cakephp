@@ -716,9 +716,8 @@ class TableTest extends TestCase
      */
     public function testHasOne(): void
     {
-        $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
         $table = new Table(['table' => 'users']);
-        $hasOne = $table->hasOne('profile', $options);
+        $hasOne = $table->hasOne('profile', ['conditions' => ['b' => 'c']]);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame($hasOne, $table->getAssociation('profile'));
         $this->assertSame('profile', $hasOne->getName());
@@ -732,10 +731,9 @@ class TableTest extends TestCase
      */
     public function testHasOnePlugin(): void
     {
-        $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
-        $hasOne = $table->hasOne('Comments', $options);
+        $hasOne = $table->hasOne('Comments', ['className' => 'TestPlugin.Comments']);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
@@ -743,10 +741,9 @@ class TableTest extends TestCase
         $this->assertSame('Comments', $hasOne->getAlias());
         $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
 
-        $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
-        $hasOne = $table->hasOne('TestPlugin.Comments', $options);
+        $hasOne = $table->hasOne('TestPlugin.Comments', ['className' => 'TestPlugin.Comments']);
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
@@ -761,12 +758,10 @@ class TableTest extends TestCase
     public function testNoneUniqueAssociationsSameClass(): void
     {
         $Users = new Table(['table' => 'users']);
-        $options = ['className' => 'Comments'];
-        $Users->hasMany('Comments', $options);
+        $Users->hasMany('Comments');
 
         $Articles = new Table(['table' => 'articles']);
-        $options = ['className' => 'Comments'];
-        $Articles->hasMany('Comments', $options);
+        $Articles->hasMany('Comments');
 
         $Categories = new Table(['table' => 'categories']);
         $options = ['className' => 'TestPlugin.Comments'];
@@ -836,7 +831,6 @@ class TableTest extends TestCase
     public function testHasMany(): void
     {
         $options = [
-            'foreignKey' => 'author_id',
             'conditions' => ['b' => 'c'],
             'sort' => ['foo' => 'asc'],
         ];
@@ -858,7 +852,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments', [
-            'className' => 'Comments',
             'conditions' => ['published' => 'Y'],
         ]);
 
@@ -2879,7 +2872,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
-            'foreignKey' => 'author_id',
             'dependent' => true,
         ]);
 
@@ -2902,7 +2894,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles', [
-            'foreignKey' => 'author_id',
             'dependent' => true,
             'cascadeCallbacks' => true,
         ]);
@@ -2953,7 +2944,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('article', [
-            'foreignKey' => 'author_id',
             'dependent' => false,
         ]);
 
@@ -3142,7 +3132,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles', [
-            'foreignKey' => 'author_id',
             'dependent' => true,
         ]);
 
@@ -4239,9 +4228,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
-        ]);
+        $authors->hasMany('Articles');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4277,7 +4264,6 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
             'saveStrategy' => 'replace',
         ]);
 
@@ -4327,7 +4313,6 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
             'saveStrategy' => 'replace',
         ]);
 
@@ -4380,7 +4365,6 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
             'saveStrategy' => 'replace',
         ]);
 
@@ -4426,7 +4410,6 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
             'saveStrategy' => 'replace',
         ]);
 
@@ -4654,9 +4637,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'foreignKey' => 'author_id',
-        ]);
+        $authors->hasMany('Articles');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
