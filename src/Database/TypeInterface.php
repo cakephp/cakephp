@@ -41,13 +41,13 @@ interface TypeInterface
     public function toPHP(mixed $value, Driver $driver): mixed;
 
     /**
-     * Casts given value to its Statement equivalent.
+     * Get the binding type to use in a PDO statement.
      *
-     * @param mixed $value Value to be converted to PDO statement.
+     * @param mixed $value The value being bound.
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted.
-     * @return mixed Given value casted to its Statement equivalent.
+     * @return int One of PDO::PARAM_* constants.
      */
-    public function toStatement(mixed $value, Driver $driver): mixed;
+    public function toStatement(mixed $value, Driver $driver): int;
 
     /**
      * Marshals flat data into PHP objects.
