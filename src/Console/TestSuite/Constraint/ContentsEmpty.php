@@ -54,3 +54,10 @@ class ContentsEmpty extends ContentsBase
         return $this->toString();
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsEmpty',
+    'Cake\TestSuite\Constraint\Console\ContentsEmpty'
+);
+// phpcs:enable

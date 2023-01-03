@@ -572,7 +572,6 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $articles,
             'targetTable' => $tags,
-            'joinTable' => 'articles_tags',
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
         $assoc = $articles->belongsToMany('Tags', $config);
@@ -607,7 +606,6 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $articles,
             'targetTable' => $tags,
-            'joinTable' => 'articles_tags',
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
         $assoc = $articles->belongsToMany('Tags', $config);
@@ -877,7 +875,6 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'articles_tags',
         ]);
         $entity = $articles->get(1, ['contain' => 'Tags']);
 
@@ -982,7 +979,6 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
-            'joinTable' => 'articles_tags',
         ]);
         $joint->setEntityClass(ArticlesTag::class);
 
@@ -1013,7 +1009,6 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $tags,
             'targetTable' => $articles,
             'through' => $joint,
-            'joinTable' => 'articles_tags',
             'finder' => ['published' => ['title' => 'First Article']],
         ]);
         $entity = $tags->get(1, ['contain' => 'Articles']);
@@ -1045,7 +1040,6 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $tags,
             'targetTable' => $articles,
             'through' => $joint,
-            'joinTable' => 'articles_tags',
             'finder' => 'withAuthors',
         ]);
         $tag = $tags->get(1);
@@ -1074,7 +1068,6 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $this->getTableLocator()->get('ArticlesTags'),
-            'joinTable' => 'articles_tags',
         ]);
         $entity = $articles->get(1, ['contain' => 'Tags']);
         $originalCount = count($entity->tags);
@@ -1594,11 +1587,7 @@ class BelongsToManyTest extends TestCase
     public function testAssociationProxyFindNoJoinRecords(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
-            'through' => 'ArticlesTags',
-        ]);
+        $table->belongsToMany('Tags');
         $table->Tags->junction()->deleteAll('1=1');
 
         $query = $table->Tags->find();
@@ -1613,8 +1602,6 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
@@ -1631,8 +1618,6 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
             'conditions' => [
                 'OR' => [
                     'SpecialTags.highlighted' => true,
@@ -1653,8 +1638,6 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
@@ -1673,8 +1656,6 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags',
         ]);
@@ -1693,8 +1674,6 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'foreignKey' => 'article_id',
-            'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
@@ -1783,7 +1762,6 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Articles', [
             'through' => 'ArticlesTagsBindingKeys',
             'foreignKey' => 'tagname',
-            'targetForeignKey' => 'article_id',
             'bindingKey' => 'name',
         ]);
         $query = $table->find()

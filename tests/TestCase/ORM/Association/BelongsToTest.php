@@ -370,7 +370,6 @@ class BelongsToTest extends TestCase
     public function testAttachToBeforeFind(): void
     {
         $config = [
-            'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
@@ -393,7 +392,6 @@ class BelongsToTest extends TestCase
     public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
-            'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];

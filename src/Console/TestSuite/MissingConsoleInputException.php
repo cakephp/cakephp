@@ -35,5 +35,8 @@ class MissingConsoleInputException extends RuntimeException
 }
 
 // phpcs:disable
-class_alias(MissingConsoleInputException::class, 'Cake\TestSuite\Stub\MissingConsoleInputException');
+class_alias(
+    'Cake\Console\TestSuite\MissingConsoleInputException',
+    'Cake\TestSuite\Stub\MissingConsoleInputException'
+);
 // phpcs:enable

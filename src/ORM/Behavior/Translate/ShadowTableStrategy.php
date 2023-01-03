@@ -537,8 +537,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {
-            $translations = (array)$row['_i18n'];
-            if (empty($translations) && $row instanceof EntityInterface && $row->get('_translations')) {
+            if (!($row instanceof EntityInterface)) {
+                return $row;
+            }
+            $translations = (array)$row->get('_i18n');
+            if (empty($translations) && $row->get('_translations')) {
                 return $row;
             }
 

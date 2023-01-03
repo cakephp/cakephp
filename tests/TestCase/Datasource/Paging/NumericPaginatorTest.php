@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource\Paging;
 
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -168,5 +169,29 @@ class NumericPaginatorTest extends TestCase
 
         $this->assertSame('Other.title', $pagingParams['sort']);
         $this->assertNull($pagingParams['direction']);
+    }
+
+    /**
+     * https://github.com/cakephp/cakephp/issues/16909
+     *
+     * @return void
+     */
+    public function testPaginateOrderWithNumericKeyAndSortSpecified(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage(
+            'The `order` config must be an associative array.'
+            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`'
+        );
+
+        $settings = [
+            'PaginatorPosts' => [
+                'order' => ['PaginatorPosts.title ASC'],
+            ],
+        ];
+
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $this->Paginator->paginate($table, ['sort' => 'title'], $settings);
     }
 }

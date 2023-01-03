@@ -43,3 +43,10 @@ class ContentsContain extends ContentsBase
         return sprintf('is in %s,' . PHP_EOL . 'actual result:' . PHP_EOL, $this->output) . $this->contents;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsContain',
+    'Cake\TestSuite\Constraint\Console\ContentsContain'
+);
+// phpcs:enable

@@ -115,7 +115,6 @@ class HasOneTest extends TestCase
     public function testAttachTo(): void
     {
         $config = [
-            'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'property' => 'profile',
@@ -279,7 +278,6 @@ class HasOneTest extends TestCase
     public function testAttachToBeforeFind(): void
     {
         $config = [
-            'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
@@ -305,7 +303,6 @@ class HasOneTest extends TestCase
     public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
-            'foreignKey' => 'user_id',
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];

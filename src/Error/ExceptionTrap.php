@@ -126,6 +126,7 @@ class ExceptionTrap
                 );
             }
 
+            /** @var class-string<\Cake\Error\ExceptionRendererInterface> $class */
             return new $class($exception, $request, $this->_config);
         }
 

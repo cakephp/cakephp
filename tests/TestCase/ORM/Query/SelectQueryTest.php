@@ -1259,7 +1259,6 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $query = new SelectQuery($table);
@@ -1436,7 +1435,6 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $article = $this->getTableLocator()->get('articles');
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $article->belongsTo('authors', ['strategy' => $strategy]);
@@ -1495,7 +1493,6 @@ class SelectQueryTest extends TestCase
             'entityClass' => '\\' . $articleEntity,
         ]);
         $table->hasMany('articles', [
-            'propertyName' => 'articles',
             'sort' => ['articles.id' => 'asc'],
         ]);
         $query = new SelectQuery($table);

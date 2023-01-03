@@ -52,3 +52,10 @@ class ContentsRegExp extends ContentsBase
         return '`' . $other . '` ' . $this->toString();
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsRegExp',
+    'Cake\TestSuite\Constraint\Console\ContentsRegExp'
+);
+// phpcs:enable

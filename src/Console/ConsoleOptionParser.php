@@ -691,10 +691,23 @@ class ConsoleOptionParser
             /** @psalm-suppress PossiblyNullReference */
             return $this->_subcommands[$command]->parser()->parse($argv, $io);
         }
+
         $params = $args = [];
         $this->_tokens = $argv;
+
+        $afterDoubleDash = false;
         while (($token = array_shift($this->_tokens)) !== null) {
             $token = (string)$token;
+            if ($token === '--') {
+                $afterDoubleDash = true;
+                continue;
+            }
+            if ($afterDoubleDash) {
+                // only positional arguments after --
+                $args = $this->_parseArg($token, $args);
+                continue;
+            }
+
             if (isset($this->_subcommands[$token])) {
                 continue;
             }

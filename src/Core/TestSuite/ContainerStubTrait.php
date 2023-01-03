@@ -174,3 +174,10 @@ trait ContainerStubTrait
         $this->containerServices = [];
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Core\TestSuite\ContainerStubTrait',
+    'Cake\TestSuite\ContainerStubTrait'
+);
+// phpcs:enable

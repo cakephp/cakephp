@@ -86,3 +86,10 @@ class StubConsoleInput extends ConsoleInput
         return true;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\StubConsoleInput',
+    'Cake\TestSuite\Stub\ConsoleInput'
+);
+// phpcs:enable
