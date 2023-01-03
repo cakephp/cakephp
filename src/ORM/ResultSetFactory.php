@@ -35,7 +35,7 @@ class ResultSetFactory
      *
      * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
      * @param array $results Results array.
-     * @return \Cake\ORM\ResultSet<T>
+     * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
     public function createResultSet(SelectQuery $query, array $results): ResultSet
     {

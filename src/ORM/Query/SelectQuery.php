@@ -365,7 +365,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|mixed>
+     * @return \Cake\Datasource\ResultSetInterface<mixed>
      */
     public function all(): ResultSetInterface
     {
@@ -1684,14 +1684,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @param string $finder The finder method to use.
      * @param array<string, mixed> $options The options for the finder.
-     * @return static Returns a modified query.
+     * @return static<TSubject> Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */
     public function find(string $finder, array $options = []): static
     {
         $table = $this->getRepository();
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $table->callFinder($finder, $this, $options);
     }
 

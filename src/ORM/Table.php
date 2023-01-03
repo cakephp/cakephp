@@ -2569,10 +2569,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Calls a finder method and applies it to the passed query.
      *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param string $type Name of the finder to be called.
-     * @param \Cake\ORM\Query\SelectQuery $query The query object to apply the finder options to.
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
      * @param array<string, mixed> $options List of options to pass to the finder.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
