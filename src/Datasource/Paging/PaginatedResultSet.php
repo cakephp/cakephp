@@ -24,6 +24,7 @@ use IteratorIterator;
  *
  * @method \Cake\Datasource\ResultSetInterface getInnerIterator()
  * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
+ * @template T
  */
 class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
 {
@@ -37,7 +38,7 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     /**
      * Constructor
      *
-     * @param \Cake\Datasource\ResultSetInterface $results Resultset instance.
+     * @param \Cake\Datasource\ResultSetInterface<T> $results Resultset instance.
      * @param array $params Paging params.
      */
     public function __construct(ResultSetInterface $results, array $params)
@@ -56,7 +57,9 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     }
 
     /**
-     * @inheritDoc
+     * Get paginated items.
+     *
+     * @return \Cake\Datasource\ResultSetInterface<T> The paginated items result set.
      */
     public function items(): ResultSetInterface
     {

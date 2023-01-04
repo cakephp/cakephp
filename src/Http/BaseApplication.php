@@ -51,6 +51,10 @@ use Psr\Http\Message\ServerRequestInterface;
  * The application class is responsible for bootstrapping the application,
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
+ *
+ * @template TSubject of \Cake\Http\BaseApplication
+ * @implements \Cake\Event\EventDispatcherInterface<TSubject>
+ * @implements \Cake\Core\PluginApplicationInterface<TSubject>
  */
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
@@ -60,6 +64,9 @@ abstract class BaseApplication implements
     PluginApplicationInterface,
     RoutingApplicationInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<TSubject>
+     */
     use EventDispatcherTrait;
 
     /**

@@ -35,9 +35,14 @@ use Stringable;
 
 /**
  * Cell base.
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
  */
 abstract class Cell implements EventDispatcherInterface, Stringable
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ViewVarsTrait;

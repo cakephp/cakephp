@@ -522,8 +522,8 @@ abstract class Driver
     /**
      * Apply translation steps to select queries.
      *
-     * @param \Cake\Database\Query\SelectQuery $query The query to translate
-     * @return \Cake\Database\Query\SelectQuery The modified query
+     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to translate
+     * @return \Cake\Database\Query\SelectQuery<mixed> The modified query
      */
     protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
@@ -534,8 +534,8 @@ abstract class Driver
      * Returns the passed query after rewriting the DISTINCT clause, so that drivers
      * that do not support the "ON" part can provide the actual way it should be done
      *
-     * @param \Cake\Database\Query\SelectQuery $query The query to be transformed
-     * @return \Cake\Database\Query\SelectQuery
+     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to be transformed
+     * @return \Cake\Database\Query\SelectQuery<mixed>
      */
     protected function _transformDistinct(SelectQuery $query): SelectQuery
     {

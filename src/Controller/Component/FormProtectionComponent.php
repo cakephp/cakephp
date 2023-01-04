@@ -72,7 +72,7 @@ class FormProtectionComponent extends Component
      *
      * Token check happens here.
      *
-     * @param \Cake\Event\EventInterface $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null
      */
     public function startup(EventInterface $event): ?Response

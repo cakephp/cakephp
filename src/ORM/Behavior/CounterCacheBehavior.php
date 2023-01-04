@@ -115,7 +115,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Check if a field, which should be ignored, is dirty
      *
-     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -153,7 +153,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Makes sure to update counter cache when a new record is created or updated.
      *
-     * @param \Cake\Event\EventInterface $event The afterSave event that was fired.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -173,7 +173,7 @@ class CounterCacheBehavior extends Behavior
      *
      * Makes sure to update counter cache when a record is deleted.
      *
-     * @param \Cake\Event\EventInterface $event The afterDelete event that was fired.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
@@ -190,7 +190,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Iterate all associations and update counter caches.
      *
-     * @param \Cake\Event\EventInterface $event Event instance.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
@@ -205,7 +205,7 @@ class CounterCacheBehavior extends Behavior
     /**
      * Updates counter cache for a single association
      *
-     * @param \Cake\Event\EventInterface $event Event instance.
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for counter cache for this association

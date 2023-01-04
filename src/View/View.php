@@ -70,12 +70,16 @@ use Throwable;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
  */
 class View implements EventDispatcherInterface
 {
     use CellTrait {
         cell as public;
     }
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     */
     use EventDispatcherTrait;
     use InstanceConfigTrait {
         getConfig as protected;

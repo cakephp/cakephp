@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.x-dev@">
+<files psalm-version="dev-master@">
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidReturnStatement occurrences="4">
       <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
@@ -13,72 +13,6 @@
       <code>int|false</code>
     </InvalidReturnType>
   </file>
-  <file src="src/Core/Exception/CakeException.php">
-    <MethodSignatureMustProvideReturnType occurrences="62">
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-      <code>pid Dev</code>
-    </MethodSignatureMustProvideReturnType>
-  </file>
   <file src="src/Database/Statement/SqlserverStatement.php">
     <UndefinedConstant occurrences="1">
       <code>PDO::SQLSRV_ENCODING_BINARY</code>
@@ -88,6 +22,25 @@
     <MethodSignatureMustProvideReturnType occurrences="1">
       <code>://cakephp.org)</code>
     </MethodSignatureMustProvideReturnType>
+  </file>
+  <file src="src/Event/EventDispatcherTrait.php">
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$subject</code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/Event/EventManager.php">
+    <InvalidArgument occurrences="3">
+      <code>_callListener</code>
+      <code>addEventToList</code>
+      <code>addEventToList</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="2">
+      <code>$event</code>
+      <code>$event</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>EventInterface</code>
+    </InvalidReturnType>
   </file>
   <file src="src/I18n/Date.php">
     <ImpureMethodCall occurrences="2">
@@ -112,6 +65,11 @@
       <code>diffFormatter</code>
       <code>timeAgoInWords</code>
     </ImpureMethodCall>
+  </file>
+  <file src="src/ORM/Table.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;_behaviors-&gt;callFinder($type, [$query, $options])</code>
+    </InvalidReturnStatement>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass occurrences="1"/>
@@ -138,16 +96,8 @@
     </InternalMethod>
   </file>
   <file src="src/Utility/Hash.php">
-    <NoValue occurrences="1">
-      <code>$return</code>
-    </NoValue>
-    <RedundantCondition occurrences="3">
-      <code>!$return</code>
-      <code>$return</code>
+    <RedundantCondition occurrences="1">
       <code>is_array($_list)</code>
     </RedundantCondition>
-    <RedundantFunctionCall occurrences="1">
-      <code>array_values</code>
-    </RedundantFunctionCall>
   </file>
 </files>

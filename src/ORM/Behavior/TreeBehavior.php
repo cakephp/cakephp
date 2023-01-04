@@ -96,7 +96,7 @@ class TreeBehavior extends Behavior
      * Transparently manages setting the lft and rght fields if the parent field is
      * included in the parameters to be saved.
      *
-     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      * @throws \Cake\Database\Exception\DatabaseException if the parent to set for the node is invalid
@@ -165,7 +165,7 @@ class TreeBehavior extends Behavior
      *
      * Manages updating level of descendants of currently saved entity.
      *
-     * @param \Cake\Event\EventInterface $event The afterSave event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
@@ -219,7 +219,7 @@ class TreeBehavior extends Behavior
     /**
      * Also deletes the nodes in the subtree of the entity to be delete
      *
-     * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeDelete event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */

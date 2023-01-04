@@ -89,9 +89,13 @@ use ReflectionMethod;
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @link https://book.cakephp.org/4/en/controllers.html
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
+     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -882,7 +886,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
-     * @param \Cake\Event\EventInterface $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
@@ -895,7 +899,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run, but before the view is rendered. You can use this method
      * to perform logic or set view variables that are required on every request.
      *
-     * @param \Cake\Event\EventInterface $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
@@ -913,7 +917,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * You can set the event result to response instance or modify the redirect location
      * using controller's response instance.
      *
-     * @param \Cake\Event\EventInterface $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @param \Psr\Http\Message\UriInterface|array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
@@ -928,7 +932,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Called after the controller action is run and rendered.
      *
-     * @param \Cake\Event\EventInterface $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint

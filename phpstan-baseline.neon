@@ -21,6 +21,11 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
+			count: 1
+			path: src/Datasource/QueryInterface.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
@@ -61,7 +66,12 @@ parameters:
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\.$#"
+			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
+			count: 1
+			path: src/ORM/Query/SelectQuery.php
+
+		-
+			message: "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 

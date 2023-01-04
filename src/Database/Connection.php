@@ -279,7 +279,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
      * @param array|string $table The table or list of tables to query.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
-     * @return \Cake\Database\Query\SelectQuery
+     * @return \Cake\Database\Query\SelectQuery<mixed>
      */
     public function selectQuery(
         ExpressionInterface|Closure|array|string|float|int $fields = [],

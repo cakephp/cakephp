@@ -149,9 +149,13 @@ use InvalidArgumentException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table>
+     */
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -1614,7 +1618,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1658,7 +1662,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing records by.
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing records by.
      * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
@@ -2565,10 +2569,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Calls a finder method and applies it to the passed query.
      *
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param string $type Name of the finder to be called.
-     * @param \Cake\ORM\Query\SelectQuery $query The query object to apply the finder options to.
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
      * @param array<string, mixed> $options List of options to pass to the finder.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
