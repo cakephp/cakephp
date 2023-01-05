@@ -1015,6 +1015,12 @@ class HtmlHelperTest extends TestCase
             'script' => ['src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8'],
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('defered', ['defer']);
+        $expected = [
+            'script' => ['src' => 'js/defered.js', 'defer' => 'defer'],
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
