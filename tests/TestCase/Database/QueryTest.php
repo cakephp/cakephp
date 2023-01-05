@@ -2238,6 +2238,32 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests selecting rows with string offset/limit
+     */
+    public function testSelectLimitInvalid(): void
+    {
+        $query = new Query($this->connection);
+        $this->expectException(InvalidArgumentException::class);
+        $query->select('id')->from('comments')
+            ->limit('1 --more')
+            ->order(['id' => 'ASC'])
+            ->execute();
+    }
+
+    /**
+     * Tests selecting rows with string offset/limit
+     */
+    public function testSelectOffsetInvalid(): void
+    {
+        $query = new Query($this->connection);
+        $this->expectException(InvalidArgumentException::class);
+        $query->select('id')->from('comments')
+            ->offset('1 --more')
+            ->order(['id' => 'ASC'])
+            ->execute();
+    }
+
+    /**
      * Tests selecting rows combining a limit and offset clause
      */
     public function testSelectOffset(): void
