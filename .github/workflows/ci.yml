@@ -16,7 +16,55 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
+  cs-stan:
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        extensions: mbstring, intl, apcu, memcached, redis
+        tools: cs2pr
+        coverage: none
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Get date part for cache key
+      id: key-date
+      run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+
+    - name: Composer install
+      run: composer stan-setup
+
+    - name: Run PHP CodeSniffer
+      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
+
+    - name: Run psalm
+      if: always()
+      run: vendor/bin/psalm.phar --output-format=github
+
+    - name: Run phpstan
+      if: always()
+      run: vendor/bin/phpstan.phar analyse --error-format=github
+
+    - name: Run phpstan for tests
+      if: always()
+      run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github
+
   testsuite:
+    needs: cs-stan
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -145,6 +193,7 @@ jobs:
       uses: codecov/codecov-action@v3
 
   testsuite-windows:
+    needs: cs-stan
     runs-on: windows-2022
     name: Windows - PHP 8.0 & SQL Server
 
@@ -214,50 +263,3 @@ jobs:
       run: |
           set CAKE_TEST_AUTOQUOTE=1
           vendor/bin/phpunit --verbose --testsuite=database
-
-  cs-stan:
-    name: Coding Standard & Static Analysis
-    runs-on: ubuntu-22.04
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.4'
-        extensions: mbstring, intl, apcu, memcached, redis
-        tools: cs2pr
-        coverage: none
-
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-    - name: Get date part for cache key
-      id: key-date
-      run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
-
-    - name: Cache composer dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
-
-    - name: Composer install
-      run: composer stan-setup
-
-    - name: Run PHP CodeSniffer
-      run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
-
-    - name: Run psalm
-      if: always()
-      run: vendor/bin/psalm.phar --output-format=github
-
-    - name: Run phpstan
-      if: always()
-      run: vendor/bin/phpstan.phar analyse --error-format=github
-
-    - name: Run phpstan for tests
-      if: always()
-      run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github
