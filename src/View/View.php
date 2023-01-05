@@ -1592,20 +1592,17 @@ class View implements EventDispatcherInterface
         }
 
         if (!empty($this->theme)) {
-            $themePaths[] = Plugin::templatePath(Inflector::camelize($this->theme));
+            $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
-                for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
-                    array_unshift(
-                        $themePaths,
-                        $themePaths[$i]
-                            . static::PLUGIN_TEMPLATE_FOLDER
-                            . DIRECTORY_SEPARATOR
-                            . $plugin
-                            . DIRECTORY_SEPARATOR
-                    );
-                }
+                $themePaths[] = $themePath
+                    . static::PLUGIN_TEMPLATE_FOLDER
+                    . DIRECTORY_SEPARATOR
+                    . $plugin
+                    . DIRECTORY_SEPARATOR;
             }
+
+            $themePaths[] = $themePath;
         }
 
         $paths = array_merge(
