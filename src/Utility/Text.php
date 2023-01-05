@@ -119,7 +119,6 @@ class Text
                 mb_strpos($data, $rightBound, $offset),
             ];
             for ($i = 0; $i < 3; $i++) {
-                /** @psalm-suppress InvalidArrayOffset */
                 if ($offsets[$i] !== false && ($offsets[$i] < $tmpOffset || $tmpOffset === -1)) {
                     $tmpOffset = $offsets[$i];
                 }

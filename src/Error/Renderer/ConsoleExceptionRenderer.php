@@ -76,7 +76,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
         }
         $out = [];
         foreach ($exceptions as $i => $error) {
-            $parent = $exceptions[$i - 1] ?? null;
+            $parent = $i > 0 ? $exceptions[$i - 1] : null;
             $out = array_merge($out, $this->renderException($error, $parent));
         }
 

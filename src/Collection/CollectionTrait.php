@@ -952,6 +952,7 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
+            /** @psalm-suppress InvalidArrayOffset */
             for (
                 $changeIndex = $lastIndex;
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
