@@ -21,6 +21,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\CacheWriteException;
 use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
@@ -694,9 +695,9 @@ class CacheTest extends TestCase
     }
 
     /**
-     * Test that failed writes cause errors to be triggered.
+     * Test that failed writes causes an Exception to be triggered.
      */
-    public function testWriteTriggerError(): void
+    public function testWriteTriggerCacheWriteException(): void
     {
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
@@ -704,7 +705,8 @@ class CacheTest extends TestCase
             'prefix' => '',
         ]);
 
-        $this->expectError();
+        $this->expectException(CacheWriteException::class);
+        $this->expectExceptionMessage('test_trigger cache was unable to write \'fail\' to TestApp\Cache\Engine\TestAppCacheEngine cache');
 
         Cache::write('fail', 'value', 'test_trigger');
     }

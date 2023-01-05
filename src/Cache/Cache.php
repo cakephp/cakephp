@@ -265,15 +265,12 @@ class Cache
         $backend = static::pool($config);
         $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
-            trigger_error(
-                sprintf(
-                    "%s cache was unable to write '%s' to %s cache",
-                    $config,
-                    $key,
-                    get_class($backend)
-                ),
-                E_USER_WARNING
-            );
+            throw new CacheWriteException(sprintf(
+                "%s cache was unable to write '%s' to %s cache",
+                $config,
+                $key,
+                get_class($backend)
+            ));
         }
 
         return $success;
