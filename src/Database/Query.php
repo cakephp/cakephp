@@ -1523,7 +1523,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function offset($num)
     {
-        if (is_string($offset) && !is_numeric($offset)) {
+        if (is_string($num) && !is_numeric($num)) {
             throw new InvalidArgumentException('Invalid value for `offset()`');
         }
         $this->_dirty();
