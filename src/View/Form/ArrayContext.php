@@ -205,11 +205,11 @@ class ArrayContext implements ContextInterface
         $required = Hash::get($this->_context['required'], $field)
             ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
-        if (!empty($required) || $required === '0') {
+        if ($required || $required === '0') {
             return true;
         }
 
-        return $required;
+        return $required !== null ? (bool)$required : null;
     }
 
     /**
@@ -343,6 +343,6 @@ class ArrayContext implements ContextInterface
      */
     protected function stripNesting(string $field): string
     {
-        return preg_replace('/\.\d*\./', '.', $field);
+        return (string)preg_replace('/\.\d*\./', '.', $field);
     }
 }

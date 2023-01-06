@@ -115,9 +115,9 @@ class ViewBlock
 
         $mode = end($this->_active);
         $active = key($this->_active);
-        $content = ob_get_clean();
+        $content = (string)ob_get_clean();
         if ($mode === ViewBlock::OVERRIDE) {
-            $this->_blocks[$active] = (string)$content;
+            $this->_blocks[$active] = $content;
         } else {
             $this->concat($active, $content, $mode);
         }
@@ -213,6 +213,7 @@ class ViewBlock
     {
         end($this->_active);
 
+        /** @var string|null */
         return key($this->_active);
     }
 

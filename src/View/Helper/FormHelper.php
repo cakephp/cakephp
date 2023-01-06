@@ -1108,6 +1108,7 @@ class FormHelper extends Helper
             $options['hiddenField'] = '_split';
         }
 
+        /** @var string $input */
         $input = $this->_getInput($fieldName, $options + ['labelOptions' => $labelOptions]);
         if ($options['type'] === 'hidden' || $options['type'] === 'submit') {
             if ($newTemplates) {

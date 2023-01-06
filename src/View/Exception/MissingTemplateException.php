@@ -53,7 +53,7 @@ class MissingTemplateException extends CakeException
     public function __construct(array|string $file, array $paths = [], ?int $code = null, ?Throwable $previous = null)
     {
         if (is_array($file)) {
-            $this->filename = array_pop($file);
+            $this->filename = (string)array_pop($file);
             $this->templateName = array_pop($file);
         } else {
             $this->filename = $file;
