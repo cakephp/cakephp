@@ -214,17 +214,19 @@ class ConsoleOutput
         if ($this->_outputAs === static::RAW) {
             return $text;
         }
-        if ($this->_outputAs === static::PLAIN) {
-            $tags = implode('|', array_keys(static::$_styles));
-
-            $output = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
-        } else {
+        if ($this->_outputAs !== static::PLAIN) {
             $output = preg_replace_callback(
                 '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
                 [$this, '_replaceTags'],
                 $text
             );
+            if ($output !== null) {
+                return $output;
+            }
         }
+
+        $tags = implode('|', array_keys(static::$_styles));
+        $output = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 
         if ($output === null) {
             return $text;
