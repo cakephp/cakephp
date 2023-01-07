@@ -289,7 +289,7 @@ class EntityContext implements ContextInterface
         }
         $field = end($parts);
         $defaults = $table->getSchema()->defaultValues();
-        if (!array_key_exists($field, $defaults)) {
+        if ($field === false || !array_key_exists($field, $defaults)) {
             return null;
         }
 

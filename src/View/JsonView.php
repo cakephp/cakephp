@@ -147,7 +147,7 @@ class JsonView extends SerializedView
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
-        return json_encode($data, $jsonOptions);
+        return (string)json_encode($data, $jsonOptions);
     }
 
     /**

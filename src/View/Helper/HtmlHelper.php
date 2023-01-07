@@ -583,7 +583,7 @@ class HtmlHelper extends Helper
      */
     public function scriptEnd(): ?string
     {
-        $buffer = ob_get_clean();
+        $buffer = (string)ob_get_clean();
         $options = $this->_scriptBlockOptions;
         $this->_scriptBlockOptions = [];
 

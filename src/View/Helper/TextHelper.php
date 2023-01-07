@@ -99,7 +99,7 @@ class TextHelper extends Helper
             )/ixu';
         // phpcs:enable Generic.Files.LineLength
 
-        $text = preg_replace_callback(
+        $text = (string)preg_replace_callback(
             $pattern,
             [&$this, '_insertPlaceHolder'],
             $text
@@ -249,14 +249,14 @@ class TextHelper extends Helper
     {
         $text = $text ?? '';
         if (trim($text) !== '') {
-            $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
-            $text = preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
-            $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+            $text = (string)preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
+            $text = (string)preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
+            $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
             $text = '';
             foreach ($texts as $txt) {
                 $text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
             }
-            $text = preg_replace('|<p>\s*</p>|', '', $text);
+            $text = (string)preg_replace('|<p>\s*</p>|', '', $text);
         }
 
         return $text;

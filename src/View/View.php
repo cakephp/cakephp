@@ -724,7 +724,7 @@ class View implements EventDispatcherInterface
             throw $exception;
         }
 
-        $result = ob_get_clean();
+        $result = (string)ob_get_clean();
 
         Cache::write($options['key'], $result, $options['config']);
 
@@ -1195,7 +1195,7 @@ class View implements EventDispatcherInterface
             throw $exception;
         }
 
-        return ob_get_clean();
+        return (string)ob_get_clean();
     }
 
     /**
@@ -1406,7 +1406,7 @@ class View implements EventDispatcherInterface
             return $file;
         }
         $absolute = realpath($file);
-        if (!str_starts_with($absolute, $path)) {
+        if ($absolute === false || !str_starts_with($absolute, $path)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',
                 $file

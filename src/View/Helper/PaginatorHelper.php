@@ -395,7 +395,7 @@ class PaginatorHelper extends Helper
                 $title = str_replace('.', ' ', $title);
             }
 
-            $title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
+            $title = __(Inflector::humanize((string)preg_replace('/_id$/', '', $title)));
         }
 
         $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
