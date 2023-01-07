@@ -281,7 +281,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         ];
         $base = $config['base'];
         $baseUrl = $config['baseUrl'];
-        $webroot = $config['webroot'];
+        $webroot = (string)$config['webroot'];
 
         if ($base !== false && $base !== null) {
             return [$base, $base . '/'];
@@ -290,7 +290,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
         if (!$baseUrl) {
             $base = dirname(Hash::get($server, 'PHP_SELF'));
             // Clean up additional / which cause following code to fail..
-            $base = preg_replace('#/+#', '/', $base);
+            $base = (string)preg_replace('#/+#', '/', $base);
 
             $indexPos = strpos($base, '/' . $webroot . '/index.php');
             if ($indexPos !== false) {

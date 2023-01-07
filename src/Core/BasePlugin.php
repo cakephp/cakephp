@@ -154,7 +154,7 @@ class BasePlugin implements PluginInterface
             return $this->path;
         }
         $reflection = new ReflectionClass($this);
-        $path = dirname($reflection->getFileName());
+        $path = dirname((string)$reflection->getFileName());
 
         // Trim off src
         if (str_ends_with($path, 'src')) {

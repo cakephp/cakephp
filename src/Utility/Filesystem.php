@@ -201,7 +201,7 @@ class Filesystem
             throw new CakeException(sprintf('"%s" is not a directory', $path));
         }
 
-        /** @var \RecursiveDirectoryIterator $iterator Replace type for psalm */
+        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
@@ -246,6 +246,7 @@ class Filesystem
             $this->mkdir($destination);
         }
 
+        /** @var \FilesystemIterator<\SplFileInfo> $iterator */
         $iterator = new FilesystemIterator($source);
 
         $result = true;

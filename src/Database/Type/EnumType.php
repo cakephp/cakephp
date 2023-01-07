@@ -179,7 +179,7 @@ class EnumType extends BaseType
      * $this->getSchema()->setColumnType('status', EnumType::from(StatusEnum::class));
      * ```
      *
-     * @param string $enumClassName The enum class name
+     * @param class-string<\BackedEnum> $enumClassName The enum class name
      * @return string
      */
     public static function from(string $enumClassName): string

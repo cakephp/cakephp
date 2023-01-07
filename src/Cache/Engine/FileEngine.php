@@ -243,7 +243,7 @@ class FileEngine extends CacheEngine
             $this->_config['path'],
             FilesystemIterator::SKIP_DOTS
         );
-        /** @var \RecursiveDirectoryIterator $contents Coerce for phpstan/psalm */
+        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $contents Coerce for phpstan/psalm */
         $contents = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST

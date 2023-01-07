@@ -218,8 +218,8 @@ class CounterCacheBehavior extends Behavior
         Association $assoc,
         array $settings
     ): void {
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
-        /** @psalm-suppress InvalidArgument */
         $countConditions = $entity->extract($foreignKeys);
 
         foreach ($countConditions as $field => $value) {
@@ -232,7 +232,6 @@ class CounterCacheBehavior extends Behavior
         $primaryKeys = (array)$assoc->getBindingKey();
         $updateConditions = array_combine($primaryKeys, $countConditions);
 
-        /** @psalm-suppress InvalidArgument */
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);

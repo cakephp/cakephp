@@ -426,7 +426,7 @@ class I18nExtractCommand extends Command
                 $io->verbose(sprintf('Processing %s...', $file));
             }
 
-            $code = file_get_contents($file);
+            $code = (string)file_get_contents($file);
 
             if (preg_match($pattern, $code) === 1) {
                 $allTokens = token_get_all($code);
@@ -692,6 +692,9 @@ class I18nExtractCommand extends Command
             return false;
         }
         $oldFileContent = file_get_contents($oldFile);
+        if ($oldFileContent === false) {
+            return false;
+        }
 
         $oldChecksum = sha1(substr($oldFileContent, $headerLength));
         $newChecksum = sha1(substr($newFileContent, $headerLength));

@@ -753,7 +753,7 @@ abstract class Driver
      */
     public function lastInsertId(?string $table = null): string
     {
-        return $this->getPdo()->lastInsertId($table);
+        return (string)$this->getPdo()->lastInsertId($table);
     }
 
     /**

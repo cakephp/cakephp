@@ -120,6 +120,7 @@ class ValidationRule
 
         if (is_string($this->_rule)) {
             $provider = $providers[$this->_provider];
+            /** @var callable $callable */
             $callable = [$provider, $this->_rule];
             $isCallable = is_callable($callable);
         } else {

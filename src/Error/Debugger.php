@@ -261,7 +261,8 @@ class Debugger
      */
     public static function log(mixed $var, string|int $level = 'debug', int $maxDepth = 3): void
     {
-        $source = (string)static::trace(['start' => 1]);
+        /** @var string $source */
+        $source = static::trace(['start' => 1]);
         $source .= "\n";
 
         Log::write(
@@ -730,7 +731,6 @@ class Debugger
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
                 }
-                /** @psalm-suppress RedundantCast */
                 $node->addProperty(
                     new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
                 );

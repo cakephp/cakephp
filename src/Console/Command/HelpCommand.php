@@ -77,7 +77,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * Output text.
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param iterable $commands The command collection to output.
+     * @param iterable<string, string|object> $commands The command collection to output.
      * @return void
      */
     protected function asText(ConsoleIo $io, iterable $commands): void
@@ -176,7 +176,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     protected function getShortestName(array $names): string
     {
         if (count($names) <= 1) {
-            return array_shift($names);
+            return (string)array_shift($names);
         }
 
         usort($names, function ($a, $b) {
@@ -190,7 +190,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * Output as XML
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param iterable $commands The command collection to output
+     * @param iterable<string, string|object> $commands The command collection to output
      * @return void
      */
     protected function asXml(ConsoleIo $io, iterable $commands): void
@@ -207,7 +207,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $shell->addAttribute('help', $name . ' -h');
         }
         $io->setOutputAs(ConsoleOutput::RAW);
-        $io->out($shells->saveXML());
+        $io->out((string)$shells->saveXML());
     }
 
     /**

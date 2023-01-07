@@ -159,7 +159,7 @@ class Response extends Message implements ResponseInterface
         }
         // Check the format byte
         if (substr($body, $offset, 1) === "\x08") {
-            return gzinflate(substr($body, $offset + 8));
+            return (string)gzinflate(substr($body, $offset + 8));
         }
 
         throw new CakeException('Invalid gzip response');
