@@ -40,6 +40,5 @@
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
         <RedundantCast errorLevel="suppress"/>
         <UndefinedAttributeClass errorLevel="suppress"/>
-        <TooManyTemplateParams errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

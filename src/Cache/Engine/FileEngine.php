@@ -243,13 +243,13 @@ class FileEngine extends CacheEngine
             $this->_config['path'],
             FilesystemIterator::SKIP_DOTS
         );
-        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $contents Coerce for phpstan/psalm */
-        $contents = new RecursiveIteratorIterator(
+        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Coerce for phpstan/psalm */
+        $iterator = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST
         );
         $cleared = [];
-        foreach ($contents as $fileInfo) {
+        foreach ($iterator as $fileInfo) {
             if ($fileInfo->isFile()) {
                 unset($fileInfo);
                 continue;
@@ -273,7 +273,7 @@ class FileEngine extends CacheEngine
 
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
-        unset($directory, $contents);
+        unset($directory, $iterator);
 
         return true;
     }
