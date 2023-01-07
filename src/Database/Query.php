@@ -1494,7 +1494,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function limit($num)
     {
-        if (is_string($limit) && !is_numeric($limit)) {
+        if (is_string($num) && !is_numeric($num)) {
             throw new InvalidArgumentException('Invalid value for `limit()`');
         }
         $this->_dirty();
