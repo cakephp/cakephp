@@ -158,11 +158,10 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testRequestBuilding(): void
     {
+        $this->setJsonHeader();
         $this->configRequest([
             'headers' => [
                 'X-CSRF-Token' => 'abc123',
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
             ],
             'base' => '',
             'webroot' => '/',
