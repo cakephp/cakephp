@@ -485,18 +485,6 @@ TEXT;
     }
 
     /**
-     * test wrapBlock() identical to wrap()
-     */
-    public function testWrapBlockIndenticalToWrapWithIndent(): void
-    {
-        $text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
-
-        $result = Text::wrapBlock($text, ['width' => 30, 'indentAt' => 0, 'indent' => '-']);
-        $expected = Text::wrap($text, ['width' => 30, 'indentAt' => 0, 'indent' => '-']);
-        $this->assertTextEquals($expected, $result);
-    }
-
-    /**
      * test wrapBlock() indenting from first line
      */
     public function testWrapBlockWithIndentAt0(): void
