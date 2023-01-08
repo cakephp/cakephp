@@ -76,7 +76,11 @@ class JsonConfig implements ConfigEngineInterface
     {
         $file = $this->_getFilePath($key, true);
 
-        $values = json_decode((string)file_get_contents($file), true);
+        $jsonContent = file_get_contents($file);
+        if ($jsonContent === false) {
+            throw new CakeException(sprintf('Cannot read file content of `%s`', $file));
+        }
+        $values = json_decode($jsonContent, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CakeException(sprintf(
                 'Error parsing JSON string fetched from config file "%s.json": %s',
