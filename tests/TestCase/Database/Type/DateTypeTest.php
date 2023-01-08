@@ -181,11 +181,11 @@ class DateTypeTest extends TestCase
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Date(date('Y-m-d')),
+                null,
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Date(date('Y-m-d')),
+                null,
             ],
             [
                 [
