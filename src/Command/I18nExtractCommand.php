@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
@@ -693,7 +694,7 @@ class I18nExtractCommand extends Command
         }
         $oldFileContent = file_get_contents($oldFile);
         if ($oldFileContent === false) {
-            return false;
+            throw new CakeException(sprintf('Cannot read file content of `%s`', $oldFile));
         }
 
         $oldChecksum = sha1(substr($oldFileContent, $headerLength));

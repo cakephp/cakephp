@@ -82,7 +82,7 @@ class I18nInitCommand extends Command
 
             $content = file_get_contents($sourceFolder . $filename);
             if ($content === false) {
-                throw new CakeException(sprintf('Cannot read file content of %s', $sourceFolder . $filename));
+                throw new CakeException(sprintf('Cannot read file content of `%s`', $sourceFolder . $filename));
             }
             $io->createFile($targetFolder . $newFilename, $content);
             $count++;
