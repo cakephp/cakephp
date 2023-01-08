@@ -268,21 +268,6 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Sets HTTP headers for the *next* request to be identified as JSON request.
-     *
-     * @return void
-     */
-    public function setJsonHeader(): void
-    {
-        $this->configRequest([
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-    }
-
-    /**
      * Configures the data for the *next* request.
      *
      * This data is cleared in the tearDown() method.
@@ -297,6 +282,21 @@ trait IntegrationTestTrait
     public function configRequest(array $data): void
     {
         $this->_request = array_merge_recursive($data, $this->_request);
+    }
+
+    /**
+     * Sets HTTP headers for the *next* request to be identified as JSON request.
+     *
+     * @return void
+     */
+    public function requestAsJson(): void
+    {
+        $this->configRequest([
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+        ]);
     }
 
     /**
