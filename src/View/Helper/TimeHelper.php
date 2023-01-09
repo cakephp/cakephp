@@ -267,7 +267,7 @@ class TimeHelper extends Helper
             'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
-        if ($options['timezone'] && method_exists($dateTime, 'setTimezone')) {
+        if ($options['timezone'] && is_object($dateTime) && method_exists($dateTime, 'setTimezone')) {
             $dateTime = $dateTime->setTimezone($options['timezone']);
             unset($options['timezone']);
         }

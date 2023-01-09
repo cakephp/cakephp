@@ -104,7 +104,7 @@ class DateType extends DateTimeType
     public function marshal($value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
-            return new FrozenDate($value);
+            return new FrozenDate('@' . $value->getTimestamp());
         }
 
         /** @var class-string<\Cake\Chronos\ChronosDate> $class */
