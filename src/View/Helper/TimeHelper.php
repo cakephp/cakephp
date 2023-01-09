@@ -19,7 +19,6 @@ namespace Cake\View\Helper;
 use Cake\I18n\FrozenTime;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
-use DateTimeInterface;
 use Exception;
 
 /**
