@@ -475,8 +475,3 @@ parameters:
 			count: 1
 			path: src/View/Form/NullContext.php
 
-		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/View/Helper/TimeHelper.php
-
