@@ -205,7 +205,7 @@ class Sqlserver extends Driver
             }
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        /** @var string $sql */
         $statement = $this->getPdo()->prepare(
             $sql,
             [

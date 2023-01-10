@@ -121,12 +121,15 @@ class CommonTableExpression implements ExpressionInterface
     public function field(IdentifierExpression|array|string $fields)
     {
         $fields = (array)$fields;
+        /** @var array<string|\Cake\Database\Expression\IdentifierExpression> $fields */
         foreach ($fields as &$field) {
             if (!($field instanceof IdentifierExpression)) {
                 $field = new IdentifierExpression($field);
             }
         }
-        $this->fields = array_merge($this->fields, $fields);
+        /** @var array<\Cake\Database\Expression\IdentifierExpression> $mergedFields */
+        $mergedFields = array_merge($this->fields, $fields);
+        $this->fields = $mergedFields;
 
         return $this;
     }

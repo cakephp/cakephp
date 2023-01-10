@@ -155,20 +155,21 @@ class ResultSetFactory
 
         foreach ($data['containAssoc'] as $assoc) {
             $alias = $assoc['nestKey'];
-
-            if ($assoc['canBeJoined'] && empty($data['fields'][$alias])) {
+            /** @var bool $canBeJoined */
+            $canBeJoined = $assoc['canBeJoined'];
+            if ($canBeJoined && empty($data['fields'][$alias])) {
                 continue;
             }
 
             $instance = $assoc['instance'];
             assert($instance instanceof Association);
 
-            if (!$assoc['canBeJoined'] && !isset($row[$alias])) {
-                $results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
+            if (!$canBeJoined && !isset($row[$alias])) {
+                $results = $instance->defaultRowValue($results, $canBeJoined);
                 continue;
             }
 
-            if (!$assoc['canBeJoined']) {
+            if (!$canBeJoined) {
                 $results[$alias] = $row[$alias];
             }
 

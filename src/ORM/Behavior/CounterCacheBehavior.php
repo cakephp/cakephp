@@ -128,6 +128,7 @@ class CounterCacheBehavior extends Behavior
 
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->getAssociation($assoc);
+            /** @var string|int $field */
             foreach ($settings as $field => $config) {
                 if (is_int($field)) {
                     continue;

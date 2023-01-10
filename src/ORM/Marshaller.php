@@ -90,8 +90,8 @@ class Marshaller
             }
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (!$this->_table->hasAssociation($key)) {
-                if (!str_starts_with($key, '_')) {
+            if (!$this->_table->hasAssociation((string)$key)) {
+                if (!str_starts_with((string)$key, '_')) {
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for `%s` association. It is not associated with `%s`.',
                         (string)$key,
@@ -100,7 +100,7 @@ class Marshaller
                 }
                 continue;
             }
-            $assoc = $this->_table->getAssociation($key);
+            $assoc = $this->_table->getAssociation((string)$key);
 
             if (isset($options['forceNew'])) {
                 $nested['forceNew'] = $options['forceNew'];
@@ -165,7 +165,7 @@ class Marshaller
      * ]);
      * ```
      *
-     * @param array $data The data to hydrate.
+     * @param array<string, mixed> $data The data to hydrate.
      * @param array<string, mixed> $options List of options
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Table::newEntity()
@@ -190,6 +190,9 @@ class Marshaller
         $options['isMerge'] = false;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];
+        /**
+         * @var string $key
+         */
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {
@@ -258,7 +261,7 @@ class Marshaller
     /**
      * Returns data and options prepared to validate and marshall.
      *
-     * @param array $data The data to prepare.
+     * @param array<string, mixed> $data The data to prepare.
      * @param array<string, mixed> $options The options passed to this marshaller.
      * @return array An array containing prepared data and options.
      */
@@ -544,6 +547,9 @@ class Marshaller
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];
+        /**
+         * @var string $key
+         */
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {
@@ -739,10 +745,14 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
+            /** @var \Cake\Datasource\EntityInterface $original */
             return $marshaller->merge($original, $value, $options);
         }
         if ($type === Association::MANY_TO_MANY) {
-            /** @phpstan-ignore-next-line */
+            /**
+             * @var array<\Cake\Datasource\EntityInterface> $original
+             * @var \Cake\ORM\Association\BelongsToMany $assoc
+             */
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, $options);
         }
 
@@ -757,7 +767,9 @@ class Marshaller
             }
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        /**
+         * @var array<\Cake\Datasource\EntityInterface> $original
+         */
         return $marshaller->mergeMany($original, $value, $options);
     }
 

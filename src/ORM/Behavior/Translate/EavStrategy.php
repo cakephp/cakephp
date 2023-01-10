@@ -267,7 +267,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get(current($primaryKey));
+        $key = $entity->get((string)current($primaryKey));
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -385,7 +385,7 @@ class EavStrategy implements TranslateStrategyInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
-                /** @psalm-suppress PossiblyInvalidMethodCall */
+                /** @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 
@@ -451,7 +451,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $fields = $this->_config['fields'];
         $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get(current($primaryKey));
+        $key = $entity->get((string)current($primaryKey));
         $find = [];
         $contents = [];
 

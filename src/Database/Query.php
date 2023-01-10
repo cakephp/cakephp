@@ -742,9 +742,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $table = current($table);
         }
 
-        /**
-         * @psalm-suppress InvalidArrayOffset
-         */
+        /** @var string $alias */
         return [
             $alias => [
                 'table' => $table,

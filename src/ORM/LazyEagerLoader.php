@@ -59,6 +59,7 @@ class LazyEagerLoader
 
         $entities = $this->_injectResults($entities, $query, $associations, $source);
 
+        /** @var \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> */
         return $returnSingle ? array_shift($entities) : $entities;
     }
 
@@ -120,8 +121,9 @@ class LazyEagerLoader
         $map = [];
         $container = $source->associations();
         foreach ($associations as $assoc) {
-            /** @psalm-suppress PossiblyNullReference */
-            $map[$assoc] = $container->get($assoc)->getProperty();
+            /** @var \Cake\ORM\Association $association */
+            $association = $container->get($assoc);
+            $map[$assoc] = $association->getProperty();
         }
 
         return $map;

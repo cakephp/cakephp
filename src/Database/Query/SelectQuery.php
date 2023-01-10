@@ -484,9 +484,7 @@ class SelectQuery extends Query implements IteratorAggregate
             $table = current($table);
         }
 
-        /**
-         * @psalm-suppress InvalidArrayOffset
-         */
+        /** @var string $alias */
         return [
             $alias => [
                 'table' => $table,
@@ -766,6 +764,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
+        /** @var \Traversable|array $results */
         $results = $this->all();
         if (is_array($results)) {
             return new ArrayIterator($results);
@@ -781,7 +780,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * row with any possible modifications.
      *
      * Callbacks will be executed lazily, if only 3 rows are fetched for database it will
-     * called 3 times, event though there might be more rows to be fetched in the cursor.
+     * be called 3 times, event though there might be more rows to be fetched in the cursor.
      *
      * Callbacks are stacked in the order they are registered, if you wish to reset the stack
      * the call this function with the second parameter set to true.
