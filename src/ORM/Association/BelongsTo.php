@@ -143,9 +143,10 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @psalm-suppress InvalidScalarArgument */
+        /** @var array<string> $foreignKeys */
+        $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
-            (array)$this->getForeignKey(),
+            $foreignKeys,
             $targetEntity->extract((array)$this->getBindingKey())
         );
         $entity->set($properties, ['guard' => false]);

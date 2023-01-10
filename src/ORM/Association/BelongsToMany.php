@@ -578,13 +578,14 @@ class BelongsToMany extends Association
         if (!$this->getDependent()) {
             return true;
         }
-        $foreignKey = (array)$this->getForeignKey();
-        $bindingKey = (array)$this->getBindingKey();
+
+        /** @var array<string> $foreignKeys */
+        $foreignKeys = (array)$this->getForeignKey();
+        $bindingKeys = (array)$this->getBindingKey();
         $conditions = [];
 
-        if (!empty($bindingKey)) {
-            /** @psalm-suppress InvalidScalarArgument */
-            $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+        if ($bindingKeys) {
+            $conditions = array_combine($foreignKeys, $entity->extract($bindingKeys));
         }
 
         $table = $this->junction();

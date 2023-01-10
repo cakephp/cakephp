@@ -166,9 +166,10 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        /** @psalm-suppress InvalidScalarArgument */
+        /** @var array<string> $foreignKeys */
+        $foreignKeys = (array)$this->getForeignKey();
         $foreignKeyReference = array_combine(
-            (array)$this->getForeignKey(),
+            $foreignKeys,
             $entity->extract((array)$this->getBindingKey())
         );
 

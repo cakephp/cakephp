@@ -513,7 +513,7 @@ class SelectLoader
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
             $f = $fetchQuery->aliasField($key, $this->sourceAlias);
-            $sourceKeys[] = key($f);
+            $sourceKeys[] = (string)key($f);
         }
 
         $nestKey = $options['nestKey'];
