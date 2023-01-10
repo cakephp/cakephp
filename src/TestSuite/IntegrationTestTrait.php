@@ -281,7 +281,22 @@ trait IntegrationTestTrait
      */
     public function configRequest(array $data): void
     {
-        $this->_request = $data + $this->_request;
+        $this->_request = array_merge_recursive($data, $this->_request);
+    }
+
+    /**
+     * Sets HTTP headers for the *next* request to be identified as JSON request.
+     *
+     * @return void
+     */
+    public function requestAsJson(): void
+    {
+        $this->configRequest([
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+        ]);
     }
 
     /**
