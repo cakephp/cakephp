@@ -199,6 +199,7 @@ class SmtpTransport extends AbstractTransport
             $this->_disconnect();
         }
 
+        /** @var array{headers: string, message: string} */
         return $this->_content;
     }
 
@@ -476,7 +477,7 @@ class SmtpTransport extends AbstractTransport
     protected function _sendRcpt(Message $message): void
     {
         $from = $this->_prepareFromAddress($message);
-        $this->_smtpSend($this->_prepareFromCmd(key($from)));
+        $this->_smtpSend($this->_prepareFromCmd((string)key($from)));
 
         $messages = $this->_prepareRecipientAddresses($message);
         foreach ($messages as $mail) {

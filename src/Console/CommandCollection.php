@@ -67,10 +67,11 @@ class CommandCollection implements IteratorAggregate, Countable
             assert(
                 is_subclass_of($command, CommandInterface::class),
                 sprintf(
-                    "Cannot use '%s' for command '%s'. " .
-                    "It is not a subclass of Cake\Console\CommandInterface.",
+                    'Cannot use `%s` for command `%s`. ' .
+                    'It is not a subclass of `%s`.',
                     $command,
-                    $name
+                    $name,
+                    CommandInterface::class
                 )
             );
         }
@@ -186,7 +187,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Resolve names based on existing commands
      *
-     * @param array $input The results of a CommandScanner operation.
+     * @param array<array<string, string>> $input The results of a CommandScanner operation.
      * @return array<string, class-string<\Cake\Console\CommandInterface>> A flat map of command names => class names.
      */
     protected function resolveNames(array $input): array
@@ -203,9 +204,11 @@ class CommandCollection implements IteratorAggregate, Countable
                 $name = $info['fullName'];
             }
 
-            $out[$name] = $info['class'];
+            /** @var class-string<\Cake\Console\CommandInterface> $class */
+            $class = $info['class'];
+            $out[$name] = $class;
             if ($addLong) {
-                $out[$info['fullName']] = $info['class'];
+                $out[$info['fullName']] = $class;
             }
         }
 

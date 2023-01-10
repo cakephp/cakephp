@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
@@ -80,6 +81,9 @@ class SchemaLoader
                 throw new InvalidArgumentException(sprintf('Unable to load SQL file `%s`.', $file));
             }
             $sql = file_get_contents($file);
+            if ($sql === false) {
+                throw new CakeException(sprintf('Cannot read file content of `%s`', $file));
+            }
 
             // Use the underlying PDO connection so we can avoid prepared statements
             // which don't support multiple queries in postgres.

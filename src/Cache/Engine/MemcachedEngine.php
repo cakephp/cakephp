@@ -352,7 +352,7 @@ class MemcachedEngine extends CacheEngine
     /**
      * Read many keys from the cache at once
      *
-     * @param iterable $keys An array of identifiers for the data
+     * @param iterable<string> $keys An array of identifiers for the data
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.

@@ -301,7 +301,7 @@ class Inflector
 
         foreach (static::$_plural as $rule => $replacement) {
             if (preg_match($rule, $word)) {
-                static::$_cache['pluralize'][$word] = preg_replace($rule, $replacement, $word);
+                static::$_cache['pluralize'][$word] = (string)preg_replace($rule, $replacement, $word);
 
                 return static::$_cache['pluralize'][$word];
             }
@@ -356,7 +356,7 @@ class Inflector
 
         foreach (static::$_singular as $rule => $replacement) {
             if (preg_match($rule, $word)) {
-                static::$_cache['singularize'][$word] = preg_replace($rule, $replacement, $word);
+                static::$_cache['singularize'][$word] = (string)preg_replace($rule, $replacement, $word);
 
                 return static::$_cache['singularize'][$word];
             }
@@ -456,7 +456,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = mb_strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
+            $result = mb_strtolower((string)preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 

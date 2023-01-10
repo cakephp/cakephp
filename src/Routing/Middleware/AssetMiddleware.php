@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
@@ -146,13 +147,20 @@ class AssetMiddleware implements MiddlewareInterface
      */
     protected function deliverAsset(ServerRequestInterface $request, SplFileInfo $file): Response
     {
-        $stream = new Stream(fopen($file->getPathname(), 'rb'));
+        $resource = fopen($file->getPathname(), 'rb');
+        if ($resource === false) {
+            throw new CakeException(sprintf('Cannot open resource `%s`', $file->getPathname()));
+        }
+        $stream = new Stream($resource);
 
         $response = new Response(['stream' => $stream]);
 
         $contentType = (array)($response->getMimeType($file->getExtension()) ?: 'application/octet-stream');
         $modified = $file->getMTime();
         $expire = strtotime($this->cacheTime);
+        if ($expire === false) {
+            throw new CakeException(sprintf('Invalid cache time value `%s`', $this->cacheTime));
+        }
         $maxAge = $expire - time();
 
         return $response

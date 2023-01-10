@@ -86,7 +86,7 @@ class Number
     {
         $formatter = static::formatter(['precision' => $precision, 'places' => $precision] + $options);
 
-        return $formatter->format((float)$value);
+        return (string)$formatter->format((float)$value);
     }
 
     /**
@@ -239,6 +239,7 @@ class Number
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
+            /** @var string $pos */
             $pos = $options['fractionPosition'] ?? 'after';
 
             return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
@@ -325,6 +326,7 @@ class Number
      */
     public static function formatter(array $options = []): NumberFormatter
     {
+        /** @var string $locale */
         $locale = $options['locale'] ?? ini_get('intl.default_locale');
 
         if (!$locale) {
@@ -333,7 +335,7 @@ class Number
 
         $type = NumberFormatter::DECIMAL;
         if (!empty($options['type'])) {
-            $type = $options['type'];
+            $type = (int)$options['type'];
             if ($options['type'] === static::FORMAT_CURRENCY) {
                 $type = NumberFormatter::CURRENCY;
             } elseif ($options['type'] === static::FORMAT_CURRENCY_ACCOUNTING) {
@@ -417,6 +419,6 @@ class Number
      */
     public static function ordinal(float|int $value, array $options = []): string
     {
-        return static::formatter(['type' => NumberFormatter::ORDINAL] + $options)->format($value);
+        return (string)static::formatter(['type' => NumberFormatter::ORDINAL] + $options)->format($value);
     }
 }

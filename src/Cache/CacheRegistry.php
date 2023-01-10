@@ -79,7 +79,7 @@ class CacheRegistry extends ObjectRegistry
         }
         unset($config['className']);
 
-        assert($instance instanceof CacheEngine, 'Cache engines must extend Cake\Cache\CacheEngine.');
+        assert($instance instanceof CacheEngine, 'Cache engines must extend `' . CacheEngine::class . '`.');
 
         if (!$instance->init($config)) {
             throw new CakeException(

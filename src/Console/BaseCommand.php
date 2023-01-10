@@ -265,7 +265,7 @@ abstract class BaseCommand implements CommandInterface
         if (is_string($command)) {
             assert(
                 is_subclass_of($command, CommandInterface::class),
-                "Command '{$command}' is not a subclass of Cake\Console\CommandInterface."
+                sprintf('Command `%s` is not a subclass of `%s`.', $command, CommandInterface::class)
             );
 
             $command = new $command();

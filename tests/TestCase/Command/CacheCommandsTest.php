@@ -100,7 +100,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache clear foo');
         $this->assertExitCode(CommandInterface::CODE_ERROR);
-        $this->assertErrorContains('The "foo" cache configuration does not exist');
+        $this->assertErrorContains('The `foo` cache configuration does not exist');
     }
 
     /**

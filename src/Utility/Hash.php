@@ -184,8 +184,8 @@ class Hash
     /**
      * Split token conditions
      *
-     * @param string $token the token being splitted.
-     * @return array [token, conditions] with token splitted
+     * @param string $token the token being split.
+     * @return array [token, conditions] with token split
      */
     protected static function _splitConditions(string $token): array
     {
@@ -313,6 +313,7 @@ class Hash
             return static::_simpleOp('insert', $data, $tokens, $values);
         }
 
+        /** @var string $token */
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
@@ -404,6 +405,7 @@ class Hash
             return static::_simpleOp('remove', $data, $tokens);
         }
 
+        /** @var string $token */
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
@@ -459,6 +461,7 @@ class Hash
         }
 
         if (is_array($keyPath)) {
+            /** @var string $format */
             $format = array_shift($keyPath);
             $keys = static::format($data, $keyPath, $format);
             assert(is_array($keys));

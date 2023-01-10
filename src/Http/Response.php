@@ -1486,8 +1486,7 @@ class Response implements ResponseInterface, Stringable
             return;
         }
 
-        /** @psalm-suppress PossiblyInvalidOperand */
-        $this->_setHeader('Content-Length', (string)($end - $start + 1));
+        $this->_setHeader('Content-Length', (string)((int)$end - (int)$start + 1));
         $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
         $this->_setStatus(206);
         /**

@@ -306,7 +306,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
             $write = [$name => $value];
         }
 
-        /** @psalm-suppress PossiblyInvalidIterator */
+        /** @var array<string, mixed> $write */
         foreach ($write as $key => $val) {
             $this->_data = Hash::insert($this->_data, $key, $val);
         }

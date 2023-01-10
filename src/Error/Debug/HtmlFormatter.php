@@ -94,7 +94,7 @@ class HtmlFormatter implements FormatterInterface
         ob_start();
         include __DIR__ . DIRECTORY_SEPARATOR . 'dumpHeader.html';
 
-        return ob_get_clean();
+        return (string)ob_get_clean();
     }
 
     /**

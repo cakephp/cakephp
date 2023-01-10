@@ -241,7 +241,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $days = (int)$future['d'] - (int)$past['d'];
             } else {
                 $daysInPastMonth = (int)date('t', $pastTime);
-                $daysInFutureMonth = (int)date('t', mktime(0, 0, 0, (int)$future['m'] - 1, 1, (int)$future['Y']));
+                $daysInFutureMonth = (int)date('t', (int)mktime(0, 0, 0, (int)$future['m'] - 1, 1, (int)$future['Y']));
 
                 if (!$backwards) {
                     $days = $daysInPastMonth - (int)$past['d'] + (int)$future['d'];

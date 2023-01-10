@@ -110,7 +110,10 @@ class Security
      */
     public static function randomBytes(int $length): string
     {
-        /** @psalm-suppress ArgumentTypeCoercion */
+        if ($length < 1) {
+            throw new InvalidArgumentException('Length must be `int<1, max>`');
+        }
+
         return random_bytes($length);
     }
 

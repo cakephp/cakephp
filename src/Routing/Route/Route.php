@@ -345,11 +345,11 @@ class Route
             $names[] = $name;
         }
         if (preg_match('#\/\*\*$#', $route)) {
-            $parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
+            $parsed = (string)preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
             $this->_greedy = true;
         }
         if (preg_match('#\/\*$#', $route)) {
-            $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
+            $parsed = (string)preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
         $mode = empty($this->options['multibytePattern']) ? '' : 'u';

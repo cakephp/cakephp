@@ -66,7 +66,7 @@ class MoFileParser
         if ($stat['size'] < self::MO_HEADER_SIZE) {
             throw new CakeException('Invalid format for MO translations file');
         }
-        $magic = unpack('V1', fread($stream, 4));
+        $magic = unpack('V1', (string)fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
 
         if ($magic === self::MO_LITTLE_ENDIAN_MAGIC) {
@@ -103,7 +103,7 @@ class MoFileParser
             }
 
             fseek($stream, $offset);
-            $singularId = fread($stream, $length);
+            $singularId = (string)fread($stream, $length);
 
             if (str_contains($singularId, "\x04")) {
                 [$context, $singularId] = explode("\x04", $singularId);
@@ -117,7 +117,7 @@ class MoFileParser
             $length = $this->_readLong($stream, $isBigEndian);
             $offset = $this->_readLong($stream, $isBigEndian);
             fseek($stream, $offset);
-            $translated = fread($stream, $length);
+            $translated = (string)fread($stream, $length);
 
             if ($pluralId !== null || str_contains($translated, "\000")) {
                 $translated = explode("\000", $translated);
@@ -154,7 +154,7 @@ class MoFileParser
      */
     protected function _readLong($stream, bool $isBigEndian): int
     {
-        $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
+        $result = unpack($isBigEndian ? 'N1' : 'V1', (string)fread($stream, 4));
         $result = current($result);
 
         return (int)substr((string)$result, -8);

@@ -838,7 +838,7 @@ class I18nExtractCommand extends Command
             $files = array_keys(iterator_to_array($files));
             sort($files);
             if ($pattern) {
-                $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
+                $files = preg_grep($pattern, $files, PREG_GREP_INVERT) ?: [];
                 $files = array_values($files);
             }
             $this->_files = array_merge($this->_files, $files);

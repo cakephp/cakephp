@@ -32,7 +32,7 @@ trait StaticConfigTrait
     /**
      * Configuration sets.
      *
-     * @var array<string|int, mixed>
+     * @var array<string|int, array<string, mixed>>
      */
     protected static array $_config = [];
 
@@ -276,6 +276,9 @@ REGEXP;
 
         parse_str($query, $queryArgs);
 
+        /**
+         * @var string $key
+         */
         foreach ($queryArgs as $key => $value) {
             if ($value === 'true') {
                 $queryArgs[$key] = true;
@@ -291,10 +294,11 @@ REGEXP;
         if (empty($parsed['className'])) {
             $classMap = static::getDsnClassMap();
 
-            $parsed['className'] = $parsed['scheme'];
-            if (isset($classMap[$parsed['scheme']])) {
-                /** @psalm-suppress PossiblyNullArrayOffset */
-                $parsed['className'] = $classMap[$parsed['scheme']];
+            /** @var string $scheme */
+            $scheme = $parsed['scheme'];
+            $parsed['className'] = $scheme;
+            if (isset($classMap[$scheme])) {
+                $parsed['className'] = $classMap[$scheme];
             }
         }
 
