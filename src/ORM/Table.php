@@ -407,7 +407,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_table === null) {
             $table = namespaceSplit(static::class);
-            $table = substr(end($table), 0, -5) ?: $this->_alias;
+            $table = substr((string)end($table), 0, -5) ?: $this->_alias;
             if (!$table) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.'
@@ -441,7 +441,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr(end($alias), 0, -5) ?: $this->_table;
+            $alias = substr((string)end($alias), 0, -5) ?: $this->_table;
             if (!$alias) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.'
@@ -538,6 +538,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
+        /** @var \Cake\Database\Schema\TableSchemaInterface */
         return $this->_schema;
     }
 

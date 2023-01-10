@@ -173,8 +173,8 @@ class NumericPaginator implements PaginatorInterface
 
         assert(
             $target instanceof RepositoryInterface,
-            'Pagination target must be an instance of Cake\Datasource\QueryInterface'
-                . ' or Cake\Datasource\RepositoryInterface.'
+            'Pagination target must be an instance of `' . QueryInterface::class
+                . '` or `' . RepositoryInterface::class . '`.'
         );
 
         $data = $this->extractData($target, $params, $settings);

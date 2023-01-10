@@ -1001,6 +1001,7 @@ trait EntityTrait
         $entity = $this;
         $len = count($path);
         while ($len) {
+            /** @var string $part */
             $part = array_shift($path);
             $len = count($path);
             $val = null;

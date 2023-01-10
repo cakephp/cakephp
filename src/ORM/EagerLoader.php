@@ -785,8 +785,8 @@ class EagerLoader
 
             $alias = $source->getAlias();
             $pkFields = [];
+            /** @var string $key */
             foreach ($keys as $key) {
-                /** @psalm-suppress PossiblyFalseArgument getForeignKey() returns false */
                 $pkFields[] = key($query->aliasField($key, $alias));
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];

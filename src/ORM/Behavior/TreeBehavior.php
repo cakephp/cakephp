@@ -229,7 +229,7 @@ class TreeBehavior extends Behavior
         $this->_ensureFields($entity);
         $left = $entity->get($config['left']);
         $right = $entity->get($config['right']);
-        $diff = $right - $left + 1;
+        $diff = (int)($right - $left + 1);
 
         if ($diff > 2) {
             if ($this->getConfig('cascadeCallbacks')) {

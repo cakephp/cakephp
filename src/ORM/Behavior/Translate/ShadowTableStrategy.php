@@ -379,7 +379,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $primaryKey = (array)$this->table->getPrimaryKey();
-        $id = $entity->get(current($primaryKey));
+        $id = $entity->get((string)current($primaryKey));
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -487,21 +487,23 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 unset($row['translation']);
 
                 if ($hydrated) {
-                    /** @psalm-suppress PossiblyInvalidMethodCall */
+                    /** @var \Cake\Datasource\EntityInterface $row */
                     $row->clean();
                 }
 
                 return $row;
             }
 
-            /** @var \Cake\ORM\Entity|array $translation */
+            /** @var \Cake\Datasource\EntityInterface|array $translation */
             $translation = $row['translation'];
 
-            /**
-             * @psalm-suppress PossiblyInvalidMethodCall
-             * @psalm-suppress PossiblyInvalidArgument
-             */
-            $keys = $hydrated ? $translation->getVisible() : array_keys($translation);
+            if ($hydrated) {
+                /** @var \Cake\Datasource\EntityInterface $translation */
+                $keys = $translation->getVisible();
+            } else {
+                /** @var array $translation */
+                $keys = array_keys($translation);
+            }
 
             foreach ($keys as $field) {
                 if ($field === 'locale') {
@@ -516,10 +518,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 }
             }
 
+            /** @var array $row */
             unset($row['translation']);
 
             if ($hydrated) {
-                /** @psalm-suppress PossiblyInvalidMethodCall */
+                /** @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 
@@ -579,7 +582,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get(current($primaryKey));
+        $key = $entity->get((string)current($primaryKey));
 
         foreach ($translations as $lang => $translation) {
             if (!$translation->id) {
