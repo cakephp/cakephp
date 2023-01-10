@@ -830,7 +830,11 @@ class I18nExtractCommand extends Command
         }
 
         foreach ($this->_paths as $path) {
-            $path = realpath($path) . DIRECTORY_SEPARATOR;
+            $path = realpath($path);
+            if ($path === false) {
+                continue;
+            }
+            $path .= DIRECTORY_SEPARATOR;
             $fs = new Filesystem();
             $files = $fs->findRecursive($path, '/\.php$/');
             $files = array_keys(iterator_to_array($files));
