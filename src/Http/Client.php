@@ -558,6 +558,7 @@ class Client implements ClientInterface
             $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }
 
+        /** @var \Cake\Http\Client\Response */
         return array_pop($responses);
     }
 

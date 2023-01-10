@@ -18,6 +18,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Configure\FileConfigTrait;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
 
 /**
@@ -99,6 +100,10 @@ class IniConfig implements ConfigEngineInterface
         $file = $this->_getFilePath($key, true);
 
         $contents = parse_ini_file($file, true);
+        if ($contents === false) {
+            throw new CakeException(sprintf('Cannot parse INI file `%s`', $file));
+        }
+
         if ($this->_section && isset($contents[$this->_section])) {
             $values = $this->_parseNestedValues($contents[$this->_section]);
         } else {

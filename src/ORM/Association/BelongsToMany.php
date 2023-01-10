@@ -786,7 +786,9 @@ class BelongsToMany extends Association
         $junction = $this->junction();
         $entityClass = $junction->getEntityClass();
         $belongsTo = $junction->getAssociation($target->getAlias());
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
+        /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
@@ -798,12 +800,9 @@ class BelongsToMany extends Association
             if (!$joint || !($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
-            /** @psalm-suppress InvalidScalarArgument */
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            /** @psalm-suppress InvalidScalarArgument */
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
-            /** @psalm-suppress InvalidArgument */
             $changedKeys = $sourceKeys !== $joint->extract($foreignKey) ||
                 $targetKeys !== $joint->extract($assocForeignKey);
 
@@ -1265,11 +1264,11 @@ class BelongsToMany extends Association
         $junction = $this->junction();
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
         /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
-        /** @var array<string> $keys */
         $keys = array_merge($foreignKey, $assocForeignKey);
         $deletes = $unmatchedEntityKeys = $present = [];
 
@@ -1404,14 +1403,13 @@ class BelongsToMany extends Association
 
         $belongsTo = $junction->getAssociation($target->getAlias());
         $hasMany = $source->getAssociation($junction->getAlias());
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
         $foreignKey = array_map(function ($key) {
-            /** @psalm-suppress PossiblyFalseOperand getForeignKey() returns false */
             return $key . ' IS';
         }, $foreignKey);
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $assocForeignKey = array_map(function ($key) {
-            /** @psalm-suppress PossiblyFalseOperand getForeignKey() returns false */
             return $key . ' IS';
         }, $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());

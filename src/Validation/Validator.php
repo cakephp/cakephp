@@ -660,7 +660,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
+            $settings = $this->_convertValidatorToArray((string)$fieldName, $defaults, $setting);
+            /** @var string $fieldName */
             $fieldName = current(array_keys($settings));
 
             $this->field($fieldName)->requirePresence($settings[$fieldName]['mode']);
@@ -675,7 +676,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Low-level method to indicate that a field can be empty.
      *
-     * This method should generally not be used and instead you should
+     * This method should generally not be used, and instead you should
      * use:
      *
      * - `allowEmptyString()`
@@ -1013,14 +1014,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Converts validator to fieldName => $settings array
      *
-     * @param string|int $fieldName name of field
+     * @param string $fieldName name of field
      * @param array<string, mixed> $defaults default settings
      * @param array<string, mixed>|string $settings settings from data
-     * @return array<array>
+     * @return array<string, array<string, mixed>>
      * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray(
-        string|int $fieldName,
+        string $fieldName,
         array $defaults = [],
         array|string $settings = []
     ): array {

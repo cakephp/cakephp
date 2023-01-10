@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
@@ -426,7 +427,7 @@ class I18nExtractCommand extends Command
                 $io->verbose(sprintf('Processing %s...', $file));
             }
 
-            $code = file_get_contents($file);
+            $code = (string)file_get_contents($file);
 
             if (preg_match($pattern, $code) === 1) {
                 $allTokens = token_get_all($code);
@@ -692,6 +693,9 @@ class I18nExtractCommand extends Command
             return false;
         }
         $oldFileContent = file_get_contents($oldFile);
+        if ($oldFileContent === false) {
+            throw new CakeException(sprintf('Cannot read file content of `%s`', $oldFile));
+        }
 
         $oldChecksum = sha1(substr($oldFileContent, $headerLength));
         $newChecksum = sha1(substr($newFileContent, $headerLength));

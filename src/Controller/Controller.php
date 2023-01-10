@@ -731,6 +731,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $typeMap = [];
         foreach ($possibleViewClasses as $class) {
+            /** @var string $viewContentType */
             $viewContentType = $class::contentType();
             if ($viewContentType && !isset($typeMap[$viewContentType])) {
                 $typeMap[$viewContentType] = $class;

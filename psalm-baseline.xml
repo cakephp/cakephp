@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="dev-master@">
+  <file src="src/Cache/Engine/FileEngine.php">
+    <TooManyTemplateParams occurrences="1">
+      <code>$iterator</code>
+    </TooManyTemplateParams>
+  </file>
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidReturnStatement occurrences="4">
       <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
@@ -94,6 +99,12 @@
     <InternalMethod occurrences="1">
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
+  </file>
+  <file src="src/Utility/Filesystem.php">
+    <TooManyTemplateParams occurrences="2">
+      <code>$iterator</code>
+      <code>$iterator</code>
+    </TooManyTemplateParams>
   </file>
   <file src="src/Utility/Hash.php">
     <RedundantCondition occurrences="1">

@@ -38,6 +38,7 @@
             </errorLevel>
         </UndefinedConstant>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
+        <RedundantCast errorLevel="suppress"/>
         <UndefinedAttributeClass errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

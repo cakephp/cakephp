@@ -543,12 +543,12 @@ class Validation
             $dateFormat = 'ymd';
         }
         $parts = preg_split('/[\sT]+/', $check);
-        if (!empty($parts) && count($parts) > 1) {
+        if ($parts && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
             if ($dateFormat === static::DATETIME_ISO8601) {
                 $dateFormat = 'ymd';
-                $time = preg_split("/[TZ\-\+\.]/", $time);
+                $time = preg_split("/[TZ\-\+\.]/", $time) ?: [];
                 $time = array_shift($time);
             }
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
@@ -1183,7 +1183,7 @@ class Validation
         }
 
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $file);
+        $mime = $finfo ? finfo_file($finfo, $file) : null;
 
         if (!$mime) {
             throw new CakeException('Can not determine the mimetype.');
@@ -1370,7 +1370,7 @@ class Validation
             return false;
         }
 
-        [$width, $height] = getimagesize($file);
+        [$width, $height] = getimagesize($file) ?: [];
         $validHeight = null;
         $validWidth = null;
 

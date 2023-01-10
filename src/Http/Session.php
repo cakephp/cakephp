@@ -508,18 +508,18 @@ class Session
     }
 
     /**
-     * Returns the session id.
+     * Returns the session ID.
      * Calling this method will not auto start the session. You might have to manually
      * assert a started session.
      *
-     * Passing an id into it, you can also replace the session id if the session
+     * Passing an ID into it, you can also replace the session ID if the session
      * has not already been started.
      * Note that depending on the session handler, not all characters are allowed
-     * within the session id. For example, the file session handler only allows
+     * within the session ID. For example, the file session handler only allows
      * characters in the range a-z A-Z 0-9 , (comma) and - (minus).
      *
-     * @param string|null $id Id to replace the current session id
-     * @return string Session id
+     * @param string|null $id ID to replace the current session ID.
+     * @return string Session ID
      */
     public function id(?string $id = null): string
     {
@@ -527,7 +527,7 @@ class Session
             session_id($id);
         }
 
-        return session_id();
+        return (string)session_id();
     }
 
     /**
@@ -626,7 +626,7 @@ class Session
         $this->start();
         $params = session_get_cookie_params();
         setcookie(
-            session_name(),
+            (string)session_name(),
             '',
             time() - 42000,
             $params['path'],

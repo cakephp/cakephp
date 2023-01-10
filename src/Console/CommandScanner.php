@@ -108,7 +108,7 @@ class CommandScanner
         foreach ($files as $fileInfo) {
             $file = $fileInfo->getFilename();
 
-            $name = Inflector::underscore(preg_replace($classPattern, '', $file));
+            $name = Inflector::underscore((string)preg_replace($classPattern, '', $file));
             if (in_array($name, $hide, true)) {
                 continue;
             }

@@ -153,19 +153,19 @@ class FormData implements Countable, Stringable
             $contentType = $value->getClientMediaType();
             $filename = $value->getClientFilename();
         } elseif (is_resource($value)) {
-            $content = stream_get_contents($value);
+            $content = (string)stream_get_contents($value);
             if (stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
                 $metadata = stream_get_meta_data($value);
-                $contentType = $finfo->file($metadata['uri']);
+                $contentType = (string)$finfo->file($metadata['uri']);
                 $filename = basename($metadata['uri']);
             }
         } else {
             $finfo = new finfo(FILEINFO_MIME);
             $value = substr($value, 1);
             $filename = basename($value);
-            $content = file_get_contents($value);
-            $contentType = $finfo->file($value);
+            $content = (string)file_get_contents($value);
+            $contentType = (string)$finfo->file($value);
         }
         $part = $this->newPart($name, $content);
         $part->type($contentType);
