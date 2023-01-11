@@ -516,7 +516,7 @@ class ConsoleOptionParser
      * Add multiple arguments at once. Take an array of argument definitions.
      * The keys are used as the argument names, and the values as params for the argument.
      *
-     * @param array $args Array of arguments to add.
+     * @param array<string, array<string, mixed>|\Cake\Console\ConsoleInputArgument> $args Array of arguments to add.
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @return $this
      */

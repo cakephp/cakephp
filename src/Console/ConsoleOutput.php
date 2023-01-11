@@ -217,10 +217,10 @@ class ConsoleOutput
         if ($this->_outputAs === static::PLAIN) {
             $tags = implode('|', array_keys(static::$_styles));
 
-            return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
+            return (string)preg_replace('#</?(?:' . $tags . ')>#', '', $text);
         }
 
-        return preg_replace_callback(
+        return (string)preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
             $this->_replaceTags(...),
             $text

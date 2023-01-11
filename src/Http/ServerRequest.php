@@ -764,8 +764,9 @@ class ServerRequest implements ServerRequestInterface
         }
 
         if (isset(static::$_detectors[$name], $detector['options'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
-            $detector = Hash::merge(static::$_detectors[$name], $detector);
+            /** @var array $data */
+            $data = static::$_detectors[$name];
+            $detector = Hash::merge($data, $detector);
         }
         static::$_detectors[$name] = $detector;
     }

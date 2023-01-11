@@ -322,7 +322,7 @@ class Message implements JsonSerializable
         if ($this->appCharset !== null) {
             $this->charset = $this->appCharset;
         }
-        $this->domain = preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
+        $this->domain = (string)preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
         if (empty($this->domain)) {
             $this->domain = php_uname('n');
         }
@@ -1890,7 +1890,7 @@ class Message implements JsonSerializable
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
-                $item = json_decode(json_encode((array)$item), true);
+                $item = json_decode((string)json_encode((array)$item), true);
             }
         });
 

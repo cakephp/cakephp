@@ -96,7 +96,7 @@ class JsonConfigTest extends TestCase
     public function testReadEmptyFile(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('config file "empty.json"');
+        $this->expectExceptionMessage('config file `empty.json`');
         $engine = new JsonConfig($this->path);
         $engine->read('empty');
     }
@@ -107,7 +107,7 @@ class JsonConfigTest extends TestCase
     public function testReadWithInvalidJson(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Error parsing JSON string fetched from config file "invalid.json"');
+        $this->expectExceptionMessage('Error parsing JSON string fetched from config file `invalid.json`');
         $engine = new JsonConfig($this->path);
         $engine->read('invalid');
     }

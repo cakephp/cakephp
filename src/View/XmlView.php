@@ -111,6 +111,7 @@ class XmlView extends SerializedView
      */
     protected function _serialize(array|string $serialize): string
     {
+        /** @var string $rootNode */
         $rootNode = $this->getConfig('rootNode', 'response');
 
         if (is_array($serialize)) {
@@ -132,6 +133,7 @@ class XmlView extends SerializedView
                 }
             }
         } else {
+            /** @var array<mixed>|string $data */
             $data = $this->viewVars[$serialize] ?? [];
             if (
                 $data &&
@@ -146,7 +148,10 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        /** @var string|false $result */
+        /**
+         * @var array<mixed> $data
+         * @var string|false $result
+         */
         $result = Xml::fromArray($data, $options)->saveXML();
         if ($result === false) {
             throw new SerializationFailureException(

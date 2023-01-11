@@ -113,8 +113,8 @@ class Debugger
     public static function getInstance(?string $class = null): static
     {
         static $instance = [];
-        if (!empty($class)) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
+        if ($class) {
+            if (!$instance || strtolower($class) !== strtolower((string)get_class($instance[0]))) {
                 $instance[0] = new $class();
             }
         }
@@ -840,7 +840,7 @@ class Debugger
     public static function formatHtmlMessage(string $message): string
     {
         $message = h($message);
-        $message = preg_replace('/`([^`]+)`/', '<code>$0</code>', $message);
+        $message = (string)preg_replace('/`([^`]+)`/', '<code>$0</code>', $message);
 
         return nl2br($message);
     }

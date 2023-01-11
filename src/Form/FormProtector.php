@@ -132,7 +132,7 @@ class FormProtector
         }
 
         $field = implode('.', $field);
-        $field = preg_replace('/(\.\d+)+$/', '', $field);
+        $field = (string)preg_replace('/(\.\d+)+$/', '', $field);
 
         if ($lock) {
             if (!in_array($field, $this->fields, true)) {
@@ -328,6 +328,7 @@ class FormProtector
             )
         );
 
+        /** @var string $key */
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
@@ -410,7 +411,7 @@ class FormProtector
         return [
             'fields' => urlencode($fields . ':' . $locked),
             'unlocked' => urlencode(implode('|', $unlockedFields)),
-            'debug' => urlencode(json_encode([
+            'debug' => urlencode((string)json_encode([
                 $url,
                 $this->fields,
                 $this->unlockedFields,

@@ -131,6 +131,7 @@ class ResponseEmitter
         $body = new RelativeStream($body, $first);
         $body->rewind();
         $pos = 0;
+        /** @var int $length */
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
             if ($pos + $this->maxBufferLength > $length) {

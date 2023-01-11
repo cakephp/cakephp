@@ -760,7 +760,7 @@ abstract class TestCase extends BaseTestCase
             $expression = '';
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
-                if (preg_match($expression, $string, $match)) {
+                if ($string && preg_match($expression, $string, $match)) {
                     $matches = true;
                     $string = substr($string, strlen($match[0]));
                     break;
@@ -773,7 +773,7 @@ abstract class TestCase extends BaseTestCase
                 }
                 $this->assertMatchesRegularExpression(
                     $expression,
-                    $string,
+                    (string)$string,
                     sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)
                 );
 

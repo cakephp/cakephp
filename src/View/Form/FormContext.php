@@ -55,7 +55,7 @@ class FormContext implements ContextInterface
     {
         assert(
             isset($context['entity']) && $context['entity'] instanceof Form,
-            "`\$context['entity']` must be an instance of Cake\Form\Form"
+            "`\$context['entity']` must be an instance of " . Form::class
         );
 
         $this->_form = $context['entity'];

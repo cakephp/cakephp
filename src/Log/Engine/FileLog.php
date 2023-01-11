@@ -206,7 +206,7 @@ class FileLog extends BaseLog
         if ($files) {
             $filesToDelete = count($files) - $rotate;
             while ($filesToDelete > 0) {
-                unlink(array_shift($files));
+                unlink((string)array_shift($files));
                 $filesToDelete--;
             }
         }

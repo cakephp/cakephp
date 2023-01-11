@@ -127,7 +127,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Obtains multiple cache items by their unique keys.
      *
-     * @param iterable $keys A list of keys that can obtained in a single operation.
+     * @param iterable<string> $keys A list of keys that can obtained in a single operation.
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
@@ -377,7 +377,10 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             return $ttl;
         }
 
-        return (int)DateTime::createFromFormat('U', '0')
+        /** @var \DateTime $datetime */
+        $datetime = DateTime::createFromFormat('U', '0');
+
+        return (int)$datetime
             ->add($ttl)
             ->format('U');
     }

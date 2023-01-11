@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Cache;
 
 use BadMethodCallException;
 use Cake\Cache\Cache;
+use Cake\Cache\CacheEngine;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
@@ -246,7 +247,7 @@ class CacheTest extends TestCase
         ]);
 
         $this->expectError();
-        $this->expectErrorMessage('Cache engines must extend Cake\Cache\CacheEngine');
+        $this->expectErrorMessage('Cache engines must extend `' . CacheEngine::class . '`');
 
         Cache::pool('tests');
     }

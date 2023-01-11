@@ -180,7 +180,7 @@ trait DateFormatTrait
             $calendar,
             $pattern
         );
-        if (empty($formatter)) {
+        if (!$formatter) {
             $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
             throw new CakeException(
                 'Your version of icu does not support creating a date formatter for ' .
@@ -188,7 +188,7 @@ trait DateFormatTrait
             );
         }
 
-        return $formatter->format($date->format('U'));
+        return (string)$formatter->format($date->format('U'));
     }
 
     /**

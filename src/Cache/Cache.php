@@ -141,12 +141,11 @@ class Cache
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('The "%s" cache configuration does not exist.', $name)
+                sprintf('The `%s` cache configuration does not exist.', $name)
             );
         }
 
         $config = static::$_config[$name];
-        assert(is_array($config));
 
         try {
             $registry->load($name, $config);
@@ -185,6 +184,7 @@ class Cache
         }
 
         if (!empty($config['groups'])) {
+            /** @var string $group */
             foreach ($config['groups'] as $group) {
                 static::$_groups[$group][] = $name;
                 static::$_groups[$group] = array_unique(static::$_groups[$group]);
@@ -356,7 +356,7 @@ class Cache
     public static function increment(string $key, int $offset = 1, string $config = 'default'): int|false
     {
         if ($offset < 0) {
-            throw new InvalidArgumentException('Offset cannot be less than 0.');
+            throw new InvalidArgumentException('Offset cannot be less than `0`.');
         }
 
         return static::pool($config)->increment($key, $offset);
@@ -375,7 +375,7 @@ class Cache
     public static function decrement(string $key, int $offset = 1, string $config = 'default'): int|false
     {
         if ($offset < 0) {
-            throw new InvalidArgumentException('Offset cannot be less than 0.');
+            throw new InvalidArgumentException('Offset cannot be less than `0`.');
         }
 
         return static::pool($config)->decrement($key, $offset);

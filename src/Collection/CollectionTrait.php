@@ -1023,7 +1023,6 @@ trait CollectionTrait
         $iterator = $this->unwrap();
 
         if ($iterator::class === ArrayIterator::class) {
-            /** @phpstan-ignore-next-line */
             $iterator = $iterator->getArrayCopy();
         }
 

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Exception\XmlException;
 use Closure;
 use DOMDocument;
@@ -118,7 +119,12 @@ class Xml
         }
 
         if ($options['readFile'] && file_exists($input)) {
-            return static::_loadXml(file_get_contents($input), $options);
+            $content = file_get_contents($input);
+            if ($content === false) {
+                throw new CakeException(sprintf('Cannot read file content of `%s`', $input));
+            }
+
+            return static::_loadXml($content, $options);
         }
 
         if (str_contains($input, '<')) {
@@ -287,7 +293,7 @@ class Xml
 
         $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-            return new SimpleXMLElement($dom->saveXML());
+            return new SimpleXMLElement((string)$dom->saveXML());
         }
 
         return $dom;
@@ -460,11 +466,10 @@ class Xml
         $data = [];
 
         foreach ($namespaces as $namespace) {
-            /**
-             * @psalm-suppress PossiblyNullIterator
-             * @var string $key
-             */
-            foreach ($xml->attributes($namespace, true) as $key => $value) {
+            /** @var \SimpleXMLElement $attributes */
+            $attributes = $xml->attributes($namespace, true);
+            /** @var string $key */
+            foreach ($attributes as $key => $value) {
                 if (!empty($namespace)) {
                     $key = $namespace . ':' . $key;
                 }

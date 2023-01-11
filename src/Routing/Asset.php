@@ -214,7 +214,7 @@ class Asset
     protected static function encodeUrl(string $url): string
     {
         $path = parse_url($url, PHP_URL_PATH);
-        if ($path === false) {
+        if ($path === false || $path === null) {
             $path = $url;
         }
 
@@ -243,7 +243,7 @@ class Asset
         $timestamp ??= Configure::read('Asset.timestamp');
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled) {
-            $filepath = preg_replace(
+            $filepath = (string)preg_replace(
                 '/^' . preg_quote(static::requestWebroot(), '/') . '/',
                 '',
                 urldecode($path)

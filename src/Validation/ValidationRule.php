@@ -129,10 +129,11 @@ class ValidationRule
         }
 
         if (!$isCallable) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /** @var string $method */
+            $method = $this->_rule;
             $message = sprintf(
-                'Unable to call method "%s" in "%s" provider for field "%s"',
-                $this->_rule,
+                'Unable to call method `%s` in `%s` provider for field `%s`',
+                $method,
                 $this->_provider,
                 $context['field']
             );
