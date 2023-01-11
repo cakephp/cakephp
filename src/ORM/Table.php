@@ -340,6 +340,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->queryFactory ??= new QueryFactory();
 
         $this->initialize($config);
+
+        assert($this->_eventManager !== null, 'EventManager not available');
+
         $this->_eventManager->on($this);
         $this->dispatchEvent('Model.initialize');
     }

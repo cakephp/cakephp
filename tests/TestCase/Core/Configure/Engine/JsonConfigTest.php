@@ -98,7 +98,7 @@ class JsonConfigTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('config file "empty.json"');
         $engine = new JsonConfig($this->path);
-        $config = $engine->read('empty');
+        $engine->read('empty');
     }
 
     /**

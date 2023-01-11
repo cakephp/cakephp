@@ -121,9 +121,10 @@ class HasOne extends Association
             return $entity;
         }
 
-        /** @psalm-suppress InvalidScalarArgument */
+        /** @var array<string> $foreignKeys */
+        $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
-            (array)$this->getForeignKey(),
+            $foreignKeys,
             $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
