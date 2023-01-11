@@ -314,7 +314,11 @@ class Stream implements AdapterInterface
             return true;
         });
         try {
-            $this->_stream = fopen($url, 'rb', false, $this->_context);
+            $stream = fopen($url, 'rb', false, $this->_context);
+            if ($stream === false) {
+                $stream = null;
+            }
+            $this->_stream = $stream;
         } finally {
             restore_error_handler();
         }

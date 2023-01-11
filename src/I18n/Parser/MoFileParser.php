@@ -60,12 +60,16 @@ class MoFileParser
     public function parse(string $file): array
     {
         $stream = fopen($file, 'rb');
+        if ($stream === false) {
+            throw new CakeException(sprintf('Cannot open resource `%s`', $file));
+        }
 
         $stat = fstat($stream);
 
         if ($stat['size'] < self::MO_HEADER_SIZE) {
             throw new CakeException('Invalid format for MO translations file');
         }
+        /** @var array $magic */
         $magic = unpack('V1', (string)fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
 
@@ -115,6 +119,10 @@ class MoFileParser
 
             fseek($stream, $offsetTranslated + $i * 8);
             $length = $this->_readLong($stream, $isBigEndian);
+            if ($length < 0) {
+                throw new CakeException('Length must be > 0');
+            }
+
             $offset = $this->_readLong($stream, $isBigEndian);
             fseek($stream, $offset);
             $translated = (string)fread($stream, $length);
@@ -154,6 +162,7 @@ class MoFileParser
      */
     protected function _readLong($stream, bool $isBigEndian): int
     {
+        /** @var array $result */
         $result = unpack($isBigEndian ? 'N1' : 'V1', (string)fread($stream, 4));
         $result = current($result);
 

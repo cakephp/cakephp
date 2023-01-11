@@ -104,8 +104,11 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
             };
         }
 
+        /** @var \RecursiveIterator $iterator */
+        $iterator = $this->getInnerIterator();
+
         return new TreePrinter(
-            $this->getInnerIterator(),
+            $iterator,
             $valuePath,
             $keyPath,
             $spacer,

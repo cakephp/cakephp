@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 
 /**
@@ -164,7 +165,11 @@ class ConsoleOutput
      */
     public function __construct(string $stream = 'php://stdout')
     {
-        $this->_output = fopen($stream, 'wb');
+        $resource = fopen($stream, 'wb');
+        if ($resource === false) {
+            throw new CakeException(sprintf('Cannot open stream `%s`', $stream));
+        }
+        $this->_output = $resource;
 
         if (
             (
