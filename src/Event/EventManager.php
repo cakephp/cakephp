@@ -116,6 +116,7 @@ class EventManager implements EventManagerInterface
         }
 
         if (!$callable) {
+            /** @var callable $options */
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options(...),
             ];

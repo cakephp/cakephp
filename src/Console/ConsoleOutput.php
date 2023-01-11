@@ -225,9 +225,12 @@ class ConsoleOutput
             return (string)preg_replace('#</?(?:' . $tags . ')>#', '', $text);
         }
 
+        /** @var callable $callback */
+        $callback = $this->_replaceTags(...);
+
         return (string)preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
-            $this->_replaceTags(...),
+            $callback,
             $text
         );
     }

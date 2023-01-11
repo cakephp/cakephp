@@ -184,6 +184,7 @@ abstract class BaseCommand implements CommandInterface
             $io->setInteractive(false);
         }
 
+        /** @var int|null */
         return $this->execute($args, $io);
     }
 
