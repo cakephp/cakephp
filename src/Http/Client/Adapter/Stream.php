@@ -243,6 +243,7 @@ class Stream implements AdapterInterface
     {
         $deadline = false;
         if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {
+            /** @var int $deadline */
             $deadline = time() + $this->_contextOptions['timeout'];
         }
 
@@ -251,7 +252,8 @@ class Stream implements AdapterInterface
         $content = '';
         $timedOut = false;
 
-        /** @psalm-suppress PossiblyNullArgument  */
+        assert($this->_stream !== null, 'Stream is not opened');
+
         while (!feof($this->_stream)) {
             if ($deadline !== false) {
                 stream_set_timeout($this->_stream, max($deadline - time(), 1));
@@ -265,7 +267,7 @@ class Stream implements AdapterInterface
                 break;
             }
         }
-        /** @psalm-suppress PossiblyNullArgument */
+
         $meta = stream_get_meta_data($this->_stream);
         /** @psalm-suppress InvalidPropertyAssignmentValue */
         fclose($this->_stream);

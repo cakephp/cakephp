@@ -504,7 +504,7 @@ class SqliteSchemaDialect extends SchemaDialect
     public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
-        assert($data !== null);
+        assert($data !== null, 'Data does not exist');
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&

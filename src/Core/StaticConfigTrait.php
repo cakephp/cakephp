@@ -292,6 +292,7 @@ REGEXP;
             }
         }
 
+        /** @var array<string, mixed> $parsed */
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

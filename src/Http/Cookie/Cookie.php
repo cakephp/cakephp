@@ -274,10 +274,10 @@ class Cookie implements CookieInterface
             $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
             $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
         } else {
-            $parts = preg_split('/\;[ \t]*/', $cookie);
+            $parts = preg_split('/\;[ \t]*/', $cookie) ?: [];
         }
 
-        [$name, $value] = explode('=', array_shift($parts), 2);
+        [$name, $value] = explode('=', (string)array_shift($parts), 2);
         $data = [
                 'name' => urldecode($name),
                 'value' => urldecode($value),
@@ -332,10 +332,10 @@ class Cookie implements CookieInterface
         $value = $this->value;
         if ($this->isExpanded) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $value = $this->_flatten($this->value);
+            $value = $this->_flatten($value);
         }
         $headerValue = [];
-        /** @psalm-suppress PossiblyInvalidArgument */
+        /** @var string $value */
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
 
         if ($this->expiresAt) {
