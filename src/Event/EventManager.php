@@ -485,7 +485,8 @@ class EventManager implements EventManagerInterface
         if ($this->_eventList) {
             $count = count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
-                /** @var \Cake\Event\EventInterface $event */
+                assert(!empty($this->_eventList[$i]), 'Given event item not present');
+
                 $event = $this->_eventList[$i];
                 try {
                     $subject = $event->getSubject();
