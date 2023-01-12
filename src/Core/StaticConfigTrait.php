@@ -256,6 +256,9 @@ REGEXP;
         }
 
         $exists = [];
+        /**
+         * @var string|int $k
+         */
         foreach ($parsed as $k => $v) {
             if (is_int($k)) {
                 unset($parsed[$k]);
@@ -289,6 +292,7 @@ REGEXP;
             }
         }
 
+        /** @var array<string, mixed> $parsed */
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

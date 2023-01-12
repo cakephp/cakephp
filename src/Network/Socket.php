@@ -178,7 +178,8 @@ class Socket
 
         $this->connected = is_resource($this->connection);
         if ($this->connected) {
-            /** @psalm-suppress PossiblyNullArgument */
+            assert($this->connection !== null);
+
             stream_set_timeout($this->connection, (int)$this->_config['timeout']);
         }
 
@@ -300,10 +301,10 @@ class Socket
     public function host(): string
     {
         if (Validation::ip($this->_config['host'])) {
-            return gethostbyaddr($this->_config['host']);
+            return (string)gethostbyaddr($this->_config['host']);
         }
 
-        return gethostbyaddr($this->address());
+        return (string)gethostbyaddr($this->address());
     }
 
     /**
@@ -331,7 +332,7 @@ class Socket
             return [$this->_config['host']];
         }
 
-        return gethostbynamel($this->_config['host']);
+        return gethostbynamel($this->_config['host']) ?: [];
     }
 
     /**
@@ -374,7 +375,8 @@ class Socket
         $totalBytes = strlen($data);
         $written = 0;
         while ($written < $totalBytes) {
-            /** @psalm-suppress PossiblyNullArgument */
+            assert($this->connection !== null);
+
             $rv = fwrite($this->connection, substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
@@ -394,11 +396,15 @@ class Socket
      */
     public function read(int $length = 1024): ?string
     {
+        if ($length < 0) {
+            throw new InvalidArgumentException('Length must be greater than `0`');
+        }
+
         if (!$this->connected && !$this->connect()) {
             return null;
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
+        assert($this->connection !== null);
         if (feof($this->connection)) {
             return null;
         }
@@ -411,7 +417,7 @@ class Socket
             return null;
         }
 
-        return $buffer;
+        return $buffer === false ? null : $buffer;
     }
 
     /**

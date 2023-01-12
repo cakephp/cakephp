@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Parser;
 
+use Cake\Core\Exception\CakeException;
 use Cake\I18n\Translator;
 
 /**
@@ -73,6 +74,9 @@ class PoFileParser
     public function parse(string $resource): array
     {
         $stream = fopen($resource, 'rb');
+        if ($stream === false) {
+            throw new CakeException(sprintf('Cannot open resource `%s`', $resource));
+        }
 
         $defaults = [
             'ids' => [],
