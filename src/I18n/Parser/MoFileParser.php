@@ -66,7 +66,7 @@ class MoFileParser
 
         $stat = fstat($stream);
 
-        if ($stat['size'] < self::MO_HEADER_SIZE) {
+        if ($stat === false || $stat['size'] < self::MO_HEADER_SIZE) {
             throw new CakeException('Invalid format for MO translations file');
         }
         /** @var array $magic */
