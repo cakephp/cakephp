@@ -252,7 +252,7 @@ class Stream implements AdapterInterface
         $content = '';
         $timedOut = false;
 
-        assert($this->_stream !== null, 'Stream is not opened');
+        assert($this->_stream !== null, 'HTTP stream failed to open');
 
         while (!feof($this->_stream)) {
             if ($deadline !== false) {
