@@ -102,12 +102,10 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            assert($this->pdo !== null, 'PDO object not available');
             $config['init'][] = sprintf('SET timezone = %s', $this->pdo->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            assert($this->pdo !== null, 'PDO object not available');
             $this->pdo->exec($command);
         }
     }
