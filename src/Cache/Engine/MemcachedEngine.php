@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Cache\Engine;
 
-use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Memcached;
 use RuntimeException;
 
