@@ -299,7 +299,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $parts = explode('\\', static::class);
         trigger_error(
             sprintf(
-                'Undefined property: %s::$%s in %s on line %s',
+                'Undefined property `%s::$%s` in `%s` on line %s',
                 array_pop($parts),
                 $name,
                 $trace[0]['file'],

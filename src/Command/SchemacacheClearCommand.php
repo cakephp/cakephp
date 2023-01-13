@@ -61,7 +61,7 @@ class SchemacacheClearCommand extends Command
         $tables = $cache->clear($args->getArgument('name'));
 
         foreach ($tables as $table) {
-            $io->verbose(sprintf('Cleared "%s"', $table));
+            $io->verbose(sprintf('Cleared `%s`', $table));
         }
 
         $io->out('<success>Cache clear complete</success>');

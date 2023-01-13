@@ -744,7 +744,7 @@ trait PaginatorTestTrait
             $this->fail('No exception raised');
         } catch (PageOutOfBoundsException $exception) {
             $this->assertEquals(
-                'Page number 3000 could not be found.',
+                'Page number `3000` could not be found.',
                 $exception->getMessage()
             );
 

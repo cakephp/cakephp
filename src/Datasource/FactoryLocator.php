@@ -68,7 +68,7 @@ class FactoryLocator
         }
 
         throw new InvalidArgumentException(sprintf(
-            'Unknown repository type "%s". Make sure you register a type before trying to use it.',
+            'Unknown repository type `%s`. Make sure you register a type before trying to use it.',
             $type
         ));
     }

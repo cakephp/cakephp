@@ -109,7 +109,7 @@ class ComponentTest extends TestCase
     public function testDuplicateComponentInitialize(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The "Banana" alias has already been loaded. The `property` key');
+        $this->expectExceptionMessage('The `Banana` alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry(new Controller(new ServerRequest()));
         $Collection->load('Banana', ['property' => ['closure' => function (): void {
         }]]);
@@ -198,7 +198,7 @@ class ComponentTest extends TestCase
     public function testLazyLoadingDoesNotExists(): void
     {
         $this->expectException(MissingComponentException::class);
-        $this->expectExceptionMessage('Component class YouHaveNoBananasComponent could not be found.');
+        $this->expectExceptionMessage('Component class `YouHaveNoBananasComponent` could not be found.');
         $Component = new ConfiguredComponent(new ComponentRegistry(new Controller(new ServerRequest())), [], ['YouHaveNoBananas']);
         $bananas = $Component->YouHaveNoBananas;
     }

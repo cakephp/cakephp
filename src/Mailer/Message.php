@@ -737,9 +737,9 @@ class Message implements JsonSerializable
 
         $context = ltrim($context, '_');
         if ($email === '') {
-            throw new InvalidArgumentException(sprintf('The email set for "%s" is empty.', $context));
+            throw new InvalidArgumentException(sprintf('The email set for `%s` is empty.', $context));
         }
-        throw new InvalidArgumentException(sprintf('Invalid email set for "%s". You passed "%s".', $context, $email));
+        throw new InvalidArgumentException(sprintf('Invalid email set for `%s`. You passed `%s`.', $context, $email));
     }
 
     /**
@@ -1193,7 +1193,7 @@ class Message implements JsonSerializable
                 $fileName = $fileInfo['file'];
                 $fileInfo['file'] = realpath($fileInfo['file']);
                 if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-                    throw new InvalidArgumentException(sprintf('File not found: "%s"', $fileName));
+                    throw new InvalidArgumentException(sprintf('File not found: `%s`', $fileName));
                 }
                 if (is_int($name)) {
                     $name = basename($fileInfo['file']);
@@ -1514,7 +1514,7 @@ class Message implements JsonSerializable
         foreach ($content as $type => $text) {
             if (!in_array($type, $this->emailFormatAvailable, true)) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid message type: "%s". Valid types are: "text", "html".',
+                    'Invalid message type: `%s`. Valid types are: `text`, `html`.',
                     $type
                 ));
             }

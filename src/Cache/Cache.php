@@ -249,7 +249,7 @@ class Cache
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
-                    "%s cache was unable to write '%s' to %s cache",
+                    '%s cache was unable to write `%s` to `%s` cache',
                     $config,
                     $key,
                     $backend::class

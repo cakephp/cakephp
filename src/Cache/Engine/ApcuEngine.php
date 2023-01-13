@@ -204,7 +204,7 @@ class ApcuEngine extends CacheEngine
                     $value = 1;
                     if (apcu_store($group, $value) === false) {
                         $this->warning(
-                            sprintf('Failed to store key "%s" with value "%s" into APCu cache.', $group, $value)
+                            sprintf('Failed to store key `%s` with value `%s` into APCu cache.', $group, $value)
                         );
                     }
                     $groups[$group] = $value;

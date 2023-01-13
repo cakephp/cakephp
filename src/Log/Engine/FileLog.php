@@ -145,7 +145,7 @@ class FileLog extends BaseLog
         if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {
             $selfError = true;
             trigger_error(vsprintf(
-                'Could not apply permission mask "%s" on log file "%s"',
+                'Could not apply permission mask `%s` on log file `%s`',
                 [$mask, $pathname]
             ), E_USER_WARNING);
             $selfError = false;
