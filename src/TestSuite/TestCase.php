@@ -746,7 +746,10 @@ abstract class TestCase extends BaseTestCase
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
-                /** @psalm-suppress InvalidArgument */
+                /**
+                 * @var array<string, mixed> $assertion
+                 * @var string $string
+                 */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
                 if ($fullDebug === true && $string === false) {
                     debug($string, true);
@@ -756,6 +759,9 @@ abstract class TestCase extends BaseTestCase
             }
 
             // If 'attrs' is not present then the array is just a regular int-offset one
+            /**
+             * @var array<int, mixed> $assertion
+             */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = '';
             foreach ((array)$expressions as $expression) {
