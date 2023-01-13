@@ -57,9 +57,9 @@ class DateType extends BaseType implements BatchCastingInterface
      *
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
-     * @var string|int|null
+     * @var array|string|int|null
      */
-    protected string|int|null $_localeMarshalFormat = null;
+    protected array|string|int|null $_localeMarshalFormat = null;
 
     /**
      * The classname to use when creating objects.

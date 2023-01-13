@@ -102,11 +102,11 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $this->pdo->quote($config['timezone']));
+            $config['init'][] = sprintf('SET timezone = %s', $this->getPdo()->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
-            $this->pdo->exec($command);
+            $this->getPdo()->exec($command);
         }
     }
 

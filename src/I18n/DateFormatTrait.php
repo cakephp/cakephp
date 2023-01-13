@@ -321,10 +321,10 @@ trait DateFormatTrait
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|int|null $format Any format accepted by IntlDateFormatter.
+     * @param array|string|int|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
-    public static function parseTime(string $time, string|int|null $format = null): ?static
+    public static function parseTime(string $time, array|string|int|null $format = null): ?static
     {
         if (is_int($format)) {
             $format = [IntlDateFormatter::NONE, $format];

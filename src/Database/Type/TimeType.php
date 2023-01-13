@@ -116,7 +116,6 @@ class TimeType extends DateTimeType
         /** @psalm-var class-string<\Cake\I18n\DateTime> $class */
         $class = $this->_className;
 
-        /** @psalm-suppress PossiblyInvalidArgument */
         return $class::parseTime($value, $this->_localeMarshalFormat);
     }
 
