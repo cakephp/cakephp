@@ -1598,7 +1598,7 @@ class TableTest extends TestCase
     public function testTableClassNonExistent(): void
     {
         $this->expectException(MissingEntityException::class);
-        $this->expectExceptionMessage('Entity class FooUser could not be found.');
+        $this->expectExceptionMessage('Entity class `FooUser` could not be found.');
         $table = new Table();
         $table->setEntityClass('FooUser');
     }
@@ -1758,7 +1758,7 @@ class TableTest extends TestCase
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The `Sluggable` alias has already been loaded', $e->getMessage());
         }
     }
 
@@ -2391,7 +2391,7 @@ class TableTest extends TestCase
     public function testSaveNewErrorOnNoPrimaryKey(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
+        $this->expectExceptionMessage('Cannot insert row in `users` table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = $this->getTableLocator()->get('users', [
             'schema' => [

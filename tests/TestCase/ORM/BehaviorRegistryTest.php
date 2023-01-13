@@ -278,7 +278,7 @@ class BehaviorRegistryTest extends TestCase
     public function testCallError(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call `nope` it does not belong to any attached behavior.');
+        $this->expectExceptionMessage('Cannot call `nope`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->call('nope');
     }
@@ -314,7 +314,7 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinderError(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call finder "nope"');
+        $this->expectExceptionMessage('Cannot call finder `nope`');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->callFinder('nope');
     }
@@ -325,7 +325,7 @@ class BehaviorRegistryTest extends TestCase
     public function testUnloadBehaviorThenCall(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call `slugify` it does not belong to any attached behavior.');
+        $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 
@@ -338,7 +338,7 @@ class BehaviorRegistryTest extends TestCase
     public function testUnloadBehaviorThenCallFinder(): void
     {
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call finder "noslug" it does not belong to any attached behavior.');
+        $this->expectExceptionMessage('Cannot call finder `noslug`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 
@@ -378,7 +378,7 @@ class BehaviorRegistryTest extends TestCase
     public function testUnloadUnknown(): void
     {
         $this->expectException(MissingBehaviorException::class);
-        $this->expectExceptionMessage('Behavior class FooBehavior could not be found.');
+        $this->expectExceptionMessage('Behavior class `FooBehavior` could not be found.');
         $this->Behaviors->unload('Foo');
     }
 

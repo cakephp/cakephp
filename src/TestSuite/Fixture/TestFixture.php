@@ -74,7 +74,7 @@ class TestFixture implements FixtureInterface
             $connection = $this->connection;
             if (!str_starts_with($connection, 'test')) {
                 $message = sprintf(
-                    'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
+                    'Invalid datasource name `%s` for `%s` fixture. Fixture datasource names must begin with `test`.',
                     $connection,
                     static::class
                 );
