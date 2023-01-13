@@ -238,7 +238,7 @@ HTML;
             $this->fail('Assertion should fail');
         } catch (ExpectationFailedException $e) {
             $this->assertStringContainsString(
-                'Attribute did not match. Was expecting Attribute "clAss" == "active"',
+                'Attribute did not match. Was expecting Attribute `clAss` == `active`',
                 $e->getMessage()
             );
         }
