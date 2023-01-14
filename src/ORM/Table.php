@@ -2088,7 +2088,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = (array)$this->getPrimaryKey();
         if (empty($primary)) {
             $msg = sprintf(
-                'Cannot insert row in "%s" table, it has no primary key.',
+                'Cannot insert row in `%s` table, it has no primary key.',
                 $this->getTable()
             );
             throw new DatabaseException($msg);
@@ -2689,7 +2689,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s" called on %s', $method, static::class)
+            sprintf('Unknown method `%s` called on `%s`', $method, static::class)
         );
     }
 

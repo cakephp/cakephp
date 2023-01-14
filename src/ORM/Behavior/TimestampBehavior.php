@@ -220,7 +220,7 @@ class TimestampBehavior extends Behavior
         $type = TypeFactory::build($columnType);
         assert(
             $type instanceof DateTimeType,
-            'TimestampBehavior only supports columns of type DateTimeType.'
+            sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class)
         );
 
         $class = $type->getDateTimeClassName();

@@ -871,7 +871,7 @@ class ViewTest extends TestCase
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
         } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The "Html" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The `Html` alias has already been loaded', $e->getMessage());
         }
     }
 

@@ -89,7 +89,7 @@ class EventFiredWith extends Constraint
 
         if (count($events) > 1) {
             throw new AssertionFailedError(sprintf(
-                'Event "%s" was fired %d times, cannot make data assertion',
+                'Event `%s` was fired %d times, cannot make data assertion',
                 $other,
                 count($events)
             ));

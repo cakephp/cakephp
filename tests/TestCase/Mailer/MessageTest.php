@@ -571,7 +571,7 @@ HTML;
     public function testUnsetEmailPattern(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid email set for "to". You passed "fail.@example.com".');
+        $this->expectExceptionMessage('Invalid email set for `to`. You passed `fail.@example.com`.');
         $email = new Message();
         $this->assertSame(Message::EMAIL_PATTERN, $email->getEmailPattern());
 
@@ -588,7 +588,7 @@ HTML;
     public function testEmptyTo(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The email set for "to" is empty.');
+        $this->expectExceptionMessage('The email set for `to` is empty.');
         $email = new Message();
         $email->setTo('');
     }

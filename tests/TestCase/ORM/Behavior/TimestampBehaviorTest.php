@@ -228,7 +228,7 @@ class TimestampBehaviorTest extends TestCase
     public function testNonDateTimeTypeException(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
+        $this->expectExceptionMessage('TimestampBehavior only supports columns of type `Cake\Database\Type\DateTimeType`.');
 
         $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table, [

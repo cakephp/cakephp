@@ -261,7 +261,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call `%s` it does not belong to any attached behavior.', $method)
+            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method)
         );
     }
 
@@ -286,7 +286,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type)
+            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type)
         );
     }
 }

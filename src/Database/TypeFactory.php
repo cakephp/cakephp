@@ -75,7 +75,7 @@ class TypeFactory
             return static::$_builtTypes[$name];
         }
         if (!isset(static::$_types[$name])) {
-            throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
+            throw new InvalidArgumentException(sprintf('Unknown type `%s`', $name));
         }
 
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);

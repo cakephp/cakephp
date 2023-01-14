@@ -383,7 +383,7 @@ class BelongsToManyTest extends TestCase
     public function testSaveStrategyInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid save strategy "depsert"');
+        $this->expectExceptionMessage('Invalid save strategy `depsert`');
         new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
 

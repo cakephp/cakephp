@@ -267,7 +267,7 @@ class I18nExtractCommand extends Command
 
         $this->_output = rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if (!$this->_isPathUsable($this->_output)) {
-            $io->err(sprintf('The output directory %s was not found or writable.', $this->_output));
+            $io->err(sprintf('The output directory `%s` was not found or writable.', $this->_output));
 
             return static::CODE_ERROR;
         }

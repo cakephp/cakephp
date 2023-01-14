@@ -471,7 +471,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
             throw new DatabaseException(sprintf(
-                'Invalid index type "%s" in index "%s" in table "%s".',
+                'Invalid index type `%s` in index `%s` in table `%s`.',
                 $attrs['type'],
                 $name,
                 $this->_table
@@ -479,7 +479,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         if (empty($attrs['columns'])) {
             throw new DatabaseException(sprintf(
-                'Index "%s" in table "%s" must have at least one column.',
+                'Index `%s` in table `%s` must have at least one column.',
                 $name,
                 $this->_table
             ));
@@ -488,8 +488,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         foreach ($attrs['columns'] as $field) {
             if (empty($this->_columns[$field])) {
                 $msg = sprintf(
-                    'Columns used in index "%s" in table "%s" must be added to the Table schema first. ' .
-                    'The column "%s" was not found.',
+                    'Columns used in index `%s` in table `%s` must be added to the Table schema first. ' .
+                    'The column `%s` was not found.',
                     $name,
                     $this->_table,
                     $field
@@ -548,14 +548,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $attrs += static::$_indexKeys;
         if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
             throw new DatabaseException(sprintf(
-                'Invalid constraint type "%s" in table "%s".',
+                'Invalid constraint type `%s` in table `%s`.',
                 $attrs['type'],
                 $this->_table
             ));
         }
         if (empty($attrs['columns'])) {
             throw new DatabaseException(sprintf(
-                'Constraints in table "%s" must have at least one column.',
+                'Constraints in table `%s` must have at least one column.',
                 $this->_table
             ));
         }
@@ -564,7 +564,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             if (empty($this->_columns[$field])) {
                 $msg = sprintf(
                     'Columns used in constraints must be added to the Table schema first. ' .
-                    'The column "%s" was not found in table "%s".',
+                    'The column `%s` was not found in table `%s`.',
                     $field,
                     $this->_table
                 );

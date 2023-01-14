@@ -50,7 +50,7 @@ class MailerAwareTraitTest extends TestCase
     public function testGetMailerThrowsException(): void
     {
         $this->expectException(MissingMailerException::class);
-        $this->expectExceptionMessage('Mailer class "Test" could not be found.');
+        $this->expectExceptionMessage('Mailer class `Test` could not be found.');
         $stub = new Stub();
         $stub->getMailer('Test');
     }

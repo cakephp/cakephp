@@ -61,7 +61,7 @@ class SchemacacheBuildCommand extends Command
         $tables = $cache->build($args->getArgument('name'));
 
         foreach ($tables as $table) {
-            $io->verbose(sprintf('Cached "%s"', $table));
+            $io->verbose(sprintf('Cached `%s`', $table));
         }
 
         $io->out('<success>Cache build complete</success>');

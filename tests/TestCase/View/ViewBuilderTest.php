@@ -21,6 +21,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingViewException;
+use Cake\View\View;
 use Cake\View\ViewBuilder;
 
 /**
@@ -253,7 +254,7 @@ class ViewBuilderTest extends TestCase
         static::setAppNamespace('Nope');
         $builder = new ViewBuilder();
         $view = $builder->build();
-        $this->assertInstanceOf('Cake\View\View', $view);
+        $this->assertInstanceOf(View::class, $view);
     }
 
     /**
@@ -273,7 +274,7 @@ class ViewBuilderTest extends TestCase
     public function testBuildMissingViewClass(): void
     {
         $this->expectException(MissingViewException::class);
-        $this->expectExceptionMessage('View class "Foo" is missing.');
+        $this->expectExceptionMessage('View class `Foo` is missing.');
         $builder = new ViewBuilder();
         $builder->setClassName('Foo');
         $builder->build();

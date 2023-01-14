@@ -99,7 +99,7 @@ class MailerTest extends TestCase
     public function testTransportInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
+        $this->expectExceptionMessage('The `Invalid` transport configuration does not exist');
         $this->mailer->setTransport('Invalid');
     }
 

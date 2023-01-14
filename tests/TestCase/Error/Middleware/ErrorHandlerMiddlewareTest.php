@@ -323,7 +323,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $logs = $this->logger->read();
         $this->assertStringContainsString(
-            '[Cake\Http\Exception\MissingControllerException] Controller class Articles could not be found.',
+            '[Cake\Http\Exception\MissingControllerException] Controller class `Articles` could not be found.',
             $logs[0]
         );
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);

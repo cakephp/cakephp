@@ -104,7 +104,7 @@ class ConnectionManagerTest extends TestCase
     public function testGetFailOnMissingConfig(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The datasource configuration "test_variant" was not found.');
+        $this->expectExceptionMessage('The datasource configuration `test_variant` was not found.');
         ConnectionManager::get('test_variant');
     }
 
@@ -128,7 +128,7 @@ class ConnectionManagerTest extends TestCase
     public function testGetNoAlias(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The datasource configuration "other_name" was not found.');
+        $this->expectExceptionMessage('The datasource configuration `other_name` was not found.');
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(empty($config), 'No test config, skipping');
 

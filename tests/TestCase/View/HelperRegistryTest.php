@@ -249,7 +249,7 @@ class HelperRegistryTest extends TestCase
     public function testUnloadUnknown(): void
     {
         $this->expectException(MissingHelperException::class);
-        $this->expectExceptionMessage('Helper class FooHelper could not be found.');
+        $this->expectExceptionMessage('Helper class `FooHelper` could not be found.');
         $this->Helpers->unload('Foo');
     }
 
@@ -295,7 +295,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigured(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded');
+        $this->expectExceptionMessage('The `Html` alias has already been loaded');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
     }
@@ -306,7 +306,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadMultipleTimesDifferentConfigValues(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The "Html" alias has already been loaded');
+        $this->expectExceptionMessage('The `Html` alias has already been loaded');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
     }

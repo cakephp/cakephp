@@ -285,7 +285,7 @@ class TableLocatorTest extends TestCase
         $this->assertNotEmpty($users);
 
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('You cannot configure "Users", it already exists in the registry.');
+        $this->expectExceptionMessage('You cannot configure `Users`, it already exists in the registry.');
 
         $this->_locator->get('Users', ['table' => 'my_users']);
     }

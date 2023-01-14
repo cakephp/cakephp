@@ -180,7 +180,7 @@ class ExceptionTrapTest extends TestCase
         $trap->handleException($error);
         $out = $output->messages();
 
-        $this->assertStringContainsString('Controller class Articles', $out[0]);
+        $this->assertStringContainsString('Controller class `Articles`', $out[0]);
         $this->assertStringContainsString('Exception Attributes', $out[0]);
         $this->assertStringContainsString('Articles', $out[0]);
     }

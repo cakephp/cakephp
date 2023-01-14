@@ -24,5 +24,5 @@ class MissingDatasourceConfigException extends CakeException
     /**
      * @var string
      */
-    protected string $_messageTemplate = 'The datasource configuration "%s" was not found.';
+    protected string $_messageTemplate = 'The datasource configuration `%s` was not found.';
 }
