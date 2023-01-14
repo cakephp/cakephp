@@ -45,6 +45,7 @@ class DeleteQuery extends Query
         'order' => null,
         'limit' => null,
         'epilog' => null,
+        'comment' => null,
     ];
 
     /**

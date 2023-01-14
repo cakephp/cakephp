@@ -43,6 +43,7 @@ class QueryCompiler
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
         'epilog' => ' %s',
+        'comment' => '/* %s */ ',
     ];
 
     /**
@@ -51,7 +52,7 @@ class QueryCompiler
      * @var array<string>
      */
     protected array $_selectParts = [
-        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
+        'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
         'limit', 'offset', 'union', 'epilog',
     ];
 
@@ -60,21 +61,21 @@ class QueryCompiler
      *
      * @var array<string>
      */
-    protected array $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
+    protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array<string>
      */
-    protected array $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
+    protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array<string>
      */
-    protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
+    protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicate whether this query dialect supports ordered unions.

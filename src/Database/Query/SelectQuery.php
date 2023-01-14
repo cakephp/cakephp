@@ -66,6 +66,7 @@ class SelectQuery extends Query implements IteratorAggregate
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'comment' => null,
     ];
 
     /**

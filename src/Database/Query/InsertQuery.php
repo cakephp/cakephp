@@ -44,6 +44,7 @@ class InsertQuery extends Query
         'modifier' => [],
         'values' => [],
         'epilog' => null,
+        'comment' => null,
     ];
 
     /**

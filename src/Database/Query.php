@@ -118,6 +118,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'comment' => null,
     ];
 
     /**
@@ -1448,6 +1449,27 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         $this->_dirty();
         $this->_parts['epilog'] = $expression;
+
+        return $this;
+    }
+
+    /**
+     * A string or expression that will be appended to the generated query as a comment
+     *
+     * ### Examples:
+     * ```
+     * $query->select('id')->where(['author_id' => 1])->comment('Filter for admin user');
+     * ```
+     *
+     * Comment content is raw SQL and not suitable for use with user supplied data.
+     *
+     * @param \Cake\Database\ExpressionInterface|string|null $expression The comment to be added
+     * @return $this
+     */
+    public function comment(ExpressionInterface|string|null $expression = null)
+    {
+        $this->_dirty();
+        $this->_parts['comment'] = $expression;
 
         return $this;
     }

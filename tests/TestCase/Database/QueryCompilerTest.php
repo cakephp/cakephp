@@ -1,0 +1,169 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * cakephp(tm) : rapid development framework (https://cakephp.org)
+ * copyright (c) cake software foundation, inc. (https://cakefoundation.org)
+ *
+ * licensed under the mit license
+ * for full copyright and license information, please see the license.txt
+ * redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     copyright (c) cake software foundation, inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org cakephp(tm) project
+ * @since         5.0.0
+ * @license       https://opensource.org/licenses/mit-license.php mit license
+ */
+namespace Cake\Test\TestCase\Database;
+
+use Cake\Database\Connection;
+use Cake\Database\Query;
+use Cake\Database\QueryCompiler;
+use Cake\Database\ValueBinder;
+use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\TestCase;
+
+/**
+ * Tests Query class
+ */
+class QueryCompilerTest extends TestCase
+{
+    use QueryAssertsTrait;
+
+    protected array $fixtures = [
+        'core.Articles',
+    ];
+
+    protected Connection|ConnectionInterface $connection;
+
+    protected QueryCompiler $compiler;
+
+    protected ValueBinder $binder;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->connection = ConnectionManager::get('test');
+        $this->compiler = new QueryCompiler();
+        $this->binder = new ValueBinder();
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->compiler);
+        unset($this->binder);
+    }
+
+    protected function newQuery(string $type): Query
+    {
+        return match ($type) {
+            Query::TYPE_SELECT => new Query\SelectQuery($this->connection),
+            Query::TYPE_INSERT => new Query\InsertQuery($this->connection),
+            Query::TYPE_UPDATE => new Query\UpdateQuery($this->connection),
+            Query::TYPE_DELETE => new Query\DeleteQuery($this->connection),
+        };
+    }
+
+    public function testSelectFrom(): void
+    {
+        /** @var \Cake\Database\Query\SelectQuery $query */
+        $query = $this->newQuery(Query::TYPE_SELECT);
+        $query = $query->select('*')
+            ->from('articles');
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('SELECT * FROM articles', $result);
+    }
+
+    public function testSelectWhere(): void
+    {
+        /** @var \Cake\Database\Query\SelectQuery $query */
+        $query = $this->newQuery(Query::TYPE_SELECT);
+        $query = $query->select('*')
+            ->from('articles')
+            ->where(['author_id' => 10]);
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('SELECT * FROM articles WHERE author_id = :c0', $result);
+    }
+
+    public function testSelectWithComment(): void
+    {
+        /** @var \Cake\Database\Query\SelectQuery $query */
+        $query = $this->newQuery(Query::TYPE_SELECT);
+        $query = $query->select('*')
+            ->from('articles')
+            ->comment('This is a test');
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('/* This is a test */ SELECT * FROM articles', $result);
+    }
+
+    public function testInsert(): void
+    {
+        /** @var \Cake\Database\Query\InsertQuery $query */
+        $query = $this->newQuery(Query::TYPE_INSERT);
+        $query = $query->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'A new article']);
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
+    }
+
+    public function testInsertWithComment(): void
+    {
+        /** @var \Cake\Database\Query\InsertQuery $query */
+        $query = $this->newQuery(Query::TYPE_INSERT);
+        $query = $query->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'A new article'])
+            ->comment('This is a test');
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+    }
+
+    public function testUpdate(): void
+    {
+        /** @var \Cake\Database\Query\UpdateQuery $query */
+        $query = $this->newQuery(Query::TYPE_UPDATE);
+        $query = $query->update('articles')
+            ->set('name', 'mark')
+            ->where(['id' => 1]);
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('UPDATE articles SET name = :c0 WHERE id = :c1', $result);
+    }
+
+    public function testUpdateWithComment(): void
+    {
+        /** @var \Cake\Database\Query\UpdateQuery $query */
+        $query = $this->newQuery(Query::TYPE_UPDATE);
+        $query = $query->update('articles')
+            ->set('name', 'mark')
+            ->where(['id' => 1])
+            ->comment('This is a test');
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('/* This is a test */ UPDATE articles SET name = :c0 WHERE id = :c1', $result);
+    }
+
+    public function testDelete(): void
+    {
+        /** @var \Cake\Database\Query\DeleteQuery $query */
+        $query = $this->newQuery(Query::TYPE_DELETE);
+        $query = $query->delete()
+            ->from('articles')
+            ->where(['id !=' => 1]);
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
+    }
+
+    public function testDeleteWithComment(): void
+    {
+        /** @var \Cake\Database\Query\DeleteQuery $query */
+        $query = $this->newQuery(Query::TYPE_DELETE);
+        $query = $query->delete()
+            ->from('articles')
+            ->where(['id !=' => 1])
+            ->comment('This is a test');
+        $result = $this->compiler->compile($query, $this->binder);
+        $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
+    }
+}
