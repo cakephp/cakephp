@@ -45,7 +45,7 @@ class QueryCompilerTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        $this->compiler = new QueryCompiler();
+        $this->compiler = $this->connection->getDriver()->newCompiler();
         $this->binder = new ValueBinder();
     }
 
@@ -74,6 +74,9 @@ class QueryCompilerTest extends TestCase
             ->from('articles');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('SELECT * FROM articles', $result);
+
+        $result = $query->all();
+        $this->assertCount(3, $result);
     }
 
     public function testSelectWhere(): void
@@ -82,9 +85,12 @@ class QueryCompilerTest extends TestCase
         $query = $this->newQuery(Query::TYPE_SELECT);
         $query = $query->select('*')
             ->from('articles')
-            ->where(['author_id' => 10]);
+            ->where(['author_id' => 1]);
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('SELECT * FROM articles WHERE author_id = :c0', $result);
+
+        $result = $query->all();
+        $this->assertCount(2, $result);
     }
 
     public function testSelectWithComment(): void
@@ -96,6 +102,9 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ SELECT * FROM articles', $result);
+
+        $result = $query->all();
+        $this->assertCount(3, $result);
     }
 
     public function testInsert(): void
@@ -107,6 +116,10 @@ class QueryCompilerTest extends TestCase
             ->values(['title' => 'A new article']);
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 
     public function testInsertWithComment(): void
@@ -119,6 +132,10 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 
     public function testUpdate(): void
@@ -126,10 +143,14 @@ class QueryCompilerTest extends TestCase
         /** @var \Cake\Database\Query\UpdateQuery $query */
         $query = $this->newQuery(Query::TYPE_UPDATE);
         $query = $query->update('articles')
-            ->set('name', 'mark')
+            ->set('title', 'mark')
             ->where(['id' => 1]);
         $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('UPDATE articles SET name = :c0 WHERE id = :c1', $result);
+        $this->assertSame('UPDATE articles SET title = :c0 WHERE id = :c1', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 
     public function testUpdateWithComment(): void
@@ -137,11 +158,15 @@ class QueryCompilerTest extends TestCase
         /** @var \Cake\Database\Query\UpdateQuery $query */
         $query = $this->newQuery(Query::TYPE_UPDATE);
         $query = $query->update('articles')
-            ->set('name', 'mark')
+            ->set('title', 'mark')
             ->where(['id' => 1])
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('/* This is a test */ UPDATE articles SET name = :c0 WHERE id = :c1', $result);
+        $this->assertSame('/* This is a test */ UPDATE articles SET title = :c0 WHERE id = :c1', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 
     public function testDelete(): void
@@ -153,6 +178,10 @@ class QueryCompilerTest extends TestCase
             ->where(['id !=' => 1]);
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 
     public function testDeleteWithComment(): void
@@ -165,5 +194,9 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
     }
 }
