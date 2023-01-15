@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -42,15 +41,12 @@ class QueryCompilerTest extends TestCase
 
     protected ValueBinder $binder;
 
-    protected bool $debug;
-
     public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->compiler = new QueryCompiler();
         $this->binder = new ValueBinder();
-        $this->debug = Configure::read('debug');
     }
 
     public function tearDown(): void
@@ -58,7 +54,6 @@ class QueryCompilerTest extends TestCase
         parent::tearDown();
         unset($this->compiler);
         unset($this->binder);
-        Configure::write('debug', $this->debug);
     }
 
     protected function newQuery(string $type): Query
@@ -103,18 +98,6 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('/* This is a test */ SELECT * FROM articles', $result);
     }
 
-    public function testSelectWithCommentInProd(): void
-    {
-        Configure::write('debug', false);
-        /** @var \Cake\Database\Query\SelectQuery $query */
-        $query = $this->newQuery(Query::TYPE_SELECT);
-        $query = $query->select('*')
-            ->from('articles')
-            ->comment('This is a test');
-        $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('SELECT * FROM articles', $result);
-    }
-
     public function testInsert(): void
     {
         /** @var \Cake\Database\Query\InsertQuery $query */
@@ -136,19 +119,6 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
-    }
-
-    public function testInsertWithCommentInProd(): void
-    {
-        Configure::write('debug', false);
-        /** @var \Cake\Database\Query\InsertQuery $query */
-        $query = $this->newQuery(Query::TYPE_INSERT);
-        $query = $query->insert(['title'])
-            ->into('articles')
-            ->values(['title' => 'A new article'])
-            ->comment('This is a test');
-        $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
     }
 
     public function testUpdate(): void
@@ -174,19 +144,6 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('/* This is a test */ UPDATE articles SET name = :c0 WHERE id = :c1', $result);
     }
 
-    public function testUpdateWithCommentInProd(): void
-    {
-        Configure::write('debug', false);
-        /** @var \Cake\Database\Query\UpdateQuery $query */
-        $query = $this->newQuery(Query::TYPE_UPDATE);
-        $query = $query->update('articles')
-            ->set('name', 'mark')
-            ->where(['id' => 1])
-            ->comment('This is a test');
-        $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('UPDATE articles SET name = :c0 WHERE id = :c1', $result);
-    }
-
     public function testDelete(): void
     {
         /** @var \Cake\Database\Query\DeleteQuery $query */
@@ -208,18 +165,5 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
-    }
-
-    public function testDeleteWithCommentInProd(): void
-    {
-        Configure::write('debug', false);
-        /** @var \Cake\Database\Query\DeleteQuery $query */
-        $query = $this->newQuery(Query::TYPE_DELETE);
-        $query = $query->delete()
-            ->from('articles')
-            ->where(['id !=' => 1])
-            ->comment('This is a test');
-        $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
     }
 }

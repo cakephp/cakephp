@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -337,11 +336,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function traverseParts(Closure $visitor, array $parts)
     {
-        $debugMode = Configure::read('debug');
         foreach ($parts as $name) {
-            if ($name === 'comment' && !$debugMode) {
-                continue;
-            }
             $visitor($this->_parts[$name], $name);
         }
 
