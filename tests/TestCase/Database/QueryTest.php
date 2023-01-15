@@ -2,17 +2,15 @@
 declare(strict_types=1);
 
 /**
- * cakephp(tm) : rapid development framework (https://cakephp.org)
- * copyright (c) cake software foundation, inc. (https://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
- * licensed under the mit license
- * for full copyright and license information, please see the license.txt
- * redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice
  *
- * @copyright     copyright (c) cake software foundation, inc. (https://cakefoundation.org)
- * @link          https://cakephp.org cakephp(tm) project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         3.0.0
- * @license       https://opensource.org/licenses/mit-license.php mit license
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database;
 
