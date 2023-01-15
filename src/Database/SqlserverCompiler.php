@@ -46,6 +46,7 @@ class SqlserverCompiler extends QueryCompiler
         'order' => ' %s',
         'offset' => ' OFFSET %s ROWS',
         'epilog' => ' %s',
+        'comment' => '/* %s */ ',
     ];
 
     /**
