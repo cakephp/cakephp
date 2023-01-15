@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
@@ -129,7 +130,12 @@ class QueryCompilerTest extends TestCase
             ->into('articles')
             ->values(['title' => 'A new article']);
         $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
+
+        if ($this->connection->getDriver() instanceof Sqlserver) {
+            $this->assertSame('INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
+        } else {
+            $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
+        }
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -145,7 +151,12 @@ class QueryCompilerTest extends TestCase
             ->values(['title' => 'A new article'])
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+
+        if ($this->connection->getDriver() instanceof Sqlserver) {
+            $this->assertSame('/* This is a test */ INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
+        } else {
+            $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+        }
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -161,7 +172,12 @@ class QueryCompilerTest extends TestCase
             ->values(['title' => 'A new article'])
             ->comment($query->expr('This is a test'));
         $result = $this->compiler->compile($query, $this->binder);
-        $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+
+        if ($this->connection->getDriver() instanceof Sqlserver) {
+            $this->assertSame('/* This is a test */ INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
+        } else {
+            $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
+        }
 
         $result = $query->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
