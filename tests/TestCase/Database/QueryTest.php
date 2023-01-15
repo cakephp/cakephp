@@ -313,7 +313,7 @@ class QueryTest extends TestCase
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `nope` clause is not defined. Valid clauses are: `delete`, `update`');
+        $this->expectExceptionMessage('The `nope` clause is not defined. Valid clauses are: `comment`, `delete`, `update`');
 
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');
