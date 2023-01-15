@@ -36,6 +36,7 @@ class DeleteQuery extends Query
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'with' => [],
         'delete' => true,
         'modifier' => [],
@@ -45,7 +46,6 @@ class DeleteQuery extends Query
         'order' => null,
         'limit' => null,
         'epilog' => null,
-        'comment' => null,
     ];
 
     /**

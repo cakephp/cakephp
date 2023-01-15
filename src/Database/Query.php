@@ -98,6 +98,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'delete' => true,
         'update' => [],
         'set' => [],
@@ -118,7 +119,6 @@ abstract class Query implements ExpressionInterface, Stringable
         'offset' => null,
         'union' => [],
         'epilog' => null,
-        'comment' => null,
     ];
 
     /**

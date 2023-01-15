@@ -39,6 +39,7 @@ class UpdateQuery extends Query
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'with' => [],
         'update' => [],
         'modifier' => [],
@@ -48,7 +49,6 @@ class UpdateQuery extends Query
         'order' => null,
         'limit' => null,
         'epilog' => null,
-        'comment' => null,
     ];
 
     /**
