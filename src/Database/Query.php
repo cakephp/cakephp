@@ -1463,10 +1463,10 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * Comment content is raw SQL and not suitable for use with user supplied data.
      *
-     * @param \Cake\Database\ExpressionInterface|string|null $expression The comment to be added
+     * @param string|null $expression The comment to be added
      * @return $this
      */
-    public function comment(ExpressionInterface|string|null $expression = null)
+    public function comment(?string $expression = null)
     {
         $this->_dirty();
         $this->_parts['comment'] = $expression;
