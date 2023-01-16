@@ -331,9 +331,11 @@ class Cookie implements CookieInterface
     {
         $value = $this->value;
         if ($this->isExpanded) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_array($value), '$value is not an array');
+
             $value = $this->_flatten($value);
         }
+
         $headerValue = [];
         /** @var string $value */
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
@@ -423,11 +425,13 @@ class Cookie implements CookieInterface
     public function getScalarValue(): string
     {
         if ($this->isExpanded) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_array($this->value), '$value is not an array');
+
             return $this->_flatten($this->value);
         }
 
-        /** @var string */
+        assert(is_string($this->value), '$value is not a string');
+
         return $this->value;
     }
 
@@ -654,11 +658,12 @@ class Cookie implements CookieInterface
     public function check(string $path): bool
     {
         if ($this->isExpanded === false) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_string($this->value), '$value is not a string');
             $this->value = $this->_expand($this->value);
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        assert(is_array($this->value), '$value is not an array');
+
         return Hash::check($this->value, $path);
     }
 
@@ -673,11 +678,11 @@ class Cookie implements CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_string($new->value), '$value is not a string');
             $new->value = $new->_expand($new->value);
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        assert(is_array($new->value), '$value is not an array');
         $new->value = Hash::insert($new->value, $path, $value);
 
         return $new;
@@ -693,11 +698,12 @@ class Cookie implements CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_string($new->value), '$value is not a string');
             $new->value = $new->_expand($new->value);
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        assert(is_array($new->value), '$value is not an array');
+
         $new->value = Hash::remove($new->value, $path);
 
         return $new;
@@ -715,7 +721,8 @@ class Cookie implements CookieInterface
     public function read(?string $path = null): mixed
     {
         if ($this->isExpanded === false) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            assert(is_string($this->value), '$value is not a string');
+
             $this->value = $this->_expand($this->value);
         }
 
@@ -723,7 +730,8 @@ class Cookie implements CookieInterface
             return $this->value;
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        assert(is_array($this->value), '$value is not an array');
+
         return Hash::get($this->value, $path);
     }
 
