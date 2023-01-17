@@ -10,6 +10,9 @@
     <a href="https://codecov.io/gh/cakephp/cakephp/branch/4.x" target="_blank">
         <img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/cakephp/cakephp?style=flat-square">
     </a>
+    <a href="https://phpstan.org/" target="_blank">
+        <img alt="PHPStan" src="https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat">
+    </a>
     <a href="https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/" target="_blank">
         <img alt="Code Consistency" src="https://squizlabs.github.io/PHP_CodeSniffer/analysis/cakephp/cakephp/grade.svg">
     </a>
