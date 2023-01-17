@@ -295,6 +295,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->components()->get($name);
         }
 
+        /** @var array<int, array<string, mixed>> $trace */
         $trace = debug_backtrace();
         $parts = explode('\\', static::class);
         trigger_error(

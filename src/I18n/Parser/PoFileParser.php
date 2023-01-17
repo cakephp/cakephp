@@ -85,6 +85,7 @@ class PoFileParser
 
         $messages = [];
         $item = $defaults;
+        /** @var array<int, string> $stage */
         $stage = [];
 
         while ($line = fgets($stream)) {
@@ -109,20 +110,16 @@ class PoFileParser
             } elseif ($line[0] === '"') {
                 switch (count($stage)) {
                     case 2:
+                        assert(isset($stage[0]));
+                        assert(isset($stage[1]));
                         /**
-                         * @psalm-suppress PossiblyUndefinedArrayOffset
                          * @psalm-suppress InvalidArrayOffset
-                         * @psalm-suppress PossiblyNullArrayAccess
                          */
                         $item[$stage[0]][$stage[1]] .= substr($line, 1, -1);
                         break;
 
                     case 1:
-                        /**
-                         * @psalm-suppress PossiblyUndefinedArrayOffset
-                         * @psalm-suppress PossiblyInvalidOperand
-                         * @psalm-suppress PossiblyNullOperand
-                         */
+                        assert(isset($stage[0]));
                         $item[$stage[0]] .= substr($line, 1, -1);
                         break;
                 }

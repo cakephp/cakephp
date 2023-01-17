@@ -107,14 +107,15 @@ class Debugger
     /**
      * Returns a reference to the Debugger singleton object instance.
      *
-     * @param string|null $class Class name.
+     * @param class-string<\Cake\Error\Debugger>|null $class Class name.
      * @return static
      */
     public static function getInstance(?string $class = null): static
     {
+        /** @var array<int, static> $instance */
         static $instance = [];
         if ($class) {
-            if (!$instance || strtolower($class) !== strtolower((string)get_class($instance[0]))) {
+            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
                 $instance[0] = new $class();
             }
         }
@@ -122,6 +123,7 @@ class Debugger
             $instance[0] = new Debugger();
         }
 
+        /** @var static */
         return $instance[0];
     }
 
