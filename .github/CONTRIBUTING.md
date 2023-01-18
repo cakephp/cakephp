@@ -80,7 +80,7 @@ To run static analysis tools [PHPStan](https://github.com/phpstan/phpstan) and [
 
     composer stan-setup
 
-The currently used PHPStan and Psalm versions can be found in [Phive config](.phive/phars.xml).
+The currently used PHPStan and Psalm versions can be found in `.phive/phars.xml`.
 
 After that you can perform the checks via:
 
