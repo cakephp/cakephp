@@ -261,3 +261,7 @@ jobs:
     - name: Run phpstan for tests
       if: always()
       run: vendor/bin/phpstan.phar analyse -c tests/phpstan.neon --error-format=github
+
+    - name: Run validaton script
+      if: always()
+      run: php contrib/validate-deprecation-aliases.php
