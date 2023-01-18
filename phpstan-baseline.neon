@@ -81,31 +81,6 @@ parameters:
 			path: src/I18n/RelativeTimeFormatter.php
 
 		-
-			message: "#^Access to an undefined static property static\\(Cake\\\\Mailer\\\\Mailer\\)\\:\\:\\$_registry\\.$#"
-			count: 1
-			path: src/Mailer/Mailer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$plugin\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$request\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\Mailer\\\\Renderer\\:\\:\\$response\\.$#"
-			count: 1
-			path: src/Mailer/Renderer.php
-
-		-
 			message: "#^Method Cake\\\\ORM\\\\Behavior\\\\TreeBehavior\\:\\:_scope\\(\\) should return T of Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery but returns Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery\\.$#"
 			count: 1
 			path: src/ORM/Behavior/TreeBehavior.php
@@ -129,16 +104,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\View\\\\Cell\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/View/Cell.php
-
-		-
-			message: "#^Access to an undefined property Cake\\\\View\\\\Cell\\:\\:\\$plugin\\.$#"
-			count: 1
-			path: src/View/Cell.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
