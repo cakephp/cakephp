@@ -16,7 +16,7 @@ body:
     attributes:
       label: CakePHP Version
       description: "The CakePHP version used."
-      placeholder: "4.3.0"
+      placeholder: "4.4.0"
     validations:
       required: true
   - type: input
