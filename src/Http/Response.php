@@ -665,6 +665,7 @@ class Response implements ResponseInterface
         $new->_createStream();
         $string = $string ?? $this->_statusCodes[$status];
         $new->stream->write($string);
+        
         return $new;
     }
 
