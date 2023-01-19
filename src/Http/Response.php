@@ -651,6 +651,23 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Method for returning string body with an HTTP Status code as a response to
+     * facilitate better API responses.
+     * 
+     * @param int $status Integer / HTTP Status code to return.
+     * @param string|null $string The string which will be sent with the status code.
+     * @return static
+     */
+    public function withStatusAndBody(int $status, ?string $string)
+    {
+        $new = clone $this;
+        $new->_setStatus($status);
+        $new->_createStream();
+        $new->stream->write($string);
+        return $new;
+    }
+
+    /**
      * Gets the response reason phrase associated with the status code.
      *
      * Because a reason phrase is not a required element in a response
