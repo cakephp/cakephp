@@ -663,6 +663,7 @@ class Response implements ResponseInterface
         $new = clone $this;
         $new->_setStatus($status);
         $new->_createStream();
+        $string = $string ?? $this->_statusCodes[$status];
         $new->stream->write($string);
         return $new;
     }
