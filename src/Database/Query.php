@@ -1011,7 +1011,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ]);
      * ```
      *
-     * If $category is `null` - it will actually convert that into `category_id IS NULL` - if it's `4` it will convert it into `category_id = 4`     
+     * If $category is `null` - it will actually convert that into `category_id IS NULL` - if it's `4` it will convert it into `category_id = 4`
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to filter on.
      * @param array<string, string> $types Associative array of type names used to bind values to query
