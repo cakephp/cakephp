@@ -167,6 +167,12 @@ class I18nTest extends TestCase
             'String 1 (from plugin three)',
             $translator->translate('String 1')
         );
+
+        $translator = I18n::getTranslator('company/test_plugin_three.custom');
+        $this->assertSame(
+            'String 2 (from plugin three)',
+            $translator->translate('String 2')
+        );
     }
 
     /**
