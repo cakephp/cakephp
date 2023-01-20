@@ -190,7 +190,6 @@ class MessagesFileLoader
             }
         }
 
-
         return $searchPaths;
     }
 }
