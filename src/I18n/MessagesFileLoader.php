@@ -40,7 +40,7 @@ class MessagesFileLoader
     /**
      * The package (domain) plugin
      *
-     * @var string
+     * @var string|null
      */
     protected $_plugin;
 
