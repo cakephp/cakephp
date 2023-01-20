@@ -6,6 +6,7 @@
 /composer.lock
 /phpunit.xml
 /phpstan.neon
+/tools
 /vendor
 /vendors
 /composer.phar
