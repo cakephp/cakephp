@@ -39,6 +39,7 @@ class InsertQuery extends Query
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'with' => [],
         'insert' => [],
         'modifier' => [],

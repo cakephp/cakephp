@@ -48,6 +48,7 @@ class PostgresCompiler extends QueryCompiler
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
         'epilog' => ' %s',
+        'comment' => '/* %s */ ',
     ];
 
     /**

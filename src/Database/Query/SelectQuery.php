@@ -51,6 +51,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'modifier' => [],
         'with' => [],
         'select' => [],

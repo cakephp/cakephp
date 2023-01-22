@@ -36,6 +36,7 @@ class DeleteQuery extends Query
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'with' => [],
         'delete' => true,
         'modifier' => [],
