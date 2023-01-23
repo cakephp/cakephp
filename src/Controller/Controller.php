@@ -625,7 +625,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             'Controller.initialize' => 'beforeFilter',
             'Controller.beforeRender' => 'beforeRender',
             'Controller.beforeRedirect' => 'beforeRedirect',
-            'Controller.shutdown' => 'afterFilter',
+            'Controller.afterFilter' => 'afterFilter',
         ];
     }
 
@@ -664,9 +664,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function shutdownProcess(): ?ResponseInterface
     {
-        $event = $this->dispatchEvent('Controller.shutdown');
+        $event = $this->dispatchEvent('Controller.afterFilter');
         if ($event->getResult() instanceof ResponseInterface) {
             return $event->getResult();
+        }
+
+        if ($this->getEventManager()->listeners('Controller.shutdown')) {
+            deprecationWarning(
+                '4.5.0 : Listenting to `Controller.shutdown` is deprecated. ' .
+                'Use the `Controller.afterFilter` event instead.'
+            );
+            $event = $this->dispatchEvent('Controller.shutdown');
+            if ($event->getResult() instanceof ResponseInterface) {
+                return $event->getResult();
+            }
         }
 
         return null;

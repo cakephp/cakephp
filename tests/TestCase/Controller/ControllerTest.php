@@ -21,6 +21,7 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -683,11 +684,31 @@ class ControllerTest extends TestCase
         $eventManager->expects($this->once())
             ->method('dispatch')
             ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.shutdown';
+                return $event->getName() === 'Controller.afterFilter';
             }))
             ->will($this->returnValue(new Event('stub')));
 
         $controller->shutdownProcess();
+    }
+
+    /**
+     * Tests that the shutdown process calls the correct functions
+     */
+    public function testShutdownProcessCallsDeprecatedEvent(): void
+    {
+        $eventManager = new EventManager();
+        $controller = new Controller(null, null, null, $eventManager);
+        $called = false;
+        $eventManager->on('Controller.shutdown', function (EventInterface $event) use (&$called) {
+            $called = true;
+            $this->assertEquals('Controller.shutdown', $event->getName());
+            $this->assertInstanceOf(Controller::class, $event->getSubject());
+        });
+
+        $this->deprecated(function () use ($controller) {
+            $controller->shutdownProcess();
+        });
+        $this->assertTrue($called);
     }
 
     /**
