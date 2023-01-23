@@ -155,12 +155,14 @@ class LoggingStatementTest extends TestCase
             ->method('__get')
             ->willReturn('SELECT bar FROM foo');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
-        try {
-            $st->execute();
-        } catch (MyPDOException $e) {
-            $this->assertSame('This is bad', $e->getMessage());
-            $this->assertSame($st->queryString, $e->queryString);
-        }
+        $this->deprecated(function () use ($st) {
+            try {
+                $st->execute();
+            } catch (MyPDOException $e) {
+                $this->assertSame('This is bad', $e->getMessage());
+                $this->assertSame($st->queryString, $e->queryString);
+            }
+        });
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
