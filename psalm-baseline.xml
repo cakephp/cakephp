@@ -277,9 +277,15 @@
       <code>$request-&gt;scheme()</code>
     </PossiblyNullArgument>
   </file>
+  <file src="src/I18n/Date.php">
+    <DeprecatedClass occurrences="2">
+      <code>MutableDate</code>
+      <code>parent::__construct($time, $tz)</code>
+    </DeprecatedClass>
+  </file>
   <file src="src/I18n/DateFormatTrait.php">
     <DeprecatedClass occurrences="5">
-      <code>$time-&gt;timezone($timezone)</code>
+      <code>$time-&gt;setTimezone($timezone)</code>
       <code>Time::UNIX_TIMESTAMP_FORMAT</code>
       <code>static|null</code>
       <code>static|null</code>
@@ -288,6 +294,12 @@
     <MissingParamType occurrences="1">
       <code>$format</code>
     </MissingParamType>
+  </file>
+  <file src="src/I18n/Time.php">
+    <DeprecatedClass occurrences="2">
+      <code>MutableDateTime</code>
+      <code>parent::__construct($time, $tz)</code>
+    </DeprecatedClass>
   </file>
   <file src="src/I18n/functions.php">
     <InternalMethod occurrences="8">
