@@ -140,6 +140,10 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithError(): void
     {
+        $this->skipIf(
+            version_compare(PHP_VERSION, '8.2.0', '>='),
+            'Setting queryString on exceptions does not work on 8.2+'
+        );
         $exception = new MyPDOException('This is bad');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
