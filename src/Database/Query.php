@@ -1388,9 +1388,6 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function limit(ExpressionInterface|int|null $limit)
     {
-        if (is_string($limit) && !is_numeric($limit)) {
-            throw new InvalidArgumentException('Invalid value for `limit()`');
-        }
         $this->_dirty();
         $this->_parts['limit'] = $limit;
 
@@ -1417,9 +1414,6 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function offset(ExpressionInterface|int|null $offset)
     {
-        if (is_string($offset) && !is_numeric($offset)) {
-            throw new InvalidArgumentException('Invalid value for `offset()`');
-        }
         $this->_dirty();
         $this->_parts['offset'] = $offset;
 

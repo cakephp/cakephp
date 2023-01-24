@@ -1155,7 +1155,7 @@ class Hash
      * @return array
      * @link https://book.cakephp.org/4/en/core-libraries/hash.html#Cake\Utility\Hash::normalize
      */
-    public static function normalize(array $data, bool $assoc = true, $default = null): array
+    public static function normalize(array $data, bool $assoc = true, mixed $default = null): array
     {
         $keys = array_keys($data);
         $count = count($keys);
