@@ -98,5 +98,5 @@ If you've found a security related issue in CakePHP, please don't open an issue 
 * [Forum](https://discourse.cakephp.org/)
 * [Stackoverflow](https://stackoverflow.com/tags/cakephp)
 * [IRC channel #cakephp](https://kiwiirc.com/client/irc.freenode.net#cakephp)
-* [Slack](https://cakesf.herokuapp.com/)
+* [Slack](https://slack-invite.cakephp.org/)
 * [Discord](https://discord.gg/k4trEMPebj)
