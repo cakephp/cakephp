@@ -438,9 +438,6 @@ class Xml
             $obj = simplexml_import_dom($obj);
         }
 
-        /**
-         * @psalm-suppress TypeDoesNotContainNull Psalm has simplexml_import_dom()'s return incorrectly typed as SimpleXMLElement|false
-         */
         if ($obj === null) {
             throw new XmlException('Failed converting DOMNode to SimpleXMLElement');
         }
