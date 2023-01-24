@@ -372,4 +372,23 @@ class I18nExtractCommandTest extends TestCase
         $expected = '#: ./tests/test_app/templates/Pages/extract.php:';
         $this->assertStringContainsString($expected, $result);
     }
+
+    /**
+     * test invalid path options
+     */
+    public function testExtractWithInvalidPaths(): void
+    {
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates,' . TEST_APP . 'unknown ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $expected = '#: ./tests/test_app/templates/Pages/extract.php:';
+        $this->assertStringContainsString($expected, $result);
+    }
 }

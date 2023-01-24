@@ -219,20 +219,28 @@ class ConsoleOutput
         if ($this->_outputAs === static::RAW) {
             return $text;
         }
-        if ($this->_outputAs === static::PLAIN) {
-            $tags = implode('|', array_keys(static::$_styles));
+        if ($this->_outputAs !== static::PLAIN) {
+            /** @var \Closure $replaceTags */
+            $replaceTags = $this->_replaceTags(...);
 
-            return (string)preg_replace('#</?(?:' . $tags . ')>#', '', $text);
+            $output = preg_replace_callback(
+                '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
+                $replaceTags,
+                $text
+            );
+            if ($output !== null) {
+                return $output;
+            }
         }
 
-        /** @var callable $callback */
-        $callback = $this->_replaceTags(...);
+        $tags = implode('|', array_keys(static::$_styles));
+        $output = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 
-        return (string)preg_replace_callback(
-            '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
-            $callback,
-            $text
-        );
+        if ($output === null) {
+            return $text;
+        }
+
+        return $output;
     }
 
     /**

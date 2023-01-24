@@ -1581,8 +1581,8 @@ class View implements EventDispatcherInterface
         $templatePaths = App::path(static::NAME_TEMPLATE);
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
-            for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                $pluginPaths[] = $templatePaths[$i]
+            foreach ($templatePaths as $templatePath) {
+                $pluginPaths[] = $templatePath
                     . static::PLUGIN_TEMPLATE_FOLDER
                     . DIRECTORY_SEPARATOR
                     . $plugin
@@ -1595,11 +1595,14 @@ class View implements EventDispatcherInterface
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
-                $themePaths[] = $themePath
-                    . static::PLUGIN_TEMPLATE_FOLDER
-                    . DIRECTORY_SEPARATOR
-                    . $plugin
-                    . DIRECTORY_SEPARATOR;
+                array_unshift(
+                    $themePaths,
+                    $themePaths[0]
+                        . static::PLUGIN_TEMPLATE_FOLDER
+                        . DIRECTORY_SEPARATOR
+                        . $plugin
+                        . DIRECTORY_SEPARATOR
+                );
             }
 
             $themePaths[] = $themePath;
