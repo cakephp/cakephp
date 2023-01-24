@@ -190,7 +190,7 @@ trait DateFormatTrait
         if ($timezone) {
             // Handle the immutable and mutable object cases.
             $time = clone $this;
-            $time = $time->timezone($timezone);
+            $time = $time->setTimezone($timezone);
         }
 
         $format = $format ?? static::$_toStringFormat;

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Date as ChronosDate;
+use Cake\Chronos\ChronosDate;
 use IntlDateFormatter;
 
 /**
