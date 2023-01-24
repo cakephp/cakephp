@@ -1595,14 +1595,11 @@ class View implements EventDispatcherInterface
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
-                array_unshift(
-                    $themePaths,
-                    $themePaths[0]
-                        . static::PLUGIN_TEMPLATE_FOLDER
-                        . DIRECTORY_SEPARATOR
-                        . $plugin
-                        . DIRECTORY_SEPARATOR
-                );
+                $themePaths[] = $themePath
+                    . static::PLUGIN_TEMPLATE_FOLDER
+                    . DIRECTORY_SEPARATOR
+                    . $plugin
+                    . DIRECTORY_SEPARATOR;
             }
 
             $themePaths[] = $themePath;
