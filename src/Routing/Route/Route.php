@@ -722,7 +722,6 @@ class Route
             if ($numeric) {
                 $pass[] = $value;
                 unset($url[$key]);
-                continue;
             }
         }
 

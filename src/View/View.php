@@ -1631,7 +1631,7 @@ class View implements EventDispatcherInterface
     protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
-            /** @psalm-var array{key:string, config:string}*/
+            /** @psalm-var array{key:string, config:string} $cache */
             $cache = $options['cache'];
             $cache['key'] = 'element_' . $cache['key'];
 

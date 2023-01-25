@@ -82,7 +82,7 @@ trait ContainerStubTrait
         if ($this->_appClass) {
             $appClass = $this->_appClass;
         } else {
-            /** @psalm-var class-string<\Cake\Http\BaseApplication> */
+            /** @var class-string<\Cake\Http\BaseApplication> $appClass */
             $appClass = Configure::read('App.namespace') . '\Application';
         }
         if (!class_exists($appClass)) {

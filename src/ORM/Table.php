@@ -738,7 +738,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setEntityClass(string $name)
     {
-        /** @psalm-var class-string<\Cake\Datasource\EntityInterface>|null */
+        /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
         $class = App::className($name, 'Model/Entity');
         if ($class === null) {
             throw new MissingEntityException([$name]);

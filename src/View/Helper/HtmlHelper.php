@@ -1037,7 +1037,7 @@ class HtmlHelper extends Helper
                 $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
                 assert(is_string($mimeType));
             }
-            if (preg_match('#^video/#', $mimeType)) {
+            if (str_starts_with($mimeType, 'video/')) {
                 $tag = 'video';
             } else {
                 $tag = 'audio';

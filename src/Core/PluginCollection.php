@@ -139,9 +139,9 @@ class PluginCollection implements Iterator, Countable
         if (Configure::check('plugins')) {
             return;
         }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
+        $vendorFile = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
         if (!is_file($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
+            $vendorFile = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
             if (!is_file($vendorFile)) {
                 Configure::write(['plugins' => []]);
 

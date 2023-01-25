@@ -19,6 +19,7 @@ use Cake\Error\Debugger;
 ?>
 <a href="#" class="toggle-link toggle-vendor-frames">Toggle Vendor Stack Frames</a>
 
+<ul>
 <?php foreach ($exceptions as $level => $exc): ?>
     <?php if ($level > 0): ?>
         <li class="stack-previous">

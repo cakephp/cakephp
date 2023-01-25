@@ -417,7 +417,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     protected function _parseLocaleValue(string $value): ?DateTime
     {
-        /** @psalm-var class-string<\Cake\I18n\DateTime> $class */
+        /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeMarshalFormat, $this->userTimezone);

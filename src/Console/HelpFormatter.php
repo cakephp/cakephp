@@ -199,7 +199,7 @@ class HelpFormatter
     {
         $max = 0;
         foreach ($collection as $item) {
-            $max = strlen($item->name()) > $max ? strlen($item->name()) : $max;
+            $max = max(strlen($item->name()), $max);
         }
 
         return $max;

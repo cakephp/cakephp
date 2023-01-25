@@ -1722,7 +1722,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withUri($uri, $preserveHost = false): static
+    public function withUri(UriInterface $uri, $preserveHost = false): static
     {
         $new = clone $this;
         $new->uri = $uri;

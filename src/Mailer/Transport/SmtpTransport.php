@@ -248,8 +248,6 @@ class SmtpTransport extends AbstractTransport
 
         if (strpos($auth, self::AUTH_LOGIN) !== false) {
             $this->authType = self::AUTH_LOGIN;
-
-            return;
         }
     }
 
@@ -340,8 +338,6 @@ class SmtpTransport extends AbstractTransport
 
         if ($this->authType === self::AUTH_LOGIN) {
             $this->_authLogin($username, $password);
-
-            return;
         }
     }
 
