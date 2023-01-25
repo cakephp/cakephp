@@ -75,10 +75,10 @@ class FixtureHelper
                     $additionalPath,
                     $name . 'Fixture',
                 ];
-                /** @psalm-var class-string<\Cake\Datasource\FixtureInterface> */
+                /** @psalm-var class-string<\Cake\Datasource\FixtureInterface> $className */
                 $className = implode('\\', array_filter($nameSegments));
             } else {
-                /** @psalm-var class-string<\Cake\Datasource\FixtureInterface> */
+                /** @psalm-var class-string<\Cake\Datasource\FixtureInterface> $className */
                 $className = $fixtureName;
             }
 

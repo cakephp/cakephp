@@ -590,7 +590,7 @@ class Client implements ClientInterface
             $url .= is_string($query) ? $query : http_build_query($query, '', '&', PHP_QUERY_RFC3986);
         }
 
-        if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
+        if ($options['protocolRelative'] && str_starts_with($url, '//')) {
             $url = $options['scheme'] . ':' . $url;
         }
         if (preg_match('#^https?://#', $url)) {

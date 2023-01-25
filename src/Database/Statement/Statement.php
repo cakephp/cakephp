@@ -141,7 +141,10 @@ class Statement implements StatementInterface
     }
 
     /**
-     * @inheritDoc
+     * @param string|int $column
+     * @param mixed $value
+     * @param int $type
+     * @return void
      */
     protected function performBind(string|int $column, mixed $value, int $type): void
     {

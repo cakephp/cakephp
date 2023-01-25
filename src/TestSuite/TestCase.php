@@ -299,7 +299,7 @@ abstract class TestCase extends BaseTestCase
     public function loadRoutes(?array $appArgs = null): void
     {
         $appArgs = $appArgs ?? [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
-        /** @psalm-var class-string */
+        /** @psalm-var class-string $className */
         $className = Configure::read('App.namespace') . '\\Application';
         try {
             $reflect = new ReflectionClass($className);
@@ -826,7 +826,7 @@ abstract class TestCase extends BaseTestCase
                     debug($string);
                     debug($regex);
                 }
-                $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
+                $this->fail('Attribute did not match. Was expecting ' . $explains[$j]);
             }
             $len = count($asserts);
         } while ($len > 0);
@@ -985,7 +985,7 @@ abstract class TestCase extends BaseTestCase
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
-            /** @psalm-var class-string<\Cake\ORM\Table>|null */
+            /** @psalm-var class-string<\Cake\ORM\Table>|null $className */
             $className = App::className($class, 'Model/Table', 'Table');
             if (!$className) {
                 throw new MissingTableClassException([$alias]);

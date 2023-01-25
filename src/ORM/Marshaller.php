@@ -430,7 +430,7 @@ class Marshaller
 
                 // Update existing record and child associations
                 if (isset($existing[$key])) {
-                    $records[$i] = $this->merge($existing[$key], $data[$i], $options);
+                    $records[$i] = $this->merge($existing[$key], $row, $options);
                 }
             }
         }

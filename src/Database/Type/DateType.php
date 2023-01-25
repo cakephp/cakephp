@@ -32,13 +32,11 @@ use InvalidArgumentException;
 class DateType extends BaseType implements BatchCastingInterface
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected string $_format = 'Y-m-d';
 
     /**
-     * {@inheritDoc}
-     *
      * @var array<string>
      */
     protected array $_marshalFormats = [
@@ -263,7 +261,8 @@ class DateType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * @inheritDoc
+     * @param string $value
+     * @return \Cake\I18n\Date|null
      */
     protected function _parseLocaleValue(string $value): ?Date
     {

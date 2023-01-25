@@ -109,7 +109,8 @@ class TimeType extends DateTimeType
     }
 
     /**
-     * @inheritDoc
+     * @param string $value
+     * @return \Cake\I18n\DateTime|null
      */
     protected function _parseLocaleTimeValue(string $value): ?DateTime
     {

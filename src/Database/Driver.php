@@ -840,7 +840,7 @@ abstract class Driver
     }
 
     /**
-     * @inheritDoc
+     * @return \Cake\Database\QueryCompiler
      */
     public function newCompiler(): QueryCompiler
     {

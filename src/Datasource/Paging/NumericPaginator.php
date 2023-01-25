@@ -245,7 +245,7 @@ class NumericPaginator implements PaginatorInterface
         $options = $this->checkLimit($options);
 
         $options += ['page' => 1, 'scope' => null];
-        $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
+        $options['page'] = max((int)$options['page'], 1);
         [$finder, $options] = $this->_extractFinder($options);
 
         return compact('defaults', 'options', 'finder');

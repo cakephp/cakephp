@@ -36,6 +36,7 @@ interface ConnectionInterface
     /**
      * Gets the driver instance.
      *
+     * @param string $role
      * @return object
      */
     public function getDriver(string $role = self::ROLE_WRITE): object;
