@@ -1102,7 +1102,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the attribute to get.
      * @return \Cake\View\Helper|null
      */
-    public function __get(string $name): mixed
+    public function __get(string $name): ?Helper
     {
         return $this->helpers()->{$name};
     }

@@ -351,7 +351,7 @@ trait DateFormatTrait
     /**
      * Get the difference formatter instance.
      *
-     * @param \Cake\Chronos\DifferenceFormatterInterface $formatter Difference formatter
+     * @param \Cake\Chronos\DifferenceFormatterInterface|null $formatter Difference formatter
      * @return \Cake\I18n\RelativeTimeFormatter
      */
     public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter

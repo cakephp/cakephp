@@ -409,7 +409,6 @@ class Debugger
                 $back[] = $frame;
             } elseif ($options['format'] === 'text') {
                 $path = static::trimPath($frame['file']);
-                $reference = $reference;
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
                 debug($options);

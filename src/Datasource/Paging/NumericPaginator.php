@@ -552,7 +552,7 @@ class NumericPaginator implements PaginatorInterface
                 ));
             }
 
-            if (strpos($field, '.') === false) {
+            if (!str_contains($field, '.')) {
                 $result[$field] = $sort;
                 continue;
             }

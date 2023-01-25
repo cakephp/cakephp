@@ -93,7 +93,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int
+     * @return int|null
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -163,7 +163,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int
+     * @return int|null
      */
     protected function getOptions(Arguments $args, ConsoleIo $io): ?int
     {

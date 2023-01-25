@@ -421,10 +421,7 @@ trait EntityTrait
             (
                 is_array($value) &&
                 empty($value) ||
-                (
-                    is_string($value) &&
-                    $value === ''
-                )
+                $value === ''
             )
         ) {
             return true;

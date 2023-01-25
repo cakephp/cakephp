@@ -88,7 +88,7 @@ class MissingOptionException extends ConsoleException
      *
      * @param string $needle Unknown option name trying to be used.
      * @param array<string> $haystack Suggestions to look through.
-     * @return string The best match
+     * @return string|null The best match
      */
     protected function findClosestItem(string $needle, array $haystack): ?string
     {

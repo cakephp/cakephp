@@ -99,7 +99,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     /**
      * Adds one or more arguments for the function call.
      *
-     * @param array $conditions list of arguments to be passed to the function
+     * @param \Cake\Database\ExpressionInterface|array|string $conditions list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
      * @param array<string, string> $types Associative array of types to be associated with the
      * passed arguments

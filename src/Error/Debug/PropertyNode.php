@@ -63,7 +63,7 @@ class PropertyNode implements NodeInterface
     /**
      * Get the property visibility
      *
-     * @return string
+     * @return string|null
      */
     public function getVisibility(): ?string
     {

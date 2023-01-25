@@ -469,7 +469,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool
      * @throws \BadMethodCallException when an invalid method is called.
      */
-    public function __call(string $name, array $params): mixed
+    public function __call(string $name, array $params): bool
     {
         if (str_starts_with($name, 'is')) {
             $type = strtolower(substr($name, 2));
@@ -1720,7 +1720,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint For $preserveHost type.
      */
     public function withUri(UriInterface $uri, $preserveHost = false): static
     {

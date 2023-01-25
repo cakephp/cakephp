@@ -328,7 +328,7 @@ trait IntegrationTestTrait
      * the current state.
      *
      * @param string $name The cookie name to use.
-     * @param array|string $value The value of the cookie.
+     * @param string $value The value of the cookie.
      * @return void
      */
     public function cookie(string $name, string $value): void
