@@ -1720,7 +1720,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint For $preserveHost type.
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withUri(UriInterface $uri, $preserveHost = false): static
     {
