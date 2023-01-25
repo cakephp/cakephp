@@ -98,7 +98,7 @@ trait RulesAwareTrait
         if ($this->_rulesChecker !== null) {
             return $this->_rulesChecker;
         }
-        /** @psalm-var class-string<\Cake\Datasource\RulesChecker> $class */
+        /** @var class-string<\Cake\Datasource\RulesChecker> $class */
         $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : RulesChecker::class;
         /**
          * @psalm-suppress ArgumentTypeCoercion

@@ -68,7 +68,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected function resolve(MiddlewareInterface|Closure|string $middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
-            /** @psalm-var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
+            /** @var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null) {
                 throw new InvalidArgumentException(sprintf(

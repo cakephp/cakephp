@@ -55,7 +55,7 @@ class UrlHelper extends Helper
         parent::initialize($config);
         $engineClassConfig = $this->getConfig('assetUrlClassName');
 
-        /** @psalm-var class-string<\Cake\Routing\Asset>|null $engineClass */
+        /** @var class-string<\Cake\Routing\Asset>|null $engineClass */
         $engineClass = App::className($engineClassConfig, 'Routing');
         if ($engineClass === null) {
             throw new CakeException(sprintf('Class for `%s` could not be found.', $engineClassConfig));

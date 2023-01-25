@@ -1265,7 +1265,7 @@ class Hash
             }
         }
 
-        /** @psalm-var list<array> */
+        /** @var list<array> */
         return array_values($return);
     }
 }

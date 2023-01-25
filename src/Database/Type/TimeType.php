@@ -114,7 +114,7 @@ class TimeType extends DateTimeType
      */
     protected function _parseLocaleTimeValue(string $value): ?DateTime
     {
-        /** @psalm-var class-string<\Cake\I18n\DateTime> $class */
+        /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $this->_className;
 
         return $class::parseTime($value, $this->_localeMarshalFormat);
