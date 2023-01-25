@@ -80,7 +80,7 @@ trait StaticConfigTrait
                 throw new LogicException('If config is null, key must be an array.');
             }
             foreach ($key as $name => $settings) {
-                static::setConfig($name, $settings);
+                static::setConfig((string)$name, $settings);
             }
 
             return;
