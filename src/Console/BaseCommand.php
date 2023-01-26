@@ -45,7 +45,7 @@ abstract class BaseCommand implements CommandInterface
     public function setName(string $name)
     {
         assert(
-            strpos($name, ' ') !== false && strpos($name, ' ') !== 0,
+            str_contains($name, ' ') && !str_starts_with($name, ' '),
             "The name '{$name}' is missing a space. Names should look like `cake routes`"
         );
         $this->name = $name;

@@ -240,13 +240,13 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
-        if (strpos($auth, self::AUTH_PLAIN) !== false) {
+        if (str_contains($auth, self::AUTH_PLAIN)) {
             $this->authType = self::AUTH_PLAIN;
 
             return;
         }
 
-        if (strpos($auth, self::AUTH_LOGIN) !== false) {
+        if (str_contains($auth, self::AUTH_LOGIN)) {
             $this->authType = self::AUTH_LOGIN;
         }
     }

@@ -680,7 +680,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string $condition The value from which the actual field and operator will
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
-     * @return \Cake\Database\ExpressionInterface
+     * @return \Cake\Database\ExpressionInterface|string
      * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
      */
     protected function _parseCondition(string $condition, mixed $value): ExpressionInterface|string

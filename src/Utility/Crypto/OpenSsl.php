@@ -63,7 +63,7 @@ class OpenSsl
      *
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @return string Decrypted data. Any trailing null bytes will be removed.
+     * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
     public static function decrypt(string $cipher, string $key): ?string

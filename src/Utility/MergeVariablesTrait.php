@@ -101,7 +101,7 @@ trait MergeVariablesTrait
      * @param bool $isAssoc Whether the merging should be done in associative mode.
      * @return array The updated value.
      */
-    protected function _mergePropertyData(array $current, array $parent, bool $isAssoc): mixed
+    protected function _mergePropertyData(array $current, array $parent, bool $isAssoc): array
     {
         if (!$isAssoc) {
             return array_merge($parent, $current);

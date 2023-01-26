@@ -792,7 +792,7 @@ class RouteBuilder
      * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
-     * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
+     * @return \Cake\Routing\Route\Route
      */
     public function redirect(string $route, array|string $url, array $options = []): Route
     {

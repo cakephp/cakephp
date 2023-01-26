@@ -61,7 +61,7 @@ foreach ($exceptions as $level => $exc):
 
         $frameId = "{$level}-{$i}";
         $activeFrame = $i == 0;
-        $vendorFrame = isset($stack['file']) && strpos($stack['file'], APP) === false ? 'vendor-frame' : '';
+        $vendorFrame = isset($stack['file']) && !str_contains($stack['file'], APP) ? 'vendor-frame' : '';
     ?>
         <li id="stack-frame-<?= $frameId ?>" class="stack-frame <?= $vendorFrame ?>">
             <div class="stack-frame-header">

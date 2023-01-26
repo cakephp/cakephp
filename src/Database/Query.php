@@ -1842,7 +1842,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 'sql' => $sql,
                 'params' => $params,
                 'defaultTypes' => $this->getDefaultTypes(),
-                'executed' => $this->_statement ? true : false,
+                'executed' => (bool)$this->_statement,
             ];
         }
     }

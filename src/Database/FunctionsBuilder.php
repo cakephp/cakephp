@@ -279,7 +279,7 @@ class FunctionsBuilder
      * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
      * @param int $offset The row offset
      * @param mixed $default The default value if offset doesn't exist
-     * @param string $type The output type of the lag expression. Defaults to float.
+     * @param string|null $type The output type of the lag expression. Defaults to float.
      * @return \Cake\Database\Expression\AggregateExpression
      */
     public function lag(
@@ -307,7 +307,7 @@ class FunctionsBuilder
      * @param \Cake\Database\ExpressionInterface|string $expression The value evaluated at offset
      * @param int $offset The row offset
      * @param mixed $default The default value if offset doesn't exist
-     * @param string $type The output type of the lead expression. Defaults to float.
+     * @param string|null $type The output type of the lead expression. Defaults to float.
      * @return \Cake\Database\Expression\AggregateExpression
      */
     public function lead(

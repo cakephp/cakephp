@@ -469,7 +469,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool
      * @throws \BadMethodCallException when an invalid method is called.
      */
-    public function __call(string $name, array $params): mixed
+    public function __call(string $name, array $params): bool
     {
         if (str_starts_with($name, 'is')) {
             $type = strtolower(substr($name, 2));
