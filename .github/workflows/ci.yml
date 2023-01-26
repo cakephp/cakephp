@@ -250,13 +250,13 @@ jobs:
       run: composer update
  
     - name: Phive install
-      id: phive-install
       uses: szepeviktor/phive@v1
       with:
         home: "${{ runner.temp }}/.phive"
         binPath: "${{ github.workspace }}/tools/phive"
 
     - name: Install PHP tools with phive.
+      id: phive-install
       uses: szepeviktor/phive-install@v1
       with:
         home: "${{ runner.temp }}/.phive"
@@ -268,13 +268,13 @@ jobs:
       run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
-      if: steps.phive-install.outputs.outcome == 'success'
+      if: steps.phive-install.outcome == 'success'
       run: tools/psalm --output-format=github
 
     - name: Run phpstan
-      if: steps.phive-install.outputs.outcome == 'success'
+      if: steps.phive-install.outcome == 'success'
       run: tools/phpstan analyse --error-format=github
 
     - name: Run phpstan for tests
-      if: steps.phive-install.outputs.outcome == 'success'
+      if: steps.phive-install.outcome == 'success'
       run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
