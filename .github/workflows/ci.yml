@@ -260,7 +260,7 @@ jobs:
       with:
         home: "${{ runner.temp }}/.phive"
         binPath: "${{ github.workspace }}/tools/phive"
-        trustGpgKeys: "CF1A108D0E7AE720, 12CE0F1D262429A5"
+        trustGpgKeys: "CF1A108D0E7AE720,12CE0F1D262429A5"
 
     - name: Run phpcs
       if: always()
