@@ -145,7 +145,7 @@ class PaginatorHelper extends Helper
         }
 
         if (!isset($this->paginated)) {
-            throw new CakeException('You must set a pagination instance using `setPaginated()` first.');
+            throw new CakeException('You must set a pagination instance using `setPaginated()` first');
         }
 
         return $this->paginated;
