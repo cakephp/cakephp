@@ -250,6 +250,7 @@ jobs:
       run: composer update
  
     - name: Phive install
+      id: phive-install
       uses: szepeviktor/phive@v1
       with:
         home: "${{ runner.temp }}/.phive"
@@ -267,13 +268,13 @@ jobs:
       run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
-      if: always()
-      run: composer psalm --output-format=github
+      if: steps.phive-install.outputs.outcome == 'success'
+      run: tools/psalm --output-format=github
 
     - name: Run phpstan
-      if: always()
-      run: composer phpstan analyse --error-format=github
+      if: steps.phive-install.outputs.outcome == 'success'
+      run: tools/phpstan analyse --error-format=github
 
     - name: Run phpstan for tests
-      if: always()
-      run: composer phpstan analyse -c tests/phpstan.neon --error-format=github
+      if: steps.phive-install.outputs.outcome == 'success'
+      run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
