@@ -256,7 +256,7 @@ jobs:
         binPath: "${{ github.workspace }}/tools/phive"
 
     - name: Install PHP tools with phive.
-      uses: szepeviktor/phive@v1
+      uses: szepeviktor/phive-install@v1
       with:
         home: "${{ runner.temp }}/.phive"
         binPath: "${{ github.workspace }}/tools/phive"
