@@ -225,8 +225,8 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
-        extensions: mbstring, intl
+        php-version: '7.4'
+        extensions: mbstring, intl, apcu, memcached, redis
         coverage: none
         tools: phive, cs2pr
       env:
@@ -248,33 +248,22 @@ jobs:
 
     - name: Composer install
       run: composer update
- 
-    - name: Phive install
-      uses: szepeviktor/phive@v1
-      with:
-        home: "${{ runner.temp }}/.phive"
-        binPath: "${{ github.workspace }}/tools/phive"
 
     - name: Install PHP tools with phive.
-      id: phive-install
-      uses: szepeviktor/phive-install@v1
-      with:
-        home: "${{ runner.temp }}/.phive"
-        binPath: "${{ github.workspace }}/tools/phive"
-        trustGpgKeys: "CF1A108D0E7AE720,12CE0F1D262429A5"
+      run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,12CE0F1D262429A5'
 
     - name: Run phpcs
       if: always()
       run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
 
     - name: Run psalm
-      if: steps.phive-install.outcome == 'success'
+      if: always()
       run: tools/psalm --output-format=github
 
     - name: Run phpstan
-      if: steps.phive-install.outcome == 'success'
+      if: always()
       run: tools/phpstan analyse --error-format=github
 
     - name: Run phpstan for tests
-      if: steps.phive-install.outcome == 'success'
+      if: always()
       run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
