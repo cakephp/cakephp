@@ -198,3 +198,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
         return static::diffFormatter()->dateAgoInWords($this, $options);
     }
 }
+
+// phpcs:disable
+class_alias(Date::class, 'Cake\I18n\FrozenDate');
+// phpcs:enable
