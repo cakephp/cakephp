@@ -115,21 +115,6 @@ class ConsoleOptionParser
     protected array $_args = [];
 
     /**
-     * Subcommands for this Command.
-     *
-     * @see \Cake\Console\ConsoleOptionParser::addSubcommand()
-     * @var array<string, \Cake\Console\ConsoleInputSubcommand>
-     */
-    protected array $_subcommands = [];
-
-    /**
-     * Subcommand sorting option
-     *
-     * @var bool
-     */
-    protected bool $_subcommandSort = true;
-
-    /**
      * Command name.
      *
      * @var string
@@ -205,9 +190,6 @@ class ConsoleOptionParser
      *      ],
      *      'options' => [
      *          // list of options compatible with addOptions
-     *      ],
-     *      'subcommands' => [
-     *          // list of subcommands to add.
      *      ]
      * ];
      * ```
@@ -224,9 +206,6 @@ class ConsoleOptionParser
         }
         if (!empty($spec['options'])) {
             $parser->addOptions($spec['options']);
-        }
-        if (!empty($spec['subcommands'])) {
-            $parser->addSubcommands($spec['subcommands']);
         }
         if (!empty($spec['description'])) {
             $parser->setDescription($spec['description']);
@@ -249,7 +228,6 @@ class ConsoleOptionParser
             'command' => $this->_command,
             'arguments' => $this->_args,
             'options' => $this->_options,
-            'subcommands' => $this->_subcommands,
             'description' => $this->_description,
             'epilog' => $this->_epilog,
         ];
@@ -271,9 +249,6 @@ class ConsoleOptionParser
         }
         if (!empty($spec['options'])) {
             $this->addOptions($spec['options']);
-        }
-        if (!empty($spec['subcommands'])) {
-            $this->addSubcommands($spec['subcommands']);
         }
         if (!empty($spec['description'])) {
             $this->setDescription($spec['description']);
@@ -361,29 +336,6 @@ class ConsoleOptionParser
     public function getEpilog(): string
     {
         return $this->_epilog;
-    }
-
-    /**
-     * Enables sorting of subcommands
-     *
-     * @param bool $value Whether to sort subcommands
-     * @return $this
-     */
-    public function enableSubcommandSort(bool $value = true)
-    {
-        $this->_subcommandSort = $value;
-
-        return $this;
-    }
-
-    /**
-     * Checks whether sorting is enabled for subcommands.
-     *
-     * @return bool
-     */
-    public function isSubcommandSortEnabled(): bool
-    {
-        return $this->_subcommandSort;
     }
 
     /**
@@ -555,78 +507,6 @@ class ConsoleOptionParser
     }
 
     /**
-     * Append a subcommand to the subcommand list.
-     * Subcommands are usually methods on your Shell, but can also be used to document Tasks.
-     *
-     * ### Options
-     *
-     * - `help` - Help text for the subcommand.
-     * - `parser` - A ConsoleOptionParser for the subcommand. This allows you to create method
-     *    specific option parsers. When help is generated for a subcommand, if a parser is present
-     *    it will be used.
-     *
-     * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand.
-     *   Will also accept an instance of ConsoleInputSubcommand.
-     * @param array<string, mixed> $options Array of params, see above.
-     * @return $this
-     */
-    public function addSubcommand(ConsoleInputSubcommand|string $name, array $options = [])
-    {
-        if ($name instanceof ConsoleInputSubcommand) {
-            $command = $name;
-            $name = $command->name();
-        } else {
-            $name = Inflector::underscore($name);
-            $defaults = [
-                'name' => $name,
-                'help' => '',
-                'parser' => null,
-            ];
-            $options += $defaults;
-
-            $command = new ConsoleInputSubcommand($options);
-        }
-        $this->_subcommands[$name] = $command;
-        if ($this->_subcommandSort) {
-            asort($this->_subcommands);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove a subcommand from the option parser.
-     *
-     * @param string $name The subcommand name to remove.
-     * @return $this
-     */
-    public function removeSubcommand(string $name)
-    {
-        unset($this->_subcommands[$name]);
-
-        return $this;
-    }
-
-    /**
-     * Add multiple subcommands at once.
-     *
-     * @param array<string, mixed> $commands Array of subcommands.
-     * @return $this
-     */
-    public function addSubcommands(array $commands)
-    {
-        foreach ($commands as $name => $params) {
-            if ($params instanceof ConsoleInputSubcommand) {
-                $name = $params;
-                $params = [];
-            }
-            $this->addSubcommand($name, $params);
-        }
-
-        return $this;
-    }
-
-    /**
      * Gets the arguments defined in the parser.
      *
      * @return array<\Cake\Console\ConsoleInputArgument>
@@ -662,19 +542,7 @@ class ConsoleOptionParser
     }
 
     /**
-     * Get the array of defined subcommands
-     *
-     * @return array<string, \Cake\Console\ConsoleInputSubcommand>
-     */
-    public function subcommands(): array
-    {
-        return $this->_subcommands;
-    }
-
-    /**
-     * Parse the argv array into a set of params and args. If $command is not null
-     * and $command is equal to a subcommand that has a parser, that parser will be used
-     * to parse the $argv
+     * Parse the argv array into a set of params and args.
      *
      * @param array $argv Array of args (argv) to parse.
      * @param \Cake\Console\ConsoleIo|null $io A ConsoleIo instance or null. If null prompt options will error.
@@ -683,15 +551,6 @@ class ConsoleOptionParser
      */
     public function parse(array $argv, ?ConsoleIo $io = null): array
     {
-        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
-        if (isset($this->_subcommands[$command])) {
-            array_shift($argv);
-        }
-        if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
-            /** @psalm-suppress PossiblyNullReference */
-            return $this->_subcommands[$command]->parser()->parse($argv, $io);
-        }
-
         $params = $args = [];
         $this->_tokens = $argv;
 
@@ -708,9 +567,6 @@ class ConsoleOptionParser
                 continue;
             }
 
-            if (isset($this->_subcommands[$token])) {
-                continue;
-            }
             if (str_starts_with($token, '--')) {
                 $params = $this->_parseLongOption($token, $params);
             } elseif (str_starts_with($token, '-')) {
@@ -772,64 +628,27 @@ class ConsoleOptionParser
     /**
      * Gets formatted help for this parser object.
      *
-     * Generates help text based on the description, options, arguments, subcommands and epilog
+     * Generates help text based on the description, options, arguments and epilog
      * in the parser.
      *
-     * @param string|null $subcommand If present and a valid subcommand that has a linked parser.
-     *    That subcommands help will be shown instead.
      * @param string $format Define the output format, can be text or XML
      * @param int $width The width to format user content to. Defaults to 72
      * @return string Generated help.
      */
-    public function help(?string $subcommand = null, string $format = 'text', int $width = 72): string
+    public function help(string $format = 'text', int $width = 72): string
     {
-        if ($subcommand === null) {
-            $formatter = new HelpFormatter($this);
-            $formatter->setAlias($this->rootName);
+        $formatter = new HelpFormatter($this);
+        $formatter->setAlias($this->rootName);
 
-            if ($format === 'text') {
-                return $formatter->text($width);
-            }
-            if ($format === 'xml') {
-                return (string)$formatter->xml();
-            }
+        if ($format === 'text') {
+            return $formatter->text($width);
         }
-        $subcommand = (string)$subcommand;
-
-        if (isset($this->_subcommands[$subcommand])) {
-            $command = $this->_subcommands[$subcommand];
-            $subparser = $command->parser();
-
-            // Generate a parser as the subcommand didn't define one.
-            if (!($subparser instanceof self)) {
-                // $subparser = clone $this;
-                $subparser = new self($subcommand);
-                $subparser
-                    ->setDescription($command->getRawHelp())
-                    ->addOptions($this->options())
-                    ->addArguments($this->arguments());
-            }
-            if ($subparser->getDescription() === '') {
-                $subparser->setDescription($command->getRawHelp());
-            }
-            $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
-            $subparser->setRootName($this->rootName);
-
-            return $subparser->help(null, $format, $width);
+        if ($format === 'xml') {
+            return (string)$formatter->xml();
         }
 
-        $rootCommand = $this->getCommand();
-        $message = sprintf(
-            'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
-            $rootCommand,
-            $subcommand,
-            $this->rootName,
-            $rootCommand
-        );
-        throw new MissingOptionException(
-            $message,
-            $subcommand,
-            array_keys($this->subcommands())
+        throw new ConsoleException(
+            sprintf('Invalid format. Output format can be text or xml.')
         );
     }
 
