@@ -75,8 +75,14 @@ class LoggingStatement extends StatementDecorator
             $result = parent::execute($params);
             $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
         } catch (Exception $e) {
-            /** @psalm-suppress UndefinedPropertyAssignment */
-            $e->queryString = $this->queryString;
+            if (version_compare(PHP_VERSION, '8.2.0', '<')) {
+                deprecationWarning(
+                    '4.4.12 - Having queryString set on exceptions is deprecated.' .
+                    'If you are not using this attribute there is no action to take.'
+                );
+                /** @psalm-suppress UndefinedPropertyAssignment */
+                $e->queryString = $this->queryString;
+            }
             $this->loggedQuery->error = $e;
             $this->_log();
             throw $e;
