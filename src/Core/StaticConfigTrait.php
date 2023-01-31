@@ -157,8 +157,14 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
-        if (isset(static::$_registry)) {
-            static::$_registry->unload($config);
+
+        /**
+         * @phpstan-ignore-next-line
+         * @var \Cake\Core\ObjectRegistry|null $registry
+         */
+        $registry = static::$_registry;
+        if ($registry) {
+            $registry->unload($config);
         }
         unset(static::$_config[$config]);
 
