@@ -64,9 +64,9 @@ class ConnectionManager
     /**
      * The ConnectionRegistry used by the manager.
      *
-     * @var \Cake\Datasource\ConnectionRegistry|null
+     * @var \Cake\Datasource\ConnectionRegistry
      */
-    protected static ?ConnectionRegistry $_registry = null;
+    protected static ConnectionRegistry $_registry;
 
     /**
      * Configure a new connection object.
