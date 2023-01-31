@@ -108,7 +108,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Ensure the validity of the argument type and cache keys.
      *
-     * @param iterable $iterable The iterable to check.
+     * @param iterable<string> $iterable The iterable to check.
      * @param string $check Whether to check keys or values.
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException
@@ -134,9 +134,9 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Obtains multiple cache items by their unique keys.
      *
-     * @param iterable $keys A list of keys that can obtained in a single operation.
+     * @param iterable<string> $keys A list of keys that can obtained in a single operation.
      * @param mixed $default Default value to return for keys that do not exist.
-     * @return iterable A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
+     * @return iterable<string, mixed> A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
