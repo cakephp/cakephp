@@ -87,20 +87,22 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, new Response());
         $Controller->modelClass = 'SiteArticles';
 
-        $this->assertFalse(isset($Controller->Articles));
-        $this->assertInstanceOf(
-            'Cake\ORM\Table',
-            $Controller->SiteArticles
-        );
-        unset($Controller->SiteArticles);
+        $this->deprecated(function () use ($Controller) {
+            $this->assertFalse(isset($Controller->Articles));
+            $this->assertInstanceOf(
+                'Cake\ORM\Table',
+                $Controller->SiteArticles
+            );
+            unset($Controller->SiteArticles);
 
-        $Controller->modelClass = 'Articles';
+            $Controller->modelClass = 'Articles';
 
-        $this->assertFalse(isset($Controller->SiteArticles));
-        $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
-            $Controller->Articles
-        );
+            $this->assertFalse(isset($Controller->SiteArticles));
+            $this->assertInstanceOf(
+                'TestApp\Model\Table\ArticlesTable',
+                $Controller->Articles
+            );
+        });
     }
 
     /**
@@ -132,15 +134,17 @@ class ControllerTest extends TestCase
 
         $this->assertFalse(isset($Controller->Articles));
 
-        $result = $Controller->loadModel('Articles');
-        $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
-            $result
-        );
-        $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
-            $Controller->Articles
-        );
+        $this->deprecated(function () use ($Controller) {
+            $result = $Controller->loadModel('Articles');
+            $this->assertInstanceOf(
+                'TestApp\Model\Table\ArticlesTable',
+                $result
+            );
+            $this->assertInstanceOf(
+                'TestApp\Model\Table\ArticlesTable',
+                $Controller->Articles
+            );
+        });
     }
 
     public function testAutoLoadModelUsingDefaultTable()
@@ -148,7 +152,9 @@ class ControllerTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $Controller = new WithDefaultTableController(new ServerRequest(), new Response());
 
-        $this->assertInstanceOf(PostsTable::class, $Controller->Posts);
+        $this->deprecated(function () use ($Controller) {
+            $this->assertInstanceOf(PostsTable::class, $Controller->Posts);
+        });
 
         Configure::write('App.namespace', 'App');
     }
@@ -161,7 +167,9 @@ class ControllerTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $Controller = new ArticlesController(new ServerRequest(), new Response());
 
-        $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
+        $this->deprecated(function () use ($Controller) {
+            $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
+        });
 
         Configure::write('App.namespace', 'App');
     }
@@ -178,15 +186,17 @@ class ControllerTest extends TestCase
 
         $this->assertFalse(isset($Controller->TestPluginComments));
 
-        $result = $Controller->loadModel('TestPlugin.TestPluginComments');
-        $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
-            $result
-        );
-        $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
-            $Controller->TestPluginComments
-        );
+        $this->deprecated(function () use ($Controller) {
+            $result = $Controller->loadModel('TestPlugin.TestPluginComments');
+            $this->assertInstanceOf(
+                'TestPlugin\Model\Table\TestPluginCommentsTable',
+                $result
+            );
+            $this->assertInstanceOf(
+                'TestPlugin\Model\Table\TestPluginCommentsTable',
+                $Controller->TestPluginComments
+            );
+        });
     }
 
     /**
@@ -198,18 +208,20 @@ class ControllerTest extends TestCase
 
         $request = new ServerRequest();
         $response = new Response();
-        $controller = new PostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
+        $this->deprecated(function () use ($request, $response) {
+            $controller = new PostsController($request, $response);
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
-        $controller = new AdminPostsController($request, $response);
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
-        $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
+            $controller = new AdminPostsController($request, $response);
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
-        $request = $request->withParam('plugin', 'TestPlugin');
-        $controller = new CommentsController($request, $response);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->loadModel());
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
+            $request = $request->withParam('plugin', 'TestPlugin');
+            $controller = new CommentsController($request, $response);
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->loadModel());
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
+        });
     }
 
     public function testConstructSetDefaultTable()
@@ -711,9 +723,11 @@ class ControllerTest extends TestCase
         $this->assertNotContains('Paginator', $Controller->viewBuilder()->getHelpers());
         $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
-        $results = $Controller->paginate('Posts');
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
-        $this->assertCount(3, $results);
+        $this->deprecated(function () use ($Controller) {
+            $results = $Controller->paginate('Posts');
+            $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+            $this->assertCount(3, $results);
+        });
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'));
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
@@ -760,9 +774,11 @@ class ControllerTest extends TestCase
 
         $Controller = new Controller($request, $response);
         $Controller->modelClass = 'Posts';
-        $results = $Controller->paginate();
+        $this->deprecated(function () use ($Controller) {
+            $results = $Controller->paginate();
 
-        $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+            $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
+        });
     }
 
     /**

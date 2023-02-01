@@ -162,6 +162,11 @@ trait ModelAwareTrait
      */
     public function getModelType(): string
     {
+        deprecationWarning(
+            '4.5.0 getModelType() is deprecated. ' .
+            'Use ORM\LocatorAwareTrait or datasource specific registries instead.'
+        );
+
         return $this->_modelType;
     }
 
@@ -173,6 +178,10 @@ trait ModelAwareTrait
      */
     public function setModelType(string $modelType)
     {
+        deprecationWarning(
+            '4.5.0 setModelType() is deprecated. ' .
+            'Use ORM\LocatorAwareTrait or datasource specific registries instead.'
+        );
         $this->_modelType = $modelType;
 
         return $this;
