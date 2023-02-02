@@ -50,9 +50,11 @@ class CommandTest extends TestCase
      */
     public function testConstructorLoadModel(): void
     {
-        $command = new Command();
-        $command->loadModel('Comments');
-        $this->assertInstanceOf(Table::class, $command->Comments);
+        $this->deprecated(function () {
+            $command = new Command();
+            $command->loadModel('Comments');
+            $this->assertInstanceOf(Table::class, $command->Comments);
+        });
     }
 
     /**
@@ -60,8 +62,10 @@ class CommandTest extends TestCase
      */
     public function testConstructorAutoLoadModel(): void
     {
-        $command = new AutoLoadModelCommand();
-        $this->assertInstanceOf(Table::class, $command->Posts);
+        $this->deprecated(function () {
+            $command = new AutoLoadModelCommand();
+            $this->assertInstanceOf(Table::class, $command->Posts);
+        });
     }
 
     /**

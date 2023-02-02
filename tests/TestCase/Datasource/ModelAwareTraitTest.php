@@ -48,22 +48,24 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testLoadModel(): void
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
-        $stub->setModelType('Table');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
+            $stub->setModelType('Table');
 
-        $result = $stub->loadModel();
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
+            $result = $stub->loadModel();
+            $this->assertInstanceOf('Cake\ORM\Table', $result);
+            $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
 
-        $result = $stub->loadModel('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+            $result = $stub->loadModel('Comments');
+            $this->assertInstanceOf('Cake\ORM\Table', $result);
+            $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
 
-        $result = $stub->loadModel(PaginatorPostsTable::class);
-        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
-        $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
-        $this->assertSame('PaginatorPosts', $result->getAlias());
+            $result = $stub->loadModel(PaginatorPostsTable::class);
+            $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+            $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
+            $this->assertSame('PaginatorPosts', $result->getAlias());
+        });
     }
 
     /**
@@ -75,11 +77,13 @@ class ModelAwareTraitTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Default modelClass is empty');
 
-        $stub = new Stub();
-        $stub->setProps('');
-        $stub->setModelType('Table');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('');
+            $stub->setModelType('Table');
 
-        $stub->loadModel();
+            $stub->loadModel();
+        });
     }
 
     /**
@@ -90,17 +94,19 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testLoadModelPlugin(): void
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
-        $stub->setModelType('Table');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
+            $stub->setModelType('Table');
 
-        $result = $stub->loadModel('TestPlugin.Comments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+            $result = $stub->loadModel('TestPlugin.Comments');
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
 
-        $result = $stub->loadModel('Comments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+            $result = $stub->loadModel('Comments');
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+        });
     }
 
     /**
@@ -157,19 +163,20 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testGetSetModelType(): void
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
-
         $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
+
             FactoryLocator::add('Test', function ($name) {
                 $mock = new stdClass();
                 $mock->name = $name;
 
                 return $mock;
             });
+
+            $stub->setModelType('Test');
+            $this->assertSame('Test', $stub->getModelType());
         });
-        $stub->setModelType('Test');
-        $this->assertSame('Test', $stub->getModelType());
     }
 
     /**
