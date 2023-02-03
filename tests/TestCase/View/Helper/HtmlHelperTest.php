@@ -1572,7 +1572,7 @@ class HtmlHelperTest extends TestCase
     /**
      * @return array
      */
-    public function dataMetaLinksProvider(): array
+    public static function dataMetaLinksProvider(): array
     {
         return [
             ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'],

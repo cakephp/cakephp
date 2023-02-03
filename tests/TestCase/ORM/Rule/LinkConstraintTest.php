@@ -70,7 +70,7 @@ class LinkConstraintTest extends TestCase
      *
      * @return array
      */
-    public function invalidConstructorArgumentOneDataProvider(): array
+    public static function invalidConstructorArgumentOneDataProvider(): array
     {
         return [[null, 'null'], [1, 'int'], [[], 'array'], [new stdClass(), 'stdClass']];
     }
@@ -169,7 +169,7 @@ class LinkConstraintTest extends TestCase
      *
      * @return array
      */
-    public function invalidRepositoryOptionsDataProvider(): array
+    public static function invalidRepositoryOptionsDataProvider(): array
     {
         return [
             [['repository' => null]],

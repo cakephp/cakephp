@@ -138,7 +138,7 @@ class IntegerTypeTest extends TestCase
      *
      * @return void
      */
-    public function invalidIntegerProvider(): array
+    public static function invalidIntegerProvider(): array
     {
         return [
             'array' => [['3', '4']],

@@ -124,7 +124,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderHasMany(): array
+    public static function strategiesProviderHasMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -134,7 +134,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsTo(): array
+    public static function strategiesProviderBelongsTo(): array
     {
         return [['join'], ['select']];
     }
@@ -144,7 +144,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsToMany(): array
+    public static function strategiesProviderBelongsToMany(): array
     {
         return [['subquery'], ['select']];
     }

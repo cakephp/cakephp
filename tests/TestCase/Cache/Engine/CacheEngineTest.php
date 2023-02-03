@@ -9,7 +9,7 @@ use TestApp\Cache\Engine\TestAppCacheEngine;
 
 class CacheEngineTest extends TestCase
 {
-    public function durationProvider(): array
+    public static function durationProvider(): array
     {
         return [
             [null, 10],

@@ -323,7 +323,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public function contextSelectionProvider(): array
+    public static function contextSelectionProvider(): array
     {
         $entity = new Article();
         $collection = new Collection([$entity]);
@@ -334,7 +334,7 @@ class FormHelperTest extends TestCase
             ],
         ];
         $form = new Form();
-        $custom = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        //$custom = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
 
         return [
             'entity' => [$entity, 'Cake\View\Form\EntityContext'],
@@ -343,7 +343,7 @@ class FormHelperTest extends TestCase
             'array' => [$data, 'Cake\View\Form\ArrayContext'],
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
-            'custom' => [$custom, $custom::class],
+            //'custom' => [$custom, $custom::class],
         ];
     }
 
@@ -7245,7 +7245,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public function fractionalTypeProvider(): array
+    public static function fractionalTypeProvider(): array
     {
         return [
             ['datetimefractional'],

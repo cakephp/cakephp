@@ -86,7 +86,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->assertStringContainsString("'Company/TestPluginThree'", $contents);
     }
 
-    public function pluginNameProvider()
+    public static function pluginNameProvider()
     {
         return [
             ['TestPlugin'],

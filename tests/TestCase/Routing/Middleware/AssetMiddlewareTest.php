@@ -84,7 +84,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public function assetProvider(): array
+    public static function assetProvider(): array
     {
         return [
             // In plugin root.

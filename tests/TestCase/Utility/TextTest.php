@@ -354,7 +354,7 @@ class TextTest extends TestCase
      *
      * @return array
      */
-    public function wordWrapProvider(): array
+    public static function wordWrapProvider(): array
     {
         return [
             [
@@ -1557,7 +1557,7 @@ HTML;
      *
      * @return array
      */
-    public function filesizes(): array
+    public static function filesizes(): array
     {
         return [
             [['size' => '512B', 'default' => false], 512],
@@ -1620,7 +1620,7 @@ HTML;
      *
      * @return array
      */
-    public function transliterateInputProvider(): array
+    public static function transliterateInputProvider(): array
     {
         return [
             [
@@ -1694,7 +1694,7 @@ HTML;
     /**
      * @return array
      */
-    public function slugInputProvider(): array
+    public static function slugInputProvider(): array
     {
         return [
             [

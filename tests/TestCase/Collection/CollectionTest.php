@@ -58,13 +58,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function avgProvider(): array
+    public static function avgProvider(): array
     {
         $items = [1, 2, 3];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -100,13 +100,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function avgWithMatcherProvider(): array
+    public static function avgWithMatcherProvider(): array
     {
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -126,13 +126,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function medianProvider(): array
+    public static function medianProvider(): array
     {
         $items = [5, 2, 4];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -175,7 +175,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function medianWithMatcherProvider(): array
+    public static function medianWithMatcherProvider(): array
     {
         $items = [
             ['invoice' => ['total' => 400]],
@@ -187,7 +187,7 @@ class CollectionTest extends TestCase
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -226,13 +226,13 @@ class CollectionTest extends TestCase
         $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
-    public function filterProvider(): array
+    public static function filterProvider(): array
     {
         $items = [1, 2, 0, 3, false, 4, null, 5, ''];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -386,13 +386,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function simpleProvider(): array
+    public static function simpleProvider(): array
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -444,13 +444,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function extractProvider(): array
+    public static function extractProvider(): array
     {
         $items = [['a' => ['b' => ['c' => 1]]], 2];
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -472,7 +472,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function sortProvider(): array
+    public static function sortProvider(): array
     {
         $items = [
             ['a' => ['b' => ['c' => 4]]],
@@ -482,7 +482,7 @@ class CollectionTest extends TestCase
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -594,7 +594,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function groupByProvider(): array
+    public static function groupByProvider(): array
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -604,7 +604,7 @@ class CollectionTest extends TestCase
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -699,7 +699,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function indexByProvider(): array
+    public static function indexByProvider(): array
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -709,7 +709,7 @@ class CollectionTest extends TestCase
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -1579,7 +1579,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function nestedListProvider(): array
+    public static function nestedListProvider(): array
     {
         return [
             ['desc', [1, 2, 3, 5, 7, 4, 8, 6, 9, 10]],
@@ -1669,7 +1669,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function sumOfProvider(): array
+    public static function sumOfProvider(): array
     {
         $items = [
             ['invoice' => ['total' => 100]],
@@ -1683,9 +1683,9 @@ class CollectionTest extends TestCase
 
         return [
             'array' => [$items, 300],
-            'iterator' => [$this->yieldItems($items), 300],
+            'iterator' => [self::yieldItems($items), 300],
             'floatArray' => [$floatItems, 300.0],
-            'floatIterator' => [$this->yieldItems($floatItems), 300.0],
+            'floatIterator' => [self::yieldItems($floatItems), 300.0],
         ];
     }
 
@@ -2271,13 +2271,13 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function chunkProvider(): array
+    public static function chunkProvider(): array
     {
         $items = range(1, 10);
 
         return [
             'array' => [$items],
-            'iterator' => [$this->yieldItems($items)],
+            'iterator' => [self::yieldItems($items)],
         ];
     }
 
@@ -2553,7 +2553,7 @@ class CollectionTest extends TestCase
      * @param iterable $items the elements to be yielded
      * @return \Generator<array>
      */
-    protected function yieldItems(iterable $items): Generator
+    protected static function yieldItems(iterable $items): Generator
     {
         foreach ($items as $k => $v) {
             yield $k => $v;

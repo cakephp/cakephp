@@ -87,7 +87,7 @@ class SyslogLogTest extends TestCase
      *
      * @return array
      */
-    public function typesProvider(): array
+    public static function typesProvider(): array
     {
         return [
             ['emergency', LOG_EMERG],

@@ -69,7 +69,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public function methodProvider(): array
+    public static function methodProvider(): array
     {
         return [
             ['highlight', ['this is a test', 'test']],
@@ -418,7 +418,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public function autoLinkEmailProvider(): array
+    public static function autoLinkEmailProvider(): array
     {
         return [
             [

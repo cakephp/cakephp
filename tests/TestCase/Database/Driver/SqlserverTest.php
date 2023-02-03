@@ -52,7 +52,7 @@ class SqlserverTest extends TestCase
      *
      * @return array
      */
-    public function dnsStringDataProvider(): array
+    public static function dnsStringDataProvider(): array
     {
         return [
             [

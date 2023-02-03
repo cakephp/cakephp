@@ -246,7 +246,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider(): array
+    public static function marshalProvider(): array
     {
         return [
             // invalid types.
@@ -335,7 +335,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProviderWithoutMicroseconds(): array
+    public static function marshalProviderWithoutMicroseconds(): array
     {
         return [
             // invalid types.

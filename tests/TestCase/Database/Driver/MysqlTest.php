@@ -193,7 +193,7 @@ class MysqlTest extends TestCase
         $this->assertSame($expectedVersion, $result);
     }
 
-    public function versionStringProvider(): array
+    public static function versionStringProvider(): array
     {
         return [
             ['10.2.23-MariaDB', '10.2.23-MariaDB'],
