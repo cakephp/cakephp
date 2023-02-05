@@ -32,12 +32,14 @@ use Cake\Http\Exception\ServiceUnavailableException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Error;
 use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use Throwable;
 
@@ -401,6 +403,29 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $this->assertSame(500, $response->getStatusCode());
             $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
         });
+    }
+
+    /**
+     * Test that the middleware loads routes if not already loaded, which is the
+     * case when an exception occurs before RoutingMiddleware is run.
+     *
+     * @return void
+     */
+    public function testRoutesLoading(): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $app = new Application(CONFIG);
+        $middleware = new ErrorHandlerMiddleware(
+            new ExceptionTrap([
+                'exceptionRenderer' => WebExceptionRenderer::class,
+            ]),
+            $app
+        );
+
+        $this->assertSame([], Router::routes());
+
+        $middleware->process($request, $app);
+        $this->assertNotEmpty(Router::routes());
     }
 
     /**

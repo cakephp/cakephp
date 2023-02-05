@@ -19,12 +19,15 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use InvalidArgumentException;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -75,21 +78,31 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected $exceptionTrap = null;
 
     /**
+     * @var \Cake\Routing\RoutingApplicationInterface|null
+     */
+    protected $app = null;
+
+    /**
      * Constructor
      *
      * @param \Cake\Error\ErrorHandler|\Cake\Error\ExceptionTrap|array $errorHandler The error handler instance
      *  or config array.
+     * @param \Cake\Routing\RoutingApplicationInterface|null $app Application instance.
      * @throws \InvalidArgumentException
      */
-    public function __construct($errorHandler = [])
+    public function __construct($errorHandler = [], $app = null)
     {
         if (func_num_args() > 1) {
-            deprecationWarning(
-                'The signature of ErrorHandlerMiddleware::__construct() has changed. '
-                . 'Pass the config array as 1st argument instead.'
-            );
+            if (is_array($app)) {
+                deprecationWarning(
+                    'The signature of ErrorHandlerMiddleware::__construct() has changed. '
+                    . 'Pass the config array as 1st argument instead.'
+                );
 
-            $errorHandler = func_get_arg(1);
+                $errorHandler = func_get_arg(1);
+            } else {
+                $this->app = $app;
+            }
         }
 
         if (PHP_VERSION_ID >= 70400 && Configure::read('debug')) {
@@ -147,6 +160,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
+        $this->loadRoutes();
+
         $response = null;
         if ($this->errorHandler === null) {
             $handler = $this->getExceptionTrap();
@@ -243,5 +258,35 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         }
 
         return $this->exceptionTrap;
+    }
+
+    /**
+     * Ensure that the application's routes are loaded.
+     *
+     * @return void
+     */
+    protected function loadRoutes(): void
+    {
+        if (
+            !($this->app instanceof RoutingApplicationInterface)
+            || Router::routes()
+        ) {
+            return;
+        }
+
+        try {
+            $builder = Router::createRouteBuilder('/');
+
+            $this->app->routes($builder);
+            if ($this->app instanceof PluginApplicationInterface) {
+                $this->app->pluginRoutes($builder);
+            }
+        } catch (Throwable $e) {
+            triggerWarning(sprintf(
+                "Exception loading routes when rendering an error page: \n %s - %s",
+                get_class($e),
+                $e->getMessage()
+            ));
+        }
     }
 }
