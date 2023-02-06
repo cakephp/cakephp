@@ -320,7 +320,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if ($class === $name) {
-                return $this->loadModel();
+                return $this->fetchModel();
             }
         }
 

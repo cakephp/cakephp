@@ -43,29 +43,77 @@ class ModelAwareTraitTest extends TestCase
         $this->assertSame('StubArticles', $stub->getModelClass());
     }
 
+    public function testFetchModel(): void
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
+
+        $result = $stub->fetchModel();
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertNull($stub->Articles);
+
+        $result = $stub->fetchModel('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertNull($stub->Comments);
+
+        $result = $stub->fetchModel(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
+        $this->assertNull($stub->PaginatorPosts);
+    }
+
+    /**
+     * Test that calling fetchModel() without $modelClass argument when default
+     * $modelClass property is empty generates exception.
+     */
+    public function testFetchModelException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Default modelClass is empty');
+
+        $stub = new Stub();
+        $stub->setProps('');
+        $stub->setModelType('Table');
+
+        $stub->fetchModel();
+    }
+
+    /**
+     * test fetchModel() with plugin prefixed models
+     */
+    public function testFetchModelPlugin(): void
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
+
+        $result = $stub->fetchModel('TestPlugin.Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertNull($stub->Comments);
+    }
+
     /**
      * test loadModel()
      */
     public function testLoadModel(): void
     {
-        $this->deprecated(function () {
-            $stub = new Stub();
-            $stub->setProps('Articles');
-            $stub->setModelType('Table');
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
 
-            $result = $stub->loadModel();
-            $this->assertInstanceOf('Cake\ORM\Table', $result);
-            $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
+        $result = $stub->loadModel();
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
 
-            $result = $stub->loadModel('Comments');
-            $this->assertInstanceOf('Cake\ORM\Table', $result);
-            $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+        $result = $stub->loadModel('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
 
-            $result = $stub->loadModel(PaginatorPostsTable::class);
-            $this->assertInstanceOf(PaginatorPostsTable::class, $result);
-            $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
-            $this->assertSame('PaginatorPosts', $result->getAlias());
-        });
+        $result = $stub->loadModel(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
     /**
@@ -94,19 +142,17 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testLoadModelPlugin(): void
     {
-        $this->deprecated(function () {
-            $stub = new Stub();
-            $stub->setProps('Articles');
-            $stub->setModelType('Table');
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
 
-            $result = $stub->loadModel('TestPlugin.Comments');
-            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
-            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
+        $result = $stub->loadModel('TestPlugin.Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
 
-            $result = $stub->loadModel('Comments');
-            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
-            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
-        });
+        $result = $stub->loadModel('Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $stub->Comments);
     }
 
     /**
@@ -164,25 +210,25 @@ class ModelAwareTraitTest extends TestCase
     public function testGetSetModelType(): void
     {
         $this->deprecated(function () {
-            $stub = new Stub();
-            $stub->setProps('Articles');
-
             FactoryLocator::add('Test', function ($name) {
                 $mock = new stdClass();
                 $mock->name = $name;
 
                 return $mock;
             });
-
-            $stub->setModelType('Test');
-            $this->assertSame('Test', $stub->getModelType());
         });
+
+        $stub = new Stub();
+        $stub->setProps('Articles');
+
+        $stub->setModelType('Test');
+        $this->assertSame('Test', $stub->getModelType());
     }
 
     /**
      * test MissingModelException being thrown
      */
-    public function testMissingModelException(): void
+    public function testLoadModelMissingModelException(): void
     {
         $this->expectException(MissingModelException::class);
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');

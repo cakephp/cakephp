@@ -87,22 +87,20 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, new Response());
         $Controller->modelClass = 'SiteArticles';
 
-        $this->deprecated(function () use ($Controller) {
-            $this->assertFalse(isset($Controller->Articles));
-            $this->assertInstanceOf(
-                'Cake\ORM\Table',
-                $Controller->SiteArticles
-            );
-            unset($Controller->SiteArticles);
+        $this->assertFalse(isset($Controller->Articles));
+        $this->assertInstanceOf(
+            'Cake\ORM\Table',
+            $Controller->SiteArticles
+        );
+        unset($Controller->SiteArticles);
 
-            $Controller->modelClass = 'Articles';
+        $Controller->modelClass = 'Articles';
 
-            $this->assertFalse(isset($Controller->SiteArticles));
-            $this->assertInstanceOf(
-                'TestApp\Model\Table\ArticlesTable',
-                $Controller->Articles
-            );
-        });
+        $this->assertFalse(isset($Controller->SiteArticles));
+        $this->assertInstanceOf(
+            'TestApp\Model\Table\ArticlesTable',
+            $Controller->Articles
+        );
     }
 
     /**
@@ -152,9 +150,7 @@ class ControllerTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $Controller = new WithDefaultTableController(new ServerRequest(), new Response());
 
-        $this->deprecated(function () use ($Controller) {
-            $this->assertInstanceOf(PostsTable::class, $Controller->Posts);
-        });
+        $this->assertInstanceOf(PostsTable::class, $Controller->Posts);
 
         Configure::write('App.namespace', 'App');
     }
@@ -167,9 +163,7 @@ class ControllerTest extends TestCase
         Configure::write('App.namespace', 'TestApp');
         $Controller = new ArticlesController(new ServerRequest(), new Response());
 
-        $this->deprecated(function () use ($Controller) {
-            $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
-        });
+        $this->assertInstanceOf(ArticlesTable::class, $Controller->Articles);
 
         Configure::write('App.namespace', 'App');
     }
@@ -210,15 +204,18 @@ class ControllerTest extends TestCase
         $response = new Response();
         $this->deprecated(function () use ($request, $response) {
             $controller = new PostsController($request, $response);
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchModel());
             $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
             $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
             $controller = new AdminPostsController($request, $response);
+            $this->assertInstanceOf('Cake\ORM\Table', $controller->fetchModel());
             $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
             $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
             $request = $request->withParam('plugin', 'TestPlugin');
             $controller = new CommentsController($request, $response);
+            $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->fetchModel());
             $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->loadModel());
             $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
         });

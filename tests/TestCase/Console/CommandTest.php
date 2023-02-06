@@ -48,7 +48,7 @@ class CommandTest extends TestCase
     /**
      * test loadModel is configured properly
      */
-    public function testConstructorLoadModel(): void
+    public function testConstructorLoadModelDynamicProperty(): void
     {
         $this->deprecated(function () {
             $command = new Command();
@@ -62,10 +62,9 @@ class CommandTest extends TestCase
      */
     public function testConstructorAutoLoadModel(): void
     {
-        $this->deprecated(function () {
-            $command = new AutoLoadModelCommand();
-            $this->assertInstanceOf(Table::class, $command->Posts);
-        });
+        // No deprecation as AutoLoadModelCommand class defines Posts property
+        $command = new AutoLoadModelCommand();
+        $this->assertInstanceOf(Table::class, $command->Posts);
     }
 
     /**
