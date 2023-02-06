@@ -149,6 +149,10 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithError(): void
     {
+        $this->skipIf(
+            version_compare(PHP_VERSION, '8.2.0', '>='),
+            'Setting queryString on exceptions does not work on 8.2+'
+        );
         $exception = new MyPDOException('This is bad');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
@@ -167,12 +171,14 @@ class LoggingStatementTest extends TestCase
             ->method('__get')
             ->willReturn('SELECT bar FROM foo');
         $st->setLogger(new QueryLogger(['connection' => 'test']));
-        try {
-            $st->execute();
-        } catch (MyPDOException $e) {
-            $this->assertSame('This is bad', $e->getMessage());
-            $this->assertSame($st->queryString, $e->queryString);
-        }
+        $this->deprecated(function () use ($st) {
+            try {
+                $st->execute();
+            } catch (MyPDOException $e) {
+                $this->assertSame('This is bad', $e->getMessage());
+                $this->assertSame($st->queryString, $e->queryString);
+            }
+        });
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
