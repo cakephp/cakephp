@@ -18,7 +18,6 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Exception\CakeException;
 use Cake\Utility\Inflector;
 
 /**
@@ -119,11 +118,6 @@ abstract class BaseCommand implements CommandInterface
         $parser->setDescription(static::getDescription());
 
         $parser = $this->buildOptionParser($parser);
-        if ($parser->subcommands()) {
-            throw new CakeException(
-                'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
-            );
-        }
 
         return $parser;
     }
@@ -204,7 +198,7 @@ abstract class BaseCommand implements CommandInterface
             $io->setOutputAs(ConsoleOutput::RAW);
         }
 
-        $io->out($parser->help(null, $format));
+        $io->out($parser->help($format));
     }
 
     /**

@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
-use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\ConsoleException;
@@ -752,112 +751,6 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test setting a subcommand up.
-     */
-    public function testSubcommand(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $result = $parser->addSubcommand('initdb', [
-            'help' => 'Initialize the database',
-        ]);
-        $this->assertEquals($parser, $result, 'Adding a subcommand is not chainable');
-    }
-
-    /**
-     * Tests setting a subcommand up for a Shell method `initMyDb`.
-     */
-    public function testSubcommandCamelBacked(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $result = $parser->addSubcommand('initMyDb', [
-            'help' => 'Initialize the database',
-        ]);
-
-        $subcommands = array_keys($result->subcommands());
-        $this->assertEquals(['init_my_db'], $subcommands, 'Adding a subcommand does not work with camel backed method names.');
-    }
-
-    /**
-     * Test addSubcommand inherits options as no
-     * parser is created.
-     */
-    public function testAddSubcommandInheritOptions(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addSubcommand('build', [
-            'help' => 'Build things',
-        ])->addOption('connection', [
-            'short' => 'c',
-            'default' => 'default',
-        ])->addArgument('name', ['required' => false]);
-
-        $result = $parser->parse(['build'], $this->io);
-        $this->assertSame('default', $result[0]['connection']);
-
-        $result = $parser->subcommands();
-        $this->assertArrayHasKey('build', $result);
-        $this->assertNull($result['build']->parser(), 'No parser should be created');
-    }
-
-    /**
-     * test addSubcommand with an object.
-     */
-    public function testAddSubcommandObject(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addSubcommand(new ConsoleInputSubcommand('test'));
-        $result = $parser->subcommands();
-        $this->assertCount(1, $result);
-        $this->assertSame('test', $result['test']->name());
-    }
-
-    /**
-     * test addSubcommand without sorting applied.
-     */
-    public function testAddSubcommandSort(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $this->assertTrue($parser->isSubcommandSortEnabled());
-        $parser->enableSubcommandSort(false);
-        $this->assertFalse($parser->isSubcommandSortEnabled());
-        $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), []);
-        $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), []);
-        $result = $parser->subcommands();
-        $this->assertCount(2, $result);
-        $firstResult = key($result);
-        $this->assertSame('betaTest', $firstResult);
-    }
-
-    /**
-     * test removeSubcommand with an object.
-     */
-    public function testRemoveSubcommand(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addSubcommand(new ConsoleInputSubcommand('test'));
-        $result = $parser->subcommands();
-        $this->assertCount(1, $result);
-        $parser->removeSubcommand('test');
-        $result = $parser->subcommands();
-        $this->assertCount(0, $result, 'Remove a subcommand does not work');
-    }
-
-    /**
-     * test adding multiple subcommands
-     */
-    public function testAddSubcommands(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $result = $parser->addSubcommands([
-            'initdb' => ['help' => 'Initialize the database'],
-            'create' => ['help' => 'Create something'],
-        ]);
-        $this->assertEquals($parser, $result, 'Adding a subcommands is not chainable');
-        $result = $parser->subcommands();
-        $this->assertCount(2, $result, 'Not enough subcommands');
-    }
-
-    /**
      * test that no exception is triggered for required arguments when help is being generated
      */
     public function testHelpNoExceptionForRequiredArgumentsWhenGettingHelp(): void
@@ -881,151 +774,6 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->parse(['--help']);
         $this->assertTrue($result[0]['help']);
-    }
-
-    /**
-     * test that help() with a command param shows the help for a subcommand
-     */
-    public function testHelpSubcommandHelp(): void
-    {
-        $subParser = new ConsoleOptionParser('method', false);
-        $subParser->addOption('connection', ['help' => 'Db connection.']);
-        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
-
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->addSubcommand('method', [
-                'help' => 'This is another command',
-                'parser' => $subParser,
-            ])
-            ->addOption('test', ['help' => 'A test option.']);
-
-        $result = $parser->help('method');
-        $expected = <<<TEXT
-This is another command
-
-<info>Usage:</info>
-cake mycommand method [--connection] [-h] [-0]
-
-<info>Options:</info>
-
---connection      Db connection.
---help, -h        Display this help.
---zero, -0        Zero.
-
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
-    }
-
-    /**
-     * Test addSubcommand inherits options as no
-     * parser is created.
-     */
-    public function testHelpSubcommandInheritOptions(): void
-    {
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->addSubcommand('build', [
-            'help' => 'Build things.',
-        ])->addSubcommand('destroy', [
-            'help' => 'Destroy things.',
-        ])->addOption('connection', [
-            'help' => 'Db connection.',
-            'short' => 'c',
-        ])->addArgument('name', ['required' => false]);
-
-        $result = $parser->help('build');
-        $expected = <<<TEXT
-Build things.
-
-<info>Usage:</info>
-cake mycommand build [-c] [-h] [-q] [-v] [<name>]
-
-<info>Options:</info>
-
---connection, -c  Db connection.
---help, -h        Display this help.
---quiet, -q       Enable quiet output.
---verbose, -v     Enable verbose output.
-
-<info>Arguments:</info>
-
-name   <comment>(optional)</comment>
-
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
-    }
-
-    /**
-     * test that help() with a command param shows the help for a subcommand
-     */
-    public function testHelpSubcommandHelpArray(): void
-    {
-        $subParser = [
-            'options' => [
-                'foo' => [
-                    'short' => 'f',
-                    'help' => 'Foo.',
-                    'boolean' => true,
-                ],
-            ],
-        ];
-
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->addSubcommand('method', [
-                'help' => 'This is a subcommand',
-                'parser' => $subParser,
-            ])
-            ->setRootName('tool')
-            ->addOption('test', ['help' => 'A test option.']);
-
-        $result = $parser->help('method');
-        $expected = <<<TEXT
-This is a subcommand
-
-<info>Usage:</info>
-tool mycommand method [-f] [-h] [-q] [-v]
-
-<info>Options:</info>
-
---foo, -f      Foo.
---help, -h     Display this help.
---quiet, -q    Enable quiet output.
---verbose, -v  Enable verbose output.
-
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
-    }
-
-    /**
-     * test that help() with a command param shows the help for a subcommand
-     */
-    public function testHelpSubcommandInheritParser(): void
-    {
-        $subParser = new ConsoleOptionParser('method', false);
-        $subParser->addOption('connection', ['help' => 'Db connection.']);
-        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
-
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->addSubcommand('method', [
-                'help' => 'This is another command',
-                'parser' => $subParser,
-            ])
-            ->addOption('test', ['help' => 'A test option.']);
-
-        $result = $parser->help('method');
-        $expected = <<<TEXT
-This is another command
-
-<info>Usage:</info>
-cake mycommand method [--connection] [-h] [-0]
-
-<info>Options:</info>
-
---connection      Db connection.
---help, -h        Display this help.
---zero, -0        Zero.
-
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
     }
 
     /**
@@ -1057,45 +805,6 @@ TEXT;
     }
 
     /**
-     * test that getCommandError() with an unknown subcommand param shows a helpful message
-     */
-    public function testHelpUnknownSubcommand(): void
-    {
-        $subParser = [
-            'options' => [
-                'foo' => [
-                    'short' => 'f',
-                    'help' => 'Foo.',
-                    'boolean' => true,
-                ],
-            ],
-        ];
-
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $parser
-            ->addSubcommand('method', [
-                'help' => 'This is a subcommand',
-                'parser' => $subParser,
-            ])
-            ->addOption('test', ['help' => 'A test option.'])
-            ->addSubcommand('unstash');
-
-        try {
-            $result = $parser->help('unknown');
-        } catch (MissingOptionException $e) {
-            $result = $e->getFullMessage();
-            $this->assertStringContainsString(
-                "Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.\n" .
-                "\n" .
-                "Other valid choices:\n" .
-                "\n" .
-                '- method',
-                $result
-            );
-        }
-    }
-
-    /**
      * test building a parser from an array.
      */
     public function testBuildFromArray(): void
@@ -1109,9 +818,6 @@ TEXT;
             'options' => [
                 'name' => ['help' => 'The name'],
                 'other' => ['help' => 'The other arg'],
-            ],
-            'subcommands' => [
-                'initdb' => ['help' => 'make database'],
             ],
             'description' => 'description text',
             'epilog' => 'epilog text',
@@ -1127,9 +833,6 @@ TEXT;
 
         $args = $parser->arguments();
         $this->assertCount(2, $args);
-
-        $commands = $parser->subcommands();
-        $this->assertCount(1, $commands);
     }
 
     /**
@@ -1152,38 +855,6 @@ TEXT;
     }
 
     /**
-     * test that parse() takes a subcommand argument, and that the subcommand parser
-     * is used.
-     */
-    public function testParsingWithSubParser(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('primary')
-            ->addArgument('one', ['required' => true, 'choices' => ['a', 'b']])
-            ->addArgument('two', ['required' => true])
-            ->addSubcommand('sub', [
-                'parser' => [
-                    'options' => [
-                        'secondary' => ['boolean' => true],
-                        'fourth' => ['help' => 'fourth option'],
-                    ],
-                    'arguments' => [
-                        'sub_arg' => ['choices' => ['c', 'd']],
-                    ],
-                ],
-            ]);
-
-        $result = $parser->parse(['sub', '--secondary', '--fourth', '4', 'c'], $this->io);
-        $expected = [[
-            'secondary' => true,
-            'fourth' => '4',
-            'help' => false,
-            'verbose' => false,
-            'quiet' => false], ['c']];
-        $this->assertEquals($expected, $result, 'Sub parser did not parse request.');
-    }
-
-    /**
      * Tests toArray()
      */
     public function testToArray(): void
@@ -1197,9 +868,6 @@ TEXT;
             'options' => [
                 'name' => ['help' => 'The name'],
                 'other' => ['help' => 'The other arg'],
-            ],
-            'subcommands' => [
-                'initdb' => ['help' => 'make database'],
             ],
             'description' => 'description text',
             'epilog' => 'epilog text',
@@ -1215,7 +883,6 @@ TEXT;
         $this->assertArrayHasKey('other', $options);
 
         $this->assertCount(2, $result['arguments']);
-        $this->assertCount(1, $result['subcommands']);
     }
 
     /**

@@ -97,25 +97,6 @@ class HelpFormatter
         $out[] = '<info>Usage:</info>';
         $out[] = $this->_generateUsage();
         $out[] = '';
-        $subcommands = $parser->subcommands();
-        if (!empty($subcommands)) {
-            $out[] = '<info>Subcommands:</info>';
-            $out[] = '';
-            $max = $this->_getMaxLength($subcommands) + 2;
-            foreach ($subcommands as $command) {
-                $out[] = Text::wrapBlock($command->help($max), [
-                    'width' => $width,
-                    'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1,
-                ]);
-            }
-            $out[] = '';
-            $out[] = sprintf(
-                'To see help on a subcommand use <info>`' . $this->_alias . ' %s [subcommand] --help`</info>',
-                $parser->getCommand()
-            );
-            $out[] = '';
-        }
 
         $options = $parser->options();
         if ($options) {
@@ -165,10 +146,6 @@ class HelpFormatter
     protected function _generateUsage(): string
     {
         $usage = [$this->_alias . ' ' . $this->_parser->getCommand()];
-        $subcommands = $this->_parser->subcommands();
-        if (!empty($subcommands)) {
-            $usage[] = '[subcommand]';
-        }
         $options = [];
         foreach ($this->_parser->options() as $option) {
             $options[] = $option->usage();
@@ -192,7 +169,7 @@ class HelpFormatter
     /**
      * Iterate over a collection and find the longest named thing.
      *
-     * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument|\Cake\Console\ConsoleInputSubcommand> $collection The collection to find a max length of.
+     * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument> $collection The collection to find a max length of.
      * @return int
      */
     protected function _getMaxLength(array $collection): int
@@ -218,10 +195,6 @@ class HelpFormatter
         $xml->addChild('command', $parser->getCommand());
         $xml->addChild('description', $parser->getDescription());
 
-        $subcommands = $xml->addChild('subcommands');
-        foreach ($parser->subcommands() as $command) {
-            $command->xml($subcommands);
-        }
         $options = $xml->addChild('options');
         foreach ($parser->options() as $option) {
             $option->xml($options);
