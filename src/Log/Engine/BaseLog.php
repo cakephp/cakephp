@@ -20,7 +20,6 @@ use ArrayObject;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Formatter\AbstractFormatter;
 use Cake\Log\Formatter\DefaultFormatter;
-use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
