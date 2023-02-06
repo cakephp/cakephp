@@ -22,6 +22,9 @@ use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
 use Throwable;
 
+// phpcs:disable
+deprecationWarning('4.5.0 - TestListenerTrait is deprecated, as PHPUnit is removing support for listeners.');
+
 /**
  * Implements empty default methods for PHPUnit\Framework\TestListener.
  */
