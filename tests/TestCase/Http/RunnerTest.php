@@ -19,9 +19,13 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Cake\Http\Runner;
+use Cake\Http\ServerRequest;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use TestApp\Application;
+use Throwable;
 
 /**
  * Test case for runner.
@@ -125,5 +129,19 @@ class RunnerTest extends TestCase
 
         $runner = new Runner();
         $runner->run($this->queue, $req);
+    }
+
+    public function testRunSetRouterContext(): void
+    {
+        $runner = new Runner();
+        $request = new ServerRequest();
+        $app = new Application(CONFIG);
+
+        try {
+            $runner->run($this->queue, $request, $app);
+        } catch (Throwable $e) {
+        }
+
+        $this->assertSame($request, Router::getRequest());
     }
 }
