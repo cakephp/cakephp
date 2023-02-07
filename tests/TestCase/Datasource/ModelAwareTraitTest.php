@@ -17,11 +17,9 @@ namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use stdClass;
 use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
