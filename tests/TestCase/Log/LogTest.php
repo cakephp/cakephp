@@ -397,6 +397,27 @@ class LogTest extends TestCase
     }
 
     /**
+     * Test scoped logging backwards compat
+     */
+    public function testScopedLoggingBackwardsCompat(): void
+    {
+        $this->_deleteLogs();
+
+        Log::setConfig('debug', [
+            'engine' => 'File',
+            'path' => LOGS,
+            'levels' => ['notice', 'info', 'debug'],
+            'file' => 'debug',
+            'scopes' => false,
+        ]);
+
+        $this->deprecated(function () {
+            Log::write('debug', 'debug message', 'orders');
+        });
+        $this->assertFileDoesNotExist(LOGS . 'debug.log');
+    }
+
+    /**
      * Test scoped logging without the default loggers catching everything
      */
     public function testScopedLoggingStrict(): void

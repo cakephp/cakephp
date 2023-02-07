@@ -20,7 +20,6 @@ use ArrayObject;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Formatter\AbstractFormatter;
 use Cake\Log\Formatter\DefaultFormatter;
-use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
@@ -58,11 +57,11 @@ abstract class BaseLog extends AbstractLogger
     {
         $this->setConfig($config);
 
-        assert(
-            $this->_config['scopes'] !== false,
-            new InvalidArgumentException('Use `null` instead of `false` to disable scopes.')
-        );
-
+        // Backwards compatibility shim as we can't deprecate using false because of how 4.x merges configuration.
+        if ($this->_config['scopes'] === false) {
+            deprecationWarning('5.0.0', 'Using `false` to disable logging scopes is deprecated. Use `null` instead.');
+            $this->_config['scopes'] = null;
+        }
         if ($this->_config['scopes'] !== null) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];
         }
