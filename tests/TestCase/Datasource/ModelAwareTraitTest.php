@@ -22,6 +22,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
+use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
 use UnexpectedValueException;
@@ -31,6 +32,13 @@ use UnexpectedValueException;
  */
 class ModelAwareTraitTest extends TestCase
 {
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        FactoryLocator::drop('Test');
+    }
+
     /**
      * Test set modelClass
      */
@@ -77,6 +85,20 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $stub->fetchModel();
+    }
+
+    /**
+     * test MissingModelException being thrown
+     */
+    public function testFetchModelMissingModelException(): void
+    {
+        $this->expectException(MissingModelException::class);
+        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
+        $stub = new Stub();
+
+        $locator = new StubFactory();
+        FactoryLocator::add('Test', $locator);
+        $stub->loadModel('Magic', 'Test');
     }
 
     /**
@@ -163,28 +185,26 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $stub->modelFactory('Table', function ($name) {
-            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-            $mock->expects($this->any())
-                ->method('getAlias')
-                ->willReturn($name);
+        $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
+        $mock->expects($this->any())
+            ->method('getAlias')
+            ->willReturn('Magic');
 
-            return $mock;
-        });
+        $locator = new StubFactory();
+        $locator->set('Magic', $mock);
+        $stub->modelFactory('Table', $locator);
 
         $result = $stub->loadModel('Magic', 'Table');
         $this->assertInstanceOf(RepositoryInterface::class, $result);
         $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
         $this->assertSame('Magic', $stub->Magic->getAlias());
 
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $locator = new StubFactory();
         $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
         $mock2->expects($this->any())
             ->method('getAlias')
             ->willReturn('Foo');
-        $locator->expects($this->any())
-            ->method('get')
-            ->willReturn($mock2);
+        $locator->set('Foo', $mock2);
 
         $stub->modelFactory('MyType', $locator);
         $result = $stub->loadModel('Foo', 'MyType');
@@ -209,15 +229,6 @@ class ModelAwareTraitTest extends TestCase
      */
     public function testGetSetModelType(): void
     {
-        $this->deprecated(function () {
-            FactoryLocator::add('Test', function ($name) {
-                $mock = new stdClass();
-                $mock->name = $name;
-
-                return $mock;
-            });
-        });
-
         $stub = new Stub();
         $stub->setProps('Articles');
 
@@ -234,19 +245,9 @@ class ModelAwareTraitTest extends TestCase
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
-        $this->deprecated(function () {
-            FactoryLocator::add('Test', function ($name) {
-                return false;
-            });
-        });
+        $locator = new StubFactory();
+        FactoryLocator::add('Test', $locator);
 
         $stub->loadModel('Magic', 'Test');
-    }
-
-    public function tearDown(): void
-    {
-        FactoryLocator::drop('Test');
-
-        parent::tearDown();
     }
 }
