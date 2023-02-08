@@ -35,6 +35,7 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectory(string $directory = '.'): void
     {
+        deprecationWarning('4.5.0 - TestSuite is deprecated as PHPunit is removing support for testsuites.');
         $fs = new Filesystem();
         $files = $fs->find($directory, '/\.php$/');
         foreach ($files as $file => $fileInfo) {
@@ -50,6 +51,7 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectoryRecursive(string $directory = '.'): void
     {
+        deprecationWarning('4.5.0 - TestSuite is deprecated as PHPunit is removing support for testsuites.');
         $fs = new Filesystem();
         $files = $fs->findRecursive($directory, function (SplFileInfo $current) {
             $file = $current->getFilename();
