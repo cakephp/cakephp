@@ -5982,7 +5982,7 @@ class TableTest extends TestCase
         $associationBeforeFindCount = 0;
         $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, SelectQuery $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount): void {
+            function (EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary) use (&$associationBeforeFindCount): void {
                 $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
             }
@@ -5991,7 +5991,7 @@ class TableTest extends TestCase
         $beforeFindCount = 0;
         $eventManager->on(
             'Model.beforeFind',
-            function (EventInterface $event, SelectQuery $query, ArrayObject $options, $primary) use (&$beforeFindCount): void {
+            function (EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary) use (&$beforeFindCount): void {
                 $this->assertIsBool($primary);
                 $beforeFindCount++;
             }
