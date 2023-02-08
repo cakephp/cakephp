@@ -35,4 +35,9 @@ class MergeShell extends Shell
      * @var string
      */
     protected $modelClass = 'Articles';
+
+    /**
+     * @var \TestApp\Model\Table\ArticlesTable
+     */
+    public $Articles;
 }
