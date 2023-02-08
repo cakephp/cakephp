@@ -96,7 +96,7 @@ class ModelAwareTraitTest extends TestCase
 
         $locator = new StubFactory();
         FactoryLocator::add('Test', $locator);
-        $stub->loadModel('Magic', 'Test');
+        $stub->fetchModel('Magic', 'Test');
     }
 
     /**
