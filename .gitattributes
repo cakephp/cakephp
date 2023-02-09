@@ -26,6 +26,7 @@
 
 # Remove files for archives generated using `git archive`
 .github export-ignore
+.phive export-ignore
 contrib export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
