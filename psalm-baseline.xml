@@ -18,11 +18,6 @@
       <code>int|false</code>
     </InvalidReturnType>
   </file>
-  <file src="src/Database/Statement/SqlserverStatement.php">
-    <UndefinedConstant occurrences="1">
-      <code>PDO::SQLSRV_ENCODING_BINARY</code>
-    </UndefinedConstant>
-  </file>
   <file src="src/Datasource/Paging/PaginatedResultSet.php">
     <MethodSignatureMustProvideReturnType occurrences="1">
       <code>://cakephp.org)</code>

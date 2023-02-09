@@ -3,6 +3,8 @@
     errorLevel="4"
     usePhpDocMethodsWithoutMagicCall="true"
     findUnusedPsalmSuppress="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -16,6 +18,11 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <enableExtensions>
+        <extension name="apcu"/>
+        <extension name="redis"/>
+    </enableExtensions>
 
     <issueHandlers>
         <UndefinedClass>
