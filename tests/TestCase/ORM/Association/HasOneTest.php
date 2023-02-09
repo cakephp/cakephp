@@ -284,7 +284,7 @@ class HasOneTest extends TestCase
         $query = $this->user->find();
 
         $this->listenerCalled = false;
-        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary): void {
+        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, bool $primary): void {
             $this->listenerCalled = true;
             $this->assertInstanceOf('Cake\Event\Event', $event);
             $this->assertInstanceOf('Cake\ORM\Query', $query);
@@ -310,7 +310,7 @@ class HasOneTest extends TestCase
         $opts = new ArrayObject(['something' => 'more']);
         $this->profile->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, $query, $options, $primary) use ($opts): void {
+            function ($event, $query, $options, bool $primary) use ($opts): void {
                 $this->listenerCalled = true;
                 $this->assertInstanceOf('Cake\Event\Event', $event);
                 $this->assertInstanceOf('Cake\ORM\Query', $query);

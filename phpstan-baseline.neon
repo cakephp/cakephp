@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Collection\\) given\\.$#"
+			count: 3
+			path: src/Collection/Collection.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
@@ -9,6 +14,21 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\TreeIterator\\) given\\.$#"
+			count: 3
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\TreePrinter\\) given\\.$#"
+			count: 3
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\) given\\.$#"
+			count: 3
+			path: src/Collection/Iterator/ZipIterator.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -76,6 +96,11 @@ parameters:
 			path: src/Http/Session.php
 
 		-
+			message: "#^Call to an undefined method Cake\\\\I18n\\\\Date\\:\\:getTimestamp\\(\\)\\.$#"
+			count: 1
+			path: src/I18n/Date.php
+
+		-
 			message: "#^Call to an undefined method Cake\\\\I18n\\\\Date\\|Cake\\\\I18n\\\\DateTime\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/I18n/RelativeTimeFormatter.php
@@ -99,6 +124,11 @@ parameters:
 			message: "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\ORM\\\\ResultSet\\<T of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) given\\.$#"
+			count: 2
+			path: src/ORM/ResultSet.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

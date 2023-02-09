@@ -2625,12 +2625,12 @@ class SelectQueryTest extends TestCase
         ]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
             $this->assertTrue($primary);
         });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
                 $this->assertFalse($primary);
             });
         $query->all();
@@ -2653,12 +2653,12 @@ class SelectQueryTest extends TestCase
         ]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
             $this->assertTrue($primary);
         });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary): void {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
                 $this->assertFalse($primary);
             });
         $query->all();
