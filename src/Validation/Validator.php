@@ -240,6 +240,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
+            $name = (string)$name;
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
@@ -427,7 +428,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function offsetGet($field): ValidationSet
     {
-        return $this->field($field);
+        return $this->field((string)$field);
     }
 
     /**
@@ -698,7 +699,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = current(array_keys($settings));
 
-            $this->field($fieldName)->requirePresence($settings[$fieldName]['mode']);
+            $this->field((string)$fieldName)->requirePresence($settings[$fieldName]['mode']);
             if ($settings[$fieldName]['message']) {
                 $this->_presenceMessages[$fieldName] = $settings[$fieldName]['message'];
             }
@@ -1255,7 +1256,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $whenSetting = $this->invertWhenClause($settings[$fieldName]['when']);
 
-            $this->field($fieldName)->allowEmpty($whenSetting);
+            $this->field((string)$fieldName)->allowEmpty($whenSetting);
             $this->_allowEmptyFlags[$fieldName] = static::EMPTY_ALL;
             if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
