@@ -78,7 +78,7 @@ class Configure
      *
      * @param array<string, mixed>|string $config The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
-     * @param mixed $value Value to set for var
+     * @param mixed $value Value to set for the given key.
      * @return void
      * @link https://book.cakephp.org/4/en/development/configuration.html#writing-configuration-data
      */
@@ -88,8 +88,8 @@ class Configure
             $config = [$config => $value];
         }
 
-        foreach ($config as $name => $value) {
-            static::$_values = Hash::insert(static::$_values, $name, $value);
+        foreach ($config as $name => $valueToInsert) {
+            static::$_values = Hash::insert(static::$_values, $name, $valueToInsert);
         }
 
         if (isset($config['debug'])) {
