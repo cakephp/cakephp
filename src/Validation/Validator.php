@@ -231,7 +231,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Validates and returns an array of failed fields and their error messages.
      *
-     * @param array $data The data to be checked for errors
+     * @param array<string|int, mixed> $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
      * @return array<array> Array of failed fields
      */
@@ -423,7 +423,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns the rule set for a field
      *
-     * @param string $field name of the field to check
+     * @param string|int $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
     public function offsetGet($field): ValidationSet
@@ -677,7 +677,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * You can also set mode and message for all passed fields, the individual
      * setting takes precedence over group settings.
      *
-     * @param array|string $field the name of the field or list of fields.
+     * @param array<string|int, mixed>|string $field the name of the field or list of fields.
      * @param callable|string|bool $mode Valid values are true, false, 'create', 'update'.
      *   If a callable is passed then the field will be required only when the callback
      *   returns true.
@@ -1145,7 +1145,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string|int $fieldName name of field
      * @param array<string, mixed> $defaults default settings
-     * @param array<string, mixed>|string $settings settings from data
+     * @param array<string|int, mixed>|string $settings settings from data
      * @return array<array>
      * @throws \InvalidArgumentException
      */
@@ -1228,7 +1228,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @deprecated 3.7.0 Use {@link notEmptyString()}, {@link notEmptyArray()}, {@link notEmptyFile()},
      *   {@link notEmptyDate()}, {@link notEmptyTime()} or {@link notEmptyDateTime()} instead.
-     * @param array|string $field the name of the field or list of fields
+     * @param array<string|int, mixed>|string $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
      * @param callable|string|bool $when Indicates when the field is not allowed
      *   to be empty. Valid values are true (always), 'create', 'update'. If a
