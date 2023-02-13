@@ -2216,6 +2216,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function enableBufferedResults(bool $enable = true)
     {
+        if (!$enable) {
+            deprecationWarning(
+                '4.5.0 enableBufferedResults() is deprecated. Results will always be buffered in 5.0.'
+            );
+        }
         $this->_dirty();
         $this->_useBufferedResults = $enable;
 
