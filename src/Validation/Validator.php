@@ -1151,6 +1151,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function _convertValidatorToArray($fieldName, array $defaults = [], $settings = []): array
     {
+        if (is_int($settings)) {
+            $settings = (string)$settings;
+        }
         if (is_string($settings)) {
             $fieldName = $settings;
             $settings = [];
