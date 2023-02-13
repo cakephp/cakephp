@@ -295,7 +295,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the requirePresence method
+     * Tests the requirePresence method with an array
      */
     public function testRequirePresenceAsArray(): void
     {
@@ -316,6 +316,24 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('title')->isPresenceRequired());
         $this->assertSame('update', $validator->field('content')->isPresenceRequired());
         $this->assertTrue($validator->field('subject')->isPresenceRequired());
+    }
+
+    /**
+     * Tests the requirePresence method with an array containing an integer key
+     */
+    public function testRequirePresenceAsArrayWithIntegerKey(): void
+    {
+        $validator = new Validator();
+
+        $validator->requirePresence([
+            0,
+            1 => [
+                'mode' => false,
+            ],
+            'another_field',
+        ]);
+        $this->assertTrue($validator->field((string)0)->isPresenceRequired());
+        $this->assertFalse($validator->field((string)1)->isPresenceRequired());
     }
 
     /**
@@ -1379,7 +1397,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the notEmpty as array method
+     * Tests the notEmpty method with an array
      */
     public function testNotEmptyAsArray(): void
     {
@@ -1426,6 +1444,38 @@ class ValidatorTest extends TestCase
             'title' => ['_empty' => 'Not empty'],
             'content' => ['_empty' => 'Not empty'],
             'show_at' => ['_empty' => 'Show date cannot be empty'],
+        ];
+        $this->assertEquals($expected, $errors);
+    }
+
+    /**
+     * Tests the notEmpty method with an array containing an integer key
+     */
+    public function testNotEmptyAsArrayWithIntegerKey(): void
+    {
+        $validator = new Validator();
+
+        $this->deprecated(function () use ($validator): void {
+            $validator->notEmpty([
+                0,
+                1 => [
+                    'when' => false,
+                ],
+                'another_field',
+            ], 'Not empty', true);
+        });
+
+        $this->assertTrue($validator->field((string)0)->isEmptyAllowed());
+        $this->assertFalse($validator->field((string)1)->isEmptyAllowed());
+
+        $errors = $validator->validate([
+            0 => '',
+            1 => '',
+            'another_field' => '',
+        ], false);
+
+        $expected = [
+            '1' => ['_empty' => 'Not empty'],
         ];
         $this->assertEquals($expected, $errors);
     }
@@ -1831,6 +1881,17 @@ class ValidatorTest extends TestCase
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $this->assertSame($validator['email'], $validator->field('email'));
         $this->assertSame($validator['title'], $validator->field('title'));
+    }
+
+    /**
+     * Tests direct usage the offsetGet method with an integer field name
+     */
+    public function testOffsetGetWithIntegerFieldName(): void
+    {
+        $validator = new Validator();
+        $validator
+            ->add((string)0, 'alpha', ['rule' => 'alphanumeric']);
+        $this->assertSame($validator->offsetGet(0), $validator->field('0'));
     }
 
     /**
@@ -2677,6 +2738,18 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
         $this->assertEmpty($validator->validate(['username' => '123']));
         $this->assertNotEmpty($validator->validate(['username' => 'Foo']));
+    }
+
+    /**
+     * Tests the validate method with an integer key
+     */
+    public function testValidateWithIntegerKey(): void
+    {
+        $validator = new Validator();
+        $validator->requirePresence('0');
+        $errors = $validator->validate([1 => 'Not integer zero']);
+        $expected = ['0' => ['_required' => 'This field is required']];
+        $this->assertEquals($expected, $errors);
     }
 
     /**
