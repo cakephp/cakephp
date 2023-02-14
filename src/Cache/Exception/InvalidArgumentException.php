@@ -26,7 +26,7 @@ class InvalidArgumentException extends CakeException implements InvalidArgumentI
 {
 }
 // phpcs:disable
-// @deprecated Backwards compatibility alias. Will be removed in 4.4.10
+// @deprecated Backwards compatibility alias. Will be removed in 5.0
 class_alias(
     'Cake\Cache\Exception\InvalidArgumentException',
     'Cake\Cache\InvalidArgumentException'
