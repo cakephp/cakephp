@@ -25,3 +25,9 @@ use Psr\SimpleCache\InvalidArgumentException as InvalidArgumentInterface;
 class InvalidArgumentException extends CakeException implements InvalidArgumentInterface
 {
 }
+// phpcs:disable
+class_alias(
+    'Cake\Cache\Exception\InvalidArgumentException',
+    'Cake\Cache\InvalidArgumentException'
+);
+// phpcs:enable
