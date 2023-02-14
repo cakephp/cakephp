@@ -559,7 +559,6 @@ class CacheTest extends TestCase
 
     /**
      * testGroupConfigsThrowsOldException method
-     * @deprecated Backwards compatibility alias. Will be removed in 5.0
      */
     public function testGroupConfigsThrowsOldException(): void
     {
