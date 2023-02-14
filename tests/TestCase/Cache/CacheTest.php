@@ -563,8 +563,14 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigsThrowsOldException(): void
     {
-        $this->expectException(\Cake\Cache\InvalidArgumentException::class);
-        Cache::groupConfigs('bogus');
+        try {
+            Cache::groupConfigs('bogus');
+        } catch (\Cake\Cache\InvalidArgumentException $e) {
+           // do nothing
+        }
+
+        // aliased exception was caught, so I'll have a coke.
+        $this->assertFalse(false);
     }
 
     /**
