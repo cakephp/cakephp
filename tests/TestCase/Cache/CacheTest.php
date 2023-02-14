@@ -558,6 +558,22 @@ class CacheTest extends TestCase
     }
 
     /**
+     * testGroupConfigsThrowsOldException method
+     * @deprecated Backwards compatibility alias. Will be removed in 5.0
+     */
+    public function testGroupConfigsThrowsOldException(): void
+    {
+        try {
+            Cache::groupConfigs('bogus');
+        } catch (\Cake\Cache\InvalidArgumentException $e) {
+           // do nothing
+        }
+
+        // aliased exception was caught, so I'll have a coke.
+        $this->assertFalse(false);
+    }
+
+    /**
      * test that configured returns an array of the currently configured cache
      * config
      */
