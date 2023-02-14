@@ -350,6 +350,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
             '_ext' => $request->getParam('_ext'),
+            'class' => $request->getParam('controller'),
         ]);
     }
 }
