@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         4.4.10
+ * @since         4.4.12
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Exception;
@@ -19,7 +19,8 @@ namespace Cake\Cache\Exception;
 use Cake\Core\Exception\CakeException;
 
 /**
- * Exception raised when cache keys are invalid.
+ * Exception raised when cache writing failed for some reason.
+ * Replaces triggering an error.
  */
 class CacheWriteException extends CakeException
 {
