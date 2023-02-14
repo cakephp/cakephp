@@ -177,16 +177,16 @@ class StringTemplate
         }
         foreach ($templates as $name) {
             $template = $this->get($name);
-            if ($template === null) {
+            if (is_string($template)) {
+                $template = str_replace('%', '%%', $template);
+                preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
+                $this->_compiled[$name] = [
+                    str_replace($matches[0], '%s', $template),
+                    $matches[1],
+                ];
+            } else {
                 $this->_compiled[$name] = [null, null];
             }
-
-            $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
-            $this->_compiled[$name] = [
-                str_replace($matches[0], '%s', $template),
-                $matches[1],
-            ];
         }
     }
 
