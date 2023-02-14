@@ -179,6 +179,8 @@ class StringTemplate
             $template = $this->get($name);
             if ($template === null) {
                 $this->_compiled[$name] = [null, null];
+
+                continue;
             }
 
             $template = str_replace('%', '%%', $template);
