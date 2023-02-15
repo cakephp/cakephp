@@ -1890,7 +1890,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator
-            ->add(('0', 'alpha', ['rule' => 'alphanumeric']);
+            ->add('0', 'alpha', ['rule' => 'alphanumeric']);
         $this->assertSame($validator->offsetGet(0), $validator->field('0'));
     }
 
