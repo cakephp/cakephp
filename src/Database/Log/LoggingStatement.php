@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
-use PDOException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -82,10 +81,15 @@ class LoggingStatement extends StatementDecorator
             $this->_log();
 
             if (Configure::read('Error.wrapStatementException', false) === true) {
+                $code = $e->getCode();
+                if (!is_int($code)) {
+                    $code = null;
+                }
+
                 throw new DatabaseException([
                     'message' => $e->getMessage(),
                     'queryString' => $this->queryString,
-                ], $e->getCode(), $e);
+                ], $code, $e);
             }
 
             if (version_compare(PHP_VERSION, '8.2.0', '<')) {

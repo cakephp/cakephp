@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Log;
 
+use Cake\Core\Configure;
 use Cake\Database\DriverInterface;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
@@ -43,6 +45,7 @@ class LoggingStatementTest extends TestCase
     {
         parent::tearDown();
         Log::drop('queries');
+        Configure::delete('Error.wrapStatementException');
     }
 
     /**
@@ -167,6 +170,43 @@ class LoggingStatementTest extends TestCase
                 $this->assertSame($st->queryString, $e->queryString);
             }
         });
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+    }
+
+    /**
+     * Tests that queries are logged despite database errors
+     */
+    public function testExecuteWithErrorWrapStatement(): void
+    {
+        Configure::write('Error.wrapStatementException', true);
+        $exception = new MyPDOException('This is bad');
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner->expects($this->once())
+            ->method('execute')
+            ->will($this->throwException($exception));
+
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo');
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
+        try {
+            $st->execute();
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame($st->queryString, $attrs['queryString']);
+        }
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
