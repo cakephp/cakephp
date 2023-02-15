@@ -332,8 +332,8 @@ class ValidatorTest extends TestCase
             ],
             'another_field',
         ]);
-        $this->assertTrue($validator->field((string)0)->isPresenceRequired());
-        $this->assertFalse($validator->field((string)1)->isPresenceRequired());
+        $this->assertTrue($validator->field('0')->isPresenceRequired());
+        $this->assertFalse($validator->field('1')->isPresenceRequired());
     }
 
     /**
@@ -1465,8 +1465,8 @@ class ValidatorTest extends TestCase
             ], 'Not empty', true);
         });
 
-        $this->assertTrue($validator->field((string)0)->isEmptyAllowed());
-        $this->assertFalse($validator->field((string)1)->isEmptyAllowed());
+        $this->assertTrue($validator->field('0')->isEmptyAllowed());
+        $this->assertFalse($validator->field('1')->isEmptyAllowed());
 
         $errors = $validator->validate([
             0 => '',
@@ -1890,7 +1890,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator
-            ->add((string)0, 'alpha', ['rule' => 'alphanumeric']);
+            ->add(('0', 'alpha', ['rule' => 'alphanumeric']);
         $this->assertSame($validator->offsetGet(0), $validator->field('0'));
     }
 
