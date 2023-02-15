@@ -182,7 +182,7 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithErrorWrapStatement(): void
     {
         Configure::write('Error.wrapStatementException', true);
-        $exception = new MyPDOException('This is bad');
+        $exception = new MyPDOException('This is bad', 'DBCODE11111');
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
