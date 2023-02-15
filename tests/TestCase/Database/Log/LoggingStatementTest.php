@@ -26,6 +26,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use TestApp\Error\Exception\MyPDOException;
+use TestApp\Error\Exception\MyPDOStringException;
 
 /**
  * Tests LoggingStatement class
@@ -182,7 +183,7 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithErrorWrapStatement(): void
     {
         Configure::write('Error.wrapStatementException', true);
-        $exception = new MyPDOException('This is bad', 'DBCODE11111');
+        $exception = new MyPDOStringException('This is bad', 1234);
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
