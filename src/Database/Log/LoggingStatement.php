@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
+use PDOException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -75,6 +78,16 @@ class LoggingStatement extends StatementDecorator
             $result = parent::execute($params);
             $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
         } catch (Exception $e) {
+            $this->loggedQuery->error = $e;
+            $this->_log();
+
+            if (Configure::read('Error.wrapStatementException', false) === true) {
+                throw new DatabaseException([
+                    'message' => $e->getMessage(),
+                    'queryString' => $this->queryString,
+                ], $e->getCode(), $e);
+            }
+
             if (version_compare(PHP_VERSION, '8.2.0', '<')) {
                 deprecationWarning(
                     '4.4.12 - Having queryString set on exceptions is deprecated.' .
@@ -83,8 +96,7 @@ class LoggingStatement extends StatementDecorator
                 /** @psalm-suppress UndefinedPropertyAssignment */
                 $e->queryString = $this->queryString;
             }
-            $this->loggedQuery->error = $e;
-            $this->_log();
+
             throw $e;
         }
 
