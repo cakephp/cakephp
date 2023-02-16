@@ -124,7 +124,7 @@ class ErrorTrap
 
         $ignoredPaths = (array)Configure::read('Error.ignoredDeprecationPaths');
         if ($code === E_USER_DEPRECATED && $ignoredPaths) {
-            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', substr($file, strlen(ROOT) + 1));
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', substr((string)$file, strlen(ROOT) + 1));
             foreach ($ignoredPaths as $pattern) {
                 $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
                 if (fnmatch($pattern, $relativePath)) {
