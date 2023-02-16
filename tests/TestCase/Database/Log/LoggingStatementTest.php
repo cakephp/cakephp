@@ -178,12 +178,51 @@ class LoggingStatementTest extends TestCase
     }
 
     /**
-     * Tests that queries are logged despite database errors
+     * Tests that we do exception wrapping correctly.
+     * The exception returns a string code like most PDOExceptions
      */
-    public function testExecuteWithErrorWrapStatement(): void
+    public function testExecuteWithErrorWrapStatementStringCode(): void
     {
         Configure::write('Error.wrapStatementException', true);
         $exception = new MyPDOStringException('This is bad', 1234);
+        $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $inner->expects($this->once())
+            ->method('execute')
+            ->will($this->throwException($exception));
+
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $st = $this->getMockBuilder(LoggingStatement::class)
+            ->onlyMethods(['__get'])
+            ->setConstructorArgs([$inner, $driver])
+            ->getMock();
+        $st->expects($this->any())
+            ->method('__get')
+            ->willReturn('SELECT bar FROM foo');
+        $st->setLogger(new QueryLogger(['connection' => 'test']));
+        try {
+            $st->execute();
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame($st->queryString, $attrs['queryString']);
+        }
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+    }
+
+    /**
+     * Tests that we do exception wrapping correctly.
+     * The exception returns an int code.
+     */
+    public function testExecuteWithErrorWrapStatementIntCode(): void
+    {
+        Configure::write('Error.wrapStatementException', true);
+        $exception = new MyPDOException('This is bad', 1234);
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
             ->method('execute')
