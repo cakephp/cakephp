@@ -62,3 +62,10 @@ class LegacyShellDispatcher extends ShellDispatcher
         return $instance;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\LegacyShellDispatcher',
+    'Cake\TestSuite\LegacyShellDispatcher'
+);
+// phpcs:enable

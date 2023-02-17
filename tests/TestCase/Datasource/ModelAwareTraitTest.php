@@ -17,11 +17,10 @@ namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\Locator\LocatorInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use stdClass;
+use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
 use UnexpectedValueException;
@@ -31,6 +30,13 @@ use UnexpectedValueException;
  */
 class ModelAwareTraitTest extends TestCase
 {
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        FactoryLocator::drop('Test');
+    }
+
     /**
      * Test set modelClass
      */
@@ -41,6 +47,70 @@ class ModelAwareTraitTest extends TestCase
 
         $stub->setProps('StubArticles');
         $this->assertSame('StubArticles', $stub->getModelClass());
+    }
+
+    public function testFetchModel(): void
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
+
+        $result = $stub->fetchModel();
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertNull($stub->Articles);
+
+        $result = $stub->fetchModel('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertNull($stub->Comments);
+
+        $result = $stub->fetchModel(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
+        $this->assertNull($stub->PaginatorPosts);
+    }
+
+    /**
+     * Test that calling fetchModel() without $modelClass argument when default
+     * $modelClass property is empty generates exception.
+     */
+    public function testFetchModelException(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Default modelClass is empty');
+
+        $stub = new Stub();
+        $stub->setProps('');
+        $stub->setModelType('Table');
+
+        $stub->fetchModel();
+    }
+
+    /**
+     * test MissingModelException being thrown
+     */
+    public function testFetchModelMissingModelException(): void
+    {
+        $this->expectException(MissingModelException::class);
+        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
+        $stub = new Stub();
+
+        $locator = new StubFactory();
+        FactoryLocator::add('Test', $locator);
+        $stub->fetchModel('Magic', 'Test');
+    }
+
+    /**
+     * test fetchModel() with plugin prefixed models
+     */
+    public function testFetchModelPlugin(): void
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+        $stub->setModelType('Table');
+
+        $result = $stub->fetchModel('TestPlugin.Comments');
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertNull($stub->Comments);
     }
 
     /**
@@ -75,11 +145,13 @@ class ModelAwareTraitTest extends TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Default modelClass is empty');
 
-        $stub = new Stub();
-        $stub->setProps('');
-        $stub->setModelType('Table');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('');
+            $stub->setModelType('Table');
 
-        $stub->loadModel();
+            $stub->loadModel();
+        });
     }
 
     /**
@@ -111,28 +183,26 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $stub->modelFactory('Table', function ($name) {
-            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-            $mock->expects($this->any())
-                ->method('getAlias')
-                ->willReturn($name);
+        $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
+        $mock->expects($this->any())
+            ->method('getAlias')
+            ->willReturn('Magic');
 
-            return $mock;
-        });
+        $locator = new StubFactory();
+        $locator->set('Magic', $mock);
+        $stub->modelFactory('Table', $locator);
 
         $result = $stub->loadModel('Magic', 'Table');
         $this->assertInstanceOf(RepositoryInterface::class, $result);
         $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
         $this->assertSame('Magic', $stub->Magic->getAlias());
 
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $locator = new StubFactory();
         $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
         $mock2->expects($this->any())
             ->method('getAlias')
             ->willReturn('Foo');
-        $locator->expects($this->any())
-            ->method('get')
-            ->willReturn($mock2);
+        $locator->set('Foo', $mock2);
 
         $stub->modelFactory('MyType', $locator);
         $result = $stub->loadModel('Foo', 'MyType');
@@ -160,14 +230,6 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $this->deprecated(function () {
-            FactoryLocator::add('Test', function ($name) {
-                $mock = new stdClass();
-                $mock->name = $name;
-
-                return $mock;
-            });
-        });
         $stub->setModelType('Test');
         $this->assertSame('Test', $stub->getModelType());
     }
@@ -175,25 +237,15 @@ class ModelAwareTraitTest extends TestCase
     /**
      * test MissingModelException being thrown
      */
-    public function testMissingModelException(): void
+    public function testLoadModelMissingModelException(): void
     {
         $this->expectException(MissingModelException::class);
         $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
-        $this->deprecated(function () {
-            FactoryLocator::add('Test', function ($name) {
-                return false;
-            });
-        });
+        $locator = new StubFactory();
+        FactoryLocator::add('Test', $locator);
 
         $stub->loadModel('Magic', 'Test');
-    }
-
-    public function tearDown(): void
-    {
-        FactoryLocator::drop('Test');
-
-        parent::tearDown();
     }
 }

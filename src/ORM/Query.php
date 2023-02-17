@@ -178,7 +178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __construct(Connection $connection, Table $table)
     {
         parent::__construct($connection);
-        $this->repository($table);
+        $this->setRepository($table);
 
         if ($this->_repository !== null) {
             $this->addDefaultTypes($this->_repository);
@@ -240,6 +240,24 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return parent::select($fields, $overwrite);
+    }
+
+    /**
+     * Behaves the exact same as `select()` except adds the field to the list of fields selected and
+     * does not disable auto-selecting fields for Associations.
+     *
+     * Use this instead of calling `select()` then `enableAutoFields()` to re-enable auto-fields.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string $fields Fields
+     * to be added to the list.
+     * @return $this
+     */
+    public function selectAlso($fields)
+    {
+        $this->select($fields);
+        $this->_autoFields = true;
+
+        return $this;
     }
 
     /**
@@ -977,8 +995,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
-                ->select($count)
+            $statement = $this->getConnection()
+                ->selectQuery($count)
                 ->from(['count_source' => $query])
                 ->execute();
         }
@@ -1439,5 +1457,20 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Helper for ORM\Query exceptions
+     *
+     * @param string $method The method that is invalid.
+     * @param string $message An additional message.
+     * @return void
+     * @internal
+     */
+    protected function _deprecatedMethod($method, $message = '')
+    {
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
     }
 }

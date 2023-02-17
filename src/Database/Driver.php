@@ -109,6 +109,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Get the configuration data used to create the driver.
+     *
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return $this->_config;
+    }
+
+    /**
      * Establishes a connection to the database server
      *
      * @param string $dsn A Driver-specific PDO-DSN
@@ -514,6 +524,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns the connection role this driver performs.
+     *
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
@@ -532,6 +552,7 @@ abstract class Driver implements DriverInterface
     {
         return [
             'connected' => $this->_connection !== null,
+            'role' => $this->getRole(),
         ];
     }
 }

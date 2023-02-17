@@ -160,7 +160,7 @@ class ErrorTrapTest extends TestCase
         $logs = Log::engine('test_error')->read();
         $this->assertStringContainsString('Oh no it was bad', $logs[0]);
         $this->assertStringContainsString('Trace:', $logs[0]);
-        $this->assertStringContainsString('ErrorTrapTest::testHandleErrorLogTrace', $logs[0]);
+        $this->assertStringContainsString('ErrorTrapTest->testHandleErrorLogTrace', $logs[0]);
     }
 
     public function testHandleErrorNoLog()
@@ -252,7 +252,7 @@ class ErrorTrapTest extends TestCase
         $out = $stub->messages();
         $this->assertStringContainsString('Oh no it was bad', $out[0]);
         $this->assertStringContainsString('Trace', $out[0]);
-        $this->assertStringContainsString('ErrorTrapTest::testConsoleRenderingWithTrace', $out[0]);
+        $this->assertStringContainsString('ErrorTrapTest->testConsoleRenderingWithTrace', $out[0]);
     }
 
     public function testRegisterNoOutputDebug()
@@ -302,5 +302,20 @@ class ErrorTrapTest extends TestCase
         $out = ob_get_clean();
         restore_error_handler();
         $this->assertSame('', $out);
+    }
+
+    public function testEventReturnResponse(): void
+    {
+        $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
+        $trap->register();
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+            return "This ain't so bad";
+        });
+
+        ob_start();
+        trigger_error('Oh no it was bad', E_USER_NOTICE);
+        $out = ob_get_clean();
+        restore_error_handler();
+        $this->assertSame("This ain't so bad", $out);
     }
 }

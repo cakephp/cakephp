@@ -833,6 +833,18 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test adding helpers in initialize().
+     */
+    public function testAddHelper(): void
+    {
+        $View = new TestView();
+        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+
+        $config = $View->Html->getConfig();
+        $this->assertSame('myval', $config['mykey']);
+    }
+
+    /**
      * Test loading helper using loadHelper().
      */
     public function testLoadHelper(): void
@@ -997,7 +1009,7 @@ class ViewTest extends TestCase
 
         $attached = $View->helpers()->loaded();
         // HtmlHelper is loaded in TestView::initialize()
-        $this->assertEquals(['Html', 'Form', 'Number'], $attached);
+        $this->assertEquals(['Form', 'Number', 'Html'], $attached);
 
         $this->PostsController->viewBuilder()->addHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
@@ -1009,7 +1021,7 @@ class ViewTest extends TestCase
         $this->assertSame('posts index', $result);
 
         $attached = $View->helpers()->loaded();
-        $expected = ['Html', 'Form', 'Number', 'PluggedHelper'];
+        $expected = ['Form', 'Number', 'Html', 'PluggedHelper'];
         $this->assertEquals($expected, $attached, 'Attached helpers are wrong.');
     }
 
@@ -1022,7 +1034,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
@@ -1036,7 +1048,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
-        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
+        $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
         $this->assertMatchesRegularExpression("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
     }
 

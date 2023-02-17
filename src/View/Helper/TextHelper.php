@@ -88,6 +88,9 @@ class TextHelper extends Helper
         if ($engineClass === null) {
             throw new CakeException(sprintf('Class for %s could not be found', $config['engine']));
         }
+        if ($engineClass != Text::class) {
+            deprecationWarning('4.5.0 - The `engine` option for TextHelper will be removed in 5.0');
+        }
 
         $this->_engine = new $engineClass($config);
     }
@@ -294,11 +297,11 @@ class TextHelper extends Helper
 
     /**
      * Formats paragraphs around given text for all line breaks
-     *  <br /> added for single line return
+     *  <br> added for single line return
      *  <p> added for double line return
      *
      * @param string|null $text Text
-     * @return string The text with proper <p> and <br /> tags
+     * @return string The text with proper <p> and <br> tags
      * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-text-into-paragraphs
      */
     public function autoParagraph(?string $text): string

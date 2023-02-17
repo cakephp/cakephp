@@ -22,11 +22,11 @@
         }
     ],
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=7.4.0,<9",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^2.2",
+        "cakephp/chronos": "^2.4.0-RC2",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^2.2.2",
         "laminas/laminas-httphandlerrunner": "^1.1 || ^2.0",

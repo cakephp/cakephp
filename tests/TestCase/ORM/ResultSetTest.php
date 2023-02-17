@@ -91,16 +91,18 @@ class ResultSetTest extends TestCase
      */
     public function testRewindStreaming(): void
     {
-        $query = $this->table->find('all')->enableBufferedResults(false);
-        $results = $query->all();
-        $first = $second = [];
-        foreach ($results as $result) {
-            $first[] = $result;
-        }
-        $this->expectException(DatabaseException::class);
-        foreach ($results as $result) {
-            $second[] = $result;
-        }
+        $this->deprecated(function () {
+            $query = $this->table->find('all')->enableBufferedResults(false);
+            $results = $query->all();
+            $first = $second = [];
+            foreach ($results as $result) {
+                $first[] = $result;
+            }
+            $this->expectException(DatabaseException::class);
+            foreach ($results as $result) {
+                $second[] = $result;
+            }
+        });
     }
 
     /**

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
+use InvalidArgumentException;
 use RuntimeException;
 use stdClass;
 
@@ -72,6 +73,19 @@ class StringTemplateTest extends TestCase
         $this->assertSame($templates['true'], $this->template->get('true'));
         $this->assertSame($templates['false'], $this->template->get('false'));
         $this->assertSame($templates['null'], $this->template->get('null'));
+    }
+
+    /**
+     * test adding a template config with a null value
+     */
+    public function testAddWithInvalidTemplate(): void
+    {
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'invalid' => null,
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->template->add($templates);
     }
 
     /**

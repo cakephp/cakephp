@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -92,6 +93,24 @@ class QueryTest extends TestCase
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
         unset($this->connection);
+    }
+
+    public function testConnectionRoles(): void
+    {
+        // Defaults to write role
+        $this->assertSame(Connection::ROLE_WRITE, (new Query($this->connection))->getConnectionRole());
+
+        $selectQuery = $this->connection->selectQuery();
+        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->getConnectionRole());
+
+        // Can set read role for select queries
+        $this->assertSame(Connection::ROLE_READ, $selectQuery->setConnectionRole(Connection::ROLE_READ)->getConnectionRole());
+
+        // Can set read role for select queries
+        $this->assertSame(Connection::ROLE_READ, $selectQuery->useReadRole()->getConnectionRole());
+
+        // Can set write role for select queries
+        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
     /**
@@ -723,7 +742,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('menu_link_trees')
-            ->whereNull($this->connection->newQuery()->select('parent_id'))
+            ->whereNull($this->connection->selectQuery('parent_id'))
             ->execute();
         $this->assertCount(5, $result);
         $result->closeCursor();
@@ -756,7 +775,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('menu_link_trees')
-            ->whereNotNull($this->connection->newQuery()->select('parent_id'))
+            ->whereNotNull($this->connection->selectQuery('parent_id'))
             ->execute();
         $this->assertCount(13, $result);
         $result->closeCursor();
@@ -4276,32 +4295,34 @@ class QueryTest extends TestCase
      */
     public function testUnbufferedQuery(): void
     {
-        $query = new Query($this->connection);
-        $result = $query->select(['body', 'author_id'])
-            ->from('articles')
-            ->enableBufferedResults(false)
-            ->execute();
+        $this->deprecated(function () {
+            $query = new Query($this->connection);
+            $result = $query->select(['body', 'author_id'])
+                ->from('articles')
+                ->enableBufferedResults(false)
+                ->execute();
 
-        if (!method_exists($result, 'bufferResults')) {
+            if (!method_exists($result, 'bufferResults')) {
+                $result->closeCursor();
+                $this->markTestSkipped('This driver does not support unbuffered queries');
+            }
+
+            $this->assertCount(0, $result, 'Unbuffered queries only have a count when results are fetched');
+
+            $list = $result->fetchAll('assoc');
+            $this->assertCount(3, $list);
             $result->closeCursor();
-            $this->markTestSkipped('This driver does not support unbuffered queries');
-        }
 
-        $this->assertCount(0, $result, 'Unbuffered queries only have a count when results are fetched');
+            $query = new Query($this->connection);
+            $result = $query->select(['body', 'author_id'])
+                ->from('articles')
+                ->execute();
 
-        $list = $result->fetchAll('assoc');
-        $this->assertCount(3, $list);
-        $result->closeCursor();
-
-        $query = new Query($this->connection);
-        $result = $query->select(['body', 'author_id'])
-            ->from('articles')
-            ->execute();
-
-        $this->assertCount(3, $result, 'Buffered queries can be counted any time.');
-        $list = $result->fetchAll('assoc');
-        $this->assertCount(3, $list);
-        $result->closeCursor();
+            $this->assertCount(3, $result, 'Buffered queries can be counted any time.');
+            $list = $result->fetchAll('assoc');
+            $this->assertCount(3, $list);
+            $result->closeCursor();
+        });
     }
 
     public function testCloneUpdateExpression(): void
@@ -5069,7 +5090,6 @@ class QueryTest extends TestCase
             ])
             ->from('profiles')
             ->limit(1)
-            ->enableBufferedResults(false)
             ->execute();
         $results = $stmt->fetch(StatementDecorator::FETCH_TYPE_OBJ);
         $stmt->closeCursor();

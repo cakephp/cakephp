@@ -8,10 +8,15 @@ use Cake\Datasource\ModelAwareTrait;
 /**
  * Testing stub.
  */
-#[\AllowDynamicProperties]
 class Stub
 {
     use ModelAwareTrait;
+
+    public $Articles = null;
+    public $Comments = null;
+    public $Foo = null;
+    public $Magic = null;
+    public $PaginatorPosts = null;
 
     public function setProps(string $name): void
     {

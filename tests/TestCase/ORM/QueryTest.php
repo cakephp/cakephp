@@ -160,6 +160,48 @@ class QueryTest extends TestCase
         $this->assertSame($this->table, $result);
     }
 
+    public function testSelectAlso(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->select('id')
+            ->selectAlso(['extra' => 'id'])
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+
+        $query = new Query($this->connection, $table);
+        $results = $query
+            ->selectAlso(['extra' => 'id'])
+            ->select('id')
+            ->where(['author_id' => 3])
+            ->disableHydration()
+            ->first();
+
+        $this->assertSame(
+            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            $results
+        );
+    }
+
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
@@ -285,7 +327,7 @@ class QueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results);
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
             ->enableHydration(false)
@@ -683,7 +725,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->disableHydration()
             ->matching('Comments', function ($q) {
@@ -722,7 +764,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $table->hasMany('Comments');
 
-        $result = $query->repository($table)
+        $result = $query->setRepository($table)
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -748,7 +790,7 @@ class QueryTest extends TestCase
         ]);
         $table->belongsToMany('Tags');
 
-        $results = $query->repository($table)->select()
+        $results = $query->setRepository($table)->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.id' => 3]);
             })
@@ -813,7 +855,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
 
-        $results = $query->repository($table)
+        $results = $query->setRepository($table)
             ->select()
             ->enableHydration(false)
             ->matching('articles.tags', function ($q) {
@@ -1178,14 +1220,16 @@ class QueryTest extends TestCase
      */
     public function testFirstUnbuffered(): void
     {
-        $table = $this->getTableLocator()->get('Articles');
-        $query = new Query($this->connection, $table);
-        $query->select(['id']);
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('Articles');
+            $query = new Query($this->connection, $table);
+            $query->select(['id']);
 
-        $first = $query->enableHydration(false)
-            ->enableBufferedResults(false)->first();
+            $first = $query->enableHydration(false)
+                ->enableBufferedResults(false)->first();
 
-        $this->assertEquals(['id' => 1], $first);
+            $this->assertEquals(['id' => 1], $first);
+        });
     }
 
     /**
@@ -1684,8 +1728,7 @@ class QueryTest extends TestCase
     public function testSelectRandom(): void
     {
         $table = $this->getTableLocator()->get('articles');
-        $query = $table
-            ->query();
+        $query = $table->selectQuery();
 
         $query->select(['s' => $query->func()->rand()]);
         $result = $query
@@ -1704,7 +1747,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->updateQuery()
             ->update()
             ->set(['title' => 'First'])
             ->execute();
@@ -1721,7 +1764,7 @@ class QueryTest extends TestCase
         $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
         $table = $this->getTableLocator()->get('articles');
 
-        $query = $table->query();
+        $query = $table->updateQuery();
         $result = $query->update($query->newExpr('articles, authors'))
             ->set(['title' => 'First'])
             ->where(['articles.author_id = authors.id'])
@@ -1739,7 +1782,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
+        $result = $table->insertQuery()
             ->insert(['title'])
             ->values(['title' => 'First'])
             ->values(['title' => 'Second'])
@@ -1758,8 +1801,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
 
-        $result = $table->query()
-            ->delete()
+        $result = $table->deleteQuery()
             ->where(['id >=' => 1])
             ->execute();
 
@@ -2646,7 +2688,6 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()
             ->where(['id > ' => 1])
-            ->enableBufferedResults(false)
             ->enableHydration(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -2686,7 +2727,7 @@ class QueryTest extends TestCase
             'decorators' => 0,
             'executed' => false,
             'hydrate' => false,
-            'buffered' => false,
+            'buffered' => true,
             'formatters' => 1,
             'mapReducers' => 1,
             'contain' => [],
@@ -3207,7 +3248,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $this->getTableLocator()->get('articles')->belongsToMany('tags');
 
-        $result = $query->repository($table)
+        $result = $query->setRepository($table)
             ->select()
             ->matching('articles.tags', function ($q) {
                 return $q->where(['tags.id' => 2]);

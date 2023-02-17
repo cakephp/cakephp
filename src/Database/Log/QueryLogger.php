@@ -50,7 +50,7 @@ class QueryLogger extends BaseLog
 
         if ($context['query'] instanceof LoggedQuery) {
             $context = $context['query']->getContext() + $context;
-            $message = 'connection={connection} duration={took} rows={numRows} ' . $message;
+            $message = 'connection={connection} role={role} duration={took} rows={numRows} ' . $message;
         }
         Log::write('debug', (string)$message, $context);
     }

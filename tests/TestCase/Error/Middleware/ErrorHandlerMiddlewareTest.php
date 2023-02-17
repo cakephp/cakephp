@@ -23,6 +23,8 @@ use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -30,12 +32,16 @@ use Cake\Http\Exception\ServiceUnavailableException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Error;
 use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
+use Throwable;
 
 /**
  * Test for ErrorHandlerMiddleware
@@ -347,6 +353,28 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('Request URL:', $logs[0]);
     }
 
+    public function testExceptionBeforeRenderEvent(): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
+            'exceptionRenderer' => WebExceptionRenderer::class,
+        ]));
+        $handler = new TestRequestHandler(function (): void {
+            throw new NotFoundException('whoops');
+        });
+
+        EventManager::instance()->on(
+            'Exception.beforeRender',
+            function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
+                return 'Response string from event';
+            }
+        );
+
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame('Response string from event', (string)$result->getBody());
+    }
+
     /**
      * Test handling an error and having rendering fail.
      */
@@ -375,6 +403,29 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $this->assertSame(500, $response->getStatusCode());
             $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
         });
+    }
+
+    /**
+     * Test that the middleware loads routes if not already loaded, which is the
+     * case when an exception occurs before RoutingMiddleware is run.
+     *
+     * @return void
+     */
+    public function testRoutesLoading(): void
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $app = new Application(CONFIG);
+        $middleware = new ErrorHandlerMiddleware(
+            new ExceptionTrap([
+                'exceptionRenderer' => WebExceptionRenderer::class,
+            ]),
+            $app
+        );
+
+        $this->assertSame([], Router::routes());
+
+        $middleware->process($request, $app);
+        $this->assertNotEmpty(Router::routes());
     }
 
     /**

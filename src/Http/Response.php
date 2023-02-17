@@ -1387,9 +1387,9 @@ class Response implements ResponseInterface
     public function cors(ServerRequest $request): CorsBuilder
     {
         $origin = $request->getHeaderLine('Origin');
-        $ssl = $request->is('ssl');
+        $https = $request->is('https');
 
-        return new CorsBuilder($this, $origin, $ssl);
+        return new CorsBuilder($this, $origin, $https);
     }
 
     /**

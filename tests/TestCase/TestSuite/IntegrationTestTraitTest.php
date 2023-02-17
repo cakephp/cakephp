@@ -619,7 +619,7 @@ class IntegrationTestTraitTest extends TestCase
             'controller' => 'Posts',
             'action' => 'hostData',
             '_host' => 'app.example.org',
-            '_ssl' => true,
+            '_https' => true,
         ]);
         $this->assertResponseOk();
         $this->assertResponseContains('"isSsl":true');

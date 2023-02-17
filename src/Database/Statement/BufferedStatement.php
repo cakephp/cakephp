@@ -86,6 +86,16 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
+     * Returns the connection driver.
+     *
+     * @return \Cake\Database\DriverInterface
+     */
+    protected function getDriver(): DriverInterface
+    {
+        return $this->_driver;
+    }
+
+    /**
      * Magic getter to return $queryString as read-only.
      *
      * @param string $property internal property to get

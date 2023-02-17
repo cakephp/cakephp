@@ -40,12 +40,17 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
+use Cake\ORM\Query\DeleteQuery;
+use Cake\ORM\Query\InsertQuery;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use Exception;
 use InvalidArgumentException;
+use ReflectionMethod;
 use RuntimeException;
 
 /**
@@ -515,11 +520,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
-            $this->_schema = $this->_initializeSchema(
-                $this->getConnection()
-                    ->getSchemaCollection()
-                    ->describe($this->getTable())
-            );
+            $this->_schema = $this->getConnection()
+                ->getSchemaCollection()
+                ->describe($this->getTable());
+
+            $method = new ReflectionMethod($this, '_initializeSchema');
+            if ($method->getDeclaringClass()->getName() != Table::class) {
+                deprecationWarning(
+                    'Table::_initializeSchema() is deprecated. Override `getSchema()` with a parent call instead.'
+                );
+                $this->_schema = $this->_initializeSchema($this->_schema);
+            }
             if (Configure::read('debug')) {
                 $this->checkAliasLengths();
             }
@@ -1266,7 +1277,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find(string $type = 'all', array $options = []): Query
     {
-        return $this->callFinder($type, $this->query()->select(), $options);
+        return $this->callFinder($type, $this->selectQuery()->select(), $options);
     }
 
     /**
@@ -1711,7 +1722,54 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function query(): Query
     {
+        deprecationWarning(
+            'As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`, ' .
+            '`deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects ' .
+            'returned by these methods will emit deprecations that will become fatal errors in 5.0.' .
+            'See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.'
+        );
+
         return new Query($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new DeleteQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\DeleteQuery
+     */
+    public function deleteQuery(): DeleteQuery
+    {
+        return new DeleteQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new InsertQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\InsertQuery
+     */
+    public function insertQuery(): InsertQuery
+    {
+        return new InsertQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new SelectQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function selectQuery(): SelectQuery
+    {
+        return new SelectQuery($this->getConnection(), $this);
+    }
+
+    /**
+     * Creates a new UpdateQuery instance for a table.
+     *
+     * @return \Cake\ORM\Query\UpdateQuery
+     */
+    public function updateQuery(): UpdateQuery
+    {
+        return new UpdateQuery($this->getConnection(), $this);
     }
 
     /**
@@ -1730,8 +1788,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function updateAll($fields, $conditions): int
     {
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($fields)
             ->where($conditions)
             ->execute();
@@ -1745,8 +1802,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteAll($conditions): int
     {
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($conditions)
             ->execute();
         $statement->closeCursor();
@@ -2086,7 +2142,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $statement = $this->query()->insert(array_keys($data))
+        $statement = $this->insertQuery()
+            ->insert(array_keys($data))
             ->values($data)
             ->execute();
 
@@ -2167,8 +2224,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException($message);
         }
 
-        $statement = $this->query()
-            ->update()
+        $statement = $this->updateQuery()
             ->set($data)
             ->where($primaryKey)
             ->execute();
@@ -2508,8 +2564,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $statement = $this->query()
-            ->delete()
+        $statement = $this->deleteQuery()
             ->where($entity->extract($primaryKey))
             ->execute();
 

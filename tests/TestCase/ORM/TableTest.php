@@ -43,6 +43,7 @@ use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
@@ -203,7 +204,12 @@ class TableTest extends TestCase
     {
         $table = new Table(['table' => 'users']);
 
-        $query = $table->query();
+        $this->deprecated(function () use ($table) {
+            $query = $table->query();
+            $this->assertEquals('users', $query->getRepository()->getTable());
+        });
+
+        $query = $table->selectQuery();
         $this->assertEquals('users', $query->getRepository()->getTable());
 
         $query = $table->subquery();
@@ -484,10 +490,12 @@ class TableTest extends TestCase
 
                 return $schema;
             }));
-        $result = $table->getSchema();
-        $schema->setColumnType('username', 'integer');
-        $this->assertEquals($schema, $result);
-        $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
+        $this->deprecated(function () use ($schema, $table) {
+            $result = $table->getSchema();
+            $schema->setColumnType('username', 'integer');
+            $this->assertEquals($schema, $result);
+            $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
+        });
     }
 
     /**
@@ -1025,20 +1033,16 @@ class TableTest extends TestCase
     public function testUpdateAllFailure(): void
     {
         $this->expectException(DatabaseException::class);
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
-            ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->connection, $table])
-            ->getMock();
-        $table->expects($this->once())
-            ->method('query')
-            ->will($this->returnValue($query));
 
-        $query->expects($this->once())
-            ->method('execute')
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
+            ->getMock();
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
+
+        $connection->expects($this->once())->method('run')
             ->will($this->throwException(new DatabaseException('Not good')));
 
         $table->updateAll(['username' => 'mark'], []);
@@ -1086,15 +1090,15 @@ class TableTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
+            ->onlyMethods(['deleteQuery'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\DeleteQuery')
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
         $table->expects($this->once())
-            ->method('query')
+            ->method('deleteQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -1110,14 +1114,14 @@ class TableTest extends TestCase
     public function testFindApplyOptions(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query', 'findAll'])
+            ->onlyMethods(['selectQuery', 'findAll'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
@@ -2245,30 +2249,25 @@ class TableTest extends TestCase
      */
     public function testAfterSaveNotCalled(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([$this->connection, $table])
-            ->getMock();
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
+
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $statement->expects($this->once())->method('rowCount')
+            ->will($this->returnValue(0));
+        $connection->expects($this->once())->method('run')
+            ->will($this->returnValue($statement));
+
         $data = new Entity([
             'username' => 'superuser',
             'created' => new FrozenTime('2013-10-10 00:00'),
             'updated' => new FrozenTime('2013-10-10 00:00'),
         ]);
-
-        $table->expects($this->once())->method('query')
-            ->will($this->returnValue($query));
-
-        $query->expects($this->once())->method('execute')
-            ->will($this->returnValue($statement));
-
-        $statement->expects($this->once())->method('rowCount')
-            ->will($this->returnValue(0));
 
         $called = false;
         $listener = function ($e, $entity, $options) use (&$called): void {
@@ -2384,29 +2383,18 @@ class TableTest extends TestCase
     public function testAtomicSaveRollback(): void
     {
         $this->expectException(PDOException::class);
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['begin', 'rollback'])
+            ->onlyMethods(['begin', 'rollback', 'run'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query', 'getConnection'])
-            ->setConstructorArgs([['table' => 'users']])
-            ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([$connection, $table])
-            ->getMock();
-        $table->expects($this->any())->method('getConnection')
-            ->will($this->returnValue($connection));
-
-        $table->expects($this->once())->method('query')
-            ->will($this->returnValue($query));
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
-        $query->expects($this->once())->method('execute')
+        $connection->expects($this->once())->method('run')
             ->will($this->throwException(new PDOException()));
 
         $data = new Entity([
@@ -2424,26 +2412,13 @@ class TableTest extends TestCase
      */
     public function testAtomicSaveRollbackOnFailure(): void
     {
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
         $connection = $this->getMockBuilder('Cake\Database\Connection')
-            ->onlyMethods(['begin', 'rollback'])
+            ->onlyMethods(['begin', 'rollback', 'run'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query', 'getConnection', 'exists'])
-            ->setConstructorArgs([['table' => 'users']])
-            ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([$connection, $table])
-            ->getMock();
-
-        $table->expects($this->any())->method('getConnection')
-            ->will($this->returnValue($connection));
-
-        $table->expects($this->once())->method('query')
-            ->will($this->returnValue($query));
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
 
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
@@ -2451,8 +2426,7 @@ class TableTest extends TestCase
             ->will($this->returnValue(0));
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
-        $query->expects($this->once())
-            ->method('execute')
+        $connection->expects($this->once())->method('run')
             ->will($this->returnValue($statement));
 
         $data = new Entity([
@@ -2606,32 +2580,21 @@ class TableTest extends TestCase
      */
     public function testSaveUpdatePrimaryKeyNotModified(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['query'])
-            ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
+        /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->onlyMethods(['run'])
+            ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
-
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['execute', 'addDefaultTypes', 'set'])
-            ->setConstructorArgs([$this->connection, $table])
-            ->getMock();
-
-        $table->expects($this->once())->method('query')
-            ->will($this->returnValue($query));
+        $table = $this->fetchTable('Users');
+        $table->setConnection($connection);
 
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
 
-        $query->expects($this->once())
-            ->method('execute')
+        $connection->expects($this->once())->method('run')
             ->will($this->returnValue($statement));
-
-        $query->expects($this->once())->method('set')
-            ->with(['username' => 'baggins'])
-            ->will($this->returnValue($query));
 
         $entity = new Entity([
             'id' => 2,
@@ -5269,7 +5232,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = (new Query($this->connection, $table))->select();
+        $query = (new SelectQuery($this->connection, $table))->select();
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, []);
         $table->find();
@@ -5293,7 +5256,7 @@ class TableTest extends TestCase
     public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5304,13 +5267,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])
@@ -5342,7 +5305,7 @@ class TableTest extends TestCase
     public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5353,13 +5316,13 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('custom', $query, ['fields' => ['id']])
@@ -5409,7 +5372,7 @@ class TableTest extends TestCase
     public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'query'])
+            ->onlyMethods(['callFinder', 'selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5421,13 +5384,13 @@ class TableTest extends TestCase
             ->getMock();
         $table->setTable('table_name');
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $entity = new Entity();
-        $table->expects($this->once())->method('query')
+        $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
         $table->expects($this->once())->method('callFinder')
             ->with('all', $query, ['fields' => ['id']])

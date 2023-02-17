@@ -278,7 +278,7 @@ class DebuggerTest extends TestCase
             $this->assertStringContainsString('notice: 8 :: Error description', $result);
             $this->assertStringContainsString("on line {$data['line']} of {$data['file']}", $result);
             $this->assertStringContainsString('Trace:', $result);
-            $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest::testOutputErrorText()', $result);
+            $this->assertStringContainsString('Cake\Test\TestCase\Error\DebuggerTest->testOutputErrorText()', $result);
             $this->assertStringContainsString('[main]', $result);
         });
     }
@@ -310,14 +310,13 @@ class DebuggerTest extends TestCase
 
             $this->assertSame('', $output);
             $this->assertCount(1, $logs);
-            // This is silly but that's how it works currently.
-            $this->assertStringContainsString("debug: \nCake\Error\Debugger::outputError()", $logs[0]);
+            $this->assertStringContainsString('Cake\Error\Debugger->outputError()', $logs[0]);
 
             $this->assertStringContainsString("'file' => '{$data['file']}'", $logs[0]);
             $this->assertStringContainsString("'line' => (int) {$data['line']}", $logs[0]);
             $this->assertStringContainsString("'trace' => ", $logs[0]);
             $this->assertStringContainsString("'description' => 'Error description'", $logs[0]);
-            $this->assertStringContainsString('DebuggerTest::testOutputErrorLog()', $logs[0]);
+            $this->assertStringContainsString('DebuggerTest->testOutputErrorLog()', $logs[0]);
         });
     }
 
@@ -700,10 +699,10 @@ TEXT;
 
         $messages = Log::engine('test')->read();
         $this->assertCount(2, $messages);
-        $this->assertStringContainsString('DebuggerTest::testLog', $messages[0]);
+        $this->assertStringContainsString('DebuggerTest->testLog', $messages[0]);
         $this->assertStringContainsString('cool', $messages[0]);
 
-        $this->assertStringContainsString('DebuggerTest::testLog', $messages[1]);
+        $this->assertStringContainsString('DebuggerTest->testLog', $messages[1]);
         $this->assertStringContainsString('[main]', $messages[1]);
         $this->assertStringContainsString("'whatever'", $messages[1]);
         $this->assertStringContainsString("'here'", $messages[1]);
@@ -758,7 +757,7 @@ TEXT;
         Debugger::log($veryRandomName, 'debug', 0);
 
         $messages = Log::engine('test')->read();
-        $this->assertStringContainsString('DebuggerTest::testLogDepth', $messages[0]);
+        $this->assertStringContainsString('DebuggerTest->testLogDepth', $messages[0]);
         $this->assertStringContainsString('test', $messages[0]);
         $this->assertStringNotContainsString('veryRandomName', $messages[0]);
     }
@@ -857,12 +856,33 @@ TEXT;
     public function testTraceExclude(): void
     {
         $result = Debugger::trace();
-        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
 
         $result = Debugger::trace([
-            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
+            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest->testTraceExclude'],
         ]);
-        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
+        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
+    }
+
+    protected function _makeException()
+    {
+        return new RuntimeException('testing');
+    }
+
+    /**
+     * Test stack frame comparisons.
+     */
+    public function testGetUniqueFrames()
+    {
+        $parent = new RuntimeException('parent');
+        $child = $this->_makeException();
+
+        $result = Debugger::getUniqueFrames($child, $parent);
+        $this->assertCount(1, $result);
+        $this->assertEquals(__LINE__ - 4, $result[0]['line']);
+
+        $result = Debugger::getUniqueFrames($child, null);
+        $this->assertGreaterThan(1, count($result));
     }
 
     /**

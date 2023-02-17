@@ -1878,6 +1878,8 @@ class RouterTest extends TestCase
 
     /**
      * Test that the ssl option works.
+     *
+     * @deprecated
      */
     public function testGenerationWithSslOption(): void
     {
@@ -1905,6 +1907,8 @@ class RouterTest extends TestCase
 
     /**
      * Test ssl option when the current request is ssl.
+     *
+     * @deprecated
      */
     public function testGenerateWithSslInSsl(): void
     {
@@ -1927,6 +1931,61 @@ class RouterTest extends TestCase
 
         $result = Router::url([
             '_ssl' => true,
+        ]);
+        $this->assertSame('https://app.test/Images/index', $result);
+    }
+
+    /**
+     * Test that the https option works.
+     */
+    public function testGenerationWithHttpsOption(): void
+    {
+        Router::fullBaseUrl('http://app.test');
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/*');
+        $request = new ServerRequest([
+            'url' => '/images/index',
+            'params' => [
+                'plugin' => null, 'controller' => 'Images', 'action' => 'index',
+            ],
+            'environment' => ['HTTP_HOST' => 'localhost'],
+        ]);
+        Router::setRequest($request);
+
+        $result = Router::url([
+            '_https' => true,
+        ]);
+        $this->assertSame('https://app.test/Images/index', $result);
+
+        $result = Router::url([
+            '_https' => false,
+        ]);
+        $this->assertSame('http://app.test/Images/index', $result);
+    }
+
+    /**
+     * Test https option when the current request is https.
+     */
+    public function testGenerateWithHttpsInHttps(): void
+    {
+        Router::createRouteBuilder('/')->connect('/{controller}/{action}/*');
+        $request = new ServerRequest([
+            'url' => '/images/index',
+            'environment' => ['HTTP_HOST' => 'app.test', 'HTTPS' => 'on'],
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Images',
+                'action' => 'index',
+            ],
+        ]);
+        Router::setRequest($request);
+
+        $result = Router::url([
+            '_https' => false,
+        ]);
+        $this->assertSame('http://app.test/Images/index', $result);
+
+        $result = Router::url([
+            '_https' => true,
         ]);
         $this->assertSame('https://app.test/Images/index', $result);
     }

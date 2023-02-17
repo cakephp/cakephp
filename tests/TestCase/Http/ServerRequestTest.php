@@ -478,8 +478,6 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $this->assertFalse($request->is('undefined-behavior'));
-
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -496,6 +494,16 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('REQUEST_METHOD', 'delete');
         $this->assertFalse($request->is('delete'));
+    }
+
+    public function testExceptionForInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No detector set for type `nonexistent`');
+
+        $request = new ServerRequest();
+
+        $this->assertFalse($request->is('nonexistent'));
     }
 
     /**
@@ -738,19 +746,34 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
 
         $request = $request->withEnv('HTTPS', 'on');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
+        $this->deprecated(function () use ($request) {
+            $this->assertTrue($request->is('ssl'));
+        });
 
         $request = $request->withEnv('HTTPS', '1');
-        $this->assertTrue($request->is('ssl'));
+        $this->assertTrue($request->is('https'));
+        $this->deprecated(function () use ($request) {
+            $this->assertTrue($request->is('ssl'));
+        });
 
         $request = $request->withEnv('HTTPS', 'I am not empty');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
+        $this->deprecated(function () use ($request) {
+            $this->assertFalse($request->is('ssl'));
+        });
 
         $request = $request->withEnv('HTTPS', 'off');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
+        $this->deprecated(function () use ($request) {
+            $this->assertFalse($request->is('ssl'));
+        });
 
         $request = $request->withEnv('HTTPS', '');
-        $this->assertFalse($request->is('ssl'));
+        $this->assertFalse($request->is('https'));
+        $this->deprecated(function () use ($request) {
+            $this->assertFalse($request->is('ssl'));
+        });
     }
 
     /**

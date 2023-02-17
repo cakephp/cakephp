@@ -49,12 +49,13 @@ if (!function_exists('debug')) {
 
         $location = [];
         if ($showFrom) {
-            $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
-            /** @psalm-suppress PossiblyInvalidArrayOffset */
-            $location = [
-                'line' => $trace[0]['line'],
-                'file' => $trace[0]['file'],
-            ];
+            $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
+            if (isset($trace[0]['line']) && isset($trace[0]['file'])) {
+                $location = [
+                    'line' => $trace[0]['line'],
+                    'file' => $trace[0]['file'],
+                ];
+            }
         }
 
         Debugger::printVar($var, $location, $showHtml);

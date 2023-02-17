@@ -46,3 +46,10 @@ abstract class ContentsBase extends Constraint
         $this->output = $output;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsBase',
+    'Cake\TestSuite\Constraint\Console\ContentsBase'
+);
+// phpcs:enable
