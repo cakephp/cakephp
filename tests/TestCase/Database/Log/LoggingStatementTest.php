@@ -46,7 +46,7 @@ class LoggingStatementTest extends TestCase
     {
         parent::tearDown();
         Log::drop('queries');
-        Configure::delete('Error.wrapStatementException');
+        Configure::delete('Error.convertStatementToDatabaseException');
     }
 
     /**
@@ -183,7 +183,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithErrorWrapStatementStringCode(): void
     {
-        Configure::write('Error.wrapStatementException', true);
+        Configure::write('Error.convertStatementToDatabaseException', true);
         $exception = new MyPDOStringException('This is bad', 1234);
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())
@@ -221,7 +221,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testExecuteWithErrorWrapStatementIntCode(): void
     {
-        Configure::write('Error.wrapStatementException', true);
+        Configure::write('Error.convertStatementToDatabaseException', true);
         $exception = new MyPDOException('This is bad', 1234);
         $inner = $this->getMockBuilder(StatementInterface::class)->getMock();
         $inner->expects($this->once())

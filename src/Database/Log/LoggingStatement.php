@@ -80,7 +80,7 @@ class LoggingStatement extends StatementDecorator
             $this->loggedQuery->error = $e;
             $this->_log();
 
-            if (Configure::read('Error.wrapStatementException', false) === true) {
+            if (Configure::read('Error.convertStatementToDatabaseException', false) === true) {
                 $code = $e->getCode();
                 if (!is_int($code)) {
                     $code = null;
