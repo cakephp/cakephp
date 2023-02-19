@@ -182,6 +182,11 @@ class StringTemplate
                 throw new InvalidArgumentException(sprintf('String template `%s` is not valid.', $name));
             }
 
+            assert(
+                is_string($template),
+                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template))
+            );
+
             $template = str_replace('%', '%%', $template);
             preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [

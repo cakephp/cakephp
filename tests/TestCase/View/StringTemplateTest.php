@@ -58,6 +58,7 @@ class StringTemplateTest extends TestCase
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
+            'null' => null,
         ];
         $result = $this->template->add($templates);
         $this->assertSame(
@@ -67,6 +68,7 @@ class StringTemplateTest extends TestCase
         );
 
         $this->assertSame($templates['link'], $this->template->get('link'));
+        $this->assertSame($templates['null'], $this->template->get('null'));
     }
 
     /**
