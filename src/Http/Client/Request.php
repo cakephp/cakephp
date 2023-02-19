@@ -18,6 +18,7 @@ namespace Cake\Http\Client;
 use Laminas\Diactoros\RequestTrait;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Implements methods for HTTP requests.
@@ -35,13 +36,13 @@ class Request extends Message implements RequestInterface
      * Provides backwards compatible defaults for some properties.
      *
      * @phpstan-param array<non-empty-string, non-empty-string> $headers
-     * @param string $url The request URL
+     * @param \Psr\Http\Message\UriInterface|string $url The request URL
      * @param string $method The HTTP method to use.
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      */
     public function __construct(
-        string $url = '',
+        UriInterface|string $url = '',
         string $method = self::METHOD_GET,
         array $headers = [],
         array|string|null $data = null
