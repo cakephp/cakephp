@@ -1385,4 +1385,15 @@ class ServerRequestFactoryTest extends TestCase
             ],
         ]);
     }
+
+    public function testCreateServerRequest(): void
+    {
+        $factory = new ServerRequestFactory();
+        $request = $factory->createServerRequest('GET', '/posts', ['foo' => 'bar']);
+
+        $this->assertSame('GET', $request->getMethod());
+        $this->assertSame('/posts', $request->getRequestTarget());
+        $expected = ['foo' => 'bar', 'REQUEST_URI' => '/posts', 'REQUEST_METHOD' => 'GET'];
+        $this->assertEquals($expected, $request->getServerParams());
+    }
 }
