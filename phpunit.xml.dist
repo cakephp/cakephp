@@ -16,6 +16,9 @@
             <directory>tests/TestCase/Database/</directory>
             <directory>tests/TestCase/ORM/</directory>
         </testsuite>
+        <testsuite name="http-interop-http-factory">
+            <directory>./vendor/http-interop/http-factory-tests/test</directory>
+        </testsuite>
     </testsuites>
 
     <extensions>
@@ -55,5 +58,13 @@
         <!-- SQL Server
         <env name="DB_URL" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
+
+        <!-- Fully qualified class names to your classes -->
+        <const name="REQUEST_FACTORY" value="Cake\Http\RequestFactory"/>
+        <const name="RESPONSE_FACTORY" value="Cake\Http\ResponseFactory"/>
+        <const name="SERVER_REQUEST_FACTORY" value="Cake\Http\ServerRequestFactory"/>
+        <const name="STREAM_FACTORY" value="Cake\Http\StreamFactory"/>
+        <const name="UPLOADED_FILE_FACTORY" value="Cake\Http\UploadedFileFactory"/>
+        <const name="URI_FACTORY" value="Cake\Http\UriFactory"/>
     </php>
 </phpunit>

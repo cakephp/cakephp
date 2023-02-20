@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
@@ -1389,11 +1390,12 @@ class ServerRequestFactoryTest extends TestCase
     public function testCreateServerRequest(): void
     {
         $factory = new ServerRequestFactory();
-        $request = $factory->createServerRequest('GET', '/posts', ['foo' => 'bar']);
+        $request = $factory->createServerRequest('GET', 'https://cakephp.org/team', ['foo' => 'bar']);
 
+        $this->assertInstanceOf(ServerRequest::class, $request);
         $this->assertSame('GET', $request->getMethod());
-        $this->assertSame('/posts', $request->getRequestTarget());
-        $expected = ['foo' => 'bar', 'REQUEST_URI' => '/posts', 'REQUEST_METHOD' => 'GET'];
+        $this->assertSame('/team', $request->getRequestTarget());
+        $expected = ['foo' => 'bar', 'REQUEST_METHOD' => 'GET'];
         $this->assertEquals($expected, $request->getServerParams());
     }
 }

@@ -176,11 +176,10 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];
 
-        if ($uri instanceof UriInterface) {
-            $options['uri'] = $uri;
-        } else {
-            $options['url'] = $uri;
+        if (is_string($uri)) {
+            $uri = (new UriFactory())->createUri($uri);
         }
+        $options['uri'] = $uri;
 
         return new ServerRequest($options);
     }
@@ -288,7 +287,12 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         if (!$baseUrl) {
-            $base = dirname(Hash::get($server, 'PHP_SELF'));
+            $phpSelf = Hash::get($server, 'PHP_SELF');
+            if ($phpSelf === null) {
+                return ['', '/'];
+            }
+
+            $base = dirname(Hash::get($server, 'PHP_SELF', DIRECTORY_SEPARATOR));
             // Clean up additional / which cause following code to fail..
             $base = (string)preg_replace('#/+#', '/', $base);
 

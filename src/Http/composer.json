@@ -29,13 +29,15 @@
         "cakephp/utility": "^5.0",
         "composer/ca-bundle": "^1.2",
         "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "laminas/laminas-diactoros": "^2.1",
         "laminas/laminas-httphandlerrunner": "^1.0"
     },
     "provide": {
-        "psr/http-client-implementation": "^1.0"
+        "psr/http-client-implementation": "^1.0",
+        "psr/http-factory-implementation": "^1.0"
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
