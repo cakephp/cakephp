@@ -59,7 +59,7 @@
         <env name="DB_URL" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
 
-        <!-- Fully qualified class names to your classes -->
+        <!-- Constants used by Http Interop's Http Factory tests -->
         <const name="REQUEST_FACTORY" value="Cake\Http\RequestFactory"/>
         <const name="RESPONSE_FACTORY" value="Cake\Http\ResponseFactory"/>
         <const name="SERVER_REQUEST_FACTORY" value="Cake\Http\ServerRequestFactory"/>
