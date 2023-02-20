@@ -50,7 +50,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         ?string $clientMediaType = null
     ): UploadedFileInterface {
         if ($size === null) {
-            $size = $stream->getSize();
+            $size = $stream->getSize() ?? 0;
         }
 
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
