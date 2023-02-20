@@ -42,6 +42,7 @@
             <errorLevel type="suppress">
                 <file name="src/Cache/Engine/ApcuEngine.php" />
                 <file name="src/Database/Driver/Sqlserver.php" />
+                <file name="src/Database/Statement/SqlserverStatement.php" />
             </errorLevel>
         </UndefinedConstant>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
