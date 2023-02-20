@@ -1587,7 +1587,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query\SelectQuery |callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -2587,6 +2587,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
 
+        /** @var array<string, mixed> $options */
         $query->applyOptions($options);
         $options = $query->getOptions();
         $finder = 'find' . $type;
