@@ -428,6 +428,19 @@ class TableTest extends TestCase
             ],
         ]);
         $this->assertSame('custom_name', $table->getDisplayField());
+
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'nullable_title' => ['type' => 'string', 'null' => true],
+                'password' => ['type' => 'string'],
+                'user_secret' => ['type' => 'string'],
+                'api_token' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('id', $table->getDisplayField());
     }
 
     /**
