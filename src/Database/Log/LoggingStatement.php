@@ -95,7 +95,8 @@ class LoggingStatement extends StatementDecorator
             if (version_compare(PHP_VERSION, '8.2.0', '<')) {
                 deprecationWarning(
                     '4.4.12 - Having queryString set on exceptions is deprecated.' .
-                    'If you are not using this attribute there is no action to take.'
+                    'If you are not using this attribute there is no action to take.' .
+                    'Otherwise, enable Error.convertStatementToDatabaseException.'
                 );
                 /** @psalm-suppress UndefinedPropertyAssignment */
                 $e->queryString = $this->queryString;
