@@ -348,6 +348,7 @@ class ExceptionTrap
             foreach ($this->getConfig('skipLog') as $class) {
                 if ($exception instanceof $class) {
                     $shouldLog = false;
+                    break;
                 }
             }
         }
