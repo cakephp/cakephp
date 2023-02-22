@@ -716,7 +716,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $columnSchema &&
                 $columnSchema['null'] !== true &&
                 $columnSchema['type'] === 'string' &&
-                !preg_match('/pass|token|secret/', $column)
+                !preg_match('/pass|token|secret/i', $column)
             ) {
                 return $this->_displayField = $column;
             }
