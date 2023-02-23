@@ -4,8 +4,8 @@
 # CakePHP Http Library
 
 This library provides a PSR-15 Http middleware server, PSR-7 Request and
-Response objects, and a PSR-18 Http Client. Together these classes let you
-handle incoming server requests and send outgoing HTTP requests.
+Response objects, PSR-17 HTTP Factories, and PSR-18 Http Client. Together these
+classes let you handle incoming server requests and send outgoing HTTP requests.
 
 ## Using the Http Client
 
