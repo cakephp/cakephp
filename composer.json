@@ -33,6 +33,7 @@
         "league/container": "^4.2",
         "psr/container": "^2.0",
         "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^3.0",
@@ -56,6 +57,7 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^5.0",
+        "http-interop/http-factory-tests": "^0.9.0",
         "mikey179/vfsstream": "^1.6.10",
         "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^9.5.19"
