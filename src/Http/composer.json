@@ -32,8 +32,8 @@
         "psr/http-factory": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "laminas/laminas-diactoros": "^2.1",
-        "laminas/laminas-httphandlerrunner": "^1.0"
+        "laminas/laminas-diactoros": "^2.22",
+        "laminas/laminas-httphandlerrunner": "^2.3"
     },
     "provide": {
         "psr/http-client-implementation": "^1.0",
