@@ -236,11 +236,7 @@ class ConsoleOutput
         $tags = implode('|', array_keys(static::$_styles));
         $output = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 
-        if ($output === null) {
-            return $text;
-        }
-
-        return $output;
+        return $output ?? $text;
     }
 
     /**

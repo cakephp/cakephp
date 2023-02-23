@@ -27,6 +27,7 @@ use Cake\Console\TestSuite\Constraint\ContentsRegExp;
 use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
+use InvalidArgumentException;
 
 /**
  * A bundle of methods that makes testing commands
@@ -80,12 +81,8 @@ trait ConsoleIntegrationTestTrait
     {
         $runner = $this->makeRunner();
 
-        if ($this->_out === null) {
-            $this->_out = new StubConsoleOutput();
-        }
-        if ($this->_err === null) {
-            $this->_err = new StubConsoleOutput();
-        }
+        $this->_out ??= new StubConsoleOutput();
+        $this->_err ??= new StubConsoleOutput();
         if ($this->_in === null) {
             $this->_in = new StubConsoleInput($input);
         } elseif ($input) {

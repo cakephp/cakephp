@@ -892,9 +892,7 @@ abstract class Driver
      */
     protected function createLogger(?string $className): LoggerInterface
     {
-        if ($className === null) {
-            $className = QueryLogger::class;
-        }
+        $className ??= QueryLogger::class;
 
         /** @var class-string<\Psr\Log\LoggerInterface>|null $className */
         $className = App::className($className, 'Cake/Log', 'Log');
