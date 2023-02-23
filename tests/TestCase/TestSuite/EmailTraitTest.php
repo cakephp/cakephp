@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         3.7.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Mailer;
@@ -165,6 +167,18 @@ class EmailTraitTest extends TestCase
     }
 
     /**
+     * tests multiple messages sent by same Mailer are captured correctly
+     */
+    public function testAssertMultipleMessages(): void
+    {
+        $this->sendMultipleEmails();
+
+        $this->assertMailSentTo('to@example.com');
+        $this->assertMailSentTo('to2@example.com');
+        $this->assertMailSentFrom('reusable-mailer@example.com');
+    }
+
+    /**
      * Tests asserting using RegExp characters doesn't break the assertion
      */
     public function testAssertUsingRegExpCharacters(): void
@@ -246,5 +260,29 @@ class EmailTraitTest extends TestCase
         (new Mailer('alternate'))
             ->setTo(['to3@example.com' => null])
             ->deliver('html');
+    }
+
+    /**
+     * sends some emails
+     */
+    private function sendMultipleEmails(): void
+    {
+        $reusableMailer = new Mailer();
+        $reusableMailer
+            ->setEmailFormat(Message::MESSAGE_TEXT)
+            ->setFrom('reusable-mailer@example.com');
+
+
+        $emails = [
+            'to@example.com' => ['title' => 'Title1', 'content' => 'abc'],
+            'to2@example.com' => ['title' => 'Title2', 'content' => 'xyz'],
+        ];
+
+        foreach ($emails as $email => $messageContents) {
+            $reusableMailer->setTo($email)
+                ->setSubject($messageContents['title'])
+                ->setViewVars($messageContents)
+                ->deliver();
+        }
     }
 }
