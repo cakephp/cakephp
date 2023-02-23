@@ -58,9 +58,6 @@ class StringTemplateTest extends TestCase
     {
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
-            'true' => true,
-            'false' => false,
-            'null' => null,
         ];
         $result = $this->template->add($templates);
         $this->assertSame(
@@ -70,9 +67,6 @@ class StringTemplateTest extends TestCase
         );
 
         $this->assertSame($templates['link'], $this->template->get('link'));
-        $this->assertSame($templates['true'], $this->template->get('true'));
-        $this->assertSame($templates['false'], $this->template->get('false'));
-        $this->assertSame($templates['null'], $this->template->get('null'));
     }
 
     /**
@@ -83,6 +77,27 @@ class StringTemplateTest extends TestCase
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
             'invalid' => null,
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->template->add($templates);
+
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'invalid' => false,
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->template->add($templates);
+
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'invalid' => [],
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->template->add($templates);
+
+        $templates = [
+            'link' => '<a href="{{url}}">{{text}}</a>',
+            'invalid' => 42,
         ];
         $this->expectException(InvalidArgumentException::class);
         $this->template->add($templates);
