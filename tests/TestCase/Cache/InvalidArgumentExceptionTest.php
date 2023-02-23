@@ -17,7 +17,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache;
 
-use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -30,8 +29,8 @@ class InvalidArgumentExceptionTest extends TestCase
      */
     public function testThrowingOldException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\Cake\Cache\InvalidArgumentException::class);
 
-        throw new InvalidArgumentException('I should be the old one, aliased.');
+        throw new \Cake\Cache\InvalidArgumentException('I should be the old one, aliased.');
     }
 }
