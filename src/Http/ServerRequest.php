@@ -278,7 +278,7 @@ class ServerRequest implements ServerRequestInterface
             if ($config['url'] !== '') {
                 $config = $this->processUrlOption($config);
             }
-            [$uri] = ServerRequestFactory::createUri($config['environment']);
+            ['uri' => $uri] = UriFactory::marshalUriAndBaseFromSapi($config['environment']);
         }
 
         $this->_environment = $config['environment'];
