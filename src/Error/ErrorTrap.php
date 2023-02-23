@@ -122,6 +122,17 @@ class ErrorTrap
         $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
+        $ignoredPaths = (array)Configure::read('Error.ignoredDeprecationPaths');
+        if ($code === E_USER_DEPRECATED && $ignoredPaths) {
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', substr((string)$file, strlen(ROOT) + 1));
+            foreach ($ignoredPaths as $pattern) {
+                $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
+                if (fnmatch($pattern, $relativePath)) {
+                    return true;
+                }
+            }
+        }
+
         $debug = Configure::read('debug');
         $renderer = $this->renderer();
 

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
@@ -127,6 +128,15 @@ class PluginCollectionTest extends TestCase
         $plugin = $plugins->create('TestTheme');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
         $this->assertSame('TestTheme', $plugin->getName());
+    }
+
+    public function testCreateException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Cannot create a plugin with empty name');
+
+        $plugins = new PluginCollection();
+        $plugins->create('');
     }
 
     public function testIterator(): void
