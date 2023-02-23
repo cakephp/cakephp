@@ -190,16 +190,11 @@ class IniConfig implements ConfigEngineInterface
      */
     protected function _value(mixed $value): string
     {
-        if ($value === null) {
-            return 'null';
-        }
-        if ($value === true) {
-            return 'true';
-        }
-        if ($value === false) {
-            return 'false';
-        }
-
-        return (string)$value;
+        return match ($value) {
+            null => 'null',
+            true => 'true',
+            false => 'false',
+            default => (string)$value
+        };
     }
 }

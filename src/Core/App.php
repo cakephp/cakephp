@@ -193,15 +193,14 @@ class App
             return (array)Configure::read('App.paths.' . $type);
         }
 
-        if ($type === 'templates') {
-            return [Plugin::templatePath($plugin)];
-        }
-
-        if ($type === 'locales') {
-            return [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
-        }
-
-        throw new CakeException('Only path types `templates` and `locales` are supported for plugins.');
+        return match ($type) {
+            'templates' => [Plugin::templatePath($plugin)],
+            'locales' => [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR],
+            default => throw new CakeException(sprintf(
+                'Invalid type `%s`. Only path types `templates` and `locales` are supported for plugins.',
+                $type
+            ))
+        };
     }
 
     /**
