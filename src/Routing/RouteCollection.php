@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Routing;
 
 use Cake\Routing\Exception\DuplicateNamedRouteException;
@@ -125,7 +127,9 @@ class RouteCollection
         $decoded = urldecode($url);
 
         // Sort path segments matching longest paths first.
-        krsort($this->_paths);
+        array_walk($this->_paths, function (&$value, $key) {
+            krsort($value);
+        });
 
         foreach ($this->_paths as $path => $routes) {
             if (strpos($decoded, $path) !== 0) {
@@ -174,7 +178,9 @@ class RouteCollection
         $urlPath = urldecode($uri->getPath());
 
         // Sort path segments matching longest paths first.
-        krsort($this->_paths);
+        array_walk($this->_paths, function (&$value, $key) {
+            krsort($value);
+        });
 
         foreach ($this->_paths as $path => $routes) {
             if (strpos($urlPath, $path) !== 0) {
@@ -333,7 +339,9 @@ class RouteCollection
      */
     public function routes(): array
     {
-        krsort($this->_paths);
+        array_walk($this->_paths, function (&$value, $key) {
+            krsort($value);
+        });
 
         return array_reduce(
             $this->_paths,
