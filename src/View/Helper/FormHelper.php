@@ -150,6 +150,8 @@ class FormHelper extends Helper
             'confirmJs' => '{{confirm}}',
             // selected class
             'selectedClass' => 'selected',
+            // required class
+            'requiredClass' => 'required',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -1173,7 +1175,7 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
-            'required' => $options['options']['required'] ? ' required' : '',
+            'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
             'templateVars' => $options['options']['templateVars'] ?? [],
         ]);

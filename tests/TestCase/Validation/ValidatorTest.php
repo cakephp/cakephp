@@ -295,7 +295,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the requirePresence method
+     * Tests the requirePresence method with an array
      */
     public function testRequirePresenceAsArray(): void
     {
@@ -316,6 +316,34 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('title')->isPresenceRequired());
         $this->assertSame('update', $validator->field('content')->isPresenceRequired());
         $this->assertTrue($validator->field('subject')->isPresenceRequired());
+    }
+
+    /**
+     * Tests the requirePresence method with an array containing an integer key
+     */
+    public function testRequirePresenceAsArrayWithIntegerKey(): void
+    {
+        $validator = new Validator();
+
+        $validator->requirePresence([
+            0,
+            1 => [
+                'mode' => false,
+            ],
+            'another_field',
+        ]);
+        $this->assertTrue($validator->field('0')->isPresenceRequired());
+        $this->assertFalse($validator->field('1')->isPresenceRequired());
+    }
+
+    /**
+     * Tests the requirePresence failure case
+     */
+    public function testRequirePresenceAsArrayFailure(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $validator = new Validator();
+        $validator->requirePresence(['title' => 'derp', 'created' => false]);
     }
 
     /**
@@ -1626,6 +1654,17 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests direct usage the offsetGet method with an integer field name
+     */
+    public function testOffsetGetWithIntegerFieldName(): void
+    {
+        $validator = new Validator();
+        $validator
+            ->add('0', 'alpha', ['rule' => 'alphanumeric']);
+        $this->assertSame($validator->offsetGet(0), $validator->field('0'));
+    }
+
+    /**
      * Tests it is possible to check for validation sets for a field using an array interface
      */
     public function testArrayAccessExists(): void
@@ -2431,6 +2470,18 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
         $this->assertEmpty($validator->validate(['username' => '123']));
         $this->assertNotEmpty($validator->validate(['username' => 'Foo']));
+    }
+
+    /**
+     * Tests the validate method with an integer key
+     */
+    public function testValidateWithIntegerKey(): void
+    {
+        $validator = new Validator();
+        $validator->requirePresence('0');
+        $errors = $validator->validate([1 => 'Not integer zero']);
+        $expected = ['0' => ['_required' => 'This field is required']];
+        $this->assertEquals($expected, $errors);
     }
 
     /**

@@ -19,11 +19,14 @@ namespace Cake\Error\Middleware;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -70,14 +73,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected ?ExceptionTrap $exceptionTrap = null;
 
     /**
+     * @var \Cake\Routing\RoutingApplicationInterface|null
+     */
+    protected ?RoutingApplicationInterface $app = null;
+
+    /**
      * Constructor
      *
      * @param \Cake\Error\ExceptionTrap|array $config The error handler instance
      *  or config array.
-     * @throws \InvalidArgumentException
+     * @param \Cake\Routing\RoutingApplicationInterface|null $app Application instance.
      */
-    public function __construct(ExceptionTrap|array $config = [])
+    public function __construct(ExceptionTrap|array $config = [], ?RoutingApplicationInterface $app = null)
     {
+        $this->app = $app;
+
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
         }
@@ -118,6 +128,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
+        $this->loadRoutes();
+
         $trap = $this->getExceptionTrap();
         $trap->logException($exception, $request);
 
@@ -192,5 +204,35 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         }
 
         return $this->exceptionTrap;
+    }
+
+    /**
+     * Ensure that the application's routes are loaded.
+     *
+     * @return void
+     */
+    protected function loadRoutes(): void
+    {
+        if (
+            !($this->app instanceof RoutingApplicationInterface)
+            || Router::routes()
+        ) {
+            return;
+        }
+
+        try {
+            $builder = Router::createRouteBuilder('/');
+
+            $this->app->routes($builder);
+            if ($this->app instanceof PluginApplicationInterface) {
+                $this->app->pluginRoutes($builder);
+            }
+        } catch (Throwable $e) {
+            triggerWarning(sprintf(
+                "Exception loading routes when rendering an error page: \n %s - %s",
+                get_class($e),
+                $e->getMessage()
+            ));
+        }
     }
 }

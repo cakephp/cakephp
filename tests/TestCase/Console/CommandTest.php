@@ -51,6 +51,7 @@ class CommandTest extends TestCase
      */
     public function testConstructorAutoLoadModel(): void
     {
+        // No deprecation as AutoLoadModelCommand class defines Posts property
         $command = new AutoLoadModelCommand();
         $this->assertInstanceOf(Table::class, $command->fetchTable());
     }

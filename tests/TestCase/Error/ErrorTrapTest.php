@@ -230,6 +230,30 @@ class ErrorTrapTest extends TestCase
         $this->assertSame('', $output);
     }
 
+    public function testRegisterIgnoredDeprecations()
+    {
+        $trap = new ErrorTrap([
+            'errorRenderer' => TextErrorRenderer::class,
+            'trace' => false,
+        ]);
+        $trap->register();
+
+        ob_start();
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'tests/TestCase/Error/ErrorTrap*',
+        ]);
+        trigger_error('Should be ignored', E_USER_DEPRECATED);
+
+        Configure::write('Error.ignoredDeprecationPaths', []);
+        trigger_error('Not ignored', E_USER_DEPRECATED);
+
+        $output = ob_get_clean();
+        restore_error_handler();
+
+        $this->assertStringNotContainsString('Should be ignored', $output);
+        $this->assertStringContainsString('Not ignored', $output);
+    }
+
     public function testEventTriggered()
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);

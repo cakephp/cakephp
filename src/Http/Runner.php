@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -54,6 +56,13 @@ class Runner implements RequestHandlerInterface
         $this->queue = $queue;
         $this->queue->rewind();
         $this->fallbackHandler = $fallbackHandler;
+
+        if (
+            $fallbackHandler instanceof RoutingApplicationInterface &&
+            $request instanceof ServerRequest
+        ) {
+            Router::setRequest($request);
+        }
 
         return $this->handle($request);
     }

@@ -76,7 +76,7 @@ Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to set up the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
 
-To run static analysis tools [PHPStan](https://github.com/phpstan/phpstan) and [Psalm](https://github.com/vimeo/psalm) you first have to install the additional packages via [phive](https://phar.io/).
+To run static analysis tools [PHPStan](https://github.com/phpstan/phpstan) and [Psalm](https://github.com/vimeo/psalm) you first have to install the additional packages via [phive](https://phar.io).
 
     composer stan-setup
 

@@ -444,9 +444,71 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that displayField will fallback to first *_name field
+     */
+    public function testDisplayNameFallback(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'custom_title' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('custom_title', $table->getDisplayField());
+
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'name' => ['type' => 'string'],
+                'custom_title' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('name', $table->getDisplayField());
+
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'title_id' => ['type' => 'integer'],
+                'custom_name' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('custom_name', $table->getDisplayField());
+
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'nullable_title' => ['type' => 'string', 'null' => true],
+                'custom_name' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('custom_name', $table->getDisplayField());
+
+        $table = new Table([
+            'table' => 'users',
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'nullable_title' => ['type' => 'string', 'null' => true],
+                'password' => ['type' => 'string'],
+                'user_secret' => ['type' => 'string'],
+                'api_token' => ['type' => 'string'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+            ],
+        ]);
+        $this->assertSame('id', $table->getDisplayField());
+    }
+
+    /**
      * Tests that no displayField will fallback to primary key
      */
-    public function testDisplayFallback(): void
+    public function testDisplayIdFallback(): void
     {
         $table = new Table([
             'table' => 'users',

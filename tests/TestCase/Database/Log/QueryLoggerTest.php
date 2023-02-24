@@ -21,6 +21,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Psr\Log\LogLevel;
+use Stringable;
 
 /**
  * Tests QueryLogger class
@@ -58,10 +59,29 @@ class QueryLoggerTest extends TestCase
             'className' => 'Array',
             'scopes' => ['foo'],
         ]);
-        $logger->log(LogLevel::DEBUG, (string)$query, compact('query'));
+        $logger->log(LogLevel::DEBUG, $query, compact('query'));
 
         $this->assertCount(1, Log::engine('queryLoggerTest')->read());
         $this->assertCount(0, Log::engine('queryLoggerTest2')->read());
+    }
+
+    /**
+     * Tests that passed Stringable also work.
+     */
+    public function testLogFunctionStringable(): void
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '8.0', '<'), 'Stringable exists since 8.0');
+
+        $logger = new QueryLogger(['connection' => '']);
+        $stringable = new class implements Stringable
+        {
+            public function __toString(): string
+            {
+                return 'FooBar';
+            }
+        };
+
+        $logger->log(LogLevel::DEBUG, $stringable, ['query' => null]);
     }
 
     /**

@@ -224,6 +224,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
+            $name = (string)$name;
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
@@ -390,12 +391,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns the rule set for a field
      *
-     * @param string $field name of the field to check
+     * @param string|int $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
     public function offsetGet(mixed $field): ValidationSet
     {
-        return $this->field($field);
+        return $this->field((string)$field);
     }
 
     /**
@@ -643,7 +644,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * You can also set mode and message for all passed fields, the individual
      * setting takes precedence over group settings.
      *
-     * @param array|string $field the name of the field or list of fields.
+     * @param array<string|int, mixed>|string $field the name of the field or list of fields.
      * @param \Closure|string|bool $mode Valid values are true, false, 'create', 'update'.
      *   If a Closure is passed then the field will be required only when the callback
      *   returns true.
@@ -666,7 +667,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             /** @var string $fieldName */
             $fieldName = current(array_keys($settings));
 
-            $this->field($fieldName)->requirePresence($settings[$fieldName]['mode']);
+            $this->field((string)$fieldName)->requirePresence($settings[$fieldName]['mode']);
             if ($settings[$fieldName]['message']) {
                 $this->_presenceMessages[$fieldName] = $settings[$fieldName]['message'];
             }
@@ -1018,8 +1019,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $fieldName name of field
      * @param array<string, mixed> $defaults default settings
-     * @param array<string, mixed>|string $settings settings from data
-     * @return array<string, array<string, mixed>>
+     * @param array<string|int, mixed>|string $settings settings from data
+     * @return array<string, array<string|int, mixed>>
      * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray(

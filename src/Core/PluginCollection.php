@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Utility\Hash;
 use Countable;
@@ -280,6 +281,10 @@ class PluginCollection implements Iterator, Countable
      */
     public function create(string $name, array $config = []): PluginInterface
     {
+        if ($name === '') {
+            throw new CakeException('Cannot create a plugin with empty name');
+        }
+
         if (str_contains($name, '\\')) {
             if (!class_exists($name)) {
                 throw new InvalidArgumentException(sprintf('Class `%s` does not exist.', $name));

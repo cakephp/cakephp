@@ -16,7 +16,7 @@ end_of_line = crlf
 [*.yml]
 indent_size = 2
 
-[phars.xml]
+[*.xml]
 indent_size = 2
 
 [Makefile]

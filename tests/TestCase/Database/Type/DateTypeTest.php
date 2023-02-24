@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -75,8 +76,8 @@ class DateTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new Date('2001-01-04'),
-            'c' => new Date('2001-01-04'),
+            'b' => new ChronosDate('2001-01-04'),
+            'c' => new ChronosDate('2001-01-04'),
         ];
         $this->assertEquals(
             $expected,
@@ -93,7 +94,7 @@ class DateTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new DateTime('2013-08-12');
+        $date = new ChronosDate('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12', $result);
 
@@ -124,7 +125,7 @@ class DateTypeTest extends TestCase
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['2014-02-14', new Date('2014-02-14')],
+            ['2014-02-14', new ChronosDate('2014-02-14')],
 
             [new Date('2014-02-14'), new Date('2014-02-14')],
             [new NativeDateTime('2014-02-14'), new NativeDateTime('2014-02-14')],
@@ -137,7 +138,7 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Date('2014-02-14'),
+                new ChronosDate('2014-02-14'),
             ],
             [
                 [
@@ -145,7 +146,7 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am',
                 ],
-                new Date('2014-02-14'),
+                new ChronosDate('2014-02-14'),
             ],
             [
                 [
@@ -153,20 +154,20 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new Date('2014-02-14'),
+                new ChronosDate('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Date('2014-02-14'),
+                new ChronosDate('2014-02-14'),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new Date('2014-02-14'),
+                new ChronosDate('2014-02-14'),
             ],
 
             // Invalid array types
@@ -202,7 +203,7 @@ class DateTypeTest extends TestCase
         $this->type->useLocaleParser();
         $this->assertNull($this->type->marshal('11/derp/2013'));
 
-        $expected = new Date('13-10-2013');
+        $expected = new ChronosDate('13-10-2013');
         $result = $this->type->marshal('10/13/2013');
         $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }
@@ -215,7 +216,7 @@ class DateTypeTest extends TestCase
         $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y');
         $this->assertNull($this->type->marshal('11/derp/2013'));
 
-        $expected = new Date('13-10-2013');
+        $expected = new ChronosDate('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
         $this->assertSame($expected->format('Y-m-d'), $result->format('Y-m-d'));
     }

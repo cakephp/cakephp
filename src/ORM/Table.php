@@ -677,22 +677,34 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return array<string>|string|null
+     * @return array<string>|string
      */
     public function getDisplayField(): array|string|null
     {
-        if ($this->_displayField === null) {
-            $schema = $this->getSchema();
-            $this->_displayField = $this->getPrimaryKey();
-            foreach (['title', 'name', 'label'] as $field) {
-                if ($schema->hasColumn($field)) {
-                    $this->_displayField = $field;
-                    break;
-                }
+        if ($this->_displayField !== null) {
+            return $this->_displayField;
+        }
+
+        $schema = $this->getSchema();
+        foreach (['title', 'name', 'label'] as $field) {
+            if ($schema->hasColumn($field)) {
+                return $this->_displayField = $field;
             }
         }
 
-        return $this->_displayField;
+        foreach ($schema->columns() as $column) {
+            $columnSchema = $schema->getColumn($column);
+            if (
+                $columnSchema &&
+                $columnSchema['null'] !== true &&
+                $columnSchema['type'] === 'string' &&
+                !preg_match('/pass|token|secret/i', $column)
+            ) {
+                return $this->_displayField = $column;
+            }
+        }
+
+        return $this->_displayField = $this->getPrimaryKey();
     }
 
     /**
