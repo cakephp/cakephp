@@ -458,7 +458,7 @@ class ExceptionRendererTest extends TestCase
     public function testMissingController(): void
     {
         $exception = new MissingControllerException([
-            'class' => 'Posts',
+            'controller' => 'Posts',
             'prefix' => '',
             'plugin' => '',
         ]);
@@ -480,7 +480,7 @@ class ExceptionRendererTest extends TestCase
     public function testMissingControllerLowerCase(): void
     {
         $exception = new MissingControllerException([
-            'class' => 'posts',
+            'controller' => 'posts',
             'prefix' => '',
             'plugin' => '',
         ]);

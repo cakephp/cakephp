@@ -23,6 +23,10 @@ use Cake\Core\Exception\CakeException;
  */
 class DatabaseException extends CakeException
 {
+    /**
+     * @inheritDoc
+     */
+    protected $_messageTemplate = '%s';
 }
 
 // phpcs:disable
