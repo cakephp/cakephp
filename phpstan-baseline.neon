@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
-			count: 1
-			path: src/Auth/DigestAuthenticate.php
-
-		-
 			message: "#^Constructor of class Cake\\\\Auth\\\\Storage\\\\SessionStorage has an unused parameter \\$response\\.$#"
 			count: 1
 			path: src/Auth/Storage/SessionStorage.php
@@ -14,11 +9,6 @@ parameters:
 			message: "#^PHPDoc tag @mixin contains invalid type Cake\\\\Core\\\\InstanceConfigTrait\\.$#"
 			count: 1
 			path: src/Auth/Storage/StorageInterface.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Collection.php
 
 		-
 			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
@@ -41,22 +31,7 @@ parameters:
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/Collection/Iterator/TreePrinter.php
-
-		-
 			message: "#^Parameter \\#1 \\$iterator of method MultipleIterator\\:\\:attachIterator\\(\\) expects Iterator, Traversable given\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
 
@@ -114,51 +89,6 @@ parameters:
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
 			count: 2
 			path: src/Database/Driver.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Database/Driver/Postgres.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Postgres.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlite.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlite.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Database/Driver/Sqlserver.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -219,16 +149,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Client.php
-
-		-
-			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid type CurlHandle\\.$#"
-			count: 1
-			path: src/Http/Client/Adapter/Curl.php
-
-		-
-			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid type CurlHandle\\.$#"
-			count: 1
-			path: src/Http/Client/Adapter/Curl.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
@@ -339,11 +259,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/ORM/Query.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between class\\-string\\<ArrayObject\\> and 'ArrayIterator' will always evaluate to false\\.$#"
-			count: 1
-			path: src/ORM/ResultSet.php
 
 		-
 			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
