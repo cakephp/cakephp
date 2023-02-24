@@ -42,7 +42,7 @@ class MessagesFileLoader
      *
      * @var string|null
      */
-    protected ?string $_plugin;
+    protected ?string $_plugin = null;
 
     /**
      * The locale to load for the given package.

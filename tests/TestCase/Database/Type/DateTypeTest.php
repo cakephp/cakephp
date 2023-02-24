@@ -76,8 +76,8 @@ class DateTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new ChronosDate('2001-01-04'),
-            'c' => new ChronosDate('2001-01-04'),
+            'b' => new Date('2001-01-04'),
+            'c' => new Date('2001-01-04'),
         ];
         $this->assertEquals(
             $expected,
@@ -125,7 +125,7 @@ class DateTypeTest extends TestCase
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['2014-02-14', new ChronosDate('2014-02-14')],
+            ['2014-02-14', new Date('2014-02-14')],
 
             [new Date('2014-02-14'), new Date('2014-02-14')],
             [new NativeDateTime('2014-02-14'), new NativeDateTime('2014-02-14')],
@@ -138,7 +138,7 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new ChronosDate('2014-02-14'),
+                new Date('2014-02-14'),
             ],
             [
                 [
@@ -146,7 +146,7 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am',
                 ],
-                new ChronosDate('2014-02-14'),
+                new Date('2014-02-14'),
             ],
             [
                 [
@@ -154,20 +154,20 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new ChronosDate('2014-02-14'),
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new ChronosDate('2014-02-14'),
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new ChronosDate('2014-02-14'),
+                new Date('2014-02-14'),
             ],
 
             // Invalid array types
