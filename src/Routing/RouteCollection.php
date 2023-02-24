@@ -127,6 +127,7 @@ class RouteCollection
         $decoded = urldecode($url);
 
         // Sort path segments matching longest paths first.
+        krsort($this->_paths);
         array_walk($this->_paths, function (&$value, $key) {
             krsort($value);
         });
@@ -178,6 +179,7 @@ class RouteCollection
         $urlPath = urldecode($uri->getPath());
 
         // Sort path segments matching longest paths first.
+        krsort($this->_paths);
         array_walk($this->_paths, function (&$value, $key) {
             krsort($value);
         });
@@ -339,6 +341,7 @@ class RouteCollection
      */
     public function routes(): array
     {
+        krsort($this->_paths);
         array_walk($this->_paths, function (&$value, $key) {
             krsort($value);
         });
