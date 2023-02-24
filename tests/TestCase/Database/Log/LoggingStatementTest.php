@@ -24,6 +24,7 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
@@ -202,7 +203,10 @@ class LoggingStatementTest extends TestCase
             ->method('execute')
             ->will($this->throwException($exception));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(ConnectionInterface::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -224,7 +228,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
@@ -240,7 +244,10 @@ class LoggingStatementTest extends TestCase
             ->method('execute')
             ->will($this->throwException($exception));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(ConnectionInterface::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -262,7 +269,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
