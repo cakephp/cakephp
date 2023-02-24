@@ -659,7 +659,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ];
 
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $defaults);
+            $field = $this->_convertValidatorToArray((string)$field, $defaults);
         }
 
         foreach ($field as $fieldName => $setting) {
@@ -1019,17 +1019,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $fieldName name of field
      * @param array<string, mixed> $defaults default settings
-     * @param array<string|int, mixed>|string $settings settings from data
+     * @param array<string|int, mixed>|string|int $settings settings from data
      * @return array<string, array<string|int, mixed>>
      * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray(
         string $fieldName,
         array $defaults = [],
-        array|string $settings = []
+        array|string|int $settings = []
     ): array {
-        if (is_string($settings)) {
-            $fieldName = $settings;
+        if (!is_array($settings)) {
+            $fieldName = (string)$settings;
             $settings = [];
         }
         $settings += $defaults;
