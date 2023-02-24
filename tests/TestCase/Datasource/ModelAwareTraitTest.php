@@ -19,7 +19,6 @@ use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
@@ -145,18 +144,6 @@ class ModelAwareTraitTest extends TestCase
         $result = $stub->fetchModel('Foo', 'MyType');
         $this->assertInstanceOf(RepositoryInterface::class, $result);
         $this->assertSame('Foo', $result->getAlias());
-    }
-
-    public function testModelFactoryException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            '`$factory` must be an instance of Cake\Datasource\Locator\LocatorInterface or a callable.'
-            . ' Got type `string` instead.'
-        );
-
-        $stub = new Stub();
-        $stub->modelFactory('MyType', 'fail');
     }
 
     /**
