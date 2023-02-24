@@ -151,6 +151,16 @@ parameters:
 			path: src/Http/Client.php
 
 		-
+			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid type CurlHandle\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
+			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid type CurlHandle\\.$#"
+			count: 1
+			path: src/Http/Client/Adapter/Curl.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
