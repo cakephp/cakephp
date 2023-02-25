@@ -80,27 +80,6 @@ class StringTemplateTest extends TestCase
         ];
         $this->expectException(InvalidArgumentException::class);
         $this->template->add($templates);
-
-        $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>',
-            'invalid' => false,
-        ];
-        $this->expectException(InvalidArgumentException::class);
-        $this->template->add($templates);
-
-        $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>',
-            'invalid' => [],
-        ];
-        $this->expectException(InvalidArgumentException::class);
-        $this->template->add($templates);
-
-        $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>',
-            'invalid' => 42,
-        ];
-        $this->expectException(InvalidArgumentException::class);
-        $this->template->add($templates);
     }
 
     /**
