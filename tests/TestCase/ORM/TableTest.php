@@ -1675,7 +1675,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInApp(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('TestApp\Model\Entity\TestUser')) {
             class_alias($class, 'TestApp\Model\Entity\TestUser');
@@ -1691,7 +1691,7 @@ class TableTest extends TestCase
      */
     public function testEntityClassInflection(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
             class_alias($class, 'TestApp\Model\Entity\CustomCookie');
@@ -1714,7 +1714,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInPlugin(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
             class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
@@ -1756,7 +1756,7 @@ class TableTest extends TestCase
     public function testSetEntityClass(): void
     {
         $table = new Table();
-        $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
+        $class = '\\' . get_class($this->createMock('Cake\ORM\Entity'));
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertSame($class, $table->getEntityClass());
     }
