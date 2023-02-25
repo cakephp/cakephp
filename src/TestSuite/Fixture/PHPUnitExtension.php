@@ -16,34 +16,27 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Log\Log;
-use Cake\TestSuite\ConnectionHelper;
-use PHPUnit\Runner\BeforeFirstTestHook;
+use Cake\TestSuite\Fixture\PHPUnitSubscriber\BeforeFirstTestMethodCalledSubscriber;
+use PHPUnit\Runner\Extension\Extension;
+use PHPUnit\Runner\Extension\Facade;
+use PHPUnit\Runner\Extension\ParameterCollection;
+use PHPUnit\TextUI\Configuration\Configuration;
 
 /**
  * PHPUnit extension to integrate CakePHP's data-only fixtures.
  */
-class PHPUnitExtension implements BeforeFirstTestHook
+class PHPUnitExtension implements Extension
 {
     /**
-     * Initializes before any tests are run.
-     *
+     * @param \PHPUnit\TextUI\Configuration\Configuration $configuration
+     * @param \PHPUnit\Runner\Extension\Facade $facade
+     * @param \PHPUnit\Runner\Extension\ParameterCollection $parameters
      * @return void
      */
-    public function executeBeforeFirstTest(): void
+    public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
-        $helper = new ConnectionHelper();
-        $helper->addTestAliases();
-
-        $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        if ($enableLogging) {
-            $helper->enableQueryLogging();
-            Log::drop('queries');
-            Log::setConfig('queries', [
-                'className' => 'Console',
-                'stream' => 'php://stderr',
-                'scopes' => ['queriesLog'],
-            ]);
-        }
+        $facade->registerSubscriber(
+            new BeforeFirstTestMethodCalledSubscriber()
+        );
     }
 }

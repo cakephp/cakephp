@@ -29,7 +29,7 @@
     </testsuites>
 
     <extensions>
-        <extension class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
+        <bootstrap class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
     </extensions>
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
