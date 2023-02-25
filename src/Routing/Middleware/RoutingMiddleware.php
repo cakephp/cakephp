@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Cache\InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;

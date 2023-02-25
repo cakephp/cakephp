@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\CacheWriteException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\StaticConfigTrait;
 use RuntimeException;
 
@@ -136,7 +138,7 @@ class Cache
      * Finds and builds the instance of the required engine class.
      *
      * @param string $name Name of the config array that needs an engine instance built
-     * @throws \Cake\Cache\InvalidArgumentException When a cache engine cannot be created.
+     * @throws \Cake\Cache\Exception\InvalidArgumentException When a cache engine cannot be created.
      * @throws \RuntimeException If loading of the engine failed.
      * @return void
      */
@@ -265,15 +267,12 @@ class Cache
         $backend = static::pool($config);
         $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
-            trigger_error(
-                sprintf(
-                    "%s cache was unable to write '%s' to %s cache",
-                    $config,
-                    $key,
-                    get_class($backend)
-                ),
-                E_USER_WARNING
-            );
+            throw new CacheWriteException(sprintf(
+                "%s cache was unable to write '%s' to %s cache",
+                $config,
+                $key,
+                get_class($backend)
+            ));
         }
 
         return $success;
@@ -299,7 +298,7 @@ class Cache
      * @param iterable $data An array or Traversable of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True on success, false on failure
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function writeMany(iterable $data, string $config = 'default'): bool
     {
@@ -354,7 +353,7 @@ class Cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return iterable An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function readMany(iterable $keys, string $config = 'default'): iterable
     {
@@ -369,7 +368,7 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return int|false New value, or false if the data doesn't exist, is not integer,
      *    or if there was an error fetching it.
-     * @throws \Cake\Cache\InvalidArgumentException When offset < 0
+     * @throws \Cake\Cache\Exception\InvalidArgumentException When offset < 0
      */
     public static function increment(string $key, int $offset = 1, string $config = 'default')
     {
@@ -388,7 +387,7 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return int|false New value, or false if the data doesn't exist, is not integer,
      *   or if there was an error fetching it
-     * @throws \Cake\Cache\InvalidArgumentException when offset < 0
+     * @throws \Cake\Cache\Exception\InvalidArgumentException when offset < 0
      */
     public static function decrement(string $key, int $offset = 1, string $config = 'default')
     {
@@ -445,7 +444,7 @@ class Cache
      * @param iterable $keys Array or Traversable of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True on success, false on failure.
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function deleteMany(iterable $keys, string $config = 'default'): bool
     {
@@ -505,7 +504,7 @@ class Cache
      *
      * @param string|null $group Group name or null to retrieve all group mappings
      * @return array<string, array> Map of group and all configuration that has the same group
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function groupConfigs(?string $group = null): array
     {

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Http\ServerRequestFactory;
