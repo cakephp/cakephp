@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -271,7 +270,6 @@ class EmailTraitTest extends TestCase
         $reusableMailer
             ->setEmailFormat(Message::MESSAGE_TEXT)
             ->setFrom('reusable-mailer@example.com');
-
 
         $emails = [
             'to@example.com' => ['title' => 'Title1', 'content' => 'abc'],
