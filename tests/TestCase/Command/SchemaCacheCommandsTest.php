@@ -106,7 +106,7 @@ class SchemaCacheCommandsTest extends TestCase
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('set')
-            ->withConsecutive(['test_articles'])
+            ->with(...self::withConsecutive(['test_articles']))
             ->will($this->returnValue(true));
 
         $this->exec('schema_cache build --connection test');
@@ -174,7 +174,7 @@ class SchemaCacheCommandsTest extends TestCase
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('delete')
-            ->withConsecutive(['test_articles'])
+            ->with(...self::withConsecutive(['test_articles']))
             ->will($this->returnValue(true));
 
         $this->exec('schema_cache clear --connection test');

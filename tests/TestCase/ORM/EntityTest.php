@@ -238,11 +238,13 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->exactly(2))
             ->method('set')
-            ->withConsecutive(
-                [
+            ->with(
+                ...self::withConsecutive(
+                    [
                     ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
-                ],
-                [['foo' => 'bar'], ['setter' => false, 'guard' => false]]
+                    ],
+                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]]
+                )
             );
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
@@ -583,7 +585,9 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive(['foo'], ['bar'])
+            ->with(
+                ...self::withConsecutive(['foo'], ['bar'])
+            )
             ->will($this->onConsecutiveCalls(
                 $this->returnValue('worked'),
                 $this->returnValue('worked too')
@@ -605,7 +609,9 @@ class EntityTest extends TestCase
 
         $entity->expects($this->exactly(2))
             ->method('set')
-            ->withConsecutive(['foo', 1], ['bar', 2])
+            ->with(
+                ...self::withConsecutive(['foo', 1], ['bar', 2])
+            )
             ->will($this->onConsecutiveCalls(
                 $this->returnSelf(),
                 $this->returnSelf()

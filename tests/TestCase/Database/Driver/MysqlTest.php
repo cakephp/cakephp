@@ -113,7 +113,9 @@ class MysqlTest extends TestCase
             ->getMock();
         $connection->expects($this->exactly(3))
             ->method('exec')
-            ->withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]);
+            ->with(
+                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"])
+            );
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)

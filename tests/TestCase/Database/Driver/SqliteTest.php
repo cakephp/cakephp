@@ -102,7 +102,9 @@ class SqliteTest extends TestCase
             ->getMock();
         $connection->expects($this->exactly(2))
             ->method('exec')
-            ->withConsecutive(['Execute this'], ['this too']);
+            ->with(
+                ...self::withConsecutive(['Execute this'], ['this too'])
+            );
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)

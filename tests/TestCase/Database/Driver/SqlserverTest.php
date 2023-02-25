@@ -169,11 +169,13 @@ class SqlserverTest extends TestCase
 
         $connection->expects($this->exactly(4))
             ->method('exec')
-            ->withConsecutive(
-                ['Execute this'],
-                ['this too'],
-                ['SET config1 value1'],
-                ['SET config2 value2']
+            ->with(
+                ...self::withConsecutive(
+                    ['Execute this'],
+                    ['this too'],
+                    ['SET config1 value1'],
+                    ['SET config2 value2']
+                )
             );
 
         $driver->expects($this->once())->method('createPdo')

@@ -75,9 +75,11 @@ class SyslogLogTest extends TestCase
             ->getMock();
         $log->expects($this->exactly(2))
             ->method('_write')
-            ->withConsecutive(
-                [LOG_DEBUG, 'debug: Foo'],
-                [LOG_DEBUG, 'debug: Bar']
+            ->with(
+                ...self::withConsecutive(
+                    [LOG_DEBUG, 'debug: Foo'],
+                    [LOG_DEBUG, 'debug: Bar']
+                )
             );
         $log->log('debug', "Foo\nBar");
     }

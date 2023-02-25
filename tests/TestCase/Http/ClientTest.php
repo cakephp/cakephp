@@ -743,8 +743,9 @@ class ClientTest extends TestCase
 
         $adapter->expects($this->exactly(3))
             ->method('send')
-            ->withConsecutive(
-                [
+            ->with(
+                ...self::withConsecutive(
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url, (string)$request->getUri());
@@ -756,8 +757,8 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
-                ],
-                [
+                    ],
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
@@ -769,15 +770,16 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
-                ],
-                [
+                    ],
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
 
                         return true;
                     }),
-                ]
+                    ]
+                )
             )
             ->will($this->onConsecutiveCalls([$redirect], [$redirect2], [$response]));
 
@@ -858,16 +860,18 @@ class ClientTest extends TestCase
         ]);
         $adapter->expects($this->exactly(2))
             ->method('send')
-            ->withConsecutive(
-                [$this->anything()],
-                [
+            ->with(
+                ...self::withConsecutive(
+                    [$this->anything()],
+                    [
                     $this->callback(function ($request) {
                         $this->assertSame('http://backstage.example.org', (string)$request->getUri());
                         $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
                         return true;
                     }),
-                ]
+                    ]
+                )
             )
             ->will($this->OnConsecutiveCalls([$redirect], [$response]));
 

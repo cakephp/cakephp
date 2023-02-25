@@ -52,6 +52,7 @@ use function Cake\Core\pluginSplit;
 abstract class TestCase extends BaseTestCase
 {
     use LocatorAwareTrait;
+    use PHPUnitConsecutiveTrait;
 
     /**
      * Fixtures used by this test case.

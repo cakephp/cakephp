@@ -620,13 +620,15 @@ class ControllerTest extends TestCase
         $eventManager
             ->expects($this->exactly(2))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'Controller.initialize';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'Controller.startup';
-                })]
+            ->with(
+                ...self::withConsecutive(
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'Controller.initialize';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'Controller.startup';
+                    })]
+                )
             )
             ->will($this->returnValue(new Event('stub')));
 

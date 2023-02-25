@@ -41,11 +41,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Offset 'type' does not exist on array\\<string, mixed\\>\\|null\\.$#"
-			count: 1
-			path: src/Database/Schema/SqliteSchemaDialect.php
-
-		-
 			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Datasource/QueryInterface.php

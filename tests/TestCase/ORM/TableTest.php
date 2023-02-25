@@ -3279,22 +3279,24 @@ class TableTest extends TestCase
 
         $mock->expects($this->exactly(4))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->anything()],
-                [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                    return $event->getName() === 'Model.beforeDelete' &&
+            ->with(
+                ...self::withConsecutive(
+                    [$this->anything()],
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.beforeDelete' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
-                })],
-                [
+                    })],
+                    [
                     $this->callback(function (EventInterface $event) use ($entity, $options) {
                         return $event->getName() === 'Model.afterDelete' &&
                             $event->getData() == ['entity' => $entity, 'options' => $options];
                     }),
-                ],
-                [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                    return $event->getName() === 'Model.afterDeleteCommit' &&
+                    ],
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.afterDeleteCommit' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
-                })]
+                    })]
+                )
             );
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
