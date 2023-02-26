@@ -155,9 +155,12 @@ class TimeHelperTest extends TestCase
     public function testNice(): void
     {
         $time = '2014-04-20 20:00';
-        $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $this->Time->nice($time));
+        $result = $this->Time->nice($time);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $result);
 
         $result = $this->Time->nice($time, 'America/New_York');
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
     }
 
@@ -167,8 +170,9 @@ class TimeHelperTest extends TestCase
     public function testNiceOutputTimezone(): void
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $time = '2014-04-20 20:00';
-        $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $this->Time->nice($time));
+        $result = $this->Time->nice('2014-04-20 20:00');
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $result);
     }
 
     /**
@@ -462,12 +466,12 @@ class TimeHelperTest extends TestCase
         $time = strtotime('Thu Jan 14 13:59:28 2010');
 
         $result = $this->Time->format($time);
-        $expected = '1/14/10, 1:59 PM';
-        $this->assertTimeFormat($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertTimeFormat('1/14/10, 1:59 PM', $result);
 
         $result = $this->Time->format($time, IntlDateFormatter::FULL);
-        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
-        $this->assertStringStartsWith($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertStringStartsWith('Thursday, January 14, 2010 at 1:59:28 PM', $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
@@ -490,13 +494,13 @@ class TimeHelperTest extends TestCase
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->format($time);
-        $expected = '1/14/10, 12:59 AM';
-        $this->assertTimeFormat($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertTimeFormat('1/14/10, 12:59 AM', $result);
 
         $time = new DateTime('Thu Jan 14 8:59:28 2010', 'UTC');
         $result = $this->Time->format($time);
-        $expected = '1/14/10, 12:59 AM';
-        $this->assertTimeFormat($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertTimeFormat('1/14/10, 12:59 AM', $result);
     }
 
     /**
@@ -508,8 +512,8 @@ class TimeHelperTest extends TestCase
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->i18nFormat($time, [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
-        $expected = '1/14/10, 12:59:28 AM';
-        $this->assertStringStartsWith($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertStringStartsWith('1/14/10, 12:59:28 AM', $result);
     }
 
     /**
@@ -519,6 +523,7 @@ class TimeHelperTest extends TestCase
     {
         $time = '2010-01-14 13:59:28';
         $result = $this->Time->format($time);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertTimeFormat('1/14/10 1:59 PM', $result);
 
         $result = $this->Time->format($time, 'HH:mm', false, 'America/New_York');
