@@ -115,7 +115,7 @@ class ExceptionTrap
      */
     public function renderer(Throwable $exception, ?ServerRequestInterface $request = null): ExceptionRendererInterface
     {
-        $request = $request ?? Router::getRequest();
+        $request ??= Router::getRequest();
 
         /** @var callable|class-string $class */
         $class = $this->getConfig('exceptionRenderer') ?: $this->chooseRenderer();

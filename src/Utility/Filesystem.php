@@ -55,7 +55,7 @@ class Filesystem
      */
     public function find(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
         /** @psalm-suppress ArgumentTypeCoercion */
@@ -80,7 +80,7 @@ class Filesystem
      */
     public function findRecursive(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
         /** @psalm-suppress ArgumentTypeCoercion */

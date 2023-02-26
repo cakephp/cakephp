@@ -298,7 +298,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadRoutes(?array $appArgs = null): void
     {
-        $appArgs = $appArgs ?? [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
+        $appArgs ??= [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
         /** @var class-string $className */
         $className = Configure::read('App.namespace') . '\\Application';
         try {

@@ -529,7 +529,7 @@ class PaginatorHelper extends Helper
             $url = Hash::merge($url, $baseUrl);
         }
 
-        $url['?'] = $url['?'] ?? [];
+        $url['?'] ??= [];
 
         if (!empty($this->_config['options']['routePlaceholders'])) {
             $placeholders = array_flip($this->_config['options']['routePlaceholders']);
@@ -1149,7 +1149,7 @@ class PaginatorHelper extends Helper
             '50' => '50',
             '100' => '100',
         ];
-        $default = $default ?? $this->paginated()->perPage();
+        $default ??= $this->paginated()->perPage();
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
         if ($scope) {

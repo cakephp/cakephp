@@ -80,7 +80,7 @@ trait LocatorAwareTrait
      */
     public function fetchTable(?string $alias = null, array $options = []): Table
     {
-        $alias = $alias ?? $this->defaultTable;
+        $alias ??= $this->defaultTable;
         if (empty($alias)) {
             throw new UnexpectedValueException(
                 'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
