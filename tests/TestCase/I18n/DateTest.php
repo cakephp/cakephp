@@ -81,7 +81,7 @@ class DateTest extends TestCase
 
         $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
-        $expected = '12:00 AM';
+        $expected = '12:00 AM';
         $this->assertSame($expected, $result);
 
         $result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
@@ -99,7 +99,7 @@ class DateTest extends TestCase
 
         $time = new Date('2014-01-01T00:00:00Z');
         $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
-        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
+        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
         $this->assertStringStartsWith($expected, $result);
     }
 

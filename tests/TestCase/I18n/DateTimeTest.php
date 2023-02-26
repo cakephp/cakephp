@@ -360,10 +360,10 @@ class DateTimeTest extends TestCase
     public function testNice(): void
     {
         $time = new DateTime('2014-04-20 20:00', 'UTC');
-        $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $time->nice());
+        $this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $time->nice());
 
         $result = $time->nice('America/New_York');
-        $this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
+        $this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
         $this->assertSame('UTC', $time->getTimezone()->getName());
 
         $this->assertTimeFormat('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
@@ -383,7 +383,7 @@ class DateTimeTest extends TestCase
 
         // Test the default format which should be SHORT
         $result = $time->i18nFormat();
-        $expected = '1/14/10, 1:59 PM';
+        $expected = '1/14/10, 1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
         // Test with a custom timezone
@@ -394,7 +394,7 @@ class DateTimeTest extends TestCase
         // Test using a time-specific format
         $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
         $result = $time->i18nFormat($format);
-        $expected = '1:59 PM';
+        $expected = '1:59 PM';
         $this->assertTimeFormat($expected, $result);
 
         // Test using a specific format, timezone and locale
@@ -436,22 +436,22 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00+09');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00-01:30');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00Z');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
-        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
     }
 
