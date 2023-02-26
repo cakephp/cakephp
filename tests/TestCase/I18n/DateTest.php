@@ -80,9 +80,8 @@ class DateTest extends TestCase
         $this->assertSame($expected, $result);
 
         $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
-        $result = $time->i18nFormat($format);
-        $expected = '12:00 AM';
-        $this->assertSame($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $time->i18nFormat($format));
+        $this->assertSame('12:00 AM', $result);
 
         $result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
         $expected = '00:00:00';
@@ -99,8 +98,8 @@ class DateTest extends TestCase
 
         $time = new Date('2014-01-01T00:00:00Z');
         $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
-        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
-        $this->assertStringStartsWith($expected, $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertStringStartsWith('Wednesday, January 1, 2014 at 12:00:00 AM', $result);
     }
 
     public function testDiffForHumans(): void
