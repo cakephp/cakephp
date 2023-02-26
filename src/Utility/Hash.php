@@ -355,7 +355,7 @@ class Hash
 
                     return $data;
                 }
-                $_list[$key] = $_list[$key] ?? [];
+                $_list[$key] ??= [];
                 $_list = &$_list[$key];
                 if (!is_array($_list)) {
                     $_list = [];
@@ -500,8 +500,8 @@ class Hash
                 $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
-                    $group[$i] = $group[$i] ?? 0;
-                    $out[$group[$i]] = $out[$group[$i]] ?? [];
+                    $group[$i] ??= 0;
+                    $out[$group[$i]] ??= [];
                     if ($keys === null) {
                         $out[$group[$i]][] = $vals[$i];
                     } else {

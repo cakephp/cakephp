@@ -2374,12 +2374,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return null;
         }
 
-        $defaultMessage = 'This field is required';
-        if ($this->_useI18n) {
-            $defaultMessage = __d('cake', 'This field is required');
+        if (isset($this->_presenceMessages[$field])) {
+            return $this->_presenceMessages[$field];
         }
 
-        return $this->_presenceMessages[$field] ?? $defaultMessage;
+        if ($this->_useI18n) {
+            return __d('cake', 'This field is required');
+        }
+
+        return 'This field is required';
     }
 
     /**
@@ -2394,18 +2397,21 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return null;
         }
 
-        $defaultMessage = 'This field cannot be left empty';
-        if ($this->_useI18n) {
-            $defaultMessage = __d('cake', 'This field cannot be left empty');
-        }
-
         foreach ($this->_fields[$field] as $rule) {
             if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
                 return $rule->get('message');
             }
         }
 
-        return $this->_allowEmptyMessages[$field] ?? $defaultMessage;
+        if (isset($this->_allowEmptyMessages[$field])) {
+            return $this->_allowEmptyMessages[$field];
+        }
+
+        if ($this->_useI18n) {
+            return __d('cake', 'This field cannot be left empty');
+        }
+
+        return 'This field cannot be left empty';
     }
 
     /**

@@ -494,7 +494,7 @@ class I18nExtractCommand extends Command
                     $singular = '';
                     $vars = array_combine($map, $strings);
                     extract($vars);
-                    $domain = $domain ?? 'default';
+                    $domain ??= 'default';
                     $details = [
                         'file' => $this->_file,
                         'line' => $line,
@@ -587,7 +587,7 @@ class I18nExtractCommand extends Command
      */
     protected function _store(string $domain, string $header, string $sentence): void
     {
-        $this->_storage[$domain] = $this->_storage[$domain] ?? [];
+        $this->_storage[$domain] ??= [];
 
         if (!isset($this->_storage[$domain][$sentence])) {
             $this->_storage[$domain][$sentence] = $header;

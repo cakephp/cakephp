@@ -247,7 +247,7 @@ class TextHelper extends Helper
      */
     public function autoParagraph(?string $text): string
     {
-        $text = $text ?? '';
+        $text ??= '';
         if (trim($text) !== '') {
             $text = (string)preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
             $text = (string)preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));

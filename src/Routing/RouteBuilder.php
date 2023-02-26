@@ -796,7 +796,7 @@ class RouteBuilder
      */
     public function redirect(string $route, array|string $url, array $options = []): Route
     {
-        $options['routeClass'] = $options['routeClass'] ?? RedirectRoute::class;
+        $options['routeClass'] ??= RedirectRoute::class;
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }

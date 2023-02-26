@@ -94,11 +94,11 @@ trait ModelAwareTrait
      */
     public function fetchModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {
-        $modelClass = $modelClass ?? $this->modelClass;
+        $modelClass ??= $this->modelClass;
         if (empty($modelClass)) {
             throw new UnexpectedValueException('Default modelClass is empty');
         }
-        $modelType = $modelType ?? $this->getModelType();
+        $modelType ??= $this->getModelType();
 
         $options = [];
         if (strpos($modelClass, '\\') === false) {

@@ -162,7 +162,7 @@ class SelectLoader
         $filter = $options['keys'];
         $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
         $finder = $this->finder;
-        $options['fields'] = $options['fields'] ?? [];
+        $options['fields'] ??= [];
 
         $query = $finder();
         assert($query instanceof SelectQuery);

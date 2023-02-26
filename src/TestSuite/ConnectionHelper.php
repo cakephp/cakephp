@@ -65,7 +65,7 @@ class ConnectionHelper
      */
     public function enableQueryLogging(?array $connections = null): void
     {
-        $connections = $connections ?? ConnectionManager::configured();
+        $connections ??= ConnectionManager::configured();
         foreach ($connections as $connection) {
             $connection = ConnectionManager::get($connection);
             $message = '--Starting test run ' . date('Y-m-d H:i:s');

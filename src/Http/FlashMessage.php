@@ -138,8 +138,8 @@ class FlashMessage
      */
     public function setExceptionMessage(Throwable $exception, array $options = []): void
     {
-        $options['element'] = $options['element'] ?? 'error';
-        $options['params']['code'] = $options['params']['code'] ?? $exception->getCode();
+        $options['element'] ??= 'error';
+        $options['params']['code'] ??= $exception->getCode();
 
         $message = $exception->getMessage();
         $this->set($message, $options);

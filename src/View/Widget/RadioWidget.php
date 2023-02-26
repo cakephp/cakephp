@@ -165,7 +165,7 @@ class RadioWidget extends BasicWidget
         }
         $radio['name'] = $data['name'];
 
-        $radio['templateVars'] = $radio['templateVars'] ?? [];
+        $radio['templateVars'] ??= [];
         if (!empty($data['templateVars'])) {
             $radio['templateVars'] = array_merge($data['templateVars'], $radio['templateVars']);
         }

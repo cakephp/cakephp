@@ -122,9 +122,7 @@ trait InstanceConfigTrait
             $this->_configInitialized = true;
         }
 
-        $return = $this->_configRead($key);
-
-        return $return ?? $default;
+        return $this->_configRead($key) ?? $default;
     }
 
     /**
@@ -265,7 +263,7 @@ trait InstanceConfigTrait
                 throw new CakeException(sprintf('Cannot set `%s` value.', $key));
             }
 
-            $update[$k] = $update[$k] ?? [];
+            $update[$k] ??= [];
 
             $update = &$update[$k];
         }

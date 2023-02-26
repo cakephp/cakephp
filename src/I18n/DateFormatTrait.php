@@ -121,7 +121,7 @@ trait DateFormatTrait
             $time = $time->setTimezone($timezone);
         }
 
-        $format = $format ?? static::$_toStringFormat;
+        $format ??= static::$_toStringFormat;
         $locale = $locale ?: DateTime::getDefaultLocale();
 
         return $this->_formatObject($time instanceof DateTimeInterface ? $time : $time->native, $format, $locale);
@@ -231,7 +231,7 @@ trait DateFormatTrait
         array|string|int|null $format = null,
         DateTimeZone|string|null $tz = null
     ): ?static {
-        $format = $format ?? static::$_toStringFormat;
+        $format ??= static::$_toStringFormat;
         $pattern = '';
 
         if (is_array($format)) {
