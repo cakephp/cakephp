@@ -2676,19 +2676,19 @@ class CollectionTest extends TestCase
             [
                 'name' => 'User1',
                 'object_field' => (object)[
-                    'key' => 'val'
+                    'key' => 'val',
                 ],
             ],
             [
                 'name' => 'User2',
                 'object_field' => (object)[
-                    'key' => 'val2'
+                    'key' => 'val2',
                 ],
             ],
             [
                 'name' => 'User3',
                 'object_field' => (object)[
-                    'key' => 'val2'
+                    'key' => 'val2',
                 ],
             ],
         ];
@@ -2697,13 +2697,13 @@ class CollectionTest extends TestCase
                 [
                     'name' => 'User1',
                     'object_field' => (object)[
-                        'key' => 'val'
+                        'key' => 'val',
                     ],
                 ],
                 [
                     'name' => 'User2',
                     'object_field' => (object)[
-                        'key' => 'val2'
+                        'key' => 'val2',
                     ],
                 ],
             ],

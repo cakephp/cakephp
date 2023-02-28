@@ -98,7 +98,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     /**
      * Returns unique elements
      *
-     * @param string|null $key
+     * @param string|null $key An object property or array key that will be used to determine uniqueness.
      * @return \Cake\Collection\CollectionInterface
      */
     public function unique(?string $key = null): CollectionInterface;
