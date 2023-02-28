@@ -30,7 +30,22 @@ class UniqueIterator extends FilterIterator
             if (is_null($key)) {
                 $key = $value = $item;
             } else {
-                $value = $item[$key] ?? null;
+                if (is_object($item) && method_exists($item, 'get' . ucfirst($key))) {
+                    $value = $item->{'get' . ucfirst($key)};
+                } elseif (is_object($item) && method_exists($item, '__toString')) {
+                    $value = (string)$item;
+                } elseif (is_object($item) && property_exists($item, $key)) {
+                    $value = $item->{$key};
+                } elseif (is_array($item)) {
+                    $value = array_key_exists($key, $item) ? $item[$key] : null;
+                } else {
+                    throw new \InvalidArgumentException(sprintf(
+                        "Can't get value by key '%s' from item '%s', you need to implement get<Key> or __toString
+                        method or make property public in case object or there just no needed key in case of array",
+                        $key,
+                        is_object($item) ? get_class($item) : gettype($item)
+                    ));
+                }
             }
 
             if (is_object($value)) {
@@ -38,13 +53,16 @@ class UniqueIterator extends FilterIterator
                     $value = $value->format('Y-m-d\TH:i:sO');
                 } elseif (method_exists($value, '__toString')) {
                     $value = (string)$value;
-                } elseif ($pValue = print_r($value, true)) {
-                    $value = md5($pValue);
                 } else {
-                    throw new \InvalidArgumentException(sprintf(
-                        "Value '%s' couldn't be used as array index, please implement __toString method first",
-                        get_class($value)
-                    ));
+                    $pValue = print_r($value, true);
+                    if ($pValue) {
+                        $value = md5($pValue);
+                    } else {
+                        throw new \InvalidArgumentException(sprintf(
+                            "Value '%s' couldn't be used as array index, please implement __toString method first",
+                            get_class($value)
+                        ));
+                    }
                 }
             }
 

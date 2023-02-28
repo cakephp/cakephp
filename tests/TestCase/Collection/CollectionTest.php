@@ -2709,5 +2709,22 @@ class CollectionTest extends TestCase
             ],
             (new Collection($itemsWithObjects2))->unique('object_field')->toList()
         );
+
+        $itemsWithObjects3 = [
+            (object)[
+                'name' => 'User1',
+            ],
+            (object)[
+                'name' => 'User1',
+            ],
+        ];
+        $this->assertEquals(
+            [
+                (object)[
+                    'name' => 'User1',
+                ],
+            ],
+            (new Collection($itemsWithObjects3))->unique('name')->toList()
+        );
     }
 }
