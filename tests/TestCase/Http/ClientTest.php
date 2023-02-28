@@ -778,6 +778,7 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
+                    []
                     ]
                 )
             )
