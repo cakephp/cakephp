@@ -101,15 +101,10 @@ class ControllerTest extends TestCase
      */
     public function testUndefinedPropertyError(): void
     {
-        $controller = new Controller(new ServerRequest());
-
-        $this->expectNotice();
-        $this->expectNoticeMessage(sprintf(
-            'Undefined property `Controller::$Foo` in `%s` on line %s',
-            __FILE__,
-            __LINE__ + 2
-        ));
-        $controller->Foo->baz();
+        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function () {
+            $controller = new Controller(new ServerRequest());
+            $controller->Foo->baz();
+        });
     }
 
     /**

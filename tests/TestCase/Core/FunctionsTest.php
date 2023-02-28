@@ -279,13 +279,11 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabled(): void
     {
-        $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('5.0.0', 'This is going away', 2);
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/', function () {
+            $this->withErrorReporting(E_ALL, function (): void {
+                deprecationWarning('5.0.0', 'This is going away', 2);
+            });
         });
-        $this->assertMatchesRegularExpression(
-            '/This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/',
-            $error->getMessage()
-        );
     }
 
     /**
@@ -293,13 +291,11 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
-        $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('5.0.0', 'This is going away too');
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+            $this->withErrorReporting(E_ALL, function (): void {
+                deprecationWarning('5.0.0', 'This is going away too');
+            });
         });
-        $this->assertMatchesRegularExpression(
-            '/This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
-            $error->getMessage()
-        );
     }
 
     /**
@@ -332,13 +328,12 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $error = $this->captureError(E_ALL, function (): void {
-            triggerWarning('This will be gone one day ' . uniqid());
+        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+            $this->withErrorReporting(E_ALL, function (): void {
+                triggerWarning('This will be gone one day');
+                $this->assertTrue(true);
+            });
         });
-        $this->assertMatchesRegularExpression(
-            '/This will be gone one day \w+ - (.*?)[\/\\\]TestCase.php, line\: \d+/',
-            $error->getMessage()
-        );
     }
 
     /**

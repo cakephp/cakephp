@@ -35,6 +35,7 @@ use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
 use Closure;
+use Exception;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
@@ -1086,5 +1087,72 @@ abstract class TestCase extends BaseTestCase
     public function getFixtures(): array
     {
         return $this->fixtures;
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectNoticeMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_NOTICE);
+    }
+
+    /**
+     * @param string $regex A regex to match against the deprecation message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectDeprecationMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_DEPRECATED);
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectWarningMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_WARNING);
+    }
+
+    /**
+     * @param string $regex A regex to match against the error message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectErrorMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_ERROR | E_USER_ERROR);
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @param int $errorLevel The error level to listen to
+     * @return void
+     * @throws \Exception
+     */
+    protected function expectErrorHandlerMessageMatches(string $regex, Closure $callable, int $errorLevel): void
+    {
+        set_error_handler(static function (int $errno, string $errstr): never {
+            $tmp = '';
+            throw new Exception($errstr, $errno);
+        }, $errorLevel);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches($regex);
+        try {
+            $callable();
+        } finally {
+            restore_error_handler();
+        }
     }
 }
