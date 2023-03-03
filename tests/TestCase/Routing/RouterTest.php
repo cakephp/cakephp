@@ -29,6 +29,7 @@ use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Routing\url;
 
 /**
  * RouterTest class
@@ -3324,6 +3325,16 @@ class RouterTest extends TestCase
         $this->expectExceptionMessage('cannot be used when defining route targets with a string route path.');
 
         Router::url(['_path' => 'Articles::index'] + $params);
+    }
+
+    /**
+     * Test the url() function which wraps Router::url()
+     *
+     * @return void
+     */
+    public function testUrlFunction(): void
+    {
+        $this->assertSame(Router::url('/'), url('/'));
     }
 
     /**
