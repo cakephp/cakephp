@@ -917,10 +917,9 @@ class ResponseTest extends TestCase
         $response = new Response();
         $cookie = new Cookie('yay', 'a value');
         $response = $response->withExpiredCookie($cookie);
-
-        $this->assertSame(1, $response->getCookie('yay')['expires']);
-
         date_default_timezone_set('UTC');
+        
+        $this->assertSame(1, $response->getCookie('yay')['expires']);
     }
 
     /**
