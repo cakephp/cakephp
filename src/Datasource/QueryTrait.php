@@ -580,6 +580,22 @@ trait QueryTrait
     }
 
     /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Colllection\CollectionInterface::each()
+     * @deprecated
+     * @return mixed
+     */
+    public function each(callable $callback)
+    {
+        deprecationWarning(
+            '4.5.0 - Calling each() on a Query is deprecated. ' .
+            'Instead call `$query->all()->each(...)` instead.'
+        );
+
+        return $this->all()->each($callback);
+    }
+
+    /**
      * Populates or adds parts to current query clauses using an array.
      * This is handy for passing all query clauses at once.
      *
