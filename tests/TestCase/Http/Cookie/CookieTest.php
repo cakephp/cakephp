@@ -246,7 +246,7 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpired();
 
-        $this->assertStringContainsString('01-Jan-1970 00:00:01 UTC', $new->toHeaderValue());
+        $this->assertStringContainsString('01-Jan-1970 00:00:01 GMT+0000', $new->toHeaderValue());
 
         date_default_timezone_set('UTC');
     }
