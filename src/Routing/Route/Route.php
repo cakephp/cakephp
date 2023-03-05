@@ -338,7 +338,7 @@ class Route
                 } else {
                     $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 }
-                // phpcs:disable Generic.Files.LineLength
+                // phpcs:enable Generic.Files.LineLength
             } else {
                 $routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
             }
