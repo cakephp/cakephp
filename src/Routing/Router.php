@@ -1001,7 +1001,7 @@ class Router
      * - Vendor/Cms.Management/Admin/Articles::view
      *
      * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
-     * @return array<string, string>
+     * @return array<string|int, string>
      */
     public static function parseRoutePath(string $url): array
     {
@@ -1015,6 +1015,7 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
+            (?<params>[a-z0-9_/]*)
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
@@ -1031,6 +1032,11 @@ class Router
         }
         $defaults['controller'] = $matches['controller'];
         $defaults['action'] = $matches['action'];
+
+        if ($matches['params'] !== '') {
+            $paramsArray = array_values(array_filter(explode('/', $matches['params'])));
+            $defaults += $paramsArray;
+        }
 
         static::$_routePaths[$url] = $defaults;
 

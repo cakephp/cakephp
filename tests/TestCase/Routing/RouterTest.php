@@ -2260,6 +2260,24 @@ class RouterTest extends TestCase
             'action' => 'view',
         ];
         $this->assertSame($expected, Router::parseRoutePath('Vendor/Cms.Management/Admin/Articles::view'));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            '1',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/1'));
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/1/'));
+
+        $expected = [
+            'plugin' => 'Cms',
+            'controller' => 'Articles',
+            'action' => 'edit',
+            '2023',
+            '03',
+            '5th',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Cms.Articles::edit/2023/03/5th'));
     }
 
     /**
