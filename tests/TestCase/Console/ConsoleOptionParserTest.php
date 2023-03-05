@@ -54,7 +54,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($parser, $result, 'Setting description is not chainable');
         $this->assertSame('A test', $parser->getDescription(), 'getting value is wrong.');
 
-        $result = $parser->setDescription(['A test', 'something']);
+        $parser->setDescription(['A test', 'something']);
         $this->assertSame("A test\nsomething", $parser->getDescription(), 'getting value is wrong.');
     }
 
@@ -69,7 +69,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($parser, $result, 'Setting epilog is not chainable');
         $this->assertSame('A test', $parser->getEpilog(), 'getting value is wrong.');
 
-        $result = $parser->setEpilog(['A test', 'something']);
+        $parser->setEpilog(['A test', 'something']);
         $this->assertSame("A test\nsomething", $parser->getEpilog(), 'getting value is wrong.');
     }
 
@@ -552,7 +552,7 @@ class ConsoleOptionParserTest extends TestCase
         $expected = ['name' => 'mark', 'help' => false];
         $this->assertEquals($expected, $result[0], 'Got the correct value.');
 
-        $result = $parser->parse(['--name', 'jimmy'], $this->io);
+        $parser->parse(['--name', 'jimmy'], $this->io);
     }
 
     /**
@@ -655,7 +655,7 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse($expected, $this->io);
         $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
 
-        $result = $parser->parse(['one', 'two', 'three'], $this->io);
+        $parser->parse(['one', 'two', 'three'], $this->io);
     }
 
     /**
@@ -709,7 +709,7 @@ class ConsoleOptionParserTest extends TestCase
         $expected = ['mark', 'samurai', 'sword'];
         $this->assertEquals($expected, $result[1], 'Got the correct value.');
 
-        $result = $parser->parse(['jose', 'coder'], $this->io);
+        $parser->parse(['jose', 'coder'], $this->io);
     }
 
     /**

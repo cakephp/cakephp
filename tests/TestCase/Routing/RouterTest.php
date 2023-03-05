@@ -1051,7 +1051,7 @@ class RouterTest extends TestCase
             ['controller' => 'Users', 'action' => 'view'],
             ['_name' => 'test']
         );
-        $url = Router::url(['_name' => 'junk', 'name' => 'mark']);
+        Router::url(['_name' => 'junk', 'name' => 'mark']);
     }
 
     /**
@@ -2869,7 +2869,7 @@ class RouterTest extends TestCase
             ->method('match')
             ->will($this->returnValue($url));
 
-        $routes = Router::createRouteBuilder('/')->connect($route);
+        Router::createRouteBuilder('/')->connect($route);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 1]);
         $this->assertSame($url, $result);

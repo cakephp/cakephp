@@ -550,7 +550,7 @@ class CounterCacheBehaviorTest extends TestCase
                 'comment_count' => 10,
             ],
         ]);
-        $save = $this->post->save($post);
+        $this->post->save($post);
 
         $user = $this->_getUser(1);
         $this->assertSame(10, $user->get('post_count'));
@@ -590,7 +590,7 @@ class CounterCacheBehaviorTest extends TestCase
                 'post_count' => 10,
             ],
         ]);
-        $save = $this->post->save($post);
+        $this->post->save($post);
 
         $user = $this->_getUser(1);
         $this->assertSame(10, $user->get('post_count'));

@@ -110,7 +110,7 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Articles::teaserList');
         $cell->viewBuilder()->setTemplate('nope');
-        $result = "{$cell}";
+        (string)$cell;
     }
 
     /**
@@ -285,8 +285,7 @@ class CellTest extends TestCase
     public function testNonExistentCell(): void
     {
         $this->expectException(MissingCellException::class);
-        $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
-        $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
+        $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
     }
 
     /**

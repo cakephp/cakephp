@@ -152,7 +152,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
-        $link = new SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';

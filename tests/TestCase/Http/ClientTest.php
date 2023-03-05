@@ -403,7 +403,7 @@ class ClientTest extends TestCase
             'host' => 'cakephp.org',
             'adapter' => $mock,
         ]);
-        $result = $http->get('/', [], [
+        $http->get('/', [], [
             'auth' => ['type' => 'horribly broken'],
         ]);
     }

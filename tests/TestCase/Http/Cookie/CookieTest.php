@@ -472,6 +472,6 @@ class CookieTest extends TestCase
         $this->expectException(ValueError::class);
 
         Cookie::setDefaults(['samesite' => 'ompalompa']);
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        new Cookie('cakephp', 'cakephp-rocks');
     }
 }

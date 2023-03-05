@@ -441,6 +441,7 @@ class HasMany extends Association
         $ok = ($result instanceof EntityInterface);
 
         if ($ok) {
+            // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
             $sourceEntity = $result;
         }
         $this->setSaveStrategy($saveStrategy);

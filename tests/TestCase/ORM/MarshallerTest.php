@@ -1303,7 +1303,7 @@ class MarshallerTest extends TestCase
         $entity->setAccess('*', true);
         $entity->setNew(false);
         $entity->clean();
-        $result = $marshall->merge($entity, $data, []);
+        $marshall->merge($entity, $data, []);
 
         $this->assertFalse($entity->isDirty('body'), 'unchanged null should not be dirty');
     }
@@ -1933,7 +1933,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $marshall = new Marshaller($articles);
-        $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
+        $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
 
         $articles->save($entity, ['associated' => ['Tags._joinData']]);
         $this->assertFalse($entity->tags[0]->isDirty('_joinData'));
@@ -2410,7 +2410,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $marshall = new Marshaller($this->comments);
-        $result = $marshall->merge($entity, $data);
+        $marshall->merge($entity, $data);
         $this->assertInstanceOf(DateTime::class, $entity->created);
         $this->assertSame('2014-02-14', $entity->created->format('Y-m-d'));
     }
@@ -3166,7 +3166,7 @@ class MarshallerTest extends TestCase
 
         //test when $options['fields'] is empty
         $entity = $this->articles->newEmptyEntity();
-        $result = $marshall->merge($entity, $data, []);
+        $marshall->merge($entity, $data, []);
 
         $this->assertSame('original title', $entity->title, '$data is immutable');
         $this->assertSame('options[fields] is empty', $entity->body);
@@ -3177,7 +3177,7 @@ class MarshallerTest extends TestCase
 
         //test when $options['fields'] is set
         $entity = $this->articles->newEmptyEntity();
-        $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
+        $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
 
         $this->assertSame('original title', $entity->title, '$data is immutable');
         $this->assertSame('options[fields] is set', $entity->body);

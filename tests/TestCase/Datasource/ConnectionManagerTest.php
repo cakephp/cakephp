@@ -396,7 +396,7 @@ class ConnectionManagerTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The DSN string `bagof:nope` could not be parsed.');
-        $result = ConnectionManager::parseDsn('bagof:nope');
+        ConnectionManager::parseDsn('bagof:nope');
     }
 
     /**

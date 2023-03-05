@@ -800,7 +800,7 @@ class SelectQueryTest extends TestCase
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Impossible to generate condition with empty list of values for field');
         $query = new SelectQuery($this->connection);
-        $result = $query
+        $query
             ->select(['id'])
             ->from('comments')
             ->where(['id' => []], ['id' => 'integer[]'])
@@ -815,7 +815,7 @@ class SelectQueryTest extends TestCase
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('with empty list of values for field (SELECT 1)');
         $query = new SelectQuery($this->connection);
-        $result = $query
+        $query
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp, $q) {
@@ -2787,6 +2787,7 @@ class SelectQueryTest extends TestCase
 
         // Verify query is run again
         $count = 0;
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         foreach ($query->all() as $row) {
             ++$count;
         }

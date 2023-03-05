@@ -328,7 +328,6 @@ class FormHelperTest extends TestCase
         $entity = new Article();
         $collection = new Collection([$entity]);
         $emptyCollection = new Collection([]);
-        $arrayObject = new ArrayObject([]);
         $data = [
             'schema' => [
                 'title' => ['type' => 'string'],

@@ -410,9 +410,6 @@ class AssetTest extends TestCase
     public function testPluginAssetsPrependImageBaseUrl(): void
     {
         $cdnPrefix = 'https://cdn.example.com/';
-        $imageBaseUrl = Configure::read('App.imageBaseUrl');
-        $jsBaseUrl = Configure::read('App.jsBaseUrl');
-        $cssBaseUrl = Configure::read('App.cssBaseUrl');
         Configure::write('App.imageBaseUrl', $cdnPrefix . '{plugin}img/');
         $result = Asset::imageUrl('TestTheme.text.jpg');
         $expected = $cdnPrefix . 'test_theme/img/text.jpg';

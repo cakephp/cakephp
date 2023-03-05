@@ -210,12 +210,10 @@ class TreeBehaviorTest extends TestCase
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
         // root
-        $nodeIds = [];
         $nodes = $table->find('children', ['for' => 1])->all();
         $this->assertEquals([2, 3, 4, 5], $nodes->extract('id')->toArray());
 
         // leaf
-        $nodeIds = [];
         $nodes = $table->find('children', ['for' => 5])->all();
         $this->assertCount(0, $nodes->extract('id')->toArray());
 
@@ -245,7 +243,7 @@ class TreeBehaviorTest extends TestCase
         $this->expectException(RecordNotFoundException::class);
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $query = $table->find('children', ['for' => 500]);
+        $table->find('children', ['for' => 500]);
     }
 
     /**
@@ -405,7 +403,6 @@ class TreeBehaviorTest extends TestCase
 
         // move inner node
         $node = $table->moveUp($table->get(3), 1);
-        $nodes = $table->find('children', ['for' => 1])->all();
         $this->assertEquals(['lft' => 2, 'rght' => 7], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -449,7 +446,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $node = $table->moveUp($table->get(8), true);
+        $table->moveUp($table->get(8), true);
         $expected = [
             ' 1: 2 -  8:Link 8',
             ' 3:12 -  1:Link 1',
@@ -978,8 +975,6 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(17, $entity->lft);
         $this->assertSame(18, $entity->rght);
 
-        $result = $table->find()->orderBy('lft')->enableHydration(false);
-
         $expected = [
             ' 1:20 -  1:electronics',
             '_ 2: 7 -  2:televisions',
@@ -1265,7 +1260,6 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1291,11 +1285,9 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
-        $result = $table->find()->orderBy('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1320,7 +1312,6 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->orderBy('lft')->enableHydration(false)->toArray();
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);

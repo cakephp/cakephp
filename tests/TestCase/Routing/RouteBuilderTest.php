@@ -983,7 +983,7 @@ class RouteBuilderTest extends TestCase
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func);
-        $result = $routes->middlewareGroup('test', ['test']);
+        $routes->middlewareGroup('test', ['test']);
     }
 
     /**

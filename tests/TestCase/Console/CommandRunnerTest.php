@@ -226,7 +226,7 @@ class CommandRunnerTest extends TestCase
 
         $output = new StubConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertStringContainsString(Configure::version(), $output->messages()[0]);
     }
 
@@ -430,7 +430,7 @@ class CommandRunnerTest extends TestCase
             $this->assertInstanceOf(CommandCollection::class, $commands);
             $this->eventTriggered = true;
         });
-        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
     }
 
@@ -450,7 +450,6 @@ class CommandRunnerTest extends TestCase
         $app->expects($this->once())->method('bootstrap');
         $app->expects($this->once())->method('pluginBootstrap');
 
-        $commands = new CommandCollection();
         $app->expects($this->once())
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
@@ -462,7 +461,7 @@ class CommandRunnerTest extends TestCase
 
         $output = new StubConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertStringContainsString(Configure::version(), $output->messages()[0]);
     }
 

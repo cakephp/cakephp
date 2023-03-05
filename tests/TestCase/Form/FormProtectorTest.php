@@ -755,9 +755,6 @@ class FormProtectorTest extends TestCase
         ];
 
         $this->validate($data, 'Invalid form protection debug token.');
-
-        $debug = urlencode(json_encode('not an array'));
-        $this->validate($data, 'Invalid form protection debug token.');
     }
 
     /**

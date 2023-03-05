@@ -139,7 +139,7 @@ class XmlTest extends TestCase
     {
         $this->expectException(XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
-        $obj = Xml::build($xml, ['readFile' => false]);
+        Xml::build($xml, ['readFile' => false]);
     }
 
     /**

@@ -56,7 +56,7 @@ class RouteTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid HTTP method received. `NOPE` is invalid');
-        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index', '_method' => 'nope']);
+        new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index', '_method' => 'nope']);
     }
 
     /**
@@ -174,7 +174,6 @@ class RouteTest extends TestCase
             '/fighters/{0id}',
             ['controller' => 'Fighters', 'action' => 'move']
         );
-        $pattern = $route->compile();
         $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'Placeholders must start with letter');
 
         $route = new Route('/fighters/{Id}', ['controller' => 'Fighters', 'action' => 'move']);
@@ -1743,7 +1742,7 @@ class RouteTest extends TestCase
     public function testSetPatternsMultibyte(): void
     {
         $route = new Route('/reviews/{accountid}/{slug}', ['controller' => 'Reviews', 'action' => 'view']);
-        $result = $route->setPatterns([
+        $route->setPatterns([
             'date' => '[A-zА-я\-\ ]+',
             'accountid' => '[a-z]+',
         ]);

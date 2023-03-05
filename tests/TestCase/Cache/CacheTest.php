@@ -815,7 +815,6 @@ class CacheTest extends TestCase
         $result = Cache::remember('test_key', $cacher, 'tests');
         $this->assertSame($expected, $result);
 
-        $counter = 1;
         $result = Cache::remember('test_key', $cacher, 'tests');
         $this->assertSame($expected, $result);
     }

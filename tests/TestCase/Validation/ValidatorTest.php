@@ -353,6 +353,7 @@ class ValidatorTest extends TestCase
         });
         $this->assertTrue($validator->isPresenceRequired('title', true));
 
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         $require = false;
         $this->assertFalse($validator->isPresenceRequired('title', true));
     }
@@ -1322,6 +1323,7 @@ class ValidatorTest extends TestCase
         });
         $this->assertTrue($validator->isEmptyAllowed('title', true));
 
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         $allow = false;
         $this->assertFalse($validator->isEmptyAllowed('title', true));
     }
@@ -1342,6 +1344,7 @@ class ValidatorTest extends TestCase
         });
         $this->assertFalse($validator->isEmptyAllowed('title', false));
 
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         $prevent = false;
         $this->assertTrue($validator->isEmptyAllowed('title', false));
     }

@@ -832,7 +832,6 @@ class EntityTest extends TestCase
             'title',
             'author_id',
         ];
-        $result = $entity->getDirty();
         $this->assertSame($expected, $entity->getDirty());
     }
 

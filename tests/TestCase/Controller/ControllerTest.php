@@ -660,7 +660,6 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(3, $results);
 
-        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($results->currentPage(), 1);
         $this->assertSame($results->pageCount(), 1);
         $this->assertFalse($results->hasPrevPage());
@@ -674,7 +673,6 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(1, $results);
 
-        $paging = $Controller->getRequest()->getAttribute('paging');
         $this->assertSame($results->currentPage(), 2);
         $this->assertSame($results->pageCount(), 2);
         $this->assertTrue($results->hasPrevPage());

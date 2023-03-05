@@ -370,7 +370,6 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $response = new Response();
         $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals([], $req->getParsedBody());
 

@@ -109,10 +109,10 @@ class EagerLoaderTest extends TestCase
         $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
         $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
         $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);
-        $orderTypes = $this->getTableLocator()->get('orderTypes', ['schema' => $schema]);
+        $this->getTableLocator()->get('orderTypes', ['schema' => $schema]);
         $stuff = $this->getTableLocator()->get('stuff', ['schema' => $schema, 'table' => 'things']);
-        $stuffTypes = $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
-        $categories = $this->getTableLocator()->get('categories', ['schema' => $schema]);
+        $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
+        $this->getTableLocator()->get('categories', ['schema' => $schema]);
 
         $table->belongsTo('clients');
         $clients->hasOne('orders');
@@ -506,11 +506,6 @@ class EagerLoaderTest extends TestCase
                 ],
             ],
         ];
-
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->table])
-            ->getMock();
 
         $loader = new EagerLoader();
         $loader->contain($contains);

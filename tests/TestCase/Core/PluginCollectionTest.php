@@ -167,7 +167,7 @@ class PluginCollectionTest extends TestCase
         ];
         $plugins = new PluginCollection($data);
         $out = [];
-        foreach ($plugins as $key => $plugin) {
+        foreach ($plugins as $plugin) {
             $this->assertInstanceOf(PluginInterface::class, $plugin);
             $out[] = $plugin;
         }
@@ -211,6 +211,7 @@ class PluginCollectionTest extends TestCase
 
         $out = [];
         foreach ($plugins->with('routes') as $p) {
+            // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
             foreach ($plugins as $i) {
                 // Do nothing, we just need to enumerate the collection
             }
@@ -226,6 +227,7 @@ class PluginCollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $plugins = new PluginCollection();
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         foreach ($plugins->with('bad') as $p) {
         }
     }

@@ -516,9 +516,6 @@ class UrlHelperTest extends TestCase
     public function testPluginAssetsPrependImageBaseUrl(): void
     {
         $cdnPrefix = 'https://cdn.example.com/';
-        $imageBaseUrl = Configure::read('App.imageBaseUrl');
-        $jsBaseUrl = Configure::read('App.jsBaseUrl');
-        $cssBaseUrl = Configure::read('App.cssBaseUrl');
         Configure::write('App.imageBaseUrl', $cdnPrefix);
         $result = $this->Helper->image('TestTheme.text.jpg');
         $expected = $cdnPrefix . 'text.jpg';
