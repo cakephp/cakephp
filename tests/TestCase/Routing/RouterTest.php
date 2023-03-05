@@ -2278,6 +2278,22 @@ class RouterTest extends TestCase
             '5th',
         ];
         $this->assertSame($expected, Router::parseRoutePath('Cms.Articles::edit/2023/03/5th'));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organisation' => 'cakephp',
+            'repository' => 'debug_kit',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organisation:cakephp/repository:debug_kit'));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organisation' => 'cakephp',
+            'bake',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organisation:cakephp/bake'));
     }
 
     /**

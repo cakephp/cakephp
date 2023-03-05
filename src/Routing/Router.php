@@ -1015,7 +1015,7 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
-            (?<params>[a-z0-9_/]*)
+            (?<params>[a-z0-9_/:]*)
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
@@ -1035,7 +1035,16 @@ class Router
 
         if ($matches['params'] !== '') {
             $paramsArray = array_values(array_filter(explode('/', $matches['params'])));
-            $defaults += $paramsArray;
+            $convertedArray = [];
+            foreach ($paramsArray as $param) {
+                if (strpos($param, ':') !== false) {
+                    $explodedParam = explode(':', $param);
+                    $convertedArray[$explodedParam[0]] = $explodedParam[1];
+                } else {
+                    $convertedArray[] = $param;
+                }
+            }
+            $defaults += $convertedArray;
         }
 
         static::$_routePaths[$url] = $defaults;
