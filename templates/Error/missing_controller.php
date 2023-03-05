@@ -11,7 +11,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
- * @var string $class
+ * @var string $controller
  */
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -21,10 +21,10 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
 $prefixNs = $prefixPath = '';
 
-$incompleteInflection = (strpos($class, '_') !== false || strpos($class, '-'));
-$originalClass = $class;
+$incompleteInflection = (strpos($controller, '_') !== false || strpos($controller, '-'));
+$originalClass = $controller;
 
-$class = Inflector::camelize($class);
+$class = Inflector::camelize($controller);
 
 if (!empty($prefix)) {
     $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Core\Configure;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -75,10 +77,31 @@ class LoggingStatement extends StatementDecorator
             $result = parent::execute($params);
             $this->loggedQuery->took = (int)round((microtime(true) - $this->startTime) * 1000, 0);
         } catch (Exception $e) {
-            /** @psalm-suppress UndefinedPropertyAssignment */
-            $e->queryString = $this->queryString;
             $this->loggedQuery->error = $e;
             $this->_log();
+
+            if (Configure::read('Error.convertStatementToDatabaseException', false) === true) {
+                $code = $e->getCode();
+                if (!is_int($code)) {
+                    $code = null;
+                }
+
+                throw new DatabaseException([
+                    'message' => $e->getMessage(),
+                    'queryString' => $this->queryString,
+                ], $code, $e);
+            }
+
+            if (version_compare(PHP_VERSION, '8.2.0', '<')) {
+                deprecationWarning(
+                    '4.4.12 - Having queryString set on exceptions is deprecated.' .
+                    'If you are not using this attribute there is no action to take.' .
+                    'Otherwise, enable Error.convertStatementToDatabaseException.'
+                );
+                /** @psalm-suppress UndefinedPropertyAssignment */
+                $e->queryString = $this->queryString;
+            }
+
             throw $e;
         }
 

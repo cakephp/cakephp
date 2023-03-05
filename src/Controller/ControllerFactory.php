@@ -346,10 +346,11 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     protected function missingController(ServerRequest $request)
     {
         return new MissingControllerException([
-            'class' => $request->getParam('controller'),
+            'controller' => $request->getParam('controller'),
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
             '_ext' => $request->getParam('_ext'),
+            'class' => $request->getParam('controller'), // Deprecated: Will be removed in 4.5. Use `controller` instead.
         ]);
     }
 }

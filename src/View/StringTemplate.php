@@ -179,7 +179,14 @@ class StringTemplate
             $template = $this->get($name);
             if ($template === null) {
                 $this->_compiled[$name] = [null, null];
+
+                continue;
             }
+
+            assert(
+                is_string($template),
+                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template))
+            );
 
             $template = str_replace('%', '%%', $template);
             preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
