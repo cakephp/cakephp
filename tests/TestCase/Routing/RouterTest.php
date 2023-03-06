@@ -2285,7 +2285,7 @@ class RouterTest extends TestCase
             'organization' => 'cakephp',
             'repository' => 'debug_kit',
         ];
-        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization:cakephp/repository:debug_kit'));
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization=cakephp/repository=debug_kit'));
 
         $expected = [
             'controller' => 'Bookmarks',
@@ -2293,7 +2293,7 @@ class RouterTest extends TestCase
             'organization' => 'cakephp',
             'bake',
         ];
-        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization:cakephp/bake'));
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization=cakephp/bake'));
     }
 
     /**
