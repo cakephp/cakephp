@@ -876,6 +876,7 @@ trait CollectionTrait
      */
     public function isEmpty(): bool
     {
+        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
         foreach ($this as $el) {
             return false;
         }

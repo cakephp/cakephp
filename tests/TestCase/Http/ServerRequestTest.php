@@ -1173,7 +1173,7 @@ class ServerRequestTest extends TestCase
         $this->expectExceptionMessage('`post` key must be an array, object or null. Got `string` instead.');
 
         $post = 'strange, but could happen';
-        $request = new ServerRequest(compact('post'));
+        new ServerRequest(compact('post'));
     }
 
     /**

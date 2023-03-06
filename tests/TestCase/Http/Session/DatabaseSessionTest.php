@@ -154,7 +154,7 @@ class DatabaseSessionTest extends TestCase
     {
         $entity = new Entity();
         $entity->value = 'something';
-        $result = $this->storage->write('key', serialize($entity));
+        $this->storage->write('key', serialize($entity));
         $data = $this->getTableLocator()->get('Sessions')->get('key')->data;
         $this->assertSame(serialize($entity), stream_get_contents($data));
     }

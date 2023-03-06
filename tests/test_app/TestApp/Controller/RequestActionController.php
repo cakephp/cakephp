@@ -74,17 +74,6 @@ class RequestActionController extends AppController
     }
 
     /**
-     * paginate_request_action method
-     *
-     * @return void
-     */
-    public function paginate_request_action()
-    {
-        $data = $this->paginate();
-        $this->autoRender = false;
-    }
-
-    /**
      * post pass, testing post passing
      *
      * @return \Cake\Http\Response

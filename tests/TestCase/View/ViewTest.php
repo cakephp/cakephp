@@ -1769,7 +1769,6 @@ TEXT;
         $result = $this->View->disableAutoLayout();
         $this->assertSame($this->View, $result);
 
-        $autoLayout = $this->View->isAutoLayoutEnabled();
         $this->assertFalse($this->View->isAutoLayoutEnabled());
     }
 

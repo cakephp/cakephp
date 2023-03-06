@@ -145,7 +145,7 @@ class EntityContextTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
         $row = new stdClass();
-        $context = new EntityContext([
+        new EntityContext([
             'entity' => $row,
         ]);
     }
@@ -157,7 +157,7 @@ class EntityContextTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
-        $context = new EntityContext([
+        new EntityContext([
             'entity' => new Entity(),
         ]);
     }
@@ -813,7 +813,6 @@ class EntityContextTest extends TestCase
     public function testIsRequiredAssociatedCustomValidator(): void
     {
         $this->_setupTables();
-        $users = $this->getTableLocator()->get('Users');
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
@@ -1159,7 +1158,6 @@ class EntityContextTest extends TestCase
     {
         $this->_setupTables();
 
-        $comments = $this->getTableLocator()->get('Comments');
         $row = new Article([
             'title' => 'My title',
             'comments' => [

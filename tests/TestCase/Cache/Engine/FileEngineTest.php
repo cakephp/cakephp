@@ -220,7 +220,7 @@ class FileEngineTest extends TestCase
         $this->_configCache(['serialize' => false]);
         $read = Cache::read('serialize_test', 'file_test');
 
-        $delete = Cache::delete('serialize_test', 'file_test');
+        Cache::delete('serialize_test', 'file_test');
         $this->assertSame($read, serialize($data));
         $this->assertSame(unserialize($read), $data);
     }
@@ -456,7 +456,7 @@ class FileEngineTest extends TestCase
         }
         Cache::setConfig('mask_test', ['engine' => 'File', 'path' => TMP . 'tests']);
         $data = 'This is some test content';
-        $write = Cache::write('masking_test', $data, 'mask_test');
+        Cache::write('masking_test', $data, 'mask_test');
         $result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
         $expected = '0664';
         $this->assertSame($expected, $result);

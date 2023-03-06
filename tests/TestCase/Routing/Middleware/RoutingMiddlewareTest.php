@@ -301,7 +301,7 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $middleware = new RoutingMiddleware($app);
-        $result = $middleware->process($request, $app);
+        $middleware->process($request, $app);
         $this->assertSame(['second', 'first', 'last'], $this->log);
     }
 
@@ -340,7 +340,7 @@ class RoutingMiddlewareTest extends TestCase
             $this->fail('Should not be invoked as first should be ignored.');
         });
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware->process($request, $handler);
+        $middleware->process($request, $handler);
 
         $this->assertSame(['first', 'second'], $this->log);
     }
@@ -377,7 +377,7 @@ class RoutingMiddlewareTest extends TestCase
             $this->fail('Should not be invoked as first should be ignored.');
         });
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware->process($request, $handler);
+        $middleware->process($request, $handler);
 
         $this->assertSame(['first'], $this->log);
     }
@@ -423,7 +423,7 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $middleware = new RoutingMiddleware($app);
-        $result = $middleware->process($request, $app);
+        $middleware->process($request, $app);
         $this->assertSame($expected, $this->log);
     }
 

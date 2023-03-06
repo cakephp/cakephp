@@ -122,7 +122,7 @@ class ConnectionTest extends TestCase
     {
         $this->expectException(MissingDriverException::class);
         $this->expectExceptionMessage('Could not find driver `` for connection ``.');
-        $connection = new Connection([]);
+        new Connection([]);
     }
 
     /**
@@ -131,7 +131,7 @@ class ConnectionTest extends TestCase
     public function testEmptyDriver(): void
     {
         $this->expectException(Error::class);
-        $connection = new Connection(['driver' => false]);
+        new Connection(['driver' => false]);
     }
 
     /**
@@ -141,7 +141,7 @@ class ConnectionTest extends TestCase
     {
         $this->expectException(MissingDriverException::class);
         $this->expectExceptionMessage('Could not find driver `\Foo\InvalidDriver` for connection ``.');
-        $connection = new Connection(['driver' => '\Foo\InvalidDriver']);
+        new Connection(['driver' => '\Foo\InvalidDriver']);
     }
 
     /**
@@ -158,7 +158,7 @@ class ConnectionTest extends TestCase
             ->onlyMethods(['enabled'])
             ->setMockClassName('DriverMock')
             ->getMock();
-        $connection = new Connection(['driver' => $mock, 'name' => 'custom_connection_name']);
+        new Connection(['driver' => $mock, 'name' => 'custom_connection_name']);
     }
 
     /**
@@ -222,7 +222,7 @@ class ConnectionTest extends TestCase
         $config = ['driver' => DisabledDriver::class] + ConnectionManager::getConfig('test');
 
         $this->expectException(MissingExtensionException::class);
-        $connection = new Connection($config);
+        new Connection($config);
     }
 
     /**
@@ -312,7 +312,7 @@ class ConnectionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $sql = 'SELECT ?';
-        $statement = $this->connection->execute($sql, [new DateTime('2012-01-01')], ['bar']);
+        $this->connection->execute($sql, [new DateTime('2012-01-01')], ['bar']);
     }
 
     /**

@@ -851,7 +851,6 @@ class TableTest extends TestCase
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->getTarget();
         $this->assertSame('Comments', $hasOne->getAlias());
         $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
 
@@ -861,7 +860,6 @@ class TableTest extends TestCase
         $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->getTarget();
         $this->assertSame('Comments', $hasOne->getAlias());
         $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
     }
@@ -3018,7 +3016,7 @@ class TableTest extends TestCase
         ]);
 
         $entity = $table->get(1);
-        $result = $table->delete($entity);
+        $table->delete($entity);
 
         $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all', [
@@ -3091,7 +3089,7 @@ class TableTest extends TestCase
 
         $query = $table->find('all')->where(['id' => 1]);
         $entity = $query->first();
-        $result = $table->delete($entity);
+        $table->delete($entity);
 
         $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
@@ -3247,7 +3245,6 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users');
 
         $data = $table->get(1);
-        $options = new ArrayObject(['atomic' => false, 'checkRules' => false]);
 
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called): void {
@@ -3302,7 +3299,6 @@ class TableTest extends TestCase
     public function testDeleteBeforeDeleteAbort(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $options = new ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
@@ -3325,7 +3321,6 @@ class TableTest extends TestCase
     public function testDeleteBeforeDeleteReturnResult(): void
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
-        $options = new ArrayObject(['atomic' => true, 'cascade' => true]);
 
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
@@ -4540,7 +4535,6 @@ class TableTest extends TestCase
     public function testUnlinkHasManyEmpty(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $articles = $this->getTableLocator()->get('Articles');
         $authors->hasMany('Articles');
         $author = $authors->get(1);
         $article = $authors->Articles->get(1);
@@ -4777,8 +4771,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
-        $options = ['markNew' => false];
 
         $article = $table->find('all')
             ->where(['id' => 1])
@@ -4797,7 +4789,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4817,7 +4808,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4841,7 +4831,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4869,7 +4858,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4889,7 +4877,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -5903,7 +5890,7 @@ class TableTest extends TestCase
             $count++;
         };
         EventManager::instance()->on('Model.initialize', $cb);
-        $articles = $this->getTableLocator()->get('Articles');
+        $this->getTableLocator()->get('Articles');
 
         $this->assertSame(1, $count, 'Callback should be called');
         EventManager::instance()->off('Model.initialize', $cb);
@@ -6289,7 +6276,7 @@ class TableTest extends TestCase
     public function testEntityClean(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $validator = $table->getValidator()->requirePresence('body');
+        $table->getValidator()->requirePresence('body');
         $entity = $table->newEntity(['title' => 'mark']);
 
         $entity->setDirty('title', true);
@@ -6475,7 +6462,7 @@ class TableTest extends TestCase
         ]);
         $table = $this->getTableLocator()->get('users');
 
-        $result = $table->deleteOrFail($entity);
+        $table->deleteOrFail($entity);
     }
 
     /**

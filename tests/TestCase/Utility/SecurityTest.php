@@ -116,7 +116,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key);
 
         $key = 'Not the same key. This one will fail';
-        $this->assertNull(Security::decrypt($txt, $key), 'Modified key will fail.');
+        $this->assertNull(Security::decrypt($result, $key), 'Modified key will fail.');
     }
 
     /**

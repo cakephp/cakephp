@@ -122,7 +122,6 @@ class EventManagerTest extends TestCase
      */
     public function testOn(): void
     {
-        $count = 1;
         $manager = new EventManager();
         $manager->on('my.event', 'substr');
         $expected = [

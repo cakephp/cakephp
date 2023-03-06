@@ -1361,7 +1361,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('connect');
-        $schema = new MysqlSchemaDialect($driver);
+        new MysqlSchemaDialect($driver);
     }
 
     /**

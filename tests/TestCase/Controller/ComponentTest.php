@@ -200,7 +200,7 @@ class ComponentTest extends TestCase
         $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class `YouHaveNoBananasComponent` could not be found.');
         $Component = new ConfiguredComponent(new ComponentRegistry(new Controller(new ServerRequest())), [], ['YouHaveNoBananas']);
-        $bananas = $Component->YouHaveNoBananas;
+        $Component->YouHaveNoBananas;
     }
 
     /**

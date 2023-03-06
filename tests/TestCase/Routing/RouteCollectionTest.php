@@ -688,7 +688,6 @@ class RouteCollectionTest extends TestCase
 
         $callable = function () {
         };
-        $result = $this->collection->registerMiddleware('callable', $callable);
         $this->collection->registerMiddleware('callable', $callable);
 
         $this->collection->middlewareGroup('group', ['closure', 'callable']);
@@ -704,7 +703,6 @@ class RouteCollectionTest extends TestCase
         $stub = function (): void {
         };
         $this->collection->registerMiddleware('closure', $stub);
-        $result = $this->collection->registerMiddleware('callable', $stub);
         $this->collection->registerMiddleware('callable', $stub);
 
         $this->collection->middlewareGroup('group', ['callable']);

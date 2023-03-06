@@ -361,7 +361,7 @@ HTML;
         $this->assertSame($this->message, $result);
 
         $this->expectException(InvalidArgumentException::class);
-        $result = $this->message->setFrom(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
+        $this->message->setFrom(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
     }
 
     /**
@@ -922,7 +922,6 @@ HTML;
         $this->message->setAttachments(['cake.icon.gif' => [
             'data' => 'test',
         ]]);
-        $result = $this->message->getAttachments();
         $expected = [
             'cake.icon.gif' => [
                 'data' => base64_encode('test') . "\r\n",

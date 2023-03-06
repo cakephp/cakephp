@@ -216,7 +216,6 @@ class CompositeKeysTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
         $tags = $this->getTableLocator()->get('SiteTags');
-        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'strategy' => $strategy,
             'targetTable' => $tags,
@@ -461,7 +460,7 @@ class CompositeKeysTest extends TestCase
         ]);
 
         $entity = $table->get([3, 2]);
-        $result = $table->delete($entity);
+        $table->delete($entity);
 
         $query = $table->getAssociation('SiteArticles')->find('all', [
             'conditions' => [
@@ -480,7 +479,6 @@ class CompositeKeysTest extends TestCase
         $articles = $this->getTableLocator()->get('SiteArticles');
         $articles->setEntityClass(OpenArticleEntity::class);
         $tags = $this->getTableLocator()->get('SiteTags');
-        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'targetTable' => $tags,
             'propertyName' => 'tags',
@@ -656,7 +654,6 @@ class CompositeKeysTest extends TestCase
     public function testLoadInto(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
-        $tags = $this->getTableLocator()->get('SiteTags');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
         ]);
