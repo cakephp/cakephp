@@ -27,6 +27,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use Cake\View\XmlView;
 use Laminas\Diactoros\Uri;
 use ReflectionFunction;
 use RuntimeException;
@@ -39,6 +40,7 @@ use TestApp\Controller\TestController;
 use TestApp\Controller\WithDefaultTableController;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\PostsTable;
+use TestApp\View\PlainTextView;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
 use UnexpectedValueException;
@@ -270,6 +272,18 @@ class ControllerTest extends TestCase
 
         $result = $Controller->render('/element/test_element');
         $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
+    }
+
+    public function testAddViewClasses()
+    {
+        $controller = new ContentTypesController();
+        $this->assertSame([], $controller->viewClasses());
+
+        $controller->addViewClasses([PlainTextView::class]);
+        $this->assertSame([PlainTextView::class], $controller->viewClasses());
+
+        $controller->addViewClasses([XmlView::class]);
+        $this->assertSame([PlainTextView::class, XmlView::class], $controller->viewClasses());
     }
 
     /**
