@@ -1823,25 +1823,25 @@ class QueryTest extends TestCase
         $collection = new Collection([]);
 
         return [
-            ['filter', $identity, $collection],
-            ['reject', $identity, $collection],
-            ['every', $identity, false],
-            ['some', $identity, false],
-            ['contains', $identity, true],
-            ['map', $identity, $collection],
-            ['reduce', $identity, $collection],
-            ['extract', $identity, $collection],
-            ['max', $identity, 9],
-            ['min', $identity, 1],
-            ['sortBy', $identity, $collection],
-            ['groupBy', $identity, $collection],
-            ['countBy', $identity, $collection],
-            ['shuffle', $identity, $collection],
-            ['sample', 10, $collection],
-            ['take', 1, $collection],
-            ['append', new \ArrayIterator(), $collection],
-            ['compile', true, $collection],
-            ['isEmpty', true, true],
+            ['filter', [$identity], $collection],
+            ['reject', [$identity], $collection],
+            ['every', [$identity], false],
+            ['some', [$identity], false],
+            ['contains', [$identity], true],
+            ['map', [$identity], $collection],
+            ['reduce', [$identity], $collection],
+            ['extract', [$identity], $collection],
+            ['max', [$identity], 9],
+            ['min', [$identity], 1],
+            ['sortBy', [$identity], $collection],
+            ['groupBy', [$identity], $collection],
+            ['countBy', [$identity], $collection],
+            ['shuffle', [], $collection],
+            ['sample', [10], $collection],
+            ['take', [1], $collection],
+            ['append', [new \ArrayIterator()], $collection],
+            ['compile', [true], $collection],
+            ['isEmpty', [true], true],
         ];
     }
 
@@ -1876,10 +1876,10 @@ class QueryTest extends TestCase
      * Tests that query can proxy collection methods
      *
      * @dataProvider collectionMethodsProvider
-     * @param mixed $arg
+     * @param mixed $args
      * @param mixed $return
      */
-    public function testDeprecatedCollectionProxy(string $method, $arg, $return): void
+    public function testDeprecatedCollectionProxy(string $method, $args, $return): void
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->onlyMethods(['all'])
@@ -1895,31 +1895,12 @@ class QueryTest extends TestCase
             ->will($this->returnValue($resultSet));
         $resultSet->expects($this->once())
             ->method($method)
-            ->with($arg, 99)
+            ->with(...$args)
             ->will($this->returnValue($return));
 
-        $this->deprecated(function () use ($return, $query, $method, $arg) {
-            $this->assertSame($return, $query->{$method}($arg, 99));
+        $this->deprecated(function () use ($return, $query, $method, $args) {
+            $this->assertSame($return, $query->{$method}(...$args));
         });
-    }
-
-    /**
-     * Tests deprecation path for proxy collection methods.
-     *
-     * @dataProvider collectionMethodsProvider
-     */
-    public function testDeprecatedPathCollectionProxy(string $method, $arg, $return): void
-    {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessage("Calling `Cake\Datasource\ResultSetInterface` methods, such as `$method()`, on queries is deprecated.");
-
-        $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->onlyMethods(['all'])
-            ->setConstructorArgs([$this->connection, $this->table])
-            ->getMock();
-        $query->select();
-
-        $this->assertSame($return, $query->{$method}($arg, 99));
     }
 
     /**
