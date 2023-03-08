@@ -25,6 +25,9 @@
         "php": ">=7.4.0",
         "cakephp/utility": "^4.0"
     },
+    "provide": {
+        "psr/container-implementation": "^1.0 || ^2.0"
+    },
     "suggest": {
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
         "cakephp/cache": "To use Configure::store() and restore().",
