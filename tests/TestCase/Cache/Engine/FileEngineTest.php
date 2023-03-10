@@ -255,12 +255,12 @@ class FileEngineTest extends TestCase
         $FileOne = new FileEngine();
         $FileOne->init([
             'prefix' => 'prefix_one_',
-            'duration' => DAY,
+            'duration' => 3600,
         ]);
         $FileTwo = new FileEngine();
         $FileTwo->init([
             'prefix' => 'prefix_two_',
-            'duration' => DAY,
+            'duration' => 3600,
         ]);
 
         $dataOne = $dataTwo = $expected = 'content to cache';
@@ -283,7 +283,7 @@ class FileEngineTest extends TestCase
         $engine = new FileEngine();
         $engine->init([
             'prefix' => 'cake_test_',
-            'duration' => DAY,
+            'duration' => 3600,
             'groups' => ['short', 'round'],
         ]);
         $key = 'cake_test_test_key';
@@ -300,7 +300,7 @@ class FileEngineTest extends TestCase
         $engine = new FileEngine();
         $engine->init([
             'prefix' => 'cake_test_',
-            'duration' => DAY,
+            'duration' => 3600,
             'groups' => ['one', 'two'],
         ]);
         $key = 'cake_test_test_key';
