@@ -42,6 +42,7 @@ use TestApp\View\Object\TestObjectWithoutToString;
 use TestApp\View\Object\TestObjectWithToString;
 use TestApp\View\TestView;
 use TestApp\View\TestViewEventListenerInterface;
+use function Cake\Core\env;
 
 /**
  * ViewTest class

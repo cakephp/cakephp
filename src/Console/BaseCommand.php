@@ -21,6 +21,7 @@ use Cake\Console\Exception\StopException;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Base class for console commands.

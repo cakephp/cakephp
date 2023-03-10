@@ -29,6 +29,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\I18n\__d;
 
 /**
  * Provides CSRF protection & validation.

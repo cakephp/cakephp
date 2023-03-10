@@ -29,6 +29,7 @@ use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of

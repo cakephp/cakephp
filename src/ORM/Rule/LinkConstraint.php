@@ -19,6 +19,7 @@ namespace Cake\ORM\Rule;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use function Cake\Core\getTypeName;
 
 /**
  * Checks whether links to a given association exist / do not exist.

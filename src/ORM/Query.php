@@ -31,6 +31,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Extends the base Query class to provide new methods related to association

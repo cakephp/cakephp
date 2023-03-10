@@ -22,6 +22,7 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class is used to handle automatic model data pagination.

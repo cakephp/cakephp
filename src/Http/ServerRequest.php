@@ -30,6 +30,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\env;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.

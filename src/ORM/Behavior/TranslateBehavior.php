@@ -25,6 +25,7 @@ use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use function Cake\Core\namespaceSplit;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations

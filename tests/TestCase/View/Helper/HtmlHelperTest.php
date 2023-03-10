@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use function Cake\Core\h;
 
 /**
  * HtmlHelperTest class

@@ -23,6 +23,9 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\UploadedFileInterface;
 use Traversable;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\getTypeName;
+use function Cake\I18n\__d;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -193,7 +196,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function __construct()
     {
-        $this->_useI18n = function_exists('__d');
+        $this->_useI18n = function_exists('\Cake\I18n\__d');
         $this->_providers = self::$_defaultProviders;
     }
 

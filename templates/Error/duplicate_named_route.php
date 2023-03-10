@@ -15,6 +15,7 @@
  */
 
 use Cake\Error\Debugger;
+use function Cake\Core\h;
 
 $this->layout = 'dev_error';
 

@@ -44,6 +44,11 @@ use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 use UnexpectedValueException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\getTypeName;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * Application controller class for organization of business logic.

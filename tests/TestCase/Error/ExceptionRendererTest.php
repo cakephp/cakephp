@@ -51,6 +51,7 @@ use TestApp\Error\Exception\MyPDOException;
 use TestApp\Error\MyCustomExceptionRenderer;
 use TestApp\Error\TestAppsExceptionRenderer;
 use TestPlugin\Controller\ErrorController as PluginErrorController;
+use function Cake\Core\h;
 
 class ExceptionRendererTest extends TestCase
 {

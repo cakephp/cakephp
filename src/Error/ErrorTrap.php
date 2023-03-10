@@ -10,6 +10,7 @@ use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use Exception;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Entry point to CakePHP's error handling.

@@ -23,6 +23,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Class DateType

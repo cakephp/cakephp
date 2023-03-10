@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Formatter\DefaultFormatter;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Console logging. Writes logs to console output.

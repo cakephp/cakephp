@@ -18,6 +18,7 @@ namespace Cake\Console\TestSuite;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
+use function Cake\Core\pluginSplit;
 
 /**
  * Allows injecting mock IO into shells

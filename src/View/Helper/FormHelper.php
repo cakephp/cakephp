@@ -30,6 +30,10 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\h;
+use function Cake\I18n\__;
+use function Cake\I18n\__d;
 
 /**
  * Form helper library.

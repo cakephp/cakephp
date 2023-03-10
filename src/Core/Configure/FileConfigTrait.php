@@ -18,6 +18,7 @@ namespace Cake\Core\Configure;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use function Cake\Core\pluginSplit;
 
 /**
  * Trait providing utility methods for file based config engines.

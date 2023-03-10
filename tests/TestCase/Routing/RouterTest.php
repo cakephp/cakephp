@@ -30,6 +30,7 @@ use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 use function Cake\Routing\url;
+use function Cake\Routing\urlArray;
 
 /**
  * RouterTest class

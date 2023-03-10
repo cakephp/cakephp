@@ -21,6 +21,7 @@ namespace Cake\TestSuite;
 use Cake\Filesystem\Filesystem;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 use SplFileInfo;
+use function Cake\Core\deprecationWarning;
 
 /**
  * A class to contain test cases and run them with shared fixtures

@@ -18,6 +18,7 @@ namespace Cake\I18n;
 
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Extends the Date class provided by Chronos.

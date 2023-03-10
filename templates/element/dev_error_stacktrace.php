@@ -16,6 +16,7 @@
  * @var array $trace
  */
 use Cake\Error\Debugger;
+use function Cake\Core\h;
 
 foreach ($exceptions as $level => $exc):
     $parent = $exceptions[$level - 1] ?? null;

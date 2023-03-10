@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Core\Configure;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
+use function Cake\Core\deprecationWarning;
 
 /**
  * File Storage stream for Logging. Writes logs to different files

@@ -22,6 +22,8 @@ use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper;
 use Cake\View\View;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\h;
 
 /**
  * Text helper library.

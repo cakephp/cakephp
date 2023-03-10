@@ -21,6 +21,7 @@ use Cake\Cache\Exception\CacheWriteException;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\StaticConfigTrait;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you

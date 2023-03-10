@@ -16,6 +16,7 @@ namespace Cake\Core\Exception;
 
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Base class that all CakePHP Exceptions extend.

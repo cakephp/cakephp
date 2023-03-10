@@ -44,6 +44,7 @@ use ReflectionProperty;
 use RuntimeException;
 use stdClass;
 use TestApp\Database\Type\BarType;
+use function Cake\Collection\collection;
 
 /**
  * Tests Query class

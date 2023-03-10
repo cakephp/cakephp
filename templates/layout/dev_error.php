@@ -14,6 +14,7 @@
  * @var \Cake\Core\Exception\CakeException $error
  */
 use Cake\Error\Debugger;
+use function Cake\Core\h;
 ?>
 <!DOCTYPE html>
 <html>

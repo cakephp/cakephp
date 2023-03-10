@@ -45,6 +45,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Log\Engine\TestBaseLog;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Tests Connection class

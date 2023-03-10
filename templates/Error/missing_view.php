@@ -15,6 +15,7 @@
  */
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use function Cake\Core\h;
 
 $namespace = Configure::read('App.namespace');
 

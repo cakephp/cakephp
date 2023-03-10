@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use InvalidArgumentException;
+use function Cake\Core\env;
 
 /**
  * Object wrapper for outputting information from a shell application.

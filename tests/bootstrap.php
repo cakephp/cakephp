@@ -21,6 +21,7 @@ use Cake\Error\Debug\TextFormatter;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\Utility\Security;
+use function Cake\Core\env;
 
 if (is_file('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';

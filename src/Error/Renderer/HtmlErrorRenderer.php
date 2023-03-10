@@ -19,6 +19,7 @@ namespace Cake\Error\Renderer;
 use Cake\Error\Debugger;
 use Cake\Error\ErrorRendererInterface;
 use Cake\Error\PhpError;
+use function Cake\Core\h;
 
 /**
  * Interactive HTML error rendering with a stack trace.

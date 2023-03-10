@@ -27,6 +27,8 @@ use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use RuntimeException;
 use Traversable;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Provides a form context around a single entity and its relations.

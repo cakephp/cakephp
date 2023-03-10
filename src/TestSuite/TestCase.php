@@ -39,6 +39,8 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\pluginSplit;
 
 /**
  * Cake TestCase class

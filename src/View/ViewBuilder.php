@@ -27,6 +27,7 @@ use JsonSerializable;
 use PDO;
 use RuntimeException;
 use Serializable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Provides an API for iteratively building a view up.

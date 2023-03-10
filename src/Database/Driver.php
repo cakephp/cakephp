@@ -27,6 +27,7 @@ use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a database driver containing all specificities for

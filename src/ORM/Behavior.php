@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Base class for behaviors.

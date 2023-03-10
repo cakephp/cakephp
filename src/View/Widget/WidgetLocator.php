@@ -22,6 +22,7 @@ use Cake\View\StringTemplate;
 use Cake\View\View;
 use ReflectionClass;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * A registry/factory for input widgets.
