@@ -277,8 +277,6 @@ class Sqlserver extends Driver
             DriverFeatureEnum::WINDOW => true,
 
             DriverFeatureEnum::JSON => false,
-
-            default => false,
         };
     }
 

@@ -223,8 +223,6 @@ class Mysql extends Driver
                 $this->featureVersions[$this->serverType][$feature->value],
                 '>='
             ),
-
-            default => false,
         };
     }
 
