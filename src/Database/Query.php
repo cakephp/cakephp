@@ -1793,7 +1793,6 @@ abstract class Query implements ExpressionInterface, Stringable
                             }
                         }
                     } elseif ($piece instanceof ExpressionInterface) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->_parts[$name][$i] = clone $piece;
                     }
                 }

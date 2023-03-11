@@ -188,8 +188,6 @@ class Postgres extends Driver
             DriverFeatureEnum::WINDOW => true,
 
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
-
-            default => false,
         };
     }
 

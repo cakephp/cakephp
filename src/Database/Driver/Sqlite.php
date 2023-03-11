@@ -206,8 +206,6 @@ class Sqlite extends Driver
                 $this->featureVersions[$feature->value],
                 '>='
             ),
-
-            default => false,
         };
     }
 
