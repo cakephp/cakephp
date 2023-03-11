@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Cache;
 
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\InstanceConfigTrait;
 use DateInterval;
 use DateTime;
@@ -96,7 +97,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param mixed $key Key to check.
      * @return void
-     * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
+     * @throws \Cake\Cache\Exception\InvalidArgumentException When the key is not valid.
      */
     protected function ensureValidKey(mixed $key): void
     {
@@ -111,7 +112,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param iterable $iterable The iterable to check.
      * @param string $check Whether to check keys or values.
      * @return void
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     protected function ensureValidType(iterable $iterable, string $check = self::CHECK_VALUE): void
     {
@@ -130,7 +131,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param iterable<string> $keys A list of keys that can obtained in a single operation.
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
-     * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
@@ -153,7 +154,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
-     * @throws \Cake\Cache\InvalidArgumentException If $values is neither an array nor a Traversable,
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If $values is neither an array nor a Traversable,
      *   or if any of the $values are not a legal value.
      */
     public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
@@ -189,7 +190,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param iterable $keys A list of string-based keys to be deleted.
      * @return bool True if the items were successfully removed. False if there was an error.
-     * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
     public function deleteMultiple(iterable $keys): bool
@@ -216,7 +217,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param string $key The cache item key.
      * @return bool
-     * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If the $key string is not a legal value.
      */
     public function has(string $key): bool
     {
@@ -229,7 +230,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $key The unique key of this item in the cache.
      * @param mixed $default Default value to return if the key does not exist.
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
-     * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If the $key string is not a legal value.
      */
     abstract public function get(string $key, mixed $default = null): mixed;
 
@@ -242,7 +243,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
-     * @throws \Cake\Cache\InvalidArgumentException
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
      *   MUST be thrown if the $key string is not a legal value.
      */
     abstract public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool;
@@ -330,7 +331,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param string $key the key passed over
      * @return string Prefixed key with potentially unsafe characters replaced.
-     * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
+     * @throws \Cake\Cache\Exception\InvalidArgumentException If key's value is invalid.
      */
     protected function _key(string $key): string
     {

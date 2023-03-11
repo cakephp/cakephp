@@ -18,9 +18,9 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use DateInterval;
-use InvalidArgumentException;
 use Memcached;
 
 /**

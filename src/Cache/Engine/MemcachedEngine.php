@@ -99,7 +99,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
-     * @throws \InvalidArgumentException When you try use authentication without
+     * @throws \Cake\Cache\Exception\InvalidArgumentException When you try use authentication without
      *   Memcached compiled with SASL support
      */
     public function init(array $config = []): bool
@@ -204,7 +204,7 @@ class MemcachedEngine extends CacheEngine
      * Settings the memcached instance
      *
      * @return void
-     * @throws \InvalidArgumentException When the Memcached extension is not built
+     * @throws \Cake\Cache\Exception\InvalidArgumentException When the Memcached extension is not built
      *   with the desired serializer engine.
      */
     protected function _setOptions(): void

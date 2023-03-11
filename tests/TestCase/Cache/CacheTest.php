@@ -22,7 +22,8 @@ use Cake\Cache\CacheEngine;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Cache\InvalidArgumentException;
+use Cake\Cache\Exception\CacheWriteException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
@@ -558,6 +559,15 @@ class CacheTest extends TestCase
     }
 
     /**
+     * testGroupConfigsThrowsOldException method
+     */
+    public function testGroupConfigsThrowsOldException(): void
+    {
+        $this->expectException('Cake\Cache\InvalidArgumentException');
+        Cache::groupConfigs('bogus');
+    }
+
+    /**
      * test that configured returns an array of the currently configured cache
      * config
      */
@@ -695,9 +705,9 @@ class CacheTest extends TestCase
     }
 
     /**
-     * Test that failed writes cause errors to be triggered.
+     * Test that failed writes causes an Exception to be triggered.
      */
-    public function testWriteTriggerError(): void
+    public function testWriteTriggerCacheWriteException(): void
     {
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
@@ -705,7 +715,8 @@ class CacheTest extends TestCase
             'prefix' => '',
         ]);
 
-        $this->expectError();
+        $this->expectException(CacheWriteException::class);
+        $this->expectExceptionMessage('test_trigger cache was unable to write \'fail\' to TestApp\Cache\Engine\TestAppCacheEngine cache');
 
         Cache::write('fail', 'value', 'test_trigger');
     }
