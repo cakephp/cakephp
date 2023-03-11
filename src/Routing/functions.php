@@ -43,6 +43,9 @@ namespace {
 }
 
 namespace Cake\Routing {
+
+    use Psr\Http\Message\UriInterface;
+
     /**
      * Convenience wrapper for Router::url().
      *

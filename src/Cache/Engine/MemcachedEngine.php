@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Core\Exception\CakeException;
 use DateInterval;
-use InvalidArgumentException;
 use Memcached;
 
 /**
