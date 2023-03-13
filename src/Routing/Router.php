@@ -1034,7 +1034,7 @@ class Router
         $defaults['action'] = $matches['action'];
 
         if ($matches['params'] !== '') {
-            $paramsArray = array_values(array_filter(explode('/', $matches['params'])));
+            $paramsArray = explode('/', trim($matches['params'], '/'));
             $convertedArray = [];
             foreach ($paramsArray as $param) {
                 if (strpos($param, '=') !== false) {
