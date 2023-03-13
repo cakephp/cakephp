@@ -1015,7 +1015,7 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
-            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?[a-z0-9-_]+)+/?)
+            (?<params>[a-z0-9-_/=]*)
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
