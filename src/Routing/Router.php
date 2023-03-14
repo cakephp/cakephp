@@ -1033,7 +1033,7 @@ class Router
         $defaults['controller'] = $matches['controller'];
         $defaults['action'] = $matches['action'];
 
-        if ($matches['params'] !== '') {
+        if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             $convertedArray = [];
             foreach ($paramsArray as $param) {
