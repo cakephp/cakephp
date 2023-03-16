@@ -42,7 +42,7 @@ class TestEmailTransport extends DebugTransport
      */
     public function send(Message $message): array
     {
-        static::$messages[] = $message;
+        static::$messages[] = clone $message;
 
         return parent::send($message);
     }

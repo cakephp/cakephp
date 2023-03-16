@@ -134,7 +134,7 @@ class WhenThenExpression implements ExpressionInterface
                 'The `$when` argument must be either a non-empty array, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                is_array($when) ? '[]' : getTypeName($when) // @phpstan-ignore-line
+                is_array($when) ? '[]' : getTypeName($when)
             ));
         }
 

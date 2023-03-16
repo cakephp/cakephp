@@ -237,6 +237,20 @@ class CookieTest extends TestCase
     }
 
     /**
+     * Test the expired method
+     */
+    public function testWithExpiredNotUtc(): void
+    {
+        date_default_timezone_set('Europe/Paris');
+
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $new = $cookie->withExpired();
+        date_default_timezone_set('UTC');
+
+        $this->assertStringContainsString('01-Jan-1970 00:00:01 GMT+0000', $new->toHeaderValue());
+    }
+
+    /**
      * Test the withExpiry method
      */
     public function testWithExpiry(): void
