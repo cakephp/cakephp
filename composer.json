@@ -69,12 +69,12 @@
         "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "provide": {
-        "psr/container-implementation": "^1.0 || ^2.0",
+        "psr/container-implementation": "^2.0",
         "psr/http-client-implementation": "^1.0",
         "psr/http-server-handler-implementation": "^1.0",
         "psr/http-server-middleware-implementation": "^1.0",
-        "psr/log-implementation": "^1.0 || ^2.0",
-        "psr/simple-cache-implementation": "^1.0 || ^2.0"
+        "psr/log-implementation": "^3.0",
+        "psr/simple-cache-implementation": "^3.0"
     },
     "config": {
         "process-timeout": 900,
