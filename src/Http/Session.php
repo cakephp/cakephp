@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
+use Cake\Error\Debugger;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use SessionHandlerInterface;
@@ -65,6 +66,13 @@ class Session
      * @var bool
      */
     protected bool $_isCLI = false;
+
+    /**
+     * Info about where the headers were sent.
+     *
+     * @var array{filename: string, line: int}|null
+     */
+    protected ?array $headerSentInfo = null;
 
     /**
      * Returns a new instance of a session after building a configuration bundle for it.
@@ -342,7 +350,10 @@ class Session
             throw new CakeException('Session was already started');
         }
 
-        if (ini_get('session.use_cookies') && headers_sent()) {
+        $filename = $line = null;
+        if (ini_get('session.use_cookies') && headers_sent($filename, $line)) {
+            $this->headerSentInfo = ['filename' => $filename, 'line' => $line];
+
             return false;
         }
 
@@ -491,8 +502,18 @@ class Session
      */
     public function write(array|string $name, mixed $value = null): void
     {
-        if (!$this->started()) {
-            $this->start();
+        $started = $this->started() || $this->start();
+        if (!$started) {
+            $message = 'Could not start the session';
+            if ($this->headerSentInfo !== null) {
+                $message .= sprintf(
+                    ', headers already sent in file `%s` on line `%s`',
+                    Debugger::trimPath($this->headerSentInfo['filename']),
+                    $this->headerSentInfo['line']
+                );
+            }
+
+            throw new CakeException($message);
         }
 
         if (!is_array($name)) {

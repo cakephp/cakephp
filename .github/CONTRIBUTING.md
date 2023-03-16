@@ -86,6 +86,10 @@ After that you can perform the checks via:
 
     composer stan
 
+Note that updating the baselines need to be done with the same PHP version it is run online.
+That is usually the minimum version.
+Make sure to "composer install" and set up the stan tools with it and then also execute them.
+
 ## Reporting a Security Issue
 
 If you've found a security related issue in CakePHP, please don't open an issue in github. Instead, contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](https://book.cakephp.org/4/en/contributing/tickets.html#reporting-security-issues).
