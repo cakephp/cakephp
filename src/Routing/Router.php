@@ -1042,7 +1042,12 @@ class Router
                     if (!preg_match($paramsRegex, $param, $paramMatches)) {
                         throw new InvalidArgumentException("Could not parse a key=value from `{$param}`.");
                     }
-                    $convertedArray[$paramMatches['key']] = trim(trim($paramMatches['value'], '"'), "'");
+                    $paramKey = $paramMatches['key'];
+                    if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $paramKey)) {
+                        throw new InvalidArgumentException("Param key `{$paramKey}` is not valid.");
+                    }
+                    $paramValue = trim(trim($paramMatches['value'], '"'), "'");
+                    $convertedArray[$paramKey] = $paramValue;
                 } else {
                     $convertedArray[] = $param;
                 }

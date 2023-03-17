@@ -2330,6 +2330,14 @@ class RouterTest extends TestCase
             'organization' => 'cakephp',
         ];
         $this->assertSame($expected, Router::parseRoutePath("Bookmarks::view/organization='cakephp'"));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Param key `1invalid` is not valid.');
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/1invalid=cakephp'));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Param key `-invalid` is not valid.');
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/-invalid=cakephp'));
     }
 
     /**
