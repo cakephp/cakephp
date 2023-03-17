@@ -1015,7 +1015,7 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
-            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?[a-z0-9-_]+)+/?)?
+            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?(["\']?[a-z0-9-_=]+[\'"]?))+/?)?
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
@@ -1038,8 +1038,11 @@ class Router
             $convertedArray = [];
             foreach ($paramsArray as $param) {
                 if (strpos($param, '=') !== false) {
-                    $explodedParam = explode('=', $param);
-                    $convertedArray[$explodedParam[0]] = $explodedParam[1];
+                    $paramsRegex = '/(?<key>.+?)(=)(?<value>.*)/';
+                    if (!preg_match($paramsRegex, $param, $paramMatches)) {
+                        throw new InvalidArgumentException("Could not parse a key=value from `{$param}`.");
+                    }
+                    $convertedArray[$paramMatches['key']] = trim(trim($paramMatches['value'], '"'), "'");
                 } else {
                     $convertedArray[] = $param;
                 }

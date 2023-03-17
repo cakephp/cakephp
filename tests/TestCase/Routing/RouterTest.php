@@ -2294,6 +2294,42 @@ class RouterTest extends TestCase
             'bake',
         ];
         $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization=cakephp/bake'));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organization' => 'cakephp=test',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization="cakephp=test"'));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'test' => 'repo=debug_kit',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath("Bookmarks::view/test='repo=debug_kit'"));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organization' => 'cakephp=test',
+            'test' => 'repo=debug_kit',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view/organization="cakephp=test"/test=\'repo=debug_kit\''));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organization' => 'cakephp=',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath("Bookmarks::view/organization='cakephp='"));
+
+        $expected = [
+            'controller' => 'Bookmarks',
+            'action' => 'view',
+            'organization' => 'cakephp',
+        ];
+        $this->assertSame($expected, Router::parseRoutePath("Bookmarks::view/organization='cakephp'"));
     }
 
     /**
