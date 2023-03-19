@@ -2237,37 +2237,37 @@ class RouterTest extends TestCase
             [
                 'Admin/Bookmarks::view',
                 [
-                    'prefix' => 'Admin',
                     'controller' => 'Bookmarks',
                     'action' => 'view',
+                    'prefix' => 'Admin',
                 ],
             ],
             // Nested prefixes
             [
                 'LongPrefix/BackEnd/Bookmarks::view',
                 [
-                    'prefix' => 'LongPrefix/BackEnd',
                     'controller' => 'Bookmarks',
                     'action' => 'view',
+                    'prefix' => 'LongPrefix/BackEnd',
                 ],
             ],
             // Plugins
             [
                 'Cms.Articles::edit',
                 [
-                    'plugin' => 'Cms',
                     'controller' => 'Articles',
                     'action' => 'edit',
+                    'plugin' => 'Cms',
                 ],
             ],
             // Vendor plugins & nested prefix
             [
                 'Vendor/Cms.Management/Admin/Articles::view',
                 [
-                    'plugin' => 'Vendor/Cms',
-                    'prefix' => 'Management/Admin',
                     'controller' => 'Articles',
                     'action' => 'view',
+                    'plugin' => 'Vendor/Cms',
+                    'prefix' => 'Management/Admin',
                 ],
             ],
 
@@ -2291,9 +2291,9 @@ class RouterTest extends TestCase
             [
                 'Cms.Articles::edit/2023/03/5th',
                 [
-                    'plugin' => 'Cms',
                     'controller' => 'Articles',
                     'action' => 'edit',
+                    'plugin' => 'Cms',
                     '2023',
                     '03',
                     '5th',
@@ -2357,6 +2357,14 @@ class RouterTest extends TestCase
                     'organization' => 'cakephp',
                 ],
             ],
+            [
+                "Bookmarks::view/organization='foo@bar.com~1!#$%^&*()'",
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'foo@bar.com~1!#$%^&*()',
+                ],
+            ],
         ];
     }
 
@@ -2373,14 +2381,14 @@ class RouterTest extends TestCase
     public function testParseRoutePathInvalidNumeric(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Param key `1invalid` is not valid.');
+        $this->expectExceptionMessage('Param key `1invalid` is not valid');
         Router::parseRoutePath('Bookmarks::view/1invalid=cakephp');
     }
 
     public function testParseRoutePathInvalidParameterKey()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Param key `-invalid` is not valid.');
+        $this->expectExceptionMessage('Param key `-invalid` is not valid');
         Router::parseRoutePath('Bookmarks::view/-invalid=cakephp');
     }
 
@@ -2430,18 +2438,18 @@ class RouterTest extends TestCase
         $this->assertSame($expected, urlArray('Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
+            'prefix' => 'Admin',
             'plugin' => false,
         ];
         $this->assertSame($expected, urlArray('Admin/Bookmarks::view'));
 
         $expected = [
-            'plugin' => 'Vendor/Cms',
-            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'Management/Admin',
             3,
             '?' => ['query' => 'string'],
         ];

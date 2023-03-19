@@ -283,6 +283,7 @@ class Router
             }
         }
         static::$_collection = new RouteCollection();
+        static::$_routePaths = [];
     }
 
     /**
@@ -1015,47 +1016,52 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
-            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?(["\']?[a-z0-9-_=]+[\'"]?))+/?)?
+            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?
+                (?:([a-z0-9-_=]+)|(["\'][^\'"]+[\'"]))
+            )+/?)?
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
             throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
         }
 
-        $defaults = [];
-
+        $defaults = [
+            'controller' => $matches['controller'],
+            'action' => $matches['action'],
+        ];
         if ($matches['plugin'] !== '') {
             $defaults['plugin'] = $matches['plugin'];
         }
         if ($matches['prefix'] !== '') {
             $defaults['prefix'] = $matches['prefix'];
         }
-        $defaults['controller'] = $matches['controller'];
-        $defaults['action'] = $matches['action'];
 
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
-            $convertedArray = [];
             foreach ($paramsArray as $param) {
                 if (strpos($param, '=') !== false) {
-                    $paramsRegex = '/(?<key>.+?)(=)(?<value>.*)/';
-                    if (!preg_match($paramsRegex, $param, $paramMatches)) {
-                        throw new InvalidArgumentException("Could not parse a key=value from `{$param}`.");
+                    if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
+                        throw new InvalidArgumentException(
+                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                        );
                     }
                     $paramKey = $paramMatches['key'];
-                    if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $paramKey)) {
-                        throw new InvalidArgumentException("Param key `{$paramKey}` is not valid.");
+                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
+                        throw new InvalidArgumentException(
+                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                        );
                     }
-                    $paramValue = trim(trim($paramMatches['value'], '"'), "'");
-                    $convertedArray[$paramKey] = $paramValue;
+                    $defaults[$paramKey] = trim($paramMatches['value'], '\'"');
                 } else {
-                    $convertedArray[] = $param;
+                    $defaults[] = $param;
                 }
             }
-            $defaults += $convertedArray;
         }
-
-        static::$_routePaths[$url] = $defaults;
+        // Only cache 200 routes per request. Beyond that we could
+        // be soaking up too much memory.
+        if (count(static::$_routePaths) < 200) {
+            static::$_routePaths[$url] = $defaults;
+        }
 
         return $defaults;
     }
