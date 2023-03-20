@@ -178,6 +178,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
             if (!$class) {
                 // Fallback to app/core provided controller.
+                /** @var string $class */
                 $class = App::className('Error', 'Controller', 'Controller');
             }
 
