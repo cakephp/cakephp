@@ -44,12 +44,13 @@ use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use OutOfBoundsException;
 use RuntimeException;
-use TestApp\Controller\Admin\ErrorController;
+use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
 use TestApp\Error\Exception\MyPDOException;
 use TestApp\Error\MyCustomExceptionRenderer;
 use TestApp\Error\TestAppsExceptionRenderer;
+use TestPlugin\Controller\ErrorController as PluginErrorController;
 
 class ExceptionRendererTest extends TestCase
 {
@@ -91,8 +92,7 @@ class ExceptionRendererTest extends TestCase
 
     public function testControllerInstanceForPrefixedRequest(): void
     {
-        $namespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        $this->setAppNamespace('TestApp');
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
@@ -103,11 +103,35 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
 
         $this->assertInstanceOf(
-            ErrorController::class,
+            PrefixErrorController::class,
             $ExceptionRenderer->__debugInfo()['controller']
         );
+    }
 
-        Configure::write('App.namespace', $namespace);
+    /**
+     * Test that prefixed controllers in plugins use the plugin
+     * error controller if it exists.
+     *
+     * @return void
+     */
+    public function testControllerInstanceForPluginPrefixedRequest(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+        $this->setAppNamespace('TestApp');
+
+        $exception = new NotFoundException('Page not found');
+        $request = new ServerRequest();
+        $request = $request
+            ->withParam('controller', 'Comments')
+            ->withParam('plugin', 'TestPlugin')
+            ->withParam('prefix', 'Admin');
+
+        $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
+
+        $this->assertInstanceOf(
+            PluginErrorController::class,
+            $ExceptionRenderer->__debugInfo()['controller']
+        );
     }
 
     /**
