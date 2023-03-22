@@ -109,6 +109,14 @@ class PluginLoadCommand extends Command
             $this->abort();
         }
 
+        // Check if plugin is already loaded
+        $regex = '/ \$this->addPlugin\(\'' . $plugin . '\'\);$/mu';
+        if (preg_match($regex, $contents, $otherMatches, PREG_OFFSET_CAPTURE)) {
+            $this->io->info('The specified plugin is already loaded!');
+
+            return;
+        }
+
         $append = "$indent    \$this->addPlugin('%s');\n";
         $insert = str_replace(', []', '', sprintf($append, $plugin));
 

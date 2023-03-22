@@ -83,6 +83,22 @@ class PluginLoadCommandTest extends TestCase
     }
 
     /**
+     * Test loading a plugin modifies the app
+     */
+    public function testPreventDuplicatePluginLoad(): void
+    {
+        $this->exec('plugin load TestPlugin');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+
+        $contents = file_get_contents($this->app);
+        $this->assertMatchesRegularExpression('/Check plugins added here\n {8}\$this->addPlugin\(\'TestPlugin\'\);\n {4}\}\n/u', $contents);
+
+        $this->exec('plugin load TestPlugin');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('The specified plugin is already loaded!');
+    }
+
+    /**
      * Test loading an unknown plugin
      */
     public function testLoadUnknownPlugin(): void
