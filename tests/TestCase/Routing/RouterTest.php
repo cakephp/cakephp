@@ -2221,45 +2221,175 @@ class RouterTest extends TestCase
         Router::parseRequest($this->makeRequest('/blog/foobar', 'GET'));
     }
 
+    public static function routePathProvider(): array
+    {
+        // Input path, output route data.
+        return [
+            // Controller + action
+            [
+                'Bookmarks::view',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                ],
+            ],
+            // Prefix controller
+            [
+                'Admin/Bookmarks::view',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'prefix' => 'Admin',
+                ],
+            ],
+            // Nested prefixes
+            [
+                'LongPrefix/BackEnd/Bookmarks::view',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'prefix' => 'LongPrefix/BackEnd',
+                ],
+            ],
+            // Plugins
+            [
+                'Cms.Articles::edit',
+                [
+                    'controller' => 'Articles',
+                    'action' => 'edit',
+                    'plugin' => 'Cms',
+                ],
+            ],
+            // Vendor plugins & nested prefix
+            [
+                'Vendor/Cms.Management/Admin/Articles::view',
+                [
+                    'controller' => 'Articles',
+                    'action' => 'view',
+                    'plugin' => 'Vendor/Cms',
+                    'prefix' => 'Management/Admin',
+                ],
+            ],
+
+            // Passed parameters
+            [
+                'Bookmarks::view/1/',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    '1',
+                ],
+            ],
+            [
+                'Bookmarks::view/1',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    '1',
+                ],
+            ],
+            [
+                'Cms.Articles::edit/2023/03/5th',
+                [
+                    'controller' => 'Articles',
+                    'action' => 'edit',
+                    'plugin' => 'Cms',
+                    '2023',
+                    '03',
+                    '5th',
+                ],
+            ],
+            [
+                'Bookmarks::view/organization=cakephp/repository=debug_kit',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp',
+                    'repository' => 'debug_kit',],
+                ],
+            [
+            'Bookmarks::view/organization=cakephp/bake',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp',
+                    'bake',
+                ],
+            ],
+            [
+                'Bookmarks::view/organization="cakephp=test"',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp=test',
+                ],
+            ],
+            [
+                "Bookmarks::view/test='repo=debug_kit'",
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'test' => 'repo=debug_kit',
+                ],
+            ],
+            [
+                'Bookmarks::view/organization="cakephp=test"/test=\'repo=debug_kit\'',
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp=test',
+                    'test' => 'repo=debug_kit',
+                ],
+            ],
+            [
+                "Bookmarks::view/organization='cakephp='",
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp=',
+                ],
+            ],
+            [
+                "Bookmarks::view/organization='cakephp'",
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'cakephp',
+                ],
+            ],
+            [
+                "Bookmarks::view/organization='foo@bar.com~1!#$%^&*()'",
+                [
+                    'controller' => 'Bookmarks',
+                    'action' => 'view',
+                    'organization' => 'foo@bar.com~1!#$%^&*()',
+                ],
+            ],
+        ];
+    }
+
     /**
      * Test parseRoutePath() with valid strings
+     *
+     * @dataProvider routePathProvider
      */
-    public function testParseRoutePath(): void
+    public function testParseRoutePath($path, $expected): void
     {
-        $expected = [
-            'controller' => 'Bookmarks',
-            'action' => 'view',
-        ];
-        $this->assertSame($expected, Router::parseRoutePath('Bookmarks::view'));
+        $this->assertSame($expected, Router::parseRoutePath($path));
+    }
 
-        $expected = [
-            'prefix' => 'Admin',
-            'controller' => 'Bookmarks',
-            'action' => 'view',
-        ];
-        $this->assertSame($expected, Router::parseRoutePath('Admin/Bookmarks::view'));
+    public function testParseRoutePathInvalidNumeric(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Param key `1invalid` is not valid');
+        Router::parseRoutePath('Bookmarks::view/1invalid=cakephp');
+    }
 
-        $expected = [
-            'prefix' => 'LongPrefix/BackEnd',
-            'controller' => 'Bookmarks',
-            'action' => 'view',
-        ];
-        $this->assertSame($expected, Router::parseRoutePath('LongPrefix/BackEnd/Bookmarks::view'));
-
-        $expected = [
-            'plugin' => 'Cms',
-            'controller' => 'Articles',
-            'action' => 'edit',
-        ];
-        $this->assertSame($expected, Router::parseRoutePath('Cms.Articles::edit'));
-
-        $expected = [
-            'plugin' => 'Vendor/Cms',
-            'prefix' => 'Management/Admin',
-            'controller' => 'Articles',
-            'action' => 'view',
-        ];
-        $this->assertSame($expected, Router::parseRoutePath('Vendor/Cms.Management/Admin/Articles::view'));
+    public function testParseRoutePathInvalidParameterKey()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Param key `-invalid` is not valid');
+        Router::parseRoutePath('Bookmarks::view/-invalid=cakephp');
     }
 
     /**
@@ -2308,18 +2438,18 @@ class RouterTest extends TestCase
         $this->assertSame($expected, urlArray('Bookmarks::view'));
 
         $expected = [
-            'prefix' => 'Admin',
             'controller' => 'Bookmarks',
             'action' => 'view',
+            'prefix' => 'Admin',
             'plugin' => false,
         ];
         $this->assertSame($expected, urlArray('Admin/Bookmarks::view'));
 
         $expected = [
-            'plugin' => 'Vendor/Cms',
-            'prefix' => 'Management/Admin',
             'controller' => 'Articles',
             'action' => 'view',
+            'plugin' => 'Vendor/Cms',
+            'prefix' => 'Management/Admin',
             3,
             '?' => ['query' => 'string'],
         ];
