@@ -158,32 +158,8 @@ class Cache
         try {
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
-            if (!array_key_exists('fallback', $config)) {
-                $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
-
-                return;
-            }
-
-            if ($config['fallback'] === false) {
-                throw $e;
-            }
-
-            if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(sprintf(
-                    '"%s" cache configuration cannot fallback to itself.',
-                    $name
-                ), 0, $e);
-            }
-
-            /** @var \Cake\Cache\CacheEngine $fallbackEngine */
-            $fallbackEngine = clone static::pool($config['fallback']);
-            $newConfig = $config + ['groups' => [], 'prefix' => null];
-            $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
-            if ($newConfig['prefix']) {
-                $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
-            }
-            $registry->set($name, $fallbackEngine);
+            $fallbackEngine = static::getFallbackEngine($name, $config, $e);
+            static::registerFallbackEngine($fallbackEngine, $name, $config);
         }
 
         if ($config['className'] instanceof CacheEngine) {
@@ -197,6 +173,57 @@ class Cache
                 sort(static::$_groups[$group]);
             }
         }
+    }
+
+    /**
+     * Get fallback engine or NullEngine if not present
+     *
+     * @param string $name Cache name
+     * @param array $config Cache config
+     * @param \RuntimeException $e Previous exception causing callback
+     * @return \Cake\Cache\CacheEngine
+     */
+    public static function getFallbackEngine(string $name, array $config, RuntimeException $e): CacheEngine
+    {
+        if (!array_key_exists('fallback', $config)) {
+            trigger_error($e->getMessage(), E_USER_WARNING);
+
+            return new NullEngine();
+        }
+
+        if ($config['fallback'] === false) {
+            throw $e;
+        }
+
+        if ($config['fallback'] === $name) {
+            throw new InvalidArgumentException(sprintf(
+                '"%s" cache configuration cannot fallback to itself.',
+                $name
+            ), 0, $e);
+        }
+
+        /** @var \Cake\Cache\CacheEngine $fallbackEngine */
+        $fallbackEngine = clone static::pool($config['fallback']);
+
+        return $fallbackEngine;
+    }
+
+    /**
+     * Register fallback engine after set correct config
+     *
+     * @param \Cake\Cache\CacheEngine $fallbackEngine Fallback Engine
+     * @param string $name Name for register
+     * @param array $config Engine config
+     * @return void
+     */
+    public static function registerFallbackEngine(CacheEngine $fallbackEngine, string $name, array $config): void
+    {
+        $newConfig = $config + ['groups' => [], 'prefix' => null];
+        $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
+        if ($newConfig['prefix']) {
+            $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
+        }
+        static::getRegistry()->set($name, $fallbackEngine);
     }
 
     /**

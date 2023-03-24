@@ -888,4 +888,20 @@ class CacheTest extends TestCase
         $pool = Cache::pool('tests');
         $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
     }
+
+    /**
+     * @return void
+     */
+    public function getFallbackEngine(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+    /**
+     * @return void
+     */
+    public function registerFallbackEngine(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }
