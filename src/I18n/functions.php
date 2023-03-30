@@ -229,4 +229,6 @@ function __dxn(string $domain, string $context, string $singular, string $plural
 /**
  * Include global functions.
  */
-include 'functions_global.php';
+if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
+    include 'functions_global.php';
+}
