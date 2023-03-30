@@ -35,6 +35,8 @@ use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\pluginSplit;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed

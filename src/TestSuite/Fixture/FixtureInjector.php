@@ -21,6 +21,7 @@ use Cake\TestSuite\TestListenerTrait;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestSuite;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Test listener used to inject a fixture manager in all tests that

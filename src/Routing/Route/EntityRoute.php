@@ -18,6 +18,7 @@ namespace Cake\Routing\Route;
 
 use ArrayAccess;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Matches entities to routes

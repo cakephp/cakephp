@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Registry of loaded log engines

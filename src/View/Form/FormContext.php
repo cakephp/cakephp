@@ -19,6 +19,7 @@ namespace Cake\View\Form;
 use Cake\Core\Exception\CakeException;
 use Cake\Form\Form;
 use Cake\Utility\Hash;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Provides a context provider for {@link \Cake\Form\Form} instances.

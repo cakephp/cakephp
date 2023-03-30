@@ -32,6 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Factory method for building controllers for request.

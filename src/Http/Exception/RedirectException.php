@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * An exception subclass used by routing and application code to
  * trigger a redirect.

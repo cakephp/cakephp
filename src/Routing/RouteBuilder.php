@@ -25,6 +25,7 @@ use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Provides features for building routes inside scopes.

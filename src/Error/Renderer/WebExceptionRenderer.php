@@ -44,6 +44,9 @@ use Cake\View\Exception\MissingTemplateException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use function Cake\Core\h;
+use function Cake\Core\namespaceSplit;
+use function Cake\I18n\__d;
 
 /**
  * Web Exception Renderer.

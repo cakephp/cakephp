@@ -26,6 +26,7 @@ use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Exception;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used

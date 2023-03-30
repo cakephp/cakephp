@@ -22,6 +22,7 @@ use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use InvalidArgumentException;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and

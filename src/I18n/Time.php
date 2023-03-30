@@ -20,6 +20,7 @@ use Cake\Chronos\MutableDateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware

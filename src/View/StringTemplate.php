@@ -22,6 +22,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\h;
 
 /**
  * Provides an interface for registering and inserting

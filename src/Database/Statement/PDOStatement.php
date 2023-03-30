@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
+use function Cake\Core\getTypeName;
 
 /**
  * Decorator for \PDOStatement class mainly used for converting human readable

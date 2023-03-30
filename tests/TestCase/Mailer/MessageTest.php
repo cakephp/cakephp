@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use TestApp\Mailer\TestMessage;
+use function Cake\Core\env;
 
 /**
  * MessageTest class

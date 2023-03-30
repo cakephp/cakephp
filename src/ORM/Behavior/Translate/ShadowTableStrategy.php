@@ -27,6 +27,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
+use function Cake\Core\pluginSplit;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations

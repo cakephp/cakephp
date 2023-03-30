@@ -13,6 +13,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Error\Debugger;
+use function Cake\Core\h;
 
 $this->setLayout('dev_error');
 

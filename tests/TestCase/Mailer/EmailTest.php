@@ -27,6 +27,7 @@ use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use SimpleXmlElement;
 use TestApp\Mailer\TestEmail;
+use function Cake\Core\env;
 
 /**
  * EmailTest class

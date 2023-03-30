@@ -13,6 +13,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Configure;
+use function Cake\Core\h;
+use function Cake\I18n\__d;
 ?>
 <h2><?= h($message) ?></h2>
 <p class="error">

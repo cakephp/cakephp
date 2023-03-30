@@ -52,6 +52,9 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionMethod;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\getTypeName;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Represents a single database table.

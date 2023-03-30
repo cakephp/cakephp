@@ -15,6 +15,7 @@
  * @var array<string> $paths
  */
 use Cake\Utility\Inflector;
+use function Cake\Core\h;
 
 $this->layout = 'dev_error';
 

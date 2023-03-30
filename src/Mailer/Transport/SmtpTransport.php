@@ -22,6 +22,7 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
 use RuntimeException;
+use function Cake\Core\env;
 
 /**
  * Send mail using SMTP protocol

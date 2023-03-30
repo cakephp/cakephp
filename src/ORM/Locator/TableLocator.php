@@ -25,6 +25,7 @@ use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
+use function Cake\Core\pluginSplit;
 
 /**
  * Provides a default registry/factory for Table objects.

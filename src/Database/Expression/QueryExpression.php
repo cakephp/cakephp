@@ -23,6 +23,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 use Countable;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of

@@ -25,6 +25,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes

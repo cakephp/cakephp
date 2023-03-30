@@ -21,6 +21,8 @@ use Cake\Core\Exception\CakeException;
 use Cake\I18n\Number;
 use Cake\View\Helper;
 use Cake\View\View;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\h;
 
 /**
  * Number helper library.

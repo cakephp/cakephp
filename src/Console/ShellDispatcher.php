@@ -24,6 +24,7 @@ use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Shell\Task\CommandTask;
 use Cake\Utility\Inflector;
+use function Cake\Core\pluginSplit;
 
 /**
  * Shell dispatcher handles dispatching CLI commands.

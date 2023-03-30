@@ -28,6 +28,7 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Collection\collection;
 
 /**
  * Contains regression test for the Query builder

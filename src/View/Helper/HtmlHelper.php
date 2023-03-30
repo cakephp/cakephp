@@ -19,6 +19,7 @@ namespace Cake\View\Helper;
 use Cake\Core\Configure;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use function Cake\Core\h;
 
 /**
  * Html Helper class for easy use of HTML widgets.

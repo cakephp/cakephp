@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * @deprecated 4.4.12 Use {@link \Cake\Cache\Exception\InvalidArgumentException} instead.
  */

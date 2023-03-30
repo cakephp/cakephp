@@ -25,6 +25,7 @@ use LogicException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Validation Class. Used for validation of model data

@@ -31,6 +31,7 @@ use Cake\Utility\Text;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Base class for command-line utilities for automating programmer chores.

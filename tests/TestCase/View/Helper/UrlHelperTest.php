@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
 use TestApp\Routing\Asset;
+use function Cake\Core\h;
 
 /**
  * UrlHelperTest class
