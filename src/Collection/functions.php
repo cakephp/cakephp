@@ -31,4 +31,6 @@ function collection(iterable $items): CollectionInterface
 /**
  * Include global functions.
  */
-include 'functions_global.php';
+if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
+    include 'functions_global.php';
+}

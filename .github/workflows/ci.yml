@@ -206,6 +206,7 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
+          set CAKE_DISABLE_GLOBAL_FUNCS=1
           vendor/bin/phpunit --verbose
 
     - name: Run PHPUnit (autoquote enabled)

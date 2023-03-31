@@ -112,4 +112,6 @@ function dd($var, $showHtml = null): void
 /**
  * Include global functions.
  */
-include 'functions_global.php';
+if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
+    include 'functions_global.php';
+}
