@@ -877,12 +877,12 @@ HTML;
         );
 
         $this->message->setAttachments([
-            CAKE . 'basics.php',
+            __FILE__,
             $uploadedFile,
         ]);
         $expected = [
-            'basics.php' => [
-                'file' => CAKE . 'basics.php',
+            'MessageTest.php' => [
+                'file' => __FILE__,
                 'mimetype' => 'text/x-php',
             ],
             'MessageTest.php' => [
@@ -896,7 +896,7 @@ HTML;
         $this->assertSame([], $this->message->getAttachments());
 
         $this->message->setAttachments([
-            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
+            ['file' => __FILE__, 'mimetype' => 'text/plain'],
         ]);
         $this->message->addAttachments([CORE_PATH . 'config' . DS . 'bootstrap.php']);
         $this->message->addAttachments([CORE_PATH . 'config' . DS . 'bootstrap.php']);
@@ -905,14 +905,14 @@ HTML;
             'license' => CORE_PATH . 'LICENSE',
         ]);
         $expected = [
-            'basics.php' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
+            'MessageTest.php' => ['file' => __FILE__, 'mimetype' => 'text/plain'],
             'bootstrap.php' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
             'other.txt' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
             'license' => ['file' => CORE_PATH . 'LICENSE', 'mimetype' => 'text/plain'],
         ];
         $this->assertSame($expected, $this->message->getAttachments());
         $this->expectException(InvalidArgumentException::class);
-        $this->message->setAttachments([['nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain']]);
+        $this->message->setAttachments([['nofile' => __FILE__, 'mimetype' => 'text/plain']]);
     }
 
     /**
