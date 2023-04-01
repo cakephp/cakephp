@@ -150,7 +150,7 @@ if (!function_exists('triggerWarning')) {
      */
     function triggerWarning(string $message): void
     {
-        return cakeTriggerWarning($message);
+        cakeTriggerWarning($message);
     }
 }
 
@@ -166,6 +166,6 @@ if (!function_exists('deprecationWarning')) {
      */
     function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
-        return cakeDeprecationWarning($version, $message, $stackFrame);
+        cakeDeprecationWarning($version, $message, $stackFrame);
     }
 }
