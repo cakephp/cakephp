@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @since         4.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+// phpcs:disable PSR1.Files.SideEffects
 
 use Psr\Http\Message\UriInterface;
 use function Cake\Routing\url as cakeUrl;
