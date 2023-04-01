@@ -86,13 +86,15 @@ class DateTypeTest extends TestCase
     {
         $values = [
             'a' => null,
-            'b' => '2001-01-04',
-            'c' => '2001-01-04 12:13:14.12345',
+            'b' => 978606794,
+            'c' => '2001-01-04',
+            'd' => '2001-01-04 12:13:14.12345',
         ];
         $expected = [
             'a' => null,
             'b' => new ChronosDate('2001-01-04'),
             'c' => new ChronosDate('2001-01-04'),
+            'd' => new ChronosDate('2001-01-04'),
         ];
         $this->assertEquals(
             $expected,

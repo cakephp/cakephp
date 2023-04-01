@@ -124,18 +124,18 @@ class RouteCollection
     {
         $decoded = urldecode($url);
 
+        $queryParameters = [];
+        if (strpos($url, '?') !== false) {
+            [$url, $qs] = explode('?', $url, 2);
+            parse_str($qs, $queryParameters);
+        }
+
         // Sort path segments matching longest paths first.
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
-            }
-
-            $queryParameters = [];
-            if (strpos($url, '?') !== false) {
-                [$url, $qs] = explode('?', $url, 2);
-                parse_str($qs, $queryParameters);
             }
 
             foreach ($routes as $route) {
