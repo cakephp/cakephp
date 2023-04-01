@@ -1198,6 +1198,62 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get an array representation of the HTTP Link header values
+     *
+     * @return array
+     */
+    public function getParsedLink(): array
+    {
+        $linkHeader = $this->getHeader('Link');
+        $result = [];
+        foreach ($linkHeader as $link) {
+            $result[] = $this->extractLinkHeaderData($link);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Parses one item of the HTTP link header into an array
+     *
+     * @param string $linkHeader The HTTP Link header part
+     * @return array[]
+     */
+    protected function extractLinkHeaderData(string $linkHeader)
+    {
+        preg_match('/<(.*)>[; ]?[; ]?(.*)?/', $linkHeader, $matches);
+
+        $url = $matches[1];
+        $parsedParams = [];
+
+        $params = $matches[2];
+        if ($params) {
+            $explodedParams = explode(';', $params);
+            foreach ($explodedParams as $param) {
+                $explodedParam = explode('=', $param);
+                $parsedParams[trim($explodedParam[0])] = trim($explodedParam[1], '"');
+            }
+        }
+
+        if (isset($parsedParams['rel'])) {
+            $rel = $parsedParams['rel'];
+            unset($parsedParams['rel']);
+
+            return [
+                $rel => [
+                        'link' => $url,
+                    ] + $parsedParams,
+            ];
+        }
+
+        return [
+            [
+                'link' => $url,
+            ] + $parsedParams,
+        ];
+    }
+
+    /**
      * Checks whether a response has not been modified according to the 'If-None-Match'
      * (Etags) and 'If-Modified-Since' (last modification date) request
      * headers.

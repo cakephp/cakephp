@@ -426,6 +426,51 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests getting a parsed representation of a Link header
+     */
+    public function testGetParsedLink(): void
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Link'));
+
+        $new = $response->withAddedLink('http://example.com');
+        $this->assertSame('<http://example.com>', $new->getHeaderLine('Link'));
+        $expected = [
+            [['link' => 'http://example.com']],
+        ];
+        $this->assertSame($expected, $new->getParsedLink());
+
+        $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
+        $this->assertSame('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
+        $expected = [
+            ['prev' => ['link' => 'http://example.com']],
+        ];
+        $this->assertSame($expected, $new->getParsedLink());
+
+        $new = $response->withAddedLink('http://example.com', ['rel' => 'prev', 'results' => 'true']);
+        $this->assertSame('<http://example.com>; rel="prev"; results="true"', $new->getHeaderLine('Link'));
+        $expected = [
+            [
+                'prev' => [
+                    'link' => 'http://example.com',
+                    'results' => 'true',
+                ],
+            ],
+        ];
+        $this->assertSame($expected, $new->getParsedLink());
+
+        $new = $response
+            ->withAddedLink('http://example.com', ['rel' => 'prev'])
+            ->withAddedLink('http://example.com', ['rel' => 'next']);
+        $this->assertSame('<http://example.com>; rel="prev",<http://example.com>; rel="next"', $new->getHeaderLine('Link'));
+        $expected = [
+            ['prev' => ['link' => 'http://example.com']],
+            ['next' => ['link' => 'http://example.com']],
+        ];
+        $this->assertSame($expected, $new->getParsedLink());
+    }
+
+    /**
      * Tests the withExpires method
      */
     public function testWithExpires(): void
