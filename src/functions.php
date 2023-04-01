@@ -17,21 +17,8 @@ declare(strict_types=1);
 
 /**
  * Create global aliases for all functions in the split modules.
- *
- * This uses a bit of codegen hackery and we recommend you don't plan on using
- * it long term. If there are scenarios where you find global aliases are greatly
- * beneficial please look for an open issue for function aliases or create a new
- * one if your usecase hasn't been covered yet.
  */
-$setup = function (): void {
-    $packages = ['Collection', 'Core', 'I18n', 'Routing'];
-    foreach ($packages as $packageName) {
-        $path = __DIR__ . "/{$packageName}/functions_global.php";
-        if (file_exists($path)) {
-            require_once $path;
-        }
-    }
-};
-
-$setup();
-unset($setup);
+require __DIR__ . '/Collection/functions_global.php';
+require __DIR__ . '/Core/functions_global.php';
+require __DIR__ . '/I18n/functions_global.php';
+require __DIR__ . '/Routing/functions_global.php';
