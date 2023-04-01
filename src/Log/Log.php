@@ -264,11 +264,7 @@ class Log
      * ```
      *
      * @param array<string, mixed>|string $key The name of the logger config, or an array of multiple configs.
-<<<<<<< HEAD
      * @param \Psr\Log\LoggerInterface|\Closure|array<string, mixed>|null $config An array of name => config data for adapter.
-=======
-     * @param \Closure|array<string, mixed>|null $config An array of name => config data for adapter.
->>>>>>> origin/4.next
      * @return void
      * @throws \BadMethodCallException When trying to modify an existing config.
      */

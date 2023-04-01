@@ -34,7 +34,6 @@ function __(string $singular, mixed ...$args): string
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator()->translate($singular, $args);
 }
 
@@ -58,7 +57,6 @@ function __n(string $singular, string $plural, int $count, mixed ...$args): stri
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator()->translate(
         $plural,
         ['_count' => $count, '_singular' => $singular] + $args
@@ -83,7 +81,6 @@ function __d(string $domain, string $msg, mixed ...$args): string
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator($domain)->translate($msg, $args);
 }
 
@@ -109,7 +106,6 @@ function __dn(string $domain, string $singular, string $plural, int $count, mixe
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator($domain)->translate(
         $plural,
         ['_count' => $count, '_singular' => $singular] + $args
@@ -136,7 +132,6 @@ function __x(string $context, string $singular, mixed ...$args): string
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator()->translate($singular, ['_context' => $context] + $args);
 }
 
@@ -163,7 +158,6 @@ function __xn(string $context, string $singular, string $plural, int $count, mix
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator()->translate(
         $plural,
         ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
@@ -191,7 +185,6 @@ function __dx(string $domain, string $context, string $msg, mixed ...$args): str
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator($domain)->translate(
         $msg,
         ['_context' => $context] + $args
@@ -228,7 +221,6 @@ function __dxn(
         $args = $args[0];
     }
 
-    /** @psalm-suppress InternalMethod */
     return I18n::getTranslator($domain)->translate(
         $plural,
         ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
