@@ -18,6 +18,7 @@ namespace Cake\Mailer;
 
 use Cake\View\View;
 use Cake\View\ViewVarsTrait;
+use function Cake\Core\pluginSplit;
 
 /**
  * Class for rendering email message.

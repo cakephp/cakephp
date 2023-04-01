@@ -41,6 +41,8 @@ use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
 use Throwable;
+use function Cake\Core\h;
+use function Cake\Core\pr;
 
 /**
  * Provide custom logging and error handling.

@@ -18,6 +18,7 @@ namespace Cake\View\Helper;
 
 use Cake\I18n\Number;
 use Cake\View\Helper;
+use function Cake\Core\h;
 
 /**
  * Number helper library.

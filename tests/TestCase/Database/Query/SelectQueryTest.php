@@ -42,6 +42,7 @@ use InvalidArgumentException;
 use ReflectionProperty;
 use stdClass;
 use TestApp\Database\Type\BarType;
+use function Cake\Collection\collection;
 
 /**
  * Tests SelectQuery class

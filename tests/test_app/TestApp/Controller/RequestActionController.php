@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Utility\Hash;
 use Psr\Http\Message\UploadedFileInterface;
+use function Cake\Collection\collection;
 
 /**
  * RequestActionController class

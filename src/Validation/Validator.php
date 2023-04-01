@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\UploadedFileInterface;
 use Traversable;
+use function Cake\I18n\__d;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -192,7 +193,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function __construct()
     {
-        $this->_useI18n = function_exists('__d');
+        $this->_useI18n = function_exists('\Cake\I18n\__d');
         $this->_providers = self::$_defaultProviders;
     }
 
@@ -2181,13 +2182,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validation::isArray()
      * @return $this
      */
-    public function isArray(string $field, ?string $message = null, Closure|string|null $when = null)
+    public function array(string $field, ?string $message = null, Closure|string|null $when = null)
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
-        return $this->add($field, 'isArray', $extra + [
-                'rule' => 'isArray',
-            ]);
+        return $this->add($field, 'array', $extra + [
+            'rule' => 'isArray',
+        ]);
     }
 
     /**

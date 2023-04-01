@@ -16,6 +16,7 @@
 
 use Cake\Error\Debugger;
 use Cake\Routing\Router;
+use function Cake\Core\h;
 
 $this->layout = 'dev_error';
 

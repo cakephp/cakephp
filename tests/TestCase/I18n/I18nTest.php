@@ -22,6 +22,14 @@ use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
+use function Cake\I18n\__;
+use function Cake\I18n\__d;
+use function Cake\I18n\__dn;
+use function Cake\I18n\__dx;
+use function Cake\I18n\__dxn;
+use function Cake\I18n\__n;
+use function Cake\I18n\__x;
+use function Cake\I18n\__xn;
 
 /**
  * I18nTest class

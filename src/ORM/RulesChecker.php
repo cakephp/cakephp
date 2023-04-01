@@ -23,6 +23,7 @@ use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\Rule\ValidCount;
 use Cake\Utility\Inflector;
+use function Cake\I18n\__d;
 
 /**
  * ORM flavoured rules checker.

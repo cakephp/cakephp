@@ -30,6 +30,7 @@ use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * TestCaseTest

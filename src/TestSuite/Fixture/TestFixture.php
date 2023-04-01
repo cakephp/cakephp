@@ -25,6 +25,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used

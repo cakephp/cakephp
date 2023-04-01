@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use function Cake\Core\env;
+
 /**
  * Compare a string to the contents of a file
  *

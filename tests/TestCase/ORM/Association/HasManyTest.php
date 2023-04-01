@@ -29,6 +29,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use function Cake\I18n\__;
 
 /**
  * Tests HasMany class

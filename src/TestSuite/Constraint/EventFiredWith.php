@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\TestSuite\Constraint;
 
+use Cake\Collection\Collection;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
@@ -74,7 +75,7 @@ class EventFiredWith extends Constraint
             }
         }
 
-        $eventGroup = collection($firedEvents)
+        $eventGroup = (new Collection($firedEvents))
             ->groupBy(function (EventInterface $event): string {
                 return $event->getName();
             })

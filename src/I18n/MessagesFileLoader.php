@@ -21,6 +21,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use Locale;
+use function Cake\Core\pluginSplit;
 
 /**
  * A generic translations package factory that will load translations files

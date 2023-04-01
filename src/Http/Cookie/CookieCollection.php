@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Traversable;
 use TypeError;
+use function Cake\Core\triggerWarning;
 
 /**
  * Cookie Collection

@@ -55,6 +55,7 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Represents a single database table.

@@ -40,6 +40,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Tests Connection class

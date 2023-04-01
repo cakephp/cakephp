@@ -21,6 +21,12 @@ use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use Exception;
 use stdClass;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\env;
+use function Cake\Core\h;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -60,6 +66,73 @@ class FunctionsTest extends TestCase
         $this->assertStringContainsString('phpunit', env('PHP_SELF'));
     }
 
+    public function testEnv2(): void
+    {
+        $this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', 'Safe mode is on.');
+
+        $server = $_SERVER;
+        $env = $_ENV;
+        $_SERVER = $_ENV = [];
+
+        $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
+        $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
+
+        $_SERVER = $_ENV = [];
+
+        $_ENV['CGI_MODE'] = 'BINARY';
+        $_ENV['SCRIPT_URL'] = '/a/test/test.php';
+        $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
+
+        $_SERVER = $_ENV = [];
+
+        $this->assertFalse(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = 'on';
+        $this->assertTrue(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = '1';
+        $this->assertTrue(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = 'I am not empty';
+        $this->assertTrue(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = 1;
+        $this->assertTrue(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = 'off';
+        $this->assertFalse(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = false;
+        $this->assertFalse(env('HTTPS'));
+
+        $_SERVER['HTTPS'] = '';
+        $this->assertFalse(env('HTTPS'));
+
+        $_SERVER = [];
+
+        $_ENV['SCRIPT_URI'] = 'https://domain.test/a/test.php';
+        $this->assertTrue(env('HTTPS'));
+
+        $_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
+        $this->assertFalse(env('HTTPS'));
+
+        $_SERVER = $_ENV = [];
+
+        $this->assertNull(env('TEST_ME'));
+
+        $_ENV['TEST_ME'] = 'a';
+        $this->assertSame(env('TEST_ME'), 'a');
+
+        $_SERVER['TEST_ME'] = 'b';
+        $this->assertSame(env('TEST_ME'), 'b');
+
+        unset($_ENV['TEST_ME']);
+        $this->assertSame(env('TEST_ME'), 'b');
+
+        $_SERVER = $server;
+        $_ENV = $env;
+    }
+
     /**
      * Test cases for h()
      *
@@ -85,6 +158,121 @@ class FunctionsTest extends TestCase
             [new Response(), ''],
             [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
         ];
+    }
+
+    public function testH2(): void
+    {
+        $string = '<foo>';
+        $result = h($string);
+        $this->assertSame('&lt;foo&gt;', $result);
+
+        $in = ['this & that', '<p>Which one</p>'];
+        $result = h($in);
+        $expected = ['this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;'];
+        $this->assertSame($expected, $result);
+
+        $string = '<foo> & &nbsp;';
+        $result = h($string);
+        $this->assertSame('&lt;foo&gt; &amp; &amp;nbsp;', $result);
+
+        $string = '<foo> & &nbsp;';
+        $result = h($string, false);
+        $this->assertSame('&lt;foo&gt; &amp; &nbsp;', $result);
+
+        $string = "An invalid\x80string";
+        $result = h($string);
+        $this->assertStringContainsString('string', $result);
+
+        $arr = ['<foo>', '&nbsp;'];
+        $result = h($arr);
+        $expected = [
+            '&lt;foo&gt;',
+            '&amp;nbsp;',
+        ];
+        $this->assertSame($expected, $result);
+
+        $arr = ['<foo>', '&nbsp;'];
+        $result = h($arr, false);
+        $expected = [
+            '&lt;foo&gt;',
+            '&nbsp;',
+        ];
+        $this->assertSame($expected, $result);
+
+        $arr = ['f' => '<foo>', 'n' => '&nbsp;'];
+        $result = h($arr, false);
+        $expected = [
+            'f' => '&lt;foo&gt;',
+            'n' => '&nbsp;',
+        ];
+        $this->assertSame($expected, $result);
+
+        $arr = ['invalid' => "\x99An invalid\x80string", 'good' => 'Good string'];
+        $result = h($arr);
+        $this->assertStringContainsString('An invalid', $result['invalid']);
+        $this->assertSame('Good string', $result['good']);
+
+        // Test that boolean values are not converted to strings
+        $result = h(false);
+        $this->assertFalse($result);
+
+        $arr = ['foo' => false, 'bar' => true];
+        $result = h($arr);
+        $this->assertFalse($result['foo']);
+        $this->assertTrue($result['bar']);
+
+        $obj = new stdClass();
+        $result = h($obj);
+        $this->assertSame('(object)stdClass', $result);
+
+        $obj = new Response(['body' => 'Body content']);
+        $result = h($obj);
+        $this->assertSame('Body content', $result);
+    }
+
+    /**
+     * Test splitting plugin names.
+     */
+    public function testPluginSplit(): void
+    {
+        $result = pluginSplit('Something.else');
+        $this->assertSame(['Something', 'else'], $result);
+
+        $result = pluginSplit('Something.else.more.dots');
+        $this->assertSame(['Something', 'else.more.dots'], $result);
+
+        $result = pluginSplit('Somethingelse');
+        $this->assertSame([null, 'Somethingelse'], $result);
+
+        $result = pluginSplit('Something.else', true);
+        $this->assertSame(['Something.', 'else'], $result);
+
+        $result = pluginSplit('Something.else.more.dots', true);
+        $this->assertSame(['Something.', 'else.more.dots'], $result);
+
+        $result = pluginSplit('Post', false, 'Blog');
+        $this->assertSame(['Blog', 'Post'], $result);
+
+        $result = pluginSplit('Blog.Post', false, 'Ultimate');
+        $this->assertSame(['Blog', 'Post'], $result);
+    }
+
+    /**
+     * test namespaceSplit
+     */
+    public function testNamespaceSplit(): void
+    {
+        $result = namespaceSplit('Something');
+        $this->assertSame(['', 'Something'], $result);
+
+        $result = namespaceSplit('\Something');
+        $this->assertSame(['', 'Something'], $result);
+
+        $result = namespaceSplit('Cake\Something');
+        $this->assertSame(['Cake', 'Something'], $result);
+
+        $result = namespaceSplit('Cake\Test\Something');
+        $this->assertSame(['Cake\Test', 'Something'], $result);
     }
 
     /**

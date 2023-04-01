@@ -24,6 +24,7 @@ use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Closure;
+use function Cake\Core\pluginSplit;
 
 /**
  * Represents an 1 - N relationship where the source side of the relation is

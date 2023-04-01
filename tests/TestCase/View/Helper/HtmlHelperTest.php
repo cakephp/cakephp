@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use function Cake\Core\h;
 
 /**
  * HtmlHelperTest class

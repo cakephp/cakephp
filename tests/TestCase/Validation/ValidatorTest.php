@@ -2361,12 +2361,12 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the isArray proxy method
+     * Tests the array proxy method
      */
-    public function testIsArray(): void
+    public function testArray(): void
     {
         $validator = new Validator();
-        $validator->isArray('username');
+        $validator->array('username');
         $this->assertEmpty($validator->validate(['username' => [1, 2, 3]]));
         $this->assertNotEmpty($validator->validate(['username' => 'is not an array']));
     }

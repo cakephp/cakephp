@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use DateInterval;
 use DateTime;
 use Psr\SimpleCache\CacheInterface;
+use function Cake\Core\triggerWarning;
 
 /**
  * Storage engine for CakePHP caching

@@ -19,6 +19,7 @@ namespace Cake\Datasource;
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\Locator\LocatorInterface;
 use UnexpectedValueException;
+use function Cake\Core\pluginSplit;
 
 /**
  * Provides functionality for loading table classes

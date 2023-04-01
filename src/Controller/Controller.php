@@ -45,6 +45,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
 
 /**
  * Application controller class for organization of business logic.

@@ -26,6 +26,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Http\Message\UploadedFileInterface;
 use SimpleXMLElement;
+use function Cake\Core\env;
 
 /**
  * Email message class.

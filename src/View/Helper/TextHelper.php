@@ -19,6 +19,7 @@ namespace Cake\View\Helper;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper;
+use function Cake\Core\h;
 
 /**
  * Text helper library.

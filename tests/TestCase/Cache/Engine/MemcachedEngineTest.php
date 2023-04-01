@@ -22,6 +22,7 @@ use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use DateInterval;
 use Memcached;
+use function Cake\Core\env;
 
 /**
  * MemcachedEngineTest class

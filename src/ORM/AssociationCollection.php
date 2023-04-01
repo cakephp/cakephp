@@ -23,6 +23,8 @@ use Cake\ORM\Locator\LocatorInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
 
 /**
  * A container/collection for association classes.

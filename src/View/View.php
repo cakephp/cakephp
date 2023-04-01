@@ -36,6 +36,7 @@ use Generator;
 use InvalidArgumentException;
 use LogicException;
 use Throwable;
+use function Cake\Core\pluginSplit;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed

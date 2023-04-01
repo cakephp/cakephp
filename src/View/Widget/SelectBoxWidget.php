@@ -19,6 +19,7 @@ namespace Cake\View\Widget;
 use ArrayAccess;
 use Cake\View\Form\ContextInterface;
 use Traversable;
+use function Cake\Core\h;
 
 /**
  * Input widget class for generating a selectbox.

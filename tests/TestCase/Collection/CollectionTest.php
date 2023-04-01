@@ -34,6 +34,7 @@ use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
+use function Cake\Collection\collection;
 
 /**
  * Collection Test

@@ -32,6 +32,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
+use function Cake\Core\pluginSplit;
 
 /**
  * An Association is a relationship established between two tables and is used

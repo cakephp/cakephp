@@ -37,6 +37,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Model\Entity\ArticlesTag;
+use function Cake\Collection\collection;
 
 /**
  * Tests BelongsToMany class

@@ -24,6 +24,7 @@ use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
 use Stringable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Base log engine class.

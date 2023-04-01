@@ -22,6 +22,7 @@ use Cake\Error\Debugger;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use SessionHandlerInterface;
+use function Cake\Core\env;
 use const PHP_SESSION_ACTIVE;
 
 /**

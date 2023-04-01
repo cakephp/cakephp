@@ -26,6 +26,7 @@ use Exception;
 use InvalidArgumentException;
 use JsonSerializable;
 use PDO;
+use function Cake\Core\pluginSplit;
 
 /**
  * Provides an API for iteratively building a view up.

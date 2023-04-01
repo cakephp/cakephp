@@ -19,6 +19,7 @@ namespace Cake\Utility;
 use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use Transliterator;
+use function Cake\I18n\__d;
 
 /**
  * Text handling methods.

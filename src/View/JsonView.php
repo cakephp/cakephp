@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View;
 
 use Cake\Core\Configure;
+use function Cake\Core\h;
 
 /**
  * A view class that is used for JSON responses.
