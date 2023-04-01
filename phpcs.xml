@@ -5,4 +5,9 @@
     <rule ref="CakePHP" />
 
     <arg value="s"/>
+    <!-- pretty sure this is a bug in slevomat -->
+    <rule ref="Internal.Exception">
+        <severity>0</severity>
+        <exclude-pattern>src/Collection/functions.php</exclude-pattern>
+    </rule>
 </ruleset>
