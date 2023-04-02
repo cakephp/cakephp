@@ -877,12 +877,12 @@ HTML;
         );
 
         $this->message->setAttachments([
-            __FILE__,
+            CAKE . 'Mailer' . DS . 'Message.php',
             $uploadedFile,
         ]);
         $expected = [
-            'MessageTest.php' => [
-                'file' => __FILE__,
+            'Message.php' => [
+                'file' => CAKE . 'Mailer' . DS . 'Message.php',
                 'mimetype' => 'text/x-php',
             ],
             'MessageTest.php' => [
