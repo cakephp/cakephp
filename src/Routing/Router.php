@@ -938,7 +938,9 @@ class Router
     }
 
     /**
-     * Get the route scopes and their connected routes.
+     * Get the all of the routes currently connected.
+     *
+     * Routes will not always be returned in the order they were defined.
      *
      * @return array<\Cake\Routing\Route\Route>
      */

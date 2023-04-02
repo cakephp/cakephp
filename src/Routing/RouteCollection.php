@@ -377,6 +377,8 @@ class RouteCollection
     /**
      * Get all the connected routes as a flat list.
      *
+     * Routes will not be returned in the order they were added.
+     *
      * @return array<\Cake\Routing\Route\Route>
      */
     public function routes(): array
