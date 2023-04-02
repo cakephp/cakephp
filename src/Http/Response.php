@@ -1198,62 +1198,6 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Get an array representation of the HTTP Link header values
-     *
-     * @return array
-     */
-    public function getParsedLinks(): array
-    {
-        $linkHeader = $this->getHeader('Link');
-        $result = [];
-        foreach ($linkHeader as $link) {
-            $result[] = $this->extractLinkHeaderData($link);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Parses one item of the HTTP link header into an array
-     *
-     * @param string $linkHeader The HTTP Link header part
-     * @return array[]
-     */
-    protected function extractLinkHeaderData(string $linkHeader)
-    {
-        preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $linkHeader, $matches);
-
-        $url = $matches[1];
-        $parsedParams = [];
-
-        $params = $matches[2];
-        if ($params) {
-            $explodedParams = explode(';', $params);
-            foreach ($explodedParams as $param) {
-                $explodedParam = explode('=', $param);
-                $trimedKey = trim($explodedParam[0]);
-                $trimedValue = trim($explodedParam[1], '"');
-                if ($trimedKey === 'title*') {
-                    // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
-                    preg_match('/(.*)\'(.*)\'(.*)/i', $trimedValue, $matches);
-                    $trimedValue = [
-                        'language' => $matches[2],
-                        'encoding' => $matches[1],
-                        'value' => urldecode($matches[3]),
-                    ];
-                }
-                $parsedParams[$trimedKey] = $trimedValue;
-            }
-        }
-
-        return [
-            [
-                'link' => $url,
-            ] + $parsedParams,
-        ];
-    }
-
-    /**
      * Checks whether a response has not been modified according to the 'If-None-Match'
      * (Etags) and 'If-Modified-Since' (last modification date) request
      * headers.
