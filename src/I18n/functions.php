@@ -226,10 +226,3 @@ function __dxn(
         ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
     );
 }
-
-/**
- * Include global functions.
- */
-if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
-    include 'functions_global.php';
-}

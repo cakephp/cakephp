@@ -57,10 +57,3 @@ function url(UriInterface|array|string|null $url = null, bool $full = false): st
 {
     return Router::url($url, $full);
 }
-
-/**
- * Include global functions.
- */
-if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
-    include 'functions_global.php';
-}
