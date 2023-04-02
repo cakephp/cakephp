@@ -386,14 +386,14 @@ class RouteBuilderTest extends TestCase
         $this->assertInstanceOf(RedirectRoute::class, $route);
 
         $routes->redirect('/old', '/forums', ['status' => 301]);
-        $route = $this->collection->routes()[0];
+        $route = $this->collection->routes()[1];
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
         $this->assertSame('/forums', $route->redirect[0]);
 
         $route = $routes->redirect('/old', '/forums');
         $this->assertInstanceOf(RedirectRoute::class, $route);
-        $this->assertSame($route, $this->collection->routes()[1]);
+        $this->assertSame($route, $this->collection->routes()[2]);
     }
 
     /**
@@ -551,12 +551,12 @@ class RouteBuilderTest extends TestCase
             $routes->resources('Comments');
         });
         $all = $this->collection->routes();
-        $this->assertSame('Articles', $all[0]->defaults['controller']);
-        $this->assertSame('/api/posts', $all[0]->template);
-        $this->assertSame('/api/posts/{id}', $all[2]->template);
+        $this->assertSame('Articles', $all[8]->defaults['controller']);
+        $this->assertSame('/api/posts', $all[8]->template);
+        $this->assertSame('/api/posts/{id}', $all[1]->template);
         $this->assertSame(
             '/api/posts/{article_id}/comments',
-            $all[5]->template,
+            $all[4]->template,
             'parameter name should reflect resource name'
         );
     }
@@ -583,7 +583,7 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->routes();
         $this->assertCount(5, $all);
 
-        $this->assertSame('/api/articles', $all[0]->template);
+        $this->assertSame('/api/articles', $all[4]->template);
         foreach ($all as $route) {
             $this->assertSame('Api/Rest', $route->defaults['prefix']);
             $this->assertSame('Articles', $route->defaults['controller']);
@@ -626,9 +626,9 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->routes();
         $this->assertCount(10, $all);
 
-        $this->assertSame('/api/network-objects', $all[0]->template);
+        $this->assertSame('/api/network-objects', $all[8]->template);
         $this->assertSame('/api/network-objects/{id}', $all[2]->template);
-        $this->assertSame('/api/network-objects/{network_object_id}/attributes', $all[5]->template);
+        $this->assertSame('/api/network-objects/{network_object_id}/attributes', $all[4]->template);
     }
 
     /**
@@ -775,13 +775,13 @@ class RouteBuilderTest extends TestCase
 
         $result = $this->collection->routes();
         $this->assertCount(2, $result);
-        $this->assertSame('/articles', $result[0]->template);
-        $this->assertSame('index', $result[0]->defaults['action']);
-        $this->assertSame('GET', $result[0]->defaults['_method']);
+        $this->assertSame('/articles', $result[1]->template);
+        $this->assertSame('index', $result[1]->defaults['action']);
+        $this->assertSame('GET', $result[1]->defaults['_method']);
 
-        $this->assertSame('/articles/{id}', $result[1]->template);
-        $this->assertSame('delete', $result[1]->defaults['action']);
-        $this->assertSame('DELETE', $result[1]->defaults['_method']);
+        $this->assertSame('/articles/{id}', $result[0]->template);
+        $this->assertSame('delete', $result[0]->defaults['action']);
+        $this->assertSame('DELETE', $result[0]->defaults['_method']);
     }
 
     /**
@@ -797,11 +797,11 @@ class RouteBuilderTest extends TestCase
 
         $result = $this->collection->routes();
         $this->assertCount(2, $result);
-        $this->assertSame('/articles', $result[0]->template);
-        $this->assertSame('showList', $result[0]->defaults['action']);
+        $this->assertSame('/articles', $result[1]->template);
+        $this->assertSame('showList', $result[1]->defaults['action']);
 
-        $this->assertSame('/articles/{id}', $result[1]->template);
-        $this->assertSame('delete', $result[1]->defaults['action']);
+        $this->assertSame('/articles/{id}', $result[0]->template);
+        $this->assertSame('delete', $result[0]->defaults['action']);
     }
 
     /**
@@ -815,7 +815,7 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals(['prefix' => 'Api'], $routes->params());
 
             $routes->resources('Comments');
-            $route = $this->collection->routes()[5];
+            $route = $this->collection->routes()[3];
             $this->assertSame('/api/articles/{article_id}/comments', $route->template);
         });
     }
