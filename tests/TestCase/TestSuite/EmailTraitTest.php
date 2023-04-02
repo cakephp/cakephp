@@ -89,7 +89,7 @@ class EmailTraitTest extends TestCase
         $this->assertMailSubjectContains('world');
 
         $this->assertMailContainsAttachment('custom_name.php');
-        $this->assertMailContainsAttachment('custom_name.php', ['file' => CAKE . 'basics.php']);
+        $this->assertMailContainsAttachment('custom_name.php', ['file' => __FILE__]);
 
         $this->assertMailSentWith('Hello world', 'subject');
         $this->assertMailSentWith('cc@example.com', 'cc');
@@ -246,7 +246,7 @@ class EmailTraitTest extends TestCase
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
-            ->setAttachments(['custom_name.php' => CAKE . 'basics.php'])
+            ->setAttachments(['custom_name.php' => __FILE__])
             ->setEmailFormat(Message::MESSAGE_TEXT)
             ->deliver('text');
 
