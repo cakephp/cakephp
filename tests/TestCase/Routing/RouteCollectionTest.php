@@ -134,6 +134,41 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parse() handling query strings.
+     */
+    public function testParseQueryString(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+
+        $result = $this->collection->parse('/media/search/php?one=two');
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Media',
+            'action' => 'search',
+            'pass' => ['php'],
+            'plugin' => null,
+            '_matchedRoute' => '/media/search/*',
+            '?' => ['one' => 'two'],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/thing?one=two');
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'pass' => [],
+            'id' => 'thing',
+            'plugin' => null,
+            '_matchedRoute' => '/{id}',
+            '?' => ['one' => 'two'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test parsing routes with and without _name.
      */
     public function testParseWithNameParameter(): void
@@ -263,6 +298,43 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest(['url' => '/']);
         $result = $this->collection->parseRequest($request);
         $this->assertEquals([], $result, 'Should not match, missing /b');
+    }
+
+    /**
+     * Test parseRequest() handling query strings.
+     */
+    public function testParseRequestQueryString(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+
+        $request = new ServerRequest(['url' => '/media/search/php?one=two']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Media',
+            'action' => 'search',
+            'pass' => ['php'],
+            'plugin' => null,
+            '_matchedRoute' => '/media/search/*',
+            '?' => ['one' => 'two'],
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/thing?one=two']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'pass' => [],
+            'id' => 'thing',
+            'plugin' => null,
+            '_matchedRoute' => '/{id}',
+            '?' => ['one' => 'two'],
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
