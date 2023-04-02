@@ -104,4 +104,20 @@ class HeaderParser
 
         return $accept;
     }
+
+    /**
+     * @param string $value The WWW-Authenticate header
+     * @return array
+     */
+    public static function wwwAuthenticate(string $value): array
+    {
+        preg_match_all(
+            '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
+            $value,
+            $matches,
+            PREG_SET_ORDER
+        );
+
+        return $matches;
+    }
 }

@@ -17,6 +17,7 @@ namespace Cake\Http\Client\Auth;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
+use Cake\Http\HeaderParser;
 use Cake\Utility\Hash;
 
 /**
@@ -156,15 +157,11 @@ class Digest
             ['auth' => ['type' => null]]
         );
 
-        if (!$response->getHeader('WWW-Authenticate')) {
+        $header = $response->getHeader('WWW-Authenticate');
+        if (!$header) {
             return [];
         }
-        preg_match_all(
-            '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
-            $response->getHeaderLine('WWW-Authenticate'),
-            $matches,
-            PREG_SET_ORDER
-        );
+        $matches = HeaderParser::wwwAuthenticate($header[0]);
 
         foreach ($matches as $match) {
             $credentials[$match[1]] = $match[3] ?? $match[2];

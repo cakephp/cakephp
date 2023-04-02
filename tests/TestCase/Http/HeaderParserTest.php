@@ -113,4 +113,22 @@ class HeaderParserTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
     }
+
+    public function testWwwAuthenticate(): void
+    {
+        $result = HeaderParser::wwwAuthenticate('Digest realm="The batcave",nonce="4cded326c6c51"');
+        $expected = [
+            [
+                'realm="The batcave"',
+                'realm',
+                'The batcave',
+            ],
+            [
+                'nonce="4cded326c6c51"',
+                'nonce',
+                '4cded326c6c51',
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
 }
