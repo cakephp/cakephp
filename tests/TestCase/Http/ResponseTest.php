@@ -428,7 +428,7 @@ class ResponseTest extends TestCase
     /**
      * Tests getting a parsed representation of a Link header
      */
-    public function testGetParsedLink(): void
+    public function testGetParsedLinks(): void
     {
         $response = new Response();
         $this->assertFalse($response->hasHeader('Link'));
@@ -438,36 +438,78 @@ class ResponseTest extends TestCase
         $expected = [
             [['link' => 'http://example.com']],
         ];
-        $this->assertSame($expected, $new->getParsedLink());
+        $this->assertSame($expected, $new->getParsedLinks());
+
+        $new = $response->withAddedLink('http://example.com/苗条');
+        $this->assertSame('<http://example.com/苗条>', $new->getHeaderLine('Link'));
+        $expected = [
+            [['link' => 'http://example.com/苗条']],
+        ];
+        $this->assertSame($expected, $new->getParsedLinks());
 
         $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
         $this->assertSame('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
         $expected = [
-            ['prev' => ['link' => 'http://example.com']],
+            [
+                [
+                    'link' => 'http://example.com',
+                    'rel' => 'prev',
+                ],
+            ],
         ];
-        $this->assertSame($expected, $new->getParsedLink());
+        $this->assertSame($expected, $new->getParsedLinks());
 
         $new = $response->withAddedLink('http://example.com', ['rel' => 'prev', 'results' => 'true']);
         $this->assertSame('<http://example.com>; rel="prev"; results="true"', $new->getHeaderLine('Link'));
         $expected = [
             [
-                'prev' => [
+                [
                     'link' => 'http://example.com',
+                    'rel' => 'prev',
                     'results' => 'true',
                 ],
             ],
         ];
-        $this->assertSame($expected, $new->getParsedLink());
+        $this->assertSame($expected, $new->getParsedLinks());
 
         $new = $response
             ->withAddedLink('http://example.com', ['rel' => 'prev'])
             ->withAddedLink('http://example.com', ['rel' => 'next']);
         $this->assertSame('<http://example.com>; rel="prev",<http://example.com>; rel="next"', $new->getHeaderLine('Link'));
         $expected = [
-            ['prev' => ['link' => 'http://example.com']],
-            ['next' => ['link' => 'http://example.com']],
+            [
+                [
+                    'link' => 'http://example.com',
+                    'rel' => 'prev',
+                ],
+            ],
+            [
+                [
+                    'link' => 'http://example.com',
+                    'rel' => 'next',
+                ],
+            ],
         ];
-        $this->assertSame($expected, $new->getParsedLink());
+        $this->assertSame($expected, $new->getParsedLinks());
+
+        $encodedLinkHeader = '</extended-attr-example>; rel=start; title*=UTF-8\'en\'%E2%91%A0%E2%93%AB%E2%85%93%E3%8F%A8%E2%99%B3%F0%9D%84%9E%CE%BB';
+        $new = $response
+            ->withHeader('Link', $encodedLinkHeader);
+        $this->assertSame($encodedLinkHeader, $new->getHeaderLine('Link'));
+        $expected = [
+            [
+                [
+                    'link' => '/extended-attr-example',
+                    'rel' => 'start',
+                    'title*' => [
+                        'language' => 'en',
+                        'encoding' => 'UTF-8',
+                        'value' => '①⓫⅓㏨♳𝄞λ',
+                    ],
+                ],
+            ],
+        ];
+        $this->assertSame($expected, $new->getParsedLinks());
     }
 
     /**

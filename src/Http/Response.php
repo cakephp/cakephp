@@ -1202,7 +1202,7 @@ class Response implements ResponseInterface
      *
      * @return array
      */
-    public function getParsedLink(): array
+    public function getParsedLinks(): array
     {
         $linkHeader = $this->getHeader('Link');
         $result = [];
@@ -1221,7 +1221,7 @@ class Response implements ResponseInterface
      */
     protected function extractLinkHeaderData(string $linkHeader)
     {
-        preg_match('/<(.*)>[; ]?[; ]?(.*)?/', $linkHeader, $matches);
+        preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $linkHeader, $matches);
 
         $url = $matches[1];
         $parsedParams = [];
@@ -1231,19 +1231,19 @@ class Response implements ResponseInterface
             $explodedParams = explode(';', $params);
             foreach ($explodedParams as $param) {
                 $explodedParam = explode('=', $param);
-                $parsedParams[trim($explodedParam[0])] = trim($explodedParam[1], '"');
+                $trimedKey = trim($explodedParam[0]);
+                $trimedValue = trim($explodedParam[1], '"');
+                if ($trimedKey === 'title*') {
+                    // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
+                    preg_match('/(.*)\'(.*)\'(.*)/i', $trimedValue, $matches);
+                    $trimedValue = [
+                        'language' => $matches[2],
+                        'encoding' => $matches[1],
+                        'value' => urldecode($matches[3]),
+                    ];
+                }
+                $parsedParams[$trimedKey] = $trimedValue;
             }
-        }
-
-        if (isset($parsedParams['rel'])) {
-            $rel = $parsedParams['rel'];
-            unset($parsedParams['rel']);
-
-            return [
-                $rel => [
-                        'link' => $url,
-                    ] + $parsedParams,
-            ];
         }
 
         return [
