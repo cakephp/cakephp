@@ -47,11 +47,18 @@ class RouteCollection
     protected $_named = [];
 
     /**
+     * Routes indexed by static path.
+     *
+     * @var array<string, array<\Cake\Routing\Route\Route>>
+     */
+    protected $staticPaths = [];
+
+    /**
      * Routes indexed by path prefix.
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected $_paths = [];
+    protected $dynamicPaths = [];
 
     /**
      * A map of middleware names and the related objects.
@@ -104,11 +111,16 @@ class RouteCollection
 
         // Index path prefixes (for parsing)
         $path = $route->staticPath();
-        $this->_paths[$path][] = $route;
 
         $extensions = $route->getExtensions();
         if (count($extensions) > 0) {
             $this->setExtensions($extensions);
+        }
+
+        if ($path === $route->template && !$extensions) {
+            $this->staticPaths[$path][] = $route;
+        } else {
+            $this->dynamicPaths[$path][] = $route;
         }
     }
 
@@ -123,6 +135,9 @@ class RouteCollection
     public function parse(string $url, string $method = ''): array
     {
         $decoded = urldecode($url);
+        if ($decoded !== '/') {
+            $decoded = rtrim($decoded, '/');
+        }
 
         $queryParameters = [];
         if (strpos($url, '?') !== false) {
@@ -130,10 +145,25 @@ class RouteCollection
             parse_str($qs, $queryParameters);
         }
 
-        // Sort path segments matching longest paths first.
-        krsort($this->_paths);
+        if (isset($this->staticPaths[$decoded])) {
+            foreach ($this->staticPaths[$decoded] as $route) {
+                $r = $route->parse($url, $method);
+                if ($r === null) {
+                    continue;
+                }
 
-        foreach ($this->_paths as $path => $routes) {
+                if ($queryParameters) {
+                    $r['?'] = $queryParameters;
+                }
+
+                return $r;
+            }
+        }
+
+        // Sort path segments matching longest paths first.
+        krsort($this->dynamicPaths);
+
+        foreach ($this->dynamicPaths as $path => $routes) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -172,11 +202,29 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = urldecode($uri->getPath());
+        if ($urlPath !== '/') {
+            $urlPath = rtrim($urlPath, '/');
+        }
+
+        if (isset($this->staticPaths[$urlPath])) {
+            foreach ($this->staticPaths[$urlPath] as $route) {
+                $r = $route->parseRequest($request);
+                if ($r === null) {
+                    continue;
+                }
+                if ($uri->getQuery()) {
+                    parse_str($uri->getQuery(), $queryParameters);
+                    $r['?'] = $queryParameters;
+                }
+
+                return $r;
+            }
+        }
 
         // Sort path segments matching longest paths first.
-        krsort($this->_paths);
+        krsort($this->dynamicPaths);
 
-        foreach ($this->_paths as $path => $routes) {
+        foreach ($this->dynamicPaths as $path => $routes) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
@@ -333,12 +381,18 @@ class RouteCollection
      */
     public function routes(): array
     {
-        krsort($this->_paths);
+        krsort($this->dynamicPaths);
 
-        return array_reduce(
-            $this->_paths,
+        $static = array_reduce(
+            $this->staticPaths,
             'array_merge',
             []
+        );
+
+        return array_reduce(
+            $this->dynamicPaths,
+            'array_merge',
+            $static
         );
     }
 

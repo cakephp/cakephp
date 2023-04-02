@@ -625,8 +625,8 @@ class RouteCollectionTest extends TestCase
 
         $routes = $this->collection->routes();
         $this->assertCount(2, $routes);
-        $this->assertSame($one, $routes[0]);
-        $this->assertSame($two, $routes[1]);
+        $this->assertSame($one, $routes[1]);
+        $this->assertSame($two, $routes[0]);
     }
 
     /**
