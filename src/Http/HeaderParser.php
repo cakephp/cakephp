@@ -118,6 +118,11 @@ class HeaderParser
             PREG_SET_ORDER
         );
 
-        return $matches;
+        $return = [];
+        foreach ($matches as $match) {
+            $return[$match[1]] = $match[3] ?? $match[2];
+        }
+
+        return $return;
     }
 }

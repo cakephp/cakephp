@@ -118,16 +118,20 @@ class HeaderParserTest extends TestCase
     {
         $result = HeaderParser::wwwAuthenticate('Digest realm="The batcave",nonce="4cded326c6c51"');
         $expected = [
-            [
-                'realm="The batcave"',
-                'realm',
-                'The batcave',
-            ],
-            [
-                'nonce="4cded326c6c51"',
-                'nonce',
-                '4cded326c6c51',
-            ],
+            'realm' => 'The batcave',
+            'nonce' => '4cded326c6c51',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testWwwAuthenticateWithAlgo(): void
+    {
+        $result = HeaderParser::wwwAuthenticate('Digest qop="auth", realm="shellyplus1pm-44179393e8a8", nonce="63f8c86f", algorithm=SHA-256');
+        $expected = [
+            'qop' => 'auth',
+            'realm' => 'shellyplus1pm-44179393e8a8',
+            'nonce' => '63f8c86f',
+            'algorithm' => 'SHA-256',
         ];
         $this->assertEquals($expected, $result);
     }
