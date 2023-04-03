@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
-use Cake\Core\Configure;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
 
