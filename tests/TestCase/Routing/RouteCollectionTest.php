@@ -499,6 +499,18 @@ class RouteCollectionTest extends TestCase
         $builder = new RouteBuilder($this->collection, '/');
         $builder->connect('/foo', ['controller' => 'Articles'])->setExtensions(['json']);
 
+        $request = new ServerRequest(['url' => '/foo']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/foo',
+        ];
+        $this->assertEquals($expected, $result);
+
         $request = new ServerRequest(['url' => '/foo.json']);
         $result = $this->collection->parseRequest($request);
         unset($result['_route']);
