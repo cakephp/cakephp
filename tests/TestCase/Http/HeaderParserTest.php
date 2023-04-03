@@ -58,19 +58,19 @@ class HeaderParserTest extends TestCase
         $this->assertSame($expected, HeaderParser::link($new->getHeader('Link')));
 
         $new = $response
-            ->withAddedLink('http://example.com', ['rel' => 'prev'])
-            ->withAddedLink('http://example.com', ['rel' => 'next']);
-        $this->assertSame('<http://example.com>; rel="prev",<http://example.com>; rel="next"', $new->getHeaderLine('Link'));
+            ->withAddedLink('http://example.com/1', ['rel' => 'prev'])
+            ->withAddedLink('http://example.com/3', ['rel' => 'next']);
+        $this->assertSame('<http://example.com/1>; rel="prev",<http://example.com/3>; rel="next"', $new->getHeaderLine('Link'));
         $expected = [
             [
                 [
-                    'link' => 'http://example.com',
+                    'link' => 'http://example.com/1',
                     'rel' => 'prev',
                 ],
             ],
             [
                 [
-                    'link' => 'http://example.com',
+                    'link' => 'http://example.com/3',
                     'rel' => 'next',
                 ],
             ],
