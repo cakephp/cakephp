@@ -117,7 +117,7 @@ class RouteCollection
             $this->setExtensions($extensions);
         }
 
-        if ($path === $route->template && !$extensions) {
+        if ($path === $route->template) {
             $this->staticPaths[$path][] = $route;
         }
 
@@ -147,12 +147,6 @@ class RouteCollection
 
         if (isset($this->staticPaths[$decoded])) {
             foreach ($this->staticPaths[$decoded] as $route) {
-                // Extension parsing was enabled after the route was added to
-                // the collection and it can no longer be treated as a static route.
-                if ($route->getExtensions()) {
-                    // continue;
-                }
-
                 $r = $route->parse($url, $method);
                 if ($r === null) {
                     continue;
