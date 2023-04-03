@@ -112,10 +112,9 @@ class DateType extends BaseType implements BatchCastingInterface
         $class = $this->_className;
         if (is_int($value)) {
             $instance = new $class('@' . $value);
+        } elseif (str_starts_with($value, '0000-00-00')) {
+            return null;
         } else {
-            if (str_starts_with($value, '0000-00-00')) {
-                return null;
-            }
             $instance = new $class($value);
         }
 
@@ -137,14 +136,13 @@ class DateType extends BaseType implements BatchCastingInterface
             }
 
             $value = $values[$field];
-            if (str_starts_with($value, '0000-00-00')) {
-                $values[$field] = null;
-                continue;
-            }
 
             $class = $this->_className;
             if (is_int($value)) {
                 $instance = new $class('@' . $value);
+            } elseif (str_starts_with($value, '0000-00-00')) {
+                $values[$field] = null;
+                continue;
             } else {
                 $instance = new $class($value);
             }
