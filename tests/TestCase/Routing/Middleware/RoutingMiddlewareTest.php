@@ -175,7 +175,7 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertNotEmpty(Router::routes());
-            $this->assertSame('/app/articles', Router::routes()[5]->template);
+            $this->assertSame('/app/articles', Router::routes()[0]->template);
 
             return new Response();
         });

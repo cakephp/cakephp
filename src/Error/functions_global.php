@@ -14,8 +14,9 @@ declare(strict_types=1);
  * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Configure;
+use Cake\Error\Debugger;
 use function Cake\Error\dd as cakeDd;
-use function Cake\Error\debug as cakeDebug;
 use function Cake\Error\stackTrace as cakeStackTrace;
 
 if (!function_exists('debug')) {
@@ -34,7 +35,24 @@ if (!function_exists('debug')) {
      */
     function debug(mixed $var, ?bool $showHtml = null, bool $showFrom = true): mixed
     {
-        return cakeDebug($var, $showHtml, $showFrom);
+        if (!Configure::read('debug')) {
+            return $var;
+        }
+
+        $location = [];
+        if ($showFrom) {
+            $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
+            if (isset($trace[0]['line']) && isset($trace[0]['file'])) {
+                $location = [
+                    'line' => $trace[0]['line'],
+                    'file' => $trace[0]['file'],
+                ];
+            }
+        }
+
+        Debugger::printVar($var, $location, $showHtml);
+
+        return $var;
     }
 }
 

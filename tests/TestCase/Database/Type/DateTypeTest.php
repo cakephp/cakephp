@@ -71,13 +71,15 @@ class DateTypeTest extends TestCase
     {
         $values = [
             'a' => null,
-            'b' => '2001-01-04',
-            'c' => '2001-01-04 12:13:14.12345',
+            'b' => 978606794,
+            'c' => '2001-01-04',
+            'd' => '2001-01-04 12:13:14.12345',
         ];
         $expected = [
             'a' => null,
             'b' => new Date('2001-01-04'),
             'c' => new Date('2001-01-04'),
+            'd' => new Date('2001-01-04'),
         ];
         $this->assertEquals(
             $expected,
@@ -94,7 +96,7 @@ class DateTypeTest extends TestCase
         $result = $this->type->toDatabase($value, $this->driver);
         $this->assertSame($value, $result);
 
-        $date = new ChronosDate('2013-08-12');
+        $date = new Date('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12', $result);
 
