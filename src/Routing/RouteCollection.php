@@ -134,15 +134,15 @@ class RouteCollection
      */
     public function parse(string $url, string $method = ''): array
     {
-        $decoded = urldecode($url);
-        if ($decoded !== '/') {
-            $decoded = rtrim($decoded, '/');
-        }
-
         $queryParameters = [];
         if (strpos($url, '?') !== false) {
             [$url, $qs] = explode('?', $url, 2);
             parse_str($qs, $queryParameters);
+        }
+
+        $decoded = urldecode($url);
+        if ($decoded !== '/') {
+            $decoded = rtrim($decoded, '/');
         }
 
         if (isset($this->staticPaths[$decoded])) {
