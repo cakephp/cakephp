@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 /**
- * Provides methods which parse HTTP header strings
+ * Provides helper methods related to HTTP headers
  */
-class HeaderParser
+class HeaderUtility
 {
     /**
      * Get an array representation of the HTTP Link header values
@@ -18,7 +18,7 @@ class HeaderParser
     {
         $result = [];
         foreach ($linkHeaders as $linkHeader) {
-            $result[] = HeaderParser::linkItem($linkHeader);
+            $result[] = HeaderUtility::linkItem($linkHeader);
         }
 
         return $result;

@@ -17,7 +17,7 @@ namespace Cake\Http\Client\Auth;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
-use Cake\Http\HeaderParser;
+use Cake\Http\HeaderUtility;
 use Cake\Utility\Hash;
 
 /**
@@ -161,7 +161,7 @@ class Digest
         if (!$header) {
             return [];
         }
-        $matches = HeaderParser::wwwAuthenticate($header[0]);
+        $matches = HeaderUtility::wwwAuthenticate($header[0]);
         $credentials = array_merge($credentials, $matches);
 
         if (($this->isSessAlgorithm || !empty($credentials['qop'])) && empty($credentials['nc'])) {

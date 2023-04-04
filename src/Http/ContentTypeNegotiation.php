@@ -51,7 +51,7 @@ class ContentTypeNegotiation
      */
     protected function parseQualifiers(string $header): array
     {
-        return HeaderParser::qualifiers($header);
+        return HeaderUtility::qualifiers($header);
     }
 
     /**
