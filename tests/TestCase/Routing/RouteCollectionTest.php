@@ -509,6 +509,37 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testParseRequestExtension(): void
+    {
+        $builder = new RouteBuilder($this->collection, '/');
+        $builder->connect('/foo', ['controller' => 'Articles'])->setExtensions(['json']);
+
+        $request = new ServerRequest(['url' => '/foo']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/foo',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/foo.json']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_ext' => 'json',
+            '_matchedRoute' => '/foo',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Test parsing routes that match non-ascii urls
      */
@@ -712,8 +743,8 @@ class RouteCollectionTest extends TestCase
 
         $routes = $this->collection->routes();
         $this->assertCount(2, $routes);
-        $this->assertSame($one, $routes[1]);
-        $this->assertSame($two, $routes[0]);
+        $this->assertSame($one, $routes[0]);
+        $this->assertSame($two, $routes[1]);
     }
 
     /**

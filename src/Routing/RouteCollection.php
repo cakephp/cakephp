@@ -59,7 +59,7 @@ class RouteCollection
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected $dynamicPaths = [];
+    protected $_paths = [];
 
     /**
      * A map of middleware names and the related objects.
@@ -118,11 +118,11 @@ class RouteCollection
             $this->setExtensions($extensions);
         }
 
-        if ($path === $route->template && !$extensions) {
+        if ($path === $route->template) {
             $this->staticPaths[$path][] = $route;
-        } else {
-            $this->dynamicPaths[$path][] = $route;
         }
+
+        $this->_paths[$path][] = $route;
     }
 
     /**
@@ -132,19 +132,20 @@ class RouteCollection
      * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
+     * @deprecated 4.5.0 - Use parseRequest() instead.
      */
     public function parse(string $url, string $method = ''): array
     {
         deprecationWarning('4.5.0 - Use parseRequest() instead.');
-        $decoded = urldecode($url);
-        if ($decoded !== '/') {
-            $decoded = rtrim($decoded, '/');
-        }
-
         $queryParameters = [];
         if (strpos($url, '?') !== false) {
             [$url, $qs] = explode('?', $url, 2);
             parse_str($qs, $queryParameters);
+        }
+
+        $decoded = urldecode($url);
+        if ($decoded !== '/') {
+            $decoded = rtrim($decoded, '/');
         }
 
         if (isset($this->staticPaths[$decoded])) {
@@ -163,9 +164,9 @@ class RouteCollection
         }
 
         // Sort path segments matching longest paths first.
-        krsort($this->dynamicPaths);
+        krsort($this->_paths);
 
-        foreach ($this->dynamicPaths as $path => $routes) {
+        foreach ($this->_paths as $path => $routes) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -224,9 +225,9 @@ class RouteCollection
         }
 
         // Sort path segments matching longest paths first.
-        krsort($this->dynamicPaths);
+        krsort($this->_paths);
 
-        foreach ($this->dynamicPaths as $path => $routes) {
+        foreach ($this->_paths as $path => $routes) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
@@ -385,18 +386,12 @@ class RouteCollection
      */
     public function routes(): array
     {
-        krsort($this->dynamicPaths);
-
-        $static = array_reduce(
-            $this->staticPaths,
-            'array_merge',
-            []
-        );
+        krsort($this->_paths);
 
         return array_reduce(
-            $this->dynamicPaths,
+            $this->_paths,
             'array_merge',
-            $static
+            []
         );
     }
 
