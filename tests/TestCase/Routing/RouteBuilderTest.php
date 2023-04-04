@@ -739,7 +739,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->resources('Articles');
 
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $result = $this->collection->parse('/articles', 'GET');
             $this->assertSame('Articles', $result['controller']);
             $this->assertSame('index', $result['action']);

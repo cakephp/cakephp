@@ -21,7 +21,6 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-
 use function Cake\Core\deprecationWarning;
 
 /**
