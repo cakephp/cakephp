@@ -21,6 +21,7 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Contains a collection of routes.
@@ -131,9 +132,11 @@ class RouteCollection
      * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
+     * @deprecated 4.5.0 Use parseRequest() instead.
      */
     public function parse(string $url, string $method = ''): array
     {
+        deprecationWarning('4.5.0 - Use parseRequest() instead.');
         $queryParameters = [];
         if (strpos($url, '?') !== false) {
             [$url, $qs] = explode('?', $url, 2);
