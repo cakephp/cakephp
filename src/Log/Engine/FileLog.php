@@ -41,6 +41,7 @@ class FileLog extends BaseLog
      *   If value is 0, old versions are removed rather then rotated.
      * - `mask` A mask is applied when log files are created. Left empty no chmod
      *   is made.
+     * - `dirMask` The mask used for created folders.
      * - `dateFormat` PHP date() format.
      *
      * @var array<string, mixed>
@@ -54,6 +55,7 @@ class FileLog extends BaseLog
         'rotate' => 10,
         'size' => 10485760, // 10MB
         'mask' => null,
+        'dirMask' => 0770,
         'formatter' => [
             'className' => DefaultFormatter::class,
         ],
@@ -91,7 +93,7 @@ class FileLog extends BaseLog
 
         $this->_path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
         if (!is_dir($this->_path)) {
-            mkdir($this->_path, 0770, true);
+            mkdir($this->_path, $this->_config['dirMask'], true);
         }
 
         if (!empty($this->_config['file'])) {
