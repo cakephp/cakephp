@@ -91,7 +91,7 @@ class FileLog extends BaseLog
 
         $this->_path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
         if (!is_dir($this->_path)) {
-            mkdir($this->_path, 0775, true);
+            mkdir($this->_path, 0770, true);
         }
 
         if (!empty($this->_config['file'])) {

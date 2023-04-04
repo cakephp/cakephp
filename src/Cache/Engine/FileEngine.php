@@ -371,7 +371,7 @@ class FileEngine extends CacheEngine
         $dir = $this->_config['path'] . $groups;
 
         if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
+            mkdir($dir, 0770, true);
         }
 
         $path = new SplFileInfo($dir . $key);
@@ -418,7 +418,7 @@ class FileEngine extends CacheEngine
         $success = true;
         if (!is_dir($path)) {
             // phpcs:disable
-            $success = @mkdir($path, 0775, true);
+            $success = @mkdir($path, 0770, true);
             // phpcs:enable
         }
 
