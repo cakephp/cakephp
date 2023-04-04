@@ -22,6 +22,8 @@ use Cake\Routing\Route\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * Contains a collection of routes.
  *
@@ -134,6 +136,7 @@ class RouteCollection
      */
     public function parse(string $url, string $method = ''): array
     {
+        deprecationWarning('4.5.0 - Use parseRequest() instead.');
         $decoded = urldecode($url);
         if ($decoded !== '/') {
             $decoded = rtrim($decoded, '/');
