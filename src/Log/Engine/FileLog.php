@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Log\Engine;
 
-use Cake\Core\Configure;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
 use function Cake\Core\deprecationWarning;
@@ -91,7 +90,7 @@ class FileLog extends BaseLog
         parent::__construct($config);
 
         $this->_path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
-        if (Configure::read('debug') && !is_dir($this->_path)) {
+        if (!is_dir($this->_path)) {
             mkdir($this->_path, 0775, true);
         }
 
