@@ -132,7 +132,7 @@ class RouteCollection
      * @param string $method The HTTP method to use.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
-     * @deprecated 4.5.0 - Use parseRequest() instead.
+     * @deprecated 4.5.0 Use parseRequest() instead.
      */
     public function parse(string $url, string $method = ''): array
     {
