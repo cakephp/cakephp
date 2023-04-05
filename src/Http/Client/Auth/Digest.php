@@ -161,7 +161,7 @@ class Digest
         if (!$header) {
             return [];
         }
-        $matches = HeaderUtility::wwwAuthenticate($header[0]);
+        $matches = HeaderUtility::parseWwwAuthenticate($header[0]);
         $credentials = array_merge($credentials, $matches);
 
         if (($this->isSessAlgorithm || !empty($credentials['qop'])) && empty($credentials['nc'])) {

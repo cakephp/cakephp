@@ -9,16 +9,16 @@ namespace Cake\Http;
 class HeaderUtility
 {
     /**
-     * Get an array representation of the HTTP Link header values
+     * Get an array representation of the HTTP Link header values.
      *
-     * @param array $linkHeaders An array of Link Headers
+     * @param array $linkHeaders An array of Link header strings.
      * @return array
      */
-    public static function link(array $linkHeaders): array
+    public static function parseLinks(array $linkHeaders): array
     {
         $result = [];
         foreach ($linkHeaders as $linkHeader) {
-            $result[] = HeaderUtility::linkItem($linkHeader);
+            $result[] = static::parseLinkItem($linkHeader);
         }
 
         return $result;
@@ -28,9 +28,9 @@ class HeaderUtility
      * Parses one item of the HTTP link header into an array
      *
      * @param string $value The HTTP Link header part
-     * @return array[]
+     * @return array<int, array<string, mixed>>
      */
-    protected static function linkItem(string $value): array
+    protected static function parseLinkItem(string $value): array
     {
         preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $value, $matches);
 
@@ -65,12 +65,12 @@ class HeaderUtility
     }
 
     /**
-     * Parse a header value into preference => value mapping
+     * Parse the Accept header value into weight => value mapping.
      *
      * @param string $header The header value to parse
      * @return array<string, array<string>>
      */
-    public static function qualifiers(string $header): array
+    public static function parseAccept(string $header): array
     {
         $accept = [];
         if (!$header) {
@@ -109,7 +109,7 @@ class HeaderUtility
      * @param string $value The WWW-Authenticate header
      * @return array
      */
-    public static function wwwAuthenticate(string $value): array
+    public static function parseWwwAuthenticate(string $value): array
     {
         preg_match_all(
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
