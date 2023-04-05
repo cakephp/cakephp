@@ -28,14 +28,14 @@ class HeaderUtility
      * Parses one item of the HTTP link header into an array
      *
      * @param string $value The HTTP Link header part
-     * @return array<int, array<string, mixed>>
+     * @return array<string, mixed>
      */
     protected static function parseLinkItem(string $value): array
     {
         preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $value, $matches);
 
         $url = $matches[1];
-        $parsedParams = [];
+        $parsedParams = ['link' => $url];
 
         $params = $matches[2];
         if ($params) {
@@ -57,11 +57,7 @@ class HeaderUtility
             }
         }
 
-        return [
-            [
-                'link' => $url,
-            ] + $parsedParams,
-        ];
+        return $parsedParams;
     }
 
     /**
@@ -76,6 +72,7 @@ class HeaderUtility
         if (!$header) {
             return $accept;
         }
+
         $headers = explode(',', $header);
         foreach (array_filter($headers) as $value) {
             $prefValue = '1.0';

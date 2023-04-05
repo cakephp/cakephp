@@ -21,14 +21,14 @@ class HeaderUtilityTest extends TestCase
         $new = $response->withAddedLink('http://example.com');
         $this->assertSame('<http://example.com>', $new->getHeaderLine('Link'));
         $expected = [
-            [['link' => 'http://example.com']],
+            ['link' => 'http://example.com'],
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
 
         $new = $response->withAddedLink('http://example.com/苗条');
         $this->assertSame('<http://example.com/苗条>', $new->getHeaderLine('Link'));
         $expected = [
-            [['link' => 'http://example.com/苗条']],
+            ['link' => 'http://example.com/苗条'],
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
 
@@ -36,10 +36,8 @@ class HeaderUtilityTest extends TestCase
         $this->assertSame('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
         $expected = [
             [
-                [
-                    'link' => 'http://example.com',
-                    'rel' => 'prev',
-                ],
+                'link' => 'http://example.com',
+                'rel' => 'prev',
             ],
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
@@ -48,11 +46,9 @@ class HeaderUtilityTest extends TestCase
         $this->assertSame('<http://example.com>; rel="prev"; results="true"', $new->getHeaderLine('Link'));
         $expected = [
             [
-                [
-                    'link' => 'http://example.com',
-                    'rel' => 'prev',
-                    'results' => 'true',
-                ],
+                'link' => 'http://example.com',
+                'rel' => 'prev',
+                'results' => 'true',
             ],
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
@@ -63,16 +59,12 @@ class HeaderUtilityTest extends TestCase
         $this->assertSame('<http://example.com/1>; rel="prev",<http://example.com/3>; rel="next"', $new->getHeaderLine('Link'));
         $expected = [
             [
-                [
-                    'link' => 'http://example.com/1',
-                    'rel' => 'prev',
-                ],
+                'link' => 'http://example.com/1',
+                'rel' => 'prev',
             ],
             [
-                [
-                    'link' => 'http://example.com/3',
-                    'rel' => 'next',
-                ],
+                'link' => 'http://example.com/3',
+                'rel' => 'next',
             ],
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
@@ -83,14 +75,12 @@ class HeaderUtilityTest extends TestCase
         $this->assertSame($encodedLinkHeader, $new->getHeaderLine('Link'));
         $expected = [
             [
-                [
-                    'link' => '/extended-attr-example',
-                    'rel' => 'start',
-                    'title*' => [
-                        'language' => 'en',
-                        'encoding' => 'UTF-8',
-                        'value' => '①⓫⅓㏨♳𝄞λ',
-                    ],
+                'link' => '/extended-attr-example',
+                'rel' => 'start',
+                'title*' => [
+                    'language' => 'en',
+                    'encoding' => 'UTF-8',
+                    'value' => '①⓫⅓㏨♳𝄞λ',
                 ],
             ],
         ];
