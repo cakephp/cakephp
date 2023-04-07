@@ -474,15 +474,25 @@ class CookieCollectionTest extends TestCase
      */
     public function testCreateFromServerRequest(): void
     {
-        $request = new ServerRequest(['cookies' => ['name' => 'val', 'cakephp' => 'rocks']]);
+        $request = new ServerRequest([
+            'cookies' => [
+                'name' => 'val',
+                'cakephp' => 'rocks',
+                '123' => 'a integer key cookie',
+            ],
+        ]);
         $cookies = CookieCollection::createFromServerRequest($request);
-        $this->assertCount(2, $cookies);
+        $this->assertCount(3, $cookies);
         $this->assertTrue($cookies->has('name'));
         $this->assertTrue($cookies->has('cakephp'));
+        $this->assertTrue($cookies->has('123'));
 
         $cookie = $cookies->get('name');
         $this->assertSame('val', $cookie->getValue());
         $this->assertSame('/', $cookie->getPath());
         $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
+
+        $cookie = $cookies->get('123');
+        $this->assertSame('a integer key cookie', $cookie->getValue());
     }
 }

@@ -88,7 +88,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $data = $request->getCookieParams();
         $cookies = [];
         foreach ($data as $name => $value) {
-            $cookies[] = new Cookie($name, $value);
+            $cookies[] = new Cookie((string)$name, $value);
         }
 
         return new static($cookies);
