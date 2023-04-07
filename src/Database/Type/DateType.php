@@ -53,11 +53,11 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
      *
-     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
+     * See `Cake\I18n\Date::parseDate()` for accepted formats.
      *
-     * @var array|string|int|null
+     * @var string|int|null
      */
-    protected array|string|int|null $_localeMarshalFormat = null;
+    protected string|int|null $_localeMarshalFormat = null;
 
     /**
      * The classname to use when creating objects.
@@ -235,13 +235,13 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * Sets the locale-aware format used by `marshal()` when parsing strings.
      *
-     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
+     * See `Cake\I18n\Date::parseDate()` for accepted formats.
      *
-     * @param array|string $format The locale-aware format
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @param string|int $format The locale-aware format
+     * @see \Cake\I18n\Date::parseDate()
      * @return $this
      */
-    public function setLocaleFormat(array|string $format)
+    public function setLocaleFormat(string|int $format)
     {
         $this->_localeMarshalFormat = $format;
 

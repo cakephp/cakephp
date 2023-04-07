@@ -22,7 +22,6 @@ use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
-use DateTimeZone;
 use IntlDateFormatter;
 
 /**
@@ -79,27 +78,23 @@ class DateTest extends TestCase
         $expected = '1/14/10';
         $this->assertSame($expected, $result);
 
-        $format = [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
-        $result = preg_replace('/[\pZ\pC]/u', ' ', $time->i18nFormat($format));
-        $this->assertSame('12:00 AM', $result);
-
-        $result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
+        $result = $time->i18nFormat('HH:mm:ss');
         $expected = '00:00:00';
         $this->assertSame($expected, $result);
 
         DateTime::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
-        $expected = 'jeudi 14 janvier 2010 00:00:00';
+        $expected = 'jeudi 14 janvier 2010';
         $this->assertStringStartsWith($expected, $result);
 
-        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'es-ES');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, 'es-ES');
         $this->assertStringContainsString('14 de enero de 2010', $result, 'Default locale should not be used');
 
         $time = new Date('2014-01-01T00:00:00Z');
-        $result = $time->i18nFormat(IntlDateFormatter::FULL, null, 'en-US');
+        $result = $time->i18nFormat(IntlDateFormatter::FULL, 'en-US');
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
-        $this->assertStringStartsWith('Wednesday, January 1, 2014 at 12:00:00 AM', $result);
+        $this->assertStringStartsWith('Wednesday, January 1, 2014', $result);
     }
 
     public function testDiffForHumans(): void
@@ -127,8 +122,7 @@ class DateTest extends TestCase
         $date = new Date('2015-11-06 11:32:45');
 
         $this->assertSame('Nov 6, 2015', $date->nice());
-        $this->assertSame('Nov 6, 2015', $date->nice(new DateTimeZone('America/New_York')));
-        $this->assertSame('6 nov. 2015', $date->nice(null, 'fr-FR'));
+        $this->assertSame('6 nov. 2015', $date->nice('fr-FR'));
     }
 
     /**
@@ -170,19 +164,6 @@ class DateTest extends TestCase
 
         DateTime::setDefaultLocale('fr-FR');
         $date = Date::parseDate('13 10, 2015');
-        $this->assertSame('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
-    }
-
-    /**
-     * test parseDateTime()
-     */
-    public function testParseDateTime(): void
-    {
-        $date = Date::parseDate('11/6/15 12:33:12');
-        $this->assertSame('2015-11-06 00:00:00', $date->format('Y-m-d H:i:s'));
-
-        DateTime::setDefaultLocale('fr-FR');
-        $date = Date::parseDate('13 10, 2015 12:54:12');
         $this->assertSame('2015-10-13 00:00:00', $date->format('Y-m-d H:i:s'));
     }
 
@@ -465,17 +446,6 @@ class DateTest extends TestCase
     {
         date_default_timezone_set('Europe/Paris');
         $result = Date::parseDate('25-02-2016', 'd-M-y');
-        $this->assertSame('25-02-2016', $result->format('d-m-Y'));
-    }
-
-    /**
-     * Tests that parsing a full date + time in a timezone other
-     * than UTC respects the timezone when grabbing the date.
-     */
-    public function testParseDateTimeDifferentTimezone(): void
-    {
-        date_default_timezone_set('America/Toronto');
-        $result = Date::parseDateTime('25-02-2016 23:00:00', 'd-M-y H:m:s');
         $this->assertSame('25-02-2016', $result->format('d-m-Y'));
     }
 
