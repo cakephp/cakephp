@@ -335,24 +335,26 @@ use function Cake\Core\h;
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
     <div class="error-content">
-            <?php if ($this->fetch('subheading')): ?>
-            <p class="error-subheading">
-                <?= $this->fetch('subheading') ?>
-            </p>
-            <?php endif; ?>
+        <?php if ($this->fetch('subheading')): ?>
+        <p class="error-subheading">
+            <?= $this->fetch('subheading') ?>
+        </p>
+        <?php endif; ?>
 
-<div class="error-suggestion">
-<?= $this->fetch('file') ?>
-</div>
+        <?php if ($this->fetch('file')): ?>
+        <div class="error-suggestion">
+            <?= $this->fetch('file') ?>
+        </div>
+        <?php endif; ?>
 
-            <?= $this->element('dev_error_stacktrace'); ?>
+        <?= $this->element('dev_error_stacktrace'); ?>
 
-            <?php if ($this->fetch('templateName')): ?>
-            <p class="customize">
-                If you want to customize this error message, create
-                <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
-            </p>
-            <?php endif; ?>
+        <?php if ($this->fetch('templateName')): ?>
+        <p class="customize">
+            If you want to customize this error message, create
+            <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
+        </p>
+        <?php endif; ?>
     </div>
 
     <script type="text/javascript">
