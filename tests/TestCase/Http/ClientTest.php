@@ -923,9 +923,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `htps://` did not parse.');
         Client::createFromUrl('htps://');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertTextContains('did not parse', $message);
     }
 
     /**
@@ -943,9 +942,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
         Client::createFromUrl('example.co');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
@@ -954,9 +952,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
         Client::createFromUrl('/api/v1');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
