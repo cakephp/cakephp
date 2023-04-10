@@ -1143,7 +1143,6 @@ abstract class TestCase extends BaseTestCase
     protected function expectErrorHandlerMessageMatches(string $regex, Closure $callable, int $errorLevel): void
     {
         set_error_handler(static function (int $errno, string $errstr): never {
-            $tmp = '';
             throw new Exception($errstr, $errno);
         }, $errorLevel);
 
