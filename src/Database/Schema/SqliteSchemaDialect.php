@@ -508,6 +508,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
+            $schema->getColumn($data['columns'][0]) &&
             $schema->getColumn($data['columns'][0])['type'] === TableSchemaInterface::TYPE_INTEGER
         ) {
             return '';

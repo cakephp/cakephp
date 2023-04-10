@@ -505,6 +505,7 @@ abstract class TestCase extends BaseTestCase
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($prefix);
         $this->assertStringStartsWith($prefix, $string, $message);
     }
 
@@ -521,6 +522,7 @@ abstract class TestCase extends BaseTestCase
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($prefix);
         $this->assertStringStartsNotWith($prefix, $string, $message);
     }
 
@@ -537,6 +539,7 @@ abstract class TestCase extends BaseTestCase
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($suffix);
         $this->assertStringEndsWith($suffix, $string, $message);
     }
 
@@ -553,6 +556,7 @@ abstract class TestCase extends BaseTestCase
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($suffix);
         $this->assertStringEndsNotWith($suffix, $string, $message);
     }
 
