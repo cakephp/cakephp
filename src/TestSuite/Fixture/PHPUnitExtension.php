@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\TestSuite\Fixture\PHPUnitSubscriber\PreparationStartedSubscriber;
+use Cake\TestSuite\Fixture\PHPUnitSubscriber\PHPUnitStartedSubscriber;
 use PHPUnit\Runner\Extension\Extension;
 use PHPUnit\Runner\Extension\Facade;
 use PHPUnit\Runner\Extension\ParameterCollection;
@@ -36,7 +36,7 @@ class PHPUnitExtension implements Extension
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $facade->registerSubscriber(
-            new PreparationStartedSubscriber()
+            new PHPUnitStartedSubscriber()
         );
     }
 }

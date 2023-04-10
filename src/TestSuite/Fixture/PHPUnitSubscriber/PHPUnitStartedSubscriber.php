@@ -18,18 +18,18 @@ namespace Cake\TestSuite\Fixture\PHPUnitSubscriber;
 
 use Cake\Log\Log;
 use Cake\TestSuite\ConnectionHelper;
-use PHPUnit\Event\Test\PreparationStarted;
-use PHPUnit\Event\Test\PreparationStartedSubscriber as PHPUnitPreparationStarted;
+use PHPUnit\Event\TestSuite\Started;
+use PHPUnit\Event\TestSuite\StartedSubscriber as PHPUnitStarted;
 
-class PreparationStartedSubscriber implements PHPUnitPreparationStarted
+class PHPUnitStartedSubscriber implements PHPUnitStarted
 {
     /**
      * Initializes before any tests are run.
      *
-     * @param \PHPUnit\Event\Test\PreparationStarted $event The event
+     * @param \PHPUnit\Event\TestSuite\Started $event The event
      * @return void
      */
-    public function notify(PreparationStarted $event): void
+    public function notify(Started $event): void
     {
         $helper = new ConnectionHelper();
         $helper->addTestAliases();
