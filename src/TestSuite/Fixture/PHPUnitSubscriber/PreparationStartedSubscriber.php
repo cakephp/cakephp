@@ -18,18 +18,18 @@ namespace Cake\TestSuite\Fixture\PHPUnitSubscriber;
 
 use Cake\Log\Log;
 use Cake\TestSuite\ConnectionHelper;
-use PHPUnit\Event\Test\BeforeFirstTestMethodCalled;
-use PHPUnit\Event\Test\BeforeFirstTestMethodCalledSubscriber as BeforeFirstTestMethodCalledSubscriberInterface;
+use PHPUnit\Event\Test\PreparationStarted;
+use PHPUnit\Event\Test\PreparationStartedSubscriber as PHPUnitPreparationStarted;
 
-class BeforeFirstTestMethodCalledSubscriber implements BeforeFirstTestMethodCalledSubscriberInterface
+class PreparationStartedSubscriber implements PHPUnitPreparationStarted
 {
     /**
      * Initializes before any tests are run.
      *
-     * @param \PHPUnit\Event\Test\BeforeFirstTestMethodCalled $event The event
+     * @param \PHPUnit\Event\Test\PreparationStarted $event The event
      * @return void
      */
-    public function notify(BeforeFirstTestMethodCalled $event): void
+    public function notify(PreparationStarted $event): void
     {
         $helper = new ConnectionHelper();
         $helper->addTestAliases();
