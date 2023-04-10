@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache;
 
+use AssertionError;
 use BadMethodCallException;
 use Cake\Cache\Cache;
+use Cake\Cache\CacheEngine;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
@@ -240,16 +242,17 @@ class CacheTest extends TestCase
     /**
      * Test configuring an invalid class fails
      */
-    //public function testConfigInvalidClassType(): void
-    //{
-    //    Cache::setConfig('tests', [
-    //        'className' => '\stdClass',
-    //    ]);
-    //
-    //    $this->expectWarningMessageMatches('/^Cache engines must extend `.*CacheEngine`/', function() {
-    //        Cache::pool('tests');
-    //    });
-    //}
+    public function testConfigInvalidClassType(): void
+    {
+        Cache::setConfig('tests', [
+            'className' => '\stdClass',
+        ]);
+
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('Cache engines must extend `' . CacheEngine::class . '`');
+
+        Cache::pool('tests');
+    }
 
     /**
      * Test engine init failing triggers an error but falls back to NullEngine
