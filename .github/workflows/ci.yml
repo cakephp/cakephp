@@ -250,7 +250,7 @@ jobs:
       run: composer update
 
     - name: Install PHP tools with phive.
-      run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,12CE0F1D262429A5'
+      run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
 
     - name: Run phpcs
       if: always()
