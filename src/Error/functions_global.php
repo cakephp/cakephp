@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
-use function Cake\Error\dd as cakeDd;
-use function Cake\Error\stackTrace as cakeStackTrace;
 
 if (!function_exists('debug')) {
     /**
@@ -72,7 +70,16 @@ if (!function_exists('stackTrace')) {
      */
     function stackTrace(array $options = []): void
     {
-        cakeStackTrace($options);
+        if (!Configure::read('debug')) {
+            return;
+        }
+
+        $options += ['start' => 0];
+        $options['start']++;
+
+        /** @var string $trace */
+        $trace = Debugger::trace($options);
+        echo $trace;
     }
 }
 
@@ -90,7 +97,19 @@ if (!function_exists('dd')) {
      */
     function dd($var, $showHtml = null): void
     {
-        cakeDd($var, $showHtml);
+        if (!Configure::read('debug')) {
+            return;
+        }
+
+        $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+        /** @psalm-suppress PossiblyInvalidArrayOffset */
+        $location = [
+            'line' => $trace[0]['line'],
+            'file' => $trace[0]['file'],
+        ];
+
+        Debugger::printVar($var, $location, $showHtml);
+        die(1);
     }
 }
 
