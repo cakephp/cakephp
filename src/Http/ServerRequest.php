@@ -1799,7 +1799,6 @@ class ServerRequest implements ServerRequestInterface
      *   request-target forms allowed in request messages)
      * @param string $requestTarget The request target.
      * @return static
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withRequestTarget($requestTarget)
     {

@@ -26,6 +26,8 @@ use Iterator;
  *
  * This statement decorator will save fetched results in memory, allowing
  * the iterator to be rewound and reused.
+ *
+ * @template-implements \Iterator<mixed>
  */
 class BufferedStatement implements Iterator, StatementInterface
 {

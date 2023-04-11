@@ -56,7 +56,6 @@ class PDOStatement extends StatementDecorator
     public function __get(string $property)
     {
         if ($property === 'queryString' && isset($this->_statement->queryString)) {
-            /** @psalm-suppress NoInterfaceProperties */
             return $this->_statement->queryString;
         }
 

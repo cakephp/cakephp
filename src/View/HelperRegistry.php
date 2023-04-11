@@ -95,6 +95,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         if (isset($this->_loaded[$name])) {
             return $this->_loaded[$name];
         }
+        /** @psalm-suppress NoValue */
         if (isset($this->{$name})) {
             return $this->_loaded[$name];
         }
