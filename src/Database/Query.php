@@ -29,6 +29,7 @@ use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
+use Throwable;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -2456,7 +2457,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (RuntimeException $e) {
+        } catch (Throwable $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {
