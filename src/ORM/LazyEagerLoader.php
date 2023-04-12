@@ -65,7 +65,7 @@ class LazyEagerLoader
      * Builds a query for loading the passed list of entity objects along with the
      * associations specified in $contain.
      *
-     * @param array $entities The original entities
+     * @param array<\Cake\Datasource\EntityInterface> $entities The original entities
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query\SelectQuery
