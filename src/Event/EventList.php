@@ -71,7 +71,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-     * @return \Cake\Event\EventInterface|null Can return all value types.
+     * @return \Cake\Event\EventInterface|null
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
