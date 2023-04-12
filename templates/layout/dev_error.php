@@ -287,9 +287,13 @@ use function Cake\Core\h;
     .code-highlight {
         display: block;
         background: #fff59d;
+        padding-left: 4px;
     }
     .excerpt-line {
         padding: 0;
+    }
+    .excerpt-line > code {
+        padding-left: 4px;
     }
     .excerpt-number {
         background: #f6f6f6;
@@ -297,7 +301,7 @@ use function Cake\Core\h;
         text-align: right;
         color: #666;
         border-right: 1px solid #ddd;
-        padding: 2px;
+        padding: 2px 4px;
     }
     .excerpt-number:after {
         content: attr(data-number);

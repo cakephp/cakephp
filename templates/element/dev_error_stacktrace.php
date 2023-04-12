@@ -38,13 +38,18 @@ foreach ($exceptions as $level => $exc):
     <div class="stack-frame">
         <?php
         $line = $exc->getLine();
-        $excerpt = Debugger::excerpt($exc->getFile(), $line, 4);
+        $file = $exc->getFile();
+        $excerpt = Debugger::excerpt($file, $line, 4);
 
         $lineno = $line ? $line - 4 : 0;
         ?>
         <span class="stack-frame-file">
-            <?= h(Debugger::trimPath($exc->getFile())); ?> at line <?= h($line) ?>
+            <?= h(Debugger::trimPath($file)); ?> at line <?= h($line) ?>
         </span>
+        <?php if ($line !== null): ?>
+            <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
+        <?php endif; ?>
+
         <table class="code-excerpt" cellspacing="0" cellpadding="0">
         <?php foreach ($excerpt as $l => $line): ?>
             <tr>
@@ -95,6 +100,13 @@ foreach ($exceptions as $level => $exc):
                     <span class="stack-frame-file">
                         <?= h(Debugger::trimPath($file)); ?>
                     </span>
+
+                    <?php if ($line !== null): ?>
+                        <span class="stack-frame-line">
+                            <span class="stack-frame-label">at line</span><?= h($line) ?>
+                        </span>
+                    <?php endif ?>
+
                     <span class="stack-function">
                         <?php if (isset($stack['class']) || isset($stack['function'])): ?>
                             <span class="stack-frame-label">in</span>
@@ -105,12 +117,6 @@ foreach ($exceptions as $level => $exc):
                             <?= h($stack['function']) ?>
                         <?php endif; ?>
                     </span>
-
-                    <?php if ($line !== null): ?>
-                        <span class="stack-frame-line">
-                            <span class="stack-frame-label">at line</span><?= h($line) ?>
-                        </span>
-                    <?php endif ?>
 
                     <?php if ($line !== null): ?>
                         <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
