@@ -25,6 +25,7 @@ use JsonSerializable;
  *
  * @property mixed $id Alias for commonly used primary key.
  * @method bool[] getAccessible() Accessible configuration for this entity.
+ * @template-extends \ArrayAccess<string, mixed>
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {

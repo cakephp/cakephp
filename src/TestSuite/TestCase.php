@@ -210,9 +210,6 @@ abstract class TestCase extends BaseTestCase
         /** @var bool $deprecation */
         $deprecation = false;
 
-        /**
-         * @psalm-suppress InvalidArgument
-         */
         $previousHandler = set_error_handler(
             function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
                 if ($code == E_USER_DEPRECATED) {
@@ -765,7 +762,6 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
             foreach ($tags as $tag => $attributes) {
-                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
                     sprintf('[\s]*<%s', preg_quote($tag, '/')),
@@ -812,7 +808,6 @@ abstract class TestCase extends BaseTestCase
                         'attrs' => $attrs,
                     ];
                 }
-                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('End %s tag', $tag),
                     '[\s]*\/?[\s]*>[\n\r]*',
@@ -835,7 +830,6 @@ abstract class TestCase extends BaseTestCase
             }
 
             // If 'attrs' is not present then the array is just a regular int-offset one
-            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = '';
             foreach ((array)$expressions as $expression) {

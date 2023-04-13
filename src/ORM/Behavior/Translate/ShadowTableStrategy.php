@@ -267,7 +267,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return $c;
                 }
 
-                /** @psalm-suppress ParadoxicalCondition */
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
                     $field = "$alias.$field";
@@ -324,7 +323,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return;
                 }
 
-                /** @psalm-suppress ParadoxicalCondition */
                 if (in_array($field, $mainTableFields, true)) {
                     $expression->setField("$mainTableAlias.$field");
                 }

@@ -661,7 +661,6 @@ class Marshaller
      * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface>
      * @see \Cake\ORM\Entity::$_accessible
-     * @psalm-suppress NullArrayOffset
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
@@ -757,7 +756,6 @@ class Marshaller
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
         $type = $assoc->type();
         if (in_array($type, $types, true)) {
-            /** @psalm-suppress PossiblyInvalidArgument, ArgumentTypeCoercion */
             return $marshaller->merge($original, $value, $options);
         }
         if ($type === Association::MANY_TO_MANY) {

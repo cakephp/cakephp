@@ -80,7 +80,6 @@ class LogEngineRegistry extends ObjectRegistry
         }
 
         if (!isset($instance)) {
-            /** @psalm-suppress UndefinedClass */
             $instance = new $class($config);
         }
 

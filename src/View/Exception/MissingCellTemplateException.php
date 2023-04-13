@@ -56,7 +56,7 @@ class MissingCellTemplateException extends MissingTemplateException
      * Get the passed in attributes
      *
      * @return array
-     * @psalm-return array{name: string, file: string, paths: array}
+     * @psalm-return array{name: string, file: string, paths: array<string>}
      */
     public function getAttributes(): array
     {

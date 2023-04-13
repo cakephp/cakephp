@@ -527,7 +527,6 @@ class Session
             $data = Hash::insert($data, $key, $val);
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         $this->_overwrite($_SESSION, $data);
     }
 

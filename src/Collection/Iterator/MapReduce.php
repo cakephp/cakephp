@@ -25,6 +25,8 @@ use Traversable;
  * like an iterator for the original passed data after each result has been
  * processed, thus offering a transparent wrapper for results coming from any
  * source.
+ *
+ * @template-implements \IteratorAggregate<mixed>
  */
 class MapReduce implements IteratorAggregate
 {

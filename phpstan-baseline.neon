@@ -81,11 +81,6 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
 			count: 2
 			path: src/Database/Driver.php

@@ -882,7 +882,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to use for joining.
      * @param string $type the join type to use
      * @return array
-     * @psalm-suppress InvalidReturnType
      */
     protected function _makeJoin($table, $conditions, $type): array
     {
@@ -895,7 +894,6 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         /**
          * @psalm-suppress InvalidArrayOffset
-         * @psalm-suppress InvalidReturnStatement
          */
         return [
             $alias => [
@@ -2441,7 +2439,6 @@ class Query implements ExpressionInterface, IteratorAggregate
                             }
                         }
                     } elseif ($piece instanceof ExpressionInterface) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->_parts[$name][$i] = clone $piece;
                     }
                 }

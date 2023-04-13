@@ -314,7 +314,6 @@ class Stream implements AdapterInterface
             return true;
         });
         try {
-            /** @psalm-suppress PossiblyNullArgument */
             $this->_stream = fopen($url, 'rb', false, $this->_context);
         } finally {
             restore_error_handler();
