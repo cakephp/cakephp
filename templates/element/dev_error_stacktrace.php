@@ -18,6 +18,7 @@
 use Cake\Error\Debugger;
 use function Cake\Core\h;
 
+
 foreach ($exceptions as $level => $exc):
     $parent = $exceptions[$level - 1] ?? null;
     $stackTrace = Debugger::getUniqueFrames($exc, $parent);
@@ -33,6 +34,32 @@ foreach ($exceptions as $level => $exc):
             <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
         </div>
     <?php endif; ?>
+
+    <div class="stack-frame">
+        <?php
+        $line = $exc->getLine();
+        $file = $exc->getFile();
+        $excerpt = Debugger::excerpt($file, $line, 4);
+
+        $lineno = $line ? $line - 4 : 0;
+        ?>
+        <span class="stack-frame-file">
+            <?= h(Debugger::trimPath($file)); ?> at line <?= h($line) ?>
+        </span>
+        <?php if ($line !== null): ?>
+            <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
+        <?php endif; ?>
+
+        <table class="code-excerpt" cellspacing="0" cellpadding="0">
+        <?php foreach ($excerpt as $l => $line): ?>
+            <tr>
+                <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
+                <td class="excerpt-line"><?= $line ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+    </div>
+
     <ul class="stack-frames">
     <?php
     foreach ($stackTrace as $i => $stack):
@@ -61,15 +88,11 @@ foreach ($exceptions as $level => $exc):
         endif;
 
         $frameId = "{$level}-{$i}";
-        $activeFrame = $i == 0;
         $vendorFrame = isset($stack['file']) && strpos($stack['file'], APP) === false ? 'vendor-frame' : '';
     ?>
         <li id="stack-frame-<?= $frameId ?>" class="stack-frame <?= $vendorFrame ?>">
             <div class="stack-frame-header">
-                <button
-                    data-frame-id="<?= h($frameId) ?>"
-                    class="stack-frame-toggle <?= $activeFrame ? 'active' : '' ?>"
-                >
+                <button data-frame-id="<?= h($frameId) ?>" class="stack-frame-toggle">
                     &#x25BC;
                 </button>
 
@@ -77,6 +100,13 @@ foreach ($exceptions as $level => $exc):
                     <span class="stack-frame-file">
                         <?= h(Debugger::trimPath($file)); ?>
                     </span>
+
+                    <?php if ($line !== null): ?>
+                        <span class="stack-frame-line">
+                            <span class="stack-frame-label">at line</span><?= h($line) ?>
+                        </span>
+                    <?php endif ?>
+
                     <span class="stack-function">
                         <?php if (isset($stack['class']) || isset($stack['function'])): ?>
                             <span class="stack-frame-label">in</span>
@@ -89,12 +119,6 @@ foreach ($exceptions as $level => $exc):
                     </span>
 
                     <?php if ($line !== null): ?>
-                        <span class="stack-frame-line">
-                            <span class="stack-frame-label">at line</span><?= h($line) ?>
-                        </span>
-                    <?php endif ?>
-
-                    <?php if ($line !== null): ?>
                         <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
                     <?php endif; ?>
                 </div>
@@ -102,7 +126,7 @@ foreach ($exceptions as $level => $exc):
             <div
                 class="stack-frame-contents"
                 id="stack-frame-details-<?= $frameId ?>"
-                style="display: <?= $activeFrame ? 'block' : 'none' ?>"
+                style="display: none"
             >
                 <table class="code-excerpt" cellspacing="0" cellpadding="0">
                 <?php $lineno = isset($stack['line']) && is_numeric($stack['line']) ? $stack['line'] - 4 : 0 ?>

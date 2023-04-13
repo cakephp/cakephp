@@ -1628,9 +1628,11 @@ XML;
                 'user' => [
                     'remember' => '1',
                 ],
+                '123' => 'a integer key cookie',
             ],
         ]);
         $this->assertSame('A value in the cookie', $request->getCookie('testing'));
+        $this->assertSame('a integer key cookie', $request->getCookie('123'));
         $this->assertNull($request->getCookie('not there'));
         $this->assertSame('default', $request->getCookie('not there', 'default'));
 
