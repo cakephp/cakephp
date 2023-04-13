@@ -1,108 +1,148 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="dev-master@">
+<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="src/Cache/Engine/FileEngine.php">
-    <TooManyTemplateParams occurrences="1">
+    <TooManyTemplateParams>
       <code>$iterator</code>
     </TooManyTemplateParams>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
-    <InvalidReturnStatement occurrences="4">
-      <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
-      <code>$this-&gt;_Redis-&gt;setEx($key, $duration, $value)</code>
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->_Redis->set($key, $value)]]></code>
+      <code><![CDATA[$this->_Redis->setEx($key, $duration, $value)]]></code>
       <code>$value</code>
       <code>$value</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="3">
+    <InvalidReturnType>
       <code>bool</code>
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
   </file>
   <file src="src/Datasource/Paging/PaginatedResultSet.php">
-    <MethodSignatureMustProvideReturnType occurrences="1">
+    <MethodSignatureMustProvideReturnType>
       <code>://cakephp.org)</code>
     </MethodSignatureMustProvideReturnType>
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
-    <MoreSpecificImplementedParamType occurrences="1">
+    <MoreSpecificImplementedParamType>
       <code>$subject</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Event/EventManager.php">
-    <InvalidArgument occurrences="3">
+    <InvalidArgument>
       <code>_callListener</code>
       <code>addEventToList</code>
       <code>addEventToList</code>
     </InvalidArgument>
-    <InvalidReturnStatement occurrences="2">
+    <InvalidReturnStatement>
       <code>$event</code>
       <code>$event</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
+    <InvalidReturnType>
       <code>EventInterface</code>
     </InvalidReturnType>
   </file>
   <file src="src/I18n/Date.php">
-    <ImpureMethodCall occurrences="2">
+    <ImpureFunctionCall>
+      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
+      <code>static::$_jsonEncodeFormat</code>
+    </ImpureFunctionCall>
+    <ImpureMethodCall>
+      <code>_formatObject</code>
       <code>dateAgoInWords</code>
       <code>diffFormatter</code>
+      <code>getDefaultLocale</code>
     </ImpureMethodCall>
-  </file>
-  <file src="src/I18n/DateFormatTrait.php">
-    <InaccessibleProperty occurrences="2">
-      <code>$this-&gt;native</code>
-      <code>$time-&gt;native</code>
-    </InaccessibleProperty>
-    <RedundantCondition occurrences="1">
-      <code>$time instanceof DateTime</code>
-    </RedundantCondition>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$time instanceof DateTime</code>
-    </TypeDoesNotContainType>
+    <ImpureStaticProperty>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_toStringFormat</code>
+      <code>static::$niceFormat</code>
+    </ImpureStaticProperty>
   </file>
   <file src="src/I18n/DateTime.php">
-    <ImpureMethodCall occurrences="2">
+    <ImpureFunctionCall>
+      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
+      <code>static::$_jsonEncodeFormat</code>
+    </ImpureFunctionCall>
+    <ImpureMethodCall>
+      <code>_formatObject</code>
       <code>diffFormatter</code>
+      <code>getDefaultLocale</code>
       <code>timeAgoInWords</code>
     </ImpureMethodCall>
+    <ImpureStaticProperty>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_toStringFormat</code>
+      <code>static::$niceFormat</code>
+    </ImpureStaticProperty>
   </file>
   <file src="src/ORM/Table.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;_behaviors-&gt;callFinder($type, [$query, $options])</code>
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->_behaviors->callFinder($type, [$query, $options])]]></code>
     </InvalidReturnStatement>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
-    <InternalClass occurrences="1"/>
-    <InternalMethod occurrences="1"/>
+    <InternalClass>
+      <code><![CDATA[new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )]]></code>
+    </InternalClass>
+    <InternalMethod>
+      <code><![CDATA[new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )]]></code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
-    <InternalClass occurrences="2"/>
-    <InternalMethod occurrences="2"/>
+    <InternalClass>
+      <code><![CDATA[new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )]]></code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event `%s` was fired %d times, cannot make data assertion',
+                $other,
+                count($events)
+            ))]]></code>
+    </InternalClass>
+    <InternalMethod>
+      <code><![CDATA[new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )]]></code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event `%s` was fired %d times, cannot make data assertion',
+                $other,
+                count($events)
+            ))]]></code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
-    <InternalClass occurrences="1">
-      <code>new AssertionFailedError('No response set, cannot assert content.')</code>
+    <InternalClass>
+      <code><![CDATA[new AssertionFailedError('No response set, cannot assert content.')]]></code>
     </InternalClass>
-    <InternalMethod occurrences="1">
-      <code>new AssertionFailedError('No response set, cannot assert content.')</code>
+    <InternalMethod>
+      <code><![CDATA[new AssertionFailedError('No response set, cannot assert content.')]]></code>
     </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
-    <InternalClass occurrences="1">
+    <InternalClass>
       <code>new AssertionFailedError($message)</code>
     </InternalClass>
-    <InternalMethod occurrences="1">
+    <InternalMethod>
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
   <file src="src/Utility/Filesystem.php">
-    <TooManyTemplateParams occurrences="2">
+    <TooManyTemplateParams>
       <code>$iterator</code>
       <code>$iterator</code>
     </TooManyTemplateParams>
   </file>
   <file src="src/Utility/Hash.php">
-    <RedundantCondition occurrences="1">
+    <RedundantCondition>
       <code>is_array($_list)</code>
     </RedundantCondition>
   </file>

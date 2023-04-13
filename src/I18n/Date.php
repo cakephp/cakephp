@@ -19,6 +19,7 @@ namespace Cake\I18n;
 use Cake\Chronos\ChronosDate;
 use Closure;
 use IntlDateFormatter;
+use InvalidArgumentException;
 use JsonSerializable;
 use Stringable;
 
@@ -35,7 +36,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::i18nFormat()`
-     * and `__toString`. This format is also used by `parseDateTime()`.
+     * and `__toString`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -45,10 +46,10 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var array<int>|string|int
-     * @see \Cake\I18n\DateFormatTrait::i18nFormat()
+     * @var string|int
+     * @see \Cake\I18n\Date::i18nFormat()
      */
-    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
+    protected static string|int $_toStringFormat = IntlDateFormatter::SHORT;
 
     /**
      * The format to use when converting this object to JSON.
@@ -61,19 +62,19 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var \Closure|array<int>|string|int
-     * @see \Cake\I18n\Time::i18nFormat()
+     * @var \Closure|string|int
+     * @see \Cake\I18n\Date::i18nFormat()
      */
-    protected static Closure|array|string|int $_jsonEncodeFormat = 'yyyy-MM-dd';
+    protected static Closure|string|int $_jsonEncodeFormat = 'yyyy-MM-dd';
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
-     * @var array<int>|string|int
-     * @see \Cake\I18n\DateFormatTrait::parseDate()
+     * @var string|int
+     * @see \Cake\I18n\Date::parseDate()
      */
-    public static array|string|int $wordFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::NONE];
+    public static string|int $wordFormat = IntlDateFormatter::SHORT;
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::nice()`
@@ -86,10 +87,10 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @var array<int>|string|int
-     * @see \Cake\I18n\DateFormatTrait::nice()
+     * @var string|int
+     * @see \Cake\I18n\Date::nice()
      */
-    public static array|string|int $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::NONE];
+    public static string|int $niceFormat = IntlDateFormatter::MEDIUM;
 
     /**
      * The format to use when formatting a time using `Date::timeAgoInWords()`
@@ -127,7 +128,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * will be used for formatting the date part of the object and the second position
      * will be used to format the time part.
      *
-     * @param array<int>|string|int $format Format.
+     * @param string|int $format Format.
      * @return void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
@@ -150,13 +151,114 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * Alternatively, the format can provide a callback. In this case, the callback
      * can receive this datetime object and return a formatted string.
      *
-     * @see \Cake\I18n\Time::i18nFormat()
-     * @param \Closure|array|string|int $format Format.
+     * @see \Cake\I18n\Date::i18nFormat()
+     * @param \Closure|string|int $format Format.
      * @return void
      */
-    public static function setJsonEncodeFormat(Closure|array|string|int $format): void
+    public static function setJsonEncodeFormat(Closure|string|int $format): void
     {
         static::$_jsonEncodeFormat = $format;
+    }
+
+    /**
+     * Returns a new Date object after parsing the provided $date string based on
+     * the passed or configured format. This method is locale dependent,
+     * Any string that is passed to this function will be interpreted as a locale
+     * dependent string.
+     *
+     * When no $format is provided, the `wordFormat` format will be used.
+     *
+     * If it was impossible to parse the provided time, null will be returned.
+     *
+     * Example:
+     *
+     * ```
+     *  $time = Time::parseDate('10/13/2013');
+     *  $time = Time::parseDate('13 Oct, 2013', 'dd MMM, y');
+     *  $time = Time::parseDate('13 Oct, 2013', IntlDateFormatter::SHORT);
+     * ```
+     *
+     * @param string $date The date string to parse.
+     * @param string|int|null $format Any format accepted by IntlDateFormatter.
+     * @return static|null
+     */
+    public static function parseDate(string $date, string|int|null $format = null): ?static
+    {
+        $format ??= static::$wordFormat;
+        if (is_int($format)) {
+            $format = [$format, IntlDateFormatter::NONE];
+        }
+
+        return static::_parseDateTime($date, $format);
+    }
+
+    /**
+     * Returns a formatted string for this time object using the preferred format and
+     * language for the specified locale.
+     *
+     * It is possible to specify the desired format for the string to be displayed.
+     * You can either pass `IntlDateFormatter` constants as the first argument of this
+     * function, or pass a full ICU date formatting string as specified in the following
+     * resource: https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax.
+     *
+     * ### Examples
+     *
+     * ```
+     * $date = new Date('2014-04-20');
+     * $time->i18nFormat(); // outputs '4/20/14' for the en-US locale
+     * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date format
+     * $time->i18nFormat('yyyy-MM-dd'); // outputs '2014-04-20'
+     * ```
+     *
+     * You can control the default format used through `Date::setToStringFormat()`.
+     *
+     * You can read about the available IntlDateFormatter constants at
+     * https://secure.php.net/manual/en/class.intldateformatter.php
+     *
+     * Should you need to use a different locale for displaying this time object,
+     * pass a locale string as the third parameter to this function.
+     *
+     * ### Examples
+     *
+     * ```
+     * $date = new Date('2014-04-20');
+     * $time->i18nFormat(null, 'de-DE');
+     * $time->i18nFormat(\IntlDateFormatter::FULL, 'de-DE');
+     * ```
+     *
+     * You can control the default locale used through `Date::setDefaultLocale()`.
+     * If empty, the default will be taken from the `intl.default_locale` ini config.
+     *
+     * @param string|int|null $format Format string.
+     * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
+     * @return string|int Formatted and translated date string
+     */
+    public function i18nFormat(
+        string|int|null $format = null,
+        ?string $locale = null
+    ): string|int {
+        if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
+            throw new InvalidArgumentException('UNIT_TIMESTAMP_FORMAT is not supported for Date.');
+        }
+
+        $format ??= static::$_toStringFormat;
+        $format = is_int($format) ? [$format, IntlDateFormatter::NONE] : $format;
+        $locale = $locale ?: DateTime::getDefaultLocale();
+
+        return $this->_formatObject($this->native, $format, $locale);
+    }
+
+    /**
+     * Returns a nicely formatted date string for this object.
+     *
+     * The format to be used is stored in the static property `Date::$niceFormat`.
+     *
+     * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
+     * @return string Formatted date string
+     */
+    public function nice(?string $locale = null): string
+    {
+        return (string)$this->i18nFormat(static::$niceFormat, $locale);
     }
 
     /**
@@ -196,6 +298,28 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
     public function timeAgoInWords(array $options = []): string
     {
         return static::diffFormatter()->dateAgoInWords($this, $options);
+    }
+
+    /**
+     * Returns a string that should be serialized when converting this object to JSON
+     *
+     * @return string|int
+     */
+    public function jsonSerialize(): mixed
+    {
+        if (static::$_jsonEncodeFormat instanceof Closure) {
+            return call_user_func(static::$_jsonEncodeFormat, $this);
+        }
+
+        return $this->i18nFormat(static::$_jsonEncodeFormat);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString(): string
+    {
+        return (string)$this->i18nFormat();
     }
 }
 
