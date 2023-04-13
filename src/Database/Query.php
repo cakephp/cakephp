@@ -29,6 +29,7 @@ use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
+use Throwable;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -2479,7 +2480,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (RuntimeException $e) {
+        } catch (Throwable $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {
