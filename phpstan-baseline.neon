@@ -351,6 +351,11 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
+			message: "#^Access to an undefined property Cake\\\\Error\\\\PhpError\\:\\:\\$_capturedError\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php

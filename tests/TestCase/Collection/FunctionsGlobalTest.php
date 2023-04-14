@@ -22,9 +22,9 @@ use Cake\TestSuite\TestCase;
 require_once CAKE . 'Collection/functions_global.php';
 
 /**
- * FunctionsTest class
+ * FunctionsGlobalTest class
  */
-class GlobalFunctionsTest extends TestCase
+class FunctionsGlobalTest extends TestCase
 {
     /**
      * Tests that the collection() method is a shortcut for new Collection

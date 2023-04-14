@@ -24,10 +24,9 @@ use stdClass;
 require_once CAKE . 'Core/functions_global.php';
 
 /**
- * Test cases for functions in Core\functions.php
- *
+ * Test cases for functions in Core\functions_global.php
  */
-class GlobalFunctionsTest extends TestCase
+class FunctionsGlobalTest extends TestCase
 {
     /**
      * Test cases for env()
@@ -272,7 +271,7 @@ class GlobalFunctionsTest extends TestCase
             deprecationWarning('This is deprecated ' . uniqid(), 2);
         });
         $this->assertMatchesRegularExpression(
-            '/This is deprecated \w+\n(.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/',
+            '/This is deprecated \w+\n(.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/',
             $error->getMessage()
         );
     }
@@ -325,7 +324,7 @@ class GlobalFunctionsTest extends TestCase
             triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
-        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/', $error->getMessage());
+        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/', $error->getMessage());
     }
 
     /**

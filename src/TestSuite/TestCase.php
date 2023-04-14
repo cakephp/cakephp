@@ -101,6 +101,11 @@ abstract class TestCase extends BaseTestCase
     protected $_configure = [];
 
     /**
+     * @var \Cake\Error\PhpError|null
+     */
+    private $_capturedError;
+
+    /**
      * Asserts that a string matches a given regular expression.
      *
      * @param string $pattern Regex pattern
@@ -214,16 +219,11 @@ abstract class TestCase extends BaseTestCase
         $default = error_reporting();
         error_reporting($errorLevel);
 
-        $error = null;
+        $this->_capturedError = null;
         set_error_handler(
-            function (
-                int $code,
-                string $description,
-                ?string $file = null,
-                ?int $line = null
-            ) use (&$error) {
+            function (int $code, string $description, string $file, int $line) {
                 $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
-                $error = new PhpError($code, $description, $file, $line, $trace);
+                $this->_capturedError = new PhpError($code, $description, $file, $line, $trace);
 
                 return true;
             },
@@ -233,13 +233,14 @@ abstract class TestCase extends BaseTestCase
         try {
             $callable();
         } finally {
+            restore_error_handler();
             error_reporting($default);
         }
-
-        $this->assertNotNull($error, 'No error was captured');
-        assert($error instanceof PhpError);
-
-        return $error;
+        if ($this->_capturedError === null) {
+            $this->fail('No error was captured');
+        }
+        /** @var \Cake\Error\PhpError $this->_capturedError */
+        return $this->_capturedError;
     }
 
     /**
