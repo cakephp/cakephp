@@ -20,5 +20,6 @@ declare(strict_types=1);
  */
 require __DIR__ . '/Collection/functions_global.php';
 require __DIR__ . '/Core/functions_global.php';
+require __DIR__ . '/Error/functions_global.php';
 require __DIR__ . '/I18n/functions_global.php';
 require __DIR__ . '/Routing/functions_global.php';

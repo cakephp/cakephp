@@ -19,6 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debugger;
+use Cake\Error\PhpError;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
@@ -30,6 +32,7 @@ use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
+use Closure;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
@@ -192,6 +195,47 @@ abstract class TestCase extends BaseTestCase
         error_reporting($errorLevel);
         try {
             $callable();
+        } finally {
+            error_reporting($default);
+        }
+    }
+
+    /**
+     * Capture errors from $callable so that you can do assertions on the error.
+     *
+     * If no error is captured an assertion will fail.
+     *
+     * @param int $errorLevel The value of error_reporting() to use.
+     * @param \Closure $callable A closure to capture errors from.
+     * @return \Cake\Error\PhpError The captured error.
+     */
+    public function captureError(int $errorLevel, Closure $callable): PhpError
+    {
+        $default = error_reporting();
+        error_reporting($errorLevel);
+
+        $error = null;
+        set_error_handler(
+            function (
+                int $code,
+                string $description,
+                ?string $file = null,
+                ?int $line = null
+            ) use (&$error) {
+                $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
+                $error = new PhpError($code, $description, $file, $line, $trace);
+
+                return true;
+            },
+            $errorLevel
+        );
+
+        try {
+            $callable();
+            $this->assertNotNull($error, 'No error was captured');
+            assert($error instanceof PhpError);
+
+            return $error;
         } finally {
             error_reporting($default);
         }

@@ -267,12 +267,13 @@ class GlobalFunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabled(): void
     {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away\n(.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/');
-
-        $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away', 2);
+        $error = $this->captureError(E_ALL, function (): void {
+            deprecationWarning('This is deprecated ' . uniqid(), 2);
         });
+        $this->assertMatchesRegularExpression(
+            '/This is deprecated \w+\n(.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/',
+            $error->getMessage()
+        );
     }
 
     /**
@@ -280,16 +281,12 @@ class GlobalFunctionsTest extends TestCase
      */
     public function testDeprecationWarningTriggerOnlyOnce(): void
     {
-        $message = 'Test deprecation warnings trigger only once';
-        try {
-            $this->withErrorReporting(E_ALL, function () use ($message): void {
-                deprecationWarning($message);
-            });
-            $this->fail();
-        } catch (\Exception $e) {
-            $this->assertStringContainsString($message, $e->getMessage());
-            $this->assertStringContainsString('TestCase.php', $e->getMessage());
-        }
+        $message = 'Test deprecation warnings trigger only once ' . uniqid();
+        $error = $this->captureError(E_ALL, function () use ($message): void {
+            deprecationWarning($message);
+        });
+        $this->assertStringContainsString($message, $error->getMessage());
+        $this->assertStringContainsString('TestCase.php', $error->getMessage());
 
         $this->withErrorReporting(E_ALL, function () use ($message): void {
             deprecationWarning($message);
@@ -301,12 +298,13 @@ class GlobalFunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
-        $this->expectDeprecation();
-        $this->expectDeprecationMessageMatches('/This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/');
-
-        $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This is going away too');
+        $error = $this->captureError(E_ALL, function (): void {
+            deprecationWarning('This is going away too ' . uniqid());
         });
+        $this->assertMatchesRegularExpression(
+            '/This is going away too \w+\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
+            $error->getMessage()
+        );
     }
 
     /**
@@ -339,13 +337,11 @@ class GlobalFunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $this->expectWarning();
-        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/');
-
-        $this->withErrorReporting(E_ALL, function (): void {
+        $error = $this->captureError(E_ALL, function (): void {
             triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
+        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/', $error->getMessage());
     }
 
     /**
