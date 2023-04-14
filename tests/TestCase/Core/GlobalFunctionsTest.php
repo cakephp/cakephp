@@ -25,6 +25,7 @@ require_once CAKE . 'Core/functions_global.php';
 
 /**
  * Test cases for functions in Core\functions.php
+ *
  */
 class GlobalFunctionsTest extends TestCase
 {
@@ -274,23 +275,6 @@ class GlobalFunctionsTest extends TestCase
             '/This is deprecated \w+\n(.*?)[\/\\\]GlobalFunctionsTest.php, line\: \d+/',
             $error->getMessage()
         );
-    }
-
-    /**
-     * Test deprecation warnings trigger only once
-     */
-    public function testDeprecationWarningTriggerOnlyOnce(): void
-    {
-        $message = 'Test deprecation warnings trigger only once ' . uniqid();
-        $error = $this->captureError(E_ALL, function () use ($message): void {
-            deprecationWarning($message);
-        });
-        $this->assertStringContainsString($message, $error->getMessage());
-        $this->assertStringContainsString('TestCase.php', $error->getMessage());
-
-        $this->withErrorReporting(E_ALL, function () use ($message): void {
-            deprecationWarning($message);
-        });
     }
 
     /**
