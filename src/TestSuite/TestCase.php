@@ -232,13 +232,14 @@ abstract class TestCase extends BaseTestCase
 
         try {
             $callable();
-            $this->assertNotNull($error, 'No error was captured');
-            assert($error instanceof PhpError);
-
-            return $error;
         } finally {
             error_reporting($default);
         }
+
+        $this->assertNotNull($error, 'No error was captured');
+        assert($error instanceof PhpError);
+
+        return $error;
     }
 
     /**
