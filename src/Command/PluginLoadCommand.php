@@ -110,7 +110,7 @@ class PluginLoadCommand extends Command
         }
 
         // Check if plugin is already loaded
-        $regex = '/->addPlugin\(\'' . $plugin . '\'/mu';
+        $regex = '#->addPlugin\(\'' . $plugin . '\'#mu';
         if (preg_match($regex, $contents, $otherMatches, PREG_OFFSET_CAPTURE)) {
             $this->io->info('The specified plugin is already loaded!');
 
