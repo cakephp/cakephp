@@ -131,6 +131,7 @@ jobs:
           export CODECOVERAGE=1
           vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
+          vendor/bin/phpunit --verbose --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         else
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
@@ -143,6 +144,9 @@ jobs:
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
       uses: codecov/codecov-action@v3
+      with:
+        files: ['coverage.xml', 'coverage-functions.xml']
+
 
   testsuite-windows:
     runs-on: windows-2022
