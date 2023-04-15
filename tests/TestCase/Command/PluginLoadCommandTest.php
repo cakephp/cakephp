@@ -96,6 +96,16 @@ class PluginLoadCommandTest extends TestCase
         $this->exec('plugin load TestPlugin');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('The specified plugin is already loaded!');
+
+        $this->exec('plugin load Company/TestPluginThree');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+
+        $contents = file_get_contents($this->app);
+        $this->assertMatchesRegularExpression('#\$this->addPlugin\(\'Company/TestPluginThree\'\);\n {4}\}\n#u', $contents);
+
+        $this->exec('plugin load Company/TestPluginThree');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('The specified plugin is already loaded!');
     }
 
     /**
