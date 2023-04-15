@@ -172,7 +172,7 @@ if (!function_exists('deprecationWarning')) {
      */
     function deprecationWarning(string $message, int $stackFrame = 1): void
     {
-        cakeDeprecationWarning($message, $stackFrame);
+        cakeDeprecationWarning($message, $stackFrame + 1);
     }
 }
 
