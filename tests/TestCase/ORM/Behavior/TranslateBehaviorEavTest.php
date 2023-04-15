@@ -162,7 +162,7 @@ class TranslateBehaviorEavTest extends TestCase
         $entity = $table->newEntity(['author_id' => 2, 'title' => 'Title 4', 'body' => 'Body 4']);
         $table->save($entity);
 
-        $results = $table->find('all', ['locale' => 'cze'])
+        $results = $table->find('all', locale: 'cze')
             ->select(['id', 'title', 'body'])
             ->disableHydration()
             ->orderByAsc('Articles.id')
@@ -504,7 +504,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+        $results = $table->find('translations', locales: ['deu', 'cze']);
         $expected = [
             [
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
@@ -541,12 +541,13 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $results = $table
-            ->find('list', [
-                'keyField' => 'title',
-                'valueField' => '_translations.deu.title',
-                'groupField' => 'id',
-            ])
-            ->find('translations', ['locales' => ['deu']]);
+            ->find(
+                'list',
+                keyField: 'title',
+                valueField: '_translations.deu.title',
+                groupField: 'id',
+            )
+            ->find('translations', locales: ['deu']);
 
         $expected = [
             1 => ['First Article' => 'Titel #1'],
@@ -564,7 +565,7 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->setLocale('cze');
-        $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+        $results = $table->find('translations', locales: ['deu', 'cze']);
         $expected = [
             [
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
@@ -1363,7 +1364,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertCount(1, $results);
 
         $table->setLocale('spa');
-        $results = $table->find('translations', ['filterByCurrentLocale' => false])->all();
+        $results = $table->find('translations', filterByCurrentLocale: false)->all();
         $this->assertCount(6, $results);
 
         $table->setLocale('spa');

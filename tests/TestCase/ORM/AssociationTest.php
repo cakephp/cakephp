@@ -475,52 +475,35 @@ class AssociationTest extends TestCase
         $this->assertSame('published', $assoc->getFinder());
     }
 
-    /**
-     * Tests that the defined custom finder is used when calling find
-     * in the association
-     */
-    public function testCustomFinderIsUsed(): void
-    {
-        $this->association->setFinder('published');
-        $this->assertEquals(
-            ['this' => 'worked'],
-            $this->association->find()->getOptions()
-        );
-    }
-
     public function testCustomFinderWithTypedArgs(): void
     {
-        $this->association->setFinder('published');
-        $this->assertEquals(
-            ['this' => 'custom'],
-            $this->association->find(null, [], 'custom')->getOptions()
-        );
-        $this->assertEquals(
-            ['this' => 'custom'],
-            $this->association->find(null, options: [], what: 'custom')->getOptions()
-        );
-
-        $this->assertEquals(
-            ['other' => true, 'this' => 'custom'],
-            $this->association->find(['published' => ['other' => true]], [], 'custom')->getOptions()
-        );
-        $this->assertEquals(
-            ['other' => true, 'this' => 'custom'],
-            $this->association->find(['published' => ['other' => true]], 'custom')->getOptions()
-        );
-
         $this->association->setFinder('publishedWithArgOnly');
         $this->assertEquals(
-            ['this' => 'custom'],
+            ['custom', 'this' => 'custom'],
             $this->association->find(null, 'custom')->getOptions()
         );
         $this->assertEquals(
-            ['this' => 'custom'],
+            ['what' => 'custom', 'this' => 'custom'],
             $this->association->find(null, what: 'custom')->getOptions()
         );
         $this->assertEquals(
-            ['this' => 'custom'],
+            ['what' => 'custom', 'this' => 'custom'],
             $this->association->find(what: 'custom')->getOptions()
+        );
+    }
+
+    public function testCustomFinderWithOptions(): void
+    {
+        $this->association->setFinder('withOptions');
+
+        $this->assertEquals(
+            ['this' => 'worked'],
+            $this->association->find(null)->getOptions()
+        );
+
+        $this->assertEquals(
+            ['that' => 'custom', 'this' => 'worked'],
+            $this->association->find(null, ['that' => 'custom'])->getOptions()
         );
     }
 

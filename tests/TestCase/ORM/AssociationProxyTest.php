@@ -70,7 +70,7 @@ class AssociationProxyTest extends TestCase
             'foreignKey' => 'author_id',
             'conditions' => [],
         ]);
-        $query = $table->Articles->find('list', ['limit' => 2]);
+        $query = $table->Articles->find('list', limit: 2);
         $this->assertCount(2, $query->all());
     }
 

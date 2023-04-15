@@ -304,7 +304,7 @@ class CounterCacheBehavior extends Behavior
         }
 
         $config['conditions'] = array_merge($conditions, $config['conditions'] ?? []);
-        $query = $this->_table->find($finder, $config);
+        $query = $this->_table->find($finder, ...$config);
 
         return $query->count();
     }

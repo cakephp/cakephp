@@ -35,12 +35,12 @@ class ArticlesTable extends Table
      * @param \Cake\ORM\Query\SelectQuery $query The query
      * @param array<string, mixed> $options The options
      */
-    public function findPublished($query, array $options = []): SelectQuery
+    public function findPublished($query, ?string $title = null): SelectQuery
     {
         $query = $query->where([$this->aliasField('published') => 'Y']);
 
-        if (isset($options['title'])) {
-            $query->andWhere([$this->aliasField('title') => $options['title']]);
+        if ($title !== null) {
+            $query->andWhere([$this->aliasField('title') => $title]);
         }
 
         return $query;

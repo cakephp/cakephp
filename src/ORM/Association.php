@@ -721,7 +721,7 @@ abstract class Association
 
         [$finder, $opts] = $this->_extractFinder($options['finder']);
         $dummy = $this
-            ->find($finder, $opts)
+            ->find($finder, ...$opts)
             ->eagerLoaded(true);
 
         if (!empty($options['queryBuilder'])) {
@@ -845,24 +845,7 @@ abstract class Association
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
 
-        // Find $options in arguments to merge with finder options
-        $options = null;
-        if ($args) {
-            if (array_key_exists(0, $args)) {
-                $options = &$args[0];
-            } elseif (array_key_exists('options', $args)) {
-                $options = &$args['options'];
-            }
-        }
-
-        if ($opts) {
-            if (is_array($options)) {
-                /** @psalm-suppress ReferenceReusedFromConfusingScope */
-                $options = $options + $opts;
-            } else {
-                array_unshift($args, $opts);
-            }
-        }
+        $args += $opts;
 
         return $this->getTarget()
             ->find($type, ...$args)

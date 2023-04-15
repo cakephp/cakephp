@@ -28,7 +28,7 @@ use Cake\ORM\Behavior;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
-use InvalidArgumentException;
+use Closure;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -197,11 +197,12 @@ class TreeBehavior extends Behavior
         $depths = [$primaryKeyValue => $entity->get($config['level'])];
 
         /** @var \Traversable<\Cake\Datasource\EntityInterface> $children */
-        $children = $this->_table->find('children', [
-            'for' => $primaryKeyValue,
-            'fields' => [$this->_getPrimaryKey(), $config['parent'], $config['level']],
-            'order' => $config['left'],
-        ])
+        $children = $this->_table->find(
+            'children',
+            for: $primaryKeyValue,
+            fields: [$this->_getPrimaryKey(), $config['parent'], $config['level']],
+            order: $config['left'],
+        )
         ->all();
 
         foreach ($children as $node) {
@@ -388,12 +389,8 @@ class TreeBehavior extends Behavior
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
-    public function findPath(SelectQuery $query, array $options): SelectQuery
+    public function findPath(SelectQuery $query, string|int $for): SelectQuery
     {
-        if (empty($options['for'])) {
-            throw new InvalidArgumentException('The "for" key is required for find(\'path\').');
-        }
-
         $config = $this->getConfig();
         [$left, $right] = array_map(
             function ($field) {
@@ -402,7 +399,7 @@ class TreeBehavior extends Behavior
             [$config['left'], $config['right']]
         );
 
-        $node = $this->_table->get($options['for'], ['fields' => [$left, $right]]);
+        $node = $this->_table->get($for, ['fields' => [$left, $right]]);
 
         return $this->_scope($query)
             ->where([
@@ -452,22 +449,15 @@ class TreeBehavior extends Behavior
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
-    public function findChildren(SelectQuery $query, array $options): SelectQuery
+    public function findChildren(SelectQuery $query, int|string $for, bool $direct = false): SelectQuery
     {
         $config = $this->getConfig();
-        $options += ['for' => null, 'direct' => false];
         [$parent, $left, $right] = array_map(
             function ($field) {
                 return $this->_table->aliasField($field);
             },
             [$config['parent'], $config['left'], $config['right']]
         );
-
-        [$for, $direct] = [$options['for'], $options['direct']];
-
-        if (empty($for)) {
-            throw new InvalidArgumentException('The "for" key is required for find(\'children\').');
-        }
 
         if ($query->clause('order') === null) {
             $query->orderBy([$left => 'ASC']);
@@ -503,17 +493,18 @@ class TreeBehavior extends Behavior
      * @param array<string, mixed> $options Array of options as described above.
      * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findTreeList(SelectQuery $query, array $options): SelectQuery
-    {
+    public function findTreeList(
+        SelectQuery $query,
+        Closure|string|null $keyPath = null,
+        Closure|string|null $valuePath = null,
+        ?string $spacer = null
+    ): SelectQuery {
         $left = $this->_table->aliasField($this->getConfig('left'));
 
         $results = $this->_scope($query)
-            ->find('threaded', [
-                'parentField' => $this->getConfig('parent'),
-                'order' => [$left => 'ASC'],
-            ]);
+            ->find('threaded', parentField: $this->getConfig('parent'), order: [$left => 'ASC']);
 
-        return $this->formatTreeList($results, $options);
+        return $this->formatTreeList($results, $keyPath, $valuePath, $spacer);
     }
 
     /**
@@ -533,20 +524,24 @@ class TreeBehavior extends Behavior
      * @param array<string, mixed> $options Array of options as described above.
      * @return \Cake\ORM\Query\SelectQuery Augmented query.
      */
-    public function formatTreeList(SelectQuery $query, array $options = []): SelectQuery
-    {
-        return $query->formatResults(function (CollectionInterface $results) use ($options) {
-            $options += [
-                'keyPath' => $this->_getPrimaryKey(),
-                'valuePath' => $this->_table->getDisplayField(),
-                'spacer' => '_',
-            ];
+    public function formatTreeList(
+        SelectQuery $query,
+        Closure|string|null $keyPath = null,
+        Closure|string|null $valuePath = null,
+        ?string $spacer = null
+    ): SelectQuery {
+        return $query->formatResults(
+            function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer) {
+                $keyPath ??= $this->_getPrimaryKey();
+                $valuePath ??= $this->_table->getDisplayField();
+                $spacer ??= '_';
 
-            $nested = $results->listNested();
-            assert($nested instanceof TreeIterator);
+                $nested = $results->listNested();
+                assert($nested instanceof TreeIterator);
 
-            return $nested->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
-        });
+                return $nested->printer($valuePath, $keyPath, $spacer);
+            }
+        );
     }
 
     /**

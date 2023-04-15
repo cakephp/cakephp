@@ -36,10 +36,10 @@ class AuthorsTable extends Table
      * @param array<string, mixed> $options
      * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findByAuthor(SelectQuery $query, array $options = []): SelectQuery
+    public function findByAuthor(SelectQuery $query, ?int $authorId = null): SelectQuery
     {
-        if (isset($options['author_id'])) {
-            $query->where(['Articles.id' => $options['author_id']]);
+        if (isset($authorId)) {
+            $query->where(['Articles.id' => $authorId]);
         }
 
         return $query;

@@ -55,7 +55,7 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
-use ReflectionMethod;
+use ReflectionFunction;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -1308,10 +1308,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * can override this method in subclasses to modify how `find('all')` works.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options to use for the find
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findAll(SelectQuery $query, array $options): SelectQuery
+    public function findAll(SelectQuery $query): SelectQuery
     {
         return $query;
     }
@@ -1389,28 +1388,28 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options for the find
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findList(SelectQuery $query, array $options): SelectQuery
-    {
-        $options += [
-            'keyField' => $this->getPrimaryKey(),
-            'valueField' => $this->getDisplayField(),
-            'groupField' => null,
-            'valueSeparator' => ';',
-        ];
+    public function findList(
+        SelectQuery $query,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string|null $valueField = null,
+        Closure|array|string|null $groupField = null,
+        string $valueSeparator = ';'
+    ): SelectQuery {
+        $keyField ??= $this->getPrimaryKey();
+        $valueField ??= $this->getDisplayField();
 
         if (
             !$query->clause('select') &&
-            !is_object($options['keyField']) &&
-            !is_object($options['valueField']) &&
-            !is_object($options['groupField'])
+            !is_object($keyField) &&
+            !is_object($valueField) &&
+            !is_object($groupField)
         ) {
             $fields = array_merge(
-                (array)$options['keyField'],
-                (array)$options['valueField'],
-                (array)$options['groupField']
+                (array)$keyField,
+                (array)$valueField,
+                (array)$groupField
             );
             $columns = $this->getSchema()->columns();
             if (count($fields) === count(array_intersect($fields, $columns))) {
@@ -1419,7 +1418,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options = $this->_setFieldMatchers(
-            $options,
+            compact('keyField', 'valueField', 'groupField', 'valueSeparator'),
             ['keyField', 'valueField', 'groupField']
         );
 
@@ -1455,18 +1454,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options The options to find with
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findThreaded(SelectQuery $query, array $options): SelectQuery
-    {
-        $options += [
-            'keyField' => $this->getPrimaryKey(),
-            'parentField' => 'parent_id',
-            'nestingKey' => 'children',
-        ];
+    public function findThreaded(
+        SelectQuery $query,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string $parentField = 'parent_id',
+        string $nestingKey = 'children'
+    ): SelectQuery {
+        $keyField ??= $this->getPrimaryKey();
 
-        $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
+        $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
         return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']));
+            $results->nest($options['keyField'], $options['parentField'], $nestingKey));
     }
 
     /**
@@ -1565,7 +1564,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $finder = $options['finder'] ?? 'all';
         unset($options['key'], $options['cache'], $options['finder']);
 
-        $query = $this->find($finder, $options)->where($conditions);
+        $query = $this->find($finder, ...$options)->where($conditions);
 
         if ($cacheConfig) {
             if (!$cacheKey) {
@@ -2633,37 +2632,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
-        // Extract and apply $options from arguments
-        if ($args) {
-            $options = [];
-            if (array_key_exists(0, $args)) {
-                // $options is not a named argument
-                $options = &$args[0];
-            } elseif (array_key_exists('options', $args)) {
-                // options is a named argument
-                $options = &$args['options'];
-            }
-
-            if (is_array($options) && $options) {
-                assert(!array_is_list($options), '`$options` argument should be an associative array.');
-
-                $query->applyOptions($options);
-                /** @psalm-suppress ReferenceReusedFromConfusingScope */
-                $options = $query->getOptions();
-            }
-        }
-
         $finder = 'find' . $type;
         if (method_exists($this, $finder)) {
-            if (!$args) {
-                $reflected = new ReflectionMethod($this, $finder);
-                $param = $reflected->getParameters()[1] ?? null;
-                if ($param?->name === 'options' && !$param->isDefaultValueAvailable()) {
-                    $args = [[]];
-                }
-            }
-
-            return $this->{$finder}($query, ...$args);
+            return $this->invokeFinder($this->{$finder}(...), $query, $args);
         }
 
         if ($this->_behaviors->hasFinder($type)) {
@@ -2675,6 +2646,50 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $type,
             static::class
         ));
+    }
+
+    /**
+     * @internal
+     */
+    public function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
+    {
+        $options = $args;
+        $reflected = new ReflectionFunction($callable);
+        $params = $reflected->getParameters();
+
+        $maybeOptions = $params[1] ?? null;
+        $isOldOptions = false;
+        if ($maybeOptions?->name === 'options' && !$maybeOptions->isDefaultValueAvailable()) {
+            $isOldOptions = true;
+            if (isset($args[0])) {
+                $options = $args[0];
+            }
+        }
+
+        // Extract and apply $options from arguments
+        if ($options) {
+            $query->applyOptions($options);
+            $args = $query->getOptions();
+
+            if (!$isOldOptions) {
+                unset($params[0]);
+                $paramNames = [];
+                foreach ($params as $param) {
+                    $paramNames[] = $param->getName();
+                }
+
+                foreach ($args as $key => $value) {
+                    if (is_string($key) && !in_array($key, $paramNames, true)) {
+                        unset($args[$key]);
+                    }
+                }
+            }
+        }
+        if ($isOldOptions) {
+            $args = [$args];
+        }
+
+        return $callable($query, ...$args);
     }
 
     /**
@@ -2735,9 +2750,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $conditions = $makeConditions($fields, $args);
         }
 
-        return $this->find($findType, [
-            'conditions' => $conditions,
-        ]);
+        return $this->find($findType, conditions: $conditions);
     }
 
     /**

@@ -1072,24 +1072,7 @@ class BelongsToMany extends Association
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
 
-        // Find $options in arguments to merge with finder options
-        $options = null;
-        if ($args) {
-            if (array_key_exists(0, $args)) {
-                $options = &$args[0];
-            } elseif (array_key_exists('options', $args)) {
-                $options = &$args['options'];
-            }
-        }
-
-        if ($opts) {
-            if (is_array($options)) {
-                /** @psalm-suppress ReferenceReusedFromConfusingScope */
-                $options = $options + $opts;
-            } else {
-                array_unshift($args, $opts);
-            }
-        }
+        $args += $opts;
 
         $query = $this->getTarget()
             ->find($type, ...$args)

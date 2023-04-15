@@ -24,7 +24,6 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query\SelectQuery;
 use LogicException;
-use ReflectionFunction;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -284,15 +283,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             [$behavior, $callMethod] = $this->_finderMap[$type];
             $callable = $this->_loaded[$behavior]->$callMethod(...);
 
-            if (!$args) {
-                $reflected = new ReflectionFunction($callable);
-                $param = $reflected->getParameters()[1] ?? null;
-                if ($param?->name === 'options' && !$param->isDefaultValueAvailable()) {
-                    $args = [[]];
-                }
-            }
-
-            return $callable($query, ...$args);
+            return $this->_table->invokeFinder($callable, $query, $args);
         }
 
         throw new BadMethodCallException(

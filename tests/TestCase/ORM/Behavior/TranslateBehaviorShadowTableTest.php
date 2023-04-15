@@ -342,7 +342,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->addBehavior('Translate');
         $table->setLocale('eng');
 
-        $query = $table->find('all', ['filterByCurrentLocale' => true])->select(['id'])->disableAutoFields();
+        $query = $table->find('all', filterByCurrentLocale: true)->select(['id'])->disableAutoFields();
         $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
