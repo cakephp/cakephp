@@ -67,6 +67,7 @@ id BIGINT PRIMARY KEY,
 title NVARCHAR(20) COLLATE Japanese_Unicode_CI_AI DEFAULT N'無題' COLLATE Japanese_Unicode_CI_AI,
 body NVARCHAR(1000) DEFAULT N'本文なし',
 author_id INTEGER NOT NULL,
+unique_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
@@ -78,7 +79,8 @@ field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
 field3 VARCHAR(10) DEFAULT 'O''hare',
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
-CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
+CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE,
+INDEX [unique_id_idx] UNIQUE ([unique_id])
 )
 SQL;
         $connection->execute($table);
@@ -548,8 +550,9 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
+
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
-        $this->assertCount(3, $result->constraints());
+        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -569,10 +572,18 @@ SQL;
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ],
+            'unique_id_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'unique_id',
+                ],
+                'length' => [],
+            ],
         ];
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
+        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
