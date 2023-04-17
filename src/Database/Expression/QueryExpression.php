@@ -119,13 +119,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function add($conditions, array $types = [])
     {
-        if (is_string($conditions)) {
-            $this->_conditions[] = $conditions;
-
-            return $this;
-        }
-
-        if ($conditions instanceof ExpressionInterface) {
+        if (is_string($conditions) || $conditions instanceof ExpressionInterface) {
             $this->_conditions[] = $conditions;
 
             return $this;
