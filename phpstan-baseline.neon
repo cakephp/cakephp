@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Collection\\) given\\.$#"
-			count: 3
-			path: src/Collection/Collection.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
@@ -14,21 +9,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\TreeIterator\\) given\\.$#"
-			count: 3
-			path: src/Collection/Iterator/TreeIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\TreePrinter\\) given\\.$#"
-			count: 3
-			path: src/Collection/Iterator/TreePrinter.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\Collection\\\\Iterator\\\\ZipIterator\\) given\\.$#"
-			count: 3
-			path: src/Collection/Iterator/ZipIterator.php
 
 		-
 			message: "#^Call to method getOptionParser\\(\\) on an unknown class Cake\\\\Console\\\\Shell\\.$#"
@@ -141,11 +121,6 @@ parameters:
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of class LimitIterator constructor expects TIterator of Iterator\\<mixed, mixed\\>, \\$this\\(Cake\\\\ORM\\\\ResultSet\\<T of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) given\\.$#"
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
@@ -159,11 +134,6 @@ parameters:
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Utility/Hash.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

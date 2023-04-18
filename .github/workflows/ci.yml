@@ -131,8 +131,7 @@ jobs:
       if: matrix.php-version == '8.1'
       uses: codecov/codecov-action@v3
       with:
-        files: ['coverage.xml', 'coverage-functions.xml']
-
+        files: coverage.xml,coverage-functions.xml
 
   testsuite-windows:
     runs-on: windows-2022
