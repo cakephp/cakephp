@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.0.0
+ * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -20,5 +20,6 @@ declare(strict_types=1);
  */
 require __DIR__ . '/Collection/functions_global.php';
 require __DIR__ . '/Core/functions_global.php';
+require __DIR__ . '/Error/functions_global.php';
 require __DIR__ . '/I18n/functions_global.php';
 require __DIR__ . '/Routing/functions_global.php';

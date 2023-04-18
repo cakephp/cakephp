@@ -166,6 +166,6 @@ if (!function_exists('deprecationWarning')) {
      */
     function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
-        cakeDeprecationWarning($version, $message, $stackFrame);
+        cakeDeprecationWarning($version, $message, $stackFrame + 1);
     }
 }

@@ -743,7 +743,10 @@ abstract class Query implements ExpressionInterface, Stringable
             $table = current($table);
         }
 
-        /** @var string $alias */
+        /**
+         * @var string $alias */
+         * @psalm-suppress InvalidArrayOffset
+         */
         return [
             $alias => [
                 'table' => $table,
@@ -1833,6 +1836,12 @@ abstract class Query implements ExpressionInterface, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
+<<<<<<< HEAD
+=======
+        } catch (Throwable $e) {
+            $sql = 'SQL could not be generated for this query as it is incomplete.';
+            $params = [];
+>>>>>>> 4.next
         } finally {
             restore_error_handler();
 

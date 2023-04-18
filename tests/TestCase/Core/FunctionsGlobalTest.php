@@ -19,19 +19,14 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
-use Exception;
 use stdClass;
-use function Cake\Core\deprecationWarning;
-use function Cake\Core\env;
-use function Cake\Core\h;
-use function Cake\Core\namespaceSplit;
-use function Cake\Core\pluginSplit;
-use function Cake\Core\triggerWarning;
+
+require_once CAKE . 'Core/functions_global.php';
 
 /**
- * Test cases for functions in Core\functions.php
+ * Test cases for functions in Core\functions_global.php
  */
-class FunctionsTest extends TestCase
+class FunctionsGlobalTest extends TestCase
 {
     /**
      * Test cases for env()
@@ -39,7 +34,7 @@ class FunctionsTest extends TestCase
     public function testEnv(): void
     {
         $_ENV['DOES_NOT_EXIST'] = null;
-        $this->assertNull(env('DOES_NOT_EXIST'));
+        $this->assertNull(\env('DOES_NOT_EXIST'));
         $this->assertSame('default', env('DOES_NOT_EXIST', 'default'));
 
         $_ENV['DOES_EXIST'] = 'some value';
@@ -53,14 +48,6 @@ class FunctionsTest extends TestCase
         $_ENV['ZERO'] = '0';
         $this->assertSame('0', env('ZERO'));
         $this->assertSame('0', env('ZERO', '1'));
-
-        $_ENV['ZERO'] = 0;
-        $this->assertSame(0, env('ZERO'));
-        $this->assertSame(0, env('ZERO', 1));
-
-        $_ENV['ZERO'] = 0.0;
-        $this->assertSame(0.0, env('ZERO'));
-        $this->assertSame(0.0, env('ZERO', 1));
 
         $this->assertSame('', env('DOCUMENT_ROOT'));
         $this->assertStringContainsString('phpunit', env('PHP_SELF'));
@@ -281,10 +268,10 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabled(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is going away', 2);
+            deprecationWarning('This is deprecated ' . uniqid(), 2);
         });
         $this->assertMatchesRegularExpression(
-            '/This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/',
+            '/This is deprecated \w+\n(.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/',
             $error->getMessage()
         );
     }
@@ -295,10 +282,10 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is going away too');
+            deprecationWarning('This is going away too ' . uniqid());
         });
         $this->assertMatchesRegularExpression(
-            '/This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
+            '/This is going away too \w+\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
             $error->getMessage()
         );
     }
@@ -312,7 +299,7 @@ class FunctionsTest extends TestCase
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('5.0.0', 'This will be gone soon');
+            deprecationWarning('This will be gone soon');
         });
     }
 
@@ -324,7 +311,7 @@ class FunctionsTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
-            deprecationWarning('5.0.0', 'This is leaving');
+            deprecationWarning('This is leaving');
         });
     }
 
@@ -334,12 +321,10 @@ class FunctionsTest extends TestCase
     public function testTriggerWarningEnabled(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            triggerWarning('This will be gone one day ' . uniqid());
+            triggerWarning('This will be gone one day');
+            $this->assertTrue(true);
         });
-        $this->assertMatchesRegularExpression(
-            '/This will be gone one day \w+ - (.*?)[\/\\\]TestCase.php, line\: \d+/',
-            $error->getMessage()
-        );
+        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/', $error->getMessage());
     }
 
     /**
@@ -351,5 +336,15 @@ class FunctionsTest extends TestCase
             triggerWarning('This was a mistake.');
             $this->assertTrue(true);
         });
+    }
+
+    /**
+     * testing getTypeName()
+     */
+    public function testgetTypeName(): void
+    {
+        $this->assertSame('stdClass', getTypeName(new \stdClass()));
+        $this->assertSame('array', getTypeName([]));
+        $this->assertSame('string', getTypeName(''));
     }
 }

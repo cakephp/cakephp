@@ -18,102 +18,102 @@
       <code>int|false</code>
     </InvalidReturnType>
   </file>
-  <file src="src/Datasource/Paging/PaginatedResultSet.php">
-    <MethodSignatureMustProvideReturnType>
-      <code>://cakephp.org)</code>
-    </MethodSignatureMustProvideReturnType>
+  <file src="src/Collection/CollectionTrait.php">
+    <InvalidArrayOffset>
+      <code>$collectionArraysCounts[$changeIndex]</code>
+      <code>$value[$keys[$index]]</code>
+    </InvalidArrayOffset>
   </file>
-  <file src="src/Event/EventDispatcherTrait.php">
-    <MoreSpecificImplementedParamType>
-      <code>$subject</code>
-    </MoreSpecificImplementedParamType>
+  <file src="src/Collection/Iterator/ZipIterator.php">
+    <MissingTemplateParam>
+      <code>ZipIterator</code>
+    </MissingTemplateParam>
   </file>
-  <file src="src/Event/EventManager.php">
-    <InvalidArgument>
-      <code>_callListener</code>
-      <code>addEventToList</code>
-      <code>addEventToList</code>
-    </InvalidArgument>
-    <InvalidReturnStatement>
-      <code>$event</code>
-      <code>$event</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType>
-      <code>EventInterface</code>
-    </InvalidReturnType>
+  <file src="src/Controller/Component/RequestHandlerComponent.php">
+    <RedundantCondition>
+      <code>is_string($type)</code>
+    </RedundantCondition>
   </file>
-  <file src="src/I18n/Date.php">
-    <ImpureFunctionCall>
-      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
-      <code>static::$_jsonEncodeFormat</code>
-    </ImpureFunctionCall>
-    <ImpureMethodCall>
-      <code>_formatObject</code>
-      <code>dateAgoInWords</code>
-      <code>diffFormatter</code>
-      <code>getDefaultLocale</code>
-    </ImpureMethodCall>
-    <ImpureStaticProperty>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_toStringFormat</code>
-      <code>static::$niceFormat</code>
-    </ImpureStaticProperty>
+  <file src="src/Database/Expression/QueryExpression.php">
+    <RedundantCondition>
+      <code>$typeMultiple</code>
+    </RedundantCondition>
   </file>
-  <file src="src/I18n/DateTime.php">
-    <ImpureFunctionCall>
-      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
-      <code>static::$_jsonEncodeFormat</code>
-    </ImpureFunctionCall>
-    <ImpureMethodCall>
-      <code>_formatObject</code>
-      <code>diffFormatter</code>
-      <code>getDefaultLocale</code>
-      <code>timeAgoInWords</code>
-    </ImpureMethodCall>
-    <ImpureStaticProperty>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_toStringFormat</code>
-      <code>static::$niceFormat</code>
-    </ImpureStaticProperty>
+  <file src="src/Database/Query.php">
+    <MissingTemplateParam>
+      <code>IteratorAggregate</code>
+    </MissingTemplateParam>
   </file>
-  <file src="src/ORM/Table.php">
-    <InvalidReturnStatement>
-      <code><![CDATA[$this->_behaviors->callFinder($type, [$query, $options])]]></code>
-    </InvalidReturnStatement>
+  <file src="src/Database/Statement/PDOStatement.php">
+    <RedundantCondition>
+      <code><![CDATA[$property === 'queryString' && isset($this->_statement->queryString)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Error/Renderer/ConsoleExceptionRenderer.php">
+    <InvalidArrayOffset>
+      <code>$exceptions[$i - 1]</code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="src/I18n/DateFormatTrait.php">
+    <RedundantCondition>
+      <code>$time !== false</code>
+    </RedundantCondition>
+  </file>
+  <file src="src/ORM/SaveOptionsBuilder.php">
+    <MissingTemplateParam>
+      <code>SaveOptionsBuilder</code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Shell/Helper/TableHelper.php">
+    <InvalidCast>
+      <code>$v</code>
+    </InvalidCast>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass>
-      <code><![CDATA[new AssertionFailedError(
+      <code>new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
-            )]]></code>
+            )</code>
     </InternalClass>
     <InternalMethod>
-      <code><![CDATA[new AssertionFailedError(
+      <code>new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
-            )]]></code>
+            )</code>
     </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass>
+<<<<<<< HEAD
       <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
+=======
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event "%s" was fired %d times, cannot make data assertion',
+>>>>>>> 4.next
                 $other,
                 count($events)
             ))]]></code>
     </InternalClass>
     <InternalMethod>
+<<<<<<< HEAD
       <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
+=======
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event "%s" was fired %d times, cannot make data assertion',
+>>>>>>> 4.next
                 $other,
                 count($events)
             ))]]></code>

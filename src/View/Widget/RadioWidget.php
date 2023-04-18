@@ -126,7 +126,7 @@ class RadioWidget extends BasicWidget
      * Disabled attribute detection.
      *
      * @param array<string, mixed> $radio Radio info.
-     * @param array|true|null $disabled The disabled values.
+     * @param array|true|string|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(array $radio, array|string|bool|null $disabled): bool

@@ -67,7 +67,7 @@ class I18nInitCommand extends Command
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
-            mkdir($targetFolder, 0775, true);
+            mkdir($targetFolder, 0770, true);
         }
 
         $count = 0;

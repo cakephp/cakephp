@@ -287,9 +287,13 @@ use function Cake\Core\h;
     .code-highlight {
         display: block;
         background: #fff59d;
+        padding-left: 4px;
     }
     .excerpt-line {
         padding: 0;
+    }
+    .excerpt-line > code {
+        padding-left: 4px;
     }
     .excerpt-number {
         background: #f6f6f6;
@@ -297,7 +301,7 @@ use function Cake\Core\h;
         text-align: right;
         color: #666;
         border-right: 1px solid #ddd;
-        padding: 2px;
+        padding: 2px 4px;
     }
     .excerpt-number:after {
         content: attr(data-number);
@@ -335,24 +339,26 @@ use function Cake\Core\h;
         <span class="header-type"><?= get_class($error) ?></span>
     </header>
     <div class="error-content">
-            <?php if ($this->fetch('subheading')): ?>
-            <p class="error-subheading">
-                <?= $this->fetch('subheading') ?>
-            </p>
-            <?php endif; ?>
+        <?php if ($this->fetch('subheading')): ?>
+        <p class="error-subheading">
+            <?= $this->fetch('subheading') ?>
+        </p>
+        <?php endif; ?>
 
-<div class="error-suggestion">
-<?= $this->fetch('file') ?>
-</div>
+        <?php if ($this->fetch('file')): ?>
+        <div class="error-suggestion">
+            <?= $this->fetch('file') ?>
+        </div>
+        <?php endif; ?>
 
-            <?= $this->element('dev_error_stacktrace'); ?>
+        <?= $this->element('dev_error_stacktrace'); ?>
 
-            <?php if ($this->fetch('templateName')): ?>
-            <p class="customize">
-                If you want to customize this error message, create
-                <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
-            </p>
-            <?php endif; ?>
+        <?php if ($this->fetch('templateName')): ?>
+        <p class="customize">
+            If you want to customize this error message, create
+            <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
+        </p>
+        <?php endif; ?>
     </div>
 
     <script type="text/javascript">

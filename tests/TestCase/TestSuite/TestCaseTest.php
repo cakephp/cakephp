@@ -132,6 +132,31 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * test withCaptureError
+     */
+    public function testCaptureError(): void
+    {
+        $error = $this->captureError(E_USER_WARNING, function (): void {
+            trigger_error('Something bad', E_USER_WARNING);
+        });
+        $this->assertEquals('Something bad', $error->getMessage());
+        $this->assertEqualsWithDelta(__LINE__, $error->getLine(), 10);
+        $this->assertEquals(E_USER_WARNING, $error->getCode());
+        $this->assertEquals(__FILE__, $error->getFile());
+    }
+
+    /**
+     * test withCaptureError
+     */
+    public function testCaptureErrorNoError(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->captureError(E_USER_WARNING, function (): void {
+            // nothing
+        });
+    }
+
+    /**
      * test withErrorReporting with exceptions
      */
     public function testWithErrorReportingWithException(): void

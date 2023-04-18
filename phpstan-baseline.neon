@@ -16,6 +16,46 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
+			message: "#^Dead catch \\- Cake\\\\Console\\\\Exception\\\\StopException is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Console/ShellDispatcher.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$request \\(Cake\\\\Http\\\\ServerRequest\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Controller/Controller.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\Controller\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:getControllerClass\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:missingController\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			count: 2
+			path: src/Controller/ControllerFactory.php
+
+		-
+			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
+			count: 2
+			path: src/Database/Driver.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php

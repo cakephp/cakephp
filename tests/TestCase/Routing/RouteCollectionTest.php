@@ -52,8 +52,10 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
-        $result = $this->collection->parse('/');
-        $this->assertEquals([], $result, 'Should not match, missing /b');
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/');
+            $this->assertEquals([], $result, 'Should not match, missing /b');
+        });
     }
 
     /**
@@ -66,10 +68,12 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
 
-        $result = $this->collection->parse('/b', 'GET');
-        $this->assertNotEmpty($result, 'Route should be found');
-        $result = $this->collection->parse('/b', 'POST');
-        $this->assertEquals([], $result, 'Should not match with missing method');
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/b', 'GET');
+            $this->assertNotEmpty($result, 'Route should be found');
+            $result = $this->collection->parse('/b', 'POST');
+            $this->assertEquals([], $result, 'Should not match with missing method');
+        });
     }
 
     /**
@@ -82,55 +86,57 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
-        $result = $this->collection->parse('/b/');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            'pass' => [],
-            'plugin' => null,
-            'key' => 'value',
-            '_matchedRoute' => '/b',
-        ];
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/b/');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                'pass' => [],
+                'plugin' => null,
+                'key' => 'value',
+                '_matchedRoute' => '/b',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/the-thing?one=two');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'view',
-            'id' => 'the-thing',
-            'pass' => [],
-            'plugin' => null,
-            'key' => 'value',
-            '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/{id}',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/the-thing?one=two');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'id' => 'the-thing',
+                'pass' => [],
+                'plugin' => null,
+                'key' => 'value',
+                '?' => ['one' => 'two'],
+                '_matchedRoute' => '/b/{id}',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/media/search');
-        unset($result['_route']);
-        $expected = [
-            'key' => 'value',
-            'pass' => [],
-            'plugin' => null,
-            'controller' => 'Media',
-            'action' => 'search',
-            '_matchedRoute' => '/b/media/search/*',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/media/search');
+            unset($result['_route']);
+            $expected = [
+                'key' => 'value',
+                'pass' => [],
+                'plugin' => null,
+                'controller' => 'Media',
+                'action' => 'search',
+                '_matchedRoute' => '/b/media/search/*',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/media/search/thing');
-        unset($result['_route']);
-        $expected = [
-            'key' => 'value',
-            'pass' => ['thing'],
-            'plugin' => null,
-            'controller' => 'Media',
-            'action' => 'search',
-            '_matchedRoute' => '/b/media/search/*',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/media/search/thing');
+            unset($result['_route']);
+            $expected = [
+                'key' => 'value',
+                'pass' => ['thing'],
+                'plugin' => null,
+                'controller' => 'Media',
+                'action' => 'search',
+                '_matchedRoute' => '/b/media/search/*',
+            ];
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -142,30 +148,32 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
-        $result = $this->collection->parse('/media/search/php?one=two');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Media',
-            'action' => 'search',
-            'pass' => ['php'],
-            'plugin' => null,
-            '_matchedRoute' => '/media/search/*',
-            '?' => ['one' => 'two'],
-        ];
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/media/search/php?one=two');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Media',
+                'action' => 'search',
+                'pass' => ['php'],
+                'plugin' => null,
+                '_matchedRoute' => '/media/search/*',
+                '?' => ['one' => 'two'],
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/thing?one=two');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'view',
-            'pass' => [],
-            'id' => 'thing',
-            'plugin' => null,
-            '_matchedRoute' => '/{id}',
-            '?' => ['one' => 'two'],
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/thing?one=two');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => [],
+                'id' => 'thing',
+                'plugin' => null,
+                '_matchedRoute' => '/{id}',
+                '?' => ['one' => 'two'],
+            ];
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -178,57 +186,59 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
-        $result = $this->collection->parse('/b/');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            'pass' => [],
-            'plugin' => null,
-            'key' => 'value',
-            '_matchedRoute' => '/b',
-        ];
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/b/');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                'pass' => [],
+                'plugin' => null,
+                'key' => 'value',
+                '_matchedRoute' => '/b',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/the-thing?one=two');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'view',
-            'id' => 'the-thing',
-            'pass' => [],
-            'plugin' => null,
-            'key' => 'value',
-            '?' => ['one' => 'two'],
-            '_matchedRoute' => '/b/{id}',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/the-thing?one=two');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'id' => 'the-thing',
+                'pass' => [],
+                'plugin' => null,
+                'key' => 'value',
+                '?' => ['one' => 'two'],
+                '_matchedRoute' => '/b/{id}',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/media/search');
-        unset($result['_route']);
-        $expected = [
-            'key' => 'value',
-            'pass' => [],
-            'plugin' => null,
-            'controller' => 'Media',
-            'action' => 'search',
-            '_matchedRoute' => '/b/media/search/*',
-            '_name' => 'media_search',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/media/search');
+            unset($result['_route']);
+            $expected = [
+                'key' => 'value',
+                'pass' => [],
+                'plugin' => null,
+                'controller' => 'Media',
+                'action' => 'search',
+                '_matchedRoute' => '/b/media/search/*',
+                '_name' => 'media_search',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->collection->parse('/b/media/search/thing');
-        unset($result['_route']);
-        $expected = [
-            'key' => 'value',
-            'pass' => ['thing'],
-            'plugin' => null,
-            'controller' => 'Media',
-            'action' => 'search',
-            '_matchedRoute' => '/b/media/search/*',
-            '_name' => 'media_search',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $this->collection->parse('/b/media/search/thing');
+            unset($result['_route']);
+            $expected = [
+                'key' => 'value',
+                'pass' => ['thing'],
+                'plugin' => null,
+                'controller' => 'Media',
+                'action' => 'search',
+                '_matchedRoute' => '/b/media/search/*',
+                '_name' => 'media_search',
+            ];
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -239,25 +249,28 @@ class RouteCollectionTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect('/ден/{day}-{month}', ['controller' => 'Events', 'action' => 'index']);
-        $url = '/%D0%B4%D0%B5%D0%BD/15-%D0%BE%D0%BA%D1%82%D0%BE%D0%BC%D0%B2%D1%80%D0%B8?test=foo';
-        $result = $this->collection->parse($url);
-        unset($result['_route']);
-        $expected = [
-            'pass' => [],
-            'plugin' => null,
-            'controller' => 'Events',
-            'action' => 'index',
-            'day' => '15',
-            'month' => 'октомври',
-            '?' => ['test' => 'foo'],
-            '_matchedRoute' => '/ден/{day}-{month}',
-        ];
-        $this->assertEquals($expected, $result);
 
-        $request = new ServerRequest(['url' => $url]);
-        $result = $this->collection->parseRequest($request);
-        unset($result['_route']);
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $url = '/%D0%B4%D0%B5%D0%BD/15-%D0%BE%D0%BA%D1%82%D0%BE%D0%BC%D0%B2%D1%80%D0%B8?test=foo';
+            $result = $this->collection->parse($url);
+            unset($result['_route']);
+            $expected = [
+                'pass' => [],
+                'plugin' => null,
+                'controller' => 'Events',
+                'action' => 'index',
+                'day' => '15',
+                'month' => 'октомври',
+                '?' => ['test' => 'foo'],
+                '_matchedRoute' => '/ден/{day}-{month}',
+            ];
+            $this->assertEquals($expected, $result);
+
+            $request = new ServerRequest(['url' => $url]);
+            $result = $this->collection->parseRequest($request);
+            unset($result['_route']);
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -271,17 +284,19 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{controller}', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
         $routes->connect('/{controller}/{action}', [], ['routeClass' => 'InflectedRoute']);
 
-        $result = $this->collection->parse('/articles/add');
-        unset($result['_route']);
-        $expected = [
-            'controller' => 'Articles',
-            'action' => 'add',
-            'plugin' => null,
-            'pass' => [],
-            '_matchedRoute' => '/{controller}/{action}',
+        $this->deprecated(function () {
+            $result = $this->collection->parse('/articles/add');
+            unset($result['_route']);
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'add',
+                'plugin' => null,
+                'pass' => [],
+                '_matchedRoute' => '/{controller}/{action}',
 
-        ];
-        $this->assertEquals($expected, $result);
+            ];
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -494,6 +509,37 @@ class RouteCollectionTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testParseRequestExtension(): void
+    {
+        $builder = new RouteBuilder($this->collection, '/');
+        $builder->connect('/foo', ['controller' => 'Articles'])->setExtensions(['json']);
+
+        $request = new ServerRequest(['url' => '/foo']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/foo',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $request = new ServerRequest(['url' => '/foo.json']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            '_ext' => 'json',
+            '_matchedRoute' => '/foo',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Test parsing routes that match non-ascii urls
      */
@@ -697,8 +743,8 @@ class RouteCollectionTest extends TestCase
 
         $routes = $this->collection->routes();
         $this->assertCount(2, $routes);
-        $this->assertSame($one, $routes[1]);
-        $this->assertSame($two, $routes[0]);
+        $this->assertSame($one, $routes[0]);
+        $this->assertSame($two, $routes[1]);
     }
 
     /**

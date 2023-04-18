@@ -17,6 +17,7 @@ namespace Cake\Http\Client\Auth;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
+use Cake\Http\HeaderUtility;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 
@@ -157,19 +158,12 @@ class Digest
             ['auth' => ['type' => null]]
         );
 
-        if (!$response->getHeader('WWW-Authenticate')) {
+        $header = $response->getHeader('WWW-Authenticate');
+        if (!$header) {
             return [];
         }
-        preg_match_all(
-            '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
-            $response->getHeaderLine('WWW-Authenticate'),
-            $matches,
-            PREG_SET_ORDER
-        );
-
-        foreach ($matches as $match) {
-            $credentials[$match[1]] = $match[3] ?? $match[2];
-        }
+        $matches = HeaderUtility::parseWwwAuthenticate($header[0]);
+        $credentials = array_merge($credentials, $matches);
 
         if (($this->isSessAlgorithm || !empty($credentials['qop'])) && empty($credentials['nc'])) {
             $credentials['nc'] = 1;
