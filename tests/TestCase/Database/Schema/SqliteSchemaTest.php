@@ -248,6 +248,7 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 title VARCHAR(20) DEFAULT 'Let ''em eat cake',
 body TEXT,
 author_id INT(11) NOT NULL,
+unique_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
@@ -258,6 +259,7 @@ CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
+        $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
 
         $sql = <<<SQL
 CREATE TABLE schema_composite (
@@ -466,8 +468,15 @@ SQL;
                 'update' => 'cascade',
                 'delete' => 'restrict',
             ],
+            'unique_id_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'unique_id',
+                ],
+                'length' => [],
+            ],
         ];
-        $this->assertCount(3, $result->constraints());
+        $this->assertCount(4, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals(
             $expected['sqlite_autoindex_schema_articles_1'],
@@ -477,6 +486,7 @@ SQL;
             $expected['author_id_fk'],
             $result->getConstraint('author_id_fk')
         );
+        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [

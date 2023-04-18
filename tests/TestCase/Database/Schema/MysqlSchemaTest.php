@@ -283,13 +283,15 @@ SQL;
                 title VARCHAR(20) COMMENT 'A title',
                 body TEXT,
                 author_id INT NOT NULL,
+                unique_id INT NOT NULL,
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 KEY `author_idx` (`author_id`),
-                UNIQUE KEY `length_idx` (`title`(4)),
-                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+                CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
+                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+                UNIQUE INDEX `unique_id_idx` (`unique_id`)
             ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
         $connection->execute($table);
@@ -448,7 +450,7 @@ SQL;
         $result = $schema->describe('schema_articles');
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
 
-        $this->assertCount(3, $result->constraints());
+        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -470,6 +472,13 @@ SQL;
                 'update' => 'cascade',
                 'delete' => 'restrict',
             ],
+            'unique_id_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'unique_id',
+                ],
+                'length' => [],
+            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -479,6 +488,7 @@ SQL;
         } else {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
         }
+        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [

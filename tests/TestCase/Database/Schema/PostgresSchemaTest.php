@@ -71,6 +71,7 @@ id BIGINT PRIMARY KEY,
 title VARCHAR(20),
 body TEXT,
 author_id INTEGER NOT NULL,
+unique_id INTEGER NOT NULL,
 published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 readingtime TIME,
@@ -88,6 +89,7 @@ SQL;
         $connection->execute($table);
         $connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
         $connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
+        $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
 
         $table = <<<SQL
 CREATE VIEW schema_articles_v AS
@@ -586,19 +588,8 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
-        $expected = [
-            'primary' => [
-                'type' => 'primary',
-                'columns' => ['id'],
-                'length' => [],
-            ],
-            'content_idx' => [
-                'type' => 'unique',
-                'columns' => ['title', 'body'],
-                'length' => [],
-            ],
-        ];
-        $this->assertCount(3, $result->constraints());
+
+        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -618,10 +609,18 @@ SQL;
                 'update' => 'cascade',
                 'delete' => 'restrict',
             ],
+            'unique_id_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'unique_id',
+                ],
+                'length' => [],
+            ],
         ];
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
+        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
