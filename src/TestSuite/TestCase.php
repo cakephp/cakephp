@@ -75,7 +75,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @var \Cake\Error\PhpError|null
      */
-    private $_capturedError;
+    private ?PhpError $_capturedError = null;
 
     /**
      * Asserts that a string matches a given regular expression.

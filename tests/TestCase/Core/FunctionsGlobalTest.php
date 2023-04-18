@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use stdClass;
+use function env;
 
 require_once CAKE . 'Core/functions_global.php';
 
@@ -34,7 +35,7 @@ class FunctionsGlobalTest extends TestCase
     public function testEnv(): void
     {
         $_ENV['DOES_NOT_EXIST'] = null;
-        $this->assertNull(\env('DOES_NOT_EXIST'));
+        $this->assertNull(env('DOES_NOT_EXIST'));
         $this->assertSame('default', env('DOES_NOT_EXIST', 'default'));
 
         $_ENV['DOES_EXIST'] = 'some value';
@@ -268,7 +269,7 @@ class FunctionsGlobalTest extends TestCase
     public function testDeprecationWarningEnabled(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is deprecated ' . uniqid(), 2);
+            deprecationWarning('4.5.0', 'This is deprecated ' . uniqid(), 2);
         });
         $this->assertMatchesRegularExpression(
             '/This is deprecated \w+\n(.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/',
@@ -282,7 +283,7 @@ class FunctionsGlobalTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is going away too ' . uniqid());
+            deprecationWarning('5.0.0', 'This is going away too ' . uniqid());
         });
         $this->assertMatchesRegularExpression(
             '/This is going away too \w+\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
@@ -299,7 +300,7 @@ class FunctionsGlobalTest extends TestCase
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
         $this->withErrorReporting(E_ALL, function (): void {
-            deprecationWarning('This will be gone soon');
+            deprecationWarning('5.0.1', 'This will be gone soon');
         });
     }
 
@@ -311,7 +312,7 @@ class FunctionsGlobalTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
-            deprecationWarning('This is leaving');
+            deprecationWarning('5.0.0', 'This is leaving');
         });
     }
 
@@ -336,15 +337,5 @@ class FunctionsGlobalTest extends TestCase
             triggerWarning('This was a mistake.');
             $this->assertTrue(true);
         });
-    }
-
-    /**
-     * testing getTypeName()
-     */
-    public function testgetTypeName(): void
-    {
-        $this->assertSame('stdClass', getTypeName(new \stdClass()));
-        $this->assertSame('array', getTypeName([]));
-        $this->assertSame('string', getTypeName(''));
     }
 }

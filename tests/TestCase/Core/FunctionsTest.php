@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
-use Exception;
 use stdClass;
 use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
@@ -281,7 +280,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabled(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is going away', 2);
+            deprecationWarning('5.0.0', 'This is going away', 2);
         });
         $this->assertMatchesRegularExpression(
             '/This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/',
@@ -295,7 +294,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
         $error = $this->captureError(E_ALL, function (): void {
-            deprecationWarning('This is going away too');
+            deprecationWarning('5.0.0', 'This is going away too');
         });
         $this->assertMatchesRegularExpression(
             '/This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/',

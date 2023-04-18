@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.7.4@c46eccda769925073b8f65d66c4a3a7dc5d440b1">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
@@ -17,103 +17,125 @@
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
+    <UndefinedConstant>
+      <code>Redis::OPT_SCAN</code>
+      <code>Redis::OPT_SCAN</code>
+      <code>Redis::SCAN_RETRY</code>
+      <code>Redis::SCAN_RETRY</code>
+    </UndefinedConstant>
   </file>
-  <file src="src/Collection/CollectionTrait.php">
-    <InvalidArrayOffset>
-      <code>$collectionArraysCounts[$changeIndex]</code>
-      <code>$value[$keys[$index]]</code>
-    </InvalidArrayOffset>
-  </file>
-  <file src="src/Collection/Iterator/ZipIterator.php">
-    <MissingTemplateParam>
-      <code>ZipIterator</code>
-    </MissingTemplateParam>
-  </file>
-  <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <RedundantCondition>
-      <code>is_string($type)</code>
-    </RedundantCondition>
-  </file>
-  <file src="src/Database/Expression/QueryExpression.php">
-    <RedundantCondition>
-      <code>$typeMultiple</code>
-    </RedundantCondition>
+  <file src="src/Console/CommandCollection.php">
+    <InvalidDocblock>
+      <code>public function get(string $name): CommandInterface|string</code>
+      <code>public function getIterator(): Traversable</code>
+    </InvalidDocblock>
   </file>
   <file src="src/Database/Query.php">
-    <MissingTemplateParam>
-      <code>IteratorAggregate</code>
-    </MissingTemplateParam>
+    <UnusedPsalmSuppress>
+      <code>InvalidArrayOffset</code>
+    </UnusedPsalmSuppress>
   </file>
-  <file src="src/Database/Statement/PDOStatement.php">
-    <RedundantCondition>
-      <code><![CDATA[$property === 'queryString' && isset($this->_statement->queryString)]]></code>
-    </RedundantCondition>
+  <file src="src/Datasource/Paging/PaginatedResultSet.php">
+    <MethodSignatureMustProvideReturnType>
+      <code>://cakephp.org)</code>
+    </MethodSignatureMustProvideReturnType>
   </file>
-  <file src="src/Error/Renderer/ConsoleExceptionRenderer.php">
-    <InvalidArrayOffset>
-      <code>$exceptions[$i - 1]</code>
-    </InvalidArrayOffset>
+  <file src="src/Event/EventDispatcherTrait.php">
+    <MoreSpecificImplementedParamType>
+      <code>$subject</code>
+    </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/I18n/DateFormatTrait.php">
-    <RedundantCondition>
-      <code>$time !== false</code>
-    </RedundantCondition>
+  <file src="src/Event/EventManager.php">
+    <InvalidArgument>
+      <code>_callListener</code>
+      <code>addEventToList</code>
+      <code>addEventToList</code>
+    </InvalidArgument>
+    <InvalidReturnStatement>
+      <code>$event</code>
+      <code>$event</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code>EventInterface</code>
+    </InvalidReturnType>
   </file>
-  <file src="src/ORM/SaveOptionsBuilder.php">
-    <MissingTemplateParam>
-      <code>SaveOptionsBuilder</code>
-    </MissingTemplateParam>
+  <file src="src/Http/ServerRequest.php">
+    <MoreSpecificImplementedParamType>
+      <code>$requestTarget</code>
+    </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Shell/Helper/TableHelper.php">
-    <InvalidCast>
-      <code>$v</code>
-    </InvalidCast>
+  <file src="src/I18n/Date.php">
+    <ImpureFunctionCall>
+      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
+      <code>static::$_jsonEncodeFormat</code>
+    </ImpureFunctionCall>
+    <ImpureMethodCall>
+      <code>_formatObject</code>
+      <code>dateAgoInWords</code>
+      <code>diffFormatter</code>
+      <code>getDefaultLocale</code>
+    </ImpureMethodCall>
+    <ImpureStaticProperty>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_toStringFormat</code>
+      <code>static::$niceFormat</code>
+    </ImpureStaticProperty>
+  </file>
+  <file src="src/I18n/DateTime.php">
+    <ImpureFunctionCall>
+      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
+      <code>static::$_jsonEncodeFormat</code>
+    </ImpureFunctionCall>
+    <ImpureMethodCall>
+      <code>_formatObject</code>
+      <code>diffFormatter</code>
+      <code>getDefaultLocale</code>
+      <code>timeAgoInWords</code>
+    </ImpureMethodCall>
+    <ImpureStaticProperty>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_jsonEncodeFormat</code>
+      <code>static::$_toStringFormat</code>
+      <code>static::$niceFormat</code>
+    </ImpureStaticProperty>
+  </file>
+  <file src="src/ORM/Table.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->_behaviors->callFinder($type, [$query, $options])]]></code>
+    </InvalidReturnStatement>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass>
-      <code>new AssertionFailedError(
+      <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
-            )</code>
+            )]]></code>
     </InternalClass>
     <InternalMethod>
-      <code>new AssertionFailedError(
+      <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
-            )</code>
+            )]]></code>
     </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass>
-<<<<<<< HEAD
       <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
-=======
-      <code>new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
-            )</code>
-      <code><![CDATA[new AssertionFailedError(sprintf(
-                'Event "%s" was fired %d times, cannot make data assertion',
->>>>>>> 4.next
                 $other,
                 count($events)
             ))]]></code>
     </InternalClass>
     <InternalMethod>
-<<<<<<< HEAD
       <code><![CDATA[new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
-=======
-      <code>new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
-            )</code>
-      <code><![CDATA[new AssertionFailedError(sprintf(
-                'Event "%s" was fired %d times, cannot make data assertion',
->>>>>>> 4.next
                 $other,
                 count($events)
             ))]]></code>
@@ -145,5 +167,20 @@
     <RedundantCondition>
       <code>is_array($_list)</code>
     </RedundantCondition>
+  </file>
+  <file src="src/View/Exception/MissingCellTemplateException.php">
+    <ImplementedReturnTypeMismatch>
+      <code><![CDATA[array{name: string, file: string, paths: array<string>}]]></code>
+    </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="src/View/HelperRegistry.php">
+    <UnusedPsalmSuppress>
+      <code>NoValue</code>
+    </UnusedPsalmSuppress>
+  </file>
+  <file src="src/View/Widget/RadioWidget.php">
+    <UnusedPsalmSuppress>
+      <code>TypeDoesNotContainType</code>
+    </UnusedPsalmSuppress>
   </file>
 </files>

@@ -25,6 +25,7 @@ use Cake\Database\Expression\QueryExpression;
 use Closure;
 use InvalidArgumentException;
 use Stringable;
+use Throwable;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -744,7 +745,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         /**
-         * @var string $alias */
+         * @var string $alias
          * @psalm-suppress InvalidArrayOffset
          */
         return [
@@ -1836,12 +1837,9 @@ abstract class Query implements ExpressionInterface, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-<<<<<<< HEAD
-=======
         } catch (Throwable $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
->>>>>>> 4.next
         } finally {
             restore_error_handler();
 

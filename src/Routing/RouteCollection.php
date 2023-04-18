@@ -61,11 +61,7 @@ class RouteCollection
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-<<<<<<< HEAD
-    protected array $dynamicPaths = [];
-=======
-    protected $_paths = [];
->>>>>>> 4.next
+    protected array $_paths = [];
 
     /**
      * A map of middleware names and the related objects.
