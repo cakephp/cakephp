@@ -17,12 +17,6 @@
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
-    <UndefinedConstant>
-      <code>Redis::OPT_SCAN</code>
-      <code>Redis::OPT_SCAN</code>
-      <code>Redis::SCAN_RETRY</code>
-      <code>Redis::SCAN_RETRY</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Console/CommandCollection.php">
     <InvalidDocblock>
@@ -58,11 +52,6 @@
     <InvalidReturnType>
       <code>EventInterface</code>
     </InvalidReturnType>
-  </file>
-  <file src="src/Http/ServerRequest.php">
-    <MoreSpecificImplementedParamType>
-      <code>$requestTarget</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/I18n/Date.php">
     <ImpureFunctionCall>
