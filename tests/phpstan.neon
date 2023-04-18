@@ -1,10 +1,13 @@
 parameters:
-	level: 1
-	treatPhpDocTypesAsCertain: false
-	bootstrapFiles:
-		- bootstrap.php
-	paths:
-		- TestCase/
+    level: 1
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+        - bootstrap.php
+        - ../src/Collection/functions_global.php
+        - ../src/Core/functions_global.php
+        - ../src/Routing/functions_global.php
+    paths:
+        - TestCase/
 
-	excludePaths:
-		- TestCase/Routing/RouterTest.php
+    excludePaths:
+        - TestCase/Routing/RouterTest.php
