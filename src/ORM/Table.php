@@ -2659,7 +2659,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $maybeOptions = $params[1] ?? null;
         $isOldOptions = false;
-        if ($maybeOptions?->name === 'options' && !$maybeOptions->isDefaultValueAvailable()) {
+        if (
+            $maybeOptions?->name === 'options' &&
+            (
+                $maybeOptions->getType() === null ||
+                $maybeOptions->getType()->getName() === 'array'
+            )
+        ) {
             $isOldOptions = true;
             if (isset($args[0])) {
                 $options = $args[0];
