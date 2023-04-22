@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
