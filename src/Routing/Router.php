@@ -690,12 +690,20 @@ class Router
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
      */
-    public static function reverse($params, $full = false): string
-    {
-        $params = static::reverseToArray($params);
-
+     public static function reverse($params, $full = false): string
+     {
+        // add a fast cache here
+        $h = md5(serialize($params));
+        $cparams = Cache::read("rev-route-$h");
+        
+        if ($cparams === null) {
+            $params = static::reverseToArray($params);
+            Cache::write("rev-route-$h", $params);
+        } else {
+            $params = $cparams;
+        }
         return static::url($params, $full);
-    }
+     }
 
     /**
      * Normalizes a URL for purposes of comparison.
