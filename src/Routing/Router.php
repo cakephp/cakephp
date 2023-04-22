@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         0.2.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Routing;
 
 use Cake\Cache\Cache;
@@ -467,8 +469,7 @@ class Router
                 // Copy the current action if the controller is the current one.
                 if (
                     empty($url['action']) &&
-                    (
-                        empty($url['controller']) ||
+                    (empty($url['controller']) ||
                         $params['controller'] === $url['controller']
                     )
                 ) {
@@ -499,8 +500,7 @@ class Router
         } else {
             $url = (string)$url;
 
-            $plainString = (
-                strpos($url, 'javascript:') === 0 ||
+            $plainString = (strpos($url, 'javascript:') === 0 ||
                 strpos($url, 'mailto:') === 0 ||
                 strpos($url, 'tel:') === 0 ||
                 strpos($url, 'sms:') === 0 ||
@@ -691,12 +691,12 @@ class Router
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
      */
-     public static function reverse($params, $full = false): string
-     {
+    public static function reverse($params, $full = false): string
+    {
         // add a fast cache here
         $h = md5(serialize($params));
         $cparams = Cache::read("rev-route-$h");
-        
+
         if ($cparams === null) {
             $params = static::reverseToArray($params);
             Cache::write("rev-route-$h", $params);
@@ -704,7 +704,7 @@ class Router
             $params = $cparams;
         }
         return static::url($params, $full);
-     }
+    }
 
     /**
      * Normalizes a URL for purposes of comparison.
