@@ -695,11 +695,16 @@ class Router
     {
         // add a fast cache here
         $h = md5(serialize($params));
-        $cparams = Cache::read("rev-route-$h");
+        $cparams = null;
+        if (Cache::enabled()) {
+            $cparams = Cache::read("rev-route-$h");
+        }
 
         if ($cparams === null) {
             $params = static::reverseToArray($params);
-            Cache::write("rev-route-$h", $params);
+            if (Cache::enabled()) {
+                Cache::write("rev-route-$h", $params);
+            }
         } else {
             $params = $cparams;
         }
