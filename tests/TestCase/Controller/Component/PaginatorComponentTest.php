@@ -180,10 +180,6 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($table, $settings);
     }
@@ -306,13 +302,13 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, $settings);
+
+        $result = $this->Paginator->getPagingParams();
+        $this->assertEquals('PaginatorPosts.id', $result['PaginatorPosts']['sort']);
+        $this->assertEquals('DESC', $result['PaginatorPosts']['direction']);
     }
 
     /**
@@ -338,10 +334,6 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, $settings);
@@ -700,10 +692,6 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'id',
             ]);
 
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
@@ -1244,12 +1232,11 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 2,
                 'page' => 1,
                 'order' => [],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => null,
             ]);
         $this->Paginator->paginate($table, $settings);
+
+        $result = $this->Paginator->getPagingParams();
+        $this->assertEquals('published', $result['PaginatorPosts']['finder']);
     }
 
     /**
@@ -1280,10 +1267,6 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $settings);
     }
@@ -1340,10 +1323,6 @@ class PaginatorComponentTest extends TestCase
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $settings);
     }
