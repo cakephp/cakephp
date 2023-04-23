@@ -42,6 +42,13 @@ class NumericPaginator implements PaginatorInterface
      * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
+     * - `sortableFields` - A list of fields which can be used for sorting. By
+     *   default all table columns can be used for sorting. You can use this option
+     *   to restrict sorting only by particular fields. If you want to allow
+     *   sorting on either associated columns or calculated fields then you will
+     *   have to explicity specify them (along with other fields). Using an empty
+     *   array will disable sorting alltogether.
+     * - `finder` - The table finder to use. Defaults to `all`.
      *
      * @var array<string, mixed>
      */
