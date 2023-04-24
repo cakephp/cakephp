@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Http\Middleware\ClosureDecoratorMiddleware;
 use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
@@ -51,12 +52,19 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected $queue = [];
 
     /**
+     * @var \Cake\Core\ContainerInterface|null
+     */
+    protected $container;
+
+    /**
      * Constructor
      *
      * @param array $middleware The list of middleware to append.
+     * @param \Cake\Core\ContainerInterface $container Container instance.
      */
-    public function __construct(array $middleware = [])
+    public function __construct(array $middleware = [], ?ContainerInterface $container = null)
     {
+        $this->container = $container;
         $this->queue = $middleware;
     }
 
@@ -70,14 +78,22 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected function resolve($middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
-            $className = App::className($middleware, 'Middleware', 'Middleware');
-            if ($className === null) {
-                throw new RuntimeException(sprintf(
-                    'Middleware "%s" was not found.',
-                    $middleware
-                ));
+            if ($this->container && $this->container->has($middleware)) {
+                $middleware = $this->container->get($middleware);
             }
-            $middleware = new $className();
+
+            if (is_string($middleware)) {
+                $className = App::className($middleware, 'Middleware', 'Middleware');
+                if ($className === null) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Middleware "%s" was not found.',
+                            $middleware
+                        )
+                    );
+                }
+                $middleware = new $className();
+            }
         }
 
         if ($middleware instanceof MiddlewareInterface) {

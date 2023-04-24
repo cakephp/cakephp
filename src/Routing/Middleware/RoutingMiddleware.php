@@ -18,6 +18,7 @@ namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Exception\InvalidArgumentException;
+use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
@@ -187,7 +188,10 @@ class RoutingMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $middleware = new MiddlewareQueue($matching);
+        $container = $this->app instanceof ContainerApplicationInterface
+            ? $this->app->getContainer()
+            : null;
+        $middleware = new MiddlewareQueue($matching, $container);
         $runner = new Runner();
 
         return $runner->run($middleware, $request, $handler);

@@ -106,7 +106,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $middlewares = $controller->getMiddleware();
 
         if ($middlewares) {
-            $middlewareQueue = new MiddlewareQueue($middlewares);
+            $middlewareQueue = new MiddlewareQueue($middlewares, $this->container);
             $runner = new Runner();
 
             return $runner->run($middlewareQueue, $controller->getRequest(), $this);
