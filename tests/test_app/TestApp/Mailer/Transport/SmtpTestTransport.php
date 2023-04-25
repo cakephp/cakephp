@@ -50,4 +50,9 @@ class SmtpTestTransport extends SmtpTransport
     {
         return $this->authType;
     }
+
+    public function setAuthType(string $type): void
+    {
+        $this->authType = $type;
+    }
 }
