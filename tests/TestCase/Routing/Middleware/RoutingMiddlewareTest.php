@@ -28,6 +28,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
+use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response;
 use TestApp\Application;
@@ -573,6 +574,43 @@ class RoutingMiddlewareTest extends TestCase
         $this->expectExceptionMessage('Unable to cache route collection.');
         $middleware->process($request, new TestRequestHandler());
         Configure::delete('Error.ignoredDeprecationPaths');
+    }
+
+    /**
+     * Test middleware works without an application implementing ContainerApplicationInterface
+     */
+    public function testAppWithoutContainerApplicationInterface(): void
+    {
+        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
+        $app = $this->createMock(RoutingApplicationInterface::class);
+        $this->builder->scope('/', function (RouteBuilder $routes): void {
+            $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
+        });
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response('php://memory', 200);
+        });
+        $middleware = new RoutingMiddleware($app);
+        $response = $middleware->process($request, $handler);
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * Test middleware works with an application implementing ContainerApplicationInterface
+     */
+    public function testAppWithContainerApplicationInterface(): void
+    {
+        $app = $this->app();
+        $this->builder->scope('/', function (RouteBuilder $routes): void {
+            $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
+        });
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response('php://memory', 200);
+        });
+        $middleware = new RoutingMiddleware($app);
+        $response = $middleware->process($request, $handler);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     /**
