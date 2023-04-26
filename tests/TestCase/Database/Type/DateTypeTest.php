@@ -131,78 +131,7 @@ class DateTypeTest extends TestCase
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/I18n/Date.php',
         ]);
-
-        $date = new ChronosDate('@1392387900');
-
-        $data = [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['2013-nope!', null],
-            ['2014-02-14 13:14:15', null],
-
-            // valid string types
-            ['1392387900', $date],
-            [1392387900, $date],
-            ['2014-02-14', new ChronosDate('2014-02-14')],
-
-            // valid array types
-            [
-                ['year' => '', 'month' => '', 'day' => ''],
-                null,
-            ],
-            [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new ChronosDate('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new ChronosDate('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new ChronosDate('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                ],
-                new ChronosDate('2014-02-14'),
-            ],
-            [
-                new FrozenDate('2023-04-26'),
-                new ChronosDate('2023-04-26'),
-            ],
-
-            // Invalid array types
-            [
-                ['year' => 'farts', 'month' => 'derp'],
-                null,
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                null,
-            ],
-            [
-                [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts',
-                ],
-                new ChronosDate('2014-02-14'),
-            ],
-        ];
-
+        $data = $this->dateArray();
         Configure::delete('Error.ignoredDeprecationPaths');
 
         return $data;
@@ -221,9 +150,23 @@ class DateTypeTest extends TestCase
 
         $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('Europe/Vienna');
+        $data = $this->dateArray();
+        Configure::delete('Error.ignoredDeprecationPaths');
+        date_default_timezone_set($defaultTimezone);
+
+        return $data;
+    }
+
+    /**
+     * Helper method which is used by both marshalProvider and marshalWithTimezoneProvider
+     *
+     * @return array
+     */
+    protected function dateArray(): array
+    {
         $date = new ChronosDate('@1392387900');
 
-        $data = [
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -291,11 +234,6 @@ class DateTypeTest extends TestCase
                 new ChronosDate('2014-02-14'),
             ],
         ];
-
-        Configure::delete('Error.ignoredDeprecationPaths');
-        date_default_timezone_set($defaultTimezone);
-
-        return $data;
     }
 
     /**
