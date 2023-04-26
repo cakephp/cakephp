@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Chronos\ChronosDate;
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\I18nDateTimeInterface;
@@ -105,12 +104,8 @@ class DateType extends DateTimeType
      */
     public function marshal($value): ?DateTimeInterface
     {
-        if ($value instanceof ChronosDate) {
-            return $value;
-        }
-
         if ($value instanceof DateTimeInterface) {
-            return new FrozenDate('@' . $value->getTimestamp());
+            return new FrozenDate($value);
         }
 
         /** @var class-string<\Cake\Chronos\ChronosDate> $class */

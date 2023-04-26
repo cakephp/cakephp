@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Chronos\Chronos;
 use Cake\Database\DriverInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\I18nDateTimeInterface;
@@ -319,10 +318,6 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     public function marshal($value): ?DateTimeInterface
     {
-        if ($value instanceof Chronos) {
-            return $value;
-        }
-
         if ($value instanceof DateTimeInterface) {
             if ($value instanceof DateTime) {
                 $value = clone $value;
