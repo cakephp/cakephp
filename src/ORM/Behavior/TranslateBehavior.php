@@ -309,7 +309,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * for each record.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
-     * @param array<string, mixed> $options Options
+     * @param array<string> $locales A list of locales or options with the `locales` key defined
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery

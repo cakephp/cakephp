@@ -385,7 +385,7 @@ class TreeBehavior extends Behavior
      * is passed in the options containing the id of the node to get its path for.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The constructed query to modify
-     * @param array<string, mixed> $options the list of options for the query
+     * @param string|int $for The path to find or an array of options with `for`.
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
@@ -436,16 +436,11 @@ class TreeBehavior extends Behavior
     /**
      * Get the children nodes of the current model
      *
-     * Available options are:
-     *
-     * - for: The id of the record to read.
-     * - direct: Boolean, whether to return only the direct (true), or all (false) children,
-     *   defaults to false (all children).
-     *
      * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
      *
      * @param \Cake\ORM\Query\SelectQuery $query Query.
-     * @param array<string, mixed> $options Array of options as described above
+     * @param string|int $for The id of the record to read. Can also be an array of options.
+     * @param bool $direct Whether to return only the direct (true) or all children (false).
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
@@ -481,16 +476,12 @@ class TreeBehavior extends Behavior
      * the primary key for the table and the values are the display field for the table.
      * Values are prefixed to visually indicate relative depth in the tree.
      *
-     * ### Options
-     *
-     * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
-     *   return the key out of the provided row.
-     * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
-     *   return the value out of the provided row.
-     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item
-     *
      * @param \Cake\ORM\Query\SelectQuery $query Query.
-     * @param array<string, mixed> $options Array of options as described above.
+     * @param \Closure|string|null $keyPath A dot separated path to fetch the field to use for the array key, or a closure to
+     *   return the key out of the provided row.
+     * @param \Closure|string|null $valuePath A dot separated path to fetch the field to use for the array value, or a closure to
+     *   return the value out of the provided row.
+     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTreeList(
@@ -512,16 +503,12 @@ class TreeBehavior extends Behavior
      * and the values are the display field for the table. Values are prefixed to visually
      * indicate relative depth in the tree.
      *
-     * ### Options
-     *
-     * - keyPath: A dot separated path to the field that will be the result array key, or a closure to
-     *   return the key from the provided row.
-     * - valuePath: A dot separated path to the field that is the array's value, or a closure to
-     *   return the value from the provided row.
-     * - spacer: A string to be used as prefix for denoting the depth in the tree for each item.
-     *
      * @param \Cake\ORM\Query\SelectQuery $query The query object to format.
-     * @param array<string, mixed> $options Array of options as described above.
+     * @param \Closure|string|null $keyPath  A dot separated path to the field that will be the result array key, or a closure to
+     *   return the key from the provided row.
+     * @param \Closure|string|null $valuePath: A dot separated path to the field that is the array's value, or a closure to
+     *   return the value from the provided row.
+     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery Augmented query.
      */
     public function formatTreeList(

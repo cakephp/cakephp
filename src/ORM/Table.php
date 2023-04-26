@@ -1451,7 +1451,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options to find with
+     * @param \Closure|array|string|null $keyField The path to the key field.
+     * @param \Closure|array|string|null $parentField The path to the parent field.
+     * @param string $nestingKey The key to nest children under.
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
     public function findThreaded(
