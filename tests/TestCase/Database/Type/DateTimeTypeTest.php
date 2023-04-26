@@ -203,7 +203,78 @@ class DateTimeTypeTest extends TestCase
             'src/I18n/Time.php',
         ]);
 
-        $data = [
+        $data = $this->dateTimeArray();
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
+    }
+
+    /**
+     * Data provider for marshal()
+     *
+     * @return array
+     */
+    public function marshalWithTimezoneProvider(): array
+    {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Time.php',
+        ]);
+
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Vienna');
+        $data = $this->dateTimeArray();
+        Configure::delete('Error.ignoredDeprecationPaths');
+        date_default_timezone_set($defaultTimezone);
+
+        return $data;
+    }
+
+    /**
+     * test marshalling data.
+     *
+     * @dataProvider marshalProvider
+     * @param mixed $value
+     * @param mixed $expected
+     */
+    public function testMarshal($value, $expected): void
+    {
+        $result = $this->type->marshal($value);
+        if (is_object($expected)) {
+            $this->assertEquals($expected, $result);
+        } else {
+            $this->assertSame($expected, $result);
+        }
+    }
+
+    /**
+     * test marshalling data with different timezone
+     *
+     * @dataProvider marshalWithTimezoneProvider
+     * @param mixed $value
+     * @param mixed $expected
+     */
+    public function testMarshalWithTimezone($value, $expected): void
+    {
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Vienna');
+        $result = $this->type->marshal($value);
+        if (is_object($expected)) {
+            $this->assertEquals($expected, $result);
+        } else {
+            $this->assertSame($expected, $result);
+        }
+        date_default_timezone_set($defaultTimezone);
+    }
+
+    /**
+     * Helper method which is used by both marshalProvider and marshalWithTimezoneProvider
+     *
+     * @return array
+     */
+    protected function dateTimeArray(): array
+    {
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -289,27 +360,6 @@ class DateTimeTypeTest extends TestCase
                 Time::now(),
             ],
         ];
-
-        Configure::delete('Error.ignoredDeprecationPaths');
-
-        return $data;
-    }
-
-    /**
-     * test marshalling data.
-     *
-     * @dataProvider marshalProvider
-     * @param mixed $value
-     * @param mixed $expected
-     */
-    public function testMarshal($value, $expected): void
-    {
-        $result = $this->type->marshal($value);
-        if (is_object($expected)) {
-            $this->assertEquals($expected, $result);
-        } else {
-            $this->assertSame($expected, $result);
-        }
     }
 
     /**
