@@ -5321,41 +5321,41 @@ class TableTest extends TestCase
      * @dataProvider providerForTestGet
      * @param array $options
      */
-    // public function testGet($options): void
-    // {
-    //     $table = $this->getMockBuilder(Table::class)
-    //         ->onlyMethods(['callFinder', 'selectQuery'])
-    //         ->setConstructorArgs([[
-    //             'connection' => $this->connection,
-    //             'schema' => [
-    //                 'id' => ['type' => 'integer'],
-    //                 'bar' => ['type' => 'integer'],
-    //                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
-    //             ],
-    //         ]])
-    //         ->getMock();
+    public function testGet($options): void
+    {
+        $table = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['selectQuery'])
+            ->setConstructorArgs([[
+                'connection' => $this->connection,
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    'bar' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
+                ],
+            ]])
+            ->getMock();
 
-    //     $query = $this->getMockBuilder(SelectQuery::class)
-    //         ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
-    //         ->setConstructorArgs([$table])
-    //         ->getMock();
+        $query = $this->getMockBuilder(SelectQuery::class)
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
+            ->setConstructorArgs([$table])
+            ->getMock();
 
-    //     $entity = new Entity();
-    //     $table->expects($this->once())->method('selectQuery')
-    //         ->will($this->returnValue($query));
-    //     $table->expects($this->once())->method('callFinder')
-    //         ->with('all', $query, fields: ['id'])
-    //         ->will($this->returnValue($query));
+        $table->expects($this->once())->method('selectQuery')
+            ->will($this->returnValue($query));
 
-    //     $query->expects($this->once())->method('where')
-    //         ->with([$table->getAlias() . '.bar' => 10])
-    //         ->will($this->returnSelf());
-    //     $query->expects($this->never())->method('cache');
-    //     $query->expects($this->once())->method('firstOrFail')
-    //         ->will($this->returnValue($entity));
-    //     $result = $table->get(10, $options);
-    //     $this->assertSame($entity, $result);
-    // }
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
+        $query->expects($this->once())->method('where')
+            ->with([$table->getAlias() . '.bar' => 10])
+            ->will($this->returnSelf());
+        $query->expects($this->never())->method('cache');
+        $query->expects($this->once())->method('firstOrFail')
+            ->will($this->returnValue($entity));
+
+        $result = $table->get(10, $options);
+        $this->assertSame($entity, $result);
+    }
 
     public function providerForTestGetWithCustomFinder(): array
     {
@@ -5370,41 +5370,44 @@ class TableTest extends TestCase
      * @dataProvider providerForTestGetWithCustomFinder
      * @param array $options
      */
-    // public function testGetWithCustomFinder($options): void
-    // {
-    //     $table = $this->getMockBuilder(Table::class)
-    //         ->onlyMethods(['callFinder', 'selectQuery'])
-    //         ->setConstructorArgs([[
-    //             'connection' => $this->connection,
-    //             'schema' => [
-    //                 'id' => ['type' => 'integer'],
-    //                 'bar' => ['type' => 'integer'],
-    //                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
-    //             ],
-    //         ]])
-    //         ->getMock();
+    public function testGetWithCustomFinder($options): void
+    {
+        $table = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['selectQuery'])
+            ->addMethods(['findCustom'])
+            ->setConstructorArgs([[
+                'connection' => $this->connection,
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    'bar' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
+                ],
+            ]])
+            ->getMock();
 
-    //     $query = $this->getMockBuilder(SelectQuery::class)
-    //         ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
-    //         ->setConstructorArgs([$table])
-    //         ->getMock();
+        $query = $this->getMockBuilder(SelectQuery::class)
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
+            ->setConstructorArgs([$table])
+            ->getMock();
 
-    //     $entity = new Entity();
-    //     $table->expects($this->once())->method('selectQuery')
-    //         ->will($this->returnValue($query));
-    //     $table->expects($this->once())->method('callFinder')
-    //         ->with('custom', $query, fields: ['id'])
-    //         ->will($this->returnValue($query));
+        $table->expects($this->once())->method('selectQuery')
+            ->will($this->returnValue($query));
+        $table->expects($this->any())->method('findCustom')
+            ->willReturn($query);
 
-    //     $query->expects($this->once())->method('where')
-    //         ->with([$table->getAlias() . '.bar' => 10])
-    //         ->will($this->returnSelf());
-    //     $query->expects($this->never())->method('cache');
-    //     $query->expects($this->once())->method('firstOrFail')
-    //         ->will($this->returnValue($entity));
-    //     $result = $table->get(10, $options);
-    //     $this->assertSame($entity, $result);
-    // }
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
+        $query->expects($this->once())->method('where')
+            ->with([$table->getAlias() . '.bar' => 10])
+            ->will($this->returnSelf());
+        $query->expects($this->never())->method('cache');
+        $query->expects($this->once())->method('firstOrFail')
+            ->will($this->returnValue($entity));
+
+        $result = $table->get(10, $options);
+        $this->assertSame($entity, $result);
+    }
 
     public function providerForTestGetWithCache(): array
     {
@@ -5437,44 +5440,44 @@ class TableTest extends TestCase
      * @param string $cacheConfig
      * @param mixed $primaryKey
      */
-    // public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
-    // {
-    //     $table = $this->getMockBuilder(Table::class)
-    //         ->onlyMethods(['callFinder', 'selectQuery'])
-    //         ->setConstructorArgs([[
-    //             'connection' => $this->connection,
-    //             'schema' => [
-    //                 'id' => ['type' => 'integer'],
-    //                 'bar' => ['type' => 'integer'],
-    //                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
-    //             ],
-    //         ]])
-    //         ->getMock();
-    //     $table->setTable('table_name');
+    public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
+    {
+        $table = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['selectQuery'])
+            ->setConstructorArgs([[
+                'connection' => $this->connection,
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    'bar' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
+                ],
+            ]])
+            ->getMock();
+        $table->setTable('table_name');
 
-    //     $query = $this->getMockBuilder(SelectQuery::class)
-    //         ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
-    //         ->setConstructorArgs([$table])
-    //         ->getMock();
+        $query = $this->getMockBuilder(SelectQuery::class)
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
+            ->setConstructorArgs([$table])
+            ->getMock();
 
-    //     $entity = new Entity();
-    //     $table->expects($this->once())->method('selectQuery')
-    //         ->will($this->returnValue($query));
-    //     $table->expects($this->once())->method('callFinder')
-    //         ->with('all', $query, fields: ['id'])
-    //         ->will($this->returnValue($query));
+        $table->expects($this->once())->method('selectQuery')
+            ->will($this->returnValue($query));
 
-    //     $query->expects($this->once())->method('where')
-    //         ->with([$table->getAlias() . '.bar' => $primaryKey])
-    //         ->will($this->returnSelf());
-    //     $query->expects($this->once())->method('cache')
-    //         ->with($cacheKey, $cacheConfig)
-    //         ->will($this->returnSelf());
-    //     $query->expects($this->once())->method('firstOrFail')
-    //         ->will($this->returnValue($entity));
-    //     $result = $table->get($primaryKey, $options);
-    //     $this->assertSame($entity, $result);
-    // }
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
+        $query->expects($this->once())->method('where')
+            ->with([$table->getAlias() . '.bar' => $primaryKey])
+            ->will($this->returnSelf());
+        $query->expects($this->once())->method('cache')
+            ->with($cacheKey, $cacheConfig)
+            ->will($this->returnSelf());
+        $query->expects($this->once())->method('firstOrFail')
+            ->will($this->returnValue($entity));
+
+        $result = $table->get($primaryKey, $options);
+        $this->assertSame($entity, $result);
+    }
 
     /**
      * Tests that get() will throw an exception if the record was not found
