@@ -40,6 +40,11 @@ class DateTypeTest extends TestCase
     protected $driver;
 
     /**
+     * @var string
+     */
+    protected $originalTimeZone;
+
+    /**
      * Setup
      */
     public function setUp(): void
@@ -54,6 +59,7 @@ class DateTypeTest extends TestCase
             'src/I18n/Time.php',
             'tests/TestCase/Database/Type/DateTypeTest.php',
         ]);
+        $this->originalTimeZone = date_default_timezone_get();
     }
 
     /**
@@ -63,6 +69,7 @@ class DateTypeTest extends TestCase
     {
         parent::tearDown();
         $this->type->useLocaleParser(false)->setLocaleFormat(null);
+        date_default_timezone_set($this->originalTimeZone);
     }
 
     /**
@@ -131,42 +138,8 @@ class DateTypeTest extends TestCase
         Configure::write('Error.ignoredDeprecationPaths', [
             'src/I18n/Date.php',
         ]);
-        $data = $this->dateArray();
-        Configure::delete('Error.ignoredDeprecationPaths');
-
-        return $data;
-    }
-
-    /**
-     * Data provider for marshalWithTimezone()
-     *
-     * @return array
-     */
-    public function marshalWithTimezoneProvider(): array
-    {
-        Configure::write('Error.ignoredDeprecationPaths', [
-            'src/I18n/Date.php',
-        ]);
-
-        $defaultTimezone = date_default_timezone_get();
-        date_default_timezone_set('Europe/Vienna');
-        $data = $this->dateArray();
-        Configure::delete('Error.ignoredDeprecationPaths');
-        date_default_timezone_set($defaultTimezone);
-
-        return $data;
-    }
-
-    /**
-     * Helper method which is used by both marshalProvider and marshalWithTimezoneProvider
-     *
-     * @return array
-     */
-    protected function dateArray(): array
-    {
         $date = new ChronosDate('@1392387900');
-
-        return [
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -234,6 +207,9 @@ class DateTypeTest extends TestCase
                 new ChronosDate('2014-02-14'),
             ],
         ];
+        Configure::delete('Error.ignoredDeprecationPaths');
+
+        return $data;
     }
 
     /**
@@ -255,22 +231,19 @@ class DateTypeTest extends TestCase
 
     /**
      * test marshaling data with different timezone
-     *
-     * @dataProvider marshalWithTimezoneProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testMarshalWithTimezone($value, $expected): void
+    public function testMarshalWithTimezone(): void
     {
-        $defaultTimezone = date_default_timezone_get();
         date_default_timezone_set('Europe/Vienna');
+        $value = new FrozenDate('2023-04-26');
+        $expected = new ChronosDate('2023-04-26');
+
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);
 
         $this->type->useMutable();
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);
-        date_default_timezone_set($defaultTimezone);
     }
 
     /**
