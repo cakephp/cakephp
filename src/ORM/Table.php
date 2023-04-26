@@ -2665,18 +2665,23 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
 
-        $maybeOptions = $params[1] ?? null;
         $isOldOptions = false;
-        $paramType = $maybeOptions?->getType();
-        if (
-            $maybeOptions?->name === 'options' &&
-            (
-                $paramType === null || ($paramType instanceof ReflectionNamedType && $paramType->getName() === 'array')
-            )
-        ) {
-            $isOldOptions = true;
-            if (isset($args[0])) {
-                $options = $args[0];
+        if ($args === [] || isset($args[0])) {
+            $maybeOptions = $params[1] ?? null;
+            $paramType = $maybeOptions?->getType();
+            if (
+                $maybeOptions?->name === 'options' &&
+                (
+                    $paramType === null ||
+                    ($paramType instanceof ReflectionNamedType &&
+                        $paramType->getName() === 'array'
+                    )
+                )
+            ) {
+                $isOldOptions = true;
+                if (isset($args[0])) {
+                    $options = $args[0];
+                }
             }
         }
 
