@@ -56,6 +56,7 @@ use Closure;
 use Exception;
 use InvalidArgumentException;
 use ReflectionFunction;
+use ReflectionNamedType;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -1452,7 +1453,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
      * @param \Closure|array|string|null $keyField The path to the key field.
-     * @param \Closure|array|string|null $parentField The path to the parent field.
+     * @param \Closure|array|string $parentField The path to the parent field.
      * @param string $nestingKey The key to nest children under.
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
@@ -2652,6 +2653,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @internal
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Closure $callable Callable.
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object.
+     * @param array $args Arguments for the callable.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
      */
     public function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
     {
@@ -2661,11 +2667,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $maybeOptions = $params[1] ?? null;
         $isOldOptions = false;
+        $paramType = $maybeOptions?->getType();
         if (
             $maybeOptions?->name === 'options' &&
             (
-                $maybeOptions->getType() === null ||
-                $maybeOptions->getType()->getName() === 'array'
+                $paramType === null || ($paramType instanceof ReflectionNamedType && $paramType->getName() === 'array')
             )
         ) {
             $isOldOptions = true;

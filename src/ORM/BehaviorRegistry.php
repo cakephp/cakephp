@@ -269,10 +269,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Invoke a finder on a behavior.
      *
      * @internal
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param string $type The finder type to invoke.
-     * @param \Cake\ORM\Query\SelectQuery $query The query object to apply the finder options to.
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery The return value depends on the underlying behavior method.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject> The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
      */
     public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery

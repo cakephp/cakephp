@@ -525,6 +525,7 @@ class TreeBehavior extends Behavior
 
                 $nested = $results->listNested();
                 assert($nested instanceof TreeIterator);
+                assert(!is_array($valuePath));
 
                 return $nested->printer($valuePath, $keyPath, $spacer);
             }

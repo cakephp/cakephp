@@ -80,11 +80,6 @@
       <code>static::$niceFormat</code>
     </ImpureStaticProperty>
   </file>
-  <file src="src/ORM/Table.php">
-    <InvalidReturnStatement>
-      <code><![CDATA[$this->_behaviors->callFinder($type, [$query, $options])]]></code>
-    </InvalidReturnStatement>
-  </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass>
       <code><![CDATA[new AssertionFailedError(
