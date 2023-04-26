@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Chronos\ChronosDate;
 use Cake\Core\Configure;
 use Cake\Database\Type\DateType;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
@@ -179,6 +180,10 @@ class DateTypeTest extends TestCase
                 ],
                 new ChronosDate('2014-02-14'),
             ],
+            [
+                new FrozenDate('2023-04-26'),
+                new ChronosDate('2023-04-26'),
+            ],
 
             // Invalid array types
             [
@@ -204,6 +209,96 @@ class DateTypeTest extends TestCase
     }
 
     /**
+     * Data provider for marshalWithTimezone()
+     *
+     * @return array
+     */
+    public function marshalWithTimezoneProvider(): array
+    {
+        Configure::write('Error.ignoredDeprecationPaths', [
+            'src/I18n/Date.php',
+        ]);
+
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Vienna');
+        $date = new ChronosDate('@1392387900');
+
+        $data = [
+            // invalid types.
+            [null, null],
+            [false, null],
+            [true, null],
+            ['', null],
+            ['derpy', null],
+            ['2013-nope!', null],
+            ['2014-02-14 13:14:15', null],
+
+            // valid string types
+            ['1392387900', $date],
+            [1392387900, $date],
+            ['2014-02-14', new ChronosDate('2014-02-14')],
+
+            // valid array types
+            [
+                ['year' => '', 'month' => '', 'day' => ''],
+                null,
+            ],
+            [
+                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+                new ChronosDate('2014-02-14'),
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'meridian' => 'am',
+                ],
+                new ChronosDate('2014-02-14'),
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'meridian' => 'pm',
+                ],
+                new ChronosDate('2014-02-14'),
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                ],
+                new ChronosDate('2014-02-14'),
+            ],
+            [
+                new FrozenDate('2023-04-26'),
+                new ChronosDate('2023-04-26'),
+            ],
+
+            // Invalid array types
+            [
+                ['year' => 'farts', 'month' => 'derp'],
+                null,
+            ],
+            [
+                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+                null,
+            ],
+            [
+                [
+                    'year' => '2014', 'month' => '02', 'day' => '14',
+                    'hour' => 'farts', 'minute' => 'farts',
+                ],
+                new ChronosDate('2014-02-14'),
+            ],
+        ];
+
+        Configure::delete('Error.ignoredDeprecationPaths');
+        date_default_timezone_set($defaultTimezone);
+
+        return $data;
+    }
+
+    /**
      * test marshaling data.
      *
      * @dataProvider marshalProvider
@@ -218,6 +313,26 @@ class DateTypeTest extends TestCase
         $this->type->useMutable();
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test marshaling data with different timezone
+     *
+     * @dataProvider marshalWithTimezoneProvider
+     * @param mixed $value
+     * @param mixed $expected
+     */
+    public function testMarshalWithTimezone($value, $expected): void
+    {
+        $defaultTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Vienna');
+        $result = $this->type->marshal($value);
+        $this->assertEquals($expected, $result);
+
+        $this->type->useMutable();
+        $result = $this->type->marshal($value);
+        $this->assertEquals($expected, $result);
+        date_default_timezone_set($defaultTimezone);
     }
 
     /**
