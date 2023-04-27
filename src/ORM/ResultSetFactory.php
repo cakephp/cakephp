@@ -149,7 +149,7 @@ class ResultSetFactory
         // If the default table is not in the results, set
         // it to an empty array so that any contained
         // associations hydrate correctly.
-        $results[$data['primaryAlias']] = $results[$data['primaryAlias']] ?? [];
+        $results[$data['primaryAlias']] ??= [];
 
         unset($presentAliases[$data['primaryAlias']]);
 

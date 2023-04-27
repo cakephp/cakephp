@@ -895,12 +895,7 @@ trait EntityTrait
      */
     public function getError(string $field): array
     {
-        $errors = $this->_errors[$field] ?? [];
-        if ($errors) {
-            return $errors;
-        }
-
-        return $this->_nestedErrors($field);
+        return $this->_errors[$field] ?? $this->_nestedErrors($field);
     }
 
     /**
