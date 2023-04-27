@@ -2656,14 +2656,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $secondParam?->name === 'options' &&
                 ($secondParamType === null || $secondParamTypeName === 'array')
             ) {
-                if (!$secondParam->isDefaultValueAvailable()) {
+                if (isset($args[0])) {
                     deprecationWarning(
                         '5.0.0',
-                        '`$options` argument must have a default value'
+                        'Using options array for the `find()` call is deprecated.'
+                        . ' Use named arguments instead.'
                     );
-                }
 
-                if (isset($args[0])) {
                     $args = $args[0];
                 }
 

@@ -610,6 +610,25 @@ class TableTest extends TestCase
     }
 
     /**
+     * Undocumented function
+     *
+     * @return void
+     * @deprecated
+     */
+    public function testFindAllOldStyleOptionsArray(): void
+    {
+        $this->deprecated(function () {
+            $table = new Table([
+                'table' => 'users',
+                'connection' => $this->connection,
+            ]);
+
+            $query = $table->find('all', ['fields' => ['id']]);
+            $this->assertSame(['id'], $query->clause('select'));
+        });
+    }
+
+    /**
      * Tests that all fields for a table are added by default in a find when no
      * other fields are specified
      */
