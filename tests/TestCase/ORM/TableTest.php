@@ -1589,6 +1589,32 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test find('list') called with option array instead of named args for backwards compatility
+     *
+     * @return void
+     */
+    public function testFindListWithArray(): void
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+
+        $articles->belongsTo('Authors');
+        $query = $articles->find('list', ['valueField' => 'author.name'])
+            ->contain(['Authors'])
+            ->orderBy('articles.id');
+        $this->assertEmpty($query->clause('select'));
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'larry',
+            3 => 'mariano',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
      * Test the default entityClass.
      */
     public function testEntityClassDefault(): void

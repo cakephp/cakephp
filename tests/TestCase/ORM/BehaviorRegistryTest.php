@@ -302,7 +302,7 @@ class BehaviorRegistryTest extends TestCase
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
-            ->with($query, [])
+            ->with($query)
             ->will($this->returnValue($query));
         $return = $this->Behaviors->callFinder('noSlug', $query, []);
         $this->assertSame($query, $return);

@@ -2664,24 +2664,32 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options = $args;
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
+        $secondParam = $params[1] ?? null;
+        $secondParamType = null;
 
-        $isOldOptions = false;
         if ($args === [] || isset($args[0])) {
-            $maybeOptions = $params[1] ?? null;
-            $paramType = $maybeOptions?->getType();
+            $secondParamType = $secondParam?->getType();
+            $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
+            // Backwards compatibility of 4.x style finders with signature `findFoo(SelectQuery $query, array $options)`
+            // called as `find('foo')` or `find('foo', [..])`
             if (
-                $maybeOptions?->name === 'options' &&
-                (
-                    $paramType === null ||
-                    ($paramType instanceof ReflectionNamedType &&
-                        $paramType->getName() === 'array'
-                    )
-                )
+                count($params) === 2 &&
+                $secondParam?->name === 'options' &&
+                ($secondParamType === null || $secondParamTypeName === 'array')
             ) {
-                $isOldOptions = true;
-                if (isset($args[0])) {
-                    $options = $args[0];
+                if (isset($options[0])) {
+                    $options = $options[0];
                 }
+
+                $query->applyOptions($options);
+
+                return $callable($query, $query->getOptions());
+            }
+
+            // Backwards compatibility for core finders like `findList()` called in 4.x style
+            // with an array `find('list', ['valueField' => 'foo'])` instead of `find('list', valueField: 'foo')`
+            if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+                $options = $args = $args[0];
             }
         }
 
@@ -2690,22 +2698,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query->applyOptions($options);
             $args = $query->getOptions();
 
-            if (!$isOldOptions) {
-                unset($params[0]);
-                $paramNames = [];
-                foreach ($params as $param) {
-                    $paramNames[] = $param->getName();
-                }
+            unset($params[0]);
+            $paramNames = [];
+            foreach ($params as $param) {
+                $paramNames[] = $param->getName();
+            }
 
-                foreach ($args as $key => $value) {
-                    if (is_string($key) && !in_array($key, $paramNames, true)) {
-                        unset($args[$key]);
-                    }
+            foreach ($args as $key => $value) {
+                if (is_string($key) && !in_array($key, $paramNames, true)) {
+                    unset($args[$key]);
                 }
             }
-        }
-        if ($isOldOptions) {
-            $args = [$args];
         }
 
         return $callable($query, ...$args);
