@@ -2662,7 +2662,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
     {
-        $options = $args;
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
         $secondParam = $params[1] ?? null;
@@ -2685,11 +2684,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     );
                 }
 
-                if (isset($options[0])) {
-                    $options = $options[0];
+                if (isset($args[0])) {
+                    $args = $args[0];
                 }
 
-                $query->applyOptions($options);
+                $query->applyOptions($args);
 
                 return $callable($query, $query->getOptions());
             }
@@ -2703,13 +2702,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                      . ' Use named arguments instead.'
                 );
 
-                $options = $args = $args[0];
+                $args = $args[0];
             }
         }
 
-        // Extract and apply $options from arguments
-        if ($options) {
-            $query->applyOptions($options);
+        if ($args) {
+            $query->applyOptions($args);
+            // Fetch custom args without the query options.
             $args = $query->getOptions();
 
             unset($params[0]);
