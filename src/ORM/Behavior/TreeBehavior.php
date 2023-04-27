@@ -434,9 +434,10 @@ class TreeBehavior extends Behavior
     }
 
     /**
-     * Get the children nodes of the current model
+     * Get the children nodes of the current model.
      *
-     * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
+     * If the direct option is set to true, only the direct children are returned
+     * (based upon the parent_id field).
      *
      * @param \Cake\ORM\Query\SelectQuery $query Query.
      * @param string|int $for The id of the record to read. Can also be an array of options.

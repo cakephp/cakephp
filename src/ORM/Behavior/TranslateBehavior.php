@@ -301,7 +301,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * ### Example:
      *
      * ```
-     * $article = $articles->find('translations', ['locales' => ['eng', 'deu'])->first();
+     * $article = $articles->find('translations', locales: ['eng', 'deu'])->first();
      * $englishTranslatedFields = $article->get('_translations')['eng'];
      * ```
      *

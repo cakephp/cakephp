@@ -835,7 +835,7 @@ abstract class Association
      * configuration
      *
      * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
-     *   it will be interpreted as the `$options` parameter
+     *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query\SelectQuery

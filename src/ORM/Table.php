@@ -1216,7 +1216,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Each find() will trigger a `Model.beforeFind` event for all attached
      * listeners. Any listener can set a valid result set using $query
      *
-     * By default, `$options` will recognize the following keys:
+     * By default, following special named arguments are recognized which are
+     * used as select query options:
      *
      * - fields
      * - conditions
@@ -1231,14 +1232,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ### Usage
      *
-     * Using the options array:
-     *
      * ```
-     * $query = $articles->find('all', [
-     *   'conditions' => ['published' => 1],
-     *   'limit' => 10,
-     *   'contain' => ['Users', 'Comments']
-     * ]);
+     * $query = $articles->find('all',
+     *   conditions: ['published' => 1],
+     *   limit: 10,
+     *   contain: ['Users', 'Comments']
+     * );
      * ```
      *
      * Using the builder interface:
@@ -1263,14 +1262,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ## Typed finder arguments
      *
-     * Finders can have typed parameters separate from the `$options` array and the
-     * `$options` parameter can be optional if not needed:
+     * Finders must have a `SelectQuery` instance as their 1st argument and any
+     * additional parameters as needed.
      *
-     * ```
-     * $query = $articles->find('byCategory', $category);
-     * ```
-     *
-     * Here, the finder "findByCategory" does not have an `$options` parameter:
+     * Here, the finder "findByCategory" has an integer `$category` parameter:
      *
      * ```
      * function findByCategory(SelectQuery $query, int $category): SelectQuery
@@ -1279,19 +1274,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * }
      * ```
      *
-     * If you need to pass query options, just add the typed arguments after `$options`:
+     * This finder can be called as:
      *
      * ```
-     * $query = $articles->find('byCategory', [...], $category);
+     * $query = $articles->find('byCategory', $category);
      * ```
      *
-     * Here, the finder "findByCategory" does have an `$options` parameter:
-     *
+     * or using named arguments as:
      * ```
-     * function findByCategory(SelectQuery $query, array $options, int $category): SelectQuery
-     * {
-     *     return $query;
-     * }
+     * $query = $articles->find(type: 'byCategory', category: $category);
      * ```
      *
      * @param string $type the type of query to perform
@@ -1306,8 +1297,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the query as passed.
      *
-     * By default findAll() applies no conditions, you
-     * can override this method in subclasses to modify how `find('all')` works.
+     * By default findAll() applies no query clauses, you can override this
+     * method in subclasses to modify how `find('all')` works.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
      * @return \Cake\ORM\Query\SelectQuery The query builder
@@ -1336,25 +1327,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * You can specify which property will be used as the key and which as value
-     * by using the `$options` array, when not specified, it will use the results
-     * of calling `primaryKey` and `displayField` respectively in this table:
+     * You can specify which property will be used as the key and which as value,
+     * when not specified, it will use the results of calling `primaryKey` and
+     * `displayField` respectively in this table:
      *
      * ```
-     * $table->find('list', [
-     *  'keyField' => 'name',
-     *  'valueField' => 'age'
-     * ]);
+     * $table->find('list', keyField: 'name', valueField: 'age');
      * ```
      *
      * The `valueField` can also be an array, in which case you can also specify
      * the `valueSeparator` option to control how the values will be concatenated:
      *
      * ```
-     * $table->find('list', [
-     *  'valueField' => ['first_name', 'last_name'],
-     *  'valueSeparator' => ' | ',
-     * ]);
+     * $table->find('list',  valueField: ['first_name', 'last_name'], valueSeparator: ' | ');
      * ```
      *
      * The results of this finder will be in the following form:
@@ -1370,9 +1355,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * can customize the property to use for grouping by setting `groupField`:
      *
      * ```
-     * $table->find('list', [
-     *  'groupField' => 'category_id',
-     * ]);
+     * $table->find('list', groupField: 'category_id');
      * ```
      *
      * When using a `groupField` results will be returned in this format:
@@ -1441,15 +1424,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `keyField`, `parentField` or `nestingKey` in
-     * `$options`:
+     * these defaults you need to provide the `keyField`, `parentField` or `nestingKey`
+     * arguments:
      *
      * ```
-     * $table->find('threaded', [
-     *  'keyField' => 'id',
-     *  'parentField' => 'ancestor_id',
-     *  'nestingKey' => 'children'
-     * ]);
+     * $table->find('threaded', keyField: 'id', parentField: 'ancestor_id', nestingKey: 'children');
      * ```
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
