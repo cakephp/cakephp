@@ -36,6 +36,6 @@ class GreedyCommentsTable extends Table
         }
         $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
 
-        return parent::find($type, $options);
+        return parent::find($type, ...$options);
     }
 }

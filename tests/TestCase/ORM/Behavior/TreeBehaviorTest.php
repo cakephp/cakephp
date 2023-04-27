@@ -635,7 +635,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
 
         $expectedLevels = $table
-            ->find('list', ['valueField' => 'depth'])
+            ->find('list', valueField: 'depth')
             ->orderBy('lft')
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
@@ -658,7 +658,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         $result = $table
-            ->find('list', ['valueField' => 'depth'])
+            ->find('list', valueField: 'depth')
             ->orderBy('lft')
             ->toArray();
         $this->assertSame($expectedLevels, $result);

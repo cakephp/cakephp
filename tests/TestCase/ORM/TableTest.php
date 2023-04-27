@@ -1592,26 +1592,29 @@ class TableTest extends TestCase
      * Test find('list') called with option array instead of named args for backwards compatility
      *
      * @return void
+     * @deprecated
      */
     public function testFindListWithArray(): void
     {
-        $articles = new Table([
-            'table' => 'articles',
-            'connection' => $this->connection,
-        ]);
+        $this->deprecated(function () {
+            $articles = new Table([
+                'table' => 'articles',
+                'connection' => $this->connection,
+            ]);
 
-        $articles->belongsTo('Authors');
-        $query = $articles->find('list', ['valueField' => 'author.name'])
-            ->contain(['Authors'])
-            ->orderBy('articles.id');
-        $this->assertEmpty($query->clause('select'));
+            $articles->belongsTo('Authors');
+            $query = $articles->find('list', ['valueField' => 'author.name'])
+                ->contain(['Authors'])
+                ->orderBy('articles.id');
+            $this->assertEmpty($query->clause('select'));
 
-        $expected = [
-            1 => 'mariano',
-            2 => 'larry',
-            3 => 'mariano',
-        ];
-        $this->assertSame($expected, $query->toArray());
+            $expected = [
+                1 => 'mariano',
+                2 => 'larry',
+                3 => 'mariano',
+            ];
+            $this->assertSame($expected, $query->toArray());
+        });
     }
 
     /**
@@ -3087,11 +3090,7 @@ class TableTest extends TestCase
         $result = $table->delete($entity);
         $this->assertFalse($result);
 
-        $query = $articles->find('all', [
-            'conditions' => [
-                'author_id' => $entity->id,
-            ],
-        ]);
+        $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
 
         $table->associations()->get('articles')->setCascadeCallbacks(false);
@@ -3989,7 +3988,7 @@ class TableTest extends TestCase
             ],
         ];
         $result = $this->getTableLocator()->get('PolymorphicTagged')
-            ->find('all', ['sort' => ['id' => 'DESC']])
+            ->find('all', sort: ['id' => 'DESC'])
             ->enableHydration(false)
             ->toArray();
         $this->assertEquals($expected, $result);

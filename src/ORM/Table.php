@@ -57,6 +57,7 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionFunction;
 use ReflectionNamedType;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -2677,6 +2678,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $secondParam?->name === 'options' &&
                 ($secondParamType === null || $secondParamTypeName === 'array')
             ) {
+                if (!$secondParam->isDefaultValueAvailable()) {
+                    deprecationWarning(
+                        '5.0.0',
+                        '`$options` argument must have a default value'
+                    );
+                }
+
                 if (isset($options[0])) {
                     $options = $options[0];
                 }
@@ -2689,6 +2697,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             // Backwards compatibility for core finders like `findList()` called in 4.x style
             // with an array `find('list', ['valueField' => 'foo'])` instead of `find('list', valueField: 'foo')`
             if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+                deprecationWarning(
+                    '5.0.0',
+                    'Calling this finder with options array is deprecated.'
+                     . ' Use named arguments instead.'
+                );
+
                 $options = $args = $args[0];
             }
         }
