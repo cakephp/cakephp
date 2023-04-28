@@ -134,7 +134,7 @@ class FunctionsGlobalTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function hInputProvider(): array
+    public static function hInputProvider(): array
     {
         return [
             ['i am clean', 'i am clean'],
