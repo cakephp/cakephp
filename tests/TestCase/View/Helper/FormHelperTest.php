@@ -39,6 +39,7 @@ use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
+use TestApp\View\Form\StubContext;
 
 /**
  * FormHelperTest class
@@ -334,7 +335,7 @@ class FormHelperTest extends TestCase
             ],
         ];
         $form = new Form();
-        //$custom = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $custom = new StubContext();
 
         return [
             'entity' => [$entity, 'Cake\View\Form\EntityContext'],
@@ -343,7 +344,7 @@ class FormHelperTest extends TestCase
             'array' => [$data, 'Cake\View\Form\ArrayContext'],
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
-            //'custom' => [$custom, $custom::class],
+            'custom' => [$custom, $custom::class],
         ];
     }
 
