@@ -32,19 +32,11 @@
         <bootstrap class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
     </extensions>
 
-    <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">src/</directory>
         </include>
-        <exclude>
-            <!--
-            This file contains a few functions that cannot be tested
-            as they contain die; or breakpoint functionality.
-            -->
-            <file>src/basics.php</file>
-        </exclude>
-    </coverage>
+    </source>
 
     <php>
         <ini name="memory_limit" value="-1"/>
