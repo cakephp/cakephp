@@ -46,4 +46,14 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
 
         return count($this->toArray());
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function __debugInfo(): array
+    {
+        $parentInfo = parent::__debugInfo();
+
+        return array_merge($parentInfo, ['items' => $this->toArray()]);
+    }
 }

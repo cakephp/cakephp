@@ -89,4 +89,17 @@ class ResultSetDecoratorTest extends TestCase
         $this->assertSame(3, $decorator->count());
         $this->assertCount(3, $decorator);
     }
+
+    /**
+     * Test the __debugInfo() method which is used by DebugKit
+     */
+    public function testDebugInfo(): void
+    {
+        $data = new ArrayIterator([1, 2, 3]);
+        $decorator = new ResultSetDecorator($data);
+        $this->assertEquals([
+            'count' => 3,
+            'items' => [1, 2, 3],
+        ], $decorator->__debugInfo());
+    }
 }
