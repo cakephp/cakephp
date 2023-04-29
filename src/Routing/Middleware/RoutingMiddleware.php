@@ -116,7 +116,10 @@ class RoutingMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $middleware = new MiddlewareQueue($matching);
+        $container = $this->app instanceof ContainerApplicationInterface
+            ? $this->app->getContainer()
+            : null;
+        $middleware = new MiddlewareQueue($matching, $container);
         $runner = new Runner();
 
         return $runner->run($middleware, $request, $handler);

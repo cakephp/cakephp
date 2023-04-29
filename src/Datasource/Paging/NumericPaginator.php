@@ -41,6 +41,13 @@ class NumericPaginator implements PaginatorInterface
      * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
+     * - `sortableFields` - A list of fields which can be used for sorting. By
+     *   default all table columns can be used for sorting. You can use this option
+     *   to restrict sorting only by particular fields. If you want to allow
+     *   sorting on either associated columns or calculated fields then you will
+     *   have to explicity specify them (along with other fields). Using an empty
+     *   array will disable sorting alltogether.
+     * - `finder` - The table finder to use. Defaults to `all`.
      *
      * @var array<string, mixed>
      */
@@ -207,10 +214,17 @@ class NumericPaginator implements PaginatorInterface
      */
     protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
     {
+        $options = $data['options'];
+        unset(
+            $options['scope'],
+            $options['sort'],
+            $options['direction'],
+        );
+
         if ($query === null) {
-            $query = $object->find($data['finder'], ...$data['options']);
+            $query = $object->find($data['finder'], ...$options);
         } else {
-            $query->applyOptions($data['options']);
+            $query->applyOptions($options);
         }
 
         return $query;
@@ -387,7 +401,14 @@ class NumericPaginator implements PaginatorInterface
     protected function _extractFinder(array $options): array
     {
         $type = !empty($options['finder']) ? $options['finder'] : 'all';
-        unset($options['finder'], $options['maxLimit']);
+        unset(
+            $options['finder'],
+            $options['maxLimit'],
+            $options['allowedParameters'],
+            $options['whitelist'],
+            $options['sortableFields'],
+            $options['sortWhitelist'],
+        );
 
         if (is_array($type)) {
             $options = (array)current($type) + $options;

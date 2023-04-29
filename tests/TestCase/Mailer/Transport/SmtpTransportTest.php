@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Error\Debugger;
 use Cake\Mailer\Message;
+use Cake\Mailer\Transport\SmtpTransport;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
@@ -280,6 +282,79 @@ class SmtpTransportTest extends TestCase
         $this->assertStringContainsString('200 Not Accepted', $e->getPrevious()->getMessage());
     }
 
+    /**
+     * Test that when "authType" is specified that's that one used instead of the
+     * 1st one supported by the server
+     *
+     * @return void
+     */
+    public function testAuthTypeSet(): void
+    {
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
+        $this->SmtpTransport->connect();
+        $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
+    }
+
+    public function testExceptionInvalidAuthType(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unsupported auth type. Available types are: PLAIN, LOGIN, XOAUTH2');
+
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig(['authType' => 'invalid']);
+        $this->SmtpTransport->connect();
+    }
+
+    public function testAuthTypeUnsupported(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unsupported auth type: CRAM-MD5');
+
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->connect();
+        $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
+    }
+
     public function testAuthPlain(): void
     {
         $this->socket->expects($this->once())->method('write')->with("AUTH PLAIN {$this->credentialsEncoded}\r\n");
@@ -311,6 +386,33 @@ class SmtpTransportTest extends TestCase
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
+        $this->SmtpTransport->auth();
+    }
+
+    /**
+     * testAuth method
+     */
+    public function testAuthXoauth2(): void
+    {
+        $authString = base64_encode(sprintf(
+            "user=%s\1auth=Bearer %s\1\1",
+            $this->credentials['username'],
+            $this->credentials['password']
+        ));
+
+        $this->socket->expects($this->exactly(1))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "235 OK\r\n"
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["AUTH XOAUTH2 {$authString}\r\n"],
+            );
+
+        $this->SmtpTransport->setConfig($this->credentials);
+        $this->SmtpTransport->setAuthType('XOAUTH2');
         $this->SmtpTransport->auth();
     }
 

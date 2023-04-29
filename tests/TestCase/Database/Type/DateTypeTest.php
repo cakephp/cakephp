@@ -40,6 +40,11 @@ class DateTypeTest extends TestCase
     protected $driver;
 
     /**
+     * @var string
+     */
+    protected $originalTimeZone;
+
+    /**
      * Setup
      */
     public function setUp(): void
@@ -47,6 +52,17 @@ class DateTypeTest extends TestCase
         parent::setUp();
         $this->type = new DateType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+
+        $this->originalTimeZone = date_default_timezone_get();
+    }
+
+    /**
+     * Teardown
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        date_default_timezone_set($this->originalTimeZone);
     }
 
     /**
@@ -113,8 +129,7 @@ class DateTypeTest extends TestCase
     public function marshalProvider(): array
     {
         $date = new Date('@1392387900');
-
-        return [
+        $data = [
             // invalid types.
             [null, null],
             [false, null],
@@ -171,6 +186,10 @@ class DateTypeTest extends TestCase
                 ],
                 new Date('2014-02-14'),
             ],
+            // [
+            //     new ChronosDate('2023-04-26'),
+            //     new ChronosDate('2023-04-26'),
+            // ],
 
             // Invalid array types
             [
@@ -182,6 +201,8 @@ class DateTypeTest extends TestCase
                 null,
             ],
         ];
+
+        return $data;
     }
 
     /**
@@ -193,6 +214,19 @@ class DateTypeTest extends TestCase
      */
     public function testMarshal($value, $expected): void
     {
+        $result = $this->type->marshal($value);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test marshaling data with different timezone
+     */
+    public function testMarshalWithTimezone(): void
+    {
+        date_default_timezone_set('Europe/Vienna');
+        $value = new Date('2023-04-26');
+        $expected = new Date('2023-04-26');
+
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);
     }

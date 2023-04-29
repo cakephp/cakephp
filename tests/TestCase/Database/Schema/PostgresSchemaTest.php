@@ -1228,6 +1228,27 @@ SQL;
     }
 
     /**
+     * Tests creating tables in postgres schema
+     */
+    public function testCreateInSchema(): void
+    {
+        $driver = $this->_getMockedDriver(['schema' => 'notpublic']);
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+            'type' => 'string',
+            'length' => 255,
+        ]);
+        $sql = $table->createSql($connection);
+        $this->assertStringContainsString('CREATE TABLE "notpublic"."schema_articles"', $sql[0]);
+    }
+
+    /**
      * Tests creating temporary tables
      */
     public function testCreateTemporary(): void
@@ -1355,7 +1376,7 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
-    protected function _getMockedDriver(): Driver
+    protected function _getMockedDriver(array $config = []): Driver
     {
         $this->_needsConnection();
 
@@ -1370,6 +1391,7 @@ SQL;
             }));
 
         $driver = $this->getMockBuilder(Postgres::class)
+            ->setConstructorArgs([$config])
             ->onlyMethods(['createPdo'])
             ->getMock();
 

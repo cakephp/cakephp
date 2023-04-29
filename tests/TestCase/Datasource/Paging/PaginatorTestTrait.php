@@ -110,9 +110,6 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($table, $params, $settings);
     }
@@ -187,12 +184,12 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
-        $this->Paginator->paginate($table, [], $settings);
+        $result = $this->Paginator->paginate($table, [], $settings)->pagingParams();
+
+        $this->assertEquals('PaginatorPosts.id', $result['sort']);
+        $this->assertEquals('DESC', $result['direction']);
     }
 
     /**
@@ -217,9 +214,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => $settings['order'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $result = $this->Paginator->paginate($table, [], $settings);
@@ -252,9 +246,6 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $result = $this->Paginator->paginate($table, [], $settings);
@@ -577,9 +568,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'id',
             ]);
 
         $params = [
@@ -630,10 +618,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'sort' => 'id',
-                'scope' => null,
-                'sortableFields' => ['id'],
             ]);
 
         $options = [
@@ -667,9 +651,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.title' => 'asc'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'sort' => 'title',
-                'scope' => null,
             ]);
 
         $options = [
@@ -712,10 +693,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sortableFields' => ['id'],
-                'sort' => 'id',
             ]);
 
         $params = [
@@ -1142,11 +1119,10 @@ trait PaginatorTestTrait
                 'limit' => 2,
                 'page' => 1,
                 'order' => [],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => null,
             ]);
-        $this->Paginator->paginate($table, [], $settings);
+        $result = $this->Paginator->paginate($table, [], $settings)->pagingParams();
+
+        $this->assertEquals('published', $result['finder']);
     }
 
     /**
@@ -1175,9 +1151,6 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }
@@ -1231,9 +1204,6 @@ trait PaginatorTestTrait
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }

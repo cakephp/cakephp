@@ -30,6 +30,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Response as LaminasResponse;
 use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
+use Psr\Http\Message\ResponseInterface;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
@@ -340,5 +341,18 @@ class ServerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $server->setEventManager($events);
+    }
+
+    /**
+     * Test server run works without an application implementing ContainerApplicationInterface
+     */
+    public function testAppWithoutContainerApplicationInterface(): void
+    {
+        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
+        $app = $this->createMock(HttpApplicationInterface::class);
+        $server = new Server($app);
+
+        $request = new ServerRequest();
+        $this->assertInstanceOf(ResponseInterface::class, $server->run($request));
     }
 }

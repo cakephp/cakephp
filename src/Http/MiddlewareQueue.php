@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Http\Middleware\ClosureDecoratorMiddleware;
 use Closure;
 use Countable;
@@ -49,12 +50,19 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected array $queue = [];
 
     /**
+     * @var \Cake\Core\ContainerInterface|null
+     */
+    protected ?ContainerInterface $container;
+
+    /**
      * Constructor
      *
      * @param array $middleware The list of middleware to append.
+     * @param \Cake\Core\ContainerInterface $container Container instance.
      */
-    public function __construct(array $middleware = [])
+    public function __construct(array $middleware = [], ?ContainerInterface $container = null)
     {
+        $this->container = $container;
         $this->queue = $middleware;
     }
 
@@ -68,16 +76,19 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected function resolve(MiddlewareInterface|Closure|string $middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
-            /** @var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
-            $className = App::className($middleware, 'Middleware', 'Middleware');
-            if ($className === null) {
-                throw new InvalidArgumentException(sprintf(
-                    'Middleware `%s` was not found.',
-                    $middleware
-                ));
+            if ($this->container && $this->container->has($middleware)) {
+                $middleware = $this->container->get($middleware);
+            } else {
+                /** @var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */
+                $className = App::className($middleware, 'Middleware', 'Middleware');
+                if ($className === null) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Middleware `%s` was not found.',
+                        $middleware
+                    ));
+                }
+                $middleware = new $className();
             }
-
-            return new $className();
         }
 
         if ($middleware instanceof MiddlewareInterface) {
