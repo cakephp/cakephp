@@ -208,7 +208,7 @@ class NumericPaginator implements PaginatorInterface
     protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
     {
         if ($query === null) {
-            $query = $object->find($data['finder'], $data['options']);
+            $query = $object->find($data['finder'], ...$data['options']);
         } else {
             $query->applyOptions($data['options']);
         }

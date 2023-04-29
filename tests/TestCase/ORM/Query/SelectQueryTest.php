@@ -2919,7 +2919,7 @@ class SelectQueryTest extends TestCase
             ->where(['Articles.author_id' => $authorId])
             ->contain([
                 'Authors' => [
-                    'finder' => ['byAuthor' => ['author_id' => 2]],
+                    'finder' => ['byAuthor' => ['authorId' => 2]],
                 ],
             ]);
 
@@ -2927,7 +2927,7 @@ class SelectQueryTest extends TestCase
             ->where(['Articles.author_id' => $authorId])
             ->contain([
                 'Authors' => [
-                    'finder' => ['byAuthor' => ['author_id' => $authorId]],
+                    'finder' => ['byAuthor' => ['authorId' => $authorId]],
                 ],
             ]);
 

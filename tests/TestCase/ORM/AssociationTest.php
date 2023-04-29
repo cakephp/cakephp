@@ -475,17 +475,38 @@ class AssociationTest extends TestCase
         $this->assertSame('published', $assoc->getFinder());
     }
 
-    /**
-     * Tests that the defined custom finder is used when calling find
-     * in the association
-     */
-    public function testCustomFinderIsUsed(): void
+    public function testCustomFinderWithTypedArgs(): void
     {
-        $this->association->setFinder('published');
+        $this->association->setFinder('publishedWithArgOnly');
         $this->assertEquals(
-            ['this' => 'worked'],
-            $this->association->find()->getOptions()
+            ['custom', 'this' => 'custom'],
+            $this->association->find(null, 'custom')->getOptions()
         );
+        $this->assertEquals(
+            ['what' => 'custom', 'this' => 'custom'],
+            $this->association->find(null, what: 'custom')->getOptions()
+        );
+        $this->assertEquals(
+            ['what' => 'custom', 'this' => 'custom'],
+            $this->association->find(what: 'custom')->getOptions()
+        );
+    }
+
+    public function testCustomFinderWithOptions(): void
+    {
+        $this->association->setFinder('withOptions');
+
+        $this->deprecated(function () {
+            $this->assertEquals(
+                ['this' => 'worked'],
+                $this->association->find(null)->getOptions()
+            );
+
+            $this->assertEquals(
+                ['that' => 'custom', 'this' => 'worked'],
+                $this->association->find(null, ['that' => 'custom'])->getOptions()
+            );
+        });
     }
 
     /**

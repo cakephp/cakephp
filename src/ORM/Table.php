@@ -55,6 +55,9 @@ use Cake\Validation\ValidatorAwareTrait;
 use Closure;
 use Exception;
 use InvalidArgumentException;
+use ReflectionFunction;
+use ReflectionNamedType;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -1213,7 +1216,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Each find() will trigger a `Model.beforeFind` event for all attached
      * listeners. Any listener can set a valid result set using $query
      *
-     * By default, `$options` will recognize the following keys:
+     * By default, following special named arguments are recognized which are
+     * used as select query options:
      *
      * - fields
      * - conditions
@@ -1228,14 +1232,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ### Usage
      *
-     * Using the options array:
-     *
      * ```
-     * $query = $articles->find('all', [
-     *   'conditions' => ['published' => 1],
-     *   'limit' => 10,
-     *   'contain' => ['Users', 'Comments']
-     * ]);
+     * $query = $articles->find('all',
+     *   conditions: ['published' => 1],
+     *   limit: 10,
+     *   contain: ['Users', 'Comments']
+     * );
      * ```
      *
      * Using the builder interface:
@@ -1250,34 +1252,58 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Calling finders
      *
      * The find() method is the entry point for custom finder methods.
-     * You can invoke a finder by specifying the type:
+     * You can invoke a finder by specifying the type.
+     *
+     * This will invoke the `findPublished` method:
      *
      * ```
      * $query = $articles->find('published');
      * ```
      *
-     * Would invoke the `findPublished` method.
+     * ## Typed finder arguments
+     *
+     * Finders must have a `SelectQuery` instance as their 1st argument and any
+     * additional parameters as needed.
+     *
+     * Here, the finder "findByCategory" has an integer `$category` parameter:
+     *
+     * ```
+     * function findByCategory(SelectQuery $query, int $category): SelectQuery
+     * {
+     *     return $query;
+     * }
+     * ```
+     *
+     * This finder can be called as:
+     *
+     * ```
+     * $query = $articles->find('byCategory', $category);
+     * ```
+     *
+     * or using named arguments as:
+     * ```
+     * $query = $articles->find(type: 'byCategory', category: $category);
+     * ```
      *
      * @param string $type the type of query to perform
-     * @param array<string, mixed> $options An array that will be passed to Query::applyOptions()
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function find(string $type = 'all', array $options = []): SelectQuery
+    public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
-        return $this->callFinder($type, $this->selectQuery(), $options);
+        return $this->callFinder($type, $this->selectQuery(), ...$args);
     }
 
     /**
      * Returns the query as passed.
      *
-     * By default findAll() applies no conditions, you
-     * can override this method in subclasses to modify how `find('all')` works.
+     * By default findAll() applies no query clauses, you can override this
+     * method in subclasses to modify how `find('all')` works.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options to use for the find
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findAll(SelectQuery $query, array $options): SelectQuery
+    public function findAll(SelectQuery $query): SelectQuery
     {
         return $query;
     }
@@ -1301,25 +1327,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * You can specify which property will be used as the key and which as value
-     * by using the `$options` array, when not specified, it will use the results
-     * of calling `primaryKey` and `displayField` respectively in this table:
+     * You can specify which property will be used as the key and which as value,
+     * when not specified, it will use the results of calling `primaryKey` and
+     * `displayField` respectively in this table:
      *
      * ```
-     * $table->find('list', [
-     *  'keyField' => 'name',
-     *  'valueField' => 'age'
-     * ]);
+     * $table->find('list', keyField: 'name', valueField: 'age');
      * ```
      *
      * The `valueField` can also be an array, in which case you can also specify
      * the `valueSeparator` option to control how the values will be concatenated:
      *
      * ```
-     * $table->find('list', [
-     *  'valueField' => ['first_name', 'last_name'],
-     *  'valueSeparator' => ' | ',
-     * ]);
+     * $table->find('list',  valueField: ['first_name', 'last_name'], valueSeparator: ' | ');
      * ```
      *
      * The results of this finder will be in the following form:
@@ -1335,9 +1355,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * can customize the property to use for grouping by setting `groupField`:
      *
      * ```
-     * $table->find('list', [
-     *  'groupField' => 'category_id',
-     * ]);
+     * $table->find('list', groupField: 'category_id');
      * ```
      *
      * When using a `groupField` results will be returned in this format:
@@ -1355,28 +1373,28 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options for the find
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findList(SelectQuery $query, array $options): SelectQuery
-    {
-        $options += [
-            'keyField' => $this->getPrimaryKey(),
-            'valueField' => $this->getDisplayField(),
-            'groupField' => null,
-            'valueSeparator' => ';',
-        ];
+    public function findList(
+        SelectQuery $query,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string|null $valueField = null,
+        Closure|array|string|null $groupField = null,
+        string $valueSeparator = ';'
+    ): SelectQuery {
+        $keyField ??= $this->getPrimaryKey();
+        $valueField ??= $this->getDisplayField();
 
         if (
             !$query->clause('select') &&
-            !is_object($options['keyField']) &&
-            !is_object($options['valueField']) &&
-            !is_object($options['groupField'])
+            !is_object($keyField) &&
+            !is_object($valueField) &&
+            !is_object($groupField)
         ) {
             $fields = array_merge(
-                (array)$options['keyField'],
-                (array)$options['valueField'],
-                (array)$options['groupField']
+                (array)$keyField,
+                (array)$valueField,
+                (array)$groupField
             );
             $columns = $this->getSchema()->columns();
             if (count($fields) === count(array_intersect($fields, $columns))) {
@@ -1385,7 +1403,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options = $this->_setFieldMatchers(
-            $options,
+            compact('keyField', 'valueField', 'groupField', 'valueSeparator'),
             ['keyField', 'valueField', 'groupField']
         );
 
@@ -1406,33 +1424,31 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can customize what fields are used for nesting results, by default the
      * primary key and the `parent_id` fields are used. If you wish to change
-     * these defaults you need to provide the keys `keyField`, `parentField` or `nestingKey` in
-     * `$options`:
+     * these defaults you need to provide the `keyField`, `parentField` or `nestingKey`
+     * arguments:
      *
      * ```
-     * $table->find('threaded', [
-     *  'keyField' => 'id',
-     *  'parentField' => 'ancestor_id',
-     *  'nestingKey' => 'children'
-     * ]);
+     * $table->find('threaded', keyField: 'id', parentField: 'ancestor_id', nestingKey: 'children');
      * ```
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @param array<string, mixed> $options The options to find with
+     * @param \Closure|array|string|null $keyField The path to the key field.
+     * @param \Closure|array|string $parentField The path to the parent field.
+     * @param string $nestingKey The key to nest children under.
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
-    public function findThreaded(SelectQuery $query, array $options): SelectQuery
-    {
-        $options += [
-            'keyField' => $this->getPrimaryKey(),
-            'parentField' => 'parent_id',
-            'nestingKey' => 'children',
-        ];
+    public function findThreaded(
+        SelectQuery $query,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string $parentField = 'parent_id',
+        string $nestingKey = 'children'
+    ): SelectQuery {
+        $keyField ??= $this->getPrimaryKey();
 
-        $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
+        $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
         return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']));
+            $results->nest($options['keyField'], $options['parentField'], $nestingKey));
     }
 
     /**
@@ -1531,7 +1547,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $finder = $options['finder'] ?? 'all';
         unset($options['key'], $options['cache'], $options['finder']);
 
-        $query = $this->find($finder, $options)->where($conditions);
+        $query = $this->find($finder, ...$options)->where($conditions);
 
         if ($cacheConfig) {
             if (!$cacheKey) {
@@ -2586,30 +2602,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Calls a finder method and applies it to the passed query.
      *
+     * @internal
      * @template TSubject of \Cake\Datasource\EntityInterface|array
      * @param string $type Name of the finder to be called.
      * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object to apply the finder options to.
-     * @param array<string, mixed> $options List of options to pass to the finder.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
      * @uses findAll()
      * @uses findList()
      * @uses findThreaded()
      */
-    public function callFinder(string $type, SelectQuery $query, array $options = []): SelectQuery
+    public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
-        assert(empty($options) || !array_is_list($options), 'Finder options should be an associative array not a list');
-
-        /** @var array<string, mixed> $options */
-        $query->applyOptions($options);
-        $options = $query->getOptions();
         $finder = 'find' . $type;
         if (method_exists($this, $finder)) {
-            return $this->{$finder}($query, $options);
+            return $this->invokeFinder($this->{$finder}(...), $query, $args);
         }
 
         if ($this->_behaviors->hasFinder($type)) {
-            return $this->_behaviors->callFinder($type, [$query, $options]);
+            return $this->_behaviors->callFinder($type, $query, ...$args);
         }
 
         throw new BadMethodCallException(sprintf(
@@ -2617,6 +2629,80 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $type,
             static::class
         ));
+    }
+
+    /**
+     * @internal
+     * @template TSubject of \Cake\Datasource\EntityInterface|array
+     * @param \Closure $callable Callable.
+     * @param \Cake\ORM\Query\SelectQuery<TSubject> $query The query object.
+     * @param array $args Arguments for the callable.
+     * @return \Cake\ORM\Query\SelectQuery<TSubject>
+     */
+    public function invokeFinder(Closure $callable, SelectQuery $query, array $args): SelectQuery
+    {
+        $reflected = new ReflectionFunction($callable);
+        $params = $reflected->getParameters();
+        $secondParam = $params[1] ?? null;
+        $secondParamType = null;
+
+        if ($args === [] || isset($args[0])) {
+            $secondParamType = $secondParam?->getType();
+            $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
+            // Backwards compatibility of 4.x style finders with signature `findFoo(SelectQuery $query, array $options)`
+            // called as `find('foo')` or `find('foo', [..])`
+            if (
+                count($params) === 2 &&
+                $secondParam?->name === 'options' &&
+                ($secondParamType === null || $secondParamTypeName === 'array')
+            ) {
+                if (isset($args[0])) {
+                    deprecationWarning(
+                        '5.0.0',
+                        'Using options array for the `find()` call is deprecated.'
+                        . ' Use named arguments instead.'
+                    );
+
+                    $args = $args[0];
+                }
+
+                $query->applyOptions($args);
+
+                return $callable($query, $query->getOptions());
+            }
+
+            // Backwards compatibility for core finders like `findList()` called in 4.x style
+            // with an array `find('list', ['valueField' => 'foo'])` instead of `find('list', valueField: 'foo')`
+            if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+                deprecationWarning(
+                    '5.0.0',
+                    "Calling `{$reflected->getName()}` finder with options array is deprecated."
+                     . ' Use named arguments instead.'
+                );
+
+                $args = $args[0];
+            }
+        }
+
+        if ($args) {
+            $query->applyOptions($args);
+            // Fetch custom args without the query options.
+            $args = $query->getOptions();
+
+            unset($params[0]);
+            $paramNames = [];
+            foreach ($params as $param) {
+                $paramNames[] = $param->getName();
+            }
+
+            foreach ($args as $key => $value) {
+                if (is_string($key) && !in_array($key, $paramNames, true)) {
+                    unset($args[$key]);
+                }
+            }
+        }
+
+        return $callable($query, ...$args);
     }
 
     /**
@@ -2677,9 +2763,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $conditions = $makeConditions($fields, $args);
         }
 
-        return $this->find($findType, [
-            'conditions' => $conditions,
-        ]);
+        return $this->find($findType, conditions: $conditions);
     }
 
     /**

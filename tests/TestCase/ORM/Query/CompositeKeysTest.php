@@ -462,7 +462,7 @@ class CompositeKeysTest extends TestCase
         $entity = $table->get([3, 2]);
         $table->delete($entity);
 
-        $query = $table->getAssociation('SiteArticles')->find('all', [
+        $query = $table->getAssociation('SiteArticles')->find('all', ...[
             'conditions' => [
                 'author_id' => $entity->id,
                 'site_id' => $entity->site_id,
@@ -543,7 +543,7 @@ class CompositeKeysTest extends TestCase
         ];
         $this->assertEquals($expected, $query->toArray());
 
-        $query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
+        $query = $table->find('list', groupField: ['site_id', 'site_id'])
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
@@ -580,7 +580,7 @@ class CompositeKeysTest extends TestCase
             ['id' => 7, 'name' => 'a', 'site_id' => 1, 'parent_id' => 3],
             ['id' => 8, 'name' => 'a', 'site_id' => 2, 'parent_id' => 4],
         ]);
-        $query->find('threaded', ['parentField' => ['parent_id', 'site_id']]);
+        $query->find('threaded', parentField: ['parent_id', 'site_id']);
         $formatter = $query->getResultFormatters()[0];
 
         $expected = [
@@ -707,7 +707,7 @@ class CompositeKeysTest extends TestCase
         }
 
         /** @var \Cake\Datasource\EntityInterface[] $expected */
-        $expected = $table->find('all', ['contain' => ['SiteArticles']])->toArray();
+        $expected = $table->find('all', contain: ['SiteArticles'])->toArray();
         $this->assertEquals($expected, $result);
     }
 

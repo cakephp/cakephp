@@ -1063,16 +1063,19 @@ class BelongsToMany extends Association
      *
      * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
-     * @param array<string, mixed> $options The options to for the find
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query\SelectQuery
      */
-    public function find(array|string|null $type = null, array $options = []): SelectQuery
+    public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
         $type = $type ?: $this->getFinder();
         [$type, $opts] = $this->_extractFinder($type);
+
+        $args += $opts;
+
         $query = $this->getTarget()
-            ->find($type, $options + $opts)
+            ->find($type, ...$args)
             ->where($this->targetConditions())
             ->addDefaultTypes($this->getTarget());
 

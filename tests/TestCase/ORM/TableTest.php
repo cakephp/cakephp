@@ -610,6 +610,25 @@ class TableTest extends TestCase
     }
 
     /**
+     * Undocumented function
+     *
+     * @return void
+     * @deprecated
+     */
+    public function testFindAllOldStyleOptionsArray(): void
+    {
+        $this->deprecated(function () {
+            $table = new Table([
+                'table' => 'users',
+                'connection' => $this->connection,
+            ]);
+
+            $query = $table->find('all', ['fields' => ['id']]);
+            $this->assertSame(['id'], $query->clause('select'));
+        });
+    }
+
+    /**
      * Tests that all fields for a table are added by default in a find when no
      * other fields are specified
      */
@@ -1240,20 +1259,31 @@ class TableTest extends TestCase
             ->method('selectQuery')
             ->will($this->returnValue($query));
 
-        $options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
+        $options = ['fields' => ['a', 'b']];
         $query->expects($this->any())
             ->method('select')
             ->will($this->returnSelf());
 
         $query->expects($this->once())->method('getOptions')
-            ->will($this->returnValue(['connections' => ['a >' => 1]]));
+            ->will($this->returnValue([]));
         $query->expects($this->once())
             ->method('applyOptions')
             ->with($options);
 
-        $table->expects($this->once())->method('findAll')
-            ->with($query, ['connections' => ['a >' => 1]]);
-        $table->find('all', $options);
+        $table->expects($this->once())->method('findAll');
+        $table->find('all', ...$options);
+    }
+
+    /**
+     * Tests that extra arguments are passed to finders.
+     */
+    public function testFindTypedParameters(): void
+    {
+        $author = $this->getTableLocator()->get('Authors')->find('WithIdArgument', 2)->first();
+        $this->assertSame(2, $author->id);
+
+        $author = $this->getTableLocator()->get('Authors')->find('WithIdArgument', id: 2)->first();
+        $this->assertSame(2, $author->id);
     }
 
     /**
@@ -1277,7 +1307,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query = $table->find('list', ['fields' => ['id', 'username']])
+        $query = $table->find('list', fields: ['id', 'username'])
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
@@ -1288,7 +1318,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query = $table->find('list', ['groupField' => 'odd'])
+        $query = $table->find('list', groupField: 'odd')
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
             ->enableHydration(false)
             ->orderBy('id');
@@ -1397,12 +1427,12 @@ class TableTest extends TestCase
 
         $table->expects($this->once())
             ->method('findList')
-            ->with($query, ['keyPath' => 'id'])
+            ->with($query, 'id')
             ->will($this->returnValue($query));
 
         $result = $table
             ->find('threaded', ['order' => ['name' => 'ASC']])
-            ->find('list', ['keyPath' => 'id']);
+            ->find('list', keyField: 'id');
         $this->assertSame($query, $result);
     }
 
@@ -1441,7 +1471,7 @@ class TableTest extends TestCase
         ]);
         $table->setDisplayField('username');
         $query = $table
-            ->find('list', ['fields' => ['id', 'username']])
+            ->find('list', fields: ['id', 'username'])
             ->orderBy('id');
         $expected = [
             1 => 'mariano',
@@ -1451,7 +1481,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query = $table->find('list', ['groupField' => 'odd'])
+        $query = $table->find('list', groupField: 'odd')
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
             ->enableHydration(true)
             ->orderBy('id');
@@ -1483,16 +1513,13 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $query = $table->find('list', ['valueField' => function ($row) {
+        $query = $table->find('list', valueField: function ($row) {
             return $row->username;
-        }]);
+        });
         $this->assertEmpty($query->clause('select'));
 
         $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
-        $query = $table->find('list', [
-            'fields' => $expected,
-            'groupField' => 'odd',
-        ]);
+        $query = $table->find('list', fields: $expected, groupField: 'odd');
         $this->assertSame($expected, $query->clause('select'));
 
         $articles = new Table([
@@ -1500,11 +1527,11 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
 
-        $query = $articles->find('list', ['groupField' => 'author_id']);
+        $query = $articles->find('list', groupField: 'author_id');
         $expected = ['id', 'title', 'author_id'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $query = $articles->find('list', ['valueField' => ['author_id', 'title']])
+        $query = $articles->find('list', valueField: ['author_id', 'title'])
             ->orderBy('id');
         $expected = ['id', 'author_id', 'title'];
         $this->assertSame($expected, $query->clause('select'));
@@ -1516,10 +1543,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query = $articles->find('list', [
-                'valueField' => ['id', 'title'],
-                'valueSeparator' => ' : ',
-            ])
+        $query = $articles->find('list', valueField: ['id', 'title'], valueSeparator: ' : ')
             ->orderBy('id');
 
         $expected = [
@@ -1528,6 +1552,30 @@ class TableTest extends TestCase
             3 => '3 : Third Article',
         ];
         $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * Tests find(list) with backwards compatibile options
+     */
+    public function testFindListArrayOptions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+        $this->deprecated(function () use ($table) {
+            $query = $table
+                ->find('list', ['fields' => ['id', 'username']])
+                ->orderBy('id');
+            $expected = [
+                1 => 'mariano',
+                2 => 'nate',
+                3 => 'larry',
+                4 => 'garrett',
+            ];
+            $this->assertSame($expected, $query->toArray());
+        });
     }
 
     /**
@@ -1555,7 +1603,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query = $table->find('list', ['groupField' => 'odd']);
+        $query = $table->find('list', groupField: 'odd');
         $this->assertEmpty($query->clause('select'));
     }
 
@@ -1570,7 +1618,7 @@ class TableTest extends TestCase
         ]);
 
         $articles->belongsTo('Authors');
-        $query = $articles->find('list', ['valueField' => 'author.name'])
+        $query = $articles->find('list', valueField: 'author.name')
             ->contain(['Authors'])
             ->orderBy('articles.id');
         $this->assertEmpty($query->clause('select'));
@@ -1581,6 +1629,35 @@ class TableTest extends TestCase
             3 => 'mariano',
         ];
         $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * Test find('list') called with option array instead of named args for backwards compatility
+     *
+     * @return void
+     * @deprecated
+     */
+    public function testFindListWithArray(): void
+    {
+        $this->deprecated(function () {
+            $articles = new Table([
+                'table' => 'articles',
+                'connection' => $this->connection,
+            ]);
+
+            $articles->belongsTo('Authors');
+            $query = $articles->find('list', ['valueField' => 'author.name'])
+                ->contain(['Authors'])
+                ->orderBy('articles.id');
+            $this->assertEmpty($query->clause('select'));
+
+            $expected = [
+                1 => 'mariano',
+                2 => 'larry',
+                3 => 'mariano',
+            ];
+            $this->assertSame($expected, $query->toArray());
+        });
     }
 
     /**
@@ -2990,18 +3067,18 @@ class TableTest extends TestCase
     public function testDelete(): void
     {
         $table = $this->getTableLocator()->get('users');
-        $conditions = [
+        $options = [
             'limit' => 1,
             'conditions' => [
                 'username' => 'nate',
             ],
         ];
-        $query = $table->find('all', $conditions);
+        $query = $table->find('all', ...$options);
         $entity = $query->first();
         $result = $table->delete($entity);
         $this->assertTrue($result);
 
-        $query = $table->find('all', $conditions);
+        $query = $table->find('all', ...$options);
         $this->assertCount(0, $query->all(), 'Find should fail.');
     }
 
@@ -3019,11 +3096,7 @@ class TableTest extends TestCase
         $table->delete($entity);
 
         $articles = $table->getAssociation('articles')->getTarget();
-        $query = $articles->find('all', [
-            'conditions' => [
-                'author_id' => $entity->id,
-            ],
-        ]);
+        $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
 
@@ -3053,22 +3126,14 @@ class TableTest extends TestCase
         $result = $table->delete($entity);
         $this->assertTrue($result);
 
-        $query = $articles->find('all', [
-            'conditions' => [
-                'author_id' => $entity->id,
-            ],
-        ]);
+        $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
 
         $entity = $table->get(3);
         $result = $table->delete($entity);
         $this->assertFalse($result);
 
-        $query = $articles->find('all', [
-            'conditions' => [
-                'author_id' => $entity->id,
-            ],
-        ]);
+        $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
 
         $table->associations()->get('articles')->setCascadeCallbacks(false);
@@ -3966,7 +4031,7 @@ class TableTest extends TestCase
             ],
         ];
         $result = $this->getTableLocator()->get('PolymorphicTagged')
-            ->find('all', ['sort' => ['id' => 'DESC']])
+            ->find('all', sort: ['id' => 'DESC'])
             ->enableHydration(false)
             ->toArray();
         $this->assertEquals($expected, $result);
@@ -5298,16 +5363,14 @@ class TableTest extends TestCase
     public function testSimplifiedFind(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder'])
+            ->onlyMethods(['findAll'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => ['id' => ['type' => 'integer']],
             ]])
             ->getMock();
 
-        $query = (new SelectQuery($table))->select();
-        $table->expects($this->once())->method('callFinder')
-            ->with('all', $query, []);
+        $table->expects($this->once())->method('findAll');
         $table->find();
     }
 
@@ -5329,7 +5392,7 @@ class TableTest extends TestCase
     public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'selectQuery'])
+            ->onlyMethods(['selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5341,23 +5404,23 @@ class TableTest extends TestCase
             ->getMock();
 
         $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
             ->setConstructorArgs([$table])
             ->getMock();
 
-        $entity = new Entity();
         $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
-        $table->expects($this->once())->method('callFinder')
-            ->with('all', $query, ['fields' => ['id']])
-            ->will($this->returnValue($query));
 
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => 10])
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
+
         $result = $table->get(10, $options);
         $this->assertSame($entity, $result);
     }
@@ -5378,7 +5441,8 @@ class TableTest extends TestCase
     public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'selectQuery'])
+            ->onlyMethods(['selectQuery'])
+            ->addMethods(['findCustom'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5390,23 +5454,25 @@ class TableTest extends TestCase
             ->getMock();
 
         $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
             ->setConstructorArgs([$table])
             ->getMock();
 
-        $entity = new Entity();
         $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
-        $table->expects($this->once())->method('callFinder')
-            ->with('custom', $query, ['fields' => ['id']])
-            ->will($this->returnValue($query));
+        $table->expects($this->any())->method('findCustom')
+            ->willReturn($query);
 
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => 10])
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
+
         $result = $table->get(10, $options);
         $this->assertSame($entity, $result);
     }
@@ -5445,7 +5511,7 @@ class TableTest extends TestCase
     public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['callFinder', 'selectQuery'])
+            ->onlyMethods(['selectQuery'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'schema' => [
@@ -5458,17 +5524,16 @@ class TableTest extends TestCase
         $table->setTable('table_name');
 
         $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
+            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
             ->setConstructorArgs([$table])
             ->getMock();
 
-        $entity = new Entity();
         $table->expects($this->once())->method('selectQuery')
             ->will($this->returnValue($query));
-        $table->expects($this->once())->method('callFinder')
-            ->with('all', $query, ['fields' => ['id']])
-            ->will($this->returnValue($query));
 
+        $entity = new Entity();
+        $query->expects($this->once())->method('applyOptions')
+            ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => $primaryKey])
             ->will($this->returnSelf());
@@ -5477,6 +5542,7 @@ class TableTest extends TestCase
             ->will($this->returnSelf());
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
+
         $result = $table->get($primaryKey, $options);
         $this->assertSame($entity, $result);
     }

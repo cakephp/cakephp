@@ -124,13 +124,13 @@ trait PaginatorTestTrait
     {
         $settings = [
             'PaginatorPosts' => [
-                'finder' => ['author' => ['author_id' => 1]],
+                'finder' => ['author' => ['authorId' => 1]],
             ],
         ];
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $expected = $table
-            ->find('author', [
+            ->find('author', ...[
                 'conditions' => [
                     'PaginatorPosts.author_id' => 1,
                 ],

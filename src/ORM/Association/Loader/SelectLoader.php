@@ -168,7 +168,7 @@ class SelectLoader
         assert($query instanceof SelectQuery);
         if (isset($options['finder'])) {
             [$finderName, $opts] = $this->_extractFinder($options['finder']);
-            $query = $query->find($finderName, $opts);
+            $query = $query->find($finderName, ...$opts);
         }
 
         $fetchQuery = $query
