@@ -2676,7 +2676,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
                 deprecationWarning(
                     '5.0.0',
-                    'Calling this finder with options array is deprecated.'
+                    "Calling `{$reflected->getName()}` finder with options array is deprecated."
                      . ' Use named arguments instead.'
                 );
 

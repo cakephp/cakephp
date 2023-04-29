@@ -1555,6 +1555,30 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests find(list) with backwards compatibile options
+     */
+    public function testFindListArrayOptions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+        $this->deprecated(function () use ($table) {
+            $query = $table
+                ->find('list', ['fields' => ['id', 'username']])
+                ->orderBy('id');
+            $expected = [
+                1 => 'mariano',
+                2 => 'nate',
+                3 => 'larry',
+                4 => 'garrett',
+            ];
+            $this->assertSame($expected, $query->toArray());
+        });
+    }
+
+    /**
      * test that find('list') does not auto add fields to select if using virtual properties
      */
     public function testFindListWithVirtualField(): void
