@@ -314,8 +314,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
@@ -338,8 +340,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig(['authType' => 'invalid']);
@@ -361,8 +365,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->connect();
@@ -423,8 +429,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH XOAUTH2 {$authString}\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH XOAUTH2 {$authString}\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
