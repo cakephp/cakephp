@@ -16,13 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\DifferenceFormatterInterface;
 use Cake\Core\Exception\CakeException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
-use InvalidArgumentException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -159,27 +157,5 @@ trait DateFormatTrait
         $dateTime = $dateTime->setTimezone($tz);
 
         return new static($dateTime);
-    }
-
-    /**
-     * Get the difference formatter instance.
-     *
-     * @param \Cake\Chronos\DifferenceFormatterInterface|null $formatter Difference formatter
-     * @return \Cake\I18n\RelativeTimeFormatter
-     */
-    public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter
-    {
-        if ($formatter) {
-            if (!$formatter instanceof RelativeTimeFormatter) {
-                throw new InvalidArgumentException('Formatter for I18n must extend RelativeTimeFormatter.');
-            }
-
-            return static::$diffFormatter = $formatter;
-        }
-
-        /** @var \Cake\I18n\RelativeTimeFormatter $formatter */
-        $formatter = static::$diffFormatter ??= new RelativeTimeFormatter();
-
-        return $formatter;
     }
 }

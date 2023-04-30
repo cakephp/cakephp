@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\Chronos;
+use Cake\Chronos\DifferenceFormatterInterface;
 use Closure;
 use DateTimeZone;
 use IntlDateFormatter;
+use InvalidArgumentException;
 use JsonSerializable;
 use Stringable;
 
@@ -346,6 +348,28 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         $format = $format ?: [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
 
         return static::parseDateTime($time, $format);
+    }
+
+    /**
+     * Get the difference formatter instance.
+     *
+     * @param \Cake\Chronos\DifferenceFormatterInterface|null $formatter Difference formatter
+     * @return \Cake\I18n\RelativeTimeFormatter
+     */
+    public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter
+    {
+        if ($formatter) {
+            if (!$formatter instanceof RelativeTimeFormatter) {
+                throw new InvalidArgumentException('Formatter for I18n must extend RelativeTimeFormatter.');
+            }
+
+            return static::$diffFormatter = $formatter;
+        }
+
+        /** @var \Cake\I18n\RelativeTimeFormatter $formatter */
+        $formatter = static::$diffFormatter ??= new RelativeTimeFormatter();
+
+        return $formatter;
     }
 
     /**
