@@ -1631,7 +1631,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeHasManyEntitiesFromIds(): void
     {
-        $entity = $this->articles->get(1, ['contain' => ['Comments']]);
+        $entity = $this->articles->get(1, ...['contain' => ['Comments']]);
         $this->assertNotEmpty($entity->comments);
 
         $marshall = new Marshaller($this->articles);
@@ -1653,7 +1653,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeHasManyEntitiesFromIdsOnlyIds(): void
     {
-        $entity = $this->articles->get(1, ['contain' => ['Comments']]);
+        $entity = $this->articles->get(1, ...['contain' => ['Comments']]);
         $this->assertNotEmpty($entity->comments);
 
         $marshall = new Marshaller($this->articles);
@@ -1925,7 +1925,7 @@ class MarshallerTest extends TestCase
             'through' => 'SpecialTags',
         ]);
 
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $data = [
             'title' => 'Haz data',
             'tags' => [
@@ -1952,7 +1952,7 @@ class MarshallerTest extends TestCase
             'through' => 'SpecialTags',
         ]);
 
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         // Make only specific fields accessible, but not _joinData.
         $entity->tags[0]->setAccess('*', false);
         $entity->tags[0]->setAccess(['article_id', 'tag_id'], true);
@@ -2001,7 +2001,7 @@ class MarshallerTest extends TestCase
         $this->assertTrue($result->tags[0]->_joinData->highlighted);
 
         // Also ensure merge() overwrites existing data.
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $data = [
             'title' => 'Haz data',
             'tags' => [
@@ -2044,7 +2044,7 @@ class MarshallerTest extends TestCase
         $articlesTags->belongsTo('Users');
 
         $marshall = new Marshaller($this->articles);
-        $article = $this->articles->get(1, ['associated' => 'Tags']);
+        $article = $this->articles->get(1, ...['associated' => 'Tags']);
         $result = $marshall->merge($article, $data, ['associated' => ['Tags._joinData.Users']]);
 
         $this->assertTrue($result->isDirty('tags'));
@@ -2210,7 +2210,7 @@ class MarshallerTest extends TestCase
     public function testMergeBelongsToManyIdsRetainJoinData(): void
     {
         $this->articles->belongsToMany('Tags');
-        $entity = $this->articles->get(1, ['contain' => ['Tags']]);
+        $entity = $this->articles->get(1, ...['contain' => ['Tags']]);
         $entity->setAccess('*', true);
         $original = $entity->tags[0]->_joinData;
 

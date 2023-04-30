@@ -399,7 +399,7 @@ class TreeBehavior extends Behavior
             [$config['left'], $config['right']]
         );
 
-        $node = $this->_table->get($for, ['fields' => [$left, $right]]);
+        $node = $this->_table->get($for, select: [$left, $right]);
 
         return $this->_scope($query)
             ->where([

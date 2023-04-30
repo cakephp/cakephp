@@ -663,7 +663,7 @@ class CompositeKeysTest extends TestCase
         $this->assertSame($author, $result);
         $this->assertNotEmpty($result->site_articles);
 
-        $expected = $table->get([1, 1], ['contain' => ['SiteArticles']]);
+        $expected = $table->get([1, 1], ...['contain' => ['SiteArticles']]);
         $this->assertEquals($expected, $result);
     }
 
@@ -683,7 +683,7 @@ class CompositeKeysTest extends TestCase
         $this->assertSame($author, $result);
         $this->assertNotEmpty($result->site_author);
 
-        $expected = $table->get([2, 2], ['contain' => ['SiteAuthors']]);
+        $expected = $table->get([2, 2], ...['contain' => ['SiteAuthors']]);
         $this->assertEquals($expected, $result);
     }
 
