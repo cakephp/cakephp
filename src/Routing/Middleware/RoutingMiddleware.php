@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
