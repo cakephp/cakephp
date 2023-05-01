@@ -66,6 +66,9 @@ class AssociationCollection implements IteratorAggregate
      * @param string $alias The association alias
      * @param \Cake\ORM\Association $association The association to add.
      * @return \Cake\ORM\Association The association object being added.
+     * @template T of \Cake\ORM\Association
+     * @psalm-param T $association
+     * @psalm-return T
      */
     public function add(string $alias, Association $association): Association
     {
@@ -82,7 +85,9 @@ class AssociationCollection implements IteratorAggregate
      * @param array<string, mixed> $options List of options to configure the association definition.
      * @return \Cake\ORM\Association
      * @throws \InvalidArgumentException
-     * @psalm-param class-string<\Cake\ORM\Association> $className
+     * @template T of \Cake\ORM\Association
+     * @psalm-param class-string<T> $className
+     * @psalm-return T
      */
     public function load(string $className, string $associated, array $options = []): Association
     {
