@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use BadMethodCallException;
+use Cake\Cache\Engine\ChainedEngine;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
@@ -77,6 +78,7 @@ class CacheRegistry extends ObjectRegistry
         } else {
             $instance = new $class($config);
         }
+
         unset($config['className']);
 
         if (!($instance instanceof CacheEngine)) {
@@ -84,6 +86,9 @@ class CacheRegistry extends ObjectRegistry
                 'Cache engines must use Cake\Cache\CacheEngine as a base class.'
             );
         }
+
+        $config['alias'] = $alias;
+        $instance = new ChainedEngine($config, $instance);
 
         if (!$instance->init($config)) {
             throw new RuntimeException(

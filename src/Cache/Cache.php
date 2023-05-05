@@ -20,7 +20,6 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\Exception\CacheWriteException;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\StaticConfigTrait;
-use RuntimeException;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -156,36 +155,7 @@ class Cache
         /** @var array $config */
         $config = static::$_config[$name];
 
-        try {
-            $registry->load($name, $config);
-        } catch (RuntimeException $e) {
-            if (!array_key_exists('fallback', $config)) {
-                $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
-
-                return;
-            }
-
-            if ($config['fallback'] === false) {
-                throw $e;
-            }
-
-            if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(sprintf(
-                    '"%s" cache configuration cannot fallback to itself.',
-                    $name
-                ), 0, $e);
-            }
-
-            /** @var \Cake\Cache\CacheEngine $fallbackEngine */
-            $fallbackEngine = clone static::pool($config['fallback']);
-            $newConfig = $config + ['groups' => [], 'prefix' => null];
-            $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
-            if ($newConfig['prefix']) {
-                $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
-            }
-            $registry->set($name, $fallbackEngine);
-        }
+        $registry->load($name, $config);
 
         if ($config['className'] instanceof CacheEngine) {
             $config = $config['className']->getConfig();
