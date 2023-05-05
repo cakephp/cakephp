@@ -189,21 +189,21 @@ class HasManyTest extends TestCase
         }
 
         $assoc->setSort("$field DESC");
-        $result = $authors->get(1, ['contain' => 'Articles']);
+        $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
         $assoc->setSort(['Articles.id' => 'DESC']);
-        $result = $authors->get(1, ['contain' => 'Articles']);
+        $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
         $assoc->setSort(function () {
             return ['Articles.id' => 'DESC'];
         });
-        $result = $authors->get(1, ['contain' => 'Articles']);
+        $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
         $assoc->setSort(new OrderClauseExpression('Articles.id', 'DESC'));
-        $result = $authors->get(1, ['contain' => 'Articles']);
+        $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
     }
 
@@ -847,14 +847,14 @@ class HasManyTest extends TestCase
             'targetTable' => $articles,
         ]);
 
-        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $entity = $this->author->get(1, ...['contain' => 'Articles']);
         $initial = $entity->articles;
         $this->assertCount(2, $initial);
 
         $assoc->unlink($entity, $entity->articles);
         $this->assertEmpty($entity->get('articles'), 'Property should be empty');
 
-        $new = $this->author->get(2, ['contain' => 'Articles']);
+        $new = $this->author->get(2, ...['contain' => 'Articles']);
         $this->assertCount(0, $new->articles, 'DB should be clean');
         $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
         $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
@@ -871,13 +871,13 @@ class HasManyTest extends TestCase
             'targetTable' => $articles,
         ]);
 
-        $entity = $this->author->get(1, ['contain' => 'Articles']);
+        $entity = $this->author->get(1, ...['contain' => 'Articles']);
         $initial = $entity->articles;
         $this->assertCount(2, $initial);
 
         $assoc->unlink($entity, []);
 
-        $new = $this->author->get(1, ['contain' => 'Articles']);
+        $new = $this->author->get(1, ...['contain' => 'Articles']);
         $this->assertCount(2, $new->articles, 'Articles should remain linked');
         $this->assertSame(4, $this->author->find()->count(), 'Authors should still exist');
         $this->assertSame(3, $articles->find()->count(), 'Articles should still exist');
@@ -895,7 +895,7 @@ class HasManyTest extends TestCase
         ]);
 
         // Ensure author in fixture has zero associated articles
-        $entity = $this->author->get(2, ['contain' => 'Articles']);
+        $entity = $this->author->get(2, ...['contain' => 'Articles']);
         $initial = $entity->articles;
         $this->assertCount(0, $initial);
 
@@ -912,7 +912,7 @@ class HasManyTest extends TestCase
         $assoc->link($entity, $articles->find('all')->toArray(), $options);
 
         // Ensure that link was successful.
-        $new = $this->author->get(2, ['contain' => 'Articles']);
+        $new = $this->author->get(2, ...['contain' => 'Articles']);
         $this->assertCount(3, $new->articles);
     }
 
@@ -988,7 +988,7 @@ class HasManyTest extends TestCase
             'saveStrategy' => HasMany::SAVE_APPEND,
         ]);
 
-        $entity = $articles->get(1, [
+        $entity = $articles->get(1, ...[
             'contain' => ['Comments'],
         ]);
         $comments = $entity->get('comments');
@@ -998,7 +998,7 @@ class HasManyTest extends TestCase
         $this->assertSame($entity, $association->saveAssociated($entity));
         $this->assertEquals($value, $entity->get('comments'));
 
-        $entity = $articles->get(1, [
+        $entity = $articles->get(1, ...[
             'contain' => ['Comments'],
         ]);
         $this->assertEquals($comments, $entity->get('comments'));
@@ -1043,7 +1043,7 @@ class HasManyTest extends TestCase
             'saveStrategy' => HasMany::SAVE_REPLACE,
         ]);
 
-        $entity = $articles->get(1, [
+        $entity = $articles->get(1, ...[
             'contain' => ['Comments'],
         ]);
         $comments = $entity->get('comments');
@@ -1053,7 +1053,7 @@ class HasManyTest extends TestCase
         $this->assertSame($entity, $association->saveAssociated($entity));
         $this->assertEquals([], $entity->get('comments'));
 
-        $entity = $articles->get(1, [
+        $entity = $articles->get(1, ...[
             'contain' => ['Comments'],
         ]);
         $this->assertEmpty($entity->get('comments'));
@@ -1351,7 +1351,7 @@ class HasManyTest extends TestCase
         // Remove an article from the association finder scope
         $articles->updateAll(['published' => 'N'], ['author_id' => 1, 'title' => 'Third Article']);
 
-        $entity = $authors->get(1, ['contain' => ['Articles']]);
+        $entity = $authors->get(1, ...['contain' => ['Articles']]);
         $data = [
             'name' => 'updated',
             'articles' => [

@@ -789,7 +789,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEmpty($entity->author);
         $this->assertNotEmpty($entity->author->name);
 
-        $expected = $table->get(1, ['contain' => ['Authors']]);
+        $expected = $table->get(1, ...['contain' => ['Authors']]);
         $this->assertEquals($expected, $result);
         $this->assertNotEmpty($entity->author);
         $this->assertNotEmpty($entity->author->name);
@@ -810,7 +810,7 @@ class TranslateBehaviorEavTest extends TestCase
         ]);
         $specialTags->setLocale('eng');
 
-        $result = $table->get(2, ['contain' => 'Tags']);
+        $result = $table->get(2, ...['contain' => 'Tags']);
         $this->assertNotEmpty($result);
         $this->assertNotEmpty($result->tags);
         $this->assertSame('Translated Info', $result->tags[0]->special_tags[0]->extra_info);
@@ -835,7 +835,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEmpty($entity->author);
         $this->assertFalse($entity->author->isDirty());
 
-        $entity = $table->get(1, ['contain' => ['Authors']]);
+        $entity = $table->get(1, ...['contain' => ['Authors']]);
         $this->assertNotEmpty($entity);
         $this->assertFalse($entity->isDirty());
         $this->assertNotEmpty($entity->author);
@@ -858,7 +858,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEmpty($entity->article);
         $this->assertFalse($entity->article->isDirty());
 
-        $entity = $table->get(1, ['contain' => 'Articles']);
+        $entity = $table->get(1, ...['contain' => 'Articles']);
         $this->assertNotEmpty($entity);
         $this->assertFalse($entity->isDirty());
         $this->assertNotEmpty($entity->article);

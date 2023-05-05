@@ -248,7 +248,7 @@ class QueryRegressionTest extends TestCase
         ];
         $entity = $articles->patchEntity($entity, $data, ['Highlights._joinData']);
         $articles->save($entity);
-        $entity = $articles->get(2, ['contain' => ['Highlights']]);
+        $entity = $articles->get(2, ...['contain' => ['Highlights']]);
         $this->assertSame(4, $entity->highlights[0]->_joinData->tag_id);
         $this->assertSame('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
     }
@@ -328,7 +328,7 @@ class QueryRegressionTest extends TestCase
         $articles->Highlights->hasOne('Authors', [
             'foreignKey' => 'id',
         ]);
-        $entity = $articles->get(2, ['contain' => ['Highlights']]);
+        $entity = $articles->get(2, ...['contain' => ['Highlights']]);
 
         $data = [
             'highlights' => [
@@ -352,7 +352,7 @@ class QueryRegressionTest extends TestCase
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
         $articles->save($entity, $options);
-        $entity = $articles->get(2, [
+        $entity = $articles->get(2, ...[
             'contain' => [
                 'SpecialTags' => ['sort' => ['SpecialTags.id' => 'ASC']],
                 'SpecialTags.Authors',
@@ -418,7 +418,7 @@ class QueryRegressionTest extends TestCase
             'className' => 'TestApp\Model\Table\ArticlesTable',
             'foreignKey' => 'author_id',
         ]);
-        $entity = $articles->get(2, ['contain' => ['Highlights']]);
+        $entity = $articles->get(2, ...['contain' => ['Highlights']]);
 
         $data = [
             'highlights' => [
@@ -442,7 +442,7 @@ class QueryRegressionTest extends TestCase
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
         $articles->save($entity, $options);
-        $entity = $articles->get(2, [
+        $entity = $articles->get(2, ...[
             'contain' => [
                 'Highlights.TopArticles',
             ],

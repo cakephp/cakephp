@@ -165,21 +165,21 @@ class BelongsToManyTest extends TestCase
         }
 
         $assoc->setSort("$field DESC");
-        $result = $articles->get(1, ['contain' => 'Tags']);
+        $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
         $assoc->setSort(['Tags.id' => 'DESC']);
-        $result = $articles->get(1, ['contain' => 'Tags']);
+        $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
         $assoc->setSort(function () {
             return ['Tags.id' => 'DESC'];
         });
-        $result = $articles->get(1, ['contain' => 'Tags']);
+        $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
         $assoc->setSort(new OrderClauseExpression('Tags.id', 'DESC'));
-        $result = $articles->get(1, ['contain' => 'Tags']);
+        $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
     }
 
@@ -405,7 +405,7 @@ class BelongsToManyTest extends TestCase
             'finder' => 'published',
         ]);
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
-        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles, 'only one article should load');
         $this->assertSame('Y', $entity->articles[0]->published);
     }
@@ -589,7 +589,7 @@ class BelongsToManyTest extends TestCase
         $this->assertCount(2, $article->tags, 'In-memory tags are incorrect');
         $this->assertSame([2, 3], collection($article->tags)->extract('id')->toList());
 
-        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article = $articles->get(1, ...['contain' => ['Tags']]);
         $this->assertCount(3, $article->tags, 'Persisted tags are wrong');
         $this->assertSame([1, 2, 3], collection($article->tags)->extract('id')->toList());
     }
@@ -774,14 +774,14 @@ class BelongsToManyTest extends TestCase
             'through' => $joint,
             'joinTable' => 'special_tags',
         ]);
-        $entity = $articles->get(2, ['contain' => 'Tags']);
+        $entity = $articles->get(2, ...['contain' => 'Tags']);
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
         $this->assertTrue($assoc->unlink($entity, $entity->tags));
         $this->assertEmpty($entity->get('tags'), 'Property should be empty');
 
-        $new = $articles->get(2, ['contain' => 'Tags']);
+        $new = $articles->get(2, ...['contain' => 'Tags']);
         $this->assertCount(0, $new->tags, 'DB should be clean');
         $this->assertSame(3, $tags->find()->count(), 'Tags should still exist');
     }
@@ -803,7 +803,7 @@ class BelongsToManyTest extends TestCase
             'joinTable' => 'special_tags',
             'conditions' => ['SpecialTags.highlighted' => true],
         ]);
-        $entity = $articles->get(2, ['contain' => 'Tags']);
+        $entity = $articles->get(2, ...['contain' => 'Tags']);
         $initial = $entity->tags;
         $this->assertCount(1, $initial);
 
@@ -811,7 +811,7 @@ class BelongsToManyTest extends TestCase
         $this->assertNotEmpty($entity->get('tags'), 'Property should not be empty');
         $this->assertEquals($initial, $entity->get('tags'), 'Property should be untouched');
 
-        $new = $articles->get(2, ['contain' => 'Tags']);
+        $new = $articles->get(2, ...['contain' => 'Tags']);
         $this->assertCount(0, $new->tags, 'DB should be clean');
     }
 
@@ -850,14 +850,14 @@ class BelongsToManyTest extends TestCase
             'joinTable' => 'articles_tags',
         ]);
 
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertCount(2, $entity->tags);
 
         $assoc->replaceLinks($entity, []);
         $this->assertSame([], $entity->tags, 'Property should be empty');
         $this->assertFalse($entity->isDirty('tags'), 'Property should be cleaned');
 
-        $new = $articles->get(1, ['contain' => 'Tags']);
+        $new = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([], $new->tags, 'Should not be data in db');
     }
 
@@ -877,7 +877,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
             'through' => $joint,
         ]);
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
 
         // 1=existing, 2=removed, 3=new link, & new tag
         $tagData = [
@@ -891,7 +891,7 @@ class BelongsToManyTest extends TestCase
         $this->assertSame($tagData, $entity->tags, 'Tags should match replaced objects');
         $this->assertFalse($entity->isDirty('tags'), 'Should be clean');
 
-        $fresh = $articles->get(1, ['contain' => 'Tags']);
+        $fresh = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertCount(3, $fresh->tags, 'Records should be in db');
 
         $this->assertNotEmpty($tags->get(2), 'Unlinked tag should still exist');
@@ -917,14 +917,14 @@ class BelongsToManyTest extends TestCase
             'joinTable' => 'special_tags',
             'conditions' => ['SpecialTags.highlighted' => true],
         ]);
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
 
         $result = $assoc->replaceLinks($entity, [], ['associated' => false]);
         $this->assertTrue($result);
         $this->assertSame([], $entity->tags, 'Tags should match replaced objects');
         $this->assertFalse($entity->isDirty('tags'), 'Should be clean');
 
-        $fresh = $articles->get(1, ['contain' => 'Tags']);
+        $fresh = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertCount(0, $fresh->tags, 'Association should be empty');
 
         $jointCount = $joint->find()->where(['article_id' => 1])->count();
@@ -951,7 +951,7 @@ class BelongsToManyTest extends TestCase
             'through' => $joint,
             'finder' => 'published',
         ]);
-        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles);
 
         $result = $assoc->replaceLinks($entity, [], ['associated' => false]);
@@ -959,7 +959,7 @@ class BelongsToManyTest extends TestCase
         $this->assertSame([], $entity->articles, 'Articles should match replaced objects');
         $this->assertFalse($entity->isDirty('articles'), 'Should be clean');
 
-        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $fresh = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(0, $fresh->articles, 'Association should be empty');
 
         $other = $joint->find()->where(['tag_id' => 1])->toArray();
@@ -989,7 +989,7 @@ class BelongsToManyTest extends TestCase
             $this->assertNotEmpty($entity->article_id);
         });
 
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertCount(2, $entity->tags);
 
         $assoc->replaceLinks($entity, []);
@@ -1012,12 +1012,12 @@ class BelongsToManyTest extends TestCase
             'through' => $joint,
             'finder' => ['published' => ['title' => 'First Article']],
         ]);
-        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles);
 
         $assoc->replaceLinks($entity, []);
 
-        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $fresh = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(0, $fresh->articles, 'Association should be empty');
 
         $other = $joint->find()->where(['tag_id' => 1])->toArray();
@@ -1048,7 +1048,7 @@ class BelongsToManyTest extends TestCase
 
         $assoc->replaceLinks($tag, [$article]);
 
-        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $fresh = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $fresh->articles);
     }
 
@@ -1070,7 +1070,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
             'through' => $this->getTableLocator()->get('ArticlesTags'),
         ]);
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $originalCount = count($entity->tags);
 
         $tags = [
@@ -1080,7 +1080,7 @@ class BelongsToManyTest extends TestCase
         $this->assertFalse($result, 'replace should have failed.');
         $this->assertNotEmpty($tags[0]->getErrors(), 'Bad entity should have errors.');
 
-        $entity = $articles->get(1, ['contain' => 'Tags']);
+        $entity = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertCount($originalCount, $entity->tags, 'Should not have changed.');
         $this->assertSame('tag1', $entity->tags[0]->name);
     }
@@ -1117,7 +1117,7 @@ class BelongsToManyTest extends TestCase
         $refresh->binary_uuid_tags = [$refresh->binary_uuid_tags[0]];
         $items->save($refresh);
 
-        $refresh = $items->get($item->id, ['contain' => 'BinaryUuidTags']);
+        $refresh = $items->get($item->id, ...['contain' => 'BinaryUuidTags']);
         $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
     }
 

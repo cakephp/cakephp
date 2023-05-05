@@ -3255,12 +3255,12 @@ class TableTest extends TestCase
             'cascadeCallbacks' => true,
         ]);
 
-        $section = $sections->get(1, ['contain' => 'Members']);
+        $section = $sections->get(1, contain: 'Members');
         $this->assertSame(1, count($section->members));
 
         $this->assertFalse($sections->delete($section));
 
-        $section = $sections->get(1, ['contain' => 'Members']);
+        $section = $sections->get(1, contain: 'Members');
         $this->assertSame(1, count($section->members));
     }
 
@@ -3868,7 +3868,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
 
-        $entity = $table->get(3, ['contain' => ['articles']]);
+        $entity = $table->get(3, contain: ['articles']);
         $data = [
             'name' => 'big jose',
             'articles' => [
@@ -3881,7 +3881,7 @@ class TableTest extends TestCase
         $entity = $table->patchEntity($entity, $data, ['associated' => 'articles']);
         $this->assertSame($entity, $table->save($entity));
 
-        $entity = $table->get(3, ['contain' => ['articles']]);
+        $entity = $table->get(3, contain: ['articles']);
         $this->assertSame('big jose', $entity->name, 'Author did not persist');
         $this->assertSame('New title', $entity->articles[0]->title, 'Article did not persist');
     }
@@ -3953,7 +3953,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyJoinData(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article = $articles->get(1, contain: ['Tags']);
         $data = [
             'tags' => [
                 ['id' => 1, '_joinData' => ['highlighted' => 1]],
@@ -3983,7 +3983,7 @@ class TableTest extends TestCase
 
         $articles->Tags->junction()->belongsTo('Tags');
 
-        $entity = $articles->get(1, ['contain' => ['Tags']]);
+        $entity = $articles->get(1, contain: ['Tags']);
         $data = [
             'id' => 1,
             'tags' => [
@@ -4049,7 +4049,7 @@ class TableTest extends TestCase
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, contain: 'Tags');
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $entity->tags = [];
@@ -4057,7 +4057,7 @@ class TableTest extends TestCase
         $this->assertSame($result, $entity);
         $this->assertSame([], $entity->tags, 'No tags on the entity.');
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, contain: 'Tags');
         $this->assertSame([], $entity->tags, 'No tags in the db either.');
     }
 
@@ -4073,7 +4073,7 @@ class TableTest extends TestCase
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, contain: 'Tags');
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $tag = new Entity([
@@ -4085,7 +4085,7 @@ class TableTest extends TestCase
         $this->assertCount(1, $entity->tags, 'Only one tag left.');
         $this->assertEquals($tag, $entity->tags[0]);
 
-        $entity = $table->get(1, ['contain' => 'Tags']);
+        $entity = $table->get(1, contain: 'Tags');
         $this->assertCount(1, $entity->tags, 'Only one tag in the db.');
         $this->assertEquals($tag->id, $entity->tags[0]->id);
     }
@@ -4096,7 +4096,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyIgnoreNonEntityData(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $article = $articles->get(1, ['contain' => ['Tags']]);
+        $article = $articles->get(1, contain: ['Tags']);
         $article->tags = [
             '_ids' => [2, 1],
         ];
@@ -5378,7 +5378,7 @@ class TableTest extends TestCase
     {
         return [
             [['fields' => ['id']]],
-            [['fields' => ['id'], 'cache' => false]],
+            [['fields' => ['id'], 'cache' => null]],
         ];
     }
 
@@ -5421,7 +5421,7 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
 
-        $result = $table->get(10, $options);
+        $result = $table->get(10, ...$options);
         $this->assertSame($entity, $result);
     }
 
@@ -5473,7 +5473,7 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
 
-        $result = $table->get(10, $options);
+        $result = $table->get(10, ...$options);
         $this->assertSame($entity, $result);
     }
 
@@ -5493,7 +5493,7 @@ class TableTest extends TestCase
                 'get-test-table_name-["2020-07-08T00:00:00+00:00"]', 'default', new DateTime('2020-07-08'),
             ],
             [
-                ['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
+                ['fields' => ['id'], 'cache' => 'default', 'cacheKey' => 'custom_key'],
                 'custom_key', 'default', 10,
             ],
         ];
@@ -5543,8 +5543,22 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
 
-        $result = $table->get($primaryKey, $options);
+        $result = $table->get($primaryKey, ...$options);
         $this->assertSame($entity, $result);
+    }
+
+    /**
+     * Test get() with options array.
+     *
+     * @return void
+     */
+    public function testGetBackwardsCompatibility(): void
+    {
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('Articles');
+            $article = $table->get(1, ['contain' => 'Authors']);
+            $this->assertNotEmpty($article->author);
+        });
     }
 
     /**
@@ -6377,7 +6391,7 @@ class TableTest extends TestCase
         $result = $table->loadInto($entity, ['SiteArticles', 'Articles.Tags']);
         $this->assertSame($entity, $result);
 
-        $expected = $table->get(1, ['contain' => ['SiteArticles', 'Articles.Tags']]);
+        $expected = $table->get(1, contain: ['SiteArticles', 'Articles.Tags']);
         $this->assertEquals($expected, $result);
     }
 
@@ -6400,7 +6414,7 @@ class TableTest extends TestCase
         ];
         $result = $table->loadInto($entity, $options);
         $this->assertSame($entity, $result);
-        $expected = $table->get(1, ['contain' => $options]);
+        $expected = $table->get(1, contain: $options);
         $this->assertEquals($expected, $result);
     }
 
@@ -6416,7 +6430,7 @@ class TableTest extends TestCase
         $result = $table->loadInto($entity, ['Authors']);
         $this->assertSame($entity, $result);
 
-        $expected = $table->get(2, ['contain' => ['Authors']]);
+        $expected = $table->get(2, contain: ['Authors']);
         $this->assertEquals($expected, $entity);
     }
 

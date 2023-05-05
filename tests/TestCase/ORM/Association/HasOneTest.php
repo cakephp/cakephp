@@ -382,7 +382,7 @@ class HasOneTest extends TestCase
         $Articles->save($entity);
 
         // get author with null binding key
-        $entity = $Authors->get(2, ['contain' => 'Articles']);
+        $entity = $Authors->get(2, ...['contain' => 'Articles']);
         $this->assertNull($entity->article);
         $this->assertTrue($association->cascadeDelete($entity));
 

@@ -106,7 +106,7 @@ class ResultSetFactoryTest extends TestCase
         $this->assertNotEmpty($comment['comment']);
         $this->assertNull($comment['article']);
 
-        $comment = $comments->get(1, ['contain' => ['Articles']]);
+        $comment = $comments->get(1, ...['contain' => ['Articles']]);
         $this->assertNull($comment->article);
         $this->assertSame(1, $comment->id);
         $this->assertNotEmpty($comment->comment);
@@ -154,7 +154,7 @@ class ResultSetFactoryTest extends TestCase
         $comments = $this->getTableLocator()->get('Comments');
         $comments->deleteAll([]);
 
-        $article = $this->table->get(1, ['contain' => ['Comments']]);
+        $article = $this->table->get(1, ...['contain' => ['Comments']]);
         $this->assertNull($article->comment);
         $this->assertSame(1, $article->id);
         $this->assertNotEmpty($article->title);
