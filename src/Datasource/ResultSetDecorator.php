@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
 use Countable;
 
 /**
@@ -45,5 +46,16 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
         }
 
         return count($this->toArray());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __debugInfo(): array
+    {
+        $parentInfo = parent::__debugInfo();
+        $limit = Configure::read('App.ResultSetDebugLimit', 10);
+
+        return array_merge($parentInfo, ['items' => $this->take($limit)->toArray()]);
     }
 }
