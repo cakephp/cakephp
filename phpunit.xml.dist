@@ -29,7 +29,7 @@
     </testsuites>
 
     <extensions>
-        <bootstrap class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
+        <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
     </extensions>
 
     <source>

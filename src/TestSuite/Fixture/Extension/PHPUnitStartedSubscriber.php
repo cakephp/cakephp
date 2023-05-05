@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Fixture\PHPUnitSubscriber;
+namespace Cake\TestSuite\Fixture\Extension;
 
 use Cake\Log\Log;
 use Cake\TestSuite\ConnectionHelper;
