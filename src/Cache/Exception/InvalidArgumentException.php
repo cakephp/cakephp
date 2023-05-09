@@ -25,10 +25,3 @@ use Psr\SimpleCache\InvalidArgumentException as InvalidArgumentInterface;
 class InvalidArgumentException extends CakeException implements InvalidArgumentInterface
 {
 }
-// phpcs:disable
-// @deprecated Backwards compatibility alias. Will be removed in 5.0
-class_alias(
-    'Cake\Cache\Exception\InvalidArgumentException',
-    'Cake\Cache\InvalidArgumentException'
-);
-// phpcs:enable
