@@ -563,7 +563,7 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigsThrowsOldException(): void
     {
-        $this->expectException('Cake\Cache\InvalidArgumentException');
+        $this->expectException('Cake\Cache\Exception\InvalidArgumentException');
         Cache::groupConfigs('bogus');
     }
 
