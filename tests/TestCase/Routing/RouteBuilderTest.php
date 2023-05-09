@@ -158,32 +158,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test that compiling a route results in an trailing / optional pattern.
-     */
-    public function testConnectTrimTrailingSlash(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/articles', ['controller' => 'Articles']);
-        $routes->connect('/', ['action' => 'index']);
-
-        $this->deprecated(function () {
-            $expected = [
-                'plugin' => null,
-                'controller' => 'Articles',
-                'action' => 'index',
-                'pass' => [],
-                '_matchedRoute' => '/articles',
-            ];
-            $result = $this->collection->parse('/articles');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-
-            $result = $this->collection->parse('/articles/');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
      * Test connect() with short string syntax
      */
     public function testConnectShortStringInvalid(): void
@@ -191,108 +165,6 @@ class RouteBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect('/my-articles/view', 'Articles:no');
-    }
-
-    /**
-     * Test connect() with short string syntax
-     */
-    public function testConnectShortString(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/my-articles/view', 'Articles::view');
-        $this->deprecated(function () {
-            $expected = [
-                'pass' => [],
-                'controller' => 'Articles',
-                'action' => 'view',
-                'plugin' => null,
-                '_matchedRoute' => '/my-articles/view',
-            ];
-            $result = $this->collection->parse('/my-articles/view');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-
-            $url = $expected['_matchedRoute'];
-            unset($expected['_matchedRoute']);
-            $this->assertSame($url, '/' . $this->collection->match($expected, []));
-        });
-    }
-
-    /**
-     * Test connect() with short string syntax
-     */
-    public function testConnectShortStringPrefix(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/admin/bookmarks', 'Admin/Bookmarks::index');
-        $this->deprecated(function () {
-            $expected = [
-                'pass' => [],
-                'plugin' => null,
-                'prefix' => 'Admin',
-                'controller' => 'Bookmarks',
-                'action' => 'index',
-                '_matchedRoute' => '/admin/bookmarks',
-            ];
-            $result = $this->collection->parse('/admin/bookmarks');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-
-            $url = $expected['_matchedRoute'];
-            unset($expected['_matchedRoute']);
-            $this->assertSame($url, '/' . $this->collection->match($expected, []));
-        });
-    }
-
-    /**
-     * Test connect() with short string syntax
-     */
-    public function testConnectShortStringPlugin(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/blog/articles/view', 'Blog.Articles::view');
-        $this->deprecated(function () {
-            $expected = [
-                'pass' => [],
-                'plugin' => 'Blog',
-                'controller' => 'Articles',
-                'action' => 'view',
-                '_matchedRoute' => '/blog/articles/view',
-            ];
-            $result = $this->collection->parse('/blog/articles/view');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-
-            $url = $expected['_matchedRoute'];
-            unset($expected['_matchedRoute']);
-            $this->assertSame($url, '/' . $this->collection->match($expected, []));
-        });
-    }
-
-    /**
-     * Test connect() with short string syntax
-     */
-    public function testConnectShortStringPluginPrefix(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->connect('/admin/blog/articles/view', 'Vendor/Blog.Management/Admin/Articles::view');
-        $this->deprecated(function () {
-            $expected = [
-                'pass' => [],
-                'plugin' => 'Vendor/Blog',
-                'prefix' => 'Management/Admin',
-                'controller' => 'Articles',
-                'action' => 'view',
-                '_matchedRoute' => '/admin/blog/articles/view',
-            ];
-            $result = $this->collection->parse('/admin/blog/articles/view');
-            unset($result['_route']);
-            $this->assertEquals($expected, $result);
-
-            $url = $expected['_matchedRoute'];
-            unset($expected['_matchedRoute']);
-            $this->assertSame($url, '/' . $this->collection->match($expected, []));
-        });
     }
 
     /**
@@ -676,31 +548,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test connecting resources with restricted mappings.
-     */
-    public function testResourcesWithMapOnly(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('Articles', [
-            'map' => [
-                'conditions' => ['action' => 'conditions', 'method' => 'DeLeTe'],
-            ],
-            'only' => ['conditions'],
-        ]);
-
-        $all = $this->collection->routes();
-        $this->assertCount(1, $all);
-        $this->assertSame('DELETE', $all[0]->defaults['_method'], 'method should be normalized.');
-        $this->assertSame('Articles', $all[0]->defaults['controller']);
-        $this->assertSame('conditions', $all[0]->defaults['action']);
-
-        $this->deprecated(function () {
-            $result = $this->collection->parse('/api/articles/conditions', 'DELETE');
-            $this->assertNotNull($result);
-        });
-    }
-
-    /**
      * Test connecting resources.
      */
     public function testResourcesInScope(): void
@@ -728,42 +575,6 @@ class RouteBuilderTest extends TestCase
             'id' => '99',
         ]);
         $this->assertSame('/api/articles/99.json', $url);
-    }
-
-    /**
-     * Test resource parsing.
-     */
-    public function testResourcesParsing(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->resources('Articles');
-
-        $this->deprecated(function () {
-            $result = $this->collection->parse('/articles', 'GET');
-            $this->assertSame('Articles', $result['controller']);
-            $this->assertSame('index', $result['action']);
-            $this->assertEquals([], $result['pass']);
-
-            $result = $this->collection->parse('/articles/1', 'GET');
-            $this->assertSame('Articles', $result['controller']);
-            $this->assertSame('view', $result['action']);
-            $this->assertEquals([1], $result['pass']);
-
-            $result = $this->collection->parse('/articles', 'POST');
-            $this->assertSame('Articles', $result['controller']);
-            $this->assertSame('add', $result['action']);
-            $this->assertEquals([], $result['pass']);
-
-            $result = $this->collection->parse('/articles/1', 'PUT');
-            $this->assertSame('Articles', $result['controller']);
-            $this->assertSame('edit', $result['action']);
-            $this->assertEquals([1], $result['pass']);
-
-            $result = $this->collection->parse('/articles/1', 'DELETE');
-            $this->assertSame('Articles', $result['controller']);
-            $this->assertSame('delete', $result['action']);
-            $this->assertEquals([1], $result['pass']);
-        });
     }
 
     /**
@@ -1136,30 +947,6 @@ class RouteBuilderTest extends TestCase
             ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
             $route->defaults
         );
-    }
-
-    /**
-     * Integration test for http method helpers and route fluent method
-     */
-    public function testHttpMethodIntegration(): void
-    {
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->scope('/', function (RouteBuilder $routes): void {
-            $routes->get('/faq/{page}', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
-                ->setPatterns(['page' => '[a-z0-9_]+'])
-                ->setHost('docs.example.com');
-
-            $routes->post('/articles/{id}', ['controller' => 'Articles', 'action' => 'update'], 'article:update')
-                ->setPatterns(['id' => '[0-9]+'])
-                ->setPass(['id']);
-        });
-        $this->assertCount(2, $this->collection->routes());
-        $this->assertEquals(['faq', 'article:update'], array_keys($this->collection->named()));
-        $this->deprecated(function () {
-            $this->assertNotEmpty($this->collection->parse('/faq/things_you_know', 'GET'));
-            $result = $this->collection->parse('/articles/123', 'POST');
-            $this->assertEquals(['123'], $result['pass']);
-        });
     }
 
     /**

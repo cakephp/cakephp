@@ -23,7 +23,6 @@ use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use function Cake\Core\deprecationWarning;
 
 /**
  * Contains a collection of routes.
@@ -125,75 +124,6 @@ class RouteCollection
         }
 
         $this->_paths[$path][] = $route;
-    }
-
-    /**
-     * Takes the URL string and iterates the routes until one is able to parse the route.
-     *
-     * @param string $url URL to parse.
-     * @param string $method The HTTP method to use.
-     * @return array An array of request parameters parsed from the URL.
-     * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
-     * @deprecated 4.5.0 Use parseRequest() instead.
-     */
-    public function parse(string $url, string $method = ''): array
-    {
-        deprecationWarning('4.5.0', 'Use parseRequest() instead.');
-        $queryParameters = [];
-        if (strpos($url, '?') !== false) {
-            [$url, $qs] = explode('?', $url, 2);
-            parse_str($qs, $queryParameters);
-        }
-
-        $decoded = urldecode($url);
-        if ($decoded !== '/') {
-            $decoded = rtrim($decoded, '/');
-        }
-
-        if (isset($this->staticPaths[$decoded])) {
-            foreach ($this->staticPaths[$decoded] as $route) {
-                $r = $route->parse($url, $method);
-                if ($r === null) {
-                    continue;
-                }
-
-                if ($queryParameters) {
-                    $r['?'] = $queryParameters;
-                }
-
-                return $r;
-            }
-        }
-
-        // Sort path segments matching longest paths first.
-        krsort($this->_paths);
-
-        foreach ($this->_paths as $path => $routes) {
-            if (strpos($decoded, $path) !== 0) {
-                continue;
-            }
-
-            foreach ($routes as $route) {
-                $r = $route->parse($url, $method);
-                if ($r === null) {
-                    continue;
-                }
-                if ($queryParameters) {
-                    $r['?'] = $queryParameters;
-                }
-
-                return $r;
-            }
-        }
-
-        $exceptionProperties = ['url' => $url];
-        if ($method !== '') {
-            // Ensure that if the method is included, it is the first element of
-            // the array, to match the order that the strings are printed in the
-            // MissingRouteException error message, $_messageTemplateWithMethod.
-            $exceptionProperties = array_merge(['method' => $method], $exceptionProperties);
-        }
-        throw new MissingRouteException($exceptionProperties);
     }
 
     /**
