@@ -985,13 +985,13 @@ class RouteBuilder
     }
 
     /**
-     * Apply a middleware to the current route scope.
+     * Apply one or many middleware to the current route scope.
      *
-     * Requires middleware to be registered via `registerMiddleware()`
+     * Requires middleware to be registered via `registerMiddleware()`.
      *
      * @param string ...$names The names of the middleware to apply to the current scope.
      * @return $this
-     * @throws \RuntimeException
+     * @throws \RuntimeException If it cannot apply one of the given middleware or middleware groups.
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
     public function applyMiddleware(string ...$names)
