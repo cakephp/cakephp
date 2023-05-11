@@ -687,8 +687,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/api/articles/conditions',
             'environment' => [
-                'REQUEST_METHOD' => 'DELETE'
-            ]
+                'REQUEST_METHOD' => 'DELETE',
+            ],
         ]));
         $this->assertNotNull($result);
     }
@@ -734,8 +734,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles',
             'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ]
+                'REQUEST_METHOD' => 'GET',
+            ],
         ]));
         $this->assertSame('Articles', $result['controller']);
         $this->assertSame('index', $result['action']);
@@ -744,8 +744,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles/1',
             'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ]
+                'REQUEST_METHOD' => 'GET',
+            ],
         ]));
         $this->assertSame('Articles', $result['controller']);
         $this->assertSame('view', $result['action']);
@@ -754,8 +754,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles',
             'environment' => [
-                'REQUEST_METHOD' => 'POST'
-            ]
+                'REQUEST_METHOD' => 'POST',
+            ],
         ]));
         $this->assertSame('Articles', $result['controller']);
         $this->assertSame('add', $result['action']);
@@ -764,8 +764,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles/1',
             'environment' => [
-                'REQUEST_METHOD' => 'PUT'
-            ]
+                'REQUEST_METHOD' => 'PUT',
+            ],
         ]));
         $this->assertSame('Articles', $result['controller']);
         $this->assertSame('edit', $result['action']);
@@ -774,8 +774,8 @@ class RouteBuilderTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles/1',
             'environment' => [
-                'REQUEST_METHOD' => 'DELETE'
-            ]
+                'REQUEST_METHOD' => 'DELETE',
+            ],
         ]));
         $this->assertSame('Articles', $result['controller']);
         $this->assertSame('delete', $result['action']);
@@ -1176,13 +1176,13 @@ class RouteBuilderTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
                 'HTTP_HOST' => 'docs.example.com',
-            ]
+            ],
         ])));
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/articles/123',
             'environment' => [
-                'REQUEST_METHOD' => 'POST'
-            ]
+                'REQUEST_METHOD' => 'POST',
+            ],
         ]));
         $this->assertEquals(['123'], $result['pass']);
     }

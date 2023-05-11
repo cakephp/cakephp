@@ -69,15 +69,15 @@ class RouteCollectionTest extends TestCase
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/b',
             'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ]
+                'REQUEST_METHOD' => 'GET',
+            ],
         ]));
         $this->assertNotEmpty($result, 'Route should be found');
         $result = $this->collection->parseRequest(new ServerRequest([
             'url' => '/b',
             'environment' => [
-                'REQUEST_METHOD' => 'POST'
-            ]
+                'REQUEST_METHOD' => 'POST',
+            ],
         ]));
         $this->assertEquals([], $result, 'Should not match with missing method');
     }

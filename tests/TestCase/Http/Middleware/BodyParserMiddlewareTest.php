@@ -393,8 +393,8 @@ XML;
                 'environment' => [
                     'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json',
-            ],
-            'input' => $body,
+                ],
+                'input' => $body,
         ]);
         $handler = new TestRequestHandler(function ($req) use ($expected) {
             $this->assertSame($expected, $req->getParsedBody());
