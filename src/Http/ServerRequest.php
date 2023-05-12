@@ -24,7 +24,6 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use Closure;
 use InvalidArgumentException;
-use Laminas\Diactoros\PhpInputStream;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;
@@ -293,7 +292,7 @@ class ServerRequest implements ServerRequestInterface
             $stream->write($config['input']);
             $stream->rewind();
         } else {
-            $stream = new PhpInputStream();
+            $stream = new Stream('php://input');
         }
         $this->stream = $stream;
 
@@ -827,9 +826,8 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header you want to get (case-insensitive)
      * @return bool Whether the header is defined.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         $name = $this->normalizeHeaderName($name);
 
@@ -846,9 +844,8 @@ class ServerRequest implements ServerRequestInterface
      * @return array<string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         $name = $this->normalizeHeaderName($name);
         if (isset($this->_environment[$name])) {
@@ -864,9 +861,8 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header you want to get (case-insensitive)
      * @return string Header values collapsed into a comma separated string.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         $value = $this->getHeader($name);
 
@@ -882,7 +878,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withHeader($name, $value): static
+    public function withHeader(string $name, $value): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -903,7 +899,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withAddedHeader($name, $value): static
+    public function withAddedHeader(string $name, $value): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -923,9 +919,8 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The header name to remove.
      * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withoutHeader($name): static
+    public function withoutHeader(string $name): static
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
@@ -959,17 +954,12 @@ class ServerRequest implements ServerRequestInterface
      * @param string $method The HTTP method to use.
      * @return static A new instance with the updated method.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withMethod($method): static
+    public function withMethod(string $method): static
     {
         $new = clone $this;
 
-        /** @psalm-suppress DocblockTypeContradiction */
-        if (
-            !is_string($method) ||
-            !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
-        ) {
+        if (!preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)) {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported HTTP method `%s` provided.',
                 $method
@@ -1373,9 +1363,8 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $version HTTP protocol version
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withProtocolVersion($version): static
+    public function withProtocolVersion(string $version): static
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
             throw new InvalidArgumentException(sprintf('Unsupported protocol version `%s` provided.', $version));
@@ -1534,9 +1523,8 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withAttribute($name, $value): static
+    public function withAttribute(string $name, mixed $value): static
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1554,9 +1542,8 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @return static
      * @throws \InvalidArgumentException
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withoutAttribute($name): static
+    public function withoutAttribute(string $name): static
     {
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1573,11 +1560,11 @@ class ServerRequest implements ServerRequestInterface
      * Read an attribute from the request, or get the default
      *
      * @param string $name The attribute name.
-     * @param mixed|null $default The default value if the attribute has not been set.
+     * @param mixed $default The default value if the attribute has not been set.
      * @return mixed
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+     * @psalm-suppress MethodSignatureMismatch
      */
-    public function getAttribute($name, $default = null): mixed
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
             if ($name === 'here') {
@@ -1721,9 +1708,8 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): static
+    public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $new = clone $this;
         $new->uri = $uri;
@@ -1756,9 +1742,8 @@ class ServerRequest implements ServerRequestInterface
      *   request-target forms allowed in request messages)
      * @param string $requestTarget The request target.
      * @return static
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function withRequestTarget($requestTarget): static
+    public function withRequestTarget(string $requestTarget): static
     {
         $new = clone $this;
         $new->requestTarget = $requestTarget;

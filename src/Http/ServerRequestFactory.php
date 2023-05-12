@@ -53,7 +53,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $cookies = null,
         ?array $files = null
     ): ServerRequest {
-        $server = normalizeServer($server ?: $_SERVER);
+        $server = normalizeServer($server ?? $_SERVER);
         ['uri' => $uri, 'base' => $base, 'webroot' => $webroot] = UriFactory::marshalUriAndBaseFromSapi($server);
 
         $sessionConfig = (array)Configure::read('Session') + [
@@ -65,8 +65,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $request = new ServerRequest([
             'environment' => $server,
             'uri' => $uri,
-            'cookies' => $cookies ?: $_COOKIE,
-            'query' => $query ?: $_GET,
+            'cookies' => $cookies ?? $_COOKIE,
+            'query' => $query ?? $_GET,
             'webroot' => $webroot,
             'base' => $base,
             'session' => $session,

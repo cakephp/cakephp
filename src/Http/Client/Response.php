@@ -259,7 +259,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The status reason phrase.
      * @return static A copy of the current object with an updated status code.
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $new = clone $this;
         $new->code = $code;
