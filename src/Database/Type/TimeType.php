@@ -16,67 +16,69 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Chronos\Chronos;
-use Cake\I18n\DateTime;
-use DateTime as NativeDateTime;
-use DateTimeImmutable;
+use Cake\Database\Driver;
+use Cake\I18n\Time;
 use DateTimeInterface;
-use Exception;
-use InvalidArgumentException;
 
 /**
  * Time type converter.
  *
  * Use to convert time instances to strings & back.
  */
-class TimeType extends DateTimeType
+class TimeType extends BaseType implements BatchCastingInterface
 {
     /**
-     * @inheritDoc
+     * The PHP Time format used when converting to string.
+     *
+     * @var string
      */
     protected string $_format = 'H:i:s';
 
     /**
-     * {@inheritDoc}
+     * The ICU Time formats allowed by `marshal()`.
      *
      * @var array<string>
      */
     protected array $_marshalFormats = [
-        'H:i:s',
-        'H:i',
+        'HH:mm:ss',
+        'HH:mm',
     ];
+
+    /**
+     * The classname to use when creating objects.
+     *
+     * @var class-string<\Cake\I18n\Time>
+     */
+    protected string $_className;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(?string $name = null)
+    {
+        parent::__construct($name);
+
+        $this->_className = Time::class;
+    }
 
     /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\Chronos\Chronos|\DateTimeInterface|null
+     * @return \Cake\I18n\Time|\DateTimeInterface|null
      */
-    public function marshal(mixed $value): Chronos|DateTimeInterface|null
+    public function marshal(mixed $value): Time|DateTimeInterface|null
     {
-        if ($value instanceof DateTimeInterface || $value instanceof Chronos) {
-            if ($value instanceof NativeDateTime) {
-                $value = clone $value;
-            }
-
+        if ($value instanceof Time) {
             return $value;
         }
 
-        $class = $this->_className;
-        try {
-            if (is_int($value) || (is_string($value) && ctype_digit($value))) {
-                return new $class('@' . $value);
-            }
+        if ($value instanceof DateTimeInterface) {
+            return new $this->_className($value->format($this->_format));
+        }
 
-            if (is_string($value)) {
-                if ($this->_useLocaleMarshal) {
-                    return $this->_parseLocaleTimeValue($value);
-                } else {
-                    return $this->_parseTimeValue($value);
-                }
-            }
-        } catch (Exception $e) {
-            return null;
+        if (is_string($value)) {
+            return $this->_parseTimeValue($value);
         }
 
         if (!is_array($value)) {
@@ -105,19 +107,57 @@ class TimeType extends DateTimeType
             $value['microsecond']
         );
 
-        return new $class($format);
+        return new $this->_className($format);
     }
 
     /**
-     * @param string $value
-     * @return \Cake\I18n\DateTime|null
+     * @inheritDoc
      */
-    protected function _parseLocaleTimeValue(string $value): ?DateTime
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
-        /** @var class-string<\Cake\I18n\DateTime> $class */
-        $class = $this->_className;
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
 
-        return $class::parseTime($value, $this->_localeMarshalFormat);
+            $value = $values[$field];
+            $instance = new $this->_className($value);
+            $values[$field] = $instance;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Convert time data into the database time format.
+     *
+     * @param mixed $value The value to convert.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @return mixed
+     */
+    public function toDatabase(mixed $value, Driver $driver): mixed
+    {
+        if ($value === null || is_string($value)) {
+            return $value;
+        }
+
+        return $value->format($this->_format);
+    }
+
+    /**
+     * Convert time values to PHP time instances
+     *
+     * @param mixed $value The value to convert.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @return mixed
+     */
+    public function toPHP(mixed $value, Driver $driver): mixed
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return new $this->_className($value);
     }
 
     /**
@@ -125,22 +165,14 @@ class TimeType extends DateTimeType
      * formats in `_marshalFormats`.
      *
      * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\DateTime|\DateTimeImmutable|null
+     * @return \Cake\I18n\Time|null
      */
-    protected function _parseTimeValue(string $value): DateTime|DateTimeImmutable|null
+    protected function _parseTimeValue(string $value): ?Time
     {
-        $class = $this->_className;
         foreach ($this->_marshalFormats as $format) {
-            try {
-                $dateTime = $class::createFromFormat($format, $value);
-                // Check for false in case DateTime is used directly
-                if ($dateTime !== false) {
-                    return $dateTime;
-                }
-            } catch (InvalidArgumentException) {
-                // Chronos wraps DateTime::createFromFormat and throws
-                // exception if parse fails.
-                continue;
+            $time = $this->_className::parseTime($value, $format);
+            if ($time !== null) {
+                return $time;
             }
         }
 
