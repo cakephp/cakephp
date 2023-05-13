@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
+use Cake\Chronos\ChronosTime;
 use Cake\Database\Driver;
 use Cake\I18n\Time;
 use DateTimeInterface;
@@ -45,6 +46,22 @@ class TimeType extends BaseType implements BatchCastingInterface
     ];
 
     /**
+     * Whether `marshal()` should use locale-aware parser with `_localeMarshalFormat`.
+     *
+     * @var bool
+     */
+    protected bool $_useLocaleMarshal = false;
+
+    /**
+     * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
+     *
+     * See `Cake\I18n\Time::parseTime()` for accepted formats.
+     *
+     * @var string|int|null
+     */
+    protected string|int|null $_localeMarshalFormat = null;
+
+    /**
      * The classname to use when creating objects.
      *
      * @var class-string<\Cake\I18n\Time>
@@ -65,11 +82,11 @@ class TimeType extends BaseType implements BatchCastingInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\I18n\Time|\DateTimeInterface|null
+     * @return \Cake\Chronos\ChronosTime|\DateTimeInterface|null
      */
-    public function marshal(mixed $value): Time|DateTimeInterface|null
+    public function marshal(mixed $value): ChronosTime|DateTimeInterface|null
     {
-        if ($value instanceof Time) {
+        if ($value instanceof ChronosTime) {
             return $value;
         }
 
@@ -78,7 +95,11 @@ class TimeType extends BaseType implements BatchCastingInterface
         }
 
         if (is_string($value)) {
-            return $this->_parseTimeValue($value);
+            if ($this->_useLocaleMarshal) {
+                return $this->_parseLocalTimeValue($value);
+            } else {
+                return $this->_parseTimeValue($value);
+            }
         }
 
         if (!is_array($value)) {
@@ -161,7 +182,7 @@ class TimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Converts a string into a DateTime object after parsing it using the
+     * Converts a string into a Time object after parsing it using the
      * formats in `_marshalFormats`.
      *
      * @param string $value The value to parse and convert to an object.
@@ -177,5 +198,47 @@ class TimeType extends BaseType implements BatchCastingInterface
         }
 
         return null;
+    }
+
+    /**
+     * Converts a string into a Time object after parsing it using the locale
+     * aware parser with the format set by `setLocaleFormat()`.
+     *
+     * @param string $value The value to parse and convert to an object.
+     * @return \Cake\I18n\Time|null
+     */
+    protected function _parseLocalTimeValue(string $value): ?Time
+    {
+        return $this->_className::parseTime($value, $this->_localeMarshalFormat);
+    }
+
+    /**
+     * Sets whether to parse strings passed to `marshal()` using
+     * the locale-aware format set by `setLocaleFormat()`.
+     *
+     * @param bool $enable Whether to enable
+     * @return $this
+     */
+    public function useLocaleParser(bool $enable = true)
+    {
+        $this->_useLocaleMarshal = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Sets the locale-aware format used by `marshal()` when parsing strings.
+     *
+     * See `Cake\I18n\Time::parseTime()` for accepted formats.
+     *
+     * @param string|int|null $format The locale-aware format
+     * @see \Cake\I18n\Time::parseTime()
+     * @return $this
+     */
+    public function setLocaleFormat(string|int|null $format)
+    {
+        $this->_localeMarshalFormat = $format;
+
+        return $this;
     }
 }

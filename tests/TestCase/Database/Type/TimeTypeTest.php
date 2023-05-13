@@ -214,4 +214,43 @@ class TimeTypeTest extends TestCase
             $this->assertSame($expected, $result);
         }
     }
+
+    /**
+     * Tests marshalling times using the locale aware parser
+     */
+    public function testMarshalWithLocaleParsing(): void
+    {
+        $expected = new Time('23:23:00');
+        $result = $this->type->useLocaleParser()->marshal('11:23pm');
+        $this->assertSame($expected->format('H:i'), $result->format('H:i'));
+        $this->assertNull($this->type->marshal('derp:23'));
+    }
+
+    /**
+     * Tests marshalling times in denmark.
+     */
+    public function testMarshalWithLocaleParsingDanishLocale(): void
+    {
+        $original = setlocale(LC_COLLATE, '0');
+        $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
+        setlocale(LC_COLLATE, $original);
+        $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
+
+        I18n::setLocale('da_DK');
+        $expected = new Time('03:20:00');
+        $result = $this->type->useLocaleParser()->marshal('03.20');
+        $this->assertSame($expected->format('H:i'), $result->format('H:i'));
+    }
+
+    /**
+     * Tests marshalling dates using the locale aware parser and custom format
+     */
+    public function testMarshalWithLocaleParsingWithFormat(): void
+    {
+        $this->type->useLocaleParser()->setLocaleFormat('hh:mm a');
+
+        $expected = new Time('13:54:00');
+        $result = $this->type->marshal('01:54 pm');
+        $this->assertEquals($expected, $result);
+    }
 }
