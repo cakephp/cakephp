@@ -181,7 +181,10 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
             ]);
-        $this->Paginator->paginate($table, $settings);
+
+        $this->deprecated(function () use ($table, $settings) {
+            $this->Paginator->paginate($table, $settings);
+        });
     }
 
     /**
@@ -237,7 +240,6 @@ class PaginatorComponentTest extends TestCase
         $settings = [
             'PaginatorPosts' => [
                 'finder' => 'popular',
-                'fields' => ['id', 'title'],
                 'maxLimit' => 10,
             ],
         ];
@@ -361,7 +363,10 @@ class PaginatorComponentTest extends TestCase
         $result = $this->Paginator->mergeOptions('Silly', $settings);
         $this->assertSame($settings['allowedParameters'], $result['whitelist']);
         unset($result['whitelist']);
-        $this->assertEquals($settings, $result);
+        $this->assertEquals($settings + [
+            'sortableFields' => null,
+            'finder' => 'all',
+        ], $result);
 
         $result = $this->Paginator->mergeOptions('Posts', $settings);
         $expected = [
@@ -370,6 +375,8 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 50,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -402,6 +409,7 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -421,6 +429,7 @@ class PaginatorComponentTest extends TestCase
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'nonexistent',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -440,6 +449,7 @@ class PaginatorComponentTest extends TestCase
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -467,6 +477,7 @@ class PaginatorComponentTest extends TestCase
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -492,6 +503,8 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -521,6 +534,8 @@ class PaginatorComponentTest extends TestCase
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -553,6 +568,8 @@ class PaginatorComponentTest extends TestCase
                 'fields' => ['bad.stuff'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
+                'sortableFields' => null,
+                'finder' => 'all',
             ];
             $this->assertEquals($expected, $result);
         });
@@ -608,6 +625,8 @@ class PaginatorComponentTest extends TestCase
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -623,6 +642,8 @@ class PaginatorComponentTest extends TestCase
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -650,6 +671,8 @@ class PaginatorComponentTest extends TestCase
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -671,6 +694,8 @@ class PaginatorComponentTest extends TestCase
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1184,30 +1209,32 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $table = $this->getTableLocator()->get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-        $table->save(new Entity($data));
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('PaginatorPosts');
+            $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+            $table->save(new Entity($data));
 
-        $settings = [
-            'finder' => 'list',
-            'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2,
-        ];
-        $results = $this->Paginator->paginate($table, $settings);
+            $settings = [
+                'finder' => 'list',
+                'conditions' => ['PaginatorPosts.published' => 'Y'],
+                'limit' => 2,
+            ];
+            $results = $this->Paginator->paginate($table, $settings);
 
-        $result = $results->toArray();
-        $expected = [
-            1 => 'First Post',
-            2 => 'Second Post',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $results->toArray();
+            $expected = [
+                1 => 'First Post',
+                2 => 'Second Post',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->controller->getRequest()->getAttribute('paging');
-        $this->assertSame(2, $result['PaginatorPosts']['current']);
-        $this->assertSame(3, $result['PaginatorPosts']['count']);
-        $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
-        $this->assertTrue($result['PaginatorPosts']['nextPage']);
-        $this->assertFalse($result['PaginatorPosts']['prevPage']);
+            $result = $this->controller->getRequest()->getAttribute('paging');
+            $this->assertSame(2, $result['PaginatorPosts']['current']);
+            $this->assertSame(3, $result['PaginatorPosts']['count']);
+            $this->assertSame(2, $result['PaginatorPosts']['pageCount']);
+            $this->assertTrue($result['PaginatorPosts']['nextPage']);
+            $this->assertFalse($result['PaginatorPosts']['prevPage']);
+        });
     }
 
     /**
@@ -1250,9 +1277,7 @@ class PaginatorComponentTest extends TestCase
         );
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1262,8 +1287,6 @@ class PaginatorComponentTest extends TestCase
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
@@ -1304,10 +1327,8 @@ class PaginatorComponentTest extends TestCase
         );
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
                 'limit' => 5,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1318,8 +1339,6 @@ class PaginatorComponentTest extends TestCase
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,

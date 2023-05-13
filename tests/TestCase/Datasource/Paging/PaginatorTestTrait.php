@@ -110,7 +110,10 @@ trait PaginatorTestTrait
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
             ]);
-        $this->Paginator->paginate($table, $params, $settings);
+
+        $this->deprecated(function () use ($table, $params, $settings) {
+            $this->Paginator->paginate($table, $params, $settings);
+        });
     }
 
     /**
@@ -273,7 +276,10 @@ trait PaginatorTestTrait
         ];
         $defaults = $this->Paginator->getDefaults('Silly', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
-        $this->assertEquals($settings, $result);
+        $this->assertEquals($settings + [
+            'sortableFields' => null,
+            'finder' => 'all',
+        ], $result);
 
         $defaults = $this->Paginator->getDefaults('Posts', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
@@ -283,6 +289,8 @@ trait PaginatorTestTrait
             'maxLimit' => 50,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -316,6 +324,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -336,6 +345,7 @@ trait PaginatorTestTrait
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'nonexistent',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -356,6 +366,7 @@ trait PaginatorTestTrait
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -384,6 +395,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -410,6 +422,8 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -440,6 +454,8 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -473,6 +489,8 @@ trait PaginatorTestTrait
                 'fields' => ['bad.stuff'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
+                'sortableFields' => null,
+                'finder' => 'all',
             ];
             $this->assertEquals($expected, $result);
         });
@@ -496,6 +514,8 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -512,6 +532,8 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -540,6 +562,8 @@ trait PaginatorTestTrait
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -562,6 +586,8 @@ trait PaginatorTestTrait
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1171,9 +1197,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1183,8 +1207,6 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
@@ -1222,10 +1244,8 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
                 'limit' => 5,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1236,8 +1256,6 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
