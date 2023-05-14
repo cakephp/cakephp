@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -56,6 +57,8 @@ class NumericPaginator implements PaginatorInterface
         'limit' => 20,
         'maxLimit' => 100,
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+        'sortableFields' => null,
+        'finder' => 'all',
     ];
 
     /**
@@ -254,6 +257,21 @@ class NumericPaginator implements PaginatorInterface
     {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
+
+        $validSettings = array_merge(
+            array_keys($this->_defaultConfig),
+            ['order', 'scope']
+        );
+        $extraSettings = array_diff_key($defaults, array_flip($validSettings));
+        if ($extraSettings) {
+            deprecationWarning(
+                '4.5.0',
+                'Passing query options as paginator settings is deprecated.'
+                . ' Use a custom finder through `finder` config instead.'
+                . ' Extra keys found are: ' . implode(',', array_keys($extraSettings))
+            );
+        }
+
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);

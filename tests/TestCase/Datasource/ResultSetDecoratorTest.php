@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use ArrayIterator;
+use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\TestSuite\TestCase;
 
@@ -88,5 +89,19 @@ class ResultSetDecoratorTest extends TestCase
 
         $this->assertSame(3, $decorator->count());
         $this->assertCount(3, $decorator);
+    }
+
+    /**
+     * Test the __debugInfo() method which is used by DebugKit
+     */
+    public function testDebugInfo(): void
+    {
+        Configure::write('App.ResultSetDebugLimit', 2);
+        $data = new ArrayIterator([1, 2, 3]);
+        $decorator = new ResultSetDecorator($data);
+        $this->assertEquals([
+            'count' => 3,
+            'items' => [1, 2],
+        ], $decorator->__debugInfo());
     }
 }

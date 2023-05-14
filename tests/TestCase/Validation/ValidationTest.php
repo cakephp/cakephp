@@ -2869,6 +2869,9 @@ class ValidationTest extends TestCase
 
         // Grinning face
         $this->assertFalse(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value'));
+
+        // incomplete character
+        $this->assertFalse(Validation::utf8("\xfe\xfe"));
     }
 
     /**
@@ -2895,6 +2898,9 @@ class ValidationTest extends TestCase
 
         // Grinning face
         $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
+
+        // incomplete characters
+        $this->assertFalse(Validation::utf8("\xfe\xfe", ['extended' => true]));
     }
 
     /**

@@ -97,30 +97,32 @@ class SimplePaginatorTest extends NumericPaginatorTest
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $table = $this->getTableLocator()->get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-        $table->save(new Entity($data));
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('PaginatorPosts');
+            $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+            $table->save(new Entity($data));
 
-        $settings = [
-            'finder' => 'list',
-            'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2,
-        ];
-        $results = $this->Paginator->paginate($table, [], $settings);
+            $settings = [
+                'finder' => 'list',
+                'conditions' => ['PaginatorPosts.published' => 'Y'],
+                'limit' => 2,
+            ];
+            $results = $this->Paginator->paginate($table, [], $settings);
 
-        $result = $results->toArray();
-        $expected = [
-            1 => 'First Post',
-            2 => 'Second Post',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $results->toArray();
+            $expected = [
+                1 => 'First Post',
+                2 => 'Second Post',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $results->pagingParams();
-        $this->assertSame(1, $result['currentPage']);
-        $this->assertNull($result['totalCount']);
-        $this->assertNull($result['pageCount']);
-        $this->assertTrue($result['hasNextPage']);
-        $this->assertFalse($result['hasPrevPage']);
+            $result = $results->pagingParams();
+            $this->assertSame(1, $result['currentPage']);
+            $this->assertNull($result['totalCount']);
+            $this->assertNull($result['pageCount']);
+            $this->assertTrue($result['hasNextPage']);
+            $this->assertFalse($result['hasPrevPage']);
+        });
     }
 
     /**
@@ -131,7 +133,6 @@ class SimplePaginatorTest extends NumericPaginatorTest
         $settings = [
             'PaginatorPosts' => [
                 'finder' => 'published',
-                'fields' => ['id', 'title'],
                 'maxLimit' => 10,
             ],
         ];

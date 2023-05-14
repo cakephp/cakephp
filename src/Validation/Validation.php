@@ -1544,7 +1544,7 @@ class Validation
         }
         $options += ['extended' => false];
         if ($options['extended']) {
-            return true;
+            return preg_match('//u', $value) === 1;
         }
 
         return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
