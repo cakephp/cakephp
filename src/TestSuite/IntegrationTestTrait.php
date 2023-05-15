@@ -1254,7 +1254,6 @@ trait IntegrationTestTrait
      * Useful when you're working with cookies that have obfuscated values
      * but the cookie being set is important.
      *
-     * @param mixed $expected The expected contents.
      * @param string $name The cookie name.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
