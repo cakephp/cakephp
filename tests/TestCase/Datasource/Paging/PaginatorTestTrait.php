@@ -81,7 +81,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that unknown keys in the default settings are
+     * test that unknown keys in the default settings are **not**
      * passed to the find operations.
      */
     public function testPaginateExtraParams(): void
@@ -105,16 +105,12 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
             ]);
 
-        $this->deprecated(function () use ($table, $params, $settings) {
-            $this->Paginator->paginate($table, $params, $settings);
-        });
+        $this->Paginator->paginate($table, $params, $settings);
     }
 
     /**
@@ -1125,21 +1121,20 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test paginate() and custom finders to ensure the count + find
-     * use the custom type.
+     * test the `finder` is unused if paginate() is called with a query instance.
      */
-    public function testPaginateCustomFindCount(): void
+    public function testPaginateQueryUnusedFinder(): void
     {
         $settings = [
             'finder' => 'published',
             'limit' => 2,
         ];
-        $table = $this->_getMockPosts(['selectQuery']);
+        $table = $this->_getMockPosts(['find']);
         $query = $this->_getMockFindQuery();
+        $query->setRepository($table);
 
-        $table->expects($this->once())
-            ->method('selectQuery')
-            ->will($this->returnValue($query));
+        $table->expects($this->never())
+            ->method('find');
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -1147,9 +1142,7 @@ trait PaginatorTestTrait
                 'page' => 1,
                 'order' => [],
             ]);
-        $result = $this->Paginator->paginate($table, [], $settings)->pagingParams();
-
-        $this->assertEquals('published', $result['finder']);
+        $this->Paginator->paginate($query, [], $settings)->pagingParams();
     }
 
     /**

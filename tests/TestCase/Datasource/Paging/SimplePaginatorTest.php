@@ -93,39 +93,6 @@ class SimplePaginatorTest extends NumericPaginatorTest
     }
 
     /**
-     * test paginate() and custom find with fields array, to make sure the correct count is returned.
-     */
-    public function testPaginateCustomFindFieldsArray(): void
-    {
-        $this->deprecated(function () {
-            $table = $this->getTableLocator()->get('PaginatorPosts');
-            $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-            $table->save(new Entity($data));
-
-            $settings = [
-                'finder' => 'list',
-                'conditions' => ['PaginatorPosts.published' => 'Y'],
-                'limit' => 2,
-            ];
-            $results = $this->Paginator->paginate($table, [], $settings);
-
-            $result = $results->toArray();
-            $expected = [
-                1 => 'First Post',
-                2 => 'Second Post',
-            ];
-            $this->assertEquals($expected, $result);
-
-            $result = $results->pagingParams();
-            $this->assertSame(1, $result['currentPage']);
-            $this->assertNull($result['totalCount']);
-            $this->assertNull($result['pageCount']);
-            $this->assertTrue($result['hasNextPage']);
-            $this->assertFalse($result['hasPrevPage']);
-        });
-    }
-
-    /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
      */
     public function testPaginateCustomFinder(): void
@@ -138,11 +105,11 @@ class SimplePaginatorTest extends NumericPaginatorTest
         ];
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
+        $this->assertSame(3, $table->find('published')->count());
         $table->updateAll(['published' => 'N'], ['id' => 2]);
 
         $result = $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $result->pagingParams();
-        $this->assertSame('published', $pagingParams['finder']);
 
         $this->assertSame(1, $pagingParams['start']);
         $this->assertSame(2, $pagingParams['end']);
