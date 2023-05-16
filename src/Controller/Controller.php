@@ -44,6 +44,11 @@ use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 use UnexpectedValueException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\getTypeName;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * Application controller class for organization of business logic.
@@ -169,6 +174,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
     protected $middlewares = [];
+
+    /**
+     * View classes for content negotiation.
+     *
+     * @var array<string>
+     */
+    protected $viewClasses = [];
 
     /**
      * Constructor.
@@ -320,7 +332,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if ($class === $name) {
-                return $this->loadModel();
+                return $this->fetchModel();
             }
         }
 
@@ -684,10 +696,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->autoRender = false;
 
-        if ($status) {
-            $this->response = $this->response->withStatus($status);
+        if ($status < 300 || $status > 399) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid status code `%s`. It should be within the range ' .
+                    '`300` - `399` for redirect responses.', $status)
+            );
         }
 
+        $this->response = $this->response->withStatus($status);
         $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
         if ($event->getResult() instanceof Response) {
             return $this->response = $event->getResult();
@@ -787,7 +803,25 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function viewClasses(): array
     {
-        return [];
+        return $this->viewClasses;
+    }
+
+    /**
+     * Add View classes this controller can perform content negotiation with.
+     *
+     * Each view class must implement the `getContentType()` hook method
+     * to participate in negotiation.
+     *
+     * @param array $viewClasses View classes list.
+     * @return $this
+     * @see Cake\Http\ContentTypeNegotiation
+     * @since 4.5.0
+     */
+    public function addViewClasses(array $viewClasses)
+    {
+        $this->viewClasses = array_merge($this->viewClasses, $viewClasses);
+
+        return $this;
     }
 
     /**

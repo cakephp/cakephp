@@ -697,6 +697,8 @@ class PostgresSchemaDialect extends SchemaDialect
 }
 
 // phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\PostgresSchemaDialect', 'Cake\Database\Schema\PostgresSchema');
+class_alias(
+    'Cake\Database\Schema\PostgresSchemaDialect',
+    'Cake\Database\Schema\PostgresSchema'
+);
 // phpcs:enable

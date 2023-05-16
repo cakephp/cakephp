@@ -30,6 +30,7 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -62,6 +63,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var \Cake\Database\Connection
      */
     protected $_connection;
+
+    /**
+     * Connection role ('read' or 'write')
+     *
+     * @var string
+     */
+    protected $connectionRole = Connection::ROLE_WRITE;
 
     /**
      * Type of this query (select, insert, update, delete).
@@ -228,6 +236,16 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function getConnection(): Connection
     {
         return $this->_connection;
+    }
+
+    /**
+     * Returns the connection role ('read' or 'write')
+     *
+     * @return string
+     */
+    public function getConnectionRole(): string
+    {
+        return $this->connectionRole;
     }
 
     /**
@@ -428,7 +446,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         if ($cte instanceof Closure) {
-            $query = $this->getConnection()->newQuery();
+            $query = $this->getConnection()->selectQuery();
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new RuntimeException(
@@ -864,7 +882,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to use for joining.
      * @param string $type the join type to use
      * @return array
-     * @psalm-suppress InvalidReturnType
      */
     protected function _makeJoin($table, $conditions, $type): array
     {
@@ -877,7 +894,6 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         /**
          * @psalm-suppress InvalidArrayOffset
-         * @psalm-suppress InvalidReturnStatement
          */
         return [
             $alias => [
@@ -2200,6 +2216,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function enableBufferedResults(bool $enable = true)
     {
+        if (!$enable) {
+            deprecationWarning(
+                '4.5.0 enableBufferedResults() is deprecated. Results will always be buffered in 5.0.'
+            );
+        }
         $this->_dirty();
         $this->_useBufferedResults = $enable;
 
@@ -2327,7 +2348,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _decorateStatement(StatementInterface $statement)
     {
         $typeMap = $this->getSelectTypeMap();
-        $driver = $this->getConnection()->getDriver();
+        $driver = $this->getConnection()->getDriver($this->connectionRole);
 
         if ($this->typeCastEnabled && $typeMap->toArray()) {
             $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
@@ -2418,7 +2439,6 @@ class Query implements ExpressionInterface, IteratorAggregate
                             }
                         }
                     } elseif ($piece instanceof ExpressionInterface) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->_parts[$name][$i] = clone $piece;
                     }
                 }
@@ -2472,5 +2492,20 @@ class Query implements ExpressionInterface, IteratorAggregate
             'decorators' => count($this->_resultDecorators),
             'executed' => $this->_iterator ? true : false,
         ];
+    }
+
+    /**
+     * Helper for Query deprecation methods.
+     *
+     * @param string $method The method that is invalid.
+     * @param string $message An additional message.
+     * @return void
+     * @internal
+     */
+    protected function _deprecatedMethod($method, $message = '')
+    {
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
     }
 }

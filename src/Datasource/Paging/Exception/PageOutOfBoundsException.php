@@ -28,5 +28,8 @@ class PageOutOfBoundsException extends CakeException
 }
 
 // phpcs:disable
-class_exists('Cake\Datasource\Exception\PageOutOfBoundsException');
+class_alias(
+    'Cake\Datasource\Paging\Exception\PageOutOfBoundsException',
+    'Cake\Datasource\Exception\PageOutOfBoundsException'
+);
 // phpcs:enable

@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 use Serializable;
+use function Cake\Core\getTypeName;
 
 /**
  * Base log engine class.

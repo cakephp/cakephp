@@ -31,6 +31,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -51,28 +52,28 @@ use Traversable;
  * @method \Cake\Collection\CollectionInterface map(callable $c) Modifies each of the results using the callable
  * @method mixed reduce(callable $c, $zero = null) Folds all the results into a single value using the callable.
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
- * @method mixed max($field) Returns the maximum value for a single column in all the results.
- * @method mixed min($field) Returns the minimum value for a single column in all the results.
+ * @method mixed max($field, $sort = \SORT_NUMERIC) Returns the maximum value for a single column in all the results.
+ * @method mixed min($field, $sort = \SORT_NUMERIC) Returns the minimum value for a single column in all the results.
  * @method \Cake\Collection\CollectionInterface groupBy(callable|string $field) In-memory group all results by the value of a column.
  * @method \Cake\Collection\CollectionInterface indexBy(callable|string $callback) Returns the results indexed by the value of a column.
  * @method \Cake\Collection\CollectionInterface countBy(callable|string $field) Returns the number of unique values for a column
- * @method float sumOf(callable|string $field) Returns the sum of all values for a single column
+ * @method int|float sumOf($field = null) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method \Cake\Collection\CollectionInterface sample(int $size = 10) In-memory shuffle the results and return a subset of them.
  * @method \Cake\Collection\CollectionInterface take(int $size = 1, int $from = 0) In-memory limit and offset for the query results.
  * @method \Cake\Collection\CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
  * @method mixed last() Return the last row of the query result
- * @method \Cake\Collection\CollectionInterface append(array|\Traversable $items) Appends more rows to the result of the query.
+ * @method \Cake\Collection\CollectionInterface append(mixed $items) Appends more rows to the result of the query.
  * @method \Cake\Collection\CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
  *   and grouped by $g.
  * @method \Cake\Collection\CollectionInterface nest($k, $p, $n = 'children') Creates a tree structure by nesting the values of column $p into that
  *   with the same value for $k using $n as the nesting key.
  * @method array toArray() Returns a key-value array with the results of this query.
  * @method array toList() Returns a numerically indexed array with the results of this query.
- * @method \Cake\Collection\CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
- * @method \Cake\Collection\CollectionInterface zip(array|\Traversable $c) Returns the first result of both the query and $c in an array,
+ * @method \Cake\Collection\CollectionInterface stopWhen(callable|array $c) Returns each row until the callable returns true.
+ * @method \Cake\Collection\CollectionInterface zip(iterable $c) Returns the first result of both the query and $c in an array,
  *   then the second results and so on.
- * @method \Cake\Collection\CollectionInterface zipWith($collections, callable $callable) Returns each of the results out of calling $c
+ * @method \Cake\Collection\CollectionInterface zipWith(iterable $collections, callable $callable) Returns each of the results out of calling $c
  *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method \Cake\Collection\CollectionInterface chunk(int $size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty() Returns true if this query found no results.
@@ -178,7 +179,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __construct(Connection $connection, Table $table)
     {
         parent::__construct($connection);
-        $this->repository($table);
+        $this->setRepository($table);
 
         if ($this->_repository !== null) {
             $this->addDefaultTypes($this->_repository);
@@ -240,6 +241,24 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return parent::select($fields, $overwrite);
+    }
+
+    /**
+     * Behaves the exact same as `select()` except adds the field to the list of fields selected and
+     * does not disable auto-selecting fields for Associations.
+     *
+     * Use this instead of calling `select()` then `enableAutoFields()` to re-enable auto-fields.
+     *
+     * @param \Cake\Database\ExpressionInterface|\Cake\ORM\Table|\Cake\ORM\Association|callable|array|string $fields Fields
+     * to be added to the list.
+     * @return $this
+     */
+    public function selectAlso($fields)
+    {
+        $this->select($fields);
+        $this->_autoFields = true;
+
+        return $this;
     }
 
     /**
@@ -977,8 +996,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 ->disableAutoFields()
                 ->execute();
         } else {
-            $statement = $this->getConnection()->newQuery()
-                ->select($count)
+            $statement = $this->getConnection()
+                ->selectQuery($count)
                 ->from(['count_source' => $query])
                 ->execute();
         }
@@ -1439,5 +1458,20 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Helper for ORM\Query exceptions
+     *
+     * @param string $method The method that is invalid.
+     * @param string $message An additional message.
+     * @return void
+     * @internal
+     */
+    protected function _deprecatedMethod($method, $message = '')
+    {
+        $class = static::class;
+        $text = "As of 4.5.0 calling {$method}() on {$class} is deprecated. " . $message;
+        deprecationWarning($text);
     }
 }

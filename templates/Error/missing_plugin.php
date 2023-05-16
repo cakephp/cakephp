@@ -14,6 +14,7 @@
  * @var string $plugin
  */
 use Cake\Core\Configure;
+use function Cake\Core\h;
 
 $this->layout = 'dev_error';
 

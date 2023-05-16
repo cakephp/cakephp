@@ -33,11 +33,11 @@ instead of any other specific subclass.
     <li>The Table was used using associations but the association has a typo: <strong><em>$this->belongsTo('Articles')</em></strong></li>
     <li>The table class resides in a Plugin but <strong><em>no plugin notation</em></strong> was used in the association definition.</li>
 </ul>
-<br/>
+<br>
 <p>Please try correcting the issue for the following table aliases:</p>
 <ul>
 <?php foreach ($autoTables as $alias => $table) : ?>
     <li><strong><?= $alias ?></strong></li>
 <?php endforeach; ?>
 </ul>
-<br/>
+<br>

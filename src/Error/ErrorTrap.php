@@ -10,6 +10,7 @@ use Cake\Error\Renderer\HtmlErrorRenderer;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use Exception;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Entry point to CakePHP's error handling.
@@ -122,6 +123,17 @@ class ErrorTrap
         $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
+        $ignoredPaths = (array)Configure::read('Error.ignoredDeprecationPaths');
+        if ($code === E_USER_DEPRECATED && $ignoredPaths) {
+            $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', substr((string)$file, strlen(ROOT) + 1));
+            foreach ($ignoredPaths as $pattern) {
+                $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
+                if (fnmatch($pattern, $relativePath)) {
+                    return true;
+                }
+            }
+        }
+
         $debug = Configure::read('debug');
         $renderer = $this->renderer();
 
@@ -132,7 +144,7 @@ class ErrorTrap
             if ($event->isStopped()) {
                 return true;
             }
-            $renderer->write($renderer->render($error, $debug));
+            $renderer->write($event->getResult() ?: $renderer->render($error, $debug));
         } catch (Exception $e) {
             // Fatal errors always log.
             $this->logger()->logMessage('error', 'Could not render error. Got: ' . $e->getMessage());

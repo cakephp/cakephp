@@ -35,6 +35,7 @@ class ConnectionManagerTest extends TestCase
         $this->clearPlugins();
         ConnectionManager::drop('test_variant');
         ConnectionManager::dropAlias('other_name');
+        ConnectionManager::dropAlias('test2');
     }
 
     /**
@@ -181,6 +182,15 @@ class ConnectionManagerTest extends TestCase
         $this->assertNotContains('test_variant', $result);
 
         $this->assertFalse(ConnectionManager::drop('probably_does_not_exist'), 'Should return false on failure.');
+    }
+
+    public function testAliases(): void
+    {
+        $this->assertSame(['default' => 'test'], ConnectionManager::aliases());
+        ConnectionManager::alias('test', 'test2');
+        $this->assertSame(['default' => 'test', 'test2' => 'test'], ConnectionManager::aliases());
+        ConnectionManager::dropAlias('test2');
+        $this->assertSame(['default' => 'test'], ConnectionManager::aliases());
     }
 
     /**

@@ -21,6 +21,7 @@ use Cake\Http\Client\Response;
 use Closure;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
+use function Cake\Core\getTypeName;
 
 /**
  * Implements sending requests to an array of stubbed responses

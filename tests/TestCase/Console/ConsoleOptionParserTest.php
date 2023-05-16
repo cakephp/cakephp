@@ -729,6 +729,28 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertCount(2, $result, 'Not enough arguments');
     }
 
+    public function testParseArgumentsDoubleDash(): void
+    {
+        $parser = new ConsoleOptionParser('test');
+
+        $result = $parser->parse(['one', 'two', '--', '-h', '--help', '--test=value'], $this->io);
+        $this->assertEquals(['one', 'two', '-h', '--help', '--test=value'], $result[1]);
+    }
+
+    public function testParseArgumentsOptionsDoubleDash(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test');
+
+        $result = $parser->parse(['--test=value', '--', '--test'], $this->io);
+        $this->assertEquals(['test' => 'value', 'help' => false], $result[0]);
+        $this->assertEquals(['--test'], $result[1]);
+
+        $result = $parser->parse(['--', '--test'], $this->io);
+        $this->assertEquals(['help' => false], $result[0]);
+        $this->assertEquals(['--test'], $result[1]);
+    }
+
     /**
      * test setting a subcommand up.
      */

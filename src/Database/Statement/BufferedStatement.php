@@ -26,6 +26,8 @@ use Iterator;
  *
  * This statement decorator will save fetched results in memory, allowing
  * the iterator to be rewound and reused.
+ *
+ * @template-implements \Iterator<mixed>
  */
 class BufferedStatement implements Iterator, StatementInterface
 {
@@ -83,6 +85,16 @@ class BufferedStatement implements Iterator, StatementInterface
     {
         $this->statement = $statement;
         $this->_driver = $driver;
+    }
+
+    /**
+     * Returns the connection driver.
+     *
+     * @return \Cake\Database\DriverInterface
+     */
+    protected function getDriver(): DriverInterface
+    {
+        return $this->_driver;
     }
 
     /**

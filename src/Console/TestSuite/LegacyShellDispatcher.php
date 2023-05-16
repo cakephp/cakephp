@@ -18,6 +18,7 @@ namespace Cake\Console\TestSuite;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
+use function Cake\Core\pluginSplit;
 
 /**
  * Allows injecting mock IO into shells
@@ -62,3 +63,10 @@ class LegacyShellDispatcher extends ShellDispatcher
         return $instance;
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\LegacyShellDispatcher',
+    'Cake\TestSuite\LegacyShellDispatcher'
+);
+// phpcs:enable

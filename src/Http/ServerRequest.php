@@ -30,6 +30,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\env;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -127,6 +129,7 @@ class ServerRequest implements ServerRequestInterface
         'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
         'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
         'ssl' => ['env' => 'HTTPS', 'options' => [1, 'on']],
+        'https' => ['env' => 'HTTPS', 'options' => [1, 'on']],
         'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
         'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
         'xml' => [
@@ -485,6 +488,7 @@ class ServerRequest implements ServerRequestInterface
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
+     * @throws \InvalidArgumentException If no detector has been set for the provided type.
      */
     public function is($type, ...$args): bool
     {
@@ -500,7 +504,7 @@ class ServerRequest implements ServerRequestInterface
 
         $type = strtolower($type);
         if (!isset(static::$_detectors[$type])) {
-            return false;
+            throw new InvalidArgumentException("No detector set for type `{$type}`");
         }
         if ($args) {
             return $this->_is($type, $args);
@@ -528,6 +532,9 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _is(string $type, array $args): bool
     {
+        if ($type === 'ssl') {
+            deprecationWarning('The `ssl` detector is deprecated. Use `https` instead.');
+        }
         $detect = static::$_detectors[$type];
         if (is_callable($detect)) {
             array_unshift($args, $this);
@@ -1792,7 +1799,6 @@ class ServerRequest implements ServerRequestInterface
      *   request-target forms allowed in request messages)
      * @param string $requestTarget The request target.
      * @return static
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function withRequestTarget($requestTarget)
     {

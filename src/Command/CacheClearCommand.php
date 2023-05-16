@@ -19,7 +19,7 @@ namespace Cake\Command;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Engine\WincacheEngine;
-use Cake\Cache\InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;

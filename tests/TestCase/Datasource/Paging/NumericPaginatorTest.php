@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource\Paging;
 
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -99,30 +100,32 @@ class NumericPaginatorTest extends TestCase
      */
     public function testPaginateCustomFindFieldsArray(): void
     {
-        $table = $this->getTableLocator()->get('PaginatorPosts');
-        $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
-        $table->save(new Entity($data));
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('PaginatorPosts');
+            $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
+            $table->save(new Entity($data));
 
-        $settings = [
-            'finder' => 'list',
-            'conditions' => ['PaginatorPosts.published' => 'Y'],
-            'limit' => 2,
-        ];
-        $results = $this->Paginator->paginate($table, [], $settings);
+            $settings = [
+                'finder' => 'list',
+                'conditions' => ['PaginatorPosts.published' => 'Y'],
+                'limit' => 2,
+            ];
+            $results = $this->Paginator->paginate($table, [], $settings);
 
-        $result = $results->toArray();
-        $expected = [
-            1 => 'First Post',
-            2 => 'Second Post',
-        ];
-        $this->assertEquals($expected, $result);
+            $result = $results->toArray();
+            $expected = [
+                1 => 'First Post',
+                2 => 'Second Post',
+            ];
+            $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->getPagingParams()['PaginatorPosts'];
-        $this->assertSame(2, $result['current']);
-        $this->assertSame(3, $result['count']);
-        $this->assertSame(2, $result['pageCount']);
-        $this->assertTrue($result['nextPage']);
-        $this->assertFalse($result['prevPage']);
+            $result = $this->Paginator->getPagingParams()['PaginatorPosts'];
+            $this->assertSame(2, $result['current']);
+            $this->assertSame(3, $result['count']);
+            $this->assertSame(2, $result['pageCount']);
+            $this->assertTrue($result['nextPage']);
+            $this->assertFalse($result['prevPage']);
+        });
     }
 
     /**
@@ -133,7 +136,6 @@ class NumericPaginatorTest extends TestCase
         $settings = [
             'PaginatorPosts' => [
                 'finder' => 'published',
-                'fields' => ['id', 'title'],
                 'maxLimit' => 10,
             ],
         ];
@@ -168,5 +170,29 @@ class NumericPaginatorTest extends TestCase
 
         $this->assertSame('Other.title', $pagingParams['PaginatorPosts']['sort']);
         $this->assertNull($pagingParams['PaginatorPosts']['direction']);
+    }
+
+    /**
+     * https://github.com/cakephp/cakephp/issues/16909
+     *
+     * @return void
+     */
+    public function testPaginateOrderWithNumericKeyAndSortSpecified(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage(
+            'The `order` config must be an associative array.'
+            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`'
+        );
+
+        $settings = [
+            'PaginatorPosts' => [
+                'order' => ['PaginatorPosts.title ASC'],
+            ],
+        ];
+
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $this->Paginator->paginate($table, ['sort' => 'title'], $settings);
     }
 }

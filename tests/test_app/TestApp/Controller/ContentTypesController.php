@@ -26,16 +26,6 @@ use TestApp\View\PlainTextView;
  */
 class ContentTypesController extends AppController
 {
-    /**
-     * @var array<string>
-     */
-    protected $viewClasses = [];
-
-    public function viewClasses(): array
-    {
-        return $this->viewClasses;
-    }
-
     public function all()
     {
         $this->viewClasses = [JsonView::class, XmlView::class];

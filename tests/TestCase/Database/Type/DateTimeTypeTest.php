@@ -46,6 +46,11 @@ class DateTimeTypeTest extends TestCase
     protected $_originalMap = [];
 
     /**
+     * @var string
+     */
+    protected $originalTimeZone;
+
+    /**
      * Setup
      */
     public function setUp(): void
@@ -59,6 +64,18 @@ class DateTimeTypeTest extends TestCase
             'src/I18n/Time.php',
             'tests/TestCase/Database/Type/DateTimeTypeTest.php',
         ]);
+        $this->originalTimeZone = date_default_timezone_get();
+    }
+
+    /**
+     * Reset timezone to its initial value
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        date_default_timezone_set($this->originalTimeZone);
     }
 
     /**
@@ -310,6 +327,18 @@ class DateTimeTypeTest extends TestCase
         } else {
             $this->assertSame($expected, $result);
         }
+    }
+
+    /**
+     * test marshalling data with different timezone
+     */
+    public function testMarshalWithTimezone(): void
+    {
+        date_default_timezone_set('Europe/Vienna');
+        $value = Time::now();
+        $expected = Time::now();
+        $result = $this->type->marshal($value);
+        $this->assertEquals($expected, $result);
     }
 
     /**

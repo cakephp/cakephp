@@ -51,37 +51,7 @@ class ContentTypeNegotiation
      */
     protected function parseQualifiers(string $header): array
     {
-        $accept = [];
-        if (!$header) {
-            return $accept;
-        }
-        $headers = explode(',', $header);
-        foreach (array_filter($headers) as $value) {
-            $prefValue = '1.0';
-            $value = trim($value);
-
-            $semiPos = strpos($value, ';');
-            if ($semiPos !== false) {
-                $params = explode(';', $value);
-                $value = trim($params[0]);
-                foreach ($params as $param) {
-                    $qPos = strpos($param, 'q=');
-                    if ($qPos !== false) {
-                        $prefValue = substr($param, $qPos + 2);
-                    }
-                }
-            }
-
-            if (!isset($accept[$prefValue])) {
-                $accept[$prefValue] = [];
-            }
-            if ($prefValue) {
-                $accept[$prefValue][] = $value;
-            }
-        }
-        krsort($accept);
-
-        return $accept;
+        return HeaderUtility::parseAccept($header);
     }
 
     /**

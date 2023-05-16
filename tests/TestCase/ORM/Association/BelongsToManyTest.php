@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
@@ -35,6 +36,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use RuntimeException;
 use TestApp\Model\Entity\ArticlesTag;
+use function Cake\Collection\collection;
 
 /**
  * Tests BelongsToMany class
@@ -206,9 +208,13 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunctionConnection(): void
     {
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->once())
+            ->method('enabled')
+            ->will($this->returnValue(true));
+
         $mock = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['createDriver'])
-            ->setConstructorArgs([['name' => 'other_source']])
+            ->setConstructorArgs([['name' => 'other_source', 'driver' => $driver]])
             ->getMock();
         ConnectionManager::setConfig('other_source', $mock);
         $this->article->setConnection(ConnectionManager::get('other_source'));

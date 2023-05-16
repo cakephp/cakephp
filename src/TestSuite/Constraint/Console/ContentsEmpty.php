@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\Constraint\ContentsEmpty;
+use function Cake\Core\deprecationWarning;
 
-class_alias(ContentsEmpty::class, 'Cake\TestSuite\Constraint\Console\ContentsEmpty');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\Constraint\Console\ContentsEmpty is deprecated. ' .
+    'Use Cake\Console\TestSuite\Constraint\ContentsEmpty instead.'
+);
+class_exists('Cake\Console\TestSuite\Constraint\ContentsEmpty');

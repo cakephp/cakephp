@@ -30,6 +30,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Query;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -42,7 +43,9 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionMethod;
 use ReflectionProperty;
+use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Log\Engine\TestBaseLog;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Tests Connection class
@@ -97,13 +100,13 @@ class ConnectionTest extends TestCase
 
     public function tearDown(): void
     {
+        parent::tearDown();
         $this->connection->disableSavePoints();
         $this->connection->setLogger($this->defaultLogger);
         $this->connection->enableQueryLogging($this->logState);
 
         Log::reset();
         unset($this->connection);
-        parent::tearDown();
     }
 
     /**
@@ -194,6 +197,54 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Test providing a unique read config only creates separate drivers.
+     */
+    public function testDifferentReadDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test providing a unique write config only creates separate drivers.
+     */
+    public function testDifferentWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['write' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test providing the same read and write config uses a shared driver.
+     */
+    public function testSameReadWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
+        $connection = new Connection($config);
+        $this->assertSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    public function testDisabledReadWriteDriver(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ['driver' => DisabledDriver::class] + ConnectionManager::getConfig('test');
+
+        $this->expectException(MissingExtensionException::class);
+        $connection = new Connection($config);
+    }
+
+    /**
      * Tests that connecting with invalid credentials or database name throws an exception
      */
     public function testWrongCredentials(): void
@@ -244,7 +295,7 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $this->assertEquals($sql, $result->queryString);
 
-        $query = $this->connection->newQuery()->select('1 + 1');
+        $query = $this->connection->selectQuery('1 + 1');
         $result = $this->connection->prepare($query);
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
@@ -350,6 +401,28 @@ class ConnectionTest extends TestCase
         );
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         $result->closeCursor();
+        $result = $this->connection->execute('SELECT * from things where id = 3');
+        $this->assertCount(1, $result);
+        $row = $result->fetch('assoc');
+        $result->closeCursor();
+        $this->assertEquals($data, $row);
+    }
+
+    /**
+     * Tests insertQuery
+     */
+    public function testInsertQuery(): void
+    {
+        $data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
+        $query = $this->connection->insertQuery(
+            'things',
+            $data,
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+        );
+        $result = $query->execute();
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $result->closeCursor();
+
         $result = $this->connection->execute('SELECT * from things where id = 3');
         $this->assertCount(1, $result);
         $row = $result->fetch('assoc');
@@ -495,6 +568,24 @@ class ConnectionTest extends TestCase
     }
 
     /**
+     * Tests you can bind types to update values
+     */
+    public function testUpdateQueryWithConditionsAndTypes(): void
+    {
+        $title = 'changed the title!';
+        $body = new DateTime('2012-01-01');
+        $values = compact('title', 'body');
+        $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
+        $query->execute()->closeCursor();
+
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $this->assertCount(1, $result);
+        $row = $result->fetch('assoc');
+        $this->assertSame('2012-01-01', $row['body']);
+        $result->closeCursor();
+    }
+
+    /**
      * Tests delete from table with no conditions
      */
     public function testDeleteNoConditions(): void
@@ -515,15 +606,42 @@ class ConnectionTest extends TestCase
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
-        $result = $this->connection->execute('SELECT * FROM things');
-        $this->assertCount(1, $result);
-        $result->closeCursor();
-
         $this->connection->delete('things', ['id' => '2'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result);
         $result->closeCursor();
+    }
+
+    /**
+     * Tests delete from table with conditions
+     */
+    public function testDeleteQuery(): void
+    {
+        $query = $this->connection->deleteQuery('things', ['id' => '1'], ['id' => 'integer']);
+        $query->execute()->closeCursor();
+        $result = $this->connection->execute('SELECT * FROM things');
+        $this->assertCount(1, $result);
+        $result->closeCursor();
+
+        $query = $this->connection->deleteQuery('things')->where(['id' => 2], ['id' => 'integer']);
+        $query->execute()->closeCursor();
+        $result = $this->connection->execute('SELECT * FROM things');
+        $this->assertCount(0, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Test basic selectQuery behavior
+     */
+    public function testSelectQuery(): void
+    {
+        $query = $this->connection->selectQuery(['*'], 'things');
+        $statement = $query->execute();
+        $row = $statement->fetchAssoc();
+        $statement->closeCursor();
+
+        $this->assertArrayHasKey('title', $row);
+        $this->assertArrayHasKey('body', $row);
     }
 
     /**
@@ -946,7 +1064,7 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertSame('debug: connection=test duration=0 rows=0 SELECT 1', $messages[0]);
+        $this->assertSame('debug: connection=test role= duration=0 rows=0 SELECT 1', $messages[0]);
     }
 
     /**
@@ -1006,8 +1124,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug: connection= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
     }
 
     /**
@@ -1028,8 +1146,8 @@ class ConnectionTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertSame('debug: connection= duration=0 rows=0 BEGIN', $messages[0]);
-        $this->assertSame('debug: connection= duration=0 rows=0 COMMIT', $messages[1]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[1]);
     }
 
     /**
@@ -1300,17 +1418,19 @@ class ConnectionTest extends TestCase
      * Tests that the connection is restablished whenever it is interrupted
      * after having used the connection at least once.
      */
-    public function testAutomaticReconnect(): void
+    public function testAutomaticReconnect2(): void
     {
         $conn = clone $this->connection;
         $statement = $conn->query('SELECT 1');
         $statement->execute();
         $statement->closeCursor();
 
-        $prop = new ReflectionProperty($conn, '_driver');
-        $prop->setAccessible(true);
-        $oldDriver = $prop->getValue($conn);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setAccessible(true);
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
@@ -1337,10 +1457,13 @@ class ConnectionTest extends TestCase
 
         $conn->begin();
 
-        $prop = new ReflectionProperty($conn, '_driver');
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
         $prop->setAccessible(true);
         $oldDriver = $prop->getValue($conn);
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
@@ -1369,9 +1492,12 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-        $prop = new ReflectionProperty($conn, '_driver');
-        $prop->setAccessible(true);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setAccessible(true);
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
@@ -1398,9 +1524,13 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-        $prop = new ReflectionProperty($conn, '_driver');
-        $prop->setAccessible(true);
         $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setAccessible(true);
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setAccessible(true);
+        $oldDriver = $prop->getValue($conn);
         $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
@@ -1413,5 +1543,13 @@ class ConnectionTest extends TestCase
         $conn->query('SELECT 1');
 
         $this->assertSame('[RECONNECT]', $logger->getMessage());
+    }
+
+    public function testNewQuery()
+    {
+        $this->deprecated(function () {
+            $query = $this->connection->newQuery();
+            $this->assertInstanceOf(Query::class, $query);
+        });
     }
 }

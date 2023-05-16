@@ -71,7 +71,6 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $uri->getUri();
         }
 
-        /** @psalm-suppress NoInterfaceProperties */
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
             'cookiePath' => $webroot,

@@ -31,6 +31,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use stdClass;
 use TestApp\Mailer\TestMailer;
+use function Cake\Core\env;
 
 class MailerTest extends TestCase
 {

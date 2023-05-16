@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\View\Form;
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * Provides a context provider that does nothing.
  *

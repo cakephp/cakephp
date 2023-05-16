@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Cache\Engine;
 
-use Cake\Cache\InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 

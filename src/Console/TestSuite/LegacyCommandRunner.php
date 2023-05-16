@@ -37,3 +37,10 @@ class LegacyCommandRunner
         return $dispatcher->dispatch();
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\LegacyCommandRunner',
+    'Cake\TestSuite\LegacyCommandRunner'
+);
+// phpcs:enable

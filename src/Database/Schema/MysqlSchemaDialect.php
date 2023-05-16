@@ -662,6 +662,8 @@ class MysqlSchemaDialect extends SchemaDialect
 }
 
 // phpcs:disable
-// Add backwards compatible alias.
-class_alias('Cake\Database\Schema\MysqlSchemaDialect', 'Cake\Database\Schema\MysqlSchema');
+class_alias(
+    'Cake\Database\Schema\MysqlSchemaDialect',
+    'Cake\Database\Schema\MysqlSchema'
+);
 // phpcs:enable

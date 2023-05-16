@@ -25,6 +25,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -283,6 +284,7 @@ class Router
             }
         }
         static::$_collection = new RouteCollection();
+        static::$_routePaths = [];
     }
 
     /**
@@ -401,7 +403,7 @@ class Router
      * - `_port` - Set the port if you need to create links on non-standard ports.
      * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
      * - `#` - Allows you to set URL hash fragments.
-     * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
+     * - `_https` - Set to true to convert the generated URL to https, or false to force http.
      * - `_name` - Name of route. If you have setup named routes you can use this key
      *   to specify it.
      *
@@ -449,7 +451,13 @@ class Router
             }
 
             if (isset($url['_ssl'])) {
-                $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
+                deprecationWarning('`_ssl` option is deprecated. Use `_https` instead.');
+                $url['_https'] = $url['_ssl'];
+                unset($url['_ssl']);
+            }
+
+            if (isset($url['_https'])) {
+                $url['_scheme'] = $url['_https'] === true ? 'https' : 'http';
             }
 
             if (isset($url['_full']) && $url['_full'] === true) {
@@ -458,7 +466,7 @@ class Router
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
             }
-            unset($url['_ssl'], $url['_full'], $url['#']);
+            unset($url['_https'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
 
@@ -930,7 +938,9 @@ class Router
     }
 
     /**
-     * Get the route scopes and their connected routes.
+     * Get the all of the routes currently connected.
+     *
+     * Routes will not always be returned in the order they were defined.
      *
      * @return array<\Cake\Routing\Route\Route>
      */
@@ -995,7 +1005,7 @@ class Router
      * - Vendor/Cms.Management/Admin/Articles::view
      *
      * @param string $url Route path in [Plugin.][Prefix/]Controller::action format
-     * @return array<string, string>
+     * @return array<string|int, string>
      */
     public static function parseRoutePath(string $url): array
     {
@@ -1009,24 +1019,52 @@ class Router
             (?<controller>[a-z0-9]+)
             ::
             (?<action>[a-z0-9_]+)
+            (?<params>(?:/(?:[a-z][a-z0-9-_]*=)?
+                (?:([a-z0-9-_=]+)|(["\'][^\'"]+[\'"]))
+            )+/?)?
             $#ix';
 
         if (!preg_match($regex, $url, $matches)) {
             throw new InvalidArgumentException("Could not parse a string route path `{$url}`.");
         }
 
-        $defaults = [];
-
+        $defaults = [
+            'controller' => $matches['controller'],
+            'action' => $matches['action'],
+        ];
         if ($matches['plugin'] !== '') {
             $defaults['plugin'] = $matches['plugin'];
         }
         if ($matches['prefix'] !== '') {
             $defaults['prefix'] = $matches['prefix'];
         }
-        $defaults['controller'] = $matches['controller'];
-        $defaults['action'] = $matches['action'];
 
-        static::$_routePaths[$url] = $defaults;
+        if (isset($matches['params']) && $matches['params'] !== '') {
+            $paramsArray = explode('/', trim($matches['params'], '/'));
+            foreach ($paramsArray as $param) {
+                if (strpos($param, '=') !== false) {
+                    if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
+                        throw new InvalidArgumentException(
+                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                        );
+                    }
+                    $paramKey = $paramMatches['key'];
+                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
+                        throw new InvalidArgumentException(
+                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                        );
+                    }
+                    $defaults[$paramKey] = trim($paramMatches['value'], '\'"');
+                } else {
+                    $defaults[] = $param;
+                }
+            }
+        }
+        // Only cache 200 routes per request. Beyond that we could
+        // be soaking up too much memory.
+        if (count(static::$_routePaths) < 200) {
+            static::$_routePaths[$url] = $defaults;
+        }
 
         return $defaults;
     }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use function Cake\Core\h;
 
 /**
  * Input widget class for generating a textarea control.

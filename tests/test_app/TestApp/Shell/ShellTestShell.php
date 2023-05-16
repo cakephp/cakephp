@@ -55,6 +55,11 @@ class ShellTestShell extends Shell
     public $testMessage = 'all your base are belong to us';
 
     /**
+     * @var \TestPlugin\Model\Table\TestPluginCommentsTable
+     */
+    public $TestPluginComments;
+
+    /**
      * @inheritDoc
      */
     protected function _stop(int $status = Shell::CODE_SUCCESS): void

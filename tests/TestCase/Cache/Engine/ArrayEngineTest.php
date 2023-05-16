@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 use ArrayObject;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ArrayEngine;
-use Cake\Cache\InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 
 /**

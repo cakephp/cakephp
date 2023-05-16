@@ -32,6 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Factory method for building controllers for request.
@@ -105,7 +106,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $middlewares = $controller->getMiddleware();
 
         if ($middlewares) {
-            $middlewareQueue = new MiddlewareQueue($middlewares);
+            $middlewareQueue = new MiddlewareQueue($middlewares, $this->container);
             $runner = new Runner();
 
             return $runner->run($middlewareQueue, $controller->getRequest(), $this);
@@ -354,3 +355,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         ]);
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Controller\ControllerFactory',
+    'Cake\Http\ControllerFactory'
+);
+// phpcs:enable

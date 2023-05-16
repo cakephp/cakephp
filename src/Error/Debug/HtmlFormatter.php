@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error\Debug;
 
 use RuntimeException;
+use function Cake\Core\h;
 
 /**
  * A Debugger formatter for generating interactive styled HTML output.

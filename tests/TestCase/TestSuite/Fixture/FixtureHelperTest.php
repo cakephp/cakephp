@@ -120,14 +120,14 @@ class FixtureHelperTest extends TestCase
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get('test');
-        $connection->newQuery()->delete('articles')->execute()->closeCursor();
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $connection->deleteQuery('articles')->execute()->closeCursor();
+        $rows = $connection->selectQuery('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
 
         $helper = new FixtureHelper();
         $helper->insert($helper->loadFixtures(['core.Articles']));
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $rows = $connection->selectQuery('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
         $rows->closeCursor();
     }
@@ -166,13 +166,13 @@ class FixtureHelperTest extends TestCase
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get('test');
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $rows = $connection->selectQuery('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
         $rows->closeCursor();
 
         $helper = new FixtureHelper();
         $helper->truncate($helper->loadFixtures(['core.Articles']));
-        $rows = $connection->newQuery()->select('*')->from('articles')->execute();
+        $rows = $connection->selectQuery('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
     }

@@ -29,6 +29,8 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\pluginSplit;
 
 /**
  * An Association is a relationship established between two tables and is used
