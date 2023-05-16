@@ -2826,7 +2826,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('Contact.email', [
             'templates' => [
                 'formGroup' => '{{input}}',
-                'inputContainer' => '<div><div>{{label}}</div>{{content}}</div>'
+                'inputContainer' => '<div><div>{{label}}</div>{{content}}</div>',
             ],
         ]);
         $expected = [
