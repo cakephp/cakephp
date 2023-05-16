@@ -290,7 +290,7 @@ if (!function_exists('deprecationWarning')) {
             $frame += ['file' => '[internal]', 'line' => '??'];
 
             // Assuming we're installed in vendor/cakephp/cakephp/src/Core/functions.php
-            $root = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+            $root = dirname(__DIR__, 5);
             if (defined('ROOT')) {
                 $root = ROOT;
             }
