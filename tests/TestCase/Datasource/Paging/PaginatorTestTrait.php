@@ -268,6 +268,7 @@ trait PaginatorTestTrait
                 'maxLimit' => 50,
             ],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'scope' => null,
         ];
         $defaults = $this->Paginator->getDefaults('Silly', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
@@ -285,6 +286,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -318,6 +320,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -386,6 +389,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -413,6 +417,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -444,6 +449,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -478,6 +484,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -501,6 +508,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -518,6 +526,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -547,6 +556,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -570,6 +580,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }

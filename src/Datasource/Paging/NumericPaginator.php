@@ -48,6 +48,10 @@ class NumericPaginator implements PaginatorInterface
      *   have to explicity specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
      * - `finder` - The table finder to use. Defaults to `all`.
+     * - `scope` - If specified this scope will be used as get the paging options
+     *   form the query params passed to paginate(). Scope allow namespacing the
+     *   paging options and allows paginating multiple models in the same action.
+     *   Default `null`.
      *
      * @var array<string, mixed>
      */
@@ -58,6 +62,7 @@ class NumericPaginator implements PaginatorInterface
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
         'finder' => 'all',
+        'scope' => null,
     ];
 
     /**
@@ -267,7 +272,6 @@ class NumericPaginator implements PaginatorInterface
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
-        $options += ['page' => 1, 'scope' => null];
         $options['page'] = max((int)$options['page'], 1);
 
         return compact('defaults', 'options');
