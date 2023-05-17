@@ -2854,6 +2854,27 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Form->control('Contact.email', [
+            'templates' => [
+                'formGroup' => '{{input}}',
+                'inputContainer' => '<div><div>{{label}}</div>{{content}}</div>',
+            ],
+        ]);
+        $expected = [
+            '<div',
+            '<div',
+            'label' => ['for' => 'contact-email'],
+            'Email',
+            '/label',
+            '/div',
+            ['input' => [
+                'type' => 'email', 'name' => 'Contact[email]',
+                'id' => 'contact-email', 'maxlength' => 255,
+            ]],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
         $result = $this->Form->control('Contact.email', ['type' => 'text']);
         $expected = [
             'div' => ['class' => 'input text'],
