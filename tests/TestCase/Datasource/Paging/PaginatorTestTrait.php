@@ -45,7 +45,27 @@ trait PaginatorTestTrait
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Paginator = new NumericPaginator();
+        $this->Paginator = new class extends NumericPaginator {
+            public function getDefaults(string $alias, array $settings): array
+            {
+                return parent::getDefaults($alias, $settings);
+            }
+
+            public function mergeOptions(array $params, array $settings): array
+            {
+                return parent::mergeOptions($params, $settings);
+            }
+
+            public function validateSort(RepositoryInterface $object, array $options): array
+            {
+                return parent::validateSort($object, $options);
+            }
+
+            public function checkLimit(array $options): array
+            {
+                return parent::checkLimit($options);
+            }
+        };
 
         $this->Post = $this->getMockRepository();
     }

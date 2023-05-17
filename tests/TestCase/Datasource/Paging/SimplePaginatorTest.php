@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Core\Configure;
 use Cake\Datasource\Paging\SimplePaginator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends NumericPaginatorTest
@@ -28,7 +29,27 @@ class SimplePaginatorTest extends NumericPaginatorTest
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Paginator = new SimplePaginator();
+        $this->Paginator = new class extends SimplePaginator {
+            public function getDefaults(string $alias, array $settings): array
+            {
+                return parent::getDefaults($alias, $settings);
+            }
+
+            public function mergeOptions(array $params, array $settings): array
+            {
+                return parent::mergeOptions($params, $settings);
+            }
+
+            public function validateSort(RepositoryInterface $object, array $options): array
+            {
+                return parent::validateSort($object, $options);
+            }
+
+            public function checkLimit(array $options): array
+            {
+                return parent::checkLimit($options);
+            }
+        };
     }
 
     /**
