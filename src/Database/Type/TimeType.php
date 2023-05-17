@@ -20,6 +20,7 @@ use Cake\Chronos\ChronosTime;
 use Cake\Database\Driver;
 use Cake\I18n\Time;
 use DateTimeInterface;
+use InvalidArgumentException;
 
 /**
  * Time type converter.
@@ -34,16 +35,6 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @var string
      */
     protected string $_format = 'H:i:s';
-
-    /**
-     * The ICU Time formats allowed by `marshal()`.
-     *
-     * @var array<string>
-     */
-    protected array $_marshalFormats = [
-        'HH:mm:ss',
-        'HH:mm',
-    ];
 
     /**
      * Whether `marshal()` should use locale-aware parser with `_localeMarshalFormat`.
@@ -182,22 +173,18 @@ class TimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Converts a string into a Time object after parsing it using the
-     * formats in `_marshalFormats`.
+     * Converts a string into a Time object
      *
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\Time|null
      */
     protected function _parseTimeValue(string $value): ?Time
     {
-        foreach ($this->_marshalFormats as $format) {
-            $time = $this->_className::parseTime($value, $format);
-            if ($time !== null) {
-                return $time;
-            }
+        try {
+            return $this->_className::parse($value);
+        } catch (InvalidArgumentException) {
+            return null;
         }
-
-        return null;
     }
 
     /**
