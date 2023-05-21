@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosTime;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
@@ -73,7 +74,7 @@ class TimeTypeTest extends TestCase
         $this->assertSame('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf(ChronosTime::class, $result);
+        $this->assertInstanceOf(Time::class, $result);
         $this->assertSame('16', $result->format('H'));
         $this->assertSame('30', $result->format('i'));
         $this->assertSame('15', $result->format('s'));
@@ -137,6 +138,7 @@ class TimeTypeTest extends TestCase
             ['13:10:10', new Time('13:10:10')],
             ['14:15', new Time('14:15:00')],
 
+            [new ChronosTime('13:10:10'), new Time('13:10:10')],
             [new Time('13:10:10'), new Time('13:10:10')],
             [new NativeDateTime('13:10:10'), new Time('13:10:10')],
             [new DateTimeImmutable('13:10:10'), new Time('13:10:10')],
@@ -252,5 +254,14 @@ class TimeTypeTest extends TestCase
         $expected = new Time('13:54:00');
         $result = $this->type->marshal('01:54 pm');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testUseLocaleParserException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must install the `cakephp/i18n` package to use locale aware parsing.');
+
+        $type = new TimeType('time', ChronosTime::class);
+        $type->useLocaleParser();
     }
 }

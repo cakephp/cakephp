@@ -26,11 +26,12 @@
     "require": {
         "php": ">=8.1",
         "cakephp/core": "^5.0",
+        "cakephp/chronos": "^3.0",
         "cakephp/datasource": "^5.0",
         "psr/log": "^3.0"
     },
     "suggest": {
-        "cakephp/i18n": "If you are using locale-aware datetime formats or Chronos types.",
+        "cakephp/i18n": "If you are using locale-aware datetime formats.",
         "cakephp/log": "If you want to use query logging without providing a logger yourself."
     },
     "autoload": {

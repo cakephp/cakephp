@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Chronos\ChronosTime;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver;
 use Cake\I18n\Time;
 use DateTimeInterface;
@@ -55,33 +56,41 @@ class TimeType extends BaseType implements BatchCastingInterface
     /**
      * The classname to use when creating objects.
      *
-     * @var class-string<\Cake\I18n\Time>
+     * @var class-string<\Cake\Chronos\ChronosTime>
      */
     protected string $_className;
 
     /**
-     * @inheritDoc
+     * Constructor
+     *
+     * @param string|null $name The name identifying this type.
+     * @param class-string<\Cake\Chronos\ChronosTime>|null $className Class name for time representation.
      */
-    public function __construct(?string $name = null)
+    public function __construct(?string $name = null, ?string $className = null)
     {
         parent::__construct($name);
 
-        $this->_className = Time::class;
+        if ($className === null) {
+            $className = class_exists(Time::class) ? Time::class : ChronosTime::class;
+        }
+
+        $this->_className = $className;
     }
 
     /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\Chronos\ChronosTime|\DateTimeInterface|null
+     * @return \Cake\Chronos\ChronosTime|null
      */
-    public function marshal(mixed $value): ChronosTime|DateTimeInterface|null
+    public function marshal(mixed $value): ?ChronosTime
     {
-        if ($value instanceof ChronosTime) {
+        if ($value instanceof $this->_className) {
             return $value;
         }
 
-        if ($value instanceof DateTimeInterface) {
+        /** @phpstan-ignore-next-line */
+        if ($value instanceof DateTimeInterface || $value instanceof ChronosTime) {
             return new $this->_className($value->format($this->_format));
         }
 
@@ -161,9 +170,9 @@ class TimeType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return mixed
+     * @return \Cake\Chronos\ChronosTime|null
      */
-    public function toPHP(mixed $value, Driver $driver): mixed
+    public function toPHP(mixed $value, Driver $driver): ?ChronosTime
     {
         if ($value === null) {
             return null;
@@ -176,9 +185,9 @@ class TimeType extends BaseType implements BatchCastingInterface
      * Converts a string into a Time object
      *
      * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\Time|null
+     * @return \Cake\Chronos\ChronosTime|null
      */
-    protected function _parseTimeValue(string $value): ?Time
+    protected function _parseTimeValue(string $value): ?ChronosTime
     {
         try {
             return $this->_className::parse($value);
@@ -192,10 +201,12 @@ class TimeType extends BaseType implements BatchCastingInterface
      * aware parser with the format set by `setLocaleFormat()`.
      *
      * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\Time|null
+     * @return \Cake\Chronos\ChronosTime|null
      */
-    protected function _parseLocalTimeValue(string $value): ?Time
+    protected function _parseLocalTimeValue(string $value): ?ChronosTime
     {
+        assert(is_a($this->_className, Time::class, true));
+
         return $this->_className::parseTime($value, $this->_localeMarshalFormat);
     }
 
@@ -208,6 +219,16 @@ class TimeType extends BaseType implements BatchCastingInterface
      */
     public function useLocaleParser(bool $enable = true)
     {
+        if (
+            $enable &&
+            !(
+                $this->_className === Time::class ||
+                is_subclass_of($this->_className, Time::class)
+            )
+        ) {
+            throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
+        }
+
         $this->_useLocaleMarshal = $enable;
 
         return $this;
