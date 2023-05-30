@@ -11,26 +11,25 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         4.3.0
+ * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Fixture;
+namespace Cake\TestSuite\Fixture\Extension;
 
 use Cake\Log\Log;
 use Cake\TestSuite\ConnectionHelper;
-use PHPUnit\Runner\BeforeFirstTestHook;
+use PHPUnit\Event\TestSuite\Started;
+use PHPUnit\Event\TestSuite\StartedSubscriber as PHPUnitStarted;
 
-/**
- * PHPUnit extension to integrate CakePHP's data-only fixtures.
- */
-class PHPUnitExtension implements BeforeFirstTestHook
+class PHPUnitStartedSubscriber implements PHPUnitStarted
 {
     /**
      * Initializes before any tests are run.
      *
+     * @param \PHPUnit\Event\TestSuite\Started $event The event
      * @return void
      */
-    public function executeBeforeFirstTest(): void
+    public function notify(Started $event): void
     {
         $helper = new ConnectionHelper();
         $helper->addTestAliases();

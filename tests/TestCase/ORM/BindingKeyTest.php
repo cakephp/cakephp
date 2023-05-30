@@ -39,7 +39,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderJoinable(): array
+    public static function strategiesProviderJoinable(): array
     {
         return [['join'], ['select']];
     }
@@ -49,7 +49,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderExternal(): array
+    public static function strategiesProviderExternal(): array
     {
         return [['subquery'], ['select']];
     }

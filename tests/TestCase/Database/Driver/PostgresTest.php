@@ -73,9 +73,11 @@ class PostgresTest extends TestCase
 
         $connection->expects($this->exactly(2))
             ->method('exec')
-            ->withConsecutive(
-                ['SET NAMES utf8'],
-                ['SET search_path TO public']
+            ->with(
+                ...self::withConsecutive(
+                    ['SET NAMES utf8'],
+                    ['SET search_path TO public']
+                )
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -131,12 +133,14 @@ class PostgresTest extends TestCase
 
         $connection->expects($this->exactly(5))
             ->method('exec')
-            ->withConsecutive(
-                ['SET NAMES a-language'],
-                ['SET search_path TO fooblic'],
-                ['Execute this'],
-                ['this too'],
-                ['SET timezone = Antarctica']
+            ->with(
+                ...self::withConsecutive(
+                    ['SET NAMES a-language'],
+                    ['SET search_path TO fooblic'],
+                    ['Execute this'],
+                    ['this too'],
+                    ['SET timezone = Antarctica']
+                )
             );
 
         $driver->expects($this->once())->method('createPdo')

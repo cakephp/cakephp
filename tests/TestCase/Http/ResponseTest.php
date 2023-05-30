@@ -1005,7 +1005,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileProvider(): array
+    public static function invalidFileProvider(): array
     {
         return [
             ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
@@ -1222,7 +1222,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public function invalidFileRangeProvider(): array
+    public static function invalidFileRangeProvider(): array
     {
         return [
             // malformed range

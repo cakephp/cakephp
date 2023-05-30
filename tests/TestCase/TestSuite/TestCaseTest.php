@@ -29,6 +29,8 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\TestStatus\Skipped;
+use PHPUnit\Framework\TestStatus\Success;
 use TestApp\Model\Table\SecondaryPostsTable;
 use function Cake\Core\deprecationWarning;
 
@@ -111,12 +113,14 @@ class TestCaseTest extends TestCase
     public function testSkipIf(): void
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
-        $result = $test->run();
-        $this->assertSame(1, $result->skippedCount());
+        $test->run();
+        $result = $test->status();
+        $this->assertInstanceOf(Skipped::class, $result);
 
         $test = new FixturizedTestCase('testSkipIfFalse');
-        $result = $test->run();
-        $this->assertSame(0, $result->skippedCount());
+        $test->run();
+        $result = $test->status();
+        $this->assertInstanceOf(Success::class, $result);
     }
 
     /**

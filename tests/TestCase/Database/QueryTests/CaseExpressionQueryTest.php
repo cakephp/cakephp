@@ -267,7 +267,7 @@ class CaseExpressionQueryTest extends TestCase
         $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
-    public function bindingValueDataProvider(): array
+    public static function bindingValueDataProvider(): array
     {
         return [
             ['1', 3],

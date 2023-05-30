@@ -932,31 +932,33 @@ class ViewTest extends TestCase
 
         $manager->expects($this->exactly(8))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.beforeRender';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.beforeRenderFile';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.afterRenderFile';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.afterRender';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.beforeLayout';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.beforeRenderFile';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.afterRenderFile';
-                })],
-                [$this->callback(function (EventInterface $event) {
-                    return $event->getName() === 'View.afterLayout';
-                })]
+            ->with(
+                ...self::withConsecutive(
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.beforeRender';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.beforeRenderFile';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.afterRenderFile';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.afterRender';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.beforeLayout';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.beforeRenderFile';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.afterRenderFile';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'View.afterLayout';
+                    })]
+                )
             );
 
         $View->render('index');

@@ -385,10 +385,10 @@ class AssociationTest extends TestCase
      */
     public function testPropertyNameClash(): void
     {
-        $this->expectWarning();
-        $this->expectWarningMessageMatches('/^Association property name `foo` clashes with field of same name of table `test`/');
-        $this->source->setSchema(['foo' => ['type' => 'string']]);
-        $this->assertSame('foo', $this->association->getProperty());
+        $this->expectWarningMessageMatches('/^Association property name `foo` clashes with field of same name of table `test`/', function () {
+            $this->source->setSchema(['foo' => ['type' => 'string']]);
+            $this->assertSame('foo', $this->association->getProperty());
+        });
     }
 
     /**

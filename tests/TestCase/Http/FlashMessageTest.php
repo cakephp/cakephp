@@ -302,7 +302,7 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function convenienceMethods(): array
+    public static function convenienceMethods(): array
     {
         return [
             ['success'],

@@ -206,7 +206,7 @@ class DateTimeTypeTest extends TestCase
      *
      * @return array
      */
-    public function marshalProvider(): array
+    public static function marshalProvider(): array
     {
         return [
             // invalid types.

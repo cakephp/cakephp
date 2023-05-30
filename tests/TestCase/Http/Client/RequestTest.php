@@ -60,7 +60,7 @@ class RequestTest extends TestCase
     /**
      * @dataProvider additionProvider
      */
-    public function additionProvider(): array
+    public static function additionProvider(): array
     {
         $headers = [
             'Content-Type' => 'application/json',

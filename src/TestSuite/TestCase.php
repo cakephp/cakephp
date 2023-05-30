@@ -35,11 +35,8 @@ use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
 use Closure;
+use Exception;
 use LogicException;
-use PHPUnit\Framework\Constraint\DirectoryExists;
-use PHPUnit\Framework\Constraint\FileExists;
-use PHPUnit\Framework\Constraint\LogicalNot;
-use PHPUnit\Framework\Constraint\RegularExpression;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -52,6 +49,7 @@ use function Cake\Core\pluginSplit;
 abstract class TestCase extends BaseTestCase
 {
     use LocatorAwareTrait;
+    use PHPUnitConsecutiveTrait;
 
     /**
      * Fixtures used by this test case.
@@ -76,72 +74,6 @@ abstract class TestCase extends BaseTestCase
      * @var \Cake\Error\PhpError|null
      */
     private ?PhpError $_capturedError = null;
-
-    /**
-     * Asserts that a string matches a given regular expression.
-     *
-     * @param string $pattern Regex pattern
-     * @param string $string String to test
-     * @param string $message Message
-     * @return void
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @codeCoverageIgnore
-     */
-    public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
-    {
-        static::assertThat($string, new RegularExpression($pattern), $message);
-    }
-
-    /**
-     * Asserts that a string does not match a given regular expression.
-     *
-     * @param string $pattern Regex pattern
-     * @param string $string String to test
-     * @param string $message Message
-     * @return void
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
-    public static function assertDoesNotMatchRegularExpression(
-        string $pattern,
-        string $string,
-        string $message = ''
-    ): void {
-        static::assertThat(
-            $string,
-            new LogicalNot(
-                new RegularExpression($pattern)
-            ),
-            $message
-        );
-    }
-
-    /**
-     * Asserts that a file does not exist.
-     *
-     * @param string $filename Filename
-     * @param string $message Message
-     * @return void
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @codeCoverageIgnore
-     */
-    public static function assertFileDoesNotExist(string $filename, string $message = ''): void
-    {
-        static::assertThat($filename, new LogicalNot(new FileExists()), $message);
-    }
-
-    /**
-     * Asserts that a directory does not exist.
-     *
-     * @param string $directory Directory
-     * @param string $message Message
-     * @return void
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @codeCoverageIgnore
-     */
-    public static function assertDirectoryDoesNotExist(string $directory, string $message = ''): void
-    {
-        static::assertThat($directory, new LogicalNot(new DirectoryExists()), $message);
-    }
 
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -503,6 +435,7 @@ abstract class TestCase extends BaseTestCase
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($prefix);
         $this->assertStringStartsWith($prefix, $string, $message);
     }
 
@@ -519,6 +452,7 @@ abstract class TestCase extends BaseTestCase
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($prefix);
         $this->assertStringStartsNotWith($prefix, $string, $message);
     }
 
@@ -535,6 +469,7 @@ abstract class TestCase extends BaseTestCase
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($suffix);
         $this->assertStringEndsWith($suffix, $string, $message);
     }
 
@@ -551,6 +486,7 @@ abstract class TestCase extends BaseTestCase
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $this->assertNotEmpty($suffix);
         $this->assertStringEndsNotWith($suffix, $string, $message);
     }
 
@@ -1085,5 +1021,71 @@ abstract class TestCase extends BaseTestCase
     public function getFixtures(): array
     {
         return $this->fixtures;
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectNoticeMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_NOTICE);
+    }
+
+    /**
+     * @param string $regex A regex to match against the deprecation message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectDeprecationMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_DEPRECATED);
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectWarningMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_USER_WARNING);
+    }
+
+    /**
+     * @param string $regex A regex to match against the error message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @return void
+     * @throws \Exception
+     */
+    public function expectErrorMessageMatches(string $regex, Closure $callable): void
+    {
+        $this->expectErrorHandlerMessageMatches($regex, $callable, E_ERROR | E_USER_ERROR);
+    }
+
+    /**
+     * @param string $regex A regex to match against the warning message
+     * @param \Closure $callable Callable which should trigger the warning
+     * @param int $errorLevel The error level to listen to
+     * @return void
+     * @throws \Exception
+     */
+    protected function expectErrorHandlerMessageMatches(string $regex, Closure $callable, int $errorLevel): void
+    {
+        set_error_handler(static function (int $errno, string $errstr): never {
+            throw new Exception($errstr, $errno);
+        }, $errorLevel);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches($regex);
+        try {
+            $callable();
+        } finally {
+            restore_error_handler();
+        }
     }
 }

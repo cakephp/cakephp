@@ -212,7 +212,7 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public function dsnProvider(): array
+    public static function dsnProvider(): array
     {
         return [
             'no user' => [

@@ -1198,7 +1198,7 @@ class BelongsToManyTest extends TestCase
      *
      * @return array
      */
-    public function emptyProvider(): array
+    public static function emptyProvider(): array
     {
         return [
             [''],

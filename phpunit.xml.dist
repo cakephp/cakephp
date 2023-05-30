@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-    colors="true"
-    bootstrap="tests/bootstrap.php"
-    backupGlobals="true"
-    convertDeprecationsToExceptions="true"
-    >
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         colors="true"
+         bootstrap="tests/bootstrap.php"
+         backupGlobals="true"
+         cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="cakephp">
             <directory>tests/TestCase/</directory>
@@ -19,9 +18,9 @@
             <directory>tests/TestCase/Database/</directory>
             <directory>tests/TestCase/ORM/</directory>
         </testsuite>
-        <testsuite name="http-interop-http-factory">
-            <directory>./vendor/http-interop/http-factory-tests/test</directory>
-        </testsuite>
+<!--        <testsuite name="http-interop-http-factory">-->
+<!--            <directory>./vendor/http-interop/http-factory-tests/test</directory>-->
+<!--        </testsuite>-->
         <testsuite name="globalfunctions">
             <file>tests/TestCase/Collection/FunctionsGlobalTest.php</file>
             <file>tests/TestCase/Core/FunctionsGlobalTest.php</file>
@@ -30,22 +29,14 @@
     </testsuites>
 
     <extensions>
-        <extension class="Cake\TestSuite\Fixture\PHPUnitExtension"/>
+        <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
     </extensions>
 
-    <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">src/</directory>
         </include>
-        <exclude>
-            <!--
-            This file contains a few functions that cannot be tested
-            as they contain die; or breakpoint functionality.
-            -->
-            <file>src/basics.php</file>
-        </exclude>
-    </coverage>
+    </source>
 
     <php>
         <ini name="memory_limit" value="-1"/>

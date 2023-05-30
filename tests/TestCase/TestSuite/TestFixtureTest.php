@@ -193,10 +193,12 @@ class TestFixtureTest extends TestCase
         ];
         $query->expects($this->exactly(3))
             ->method('values')
-            ->withConsecutive(
-                [$expected[0]],
-                [$expected[1]],
-                [$expected[2]]
+            ->with(
+                ...self::withConsecutive(
+                    [$expected[0]],
+                    [$expected[1]],
+                    [$expected[2]]
+                )
             )
             ->will($this->returnSelf());
 

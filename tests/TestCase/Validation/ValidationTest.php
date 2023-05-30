@@ -2650,7 +2650,7 @@ class ValidationTest extends TestCase
      *
      * @return array
      */
-    public function uploadedFileProvider(): array
+    public static function uploadedFileProvider(): array
     {
         return [
             'minSize fail' => [false, ['minSize' => 500]],

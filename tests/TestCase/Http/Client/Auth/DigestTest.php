@@ -196,7 +196,7 @@ class DigestTest extends TestCase
      *
      * @return array[]
      */
-    public function algorithmsProvider(): array
+    public static function algorithmsProvider(): array
     {
         return [
             [

@@ -505,10 +505,14 @@ class SqliteSchemaDialect extends SchemaDialect
     {
         $data = $schema->getConstraint($name);
         assert($data !== null, 'Data does not exist');
+
+        $column = $schema->getColumn($data['columns'][0]);
+        assert($column !== null, 'Data does not exist');
+
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
-            $schema->getColumn($data['columns'][0])['type'] === TableSchemaInterface::TYPE_INTEGER
+            $column['type'] === TableSchemaInterface::TYPE_INTEGER
         ) {
             return '';
         }

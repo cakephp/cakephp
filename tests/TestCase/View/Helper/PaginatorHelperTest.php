@@ -709,7 +709,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public function urlGenerationResetsToPage1Provider(): array
+    public static function urlGenerationResetsToPage1Provider(): array
     {
         return [
             'Sorting the field currently sorted asc, asc' => [
@@ -2627,7 +2627,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public function dataMetaProvider(): array
+    public static function dataMetaProvider(): array
     {
         return [
             // Verifies that no next and prev links are created for single page results.

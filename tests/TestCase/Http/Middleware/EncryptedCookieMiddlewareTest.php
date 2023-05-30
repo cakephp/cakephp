@@ -32,7 +32,16 @@ class EncryptedCookieMiddlewareTest extends TestCase
 {
     use CookieCryptTrait;
 
-    protected $middleware;
+    protected EncryptedCookieMiddleware $middleware;
+
+    protected static string $encryptedString;
+
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+
+        static::$encryptedString = $this->_encrypt('secret data', 'aes');
+    }
 
     protected function _getCookieEncryptionKey(): string
     {
@@ -102,15 +111,13 @@ class EncryptedCookieMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public function malformedCookies(): array
+    public static function malformedCookies(): array
     {
-        $encrypted = $this->_encrypt('secret data', 'aes');
-
         return [
             'empty' => [''],
-            'wrong prefix' => [substr_replace($encrypted, 'foo', 0, 3)],
-            'altered' => [str_replace('M', 'A', $encrypted)],
-            'invalid chars' => [str_replace('M', 'M#', $encrypted)],
+            'wrong prefix' => [substr_replace(static::$encryptedString, 'foo', 0, 3)],
+            'altered' => [str_replace('M', 'A', static::$encryptedString)],
+            'invalid chars' => [str_replace('M', 'M#', static::$encryptedString)],
         ];
     }
 

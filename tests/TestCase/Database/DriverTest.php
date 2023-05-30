@@ -295,7 +295,7 @@ class DriverTest extends TestCase
      *
      * @return array
      */
-    public function schemaValueProvider(): array
+    public static function schemaValueProvider(): array
     {
         return [
             [null, 'NULL'],

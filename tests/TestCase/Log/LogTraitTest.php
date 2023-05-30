@@ -37,9 +37,11 @@ class LogTraitTest extends TestCase
         $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
         $mock->expects($this->exactly(2))
             ->method('log')
-            ->withConsecutive(
-                ['error', 'Testing'],
-                ['debug', 'message']
+            ->with(
+                ...self::withConsecutive(
+                    ['error', 'Testing'],
+                    ['debug', 'message']
+                )
             );
 
         Log::setConfig('trait_test', ['engine' => $mock]);

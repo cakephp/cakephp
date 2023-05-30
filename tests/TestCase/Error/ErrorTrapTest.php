@@ -98,7 +98,7 @@ class ErrorTrapTest extends TestCase
         }
     }
 
-    public function logLevelProvider(): array
+    public static function logLevelProvider(): array
     {
         return [
             // PHP error level, expected log level

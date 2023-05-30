@@ -743,8 +743,9 @@ class ClientTest extends TestCase
 
         $adapter->expects($this->exactly(3))
             ->method('send')
-            ->withConsecutive(
-                [
+            ->with(
+                ...self::withConsecutive(
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url, (string)$request->getUri());
@@ -756,8 +757,8 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
-                ],
-                [
+                    ],
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
@@ -769,15 +770,17 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
-                ],
-                [
+                    ],
+                    [
                     $this->callback(function (Request $request) use ($url) {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
 
                         return true;
                     }),
-                ]
+                    [],
+                    ]
+                )
             )
             ->will($this->onConsecutiveCalls([$redirect], [$redirect2], [$response]));
 
@@ -858,16 +861,18 @@ class ClientTest extends TestCase
         ]);
         $adapter->expects($this->exactly(2))
             ->method('send')
-            ->withConsecutive(
-                [$this->anything()],
-                [
+            ->with(
+                ...self::withConsecutive(
+                    [$this->anything()],
+                    [
                     $this->callback(function ($request) {
                         $this->assertSame('http://backstage.example.org', (string)$request->getUri());
                         $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
                         return true;
                     }),
-                ]
+                    ]
+                )
             )
             ->will($this->OnConsecutiveCalls([$redirect], [$response]));
 
@@ -918,9 +923,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `htps://` did not parse.');
         Client::createFromUrl('htps://');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertTextContains('did not parse', $message);
     }
 
     /**
@@ -938,9 +942,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
         Client::createFromUrl('example.co');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**
@@ -949,9 +952,8 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
         Client::createFromUrl('/api/v1');
-        $message = $this->getExpectedExceptionMessage();
-        $this->assertSame('The URL was parsed but did not contain a scheme or host', $message);
     }
 
     /**

@@ -119,7 +119,7 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public function timeAgoEndProvider(): array
+    public static function timeAgoEndProvider(): array
     {
         return [
             [
@@ -520,7 +520,7 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public function invalidDataProvider(): array
+    public static function invalidDataProvider(): array
     {
         return [
             [null],

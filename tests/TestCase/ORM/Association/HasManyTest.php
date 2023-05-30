@@ -939,7 +939,7 @@ class HasManyTest extends TestCase
      *
      * @return array
      */
-    public function emptySetDataProvider(): array
+    public static function emptySetDataProvider(): array
     {
         return [
             [''],

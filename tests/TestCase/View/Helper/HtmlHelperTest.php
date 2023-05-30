@@ -638,9 +638,11 @@ class HtmlHelperTest extends TestCase
 
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['css', $this->matchesRegularExpression('/css_in_head.css/')],
-                ['css', $this->matchesRegularExpression('/more_css_in_head.css/')]
+            ->with(
+                ...self::withConsecutive(
+                    ['css', $this->matchesRegularExpression('/css_in_head.css/')],
+                    ['css', $this->matchesRegularExpression('/more_css_in_head.css/')]
+                )
             );
 
         $result = $this->Html->css('css_in_head', ['block' => true]);
@@ -845,9 +847,11 @@ class HtmlHelperTest extends TestCase
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['css', $this->stringContains('test.min.css')],
-                ['script', $this->stringContains('test.min.js')]
+            ->with(
+                ...self::withConsecutive(
+                    ['css', $this->stringContains('test.min.css')],
+                    ['script', $this->stringContains('test.min.js')]
+                )
             );
         $this->Html->css('test.min', ['block' => true]);
         $this->Html->script('test.min', ['block' => true]);
@@ -1114,9 +1118,11 @@ class HtmlHelperTest extends TestCase
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['script', $this->matchesRegularExpression('/script_in_head.js/')],
-                ['headScripts', $this->matchesRegularExpression('/second_script.js/')]
+            ->with(
+                ...self::withConsecutive(
+                    ['script', $this->matchesRegularExpression('/script_in_head.js/')],
+                    ['headScripts', $this->matchesRegularExpression('/second_script.js/')]
+                )
             );
 
         $result = $this->Html->script('script_in_head', ['block' => true]);
@@ -1204,9 +1210,11 @@ class HtmlHelperTest extends TestCase
 
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/')],
-                ['scriptTop', $this->stringContains('alert(')]
+            ->with(
+                ...self::withConsecutive(
+                    ['script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/')],
+                    ['scriptTop', $this->stringContains('alert(')]
+                )
             );
 
         $result = $this->Html->scriptBlock('window.foo = 2;', ['block' => true]);
@@ -1572,7 +1580,7 @@ class HtmlHelperTest extends TestCase
     /**
      * @return array
      */
-    public function dataMetaLinksProvider(): array
+    public static function dataMetaLinksProvider(): array
     {
         return [
             ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'],
@@ -1701,9 +1709,11 @@ class HtmlHelperTest extends TestCase
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['meta', $this->stringContains('robots')],
-                ['metaTags', $this->stringContains('favicon.ico')]
+            ->with(
+                ...self::withConsecutive(
+                    ['meta', $this->stringContains('robots')],
+                    ['metaTags', $this->stringContains('favicon.ico')]
+                )
             );
 
         $result = $this->Html->meta('robots', 'ALL', ['block' => true]);
@@ -1720,9 +1730,11 @@ class HtmlHelperTest extends TestCase
     {
         $this->View->expects($this->exactly(2))
             ->method('append')
-            ->withConsecutive(
-                ['meta', $this->stringContains('og:site_name')],
-                ['meta', $this->stringContains('og:description')]
+            ->with(
+                ...self::withConsecutive(
+                    ['meta', $this->stringContains('og:site_name')],
+                    ['meta', $this->stringContains('og:description')]
+                )
             );
         $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP', 'block' => true]);
         $this->assertNull($result, 'compact style should work');

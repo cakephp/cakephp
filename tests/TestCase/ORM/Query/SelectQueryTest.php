@@ -34,6 +34,7 @@ use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
@@ -124,7 +125,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderHasMany(): array
+    public static function strategiesProviderHasMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -134,7 +135,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsTo(): array
+    public static function strategiesProviderBelongsTo(): array
     {
         return [['join'], ['select']];
     }
@@ -144,7 +145,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public function strategiesProviderBelongsToMany(): array
+    public static function strategiesProviderBelongsToMany(): array
     {
         return [['subquery'], ['select']];
     }
@@ -1487,7 +1488,8 @@ class SelectQueryTest extends TestCase
      */
     public function testHydrateCustomObject(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity', ['fakeMethod']);
+        // phpcs:ignore
+        $class = get_class(new class extends Entity {});
         $table = $this->getTableLocator()->get('articles', [
             'table' => 'articles',
             'entityClass' => '\\' . $class,
@@ -1514,8 +1516,10 @@ class SelectQueryTest extends TestCase
      */
     public function testHydrateHasManyCustomEntity(): void
     {
-        $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
-        $articleEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
+        // phpcs:disable
+        $authorEntity = get_class(new class extends Entity {});
+        $articleEntity = get_class(new class extends Entity {});
+        // phpcs:enable
         $table = $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
         ]);
@@ -1552,7 +1556,7 @@ class SelectQueryTest extends TestCase
      */
     public function testHydrateBelongsToCustomEntity(): void
     {
-        $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
+        $authorEntity = get_class($this->createMock('Cake\ORM\Entity'));
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,

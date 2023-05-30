@@ -297,7 +297,7 @@ class QueryRegressionTest extends TestCase
      *
      * @return array
      */
-    public function strategyProvider(): array
+    public static function strategyProvider(): array
     {
         return [
             ['append'],

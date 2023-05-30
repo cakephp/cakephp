@@ -1675,7 +1675,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInApp(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('TestApp\Model\Entity\TestUser')) {
             class_alias($class, 'TestApp\Model\Entity\TestUser');
@@ -1691,7 +1691,7 @@ class TableTest extends TestCase
      */
     public function testEntityClassInflection(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
             class_alias($class, 'TestApp\Model\Entity\CustomCookie');
@@ -1714,7 +1714,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInPlugin(): void
     {
-        $class = $this->getMockClass('Cake\ORM\Entity');
+        $class = get_class($this->createMock('Cake\ORM\Entity'));
 
         if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
             class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
@@ -1756,7 +1756,7 @@ class TableTest extends TestCase
     public function testSetEntityClass(): void
     {
         $table = new Table();
-        $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
+        $class = '\\' . get_class($this->createMock('Cake\ORM\Entity'));
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertSame($class, $table->getEntityClass());
     }
@@ -3279,22 +3279,24 @@ class TableTest extends TestCase
 
         $mock->expects($this->exactly(4))
             ->method('dispatch')
-            ->withConsecutive(
-                [$this->anything()],
-                [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                    return $event->getName() === 'Model.beforeDelete' &&
+            ->with(
+                ...self::withConsecutive(
+                    [$this->anything()],
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.beforeDelete' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
-                })],
-                [
+                    })],
+                    [
                     $this->callback(function (EventInterface $event) use ($entity, $options) {
                         return $event->getName() === 'Model.afterDelete' &&
                             $event->getData() == ['entity' => $entity, 'options' => $options];
                     }),
-                ],
-                [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                    return $event->getName() === 'Model.afterDeleteCommit' &&
+                    ],
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.afterDeleteCommit' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
-                })]
+                    })]
+                )
             );
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
@@ -5374,7 +5376,7 @@ class TableTest extends TestCase
         $table->find();
     }
 
-    public function providerForTestGet(): array
+    public static function providerForTestGet(): array
     {
         return [
             [['fields' => ['id']]],
@@ -5425,7 +5427,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCustomFinder(): array
+    public static function providerForTestGetWithCustomFinder(): array
     {
         return [
             [['fields' => ['id'], 'finder' => 'custom']],
@@ -5477,7 +5479,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
     }
 
-    public function providerForTestGetWithCache(): array
+    public static function providerForTestGetWithCache(): array
     {
         return [
             [

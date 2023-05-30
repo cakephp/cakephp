@@ -75,9 +75,11 @@ class SyslogLogTest extends TestCase
             ->getMock();
         $log->expects($this->exactly(2))
             ->method('_write')
-            ->withConsecutive(
-                [LOG_DEBUG, 'debug: Foo'],
-                [LOG_DEBUG, 'debug: Bar']
+            ->with(
+                ...self::withConsecutive(
+                    [LOG_DEBUG, 'debug: Foo'],
+                    [LOG_DEBUG, 'debug: Bar']
+                )
             );
         $log->log('debug', "Foo\nBar");
     }
@@ -87,7 +89,7 @@ class SyslogLogTest extends TestCase
      *
      * @return array
      */
-    public function typesProvider(): array
+    public static function typesProvider(): array
     {
         return [
             ['emergency', LOG_EMERG],

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache;
 
+use AssertionError;
 use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
@@ -106,9 +107,9 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $this->expectError();
-
-        Cache::pool('tests');
+        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function () {
+            Cache::pool('tests');
+        });
     }
 
     /**
@@ -247,8 +248,8 @@ class CacheTest extends TestCase
             'className' => '\stdClass',
         ]);
 
-        $this->expectError();
-        $this->expectErrorMessage('Cache engines must extend `' . CacheEngine::class . '`');
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('Cache engines must extend `' . CacheEngine::class . '`');
 
         Cache::pool('tests');
     }
@@ -264,10 +265,8 @@ class CacheTest extends TestCase
             'engine' => $mock,
         ]);
 
-        $this->expectError();
-        $this->expectErrorMessage('is not properly configured');
-
-        Cache::pool('tests');
+        $engine = Cache::pool('tests');
+        $this->assertInstanceOf(NullEngine::class, $engine);
     }
 
     /**

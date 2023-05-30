@@ -101,10 +101,12 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(3))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["STARTTLS\r\n"],
-                ["EHLO localhost\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["STARTTLS\r\n"],
+                    ["EHLO localhost\r\n"]
+                )
             );
         $this->socket->expects($this->once())->method('enableCrypto')
             ->with('tls')
@@ -130,9 +132,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["STARTTLS\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["STARTTLS\r\n"]
+                )
             );
 
         $e = null;
@@ -166,10 +170,12 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(3))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"]
+                )
             );
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
@@ -190,9 +196,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -215,11 +223,13 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(4))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["AUTH LOGIN\r\n"],
-                ["bWFyaw==\r\n"],
-                ["c3Rvcnk=\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["AUTH LOGIN\r\n"],
+                    ["bWFyaw==\r\n"],
+                    ["c3Rvcnk=\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -241,9 +251,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["HELO localhost\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["HELO localhost\r\n"]
+                )
             );
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
@@ -264,9 +276,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["HELO localhost\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["HELO localhost\r\n"]
+                )
             );
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
@@ -300,8 +314,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
@@ -324,8 +340,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig(['authType' => 'invalid']);
@@ -347,8 +365,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                )
             );
 
         $this->SmtpTransport->connect();
@@ -378,11 +398,13 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(4))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"],
-                ["bWFyaw==\r\n"],
-                ["c3Rvcnk=\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"],
+                    ["bWFyaw==\r\n"],
+                    ["c3Rvcnk=\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -407,8 +429,10 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH XOAUTH2 {$authString}\r\n"],
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH XOAUTH2 {$authString}\r\n"],
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -432,9 +456,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -457,9 +483,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"]
+                )
             );
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->auth();
@@ -481,9 +509,11 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"]
+                )
             );
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->auth();
@@ -503,10 +533,12 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(3))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"],
-                ["bWFyaw==\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"],
+                    ["bWFyaw==\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -538,11 +570,13 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(4))
             ->method('write')
-            ->withConsecutive(
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
-                ["AUTH LOGIN\r\n"],
-                ["bWFyaw==\r\n"],
-                ["c3Rvcnk=\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
+                    ["AUTH LOGIN\r\n"],
+                    ["bWFyaw==\r\n"],
+                    ["c3Rvcnk=\r\n"]
+                )
             );
 
         $this->SmtpTransport->setConfig($this->credentials);
@@ -574,12 +608,14 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(5))
             ->method('write')
-            ->withConsecutive(
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"],
-                ["RCPT TO:<mark@cakephp.org>\r\n"],
-                ["RCPT TO:<juan@cakephp.org>\r\n"],
-                ["RCPT TO:<phpnut@cakephp.org>\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"],
+                    ["RCPT TO:<mark@cakephp.org>\r\n"],
+                    ["RCPT TO:<juan@cakephp.org>\r\n"],
+                    ["RCPT TO:<phpnut@cakephp.org>\r\n"]
+                )
             );
 
         $this->SmtpTransport->sendRcpt($message);
@@ -599,9 +635,11 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["MAIL FROM:<pleasereply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["MAIL FROM:<pleasereply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"]
+                )
             );
         $this->SmtpTransport->sendRcpt($message);
     }
@@ -651,9 +689,11 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["DATA\r\n"],
-                [$data]
+            ->with(
+                ...self::withConsecutive(
+                    ["DATA\r\n"],
+                    [$data]
+                )
             );
 
         $this->SmtpTransport->sendData($message);
@@ -740,9 +780,11 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('write')
-            ->withConsecutive(
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"]
+                )
             );
         $this->socket->expects($this->exactly(2))
             ->method('read')
@@ -887,18 +929,20 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(10))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"],
-                ["DATA\r\n"],
-                [$this->stringContains('First Line')],
-                ["RSET\r\n"],
-                // Second email
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"],
-                ["DATA\r\n"],
-                [$this->stringContains('First Line')]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"],
+                    ["DATA\r\n"],
+                    [$this->stringContains('First Line')],
+                    ["RSET\r\n"],
+                    // Second email
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"],
+                    ["DATA\r\n"],
+                    [$this->stringContains('First Line')]
+                )
             );
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
@@ -936,13 +980,15 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->atLeast(6))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"],
-                ["DATA\r\n"],
-                [$this->stringContains('First Line')],
-                ["QUIT\r\n"]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"],
+                    ["DATA\r\n"],
+                    [$this->stringContains('First Line')],
+                    ["QUIT\r\n"]
+                )
             );
 
         $this->socket->expects($this->once())->method('disconnect');
@@ -978,12 +1024,14 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(5))
             ->method('write')
-            ->withConsecutive(
-                ["EHLO localhost\r\n"],
-                ["MAIL FROM:<noreply@cakephp.org>\r\n"],
-                ["RCPT TO:<cake@cakephp.org>\r\n"],
-                ["DATA\r\n"],
-                [$this->stringContains('First Line')]
+            ->with(
+                ...self::withConsecutive(
+                    ["EHLO localhost\r\n"],
+                    ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+                    ["RCPT TO:<cake@cakephp.org>\r\n"],
+                    ["DATA\r\n"],
+                    [$this->stringContains('First Line')]
+                )
             );
 
         $this->expectException(SocketException::class);

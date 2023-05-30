@@ -1244,7 +1244,7 @@ class ServerRequestTest extends TestCase
      *
      * @return array
      */
-    public function paramReadingDataProvider(): array
+    public static function paramReadingDataProvider(): array
     {
         return [
             [
@@ -1898,7 +1898,7 @@ class ServerRequestTest extends TestCase
      *
      * @return array
      */
-    public function emulatedPropertyProvider(): array
+    public static function emulatedPropertyProvider(): array
     {
         return [
             ['here'],
