@@ -16,12 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Chronos\Chronos;
-use Cake\I18n\DateTime;
-use DateTime as NativeDateTime;
-use DateTimeImmutable;
+use Cake\Chronos\ChronosTime;
+use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
+use Cake\I18n\Time;
 use DateTimeInterface;
-use Exception;
 use InvalidArgumentException;
 
 /**
@@ -29,54 +28,78 @@ use InvalidArgumentException;
  *
  * Use to convert time instances to strings & back.
  */
-class TimeType extends DateTimeType
+class TimeType extends BaseType implements BatchCastingInterface
 {
     /**
-     * @inheritDoc
+     * The PHP Time format used when converting to string.
+     *
+     * @var string
      */
     protected string $_format = 'H:i:s';
 
     /**
-     * {@inheritDoc}
+     * Whether `marshal()` should use locale-aware parser with `_localeMarshalFormat`.
      *
-     * @var array<string>
+     * @var bool
      */
-    protected array $_marshalFormats = [
-        'H:i:s',
-        'H:i',
-    ];
+    protected bool $_useLocaleMarshal = false;
+
+    /**
+     * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
+     *
+     * See `Cake\I18n\Time::parseTime()` for accepted formats.
+     *
+     * @var string|int|null
+     */
+    protected string|int|null $_localeMarshalFormat = null;
+
+    /**
+     * The classname to use when creating objects.
+     *
+     * @var class-string<\Cake\Chronos\ChronosTime>
+     */
+    protected string $_className;
+
+    /**
+     * Constructor
+     *
+     * @param string|null $name The name identifying this type.
+     * @param class-string<\Cake\Chronos\ChronosTime>|null $className Class name for time representation.
+     */
+    public function __construct(?string $name = null, ?string $className = null)
+    {
+        parent::__construct($name);
+
+        if ($className === null) {
+            $className = class_exists(Time::class) ? Time::class : ChronosTime::class;
+        }
+
+        $this->_className = $className;
+    }
 
     /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\Chronos\Chronos|\DateTimeInterface|null
+     * @return \Cake\Chronos\ChronosTime|null
      */
-    public function marshal(mixed $value): Chronos|DateTimeInterface|null
+    public function marshal(mixed $value): ?ChronosTime
     {
-        if ($value instanceof DateTimeInterface || $value instanceof Chronos) {
-            if ($value instanceof NativeDateTime) {
-                $value = clone $value;
-            }
-
+        if ($value instanceof $this->_className) {
             return $value;
         }
 
-        $class = $this->_className;
-        try {
-            if (is_int($value) || (is_string($value) && ctype_digit($value))) {
-                return new $class('@' . $value);
-            }
+        /** @phpstan-ignore-next-line */
+        if ($value instanceof DateTimeInterface || $value instanceof ChronosTime) {
+            return new $this->_className($value->format($this->_format));
+        }
 
-            if (is_string($value)) {
-                if ($this->_useLocaleMarshal) {
-                    return $this->_parseLocaleTimeValue($value);
-                } else {
-                    return $this->_parseTimeValue($value);
-                }
+        if (is_string($value)) {
+            if ($this->_useLocaleMarshal) {
+                return $this->_parseLocalTimeValue($value);
+            } else {
+                return $this->_parseTimeValue($value);
             }
-        } catch (Exception $e) {
-            return null;
         }
 
         if (!is_array($value)) {
@@ -105,45 +128,125 @@ class TimeType extends DateTimeType
             $value['microsecond']
         );
 
-        return new $class($format);
+        return new $this->_className($format);
     }
 
     /**
-     * @param string $value
-     * @return \Cake\I18n\DateTime|null
+     * @inheritDoc
      */
-    protected function _parseLocaleTimeValue(string $value): ?DateTime
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
-        /** @var class-string<\Cake\I18n\DateTime> $class */
-        $class = $this->_className;
-
-        return $class::parseTime($value, $this->_localeMarshalFormat);
-    }
-
-    /**
-     * Converts a string into a DateTime object after parsing it using the
-     * formats in `_marshalFormats`.
-     *
-     * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\DateTime|\DateTimeImmutable|null
-     */
-    protected function _parseTimeValue(string $value): DateTime|DateTimeImmutable|null
-    {
-        $class = $this->_className;
-        foreach ($this->_marshalFormats as $format) {
-            try {
-                $dateTime = $class::createFromFormat($format, $value);
-                // Check for false in case DateTime is used directly
-                if ($dateTime !== false) {
-                    return $dateTime;
-                }
-            } catch (InvalidArgumentException) {
-                // Chronos wraps DateTime::createFromFormat and throws
-                // exception if parse fails.
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
                 continue;
             }
+
+            $value = $values[$field];
+            $instance = new $this->_className($value);
+            $values[$field] = $instance;
         }
 
-        return null;
+        return $values;
+    }
+
+    /**
+     * Convert time data into the database time format.
+     *
+     * @param mixed $value The value to convert.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @return mixed
+     */
+    public function toDatabase(mixed $value, Driver $driver): mixed
+    {
+        if ($value === null || is_string($value)) {
+            return $value;
+        }
+
+        return $value->format($this->_format);
+    }
+
+    /**
+     * Convert time values to PHP time instances
+     *
+     * @param mixed $value The value to convert.
+     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @return \Cake\Chronos\ChronosTime|null
+     */
+    public function toPHP(mixed $value, Driver $driver): ?ChronosTime
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return new $this->_className($value);
+    }
+
+    /**
+     * Converts a string into a Time object
+     *
+     * @param string $value The value to parse and convert to an object.
+     * @return \Cake\Chronos\ChronosTime|null
+     */
+    protected function _parseTimeValue(string $value): ?ChronosTime
+    {
+        try {
+            return $this->_className::parse($value);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+    }
+
+    /**
+     * Converts a string into a Time object after parsing it using the locale
+     * aware parser with the format set by `setLocaleFormat()`.
+     *
+     * @param string $value The value to parse and convert to an object.
+     * @return \Cake\Chronos\ChronosTime|null
+     */
+    protected function _parseLocalTimeValue(string $value): ?ChronosTime
+    {
+        assert(is_a($this->_className, Time::class, true));
+
+        return $this->_className::parseTime($value, $this->_localeMarshalFormat);
+    }
+
+    /**
+     * Sets whether to parse strings passed to `marshal()` using
+     * the locale-aware format set by `setLocaleFormat()`.
+     *
+     * @param bool $enable Whether to enable
+     * @return $this
+     */
+    public function useLocaleParser(bool $enable = true)
+    {
+        if (
+            $enable &&
+            !(
+                $this->_className === Time::class ||
+                is_subclass_of($this->_className, Time::class)
+            )
+        ) {
+            throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
+        }
+
+        $this->_useLocaleMarshal = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Sets the locale-aware format used by `marshal()` when parsing strings.
+     *
+     * See `Cake\I18n\Time::parseTime()` for accepted formats.
+     *
+     * @param string|int|null $format The locale-aware format
+     * @see \Cake\I18n\Time::parseTime()
+     * @return $this
+     */
+    public function setLocaleFormat(string|int|null $format)
+    {
+        $this->_localeMarshalFormat = $format;
+
+        return $this;
     }
 }

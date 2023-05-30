@@ -16,9 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Chronos\ChronosTime;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
@@ -71,7 +74,7 @@ class TimeTypeTest extends TestCase
         $this->assertSame('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf(DateTime::class, $result);
+        $this->assertInstanceOf(Time::class, $result);
         $this->assertSame('16', $result->format('H'));
         $this->assertSame('30', $result->format('i'));
         $this->assertSame('15', $result->format('s'));
@@ -88,7 +91,7 @@ class TimeTypeTest extends TestCase
         ];
         $expected = [
             'a' => null,
-            'b' => new DateTime('01:30:13'),
+            'b' => new Time('01:30:13'),
         ];
         $this->assertEquals(
             $expected,
@@ -121,8 +124,6 @@ class TimeTypeTest extends TestCase
      */
     public function marshalProvider(): array
     {
-        $date = new DateTime('@1392387900');
-
         return [
             // invalid types.
             [null, null],
@@ -134,19 +135,18 @@ class TimeTypeTest extends TestCase
             ['2014-02-14 13:14:15', null],
 
             // valid string types
-            ['1392387900', $date],
-            [1392387900, $date],
-            ['13:10:10', new DateTime('13:10:10')],
-            ['14:15', new DateTime('14:15:00')],
+            ['13:10:10', new Time('13:10:10')],
+            ['14:15', new Time('14:15:00')],
 
-            [new DateTime('13:10:10'), new DateTime('13:10:10')],
-            [new NativeDateTime('13:10:10'), new NativeDateTime('13:10:10')],
-            [new DateTimeImmutable('13:10:10'), new DateTimeImmutable('13:10:10')],
+            [new ChronosTime('13:10:10'), new Time('13:10:10')],
+            [new Time('13:10:10'), new Time('13:10:10')],
+            [new NativeDateTime('13:10:10'), new Time('13:10:10')],
+            [new DateTimeImmutable('13:10:10'), new Time('13:10:10')],
 
             // valid array types
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new DateTime('13:14:15'),
+                new Time('13:14:15'),
             ],
             [
                 [
@@ -154,7 +154,7 @@ class TimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am',
                 ],
-                new DateTime('01:14:15'),
+                new Time('01:14:15'),
             ],
             [
                 [
@@ -162,19 +162,19 @@ class TimeTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm',
                 ],
-                new DateTime('13:14:15'),
+                new Time('13:14:15'),
             ],
             [
                 [
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                 ],
-                new DateTime('01:14:15'),
+                new Time('01:14:15'),
             ],
             [
                 [
                     'hour' => 1, 'minute' => 14,
                 ],
-                new DateTime('01:14:00'),
+                new Time('01:14:00'),
             ],
 
             // Invalid array types
@@ -222,7 +222,7 @@ class TimeTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsing(): void
     {
-        $expected = new DateTime('23:23:00');
+        $expected = new Time('23:23:00');
         $result = $this->type->useLocaleParser()->marshal('11:23pm');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
         $this->assertNull($this->type->marshal('derp:23'));
@@ -239,8 +239,29 @@ class TimeTypeTest extends TestCase
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
 
         I18n::setLocale('da_DK');
-        $expected = new DateTime('03:20:00');
+        $expected = new Time('03:20:00');
         $result = $this->type->useLocaleParser()->marshal('03.20');
         $this->assertSame($expected->format('H:i'), $result->format('H:i'));
+    }
+
+    /**
+     * Tests marshalling dates using the locale aware parser and custom format
+     */
+    public function testMarshalWithLocaleParsingWithFormat(): void
+    {
+        $this->type->useLocaleParser()->setLocaleFormat('hh:mm a');
+
+        $expected = new Time('13:54:00');
+        $result = $this->type->marshal('01:54 pm');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testUseLocaleParserException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must install the `cakephp/i18n` package to use locale aware parsing.');
+
+        $type = new TimeType('time', ChronosTime::class);
+        $type->useLocaleParser();
     }
 }
