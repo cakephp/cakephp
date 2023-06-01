@@ -45,7 +45,27 @@ trait PaginatorTestTrait
 
         Configure::write('App.namespace', 'TestApp');
 
-        $this->Paginator = new NumericPaginator();
+        $this->Paginator = new class extends NumericPaginator {
+            public function getDefaults(string $alias, array $settings): array
+            {
+                return parent::getDefaults($alias, $settings);
+            }
+
+            public function mergeOptions(array $params, array $settings): array
+            {
+                return parent::mergeOptions($params, $settings);
+            }
+
+            public function validateSort(RepositoryInterface $object, array $options): array
+            {
+                return parent::validateSort($object, $options);
+            }
+
+            public function checkLimit(array $options): array
+            {
+                return parent::checkLimit($options);
+            }
+        };
 
         $this->Post = $this->getMockRepository();
     }
@@ -81,7 +101,7 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test that unknown keys in the default settings are
+     * test that unknown keys in the default settings are **not**
      * passed to the find operations.
      */
     public function testPaginateExtraParams(): void
@@ -105,16 +125,12 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
             ]);
 
-        $this->deprecated(function () use ($table, $params, $settings) {
-            $this->Paginator->paginate($table, $params, $settings);
-        });
+        $this->Paginator->paginate($table, $params, $settings);
     }
 
     /**
@@ -272,6 +288,7 @@ trait PaginatorTestTrait
                 'maxLimit' => 50,
             ],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'scope' => null,
         ];
         $defaults = $this->Paginator->getDefaults('Silly', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
@@ -289,6 +306,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -322,6 +340,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -390,6 +409,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -417,6 +437,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -448,6 +469,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -482,6 +504,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -505,6 +528,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -522,6 +546,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -551,6 +576,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -574,6 +600,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'scope' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1125,21 +1152,20 @@ trait PaginatorTestTrait
     }
 
     /**
-     * test paginate() and custom finders to ensure the count + find
-     * use the custom type.
+     * test the `finder` is unused if paginate() is called with a query instance.
      */
-    public function testPaginateCustomFindCount(): void
+    public function testPaginateQueryUnusedFinder(): void
     {
         $settings = [
             'finder' => 'published',
             'limit' => 2,
         ];
-        $table = $this->_getMockPosts(['selectQuery']);
+        $table = $this->_getMockPosts(['find']);
         $query = $this->_getMockFindQuery();
+        $query->setRepository($table);
 
-        $table->expects($this->once())
-            ->method('selectQuery')
-            ->will($this->returnValue($query));
+        $table->expects($this->never())
+            ->method('find');
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -1147,9 +1173,7 @@ trait PaginatorTestTrait
                 'page' => 1,
                 'order' => [],
             ]);
-        $result = $this->Paginator->paginate($table, [], $settings)->pagingParams();
-
-        $this->assertEquals('published', $result['finder']);
+        $this->Paginator->paginate($query, [], $settings)->pagingParams();
     }
 
     /**

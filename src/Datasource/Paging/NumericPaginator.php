@@ -21,7 +21,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
-use function Cake\Core\deprecationWarning;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -49,6 +48,10 @@ class NumericPaginator implements PaginatorInterface
      *   have to explicity specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
      * - `finder` - The table finder to use. Defaults to `all`.
+     * - `scope` - If specified this scope will be used to get the paging options
+     *   from the query params passed to paginate(). Scopes allow namespacing the
+     *   paging options and allows paginating multiple models in the same action.
+     *   Default `null`.
      *
      * @var array<string, mixed>
      */
@@ -59,6 +62,7 @@ class NumericPaginator implements PaginatorInterface
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
         'finder' => 'all',
+        'scope' => null,
     ];
 
     /**
@@ -218,17 +222,23 @@ class NumericPaginator implements PaginatorInterface
     protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface
     {
         $options = $data['options'];
-        unset(
-            $options['scope'],
-            $options['sort'],
-            $options['direction'],
+        $queryOptions = array_intersect_key(
+            $options,
+            ['order' => null, 'page' => null, 'limit' => null],
         );
 
         if ($query === null) {
-            $query = $object->find($data['finder'], ...$options);
-        } else {
-            $query->applyOptions($options);
+            $args = [];
+            $type = !empty($options['finder']) ? $options['finder'] : 'all';
+            if (is_array($type)) {
+                $args = (array)current($type);
+                $type = key($type);
+            }
+
+            $query = $object->find($type, ...$args);
         }
+
+        $query->applyOptions($queryOptions);
 
         return $query;
     }
@@ -251,36 +261,20 @@ class NumericPaginator implements PaginatorInterface
      * @param \Cake\Datasource\RepositoryInterface $object The repository object.
      * @param array<string, mixed> $params Request params
      * @param array<string, mixed> $settings The settings/configuration used for pagination.
-     * @return array Array with keys 'defaults', 'options' and 'finder'
+     * @return array Array with keys 'defaults', 'options'.
      */
     protected function extractData(RepositoryInterface $object, array $params, array $settings): array
     {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
 
-        $validSettings = array_merge(
-            array_keys($this->_defaultConfig),
-            ['order', 'scope']
-        );
-        $extraSettings = array_diff_key($defaults, array_flip($validSettings));
-        if ($extraSettings) {
-            deprecationWarning(
-                '4.5.0',
-                'Passing query options as paginator settings is deprecated.'
-                . ' Use a custom finder through `finder` config instead.'
-                . ' Extra keys found are: ' . implode(',', array_keys($extraSettings))
-            );
-        }
-
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
         $options = $this->checkLimit($options);
 
-        $options += ['page' => 1, 'scope' => null];
         $options['page'] = max((int)$options['page'], 1);
-        [$finder, $options] = $this->_extractFinder($options);
 
-        return compact('defaults', 'options', 'finder');
+        return compact('defaults', 'options');
     }
 
     /**
@@ -308,7 +302,6 @@ class NumericPaginator implements PaginatorInterface
         $paging += [
             'limit' => $data['defaults']['limit'] != $limit ? $limit : null,
             'scope' => $data['options']['scope'],
-            'finder' => $data['finder'],
         ];
 
         return $paging;
@@ -410,33 +403,6 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Extracts the finder name and options out of the provided pagination options.
-     *
-     * @param array<string, mixed> $options the pagination options.
-     * @return array An array containing in the first position the finder name
-     *   and in the second the options to be passed to it.
-     */
-    protected function _extractFinder(array $options): array
-    {
-        $type = !empty($options['finder']) ? $options['finder'] : 'all';
-        unset(
-            $options['finder'],
-            $options['maxLimit'],
-            $options['allowedParameters'],
-            $options['whitelist'],
-            $options['sortableFields'],
-            $options['sortWhitelist'],
-        );
-
-        if (is_array($type)) {
-            $options = (array)current($type) + $options;
-            $type = key($type);
-        }
-
-        return [$type, $options];
-    }
-
-    /**
      * Merges the various options that Paginator uses.
      * Pulls settings together from the following places:
      *
@@ -452,7 +418,7 @@ class NumericPaginator implements PaginatorInterface
      * @param array $settings The settings to merge with the request data.
      * @return array<string, mixed> Array of merged options.
      */
-    public function mergeOptions(array $params, array $settings): array
+    protected function mergeOptions(array $params, array $settings): array
     {
         if (!empty($settings['scope'])) {
             $scope = $settings['scope'];
@@ -472,7 +438,7 @@ class NumericPaginator implements PaginatorInterface
      * @return array<string, mixed> An array of pagination settings for a model,
      *   or the general settings.
      */
-    public function getDefaults(string $alias, array $settings): array
+    protected function getDefaults(string $alias, array $settings): array
     {
         if (isset($settings[$alias])) {
             $settings = $settings[$alias];
@@ -519,7 +485,7 @@ class NumericPaginator implements PaginatorInterface
      * @return array<string, mixed> An array of options with sort + direction removed and
      *   replaced with order if possible.
      */
-    public function validateSort(RepositoryInterface $object, array $options): array
+    protected function validateSort(RepositoryInterface $object, array $options): array
     {
         if (isset($options['sort'])) {
             $direction = null;
@@ -656,7 +622,7 @@ class NumericPaginator implements PaginatorInterface
      * @param array<string, mixed> $options An array of options with a limit key to be checked.
      * @return array<string, mixed> An array of options for pagination.
      */
-    public function checkLimit(array $options): array
+    protected function checkLimit(array $options): array
     {
         $options['limit'] = (int)$options['limit'];
         if ($options['limit'] < 1) {
