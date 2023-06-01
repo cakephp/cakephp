@@ -48,8 +48,8 @@ class NumericPaginator implements PaginatorInterface
      *   have to explicity specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
      * - `finder` - The table finder to use. Defaults to `all`.
-     * - `scope` - If specified this scope will be used as get the paging options
-     *   form the query params passed to paginate(). Scope allow namespacing the
+     * - `scope` - If specified this scope will be used to get the paging options
+     *   from the query params passed to paginate(). Scopes allow namespacing the
      *   paging options and allows paginating multiple models in the same action.
      *   Default `null`.
      *
