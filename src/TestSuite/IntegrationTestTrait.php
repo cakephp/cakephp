@@ -1270,6 +1270,22 @@ trait IntegrationTestTrait
     }
 
     /**
+     * Asserts that a cookie is set.
+     *
+     * Useful when you're working with cookies that have obfuscated values
+     * but the cookie being set is important.
+     *
+     * @param string $name The cookie name.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertCookieIsSet(string $name, string $message = ''): void
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
+    }
+
+    /**
      * Asserts a cookie has not been set in the response
      *
      * @param string $cookie The cookie name to check

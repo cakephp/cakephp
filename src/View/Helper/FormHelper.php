@@ -1131,6 +1131,7 @@ class FormHelper extends Helper
             'content' => $result,
             'error' => $error,
             'errorSuffix' => $errorSuffix,
+            'label' => $label,
             'options' => $options,
         ]);
 
@@ -1178,6 +1179,7 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
+            'label' => $options['label'] ?? '',
             'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
             'templateVars' => $options['options']['templateVars'] ?? [],

@@ -768,6 +768,37 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Tests assertCookieIsSet assertion
+     */
+    public function testAssertCookieIsSet(): void
+    {
+        $this->get('/posts/secretCookie');
+        $this->assertCookieIsSet('secrets');
+    }
+
+    /**
+     * Tests the failure message for assertCookieIsSet
+     */
+    public function testCookieIsSetFailure(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Failed asserting that \'not-secrets\' cookie is set');
+        $this->post('/posts/secretCookie');
+        $this->assertCookieIsSet('not-secrets');
+    }
+
+    /**
+     * Tests the failure message for assertCookieIsSet when no
+     * response whas generated
+     */
+    public function testCookieIsSetFailureNoResponse(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set, cannot assert content.');
+        $this->assertCookieIsSet('secrets');
+    }
+
+    /**
      * Test error handling and error page rendering.
      */
     public function testPostAndErrorHandling(): void
