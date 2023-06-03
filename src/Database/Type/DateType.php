@@ -73,7 +73,7 @@ class DateType extends BaseType implements BatchCastingInterface
     {
         parent::__construct($name);
 
-        $this->_className = class_exists(Date::class) ? Date::class : DateTimeImmutable::class;
+        $this->_className = class_exists(Date::class) ? Date::class : ChronosDate::class;
     }
 
     /**
@@ -101,9 +101,9 @@ class DateType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value Value to be converted to PHP equivalent
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
-     * @return \Cake\I18n\Date|\DateTimeImmutable|null
+     * @return \Cake\I18n\Date|\ChronosDate|null
      */
-    public function toPHP(mixed $value, Driver $driver): Date|DateTimeImmutable|null
+    public function toPHP(mixed $value, Driver $driver): Date|ChronosDate|null
     {
         if ($value === null) {
             return null;
@@ -116,10 +116,6 @@ class DateType extends BaseType implements BatchCastingInterface
             return null;
         } else {
             $instance = new $class($value);
-        }
-
-        if ($instance instanceof DateTimeImmutable) {
-            $instance = $instance->setTime(0, 0, 0);
         }
 
         return $instance;
