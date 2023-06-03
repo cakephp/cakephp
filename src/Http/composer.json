@@ -36,7 +36,7 @@
     },
     "provide": {
         "psr/http-client-implementation": "^1.0",
-        "psr/http-server-server-implementation": "^1.0",
+        "psr/http-server-implementation": "^1.0",
         "psr/http-server-middleware-implementation": "^1.0"
     },
     "suggest": {
