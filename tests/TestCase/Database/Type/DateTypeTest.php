@@ -145,8 +145,8 @@ class DateTypeTest extends TestCase
             ['2014-02-14', new Date('2014-02-14')],
 
             [new Date('2014-02-14'), new Date('2014-02-14')],
-            [new NativeDateTime('2014-02-14'), new NativeDateTime('2014-02-14')],
-            [new DateTimeImmutable('2014-02-14'), new DateTimeImmutable('2014-02-14')],
+            [new NativeDateTime('2014-02-14'), new Date('2014-02-14')],
+            [new DateTimeImmutable('2014-02-14'), new Date('2014-02-14')],
 
             // valid array types
             [
