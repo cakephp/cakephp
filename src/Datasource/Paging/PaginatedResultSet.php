@@ -16,13 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Paging;
 
-use Cake\Datasource\ResultSetInterface;
 use IteratorIterator;
+use Traversable;
 
 /**
  * Paginated resultset.
  *
- * @method \Cake\Datasource\ResultSetInterface getInnerIterator()
  * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
  * @template T
  */
@@ -38,10 +37,10 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     /**
      * Constructor
      *
-     * @param \Cake\Datasource\ResultSetInterface<T> $results Resultset instance.
+     * @param \Traversable<T> $results Resultset instance.
      * @param array $params Paging params.
      */
-    public function __construct(ResultSetInterface $results, array $params)
+    public function __construct(Traversable $results, array $params)
     {
         parent::__construct($results);
 
@@ -53,15 +52,15 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
      */
     public function count(): int
     {
-        return $this->getInnerIterator()->count();
+        return $this->params['count'];
     }
 
     /**
      * Get paginated items.
      *
-     * @return \Cake\Datasource\ResultSetInterface<T> The paginated items result set.
+     * @return \Traversable<T> The paginated items result set.
      */
-    public function items(): ResultSetInterface
+    public function items(): Traversable
     {
         return $this->getInnerIterator();
     }
