@@ -257,7 +257,7 @@ class SmtpTransport extends AbstractTransport
     {
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+            if (substr($line['message'], 0, 5) === 'AUTH ') {
                 $auth = explode(' ', $line['message'])[1];
                 break;
             }
