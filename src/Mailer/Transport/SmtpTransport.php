@@ -123,7 +123,6 @@ class SmtpTransport extends AbstractTransport
     {
         if (!$this->connected()) {
             $this->_connect();
-            $this->_auth();
         }
     }
 
@@ -197,7 +196,6 @@ class SmtpTransport extends AbstractTransport
 
         if (!$this->connected()) {
             $this->_connect();
-            $this->_auth();
         } else {
             $this->_smtpSend('RSET');
         }
@@ -327,7 +325,10 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
-        $this->_parseAuthType();
+        if (isset($this->_config['username'], $this->_config['password'])) {
+            $this->_parseAuthType();
+            $this->_auth();
+        }
     }
 
     /**
@@ -338,10 +339,6 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _auth(): void
     {
-        if (!isset($this->_config['username'], $this->_config['password'])) {
-            return;
-        }
-
         $username = $this->_config['username'];
         $password = $this->_config['password'];
 
