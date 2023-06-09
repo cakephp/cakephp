@@ -229,11 +229,11 @@ class SmtpTransport extends AbstractTransport
         }
         $this->_lastResponse = array_merge($this->_lastResponse, $response);
     }
-    
+
     /**
      * Checks if the authType is valid and sets $this->authType
-     * 
-     * @throws Cake\Core\Exception\CakeException if authType is invalid
+     *
+     * @throws \Cake\Core\Exception\CakeException if authType is invalid
      * @param string $type Authtype to set
      * @return void
      */
@@ -262,6 +262,7 @@ class SmtpTransport extends AbstractTransport
                 break;
             }
         }
+
         return $auth;
     }
 
@@ -276,7 +277,7 @@ class SmtpTransport extends AbstractTransport
         if (isset($this->_config['authType']) && !isset($this->_config['username'], $this->_config['password'])) {
             throw new CakeException('You must provide username and password for authType ' . $this->_config['authType']);
         }
-        
+
         $this->_generateSocket();
         if (!$this->_socket()->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');

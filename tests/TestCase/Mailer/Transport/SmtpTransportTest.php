@@ -305,7 +305,8 @@ class SmtpTransportTest extends TestCase
         $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2] + $this->credentials);
         try {
             $this->SmtpTransport->connect();
-        } catch (CakeException $e) {}
+        } catch (CakeException $e) {
+        }
         $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
     }
 
