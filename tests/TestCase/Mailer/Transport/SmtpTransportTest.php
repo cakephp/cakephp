@@ -309,6 +309,15 @@ class SmtpTransportTest extends TestCase
         $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
     }
 
+    public function testExceptionOnlyAuthTypeSet(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('You must provide username and password for authType XOAUTH2');
+
+        $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
+        $this->SmtpTransport->connect();
+    }
+
     public function testExceptionInvalidAuthType(): void
     {
         $this->expectException(CakeException::class);
