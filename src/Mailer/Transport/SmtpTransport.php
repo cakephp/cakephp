@@ -229,48 +229,40 @@ class SmtpTransport extends AbstractTransport
         }
         $this->_lastResponse = array_merge($this->_lastResponse, $response);
     }
-
+    
     /**
-     * Parses the last response line and extract the preferred authentication type.
-     *
+     * Checks if the authType is valid and sets $this->authType
+     * 
+     * @throws Cake\Core\Exception\CakeException if authType is invalid
+     * @param string $type Authtype to set
      * @return void
      */
-    protected function _parseAuthType(): void
+    protected function _setAuthType($type): void
     {
-        $authType = $this->getConfig('authType');
-        if ($authType !== null) {
-            if (!in_array($authType, self::SUPPORTED_AUTH_TYPES)) {
-                throw new CakeException(
-                    'Unsupported auth type. Available types are: ' . implode(', ', self::SUPPORTED_AUTH_TYPES)
-                );
-            }
-
-            $this->authType = $authType;
-
-            return;
+        if (!in_array($type, self::SUPPORTED_AUTH_TYPES)) {
+            throw new CakeException(
+                'Unsupported auth type ' . $type . '. Available types are: ' . implode(', ', self::SUPPORTED_AUTH_TYPES)
+            );
         }
 
+        $this->authType = $type;
+    }
+
+    /**
+     * Parses the last response line and extracts and returns the preferred authentication type.
+     *
+     * @return string
+     */
+    protected function _parseAuthType(): string
+    {
         $auth = '';
         foreach ($this->_lastResponse as $line) {
             if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
-                $auth = $line['message'];
+                $auth = explode(' ', $line['message'])[1];
                 break;
             }
         }
-
-        if ($auth === '') {
-            return;
-        }
-
-        foreach (self::SUPPORTED_AUTH_TYPES as $type) {
-            if (strpos($auth, $type) !== false) {
-                $this->authType = $type;
-
-                return;
-            }
-        }
-
-        throw new CakeException('Unsupported auth type: ' . substr($auth, 5));
+        return $auth;
     }
 
     /**
@@ -281,6 +273,10 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _connect(): void
     {
+        if (isset($this->_config['authType']) && !isset($this->_config['username'], $this->_config['password'])) {
+            throw new CakeException('You must provide username and password for authType ' . $this->_config['authType']);
+        }
+        
         $this->_generateSocket();
         if (!$this->_socket()->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');
@@ -325,8 +321,13 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
+        // username and password are set, so authentication is wanted
         if (isset($this->_config['username'], $this->_config['password'])) {
-            $this->_parseAuthType();
+            if (isset($this->_config['authType'])) {
+                $this->_setAuthType($this->_config['authType']);
+            } else {
+                $this->_setAuthType($this->_parseAuthType());
+            }
             $this->_auth();
         }
     }
