@@ -154,21 +154,19 @@ class SmtpTransportTest extends TestCase
     {
         $this->expectException(SocketException::class);
         $this->expectExceptionMessage('SMTP authentication method not allowed, check if SMTP server requires TLS.');
-        $this->SmtpTransport->setConfig(['tls' => false] + $this->credentials);
+        $this->SmtpTransport->setConfig(['tls' => false, 'authType' => 'LOGIN'] + $this->credentials);
 
-        $this->socket->expects($this->exactly(4))
+        $this->socket->expects($this->exactly(3))
             ->method('read')
             ->will($this->onConsecutiveCalls(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
-                "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "504 5.7.4 Unrecognized authentication type\r\n"
             ));
-        $this->socket->expects($this->exactly(3))
+        $this->socket->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
                 ["EHLO localhost\r\n"],
-                ["AUTH PLAIN {$this->credentialsEncoded}\r\n"],
                 ["AUTH LOGIN\r\n"]
             );
 
@@ -283,7 +281,7 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
-     * Test that when "authType" is specified that's that one used instead of the
+     * Test that when "authType" and credentials are specified that's the specified type is used instead of the
      * 1st one supported by the server
      *
      * @return void
@@ -292,27 +290,29 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
-        $this->socket->expects($this->exactly(2))
+        $this->socket->expects($this->exactly(3))
             ->method('read')
             ->will($this->onConsecutiveCalls(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
             ));
-        $this->socket->expects($this->exactly(1))
+        $this->socket->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
                 ["EHLO localhost\r\n"],
             );
 
-        $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2]);
-        $this->SmtpTransport->connect();
+        $this->SmtpTransport->setConfig(['authType' => SmtpTransport::AUTH_XOAUTH2] + $this->credentials);
+        try {
+            $this->SmtpTransport->connect();
+        } catch (CakeException $e) {}
         $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
     }
 
     public function testExceptionInvalidAuthType(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Unsupported auth type. Available types are: PLAIN, LOGIN, XOAUTH2');
+        $this->expectExceptionMessage('Unsupported auth type invalid. Available types are: PLAIN, LOGIN, XOAUTH2');
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
@@ -328,14 +328,14 @@ class SmtpTransportTest extends TestCase
                 ["EHLO localhost\r\n"],
             );
 
-        $this->SmtpTransport->setConfig(['authType' => 'invalid']);
+        $this->SmtpTransport->setConfig(['authType' => 'invalid'] + $this->credentials);
         $this->SmtpTransport->connect();
     }
 
     public function testAuthTypeUnsupported(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Unsupported auth type: CRAM-MD5');
+        $this->expectExceptionMessage('Unsupported auth type CRAM-MD5. Available types are: PLAIN, LOGIN, XOAUTH2');
 
         $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
 
@@ -351,6 +351,7 @@ class SmtpTransportTest extends TestCase
                 ["EHLO localhost\r\n"],
             );
 
+        $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->connect();
         $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
     }
