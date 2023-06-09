@@ -252,6 +252,10 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
+        if (!isset($this->_config['username'], $this->_config['password'])) {
+            return;
+        }
+
         $auth = '';
         foreach ($this->_lastResponse as $line) {
             if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
