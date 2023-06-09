@@ -275,7 +275,9 @@ class SmtpTransport extends AbstractTransport
     protected function _connect(): void
     {
         if (isset($this->_config['authType']) && !isset($this->_config['username'], $this->_config['password'])) {
-            throw new CakeException('You must provide username and password for authType ' . $this->_config['authType']);
+            throw new CakeException(
+                'You must provide username and password for authType ' . $this->_config['authType']
+            );
         }
 
         $this->_generateSocket();
