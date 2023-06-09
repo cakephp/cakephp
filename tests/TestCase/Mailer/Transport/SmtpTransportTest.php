@@ -154,7 +154,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->expectException(SocketException::class);
         $this->expectExceptionMessage('SMTP authentication method not allowed, check if SMTP server requires TLS.');
-        $this->SmtpTransport->setConfig(['tls' => false, 'authType' => 'LOGIN'] + $this->credentials);
+        $this->SmtpTransport->setConfig(['tls' => false, 'authType' => SmtpTransport::AUTH_LOGIN] + $this->credentials);
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
