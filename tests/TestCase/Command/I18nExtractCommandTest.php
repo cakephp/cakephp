@@ -418,9 +418,9 @@ class I18nExtractCommandTest extends TestCase
             '--merge=no ' .
             '--extract-core=no ',
             [
-                "", //Sending two empty inputs so \Cake\Command\I18nExtractCommand::_getPaths() loops through all paths
-                "",
-                "D",
+                '', //Sending two empty inputs so \Cake\Command\I18nExtractCommand::_getPaths() loops through all paths
+                '',
+                'D',
                 $this->path . DS,
             ]
         );
