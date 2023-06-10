@@ -202,7 +202,7 @@ class I18nExtractCommand extends Command
         }
 
         if ($args->hasOption('exclude-plugins') && $this->_isExtractingApp()) {
-            $this->_exclude = array_merge($this->_exclude, array_values(App::path('plugins')));
+            $this->_exclude = array_merge($this->_exclude, App::path('plugins'));
         }
 
         if ($this->_extractCore) {
