@@ -2676,7 +2676,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if (
                 count($params) === 2 &&
                 $secondParam?->name === 'options' &&
-                !$secondParam?->isVariadic() &&
+                !$secondParam->isVariadic() &&
                 ($secondParamType === null || $secondParamTypeName === 'array')
             ) {
                 if (isset($args[0])) {
@@ -2716,7 +2716,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $lastParam = end($params);
             reset($params);
 
-            if ($lastParam === false || !$lastParam?->isVariadic()) {
+            if ($lastParam === false || !$lastParam->isVariadic()) {
                 $paramNames = [];
                 foreach ($params as $param) {
                     $paramNames[] = $param->getName();
