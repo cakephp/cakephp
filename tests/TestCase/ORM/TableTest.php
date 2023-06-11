@@ -1286,6 +1286,25 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
+    public function testFindForFinderVariadic(): void
+    {
+        $testTable = $this->fetchTable('Test');
+
+        $testTable->find('variadic', foo: 'bar');
+        $this->assertNull($testTable->first);
+        $this->assertSame(['foo' => 'bar'], $testTable->variadic);
+
+        $testTable->find('variadic', first: 'one', foo: 'bar');
+        $this->assertSame('one', $testTable->first);
+        $this->assertSame(['foo' => 'bar'], $testTable->variadic);
+
+        $testTable->find('variadicOptions');
+        $this->assertSame([], $testTable->variadicOptions);
+
+        $testTable->find('variadicOptions', foo: 'bar');
+        $this->assertSame(['foo' => 'bar'], $testTable->variadicOptions);
+    }
+
     /**
      * Tests find('list')
      */

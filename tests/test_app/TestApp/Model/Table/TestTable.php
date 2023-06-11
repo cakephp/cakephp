@@ -11,6 +11,10 @@ use Cake\ORM\Table;
  */
 class TestTable extends Table
 {
+    public mixed $first;
+    public array $variadic;
+    public array $variadicOptions;
+
     /**
      * @param array $config
      */
@@ -27,5 +31,20 @@ class TestTable extends Table
     public function findWithOptions(SelectQuery $query, array $options): SelectQuery
     {
         return $query->applyOptions(['this' => 'worked']);
+    }
+
+    public function findVariadicOptions(SelectQuery $query, ...$options)
+    {
+        $this->variadicOptions = $options;
+
+        return $query;
+    }
+
+    public function findVariadic(SelectQuery $query, mixed $first = null, mixed ...$variadic)
+    {
+        $this->first = $first;
+        $this->variadic = $variadic;
+
+        return $query;
     }
 }
