@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -62,6 +63,32 @@ class NumericPaginator implements PaginatorInterface
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
         'finder' => 'all',
+        'scope' => null,
+    ];
+
+    /**
+     * Calculated paging params.
+     *
+     * @var array
+     */
+    protected array $pagingParams = [
+        'limit' => null,
+        'count' => null,
+        'totalCount' => null,
+        'perPage' => null,
+        'pageCount' => null,
+        'currentPage' => null,
+        'requestedPage' => null,
+        'start' => null,
+        'end' => null,
+        'hasPrevPage' => null,
+        'hasNextPage' => null,
+        'sort' => null,
+        'sortDefault' => null,
+        'direction' => null,
+        'directionDefault' => null,
+        'completeSort' => null,
+        'alias' => null,
         'scope' => null,
     ];
 
@@ -194,13 +221,11 @@ class NumericPaginator implements PaginatorInterface
         $data = $this->extractData($target, $params, $settings);
         $query = $this->getQuery($target, $query, $data);
 
-        $cleanQuery = clone $query;
-        $results = $query->all();
-        $data['count'] = count($results);
-        $data['totalCount'] = $this->getCount($cleanQuery, $data);
+        $items = $this->getItems(clone $query, $data);
+        $this->pagingParams['count'] = count($items);
+        $this->pagingParams['totalCount'] = $this->getCount($query, $data);
 
         $pagingParams = $this->buildParams($data);
-        $pagingParams['alias'] = $target->getAlias();
         if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $pagingParams['requestedPage'],
@@ -208,7 +233,19 @@ class NumericPaginator implements PaginatorInterface
             ]);
         }
 
-        return new PaginatedResultSet($results, $pagingParams);
+        return $this->buildPaginated($items, $pagingParams);
+    }
+
+    /**
+     * Build paginated resultset.
+     *
+     * @param \Cake\Datasource\ResultSetInterface $items
+     * @param array $pagingParams
+     * @return \Cake\Datasource\Paging\PaginatedInterface
+     */
+    protected function buildPaginated(ResultSetInterface $items, array $pagingParams): PaginatedInterface
+    {
+        return new PaginatedResultSet($items, $pagingParams);
     }
 
     /**
@@ -244,6 +281,18 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
+     * Get paginated items.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query to fetch items.
+     * @param array $data Paging data.
+     * @return \Cake\Datasource\ResultSetInterface
+     */
+    protected function getItems(QueryInterface $query, array $data): ResultSetInterface
+    {
+        return $query->all();
+    }
+
+    /**
      * Get total count of records.
      *
      * @param \Cake\Datasource\QueryInterface $query Query instance.
@@ -261,7 +310,7 @@ class NumericPaginator implements PaginatorInterface
      * @param \Cake\Datasource\RepositoryInterface $object The repository object.
      * @param array<string, mixed> $params Request params
      * @param array<string, mixed> $settings The settings/configuration used for pagination.
-     * @return array Array with keys 'defaults', 'options'.
+     * @return array
      */
     protected function extractData(RepositoryInterface $object, array $params, array $settings): array
     {
@@ -274,113 +323,102 @@ class NumericPaginator implements PaginatorInterface
 
         $options['page'] = max((int)$options['page'], 1);
 
-        return compact('defaults', 'options');
+        return compact('defaults', 'options', 'alias');
     }
 
     /**
      * Build pagination params.
      *
      * @param array<string, mixed> $data Paginator data containing keys 'options',
-     *   'count', 'defaults', 'finder', 'numResults'.
+     *  'defaults', 'alias'.
      * @return array<string, mixed> Paging params.
      */
     protected function buildParams(array $data): array
     {
-        $limit = $data['options']['limit'];
-
-        $paging = $data + [
-            'perPage' => $limit,
-            'currentPage' => $data['options']['page'],
+        $this->pagingParams = [
+            'perPage' => $data['options']['limit'],
             'requestedPage' => $data['options']['page'],
-        ];
-
-        $paging = $this->addPageCountParams($paging, $data);
-        $paging = $this->addStartEndParams($paging, $data);
-        $paging = $this->addPrevNextParams($paging, $data);
-        $paging = $this->addSortingParams($paging, $data);
-
-        $paging += [
-            'limit' => $data['defaults']['limit'] != $limit ? $limit : null,
+            'alias' => $data['alias'],
             'scope' => $data['options']['scope'],
-        ];
+        ] + $this->pagingParams;
 
-        return $paging;
+        $this->addPageCountParams($data);
+        $this->addStartEndParams($data);
+        $this->addPrevNextParams($data);
+        $this->addSortingParams($data);
+
+        $this->pagingParams['limit'] = $data['defaults']['limit'] != $data['options']['limit']
+            ? $data['options']['limit']
+            : null;
+
+        return $this->pagingParams;
     }
 
     /**
-     * Add "page" and "pageCount" params.
+     * Add "currentPage" and "pageCount" params.
      *
-     * @param array<string, mixed> $params Paging params.
      * @param array $data Paginator data.
-     * @return array<string, mixed> Updated params.
+     * @return void
      */
-    protected function addPageCountParams(array $params, array $data): array
+    protected function addPageCountParams(array $data): void
     {
-        $page = $params['currentPage'];
+        $page = $data['options']['page'];
         $pageCount = null;
 
-        if ($params['totalCount'] !== null) {
-            $pageCount = max((int)ceil($params['totalCount'] / $params['perPage']), 1);
+        if ($this->pagingParams['totalCount'] !== null) {
+            $pageCount = max((int)ceil($this->pagingParams['totalCount'] / $this->pagingParams['perPage']), 1);
             $page = min($page, $pageCount);
-        } elseif ($params['count'] === 0 && $params['requestedPage'] > 1) {
+        } elseif ($this->pagingParams['count'] === 0 && $this->pagingParams['requestedPage'] > 1) {
             $page = 1;
         }
 
-        $params['currentPage'] = $page;
-        $params['pageCount'] = $pageCount;
-
-        return $params;
+        $this->pagingParams['currentPage'] = $page;
+        $this->pagingParams['pageCount'] = $pageCount;
     }
 
     /**
      * Add "start" and "end" params.
      *
-     * @param array<string, mixed> $params Paging params.
      * @param array $data Paginator data.
-     * @return array<string, mixed> Updated params.
+     * @return void
      */
-    protected function addStartEndParams(array $params, array $data): array
+    protected function addStartEndParams(array $data): void
     {
         $start = $end = 0;
 
-        if ($params['count'] > 0) {
-            $start = (($params['currentPage'] - 1) * $params['perPage']) + 1;
-            $end = $start + $params['count'] - 1;
+        if ($this->pagingParams['count'] > 0) {
+            $start = (($this->pagingParams['currentPage'] - 1) * $this->pagingParams['perPage']) + 1;
+            $end = $start + $this->pagingParams['count'] - 1;
         }
 
-        $params['start'] = $start;
-        $params['end'] = $end;
-
-        return $params;
+        $this->pagingParams['start'] = $start;
+        $this->pagingParams['end'] = $end;
     }
 
     /**
      * Add "prevPage" and "nextPage" params.
      *
-     * @param array<string, mixed> $params Paginator params.
      * @param array $data Paging data.
-     * @return array<string, mixed> Updated params.
+     * @return void
      */
-    protected function addPrevNextParams(array $params, array $data): array
+    protected function addPrevNextParams(array $data): void
     {
-        $params['hasPrevPage'] = $params['currentPage'] > 1;
-        if ($params['totalCount'] === null) {
-            $params['hasNextPage'] = true;
+        $this->pagingParams['hasPrevPage'] = $this->pagingParams['currentPage'] > 1;
+        if ($this->pagingParams['totalCount'] === null) {
+            $this->pagingParams['hasNextPage'] = true;
         } else {
-            $params['hasNextPage'] = $params['totalCount'] > $params['currentPage'] * $params['perPage'];
+            $this->pagingParams['hasNextPage'] = $this->pagingParams['totalCount']
+                > $this->pagingParams['currentPage'] * $this->pagingParams['perPage'];
         }
-
-        return $params;
     }
 
     /**
      * Add sorting / ordering params.
      *
-     * @param array<string, mixed> $params Paginator params.
      * @param array $data Paging data.
-     * @return array<string, mixed> Updated params.
+     * @return void
      */
-    protected function addSortingParams(array $params, array $data): array
+    protected function addSortingParams(array $data): void
     {
         $defaults = $data['defaults'];
         $order = (array)$data['options']['order'];
@@ -391,15 +429,13 @@ class NumericPaginator implements PaginatorInterface
             $directionDefault = current($defaults['order']);
         }
 
-        $params += [
+        $this->pagingParams = [
             'sort' => $data['options']['sort'],
             'direction' => isset($data['options']['sort']) && count($order) ? current($order) : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'completeSort' => $order,
-        ];
-
-        return $params;
+        ] + $this->pagingParams;
     }
 
     /**

@@ -29,11 +29,6 @@
       <code>InvalidArrayOffset</code>
     </UnusedPsalmSuppress>
   </file>
-  <file src="src/Datasource/Paging/PaginatedResultSet.php">
-    <MethodSignatureMustProvideReturnType>
-      <code>://cakephp.org)</code>
-    </MethodSignatureMustProvideReturnType>
-  </file>
   <file src="src/Event/EventDispatcherTrait.php">
     <MoreSpecificImplementedParamType>
       <code>$subject</code>

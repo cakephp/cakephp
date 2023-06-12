@@ -134,7 +134,8 @@ class SimplePaginatorTest extends NumericPaginatorTest
 
         $this->assertSame(1, $pagingParams['start']);
         $this->assertSame(2, $pagingParams['end']);
-        // nextPage will be always true for SimplePaginator
-        $this->assertTrue($pagingParams['hasNextPage']);
+        $this->assertSame(2, count($result));
+        $this->assertSame(2, $pagingParams['count']);
+        $this->assertFalse($pagingParams['hasNextPage']);
     }
 }
