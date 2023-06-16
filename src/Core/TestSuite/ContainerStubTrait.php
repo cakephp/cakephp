@@ -138,12 +138,12 @@ trait ContainerStubTrait
      *
      * @param \Cake\Event\EventInterface $event The event
      * @param \Cake\Core\ContainerInterface $container The container to wrap.
-     * @return \Cake\Core\ContainerInterface|null
+     * @return void
      */
-    public function modifyContainer(EventInterface $event, ContainerInterface $container): ?ContainerInterface
+    public function modifyContainer(EventInterface $event, ContainerInterface $container): void
     {
         if (empty($this->containerServices)) {
-            return null;
+            return;
         }
         foreach ($this->containerServices as $key => $factory) {
             if ($container->has($key)) {
@@ -157,7 +157,7 @@ trait ContainerStubTrait
             }
         }
 
-        return $container;
+        $event->setResult($container);
     }
 
     /**
