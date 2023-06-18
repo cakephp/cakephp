@@ -21,6 +21,7 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
+use Cake\Event\EventInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
@@ -259,11 +260,11 @@ class BaseApplicationTest extends TestCase
     public function testBuildContainerEventReplaceContainer(): void
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->getEventManager()->on('Application.buildContainer', function () {
+        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event) {
             $new = new Container();
             $new->add('testing', 'yes');
 
-            return $new;
+            $event->setResult($new);
         });
 
         $container = $app->getContainer();
