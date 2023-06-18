@@ -31,10 +31,6 @@ class I18nCommandTest extends TestCase
      * @var string
      */
     protected $localeDir;
-    /**
-     * @var string[]
-     */
-    protected $localePaths;
 
     /**
      * setup method
@@ -46,8 +42,6 @@ class I18nCommandTest extends TestCase
         $this->localeDir = TMP . 'Locale' . DS;
         $this->useCommandRunner();
         $this->setAppNamespace();
-
-        $this->localePaths = Configure::read('App.paths.locales');
     }
 
     /**
@@ -56,8 +50,6 @@ class I18nCommandTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-
-        Configure::write('App.paths.locales', $this->localePaths);
 
         $deDir = $this->localeDir . 'de_DE' . DS;
 

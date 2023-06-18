@@ -29,10 +29,6 @@ class I18nExtractCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
 
     /**
-     * @var array
-     */
-    protected $configPaths;
-    /**
      * @var string
      */
     protected $path;
@@ -50,8 +46,6 @@ class I18nExtractCommandTest extends TestCase
         $fs = new Filesystem();
         $fs->deleteDir($this->path);
         $fs->mkdir($this->path . DS . 'locale');
-
-        $this->configPaths = Configure::read('App.paths');
     }
 
     /**
@@ -64,8 +58,6 @@ class I18nExtractCommandTest extends TestCase
         $fs = new Filesystem();
         $fs->deleteDir($this->path);
         $this->clearPlugins();
-
-        Configure::write('App.paths', $this->configPaths);
     }
 
     /**
