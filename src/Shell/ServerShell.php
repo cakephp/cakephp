@@ -130,8 +130,10 @@ class ServerShell extends Shell
      */
     public function main()
     {
+        $phpBinary = env('PHP', 'php');
         $command = sprintf(
-            'php -S %s:%d -t %s',
+            '%s -S %s:%d -t %s',
+            $phpBinary,
             $this->_host,
             $this->_port,
             escapeshellarg($this->_documentRoot)
