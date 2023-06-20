@@ -19,6 +19,8 @@ namespace Cake\Test\TestCase\Validation;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime as CakeDateTime;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
@@ -961,6 +963,18 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::date(new stdClass()));
         $this->assertFalse(Validation::dateTime(new stdClass()));
         $this->assertFalse(Validation::localizedTime(new stdClass()));
+
+        $cakeDate = new Date();
+        $this->assertTrue(Validation::date($cakeDate));
+        $this->assertFalse(Validation::time($cakeDate));
+        $this->assertFalse(Validation::dateTime($cakeDate));
+        $this->assertFalse(Validation::localizedTime($cakeDate));
+
+        $cakeDateTime = new CakeDateTime();
+        $this->assertTrue(Validation::date($cakeDateTime));
+        $this->assertTrue(Validation::time($cakeDateTime));
+        $this->assertTrue(Validation::dateTime($cakeDateTime));
+        $this->assertTrue(Validation::localizedTime($cakeDateTime));
     }
 
     /**
