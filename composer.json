@@ -65,7 +65,7 @@
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "lib-ICU": "To use locale-aware features in the I18n and Database packages",
         "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "provide": {

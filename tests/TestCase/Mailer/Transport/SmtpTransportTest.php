@@ -371,8 +371,28 @@ class SmtpTransportTest extends TestCase
                 )
             );
 
+        $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->connect();
-        $this->assertEquals($this->SmtpTransport->getAuthType(), SmtpTransport::AUTH_XOAUTH2);
+    }
+
+    public function testAuthTypeParsingIsSkippedIfNoCredentialsProvided(): void
+    {
+        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+
+        $this->socket->expects($this->exactly(2))
+            ->method('read')
+            ->will($this->onConsecutiveCalls(
+                "220 Welcome message\r\n",
+                "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
+            ));
+        $this->socket->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                ["EHLO localhost\r\n"],
+            );
+
+        $this->SmtpTransport->connect();
+        $this->assertNull($this->SmtpTransport->getAuthType());
     }
 
     public function testAuthPlain(): void
