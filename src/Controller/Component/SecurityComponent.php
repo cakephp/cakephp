@@ -427,7 +427,7 @@ class SecurityComponent extends Component
         $expectedFields = Hash::get($expectedParts, 1);
         $dataFields = Hash::get($hashParts, 1);
         if ($dataFields) {
-            $dataFields = unserialize($dataFields);
+            $dataFields = unserialize($dataFields, ['allowed_classes' => false]);
         }
         $fieldsMessages = $this->_debugCheckFields(
             $dataFields,
