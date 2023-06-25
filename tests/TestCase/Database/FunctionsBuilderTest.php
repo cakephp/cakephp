@@ -312,5 +312,6 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->jsonValue('field', '$');
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('JSON_VALUE(field, :param0)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
     }
 }
