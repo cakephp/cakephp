@@ -305,7 +305,7 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
-     * Tests generating a LAG() window function
+     * Tests generating a JSON_VALUE() function
      */
     public function testJsonValue(): void
     {
