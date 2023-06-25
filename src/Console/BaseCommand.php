@@ -18,7 +18,12 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * Base class for console commands.
@@ -28,9 +33,16 @@ use Cake\Utility\Inflector;
  * - `initialize` Acts as a post-construct hook.
  * - `buildOptionParser` Build/Configure the option parser for your command.
  * - `execute` Execute your command with parsed Arguments and ConsoleIo
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Command\Command>
  */
-abstract class BaseCommand implements CommandInterface
+abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Command\Command>
+     */
+    use EventDispatcherTrait;
+
     /**
      * The name of this command.
      *
@@ -178,8 +190,12 @@ abstract class BaseCommand implements CommandInterface
             $io->setInteractive(false);
         }
 
-        /** @var int|null */
-        return $this->execute($args, $io);
+        $this->dispatchEvent('Command.executionStarted', ['args' => $args]);
+        /** @var int|null $result */
+        $result = $this->execute($args, $io);
+        $this->dispatchEvent('Command.executionFinished', ['args' => $args]);
+
+        return $result;
     }
 
     /**
@@ -272,5 +288,27 @@ abstract class BaseCommand implements CommandInterface
         } catch (StopException $e) {
             return $e->getCode();
         }
+    }
+
+    /**
+     * Get the global event manager.
+     *
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function getEventManager(): EventManagerInterface
+    {
+        return EventManager::instance();
+    }
+
+    /**
+     * Set the application's event manager.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        throw new InvalidArgumentException('You are not allowed to overwrite the global event manager.');
     }
 }
