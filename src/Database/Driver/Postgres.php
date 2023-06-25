@@ -321,6 +321,9 @@ class Postgres extends Driver
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
+            case 'JSON_VALUE':
+                $expression->setName('JSONB_PATH_QUERY');
+                break;
         }
     }
 

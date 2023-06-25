@@ -328,6 +328,20 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing the Json Value
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
+     * @param string $jsonPath A valid JSON PATH Query
+     * @param array $types list of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonValue($expression, string $jsonPath, array $types = []): FunctionExpression
+    {
+        $params = $this->toLiteralParam($expression) + [$jsonPath];
+        return new FunctionExpression('JSON_VALUE', $params, $types);
+    }
+
+    /**
      * Helper method to create arbitrary SQL aggregate function calls.
      *
      * @param string $name The SQL aggregate function name
