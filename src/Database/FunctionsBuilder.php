@@ -338,6 +338,7 @@ class FunctionsBuilder
     public function jsonValue($expression, string $jsonPath, array $types = []): FunctionExpression
     {
         $params = $this->toLiteralParam($expression) + [$jsonPath];
+
         return new FunctionExpression('JSON_VALUE', $params, $types);
     }
 
