@@ -455,9 +455,10 @@ class CommandRunnerTest extends TestCase
             $this->assertInstanceOf(Arguments::class, $args);
             $startedEventTriggered = true;
         });
-        $runner->getEventManager()->on('Command.executionFinished', function ($event, $args) use (&$finishedEventTriggered): void {
+        $runner->getEventManager()->on('Command.executionFinished', function ($event, $args, $result) use (&$finishedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
+            $this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
             $finishedEventTriggered = true;
         });
         $runner->run(['cake', '--version'], $this->getMockIo($output));
