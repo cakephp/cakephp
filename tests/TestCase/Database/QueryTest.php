@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver\Mysql;
@@ -1759,8 +1761,8 @@ class QueryTest extends TestCase
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage(
             'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
-            'is not allowed to avoid potential SQL injection. ' .
-            'Use QueryExpression or numeric array instead.'
+                'is not allowed to avoid potential SQL injection. ' .
+                'Use QueryExpression or numeric array instead.'
         );
 
         $query = new Query($this->connection);
@@ -2198,8 +2200,8 @@ class QueryTest extends TestCase
 
         $this->assertSame(
             'SELECT id FROM authors Authors WHERE ' .
-            '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
-            'HAVING COUNT(DISTINCT Authors.id) = :c1',
+                '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
+                'HAVING COUNT(DISTINCT Authors.id) = :c1',
             trim($query->sql())
         );
     }
@@ -2606,7 +2608,7 @@ class QueryTest extends TestCase
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Sqlite ||
-            $this->connection->getDriver() instanceof Sqlserver),
+                $this->connection->getDriver() instanceof Sqlserver),
             'Driver does not support ORDER BY in UNIONed queries.'
         );
         $union = (new Query($this->connection))
@@ -2817,11 +2819,11 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'DELETE FROM <authors> WHERE \(' .
                 '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> not in \(:c1,:c2\) AND \(' .
-                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
-                    '\)' .
+                '<name> not in \(:c1,:c2\) AND \(' .
+                '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
                 '\)' .
-            '\)',
+                '\)' .
+                '\)',
             $query->sql(),
             !$this->autoQuote
         );
@@ -3063,11 +3065,11 @@ class QueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <authors> SET <name> = :c0 WHERE \(' .
                 '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> not in \(:c2,:c3\) AND \(' .
-                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
-                    '\)' .
+                '<name> not in \(:c2,:c3\) AND \(' .
+                '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
                 '\)' .
-            '\)',
+                '\)' .
+                '\)',
             $query->sql(),
             !$this->autoQuote
         );
@@ -3145,7 +3147,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+                'VALUES \(:c0\)',
             $result,
             !$this->autoQuote
         );
@@ -3166,7 +3168,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+                'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote
         );
@@ -3205,7 +3207,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+                'VALUES \(:c0\)',
             $result,
             !$this->autoQuote
         );
@@ -3226,7 +3228,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+                'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote
         );
@@ -3307,8 +3309,8 @@ class QueryTest extends TestCase
             ['title', 'body', 'author_id'],
             ['title' => 'string', 'body' => 'string', 'author_id' => 'integer']
         )
-        ->into('articles')
-        ->values($select);
+            ->into('articles')
+            ->values($select);
 
         $result = $query->sql();
         $this->assertQuotedQuery(
@@ -3481,8 +3483,8 @@ class QueryTest extends TestCase
 
         $query = new Query($this->connection);
         $result = $query->select([
-                'c' => $query->func()->concat(['comment' => 'literal', ' is appended']),
-            ])
+            'c' => $query->func()->concat(['comment' => 'literal', ' is appended']),
+        ])
             ->from('comments')
             ->order(['c' => 'ASC'])
             ->limit(1)
@@ -4685,11 +4687,11 @@ class QueryTest extends TestCase
             ->from('comments')
             ->limit(1)
             ->getSelectTypeMap()
-                ->setTypes([
-                    'id' => 'integer',
-                    'the_date' => 'datetime',
-                    'updated' => 'custom_datetime',
-                ]);
+            ->setTypes([
+                'id' => 'integer',
+                'the_date' => 'datetime',
+                'updated' => 'custom_datetime',
+            ]);
 
         $result = $query->execute()->fetchAll('assoc');
         $this->assertIsInt($result[0]['id']);
@@ -4734,12 +4736,26 @@ class QueryTest extends TestCase
      */
     public function testJsonValue(): void
     {
+        $driver = $this->connection->getDriver();
+        $version = $driver->version();
+
+        if (
+            ($driver instanceof Mysql && version_compare($version, '8.0.21', '<'))
+            || ($driver instanceof Sqlite && version_compare($version, '3.15.0', '<'))
+            || ($driver instanceof Postgres && version_compare($version, '12.0.0', '<'))
+            || ($driver instanceof Sqlserver && version_compare($version, '13', '<'))
+        ) {
+            $skip = true;
+        }
+
+        $this->skipIf($skip);
+
         $query = new Query($this->connection);
         $insert = $query
             ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
             ->into('comments')
             ->values([
-                'comment' => ['a' => ['a1' => 'b1'], 'c' => true],
+                'comment' => ['a' => ['a1' => 'b1'], 'c' => true, 'scores' => [25, 36, 48]],
                 'article_id' => 1,
                 'user_id' => 1,
             ])
@@ -4750,15 +4766,15 @@ class QueryTest extends TestCase
 
         $query = new Query($this->connection);
         $query
-            ->select(['comment' => $query->func()->jsonValue('comment', '$.a')])
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
             ->from('comments')
             ->where(['id' => $id])
-            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
+            ->getSelectTypeMap()->setTypes(['score' => 'integer']);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc')[0]['comment'];
         $result->closeCursor();
-        $this->assertSame(['a1' => 'b1'], $comment);
+        $this->assertSame(36, $comment);
     }
 
     /**
@@ -5095,10 +5111,10 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
         $stmt = $query->select([
-                'id',
-                'user_id',
-                'is_active',
-            ])
+            'id',
+            'user_id',
+            'is_active',
+        ])
             ->from('profiles')
             ->limit(1)
             ->enableBufferedResults(false)
@@ -5218,7 +5234,7 @@ class QueryTest extends TestCase
                 'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:c1 ELSE \:c2 END\) ' .
                 'FROM <articles> <a> ' .
                 'WHERE a\.id = articles\.id' .
-            '\) DESC, <id> ASC',
+                '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote
         );
@@ -5293,10 +5309,10 @@ class QueryTest extends TestCase
             'SELECT <id>, ' .
                 '\(SELECT count\(\*\) FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = :c0\)\) AS <computedA>, ' .
                 '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1\)\) AS <computedB> ' .
-            'FROM <articles> ' .
-            'ORDER BY \(' .
+                'FROM <articles> ' .
+                'ORDER BY \(' .
                 'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)' .
-            '\) DESC, <id> ASC',
+                '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote
         );
