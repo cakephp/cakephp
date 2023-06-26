@@ -310,6 +310,9 @@ class Sqlite extends Driver
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
+            case 'JSON_VALUE':
+                    $expression->setName('JSON_EXTRACT');
+                    break;
         }
     }
 }

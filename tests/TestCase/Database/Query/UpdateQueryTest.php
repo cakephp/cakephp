@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Query;
 
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
@@ -453,5 +456,44 @@ class UpdateQueryTest extends TestCase
         $comment = $result->fetchAll('assoc')[0]['comment'];
         $result->closeCursor();
         $this->assertSame(['a' => 'b', 'c' => true], $comment);
+    }
+
+    /**
+     * Test jsonValue() Expression
+     */
+    public function testJsonValue(): void
+    {
+        $driver = $this->connection->getDriver();
+        $version = $driver->version();
+        $skip = false;
+
+        if (
+            ($driver instanceof Mysql && version_compare($version, '8.0.21', '<'))
+            || ($driver instanceof Sqlite && version_compare($version, '3.15.0', '<'))
+            || ($driver instanceof Postgres && version_compare($version, '12', '<'))
+            || ($driver instanceof Sqlserver && version_compare($version, '13', '<'))
+        ) {
+            $skip = true;
+        }
+
+        $this->skipIf($skip);
+        $query = new UpdateQuery($this->connection);
+        $query
+            ->update('comments')
+            ->set('comment', ['a' => ['a1' => 'b1'], 'c' => true, 'scores' => [25, 36, 48]], 'json')
+            ->where(['id' => 1]);
+        $query->execute()->closeCursor();
+
+        $query = new SelectQuery($this->connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1])
+            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc')[0]['score'];
+        $result->closeCursor();
+        $this->assertSame(36, $comment);
     }
 }
