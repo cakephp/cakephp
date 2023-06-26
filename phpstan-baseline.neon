@@ -51,11 +51,6 @@ parameters:
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
-			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:dispatch\\(\\) should return Cake\\\\Event\\\\EventInterface\\<TSubject of object\\> but returns Cake\\\\Event\\\\Event\\<object\\>\\|Cake\\\\Event\\\\EventInterface\\<TSubject of object\\>\\.$#"
-			count: 2
-			path: src/Event/EventManager.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Event/EventManager.php
@@ -71,11 +66,6 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 2
-			path: src/Http/Cookie/Cookie.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
@@ -89,21 +79,6 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Session.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\I18n\\\\Date\\|Cake\\\\I18n\\\\DateTime\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/RelativeTimeFormatter.php
-
-		-
-			message: "#^Method Cake\\\\ORM\\\\Behavior\\\\TreeBehavior\\:\\:_scope\\(\\) should return T of Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery but returns Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
-
-		-
-			message: "#^Parameter \\#1 \\$valuePath of method Cake\\\\Collection\\\\Iterator\\\\TreeIterator\\:\\:printer\\(\\) expects \\(callable\\(\\)\\: mixed\\)\\|string, Closure\\|string\\|null given\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -126,11 +101,6 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Parameter \\#5 \\$trace of class Cake\\\\Error\\\\PhpError constructor expects array, array\\|string given\\.$#"
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
@@ -144,13 +114,3 @@ parameters:
 			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
 			count: 1
 			path: src/View/Form/NullContext.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/View/Helper/TimeHelper.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/View/Widget/DateTimeWidget.php

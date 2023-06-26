@@ -59,11 +59,17 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        /**
-         * @var \Cake\ORM\Locator\LocatorInterface
-         * @psalm-suppress PropertyTypeCoercion
-         */
-        return $this->_tableLocator ??= FactoryLocator::get('Table');
+        if (isset($this->_tableLocator)) {
+            return $this->_tableLocator;
+        }
+
+        $locator = FactoryLocator::get('Table');
+        assert(
+            $locator instanceof LocatorInterface,
+            '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.'
+        );
+
+        return $this->_tableLocator = $locator;
     }
 
     /**
