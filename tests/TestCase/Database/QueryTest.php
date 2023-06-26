@@ -4730,6 +4730,38 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test jsonValue() Expression
+     */
+    public function testJsonValue(): void
+    {
+        $query = new Query($this->connection);
+        $insert = $query
+            ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
+            ->into('comments')
+            ->values([
+                'comment' => ['a' => ['a1' => 'b1'], 'c' => true],
+                'article_id' => 1,
+                'user_id' => 1,
+            ])
+            ->execute();
+
+        $id = $insert->lastInsertId('comments', 'id');
+        $insert->closeCursor();
+
+        $query = new Query($this->connection);
+        $query
+            ->select(['comment' => $query->func()->jsonValue('comment', '$.a')])
+            ->from('comments')
+            ->where(['id' => $id])
+            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc')[0]['comment'];
+        $result->closeCursor();
+        $this->assertSame(['a1' => 'b1'], $comment);
+    }
+
+    /**
      * Test removeJoin().
      */
     public function testRemoveJoin(): void
