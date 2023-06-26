@@ -4773,7 +4773,7 @@ class QueryTest extends TestCase
             ->getSelectTypeMap()->setTypes(['score' => 'integer']);
 
         $result = $query->execute();
-        $comment = $result->fetchAll('assoc')[0]['comment'];
+        $comment = $result->fetchAll('assoc')[0]['score'];
         $result->closeCursor();
         $this->assertSame(36, $comment);
     }
