@@ -4743,14 +4743,13 @@ class QueryTest extends TestCase
         if (
             ($driver instanceof Mysql && version_compare($version, '8.0.21', '<'))
             || ($driver instanceof Sqlite && version_compare($version, '3.15.0', '<'))
-            || ($driver instanceof Postgres && version_compare($version, '12.0.0', '<'))
+            || ($driver instanceof Postgres && version_compare($version, '12', '<'))
             || ($driver instanceof Sqlserver && version_compare($version, '13', '<'))
         ) {
             $skip = true;
         }
 
         $this->skipIf($skip);
-
         $query = new Query($this->connection);
         $insert = $query
             ->insert(['comment', 'article_id', 'user_id'], ['comment' => 'json'])
