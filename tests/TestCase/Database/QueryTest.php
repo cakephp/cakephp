@@ -4738,6 +4738,7 @@ class QueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         $version = $driver->version();
+        $skip = false;
 
         if (
             ($driver instanceof Mysql && version_compare($version, '8.0.21', '<'))
