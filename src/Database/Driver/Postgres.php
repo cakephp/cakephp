@@ -300,6 +300,18 @@ class Postgres extends Driver
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
+            case 'JSON_VALUE':
+                $expression->setName('JSONB_PATH_QUERY')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $p = sprintf("$p::jsonb", $p);
+                        } elseif ($key === 1) {
+                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
+                        }
+
+                        return $p;
+                    });
+                break;
         }
     }
 
