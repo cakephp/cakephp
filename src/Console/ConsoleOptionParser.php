@@ -647,9 +647,7 @@ class ConsoleOptionParser
             return (string)$formatter->xml();
         }
 
-        throw new ConsoleException(
-            sprintf('Invalid format. Output format can be text or xml.')
-        );
+        throw new ConsoleException('Invalid format. Output format can be text or xml.');
     }
 
     /**

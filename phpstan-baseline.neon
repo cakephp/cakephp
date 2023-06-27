@@ -101,11 +101,6 @@ parameters:
 			path: src/ORM/Behavior/TreeBehavior.php
 
 		-
-			message: "#^Parameter \\#1 \\$valuePath of method Cake\\\\Collection\\\\Iterator\\\\TreeIterator\\:\\:printer\\(\\) expects \\(callable\\(\\)\\: mixed\\)\\|string, Closure\\|string\\|null given\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/ORM/EagerLoader.php
@@ -126,14 +121,19 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Parameter \\#5 \\$trace of class Cake\\\\Error\\\\PhpError constructor expects array, array\\|string given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: "#^Offset 0 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
 			count: 1
-			path: src/TestSuite/TestCase.php
+			path: src/Validation/Validation.php
+
+		-
+			message: "#^Offset 1 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
+			count: 1
+			path: src/Validation/Validation.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

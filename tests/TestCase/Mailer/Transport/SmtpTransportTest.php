@@ -387,9 +387,9 @@ class SmtpTransportTest extends TestCase
             ));
         $this->socket->expects($this->exactly(1))
             ->method('write')
-            ->withConsecutive(
+            ->with(...self::withConsecutive(
                 ["EHLO localhost\r\n"],
-            );
+            ));
 
         $this->SmtpTransport->connect();
         $this->assertNull($this->SmtpTransport->getAuthType());
