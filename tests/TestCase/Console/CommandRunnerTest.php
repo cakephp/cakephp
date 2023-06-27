@@ -450,12 +450,12 @@ class CommandRunnerTest extends TestCase
         $runner = new CommandRunner($app, 'cake');
 
         $startedEventTriggered = $finishedEventTriggered = false;
-        $runner->getEventManager()->on('Command.executionStarted', function ($event, $args) use (&$startedEventTriggered): void {
+        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $startedEventTriggered = true;
         });
-        $runner->getEventManager()->on('Command.executionFinished', function ($event, $args, $result) use (&$finishedEventTriggered): void {
+        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $result) use (&$finishedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
