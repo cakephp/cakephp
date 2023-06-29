@@ -40,19 +40,12 @@ class NumberHelperTest extends TestCase
     protected $View;
 
     /**
-     * @var string
-     */
-    protected $appNamespace;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
-
-        $this->appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
@@ -63,7 +56,6 @@ class NumberHelperTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        static::setAppNamespace($this->appNamespace);
         unset($this->View);
     }
 
