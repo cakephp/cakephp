@@ -20,10 +20,7 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
-use Cake\Event\EventManagerInterface;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 /**
  * Base class for console commands.
@@ -288,27 +285,5 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         } catch (StopException $e) {
             return $e->getCode();
         }
-    }
-
-    /**
-     * Get the global event manager.
-     *
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function getEventManager(): EventManagerInterface
-    {
-        return EventManager::instance();
-    }
-
-    /**
-     * Set the application's event manager.
-     *
-     * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    public function setEventManager(EventManagerInterface $eventManager)
-    {
-        throw new InvalidArgumentException('You are not allowed to overwrite the global event manager.');
     }
 }
