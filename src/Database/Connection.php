@@ -318,6 +318,8 @@ class Connection implements ConnectionInterface
      */
     public function connect(): bool
     {
+        deprecationWarning('If you cannot use automatic connection management, use $connection->getDriver()->connect() instead.');
+
         $connected = true;
         foreach ([self::ROLE_READ, self::ROLE_WRITE] as $role) {
             try {
@@ -343,9 +345,12 @@ class Connection implements ConnectionInterface
      * Disconnects from database server.
      *
      * @return void
+     * @deprecated 4.5.0 Use getDriver()->disconnect() instead.
      */
     public function disconnect(): void
     {
+        deprecationWarning('If you cannot use automatic connection management, use $connection->getDriver()->disconnect() instead.');
+
         $this->getDriver(self::ROLE_READ)->disconnect();
         $this->getDriver(self::ROLE_WRITE)->disconnect();
     }
@@ -354,9 +359,12 @@ class Connection implements ConnectionInterface
      * Returns whether connection to database server was already established.
      *
      * @return bool
+     * @deprecated 4.5.0 Use getDriver()->isConnected() instead.
      */
     public function isConnected(): bool
     {
+        deprecationWarning('Use $connection->getDriver()->isConnected() instead.');
+
         return $this->getDriver(self::ROLE_READ)->isConnected() && $this->getDriver(self::ROLE_WRITE)->isConnected();
     }
 
@@ -365,6 +373,7 @@ class Connection implements ConnectionInterface
      *
      * @param \Cake\Database\Query|string $query The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
+     * @deprecated 4.5.0 Use getDriver()->prepare() instead.
      */
     public function prepare($query): StatementInterface
     {
@@ -413,6 +422,8 @@ class Connection implements ConnectionInterface
      */
     public function compileQuery(Query $query, ValueBinder $binder): string
     {
+        deprecationWarning('Use getDriver()->compileQuery() instead.');
+
         return $this->getDriver($query->getConnectionRole())->compileQuery($query, $binder)[1];
     }
 
@@ -467,6 +478,8 @@ class Connection implements ConnectionInterface
      */
     public function query(string $sql): StatementInterface
     {
+        deprecationWarning('Use either `selectQuery`, `insertQuery`, `deleteQuery`, `updateQuery` instead.');
+
         return $this->getDisconnectRetry()->run(function () use ($sql) {
             $statement = $this->prepare($sql);
             $statement->execute();
@@ -940,9 +953,11 @@ class Connection implements ConnectionInterface
      * @param mixed $value The value to quote.
      * @param \Cake\Database\TypeInterface|string|int $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
+     * @deprecated 4.5.0 Use getDriver()->quote() instead.
      */
     public function quote($value, $type = 'string'): string
     {
+        deprecationWarning('Use getDriver()->quote() instead.');
         [$value, $type] = $this->cast($value, $type);
 
         return $this->getDriver()->quote($value, $type);
@@ -954,9 +969,12 @@ class Connection implements ConnectionInterface
      * This is not required to use `quoteIdentifier()`.
      *
      * @return bool
+     * @deprecated 4.5.0 Use getDriver()->supportsQuoting() instead.
      */
     public function supportsQuoting(): bool
     {
+        deprecationWarning('Use getDriver()->supportsQuoting() instead.');
+
         return $this->getDriver()->supports(DriverInterface::FEATURE_QUOTE);
     }
 
@@ -968,9 +986,12 @@ class Connection implements ConnectionInterface
      *
      * @param string $identifier The identifier to quote.
      * @return string
+     * @deprecated 4.5.0 Use getDriver()->quoteIdentifier() instead.
      */
     public function quoteIdentifier(string $identifier): string
     {
+        deprecationWarning('Use getDriver()->quoteIdentifier() instead.');
+
         return $this->getDriver()->quoteIdentifier($identifier);
     }
 
@@ -1031,6 +1052,7 @@ class Connection implements ConnectionInterface
      *
      * @param bool $enable Enable/disable query logging
      * @return $this
+     * @deprecated 4.5.0 Connection logging is moving to the driver in 5.x
      */
     public function enableQueryLogging(bool $enable = true)
     {
@@ -1043,6 +1065,7 @@ class Connection implements ConnectionInterface
      * Disable query logging
      *
      * @return $this
+     * @deprecated 4.5.0 Connection logging is moving to the driver in 5.x
      */
     public function disableQueryLogging()
     {
@@ -1055,6 +1078,7 @@ class Connection implements ConnectionInterface
      * Check if query logging is enabled.
      *
      * @return bool
+     * @deprecated 4.5.0 Connection logging is moving to the driver in 5.x
      */
     public function isQueryLoggingEnabled(): bool
     {

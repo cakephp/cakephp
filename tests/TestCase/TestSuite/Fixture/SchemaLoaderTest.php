@@ -112,7 +112,7 @@ class SchemaLoaderTest extends TestCase
         $result = $connection->getSchemaCollection()->listTables();
         $this->assertEquals(['schema_loader_second'], $result);
 
-        $statement = $connection->query('SELECT * FROM schema_loader_second');
+        $statement = $connection->execute('SELECT * FROM schema_loader_second');
         $result = $statement->fetchAll();
         $this->assertCount(0, $result, 'Table should be empty.');
     }

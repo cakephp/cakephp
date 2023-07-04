@@ -329,8 +329,9 @@ class Query implements ExpressionInterface, IteratorAggregate
             $binder = $this->getValueBinder();
             $binder->resetCount();
         }
+        $connection = $this->getConnection();
 
-        return $this->getConnection()->compileQuery($this, $binder);
+        return $connection->getDriver($this->getConnectionRole())->compileQuery($this, $binder)[1];
     }
 
     /**
