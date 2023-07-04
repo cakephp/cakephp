@@ -278,15 +278,17 @@ class ConnectionTest extends TestCase
     {
         $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
-        $connection = new Connection(['driver' => 'RetryDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
+        $this->deprecated(function () {
+            $connection = new Connection(['driver' => 'RetryDriver']);
+            $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
 
-        try {
-            $connection->connect();
-        } catch (MissingConnectionException $e) {
-        }
+            try {
+                $connection->connect();
+            } catch (MissingConnectionException $e) {
+            }
 
-        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
+            $this->assertSame(4, $connection->getDriver()->getConnectRetries());
+        });
     }
 
     /**
