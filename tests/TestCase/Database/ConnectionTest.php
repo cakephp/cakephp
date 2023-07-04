@@ -92,10 +92,8 @@ class ConnectionTest extends TestCase
         $this->connection = ConnectionManager::get('test');
         $this->defaultLogger = $this->connection->getLogger();
 
-        $this->deprecated(function () {
-            $this->logState = $this->connection->isQueryLoggingEnabled();
-            $this->connection->disableQueryLogging();
-        });
+        $this->logState = $this->connection->isQueryLoggingEnabled();
+        $this->connection->disableQueryLogging();
 
         static::setAppNamespace();
     }
@@ -105,9 +103,7 @@ class ConnectionTest extends TestCase
         parent::tearDown();
         $this->connection->disableSavePoints();
         $this->connection->setLogger($this->defaultLogger);
-        $this->deprecated(function () {
-            $this->connection->enableQueryLogging($this->logState);
-        });
+        $this->connection->enableQueryLogging($this->logState);
 
         Log::reset();
         unset($this->connection);
@@ -298,18 +294,16 @@ class ConnectionTest extends TestCase
      */
     public function testPrepare(): void
     {
-        $this->deprecated(function () {
-            $sql = 'SELECT 1 + 1';
-            $result = $this->connection->prepare($sql);
-            $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-            $this->assertEquals($sql, $result->queryString);
+        $sql = 'SELECT 1 + 1';
+        $result = $this->connection->prepare($sql);
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertEquals($sql, $result->queryString);
 
-            $query = $this->connection->selectQuery('1 + 1');
-            $result = $this->connection->prepare($query);
-            $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-            $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
-            $this->assertMatchesRegularExpression($sql, $result->queryString);
-        });
+        $query = $this->connection->selectQuery('1 + 1');
+        $result = $this->connection->prepare($query);
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
+        $this->assertMatchesRegularExpression($sql, $result->queryString);
     }
 
     /**
@@ -856,37 +850,35 @@ class ConnectionTest extends TestCase
      */
     public function testInTransactionWithSavePoints(): void
     {
-        $this->deprecated(function () {
-            $this->skipIf(
-                $this->connection->getDriver() instanceof Sqlserver,
-                'SQLServer fails when this test is included.'
-            );
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'SQLServer fails when this test is included.'
+        );
 
-            $this->connection->enableSavePoints(true);
-            $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->connection->enableSavePoints(true);
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
 
-            $this->connection->begin();
-            $this->assertTrue($this->connection->inTransaction());
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
 
-            $this->connection->begin();
-            $this->assertTrue($this->connection->inTransaction());
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
 
-            $this->connection->commit();
-            $this->assertTrue($this->connection->inTransaction());
+        $this->connection->commit();
+        $this->assertTrue($this->connection->inTransaction());
 
-            $this->connection->commit();
-            $this->assertFalse($this->connection->inTransaction());
+        $this->connection->commit();
+        $this->assertFalse($this->connection->inTransaction());
 
-            $this->connection->begin();
-            $this->assertTrue($this->connection->inTransaction());
+        $this->connection->begin();
+        $this->assertTrue($this->connection->inTransaction());
 
-            $this->connection->begin();
-            $this->connection->rollback();
-            $this->assertTrue($this->connection->inTransaction());
+        $this->connection->begin();
+        $this->connection->rollback();
+        $this->assertTrue($this->connection->inTransaction());
 
-            $this->connection->rollback();
-            $this->assertFalse($this->connection->inTransaction());
-        });
+        $this->connection->rollback();
+        $this->assertFalse($this->connection->inTransaction());
     }
 
     /**
@@ -1047,18 +1039,16 @@ class ConnectionTest extends TestCase
      */
     public function testLoggerDecorator(): void
     {
-        $this->deprecated(function () {
-            $logger = new QueryLogger();
-            $this->connection->enableQueryLogging(true);
-            $this->connection->setLogger($logger);
-            $st = $this->connection->prepare('SELECT 1');
-            $this->assertInstanceOf(LoggingStatement::class, $st);
-            $this->assertSame($logger, $st->getLogger());
+        $logger = new QueryLogger();
+        $this->connection->enableQueryLogging(true);
+        $this->connection->setLogger($logger);
+        $st = $this->connection->prepare('SELECT 1');
+        $this->assertInstanceOf(LoggingStatement::class, $st);
+        $this->assertSame($logger, $st->getLogger());
 
-            $this->connection->enableQueryLogging(false);
-            $st = $this->connection->prepare('SELECT 1');
-            $this->assertNotInstanceOf('Cake\Database\Log\LoggingStatement', $st);
-        });
+        $this->connection->enableQueryLogging(false);
+        $st = $this->connection->prepare('SELECT 1');
+        $this->assertNotInstanceOf('Cake\Database\Log\LoggingStatement', $st);
     }
 
     /**
@@ -1066,13 +1056,11 @@ class ConnectionTest extends TestCase
      */
     public function testEnableQueryLogging(): void
     {
-        $this->deprecated(function () {
-            $this->connection->enableQueryLogging(true);
-            $this->assertTrue($this->connection->isQueryLoggingEnabled());
+        $this->connection->enableQueryLogging(true);
+        $this->assertTrue($this->connection->isQueryLoggingEnabled());
 
-            $this->connection->disableQueryLogging();
-            $this->assertFalse($this->connection->isQueryLoggingEnabled());
-        });
+        $this->connection->disableQueryLogging();
+        $this->assertFalse($this->connection->isQueryLoggingEnabled());
     }
 
     /**
@@ -1081,14 +1069,12 @@ class ConnectionTest extends TestCase
     public function testLogFunction(): void
     {
         Log::setConfig('queries', ['className' => 'Array']);
-        $this->deprecated(function () {
-            $this->connection->enableQueryLogging();
-            $this->connection->log('SELECT 1');
+        $this->connection->enableQueryLogging();
+        $this->connection->log('SELECT 1');
 
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(1, $messages);
-            $this->assertSame('debug: connection=test role= duration=0 rows=0 SELECT 1', $messages[0]);
-        });
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertSame('debug: connection=test role= duration=0 rows=0 SELECT 1', $messages[0]);
     }
 
     /**
@@ -1097,32 +1083,30 @@ class ConnectionTest extends TestCase
     public function testLoggerDecoratorDoesNotPrematurelyFetchRecords(): void
     {
         Log::setConfig('queries', ['className' => 'Array']);
-        $this->deprecated(function () {
-            $logger = new QueryLogger();
-            $this->connection->enableQueryLogging(true);
-            $this->connection->setLogger($logger);
-            $st = $this->connection->execute('SELECT * FROM things');
-            $this->assertInstanceOf(LoggingStatement::class, $st);
+        $logger = new QueryLogger();
+        $this->connection->enableQueryLogging(true);
+        $this->connection->setLogger($logger);
+        $st = $this->connection->execute('SELECT * FROM things');
+        $this->assertInstanceOf(LoggingStatement::class, $st);
 
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(0, $messages);
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(0, $messages);
 
-            $expected = [
-                [1, 'a title', 'a body'],
-                [2, 'another title', 'another body'],
-            ];
-            $results = $st->fetchAll();
-            $this->assertEquals($expected, $results);
+        $expected = [
+            [1, 'a title', 'a body'],
+            [2, 'another title', 'another body'],
+        ];
+        $results = $st->fetchAll();
+        $this->assertEquals($expected, $results);
 
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(1, $messages);
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
 
-            $st = $this->connection->execute('SELECT * FROM things WHERE id = 0');
-            $this->assertSame(0, $st->rowCount());
+        $st = $this->connection->execute('SELECT * FROM things WHERE id = 0');
+        $this->assertSame(0, $st->rowCount());
 
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(2, $messages, 'Select queries without any matching rows should also be logged.');
-        });
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages, 'Select queries without any matching rows should also be logged.');
     }
 
     /**
@@ -1132,28 +1116,26 @@ class ConnectionTest extends TestCase
     {
         Log::setConfig('queries', ['className' => 'Array']);
 
-        $this->deprecated(function () {
-            $connection = $this
-                ->getMockBuilder(Connection::class)
-                ->onlyMethods(['connect'])
-                ->disableOriginalConstructor()
-                ->getMock();
-            $connection->enableQueryLogging(true);
+        $connection = $this
+            ->getMockBuilder(Connection::class)
+            ->onlyMethods(['connect'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->enableQueryLogging(true);
 
-            $this->deprecated(function () use ($connection) {
-                $driver = $this->getMockFormDriver();
-                $connection->setDriver($driver);
-            });
-
-            $connection->begin();
-            $connection->begin(); //This one will not be logged
-            $connection->rollback();
-
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(2, $messages);
-            $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
-            $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
+        $this->deprecated(function () use ($connection) {
+            $driver = $this->getMockFormDriver();
+            $connection->setDriver($driver);
         });
+
+        $connection->begin();
+        $connection->begin(); //This one will not be logged
+        $connection->rollback();
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
     }
 
     /**
@@ -1161,23 +1143,21 @@ class ConnectionTest extends TestCase
      */
     public function testLogCommitTransaction(): void
     {
-        $this->deprecated(function () {
-            $driver = $this->getMockFormDriver();
-            $connection = $this->getMockBuilder(Connection::class)
-                ->onlyMethods(['connect'])
-                ->setConstructorArgs([['driver' => $driver]])
-                ->getMock();
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->onlyMethods(['connect'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
 
-            Log::setConfig('queries', ['className' => 'Array']);
-            $connection->enableQueryLogging(true);
-            $connection->begin();
-            $connection->commit();
+        Log::setConfig('queries', ['className' => 'Array']);
+        $connection->enableQueryLogging(true);
+        $connection->begin();
+        $connection->commit();
 
-            $messages = Log::engine('queries')->read();
-            $this->assertCount(2, $messages);
-            $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
-            $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[1]);
-        });
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(2, $messages);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[0]);
+        $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[1]);
     }
 
     /**
