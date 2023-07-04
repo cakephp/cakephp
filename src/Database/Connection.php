@@ -318,7 +318,9 @@ class Connection implements ConnectionInterface
      */
     public function connect(): bool
     {
-        deprecationWarning('If you cannot use automatic connection management, use $connection->getDriver()->connect() instead.');
+        deprecationWarning(
+            'If you cannot use automatic connection management, use $connection->getDriver()->connect() instead.'
+        );
 
         $connected = true;
         foreach ([self::ROLE_READ, self::ROLE_WRITE] as $role) {
@@ -349,7 +351,9 @@ class Connection implements ConnectionInterface
      */
     public function disconnect(): void
     {
-        deprecationWarning('If you cannot use automatic connection management, use $connection->getDriver()->disconnect() instead.');
+        deprecationWarning(
+            'If you cannot use automatic connection management, use $connection->getDriver()->disconnect() instead.'
+        );
 
         $this->getDriver(self::ROLE_READ)->disconnect();
         $this->getDriver(self::ROLE_WRITE)->disconnect();
