@@ -130,8 +130,10 @@ class ConnectionTest extends TestCase
      */
     public function testConnect(): void
     {
-        $this->assertTrue($this->connection->connect());
-        $this->assertTrue($this->connection->isConnected());
+        $this->deprecated(function () {
+            $this->assertTrue($this->connection->connect());
+            $this->assertTrue($this->connection->isConnected());
+        });
     }
 
     /**
@@ -249,40 +251,44 @@ class ConnectionTest extends TestCase
      */
     public function testWrongCredentials(): void
     {
-        $config = ConnectionManager::getConfig('test');
-        $this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
-        $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::getConfig('test'));
+        $this->deprecated(function () {
+            $config = ConnectionManager::getConfig('test');
+            $this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
+            $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::getConfig('test'));
 
-        $e = null;
-        try {
-            $connection->connect();
-        } catch (MissingConnectionException $e) {
-        }
+            $e = null;
+            try {
+                $connection->connect();
+            } catch (MissingConnectionException $e) {
+            }
 
-        $this->assertNotNull($e);
-        $this->assertStringStartsWith(
-            sprintf(
-                'Connection to %s could not be established:',
-                App::shortName(get_class($connection->getDriver()), 'Database/Driver')
-            ),
-            $e->getMessage()
-        );
-        $this->assertInstanceOf('PDOException', $e->getPrevious());
+            $this->assertNotNull($e);
+            $this->assertStringStartsWith(
+                sprintf(
+                    'Connection to %s could not be established:',
+                    App::shortName(get_class($connection->getDriver()), 'Database/Driver')
+                ),
+                $e->getMessage()
+            );
+            $this->assertInstanceOf('PDOException', $e->getPrevious());
+        });
     }
 
     public function testConnectRetry(): void
     {
         $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Sqlserver);
 
-        $connection = new Connection(['driver' => 'RetryDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
+        $this->deprecated(function () {
+            $connection = new Connection(['driver' => 'RetryDriver']);
+            $this->assertInstanceOf('TestApp\Database\Driver\RetryDriver', $connection->getDriver());
 
-        try {
-            $connection->connect();
-        } catch (MissingConnectionException $e) {
-        }
+            try {
+                $connection->connect();
+            } catch (MissingConnectionException $e) {
+            }
 
-        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
+            $this->assertSame(4, $connection->getDriver()->getConnectRetries());
+        });
     }
 
     /**
@@ -351,18 +357,20 @@ class ConnectionTest extends TestCase
             'Only required for SQLite driver which does not support buffered results natively'
         );
 
-        $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
+        $this->deprecated(function () {
+            $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
 
-        $collection = new Collection($statement);
-        $result = $collection->extract('id')->toArray();
-        $this->assertEquals(['1', '2'], $result);
+            $collection = new Collection($statement);
+            $result = $collection->extract('id')->toArray();
+            $this->assertEquals(['1', '2'], $result);
 
-        // Check iteration after extraction
-        $result = [];
-        foreach ($collection as $v) {
-            $result[] = $v['id'];
-        }
-        $this->assertEquals(['1', '2'], $result);
+            // Check iteration after extraction
+            $result = [];
+            foreach ($collection as $v) {
+                $result[] = $v['id'];
+            }
+            $this->assertEquals(['1', '2'], $result);
+        });
     }
 
     /**
@@ -880,18 +888,20 @@ class ConnectionTest extends TestCase
      */
     public function testQuote(): void
     {
-        $this->skipIf(!$this->connection->supportsQuoting());
-        $expected = "'2012-01-01'";
-        $result = $this->connection->quote(new DateTime('2012-01-01'), 'date');
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $this->skipIf(!$this->connection->supportsQuoting());
+            $expected = "'2012-01-01'";
+            $result = $this->connection->quote(new DateTime('2012-01-01'), 'date');
+            $this->assertEquals($expected, $result);
 
-        $expected = "'1'";
-        $result = $this->connection->quote(1, 'string');
-        $this->assertEquals($expected, $result);
+            $expected = "'1'";
+            $result = $this->connection->quote(1, 'string');
+            $this->assertEquals($expected, $result);
 
-        $expected = "'hello'";
-        $result = $this->connection->quote('hello', 'string');
-        $this->assertEquals($expected, $result);
+            $expected = "'hello'";
+            $result = $this->connection->quote('hello', 'string');
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -899,109 +909,111 @@ class ConnectionTest extends TestCase
      */
     public function testQuoteIdentifier(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
-            ->onlyMethods(['enabled'])
-            ->getMock();
-        $driver->expects($this->once())
-            ->method('enabled')
-            ->will($this->returnValue(true));
-        $connection = new Connection(['driver' => $driver]);
+        $this->deprecated(function () {
+            $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+                ->onlyMethods(['enabled'])
+                ->getMock();
+            $driver->expects($this->once())
+                ->method('enabled')
+                ->will($this->returnValue(true));
+            $connection = new Connection(['driver' => $driver]);
 
-        $result = $connection->quoteIdentifier('name');
-        $expected = '"name"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('name');
+            $expected = '"name"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Model.*');
-        $expected = '"Model".*';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Model.*');
+            $expected = '"Model".*';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Items.No_ 2');
-        $expected = '"Items"."No_ 2"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Items.No_ 2');
+            $expected = '"Items"."No_ 2"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Items.No_ 2 thing');
-        $expected = '"Items"."No_ 2 thing"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Items.No_ 2 thing');
+            $expected = '"Items"."No_ 2 thing"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Items.No_ 2 thing AS thing');
-        $expected = '"Items"."No_ 2 thing" AS "thing"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Items.No_ 2 thing AS thing');
+            $expected = '"Items"."No_ 2 thing" AS "thing"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Items.Item Category Code = :c1');
-        $expected = '"Items"."Item Category Code" = :c1';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Items.Item Category Code = :c1');
+            $expected = '"Items"."Item Category Code" = :c1';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('MTD()');
-        $expected = 'MTD()';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('MTD()');
+            $expected = 'MTD()';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('(sm)');
-        $expected = '(sm)';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('(sm)');
+            $expected = '(sm)';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('name AS x');
-        $expected = '"name" AS "x"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('name AS x');
+            $expected = '"name" AS "x"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Model.name AS x');
-        $expected = '"Model"."name" AS "x"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Model.name AS x');
+            $expected = '"Model"."name" AS "x"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Function(Something.foo)');
-        $expected = 'Function("Something"."foo")';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Function(Something.foo)');
+            $expected = 'Function("Something"."foo")';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Function(SubFunction(Something.foo))');
-        $expected = 'Function(SubFunction("Something"."foo"))';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Function(SubFunction(Something.foo))');
+            $expected = 'Function(SubFunction("Something"."foo"))';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Function(Something.foo) AS x');
-        $expected = 'Function("Something"."foo") AS "x"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Function(Something.foo) AS x');
+            $expected = 'Function("Something"."foo") AS "x"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('name-with-minus');
-        $expected = '"name-with-minus"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('name-with-minus');
+            $expected = '"name-with-minus"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('my-name');
-        $expected = '"my-name"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('my-name');
+            $expected = '"my-name"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Foo-Model.*');
-        $expected = '"Foo-Model".*';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Foo-Model.*');
+            $expected = '"Foo-Model".*';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Team.P%');
-        $expected = '"Team"."P%"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Team.P%');
+            $expected = '"Team"."P%"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Team.G/G');
-        $expected = '"Team"."G/G"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Team.G/G');
+            $expected = '"Team"."G/G"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Model.name as y');
-        $expected = '"Model"."name" AS "y"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Model.name as y');
+            $expected = '"Model"."name" AS "y"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('nämé');
-        $expected = '"nämé"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('nämé');
+            $expected = '"nämé"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('aßa.nämé');
-        $expected = '"aßa"."nämé"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('aßa.nämé');
+            $expected = '"aßa"."nämé"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('aßa.*');
-        $expected = '"aßa".*';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('aßa.*');
+            $expected = '"aßa".*';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Modeß.nämé as y');
-        $expected = '"Modeß"."nämé" AS "y"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Modeß.nämé as y');
+            $expected = '"Modeß"."nämé" AS "y"';
+            $this->assertEquals($expected, $result);
 
-        $result = $connection->quoteIdentifier('Model.näme Datum as y');
-        $expected = '"Model"."näme Datum" AS "y"';
-        $this->assertEquals($expected, $result);
+            $result = $connection->quoteIdentifier('Model.näme Datum as y');
+            $expected = '"Model"."näme Datum" AS "y"';
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -1420,28 +1432,30 @@ class ConnectionTest extends TestCase
      */
     public function testAutomaticReconnect2(): void
     {
-        $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
-        $statement->execute();
-        $statement->closeCursor();
+        $this->deprecated(function () {
+            $conn = clone $this->connection;
+            $statement = $conn->query('SELECT 1');
+            $statement->execute();
+            $statement->closeCursor();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
 
-        $newDriver->expects($this->exactly(2))
-            ->method('prepare')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new Exception('server gone away')),
-                $this->returnValue($statement)
-            ));
+            $newDriver->expects($this->exactly(2))
+                ->method('prepare')
+                ->will($this->onConsecutiveCalls(
+                    $this->throwException(new Exception('server gone away')),
+                    $this->returnValue($statement)
+                ));
 
-        $res = $conn->query('SELECT 1');
-        $this->assertInstanceOf(StatementInterface::class, $res);
+            $res = $conn->query('SELECT 1');
+            $this->assertInstanceOf(StatementInterface::class, $res);
+        });
     }
 
     /**
@@ -1450,99 +1464,105 @@ class ConnectionTest extends TestCase
      */
     public function testNoAutomaticReconnect(): void
     {
-        $conn = clone $this->connection;
-        $statement = $conn->query('SELECT 1');
-        $statement->execute();
-        $statement->closeCursor();
+        $this->deprecated(function () {
+            $conn = clone $this->connection;
+            $statement = $conn->query('SELECT 1');
+            $statement->execute();
+            $statement->closeCursor();
 
-        $conn->begin();
+            $conn->begin();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $oldDriver = $prop->getValue($conn);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $oldDriver = $prop->getValue($conn);
+            $prop->setValue($conn, $newDriver);
 
-        $newDriver->expects($this->once())
-            ->method('prepare')
-            ->will($this->throwException(new Exception('server gone away')));
+            $newDriver->expects($this->once())
+                ->method('prepare')
+                ->will($this->throwException(new Exception('server gone away')));
 
-        try {
-            $conn->query('SELECT 1');
-        } catch (Exception $e) {
-        }
-        $this->assertInstanceOf(Exception::class, $e ?? null);
+            try {
+                $conn->query('SELECT 1');
+            } catch (Exception $e) {
+            }
+            $this->assertInstanceOf(Exception::class, $e ?? null);
 
-        $prop->setValue($conn, $oldDriver);
-        $conn->rollback();
+            $prop->setValue($conn, $oldDriver);
+            $conn->rollback();
+        });
     }
 
     public function testAutomaticReconnectWithoutQueryLogging(): void
     {
-        $conn = clone $this->connection;
+        $this->deprecated(function () {
+            $conn = clone $this->connection;
 
-        $logger = new TestBaseLog();
-        $conn->setLogger($logger);
-        $conn->disableQueryLogging();
+            $logger = new TestBaseLog();
+            $conn->setLogger($logger);
+            $conn->disableQueryLogging();
 
-        $statement = $conn->query('SELECT 1');
-        $statement->execute();
-        $statement->closeCursor();
+            $statement = $conn->query('SELECT 1');
+            $statement->execute();
+            $statement->closeCursor();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
 
-        $newDriver->expects($this->exactly(2))
-            ->method('prepare')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new Exception('server gone away')),
-                $this->returnValue($statement)
-            ));
+            $newDriver->expects($this->exactly(2))
+                ->method('prepare')
+                ->will($this->onConsecutiveCalls(
+                    $this->throwException(new Exception('server gone away')),
+                    $this->returnValue($statement)
+                ));
 
-        $conn->query('SELECT 1');
+            $conn->query('SELECT 1');
 
-        $this->assertEmpty($logger->getMessage());
+            $this->assertEmpty($logger->getMessage());
+        });
     }
 
     public function testAutomaticReconnectWithQueryLogging(): void
     {
-        $conn = clone $this->connection;
+        $this->deprecated(function () {
+            $conn = clone $this->connection;
 
-        $logger = new TestBaseLog();
-        $conn->setLogger($logger);
-        $conn->enableQueryLogging();
+            $logger = new TestBaseLog();
+            $conn->setLogger($logger);
+            $conn->enableQueryLogging();
 
-        $statement = $conn->query('SELECT 1');
-        $statement->execute();
-        $statement->closeCursor();
+            $statement = $conn->query('SELECT 1');
+            $statement->execute();
+            $statement->closeCursor();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $oldDriver = $prop->getValue($conn);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $oldDriver = $prop->getValue($conn);
+            $prop->setValue($conn, $newDriver);
 
-        $newDriver->expects($this->exactly(2))
-            ->method('prepare')
-            ->will($this->onConsecutiveCalls(
-                $this->throwException(new Exception('server gone away')),
-                $this->returnValue($statement)
-            ));
+            $newDriver->expects($this->exactly(2))
+                ->method('prepare')
+                ->will($this->onConsecutiveCalls(
+                    $this->throwException(new Exception('server gone away')),
+                    $this->returnValue($statement)
+                ));
 
-        $conn->query('SELECT 1');
+            $conn->query('SELECT 1');
 
-        $this->assertSame('[RECONNECT]', $logger->getMessage());
+            $this->assertSame('[RECONNECT]', $logger->getMessage());
+        });
     }
 
     public function testNewQuery()
