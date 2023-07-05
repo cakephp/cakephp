@@ -77,6 +77,7 @@ class ConsoleIoTest extends TestCase
             $fs = new Filesystem();
             $fs->deleteDir(TMP . 'shell_test');
         }
+        Log::drop('console-logger');
     }
 
     /**
@@ -462,6 +463,32 @@ class ConsoleIoTest extends TestCase
         $this->io->setLoggers(false);
         $this->assertNull(Log::engine('stdout'));
         $this->assertNull(Log::engine('stderr'));
+    }
+
+    /**
+     * Tests that setLoggers does not add loggers if the
+     * application already has a console logger. This
+     * lets developers opt-out of the default behavior
+     * by configuring something equivalent.
+     */
+    public function testSetLoggersWithCustom(): void
+    {
+        Log::drop('stdout');
+        Log::drop('stderr');
+        Log::setConfig('console-logger', [
+            'className' => 'Console',
+            'stream' => $this->out,
+            'types' => ['error', 'warning'],
+        ]);
+        $this->io->setLoggers(true);
+        $this->assertEmpty(Log::engine('stdout'));
+        $this->assertEmpty(Log::engine('stderr'));
+        $this->assertNotEmpty(Log::engine('console-logger'));
+
+        $this->io->setLoggers(false);
+        $this->assertNull(Log::engine('stdout'));
+        $this->assertNull(Log::engine('stderr'));
+        $this->assertNotEmpty(Log::engine('console-logger'));
     }
 
     /**
