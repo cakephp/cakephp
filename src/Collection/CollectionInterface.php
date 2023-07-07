@@ -348,7 +348,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
 
     /**
      * Returns a sorted iterator out of the elements in this collection,
-     * ranked in ascending order by the results of running each value through a
+     * ranked in descending order by the results of running each value through a
      * callback. $callback can also be a string representing the column or property
      * name.
      *
