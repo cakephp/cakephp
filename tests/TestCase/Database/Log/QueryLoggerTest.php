@@ -55,6 +55,10 @@ class QueryLoggerTest extends TestCase
             'className' => 'Array',
             'scopes' => ['queriesLog'],
         ]);
+        Log::setConfig('newScope', [
+            'className' => 'Array',
+            'scopes' => ['cake.database.querylogger'],
+        ]);
         Log::setConfig('queryLoggerTest2', [
             'className' => 'Array',
             'scopes' => ['foo'],
@@ -62,6 +66,7 @@ class QueryLoggerTest extends TestCase
         $logger->log(LogLevel::DEBUG, $query, compact('query'));
 
         $this->assertCount(1, Log::engine('queryLoggerTest')->read());
+        $this->assertCount(1, Log::engine('newScope')->read());
         $this->assertCount(0, Log::engine('queryLoggerTest2')->read());
     }
 

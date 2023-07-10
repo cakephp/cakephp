@@ -35,7 +35,7 @@ class QueryLogger extends BaseLog
      */
     public function __construct(array $config = [])
     {
-        $this->_defaultConfig['scopes'] = ['queriesLog'];
+        $this->_defaultConfig['scopes'] = ['queriesLog', 'cake.database.querylogger'];
         $this->_defaultConfig['connection'] = '';
 
         parent::__construct($config);
@@ -47,7 +47,7 @@ class QueryLogger extends BaseLog
     public function log($level, string|Stringable $message, array $context = []): void
     {
         $context += [
-            'scope' => $this->scopes() ?: ['queriesLog'],
+            'scope' => $this->scopes() ?: ['queriesLog', 'cake.database.querylogger'],
             'connection' => $this->getConfig('connection'),
             'query' => null,
         ];
