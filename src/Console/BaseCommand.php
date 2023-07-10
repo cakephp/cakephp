@@ -18,6 +18,8 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
 
 /**
@@ -28,9 +30,16 @@ use Cake\Utility\Inflector;
  * - `initialize` Acts as a post-construct hook.
  * - `buildOptionParser` Build/Configure the option parser for your command.
  * - `execute` Execute your command with parsed Arguments and ConsoleIo
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Command\Command>
  */
-abstract class BaseCommand implements CommandInterface
+abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Command\Command>
+     */
+    use EventDispatcherTrait;
+
     /**
      * The name of this command.
      *
@@ -178,8 +187,12 @@ abstract class BaseCommand implements CommandInterface
             $io->setInteractive(false);
         }
 
-        /** @var int|null */
-        return $this->execute($args, $io);
+        $this->dispatchEvent('Command.beforeExecute', ['args' => $args]);
+        /** @var int|null $result */
+        $result = $this->execute($args, $io);
+        $this->dispatchEvent('Command.afterExecute', ['args' => $args, 'result' => $result]);
+
+        return $result;
     }
 
     /**

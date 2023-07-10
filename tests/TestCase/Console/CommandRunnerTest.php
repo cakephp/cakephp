@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\VersionCommand;
+use Cake\Console\Arguments;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
@@ -432,6 +434,36 @@ class CommandRunnerTest extends TestCase
         });
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
+    }
+
+    /**
+     * Test that run() fires off the Command.started and Command.finished events.
+     */
+    public function testRunTriggersCommandEvents(): void
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new StubConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+
+        $startedEventTriggered = $finishedEventTriggered = false;
+        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
+            $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
+            $this->assertInstanceOf(Arguments::class, $args);
+            $startedEventTriggered = true;
+        });
+        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $result) use (&$finishedEventTriggered): void {
+            $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
+            $this->assertInstanceOf(Arguments::class, $args);
+            $this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+            $finishedEventTriggered = true;
+        });
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertTrue($startedEventTriggered, 'Should have triggered Command.started event.');
+        $this->assertTrue($finishedEventTriggered, 'Should have triggered Command.finished event.');
     }
 
     /**
