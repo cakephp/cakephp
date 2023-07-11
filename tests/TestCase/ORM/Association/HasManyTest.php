@@ -827,9 +827,9 @@ class HasManyTest extends TestCase
     protected function assertSelectClause($expected, $query): void
     {
         if ($this->autoQuote) {
-            $connection = $query->getConnection();
+            $driver = $query->getConnection()->getDriver();
             foreach ($expected as $key => $value) {
-                $expected[$connection->getDriver()->quoteIdentifier($key)] = $connection->getDriver()->quoteIdentifier($value);
+                $expected[$driver->quoteIdentifier($key)] = $driver->quoteIdentifier($value);
                 unset($expected[$key]);
             }
         }

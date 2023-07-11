@@ -78,8 +78,9 @@ class QueryLoggerTest extends TestCase
     {
         Log::setConfig('queryLoggerTest', [
             'className' => 'Array',
-            'scopes' => ['cake.database.queries'],
+            'scopes' => ['queriesLog'],
         ]);
+
         $logger = new QueryLogger(['connection' => '']);
 
         $stringable = new class implements Stringable
@@ -91,8 +92,9 @@ class QueryLoggerTest extends TestCase
         };
 
         $logger->log(LogLevel::DEBUG, $stringable, ['query' => null]);
-        $logs = Log::engine('queryLoggerTest');
-        $this->assertStringContainsString('FooBar', $logs->read()[0]);
+        $logs = Log::engine('queryLoggerTest')->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('FooBar', $logs[0]);
     }
 
     /**
