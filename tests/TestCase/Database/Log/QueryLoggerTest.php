@@ -36,6 +36,7 @@ class QueryLoggerTest extends TestCase
         parent::tearDown();
         Log::drop('queryLoggerTest');
         Log::drop('queryLoggerTest2');
+        Log::drop('newScope');
     }
 
     /**
@@ -57,7 +58,7 @@ class QueryLoggerTest extends TestCase
         ]);
         Log::setConfig('newScope', [
             'className' => 'Array',
-            'scopes' => ['cake.database.querylogger'],
+            'scopes' => ['cake.database.queries'],
         ]);
         Log::setConfig('queryLoggerTest2', [
             'className' => 'Array',
@@ -75,9 +76,12 @@ class QueryLoggerTest extends TestCase
      */
     public function testLogFunctionStringable(): void
     {
-        $this->skipIf(version_compare(PHP_VERSION, '8.0', '<'), 'Stringable exists since 8.0');
-
+        Log::setConfig('queryLoggerTest', [
+            'className' => 'Array',
+            'scopes' => ['cake.database.queries'],
+        ]);
         $logger = new QueryLogger(['connection' => '']);
+
         $stringable = new class implements Stringable
         {
             public function __toString(): string
@@ -87,6 +91,8 @@ class QueryLoggerTest extends TestCase
         };
 
         $logger->log(LogLevel::DEBUG, $stringable, ['query' => null]);
+        $logs = Log::engine('queryLoggerTest');
+        $this->assertStringContainsString('FooBar', $logs->read()[0]);
     }
 
     /**
