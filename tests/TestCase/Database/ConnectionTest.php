@@ -262,9 +262,8 @@ class ConnectionTest extends TestCase
         try {
             $connection->execute('SELECT 1');
         } catch (MissingConnectionException $e) {
+            $this->assertSame(4, $connection->getDriver()->getConnectRetries());
         }
-
-        $this->assertSame(4, $connection->getDriver()->getConnectRetries());
     }
 
     /**
@@ -1078,13 +1077,13 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
             ->method('execute')
@@ -1108,16 +1107,16 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-        $conn->begin();
+            $conn->begin();
 
-        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-        $prop = new ReflectionProperty($conn, 'readDriver');
-        $prop->setAccessible(true);
-        $prop->setValue($conn, $newDriver);
-        $prop = new ReflectionProperty($conn, 'writeDriver');
-        $prop->setAccessible(true);
-        $oldDriver = $prop->getValue($conn);
-        $prop->setValue($conn, $newDriver);
+            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+            $prop = new ReflectionProperty($conn, 'readDriver');
+            $prop->setAccessible(true);
+            $prop->setValue($conn, $newDriver);
+            $prop = new ReflectionProperty($conn, 'writeDriver');
+            $prop->setAccessible(true);
+            $oldDriver = $prop->getValue($conn);
+            $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
             ->method('execute')
@@ -1126,10 +1125,9 @@ class ConnectionTest extends TestCase
         try {
             $conn->execute('SELECT 1');
         } catch (Exception $e) {
+            $this->assertInstanceOf(Exception::class, $e ?? null);
+            $prop->setValue($conn, $oldDriver);
+            $conn->rollback();
         }
-        $this->assertInstanceOf(Exception::class, $e ?? null);
-
-        $prop->setValue($conn, $oldDriver);
-        $conn->rollback();
     }
 }

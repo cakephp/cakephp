@@ -158,4 +158,19 @@ class ValueBinderTest extends TestCase
         $valueBinder->bind(':c1', 'value1', 'string');
         $valueBinder->attachTo($statementMock);
     }
+
+    /**
+     * test the __debugInfo method
+     */
+    public function testDebugInfo(): void
+    {
+        $valueBinder = new ValueBinder();
+
+        $valueBinder->bind(':c0', 'value0');
+        $valueBinder->bind(':c1', 'value1');
+
+        $data = $valueBinder->__debugInfo();
+        $this->assertArrayHasKey('bindings', $data);
+        $this->assertArrayHasKey(':c0', $data['bindings']);
+    }
 }

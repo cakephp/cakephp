@@ -71,6 +71,10 @@ class QueryLoggerTest extends TestCase
     public function testLogFunctionStringable(): void
     {
         $this->skipIf(version_compare(PHP_VERSION, '8.0', '<'), 'Stringable exists since 8.0');
+        Log::setConfig('queryLoggerTest', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
 
         $logger = new QueryLogger(['connection' => '']);
         $stringable = new class implements Stringable
@@ -82,6 +86,9 @@ class QueryLoggerTest extends TestCase
         };
 
         $logger->log(LogLevel::DEBUG, $stringable, ['query' => null]);
+        $logs = Log::engine('queryLoggerTest')->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('FooBar', $logs[0]);
     }
 
     /**
