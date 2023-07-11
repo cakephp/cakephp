@@ -47,7 +47,7 @@ class QueryLogger extends BaseLog
     public function log($level, string|Stringable $message, array $context = []): void
     {
         $context += [
-            'scope' => $this->scopes() ?: ['queriesLog', 'cake.database.querylogger'],
+            'scope' => $this->scopes() ?: ['queriesLog', 'cake.database.queries'],
             'connection' => $this->getConfig('connection'),
             'query' => null,
         ];
