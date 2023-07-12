@@ -1267,6 +1267,31 @@ class MailerTest extends TestCase
     }
 
     /**
+     * test mail logging to cake.email scope
+     */
+    public function testSendWithLogCakeScope(): void
+    {
+        Log::setConfig('email', [
+            'className' => 'Array',
+            'scopes' => ['cake.email'],
+        ]);
+
+        $this->mailer->setTransport('debug');
+        $this->mailer->setTo('me@cakephp.org');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setProfile(['log' => true]);
+        $text = 'Logging This';
+        $this->mailer->deliver($text);
+
+        $messages = Log::engine('email')->read();
+        $this->assertCount(1, $messages);
+        $this->assertStringContainsString($text, $messages[0]);
+        $this->assertStringContainsString('cake@cakephp.org', $messages[0]);
+        $this->assertStringContainsString('me@cakephp.org', $messages[0]);
+    }
+
+    /**
      * test that initial email instance config is restored after email is sent.
      */
     public function testDefaultProfileRestoration(): void

@@ -553,7 +553,7 @@ class Mailer implements EventListenerInterface
     {
         $config = [
             'level' => 'debug',
-            'scope' => 'email',
+            'scope' => ['cake.email', 'email'],
         ];
         if ($log !== true) {
             if (!is_array($log)) {
