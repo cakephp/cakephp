@@ -1125,7 +1125,7 @@ class ConnectionTest extends TestCase
         try {
             $conn->execute('SELECT 1');
         } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e ?? null);
+            $this->assertInstanceOf(Exception::class, $e);
             $prop->setValue($conn, $oldDriver);
             $conn->rollback();
         }
