@@ -1267,13 +1267,13 @@ class MailerTest extends TestCase
     }
 
     /**
-     * test mail logging to cake.email scope
+     * test mail logging to cake.mailer scope
      */
     public function testSendWithLogCakeScope(): void
     {
         Log::setConfig('email', [
             'className' => 'Array',
-            'scopes' => ['cake.email'],
+            'scopes' => ['cake.mailer'],
         ]);
 
         $this->mailer->setTransport('debug');
