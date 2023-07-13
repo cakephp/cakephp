@@ -46,7 +46,7 @@ class ConsoleLogTest extends TestCase
     /**
      * Test writing to a file stream
      */
-    public function testlogToFileStream(): void
+    public function testLogToFileStream(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([

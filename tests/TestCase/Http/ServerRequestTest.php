@@ -693,7 +693,7 @@ class ServerRequestTest extends TestCase
     /**
      * Test AJAX, flash and friends
      */
-    public function testisAjax(): void
+    public function testIsAjax(): void
     {
         $request = new ServerRequest();
 

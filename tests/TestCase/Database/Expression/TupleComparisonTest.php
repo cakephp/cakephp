@@ -30,7 +30,7 @@ class TupleComparisonTest extends TestCase
     /**
      * Tests generating a function with no arguments
      */
-    public function testsSimpleTuple(): void
+    public function testSimpleTuple(): void
     {
         $f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
         $binder = new ValueBinder();

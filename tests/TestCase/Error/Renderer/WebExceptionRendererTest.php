@@ -390,7 +390,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * test that error400 only modifies the messages on Cake Exceptions.
      */
-    public function testerror400OnlyChangingCakeException(): void
+    public function testError400OnlyChangingCakeException(): void
     {
         Configure::write('debug', false);
 

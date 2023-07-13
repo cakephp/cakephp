@@ -51,7 +51,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @group save
      */
-    public function testsSaveBelongsToWithValidationError(): void
+    public function testSaveBelongsToWithValidationError(): void
     {
         $entity = new Entity([
             'title' => 'A Title',
