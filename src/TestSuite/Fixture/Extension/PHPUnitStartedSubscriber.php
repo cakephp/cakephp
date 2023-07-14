@@ -41,7 +41,7 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
             Log::setConfig('queries', [
                 'className' => 'Console',
                 'stream' => 'php://stderr',
-                'scopes' => ['queriesLog'],
+                'scopes' => ['cake.database.queries'],
             ]);
         }
     }
