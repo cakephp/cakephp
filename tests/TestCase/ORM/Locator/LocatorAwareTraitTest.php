@@ -79,7 +79,7 @@ class LocatorAwareTraitTest extends TestCase
         $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
-    public function testfetchTableException()
+    public function testFetchTableException(): void
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
@@ -90,7 +90,7 @@ class LocatorAwareTraitTest extends TestCase
         $stub->fetchTable();
     }
 
-    public function testfetchTableExceptionForEmptyString()
+    public function testFetchTableExceptionForEmptyString(): void
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(

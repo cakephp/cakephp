@@ -242,7 +242,7 @@ class TableLocatorTest extends TestCase
     /**
      * Test that get() uses config data set with getConfig()
      */
-    public function testGetWithgetConfig(): void
+    public function testGetWithGetConfig(): void
     {
         $this->_locator->setConfig('Articles', [
             'table' => 'my_articles',
