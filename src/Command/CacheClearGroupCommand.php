@@ -23,7 +23,7 @@ use Cake\Console\ConsoleOptionParser;
 use InvalidArgumentException;
 
 /**
- * Cache Clear All command.
+ * Cache Clear Group command.
  */
 class CacheClearGroupCommand extends Command
 {
