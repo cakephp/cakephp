@@ -20,7 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use InvalidArgumentException;
+use Cake\Cache\InvalidArgumentException;
 
 /**
  * Cache Clear Group command.
