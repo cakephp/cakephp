@@ -2185,6 +2185,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function array(string $field, ?string $message = null, Closure|string|null $when = null)
     {
         $message ??= 'The provided value must be an array';
+        if ($this->_useI18n) {
+            $message = __d('cake', 'The provided value must be an array');
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'array', $extra + [
@@ -2205,6 +2209,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function scalar(string $field, ?string $message = null, Closure|string|null $when = null)
     {
         $message ??= 'The provided value must be scalar';
+        if ($this->_useI18n) {
+            $message = __d('cake', 'The provided value must be scalar');
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'scalar', $extra + [
