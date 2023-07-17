@@ -24,6 +24,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
 use UnexpectedValueException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this

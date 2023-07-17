@@ -27,12 +27,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Traversable;
 use TypeError;
+use function Cake\Core\getTypeName;
+use function Cake\Core\triggerWarning;
 
 /**
  * Cookie Collection
  *
  * Provides an immutable collection of cookies objects. Adding or removing
  * to a collection returns a *new* collection that you must retain.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\Http\Cookie\CookieInterface>
  */
 class CookieCollection implements IteratorAggregate, Countable
 {

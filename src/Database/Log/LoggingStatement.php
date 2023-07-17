@@ -21,6 +21,7 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
 use Psr\Log\LoggerInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Statement decorator used to

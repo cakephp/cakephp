@@ -19,6 +19,7 @@ namespace Cake\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\TypeFactory;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a single table in a database schema.

@@ -27,6 +27,7 @@ use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a database driver containing all specificities for
@@ -106,6 +107,16 @@ abstract class Driver implements DriverInterface
         if (!empty($config['quoteIdentifiers'])) {
             $this->enableAutoQuoting();
         }
+    }
+
+    /**
+     * Get the configuration data used to create the driver.
+     *
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return $this->_config;
     }
 
     /**
@@ -514,6 +525,16 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Returns the connection role this driver performs.
+     *
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
@@ -532,6 +553,7 @@ abstract class Driver implements DriverInterface
     {
         return [
             'connected' => $this->_connection !== null,
+            'role' => $this->getRole(),
         ];
     }
 }

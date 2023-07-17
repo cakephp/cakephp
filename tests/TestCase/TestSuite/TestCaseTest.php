@@ -29,6 +29,7 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * TestCaseTest
@@ -127,6 +128,31 @@ class TestCaseTest extends TestCase
               $this->assertSame(E_USER_WARNING, error_reporting());
         });
         $this->assertSame($errorLevel, error_reporting());
+    }
+
+    /**
+     * test withCaptureError
+     */
+    public function testCaptureError(): void
+    {
+        $error = $this->captureError(E_USER_WARNING, function (): void {
+            trigger_error('Something bad', E_USER_WARNING);
+        });
+        $this->assertEquals('Something bad', $error->getMessage());
+        $this->assertEqualsWithDelta(__LINE__, $error->getLine(), 10);
+        $this->assertEquals(E_USER_WARNING, $error->getCode());
+        $this->assertEquals(__FILE__, $error->getFile());
+    }
+
+    /**
+     * test withCaptureError
+     */
+    public function testCaptureErrorNoError(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->captureError(E_USER_WARNING, function (): void {
+            // nothing
+        });
     }
 
     /**

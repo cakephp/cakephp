@@ -19,6 +19,7 @@ namespace Cake\Controller;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of

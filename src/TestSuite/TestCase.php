@@ -19,6 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debugger;
+use Cake\Error\PhpError;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
@@ -30,6 +32,7 @@ use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\Utility\Inflector;
+use Closure;
 use LogicException;
 use PHPUnit\Framework\Constraint\DirectoryExists;
 use PHPUnit\Framework\Constraint\FileExists;
@@ -39,6 +42,8 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\pluginSplit;
 
 /**
  * Cake TestCase class
@@ -94,6 +99,11 @@ abstract class TestCase extends BaseTestCase
      * @var array
      */
     protected $_configure = [];
+
+    /**
+     * @var \Cake\Error\PhpError|null
+     */
+    private $_capturedError;
 
     /**
      * Asserts that a string matches a given regular expression.
@@ -196,6 +206,44 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Capture errors from $callable so that you can do assertions on the error.
+     *
+     * If no error is captured an assertion will fail.
+     *
+     * @param int $errorLevel The value of error_reporting() to use.
+     * @param \Closure $callable A closure to capture errors from.
+     * @return \Cake\Error\PhpError The captured error.
+     */
+    public function captureError(int $errorLevel, Closure $callable): PhpError
+    {
+        $default = error_reporting();
+        error_reporting($errorLevel);
+
+        $this->_capturedError = null;
+        set_error_handler(
+            function (int $code, string $description, string $file, int $line) {
+                $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
+                $this->_capturedError = new PhpError($code, $description, $file, $line, $trace);
+
+                return true;
+            },
+            $errorLevel
+        );
+
+        try {
+            $callable();
+        } finally {
+            restore_error_handler();
+            error_reporting($default);
+        }
+        if ($this->_capturedError === null) {
+            $this->fail('No error was captured');
+        }
+        /** @var \Cake\Error\PhpError $this->_capturedError */
+        return $this->_capturedError;
+    }
+
+    /**
      * Helper method for check deprecation methods
      *
      * @param callable $callable callable function that will receive asserts
@@ -208,9 +256,6 @@ abstract class TestCase extends BaseTestCase
         /** @var bool $deprecation */
         $deprecation = false;
 
-        /**
-         * @psalm-suppress InvalidArgument
-         */
         $previousHandler = set_error_handler(
             function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
                 if ($code == E_USER_DEPRECATED) {
@@ -763,7 +808,6 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
             foreach ($tags as $tag => $attributes) {
-                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
                     sprintf('[\s]*<%s', preg_quote($tag, '/')),
@@ -810,7 +854,6 @@ abstract class TestCase extends BaseTestCase
                         'attrs' => $attrs,
                     ];
                 }
-                /** @psalm-suppress PossiblyFalseArgument */
                 $regex[] = [
                     sprintf('End %s tag', $tag),
                     '[\s]*\/?[\s]*>[\n\r]*',
@@ -833,7 +876,6 @@ abstract class TestCase extends BaseTestCase
             }
 
             // If 'attrs' is not present then the array is just a regular int-offset one
-            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = '';
             foreach ((array)$expressions as $expression) {

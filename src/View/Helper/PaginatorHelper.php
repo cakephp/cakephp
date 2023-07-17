@@ -22,6 +22,8 @@ use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use function Cake\Core\h;
+use function Cake\I18n\__;
 
 /**
  * Pagination Helper class for easy generation of pagination links.

@@ -94,11 +94,11 @@ trait PaginatorTestTrait
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -109,12 +109,11 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
-        $this->Paginator->paginate($table, $params, $settings);
+
+        $this->deprecated(function () use ($table, $params, $settings) {
+            $this->Paginator->paginate($table, $params, $settings);
+        });
     }
 
     /**
@@ -174,11 +173,11 @@ trait PaginatorTestTrait
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -187,13 +186,13 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
+
+        $result = $this->Paginator->getPagingParams();
+        $this->assertEquals('PaginatorPosts.id', $result['PaginatorPosts']['sort']);
+        $this->assertEquals('DESC', $result['PaginatorPosts']['direction']);
     }
 
     /**
@@ -205,11 +204,11 @@ trait PaginatorTestTrait
             'order' => ['PaginatorPosts.id' => 'DESC', 'PaginatorPosts.title' => 'ASC'],
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -218,10 +217,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => $settings['order'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
@@ -241,11 +236,11 @@ trait PaginatorTestTrait
             'maxLimit' => 10,
         ];
 
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())
@@ -254,10 +249,6 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'DESC'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
@@ -285,7 +276,10 @@ trait PaginatorTestTrait
         ];
         $defaults = $this->Paginator->getDefaults('Silly', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
-        $this->assertEquals($settings, $result);
+        $this->assertEquals($settings + [
+            'sortableFields' => null,
+            'finder' => 'all',
+        ], $result);
 
         $defaults = $this->Paginator->getDefaults('Posts', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
@@ -295,6 +289,8 @@ trait PaginatorTestTrait
             'maxLimit' => 50,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -328,6 +324,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -348,6 +345,7 @@ trait PaginatorTestTrait
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'nonexistent',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -368,6 +366,7 @@ trait PaginatorTestTrait
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -396,6 +395,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -422,6 +422,8 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -452,6 +454,8 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -485,6 +489,8 @@ trait PaginatorTestTrait
                 'fields' => ['bad.stuff'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields'],
                 'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
+                'sortableFields' => null,
+                'finder' => 'all',
             ];
             $this->assertEquals($expected, $result);
         });
@@ -508,6 +514,8 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -524,6 +532,8 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -552,6 +562,8 @@ trait PaginatorTestTrait
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
 
@@ -574,6 +586,8 @@ trait PaginatorTestTrait
             ],
             'whitelist' => ['limit', 'sort', 'page', 'direction'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+            'sortableFields' => null,
+            'finder' => 'all',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -583,11 +597,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortInvalid(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -595,10 +609,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'id',
             ]);
 
         $params = [
@@ -637,11 +647,11 @@ trait PaginatorTestTrait
      */
     public function testValidaSortInitialSortAndDirection(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -649,12 +659,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'sort' => 'id',
-                'scope' => null,
-                'sortWhitelist' => ['id'],
-                'sortableFields' => ['id'],
             ]);
 
         $options = [
@@ -676,11 +680,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortAndDirectionAliased(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -688,10 +692,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.title' => 'asc'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'sort' => 'title',
-                'scope' => null,
             ]);
 
         $options = [
@@ -722,11 +722,11 @@ trait PaginatorTestTrait
      */
     public function testValidateSortRetainsOriginalSortValue(): void
     {
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -734,12 +734,6 @@ trait PaginatorTestTrait
                 'limit' => 20,
                 'page' => 1,
                 'order' => ['PaginatorPosts.id' => 'asc'],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sortWhitelist' => ['id'],
-                'sortableFields' => ['id'],
-                'sort' => 'id',
             ]);
 
         $params = [
@@ -1175,11 +1169,11 @@ trait PaginatorTestTrait
             'finder' => 'published',
             'limit' => 2,
         ];
-        $table = $this->_getMockPosts(['query']);
+        $table = $this->_getMockPosts(['selectQuery']);
         $query = $this->_getMockFindQuery();
 
         $table->expects($this->once())
-            ->method('query')
+            ->method('selectQuery')
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('applyOptions')
@@ -1187,12 +1181,11 @@ trait PaginatorTestTrait
                 'limit' => 2,
                 'page' => 1,
                 'order' => [],
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => null,
             ]);
         $this->Paginator->paginate($table, [], $settings);
+
+        $result = $this->Paginator->getPagingParams();
+        $this->assertEquals('published', $result['PaginatorPosts']['finder']);
     }
 
     /**
@@ -1204,9 +1197,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1216,15 +1207,9 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }
@@ -1259,10 +1244,8 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
                 'limit' => 5,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -1273,15 +1256,9 @@ trait PaginatorTestTrait
         $query->expects($this->once())
             ->method('applyOptions')
             ->with([
-                'contain' => ['PaginatorAuthor'],
-                'group' => 'PaginatorPosts.published',
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
-                'whitelist' => ['limit', 'sort', 'page', 'direction'],
-                'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-                'scope' => null,
-                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }
@@ -1320,7 +1297,7 @@ trait PaginatorTestTrait
     protected function _getMockFindQuery($table = null)
     {
         /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query\SelectQuery')
             ->onlyMethods(['all', 'count', 'applyOptions'])
             ->addMethods(['total'])
             ->disableOriginalConstructor()
@@ -1339,7 +1316,7 @@ trait PaginatorTestTrait
             ->will($this->returnValue($results));
 
         if ($table) {
-            $query->repository($table);
+            $query->setRepository($table);
         }
 
         return $query;

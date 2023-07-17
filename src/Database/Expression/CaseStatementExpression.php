@@ -24,6 +24,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 use InvalidArgumentException;
 use LogicException;
+use function Cake\Core\getTypeName;
 
 /**
  * Represents a SQL case statement with a fluid API

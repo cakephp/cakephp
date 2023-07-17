@@ -23,12 +23,16 @@ use Cake\ORM\Locator\LocatorInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
+use function Cake\Core\namespaceSplit;
+use function Cake\Core\pluginSplit;
 
 /**
  * A container/collection for association classes.
  *
  * Contains methods for managing associations, and
  * ordering operations around saving and deleting.
+ *
+ * @template-implements \IteratorAggregate<string, \Cake\ORM\Association>
  */
 class AssociationCollection implements IteratorAggregate
 {

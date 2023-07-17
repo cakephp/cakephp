@@ -21,6 +21,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Routing\Asset;
 use Cake\Routing\Router;
 use Cake\View\Helper;
+use function Cake\Core\h;
 
 /**
  * UrlHelper class for generating URLs.

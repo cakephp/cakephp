@@ -22,6 +22,8 @@ use Serializable;
 
 /**
  * Describes how a collection of datasource results should look like
+ *
+ * @template T
  */
 interface ResultSetInterface extends CollectionInterface, Countable, Serializable
 {

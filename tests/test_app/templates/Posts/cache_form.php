@@ -1,3 +1,6 @@
+<?php
+use function Cake\I18n\__;
+?>
 <div class="users form">
     <?= $this->Form->create(); ?>
         <fieldset>

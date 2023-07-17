@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use TestApp\Mailer\TestMessage;
+use function Cake\Core\env;
 
 /**
  * MessageTest class
@@ -1306,6 +1307,10 @@ HTML;
     public function testSerialization(): void
     {
         $message = new Message();
+        $reflection = new \ReflectionClass($message);
+        $property = $reflection->getProperty('serializableProperties');
+        $property->setAccessible(true);
+        $serializableProperties = $property->getValue($message);
 
         $message
             ->setSubject('I haz Cake')
@@ -1317,6 +1322,12 @@ HTML;
 
         $string = serialize($message);
         $this->assertStringContainsString('text message', $string);
+
+        $this->assertIsArray($serializableProperties);
+        $this->assertContains('subject', $serializableProperties);
+        $this->assertContains('emailFormat', $serializableProperties);
+        $this->assertContains('textMessage', $serializableProperties);
+        $this->assertContains('htmlMessage', $serializableProperties);
 
         /** @var \Cake\Mailer\Message $message */
         $message = unserialize($string);

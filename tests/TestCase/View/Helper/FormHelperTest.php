@@ -491,6 +491,37 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test create() with the templates option.
+     */
+    public function testCreateTemplatesRequiredClass(): void
+    {
+        $this->Form->create($this->article, [
+            'templates' => [
+                'requiredClass' => 'is-required',
+            ],
+        ]);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class' => 'input text is-required'],
+            'label' => ['for' => 'title'],
+            'Title',
+            '/label',
+            'input' => [
+                'type' => 'text',
+                'name' => 'title',
+                'id' => 'title',
+                'required' => 'required',
+                'data-validity-message' => 'This field cannot be left empty',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'aria-required' => 'true',
+            ],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test using template vars in various templates used by control() method.
      */
     public function testControlTemplateVars(): void
@@ -2815,6 +2846,27 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'contact-email'],
             'Email',
             '/label',
+            ['input' => [
+                'type' => 'email', 'name' => 'Contact[email]',
+                'id' => 'contact-email', 'maxlength' => 255,
+            ]],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('Contact.email', [
+            'templates' => [
+                'formGroup' => '{{input}}',
+                'inputContainer' => '<div><div>{{label}}</div>{{content}}</div>',
+            ],
+        ]);
+        $expected = [
+            '<div',
+            '<div',
+            'label' => ['for' => 'contact-email'],
+            'Email',
+            '/label',
+            '/div',
             ['input' => [
                 'type' => 'email', 'name' => 'Contact[email]',
                 'id' => 'contact-email', 'maxlength' => 255,

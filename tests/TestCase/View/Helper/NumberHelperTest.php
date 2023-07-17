@@ -92,16 +92,18 @@ class NumberHelperTest extends TestCase
      */
     public function testNumberHelperProxyMethodCalls(string $method): void
     {
-        $number = $this->getMockBuilder(NumberMock::class)
-            ->addMethods([$method])
-            ->getMock();
-        $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
-        $helper->attach($number);
-        $number->expects($this->once())
-            ->method($method)
-            ->with(12.3)
-            ->willReturn('');
-        $helper->{$method}(12.3);
+        $this->deprecated(function () use ($method) {
+            $number = $this->getMockBuilder(NumberMock::class)
+                ->addMethods([$method])
+                ->getMock();
+            $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
+            $helper->attach($number);
+            $number->expects($this->once())
+                ->method($method)
+                ->with(12.3)
+                ->willReturn('');
+            $helper->{$method}(12.3);
+        });
     }
 
     /**
@@ -123,12 +125,14 @@ class NumberHelperTest extends TestCase
      */
     public function testEngineOverride(): void
     {
-        $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-        $this->assertInstanceOf(TestAppEngine::class, $Number->engine());
+        $this->deprecated(function () {
+            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
+            $this->assertInstanceOf(TestAppEngine::class, $Number->engine());
 
-        $this->loadPlugins(['TestPlugin']);
-        $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
-        $this->assertInstanceOf(TestPluginEngine::class, $Number->engine());
-        $this->removePlugins(['TestPlugin']);
+            $this->loadPlugins(['TestPlugin']);
+            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
+            $this->assertInstanceOf(TestPluginEngine::class, $Number->engine());
+            $this->removePlugins(['TestPlugin']);
+        });
     }
 }

@@ -14,6 +14,7 @@
  * @var string $file
  * @var array<string> $paths
  */
+use function Cake\Core\h;
 
 $this->layout = 'dev_error';
 

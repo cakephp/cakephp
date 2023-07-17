@@ -19,6 +19,7 @@ namespace Cake\Routing\Route;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * A single Route used by the Router to connect requests to

@@ -19,6 +19,7 @@ namespace Cake\View\Helper;
 use Cake\Core\Configure;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use function Cake\Core\h;
 
 /**
  * Html Helper class for easy use of HTML widgets.
@@ -46,11 +47,11 @@ class HtmlHelper extends Helper
      */
     protected $_defaultConfig = [
         'templates' => [
-            'meta' => '<meta{{attrs}}/>',
-            'metalink' => '<link href="{{url}}"{{attrs}}/>',
+            'meta' => '<meta{{attrs}}>',
+            'metalink' => '<link href="{{url}}"{{attrs}}>',
             'link' => '<a href="{{url}}"{{attrs}}>{{content}}</a>',
             'mailto' => '<a href="mailto:{{url}}"{{attrs}}>{{content}}</a>',
-            'image' => '<img src="{{url}}"{{attrs}}/>',
+            'image' => '<img src="{{url}}"{{attrs}}>',
             'tableheader' => '<th{{attrs}}>{{content}}</th>',
             'tableheaderrow' => '<tr{{attrs}}>{{content}}</tr>',
             'tablecell' => '<td{{attrs}}>{{content}}</td>',
@@ -64,9 +65,9 @@ class HtmlHelper extends Helper
             'tagselfclosing' => '<{{tag}}{{attrs}}/>',
             'para' => '<p{{attrs}}>{{content}}</p>',
             'parastart' => '<p{{attrs}}>',
-            'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
+            'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}>',
             'style' => '<style{{attrs}}>{{content}}</style>',
-            'charset' => '<meta charset="{{charset}}"/>',
+            'charset' => '<meta charset="{{charset}}">',
             'ul' => '<ul{{attrs}}>{{content}}</ul>',
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
@@ -129,7 +130,7 @@ class HtmlHelper extends Helper
      * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array<string, mixed> $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
-     * @return string|null A completed `<link />` element, or null if the element was sent to a block.
+     * @return string|null A completed `<link>` element, or null if the element was sent to a block.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta($type, $content = null, array $options = []): ?string
@@ -247,7 +248,7 @@ class HtmlHelper extends Helper
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of options and HTML attributes.
-     * @return string An `<a />` element.
+     * @return string An `<a>` element.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
      */
     public function link($title, $url = null, array $options = []): string
@@ -314,7 +315,7 @@ class HtmlHelper extends Helper
      * @param array $params An array specifying any additional parameters.
      *   Can be also any special parameters supported by `Router::url()`.
      * @param array<string, mixed> $options Array of options and HTML attributes.
-     * @return string An `<a />` element.
+     * @return string An `<a>` element.
      * @see \Cake\Routing\Router::pathUrl()
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
      */
@@ -371,7 +372,7 @@ class HtmlHelper extends Helper
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array<string, mixed> $options Array of options and HTML arguments.
-     * @return string|null CSS `<link />` or `<style />` tag, depending on the type of link.
+     * @return string|null CSS `<link>` or `<style>` tag, depending on the type of link.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-css-files
      */
     public function css($path, array $options = []): ?string
@@ -470,7 +471,7 @@ class HtmlHelper extends Helper
      *
      * @param array<string>|string $url String or array of javascript files to include
      * @param array<string, mixed> $options Array of options, and html attributes see above.
-     * @return string|null String of `<script />` tags or null if block is specified in options
+     * @return string|null String of `<script>` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
      * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-javascript-files
      */
@@ -969,8 +970,8 @@ class HtmlHelper extends Helper
      *
      * ```
      * <video autoplay="autoplay">
-     *      <source src="/files/video.mp4" type="video/mp4"/>
-     *      <source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'"/>
+     *      <source src="/files/video.mp4" type="video/mp4">
+     *      <source src="/files/video.ogv" type="video/ogv; codecs='theora, vorbis'">
      * </video>
      * ```
      *

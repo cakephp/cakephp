@@ -131,6 +131,7 @@ jobs:
           export CODECOVERAGE=1
           vendor/bin/phpunit --verbose --coverage-clover=coverage.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --verbose --testsuite=database
+          vendor/bin/phpunit --verbose --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         else
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
@@ -143,6 +144,9 @@ jobs:
     - name: Submit code coverage
       if: matrix.php-version == '8.0'
       uses: codecov/codecov-action@v3
+      with:
+        files: coverage.xml,coverage-functions.xml
+
 
   testsuite-windows:
     runs-on: windows-2022
@@ -206,6 +210,7 @@ jobs:
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
+          set CAKE_DISABLE_GLOBAL_FUNCS=1
           vendor/bin/phpunit --verbose
 
     - name: Run PHPUnit (autoquote enabled)
@@ -267,3 +272,7 @@ jobs:
     - name: Run phpstan for tests
       if: always()
       run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
+
+    - name: Run class deprecation aliasing validaton script
+      if: always()
+      run: php contrib/validate-deprecation-aliases.php

@@ -18,6 +18,7 @@ namespace Cake\Log\Engine;
 
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Log\Formatter\LegacySyslogFormatter;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Syslog stream for Logging. Writes logs to the system logger

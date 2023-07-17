@@ -619,7 +619,7 @@ class IntegrationTestTraitTest extends TestCase
             'controller' => 'Posts',
             'action' => 'hostData',
             '_host' => 'app.example.org',
-            '_ssl' => true,
+            '_https' => true,
         ]);
         $this->assertResponseOk();
         $this->assertResponseContains('"isSsl":true');
@@ -766,6 +766,37 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set, cannot assert content.');
         $this->assertCookieNotSet('remember_me');
+    }
+
+    /**
+     * Tests assertCookieIsSet assertion
+     */
+    public function testAssertCookieIsSet(): void
+    {
+        $this->get('/posts/secretCookie');
+        $this->assertCookieIsSet('secrets');
+    }
+
+    /**
+     * Tests the failure message for assertCookieIsSet
+     */
+    public function testCookieIsSetFailure(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Failed asserting that \'not-secrets\' cookie is set');
+        $this->post('/posts/secretCookie');
+        $this->assertCookieIsSet('not-secrets');
+    }
+
+    /**
+     * Tests the failure message for assertCookieIsSet when no
+     * response whas generated
+     */
+    public function testCookieIsSetFailureNoResponse(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set, cannot assert content.');
+        $this->assertCookieIsSet('secrets');
     }
 
     /**

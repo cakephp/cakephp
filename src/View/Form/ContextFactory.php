@@ -21,6 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Factory for getting form context instance based on provided data.

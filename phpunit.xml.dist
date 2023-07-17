@@ -12,10 +12,18 @@
             <!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
             <exclude>tests/TestCase/Database/</exclude>
             <exclude>tests/TestCase/ORM/</exclude>
+            <exclude>tests/TestCase/Collection/FunctionsGlobalTest.php</exclude>
+            <exclude>tests/TestCase/Core/FunctionsGlobalTest.php</exclude>
+            <exclude>tests/TestCase/Routing/FunctionsGlobalTest.php</exclude>
         </testsuite>
         <testsuite name="database">
             <directory>tests/TestCase/Database/</directory>
             <directory>tests/TestCase/ORM/</directory>
+        </testsuite>
+        <testsuite name="globalfunctions">
+            <file>tests/TestCase/Collection/FunctionsGlobalTest.php</file>
+            <file>tests/TestCase/Core/FunctionsGlobalTest.php</file>
+            <file>tests/TestCase/Routing/FunctionsGlobalTest.php</file>
         </testsuite>
     </testsuites>
 

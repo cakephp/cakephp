@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class_exists('Cake\Database\Expression\ComparisonExpression');
+use function Cake\Core\deprecationWarning;
 
-deprecationWarning('`Comparison` deprecated in 4.1.0, use `ComparisonExpression` instead.');
+deprecationWarning('Since 4.1.0: `Comparison` deprecated. Use `ComparisonExpression` instead.');
+class_exists('Cake\Database\Expression\ComparisonExpression');

@@ -20,6 +20,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplate;
 use Traversable;
+use function Cake\Core\h;
 
 /**
  * Input widget class for generating a set of radio buttons.
@@ -125,7 +126,7 @@ class RadioWidget extends BasicWidget
      * Disabled attribute detection.
      *
      * @param array<string, mixed> $radio Radio info.
-     * @param array|true|null $disabled The disabled values.
+     * @param array|true|string|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(array $radio, $disabled): bool

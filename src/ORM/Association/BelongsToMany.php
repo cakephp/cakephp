@@ -1206,7 +1206,7 @@ class BelongsToMany extends Association
 
                 // Create a subquery join to ensure we get
                 // the correct entity passed to callbacks.
-                $existing = $junction->query()
+                $existing = $junction->selectQuery()
                     ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
                         [$junction->getAlias() => $junction->getTable()],

@@ -21,6 +21,7 @@ use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use Locale;
 use RuntimeException;
+use function Cake\Core\pluginSplit;
 
 /**
  * A generic translations package factory that will load translations files
@@ -36,6 +37,13 @@ class MessagesFileLoader
      * @var string
      */
     protected $_name;
+
+    /**
+     * The package (domain) plugin
+     *
+     * @var string|null
+     */
+    protected $_plugin;
 
     /**
      * The locale to load for the given package.
@@ -93,6 +101,13 @@ class MessagesFileLoader
     public function __construct(string $name, string $locale, string $extension = 'po')
     {
         $this->_name = $name;
+        // If space is not added after slash, the character after it remains lowercased
+        $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
+        if (strpos($this->_name, '.')) {
+            [$this->_plugin, $this->_name] = pluginSplit($pluginName);
+        } elseif (Plugin::isLoaded($pluginName)) {
+            $this->_plugin = $pluginName;
+        }
         $this->_locale = $locale;
         $this->_extension = $extension;
     }
@@ -159,6 +174,13 @@ class MessagesFileLoader
 
         $searchPaths = [];
 
+        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
+            $basePath = App::path('locales', $this->_plugin)[0];
+            foreach ($folders as $folder) {
+                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
+            }
+        }
+
         $localePaths = App::path('locales');
         if (empty($localePaths) && defined('APP')) {
             $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
@@ -166,15 +188,6 @@ class MessagesFileLoader
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
                 $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
-            }
-        }
-
-        // If space is not added after slash, the character after it remains lowercased
-        $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-        if (Plugin::isLoaded($pluginName)) {
-            $basePath = App::path('locales', $pluginName)[0];
-            foreach ($folders as $folder) {
-                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
             }
         }
 

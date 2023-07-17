@@ -26,6 +26,8 @@ use Traversable;
  *
  * @internal
  * @see \Cake\Collection\Collection::unfold()
+ * @template-implements \RecursiveIterator<mixed, mixed>
+ * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed, mixed>>
  */
 class UnfoldIterator extends IteratorIterator implements RecursiveIterator
 {

@@ -223,7 +223,6 @@ class FixtureManager
             } else {
                 /** @psalm-var class-string<\Cake\Datasource\FixtureInterface> */
                 $className = $fixture;
-                /** @psalm-suppress PossiblyFalseArgument */
                 $name = preg_replace('/Fixture\z/', '', substr(strrchr($fixture, '\\'), 1));
             }
 

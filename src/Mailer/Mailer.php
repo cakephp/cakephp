@@ -24,6 +24,7 @@ use Cake\Mailer\Exception\MissingActionException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Mailer base class.

@@ -23,6 +23,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Statement\MysqlStatement;
 use Cake\Database\StatementInterface;
 use PDO;
+use function Cake\Core\deprecationWarning;
 
 /**
  * MySQL Driver

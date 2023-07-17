@@ -60,7 +60,7 @@ class Collection implements CollectionInterface
      */
     public function listTablesWithoutViews(): array
     {
-        [$sql, $params] = $this->_dialect->listTablesWithoutViewsSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesWithoutViewsSql($this->_connection->getDriver()->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -78,7 +78,7 @@ class Collection implements CollectionInterface
      */
     public function listTables(): array
     {
-        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->getDriver()->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -109,7 +109,7 @@ class Collection implements CollectionInterface
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
-        $config = $this->_connection->config();
+        $config = $this->_connection->getDriver()->config();
         if (strpos($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }

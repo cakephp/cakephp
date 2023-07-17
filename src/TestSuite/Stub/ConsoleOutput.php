@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\StubConsoleOutput;
+use function Cake\Core\deprecationWarning;
 
-class_alias(StubConsoleOutput::class, 'Cake\TestSuite\Stub\ConsoleOutput');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\Stub\ConsoleOutput is deprecated. ' .
+    'Use Cake\Console\TestSuite\StubConsoleOutput instead.'
+);
+class_exists('Cake\Console\TestSuite\StubConsoleOutput');

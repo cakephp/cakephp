@@ -101,7 +101,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     {
         $options = $this->_options($options, FrozenTime::class);
         if ($options['timezone']) {
-            $time = $time->timezone($options['timezone']);
+            $time = $time->setTimezone($options['timezone']);
         }
 
         $now = $options['from']->format('U');

@@ -128,7 +128,7 @@ class TimeHelperTest extends TestCase
             'element' => 'span',
         ]);
         $vancouver = clone $timestamp;
-        $vancouver = $vancouver->timezone('America/Vancouver');
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
 
         $expected = [
             'span' => [
@@ -197,7 +197,7 @@ class TimeHelperTest extends TestCase
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new FrozenTime();
         $vancouver = clone $dateTime;
-        $vancouver = $vancouver->timezone('America/Vancouver');
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
         $this->assertSame($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
     }
 
@@ -227,7 +227,7 @@ class TimeHelperTest extends TestCase
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new FrozenTime();
         $vancouver = clone $dateTime;
-        $vancouver = $vancouver->timezone('America/Vancouver');
+        $vancouver = $vancouver->setTimezone('America/Vancouver');
 
         $this->assertSame($vancouver->format('r'), $this->Time->toRss($vancouver));
     }

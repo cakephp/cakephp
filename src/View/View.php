@@ -35,6 +35,8 @@ use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\pluginSplit;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -1244,7 +1246,26 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
+     * Adds a helper from within `initialize()` method.
+     *
+     * @param string $helper Helper.
+     * @param array<string, mixed> $config Config.
+     * @return void
+     */
+    protected function addHelper(string $helper, array $config = []): void
+    {
+        [$plugin, $name] = pluginSplit($helper);
+        if ($plugin) {
+            $config['className'] = $helper;
+        }
+
+        $this->helpers[$name] = $config;
+    }
+
+    /**
+     * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper.
+     *
+     * You should use `addHelper()` instead of this method from the `initialize()` hook of `AppView` or other custom View classes.
      *
      * @param string $name Name of the helper to load.
      * @param array<string, mixed> $config Settings for the helper

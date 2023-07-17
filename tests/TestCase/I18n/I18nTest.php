@@ -22,6 +22,14 @@ use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
+use function Cake\I18n\__;
+use function Cake\I18n\__d;
+use function Cake\I18n\__dn;
+use function Cake\I18n\__dx;
+use function Cake\I18n\__dxn;
+use function Cake\I18n\__n;
+use function Cake\I18n\__x;
+use function Cake\I18n\__xn;
 
 /**
  * I18nTest class
@@ -152,8 +160,8 @@ class I18nTest extends TestCase
     public function testPluginMesagesLoad(): void
     {
         $this->loadPlugins([
-            'TestPlugin',
-            'Company/TestPluginThree',
+            'TestPlugin' => [],
+            'Company/TestPluginThree' => [],
         ]);
 
         $translator = I18n::getTranslator('test_plugin');
@@ -167,6 +175,12 @@ class I18nTest extends TestCase
             'String 1 (from plugin three)',
             $translator->translate('String 1')
         );
+
+        $translator = I18n::getTranslator('company/test_plugin_three.custom');
+        $this->assertSame(
+            'String 2 (from plugin three)',
+            $translator->translate('String 2')
+        );
     }
 
     /**
@@ -175,7 +189,9 @@ class I18nTest extends TestCase
      */
     public function testPluginOverride(): void
     {
-        $this->loadPlugins(['TestTheme']);
+        $this->loadPlugins([
+            'TestTheme' => [],
+        ]);
         $translator = I18n::getTranslator('test_theme');
         $this->assertSame(
             'translated',
@@ -323,6 +339,16 @@ class I18nTest extends TestCase
 
         $result = __d('custom', 'Average price {0}', ['9.99']);
         $this->assertSame('Price Average 9.99', $result);
+
+        $this->loadPlugins([
+            'Company/TestPluginThree' => [],
+        ]);
+
+        $result = __d('company/test_plugin_three', 'String 1');
+        $this->assertSame('String 1 (from plugin three)', $result);
+
+        $result = __d('company/test_plugin_three.custom', 'String 2');
+        $this->assertSame('String 2 (from plugin three)', $result);
     }
 
     /**

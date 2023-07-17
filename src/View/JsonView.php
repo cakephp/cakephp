@@ -18,6 +18,7 @@ namespace Cake\View;
 
 use Cake\Core\Configure;
 use RuntimeException;
+use function Cake\Core\h;
 
 /**
  * A view class that is used for JSON responses.

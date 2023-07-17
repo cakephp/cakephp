@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
 
-// @deprecated 4.1.0 Load new class location and alias for old location
+use function Cake\Core\deprecationWarning;
+
+deprecationWarning(
+    'Since 4.1.0: Cake\Database\Schema\BaseSchema is deprecated. ' .
+    'Use Cake\Database\Schema\SchemaDialect instead.'
+);
 class_exists('Cake\Database\Schema\SchemaDialect');

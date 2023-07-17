@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
@@ -80,7 +81,15 @@ class Server implements EventDispatcherInterface
 
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
-        $middleware = $this->app->middleware($middlewareQueue ?? new MiddlewareQueue());
+        if ($middlewareQueue === null) {
+            if ($this->app instanceof ContainerApplicationInterface) {
+                $middlewareQueue = new MiddlewareQueue([], $this->app->getContainer());
+            } else {
+                $middlewareQueue = new MiddlewareQueue();
+            }
+        }
+
+        $middleware = $this->app->middleware($middlewareQueue);
         if ($this->app instanceof PluginApplicationInterface) {
             $middleware = $this->app->pluginMiddleware($middleware);
         }

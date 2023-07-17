@@ -19,6 +19,7 @@ namespace Cake\Database\Type;
 use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
+use function Cake\Core\getTypeName;
 
 /**
  * String type converter.

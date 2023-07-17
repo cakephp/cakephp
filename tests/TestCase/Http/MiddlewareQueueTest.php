@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Container;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use OutOfBoundsException;
+use RuntimeException;
 use TestApp\Middleware\DumbMiddleware;
 use TestApp\Middleware\SampleMiddleware;
 
@@ -389,5 +391,31 @@ class MiddlewareQueueTest extends TestCase
         $this->deprecated(function () use ($queue, $cb): void {
             $this->assertSame($cb, $queue->current()->getCallable());
         });
+    }
+
+    /**
+     * Make sure middlewares provided via DI are the same object
+     */
+    public function testDIContainer(): void
+    {
+        $container = new Container();
+        $middleware = new SampleMiddleware();
+        $container->add(SampleMiddleware::class, $middleware);
+        $queue = new MiddlewareQueue([], $container);
+        $queue->add(SampleMiddleware::class);
+        $this->assertSame($middleware, $queue->current());
+    }
+
+    /**
+     * Make sure an exception is thrown for unknown middlewares
+     */
+    public function testDIContainerNotResolvable(): void
+    {
+        $container = new Container();
+        $queue = new MiddlewareQueue([], $container);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Middleware "UnresolvableMiddleware" was not found.');
+        $queue->add('UnresolvableMiddleware');
+        $queue->current();
     }
 }

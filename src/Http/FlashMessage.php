@@ -18,6 +18,7 @@ namespace Cake\Http;
 
 use Cake\Core\InstanceConfigTrait;
 use Throwable;
+use function Cake\Core\pluginSplit;
 
 /**
  * The FlashMessage class provides a way for you to write a flash variable

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.x-dev@">
+<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidReturnStatement occurrences="4">
       <code>$this-&gt;_Redis-&gt;set($key, $value)</code>
@@ -17,473 +17,154 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="src/Collection/CollectionTrait.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$iterator</code>
-      <code>$iterator</code>
-    </ArgumentTypeCoercion>
-    <MissingParamType occurrences="28">
-      <code>$callback</code>
-      <code>$condition</code>
-      <code>$groupPath</code>
-      <code>$idPath</code>
-      <code>$initial</code>
-      <code>$item</code>
-      <code>$item</code>
-      <code>$items</code>
-      <code>$items</code>
-      <code>$key</code>
-      <code>$key</code>
-      <code>$keyPath</code>
-      <code>$nestingKey</code>
-      <code>$order</code>
-      <code>$parentPath</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$path</code>
-      <code>$value</code>
-      <code>$valuePath</code>
-      <code>$values</code>
-    </MissingParamType>
+    <InvalidArrayOffset>
+      <code>$collectionArraysCounts[$changeIndex]</code>
+      <code>$value[$keys[$index]]</code>
+    </InvalidArrayOffset>
   </file>
   <file src="src/Collection/Iterator/ZipIterator.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$set</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Command/Command.php">
-    <DeprecatedMethod occurrences="1">
-      <code>loadModel</code>
-    </DeprecatedMethod>
-    <DeprecatedProperty occurrences="2">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
-  </file>
-  <file src="src/Command/CompletionCommand.php">
-    <DeprecatedClass occurrences="1">
-      <code>\Cake\Console\Shell</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/CommandCollection.php">
-    <DeprecatedClass occurrences="6">
-      <code>Shell::class</code>
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string</code>
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell|string</code>
-      <code>\Traversable&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|class-string&gt;</code>
-      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
-      <code>array&lt;string, \Cake\Console\Shell|\Cake\Console\CommandInterface|string&gt;</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/CommandFactoryInterface.php">
-    <DeprecatedClass occurrences="1">
-      <code>\Cake\Console\Shell|\Cake\Console\CommandInterface</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/CommandRunner.php">
-    <DeprecatedClass occurrences="3">
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
-      <code>\Cake\Console\CommandInterface|\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/Shell.php">
-    <DeprecatedMethod occurrences="1">
-      <code>loadModel</code>
-    </DeprecatedMethod>
-    <DeprecatedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
-  </file>
-  <file src="src/Console/ShellDispatcher.php">
-    <DeprecatedClass occurrences="5">
-      <code>$instance</code>
-      <code>Shell</code>
-      <code>Shell</code>
-      <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/TaskRegistry.php">
-    <DeprecatedClass occurrences="5">
-      <code>Shell</code>
-      <code>TaskRegistry</code>
-      <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell</code>
-      <code>\Cake\Console\Shell</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Console/TestSuite/LegacyShellDispatcher.php">
-    <DeprecatedClass occurrences="5">
-      <code>$instance</code>
-      <code>Shell</code>
-      <code>ShellDispatcher</code>
-      <code>\Cake\Console\Shell</code>
-      <code>parent::__construct($args, $bootstrap)</code>
-    </DeprecatedClass>
+    <MissingTemplateParam>
+      <code>ZipIterator</code>
+    </MissingTemplateParam>
   </file>
   <file src="src/Controller/Component/RequestHandlerComponent.php">
-    <DeprecatedMethod occurrences="1">
-      <code>prefers</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Controller/Controller.php">
-    <DeprecatedMethod occurrences="2">
-      <code>loadModel</code>
-      <code>loadModel</code>
-    </DeprecatedMethod>
-    <DeprecatedProperty occurrences="7">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
-    <PropertyTypeCoercion occurrences="1">
-      <code>$result</code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Controller/ControllerFactory.php">
-    <ArgumentTypeCoercion occurrences="3">
-      <code>$request</code>
-      <code>$request</code>
-      <code>$request</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Core/TestSuite/ContainerStubTrait.php">
-    <DeprecatedClass occurrences="2">
-      <code>$this</code>
-      <code>$this</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Database/Connection.php">
-    <DeprecatedMethod occurrences="1">
-      <code>supportsDynamicConstraints</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Database/Driver.php">
-    <InvalidScalarArgument occurrences="2">
-      <code>$value</code>
-      <code>$value</code>
-    </InvalidScalarArgument>
+    <RedundantCondition>
+      <code>is_string($type)</code>
+    </RedundantCondition>
   </file>
   <file src="src/Database/Expression/QueryExpression.php">
-    <DeprecatedClass occurrences="1">
-      <code>new CaseExpression($conditions, $values, $types)</code>
-    </DeprecatedClass>
+    <RedundantCondition>
+      <code>$typeMultiple</code>
+    </RedundantCondition>
   </file>
-  <file src="src/Database/Schema/MysqlSchemaDialect.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$_driver</code>
-    </NonInvariantDocblockPropertyType>
+  <file src="src/Database/Query.php">
+    <MissingTemplateParam>
+      <code>IteratorAggregate</code>
+    </MissingTemplateParam>
   </file>
   <file src="src/Database/Statement/PDOStatement.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$_statement</code>
-    </NonInvariantDocblockPropertyType>
+    <RedundantCondition>
+      <code><![CDATA[$property === 'queryString' && isset($this->_statement->queryString)]]></code>
+    </RedundantCondition>
   </file>
-  <file src="src/Database/Type/DateTimeType.php">
-    <DeprecatedClass occurrences="1">
-      <code>Time::class</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Database/Type/DateType.php">
-    <DeprecatedClass occurrences="1">
-      <code>Date::class</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Datasource/ModelAwareTrait.php">
-    <DeprecatedClass occurrences="1">
-      <code>$this</code>
-    </DeprecatedClass>
-    <DeprecatedProperty occurrences="3">
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-  </file>
-  <file src="src/Error/BaseErrorHandler.php">
-    <DeprecatedMethod occurrences="2">
-      <code>log</code>
-      <code>logMessage</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Error/ErrorHandler.php">
-    <DeprecatedClass occurrences="1">
-      <code>ExceptionRenderer::class</code>
-    </DeprecatedClass>
-    <DeprecatedMethod occurrences="1">
-      <code>outputError</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Error/ErrorTrap.php">
-    <DeprecatedMethod occurrences="2">
-      <code>logMessage</code>
-      <code>logMessage</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Error/ExceptionTrap.php">
-    <DeprecatedClass occurrences="2">
-      <code>ExceptionRenderer::class</code>
-      <code>ExceptionRenderer::class</code>
-    </DeprecatedClass>
-    <DeprecatedMethod occurrences="1">
-      <code>log</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Http/BaseApplication.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$request</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Http/MiddlewareQueue.php">
-    <DeprecatedClass occurrences="2">
-      <code>new DoublePassDecoratorMiddleware($middleware)</code>
-      <code>new DoublePassDecoratorMiddleware($middleware)</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/Http/Response.php">
-    <DeprecatedMethod occurrences="1">
-      <code>notModified</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Http/ServerRequest.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;data</code>
-    </ArgumentTypeCoercion>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;scheme()</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Http/ServerRequestFactory.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$request-&gt;scheme()</code>
-    </PossiblyNullArgument>
+  <file src="src/Error/Renderer/ConsoleExceptionRenderer.php">
+    <InvalidArrayOffset>
+      <code>$exceptions[$i - 1]</code>
+    </InvalidArrayOffset>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <DeprecatedClass occurrences="5">
-      <code>$time-&gt;timezone($timezone)</code>
-      <code>Time::UNIX_TIMESTAMP_FORMAT</code>
-      <code>static|null</code>
-      <code>static|null</code>
-      <code>static|null</code>
-    </DeprecatedClass>
-    <MissingParamType occurrences="1">
-      <code>$format</code>
-    </MissingParamType>
+    <RedundantCondition>
+      <code>$time !== false</code>
+    </RedundantCondition>
   </file>
-  <file src="src/I18n/functions.php">
-    <InternalMethod occurrences="8">
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-    </InternalMethod>
-  </file>
-  <file src="src/Log/Engine/ArrayLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/ConsoleLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/FileLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/SyslogLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <DeprecatedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
-  </file>
-  <file src="src/Mailer/Transport/SmtpTransport.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;_content</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>array{headers: string, message: string}</code>
-    </MoreSpecificReturnType>
-  </file>
-  <file src="src/ORM/Locator/LocatorAwareTrait.php">
-    <DeprecatedClass occurrences="1">
-      <code>$this</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/ORM/Locator/TableLocator.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$instances</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;_repository</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/ORM/Table.php">
-    <DeprecatedClass occurrences="6">
+  <file src="src/ORM/SaveOptionsBuilder.php">
+    <MissingTemplateParam>
       <code>SaveOptionsBuilder</code>
-      <code>\Cake\ORM\SaveOptionsBuilder</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
-      <code>\Cake\ORM\SaveOptionsBuilder|\ArrayAccess|array</code>
-      <code>new SaveOptionsBuilder($this, $options)</code>
-    </DeprecatedClass>
+    </MissingTemplateParam>
   </file>
-  <file src="src/Routing/Middleware/RoutingMiddleware.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$request</code>
-      <code>$request</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/Routing/Router.php">
-    <DeprecatedMethod occurrences="3">
-      <code>static::scope($path, $params, $callback)</code>
-      <code>static::scope($path, $params, $callback)</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Shell/Task/CommandTask.php">
-    <DeprecatedClass occurrences="1">
-      <code>Shell</code>
-    </DeprecatedClass>
+  <file src="src/Shell/Helper/TableHelper.php">
+    <InvalidCast>
+      <code>$v</code>
+    </InvalidCast>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
-    <InternalClass occurrences="1"/>
-    <InternalMethod occurrences="1"/>
+    <InternalClass>
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+    </InternalClass>
+    <InternalMethod>
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
-    <InternalClass occurrences="2"/>
-    <InternalMethod occurrences="2"/>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/ContentType.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEncryptedEquals.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEquals.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieSet.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/FileSent.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$response</code>
-    </NonInvariantDocblockPropertyType>
+    <InternalClass>
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event "%s" was fired %d times, cannot make data assertion',
+                $other,
+                count($events)
+            ))]]></code>
+    </InternalClass>
+    <InternalMethod>
+      <code>new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            )</code>
+      <code><![CDATA[new AssertionFailedError(sprintf(
+                'Event "%s" was fired %d times, cannot make data assertion',
+                $other,
+                count($events)
+            ))]]></code>
+    </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
-    <InternalClass occurrences="1">
+    <InternalClass>
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalClass>
-    <InternalMethod occurrences="1">
+    <InternalMethod>
       <code>new AssertionFailedError('No response set, cannot assert content.')</code>
     </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
-    <InternalClass occurrences="1">
+    <InternalClass>
       <code>new AssertionFailedError($message)</code>
     </InternalClass>
-    <InternalMethod occurrences="1">
+    <InternalMethod>
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
-  <file src="src/TestSuite/Fixture/FixtureInjector.php">
-    <DeprecatedInterface occurrences="1">
-      <code>FixtureInjector</code>
-    </DeprecatedInterface>
-  </file>
-  <file src="src/TestSuite/Fixture/FixtureManager.php">
-    <DeprecatedProperty occurrences="2">
-      <code>$test-&gt;autoFixtures</code>
-      <code>$test-&gt;dropTables</code>
-    </DeprecatedProperty>
-  </file>
-  <file src="src/TestSuite/IntegrationTestTrait.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/TestSuite/TestCase.php">
-    <DeprecatedProperty occurrences="7">
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;autoFixtures</code>
-      <code>$this-&gt;dropTables</code>
-      <code>$this-&gt;dropTables</code>
-    </DeprecatedProperty>
+  <file src="src/TestSuite/Fixture/TestFixture.php">
+    <InvalidArrayOffset>
+      <code>$types[$field]</code>
+    </InvalidArrayOffset>
   </file>
   <file src="src/TestSuite/TestSuite.php">
-    <InternalClass occurrences="1">
+    <InternalClass>
       <code>BaseTestSuite</code>
     </InternalClass>
-    <InternalMethod occurrences="2">
+    <InternalMethod>
       <code>addTestFile</code>
       <code>addTestFile</code>
     </InternalMethod>
   </file>
-  <file src="src/View/Cell.php">
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
+  <file src="src/Utility/Hash.php">
+    <RedundantCondition>
+      <code>is_array($_list)</code>
+    </RedundantCondition>
   </file>
-  <file src="src/View/Helper/NumberHelper.php">
-    <DeprecatedMethod occurrences="1">
-      <code>defaultCurrency</code>
-    </DeprecatedMethod>
+  <file src="src/Utility/Text.php">
+    <RedundantCast>
+      <code>(string)mb_internal_encoding()</code>
+    </RedundantCast>
   </file>
-  <file src="src/View/SerializedView.php">
-    <DeprecatedProperty occurrences="2">
-      <code>$this-&gt;_responseType</code>
-      <code>$this-&gt;_responseType</code>
-    </DeprecatedProperty>
+  <file src="src/Utility/Xml.php">
+    <TypeDoesNotContainType>
+      <code>!is_array($data)</code>
+    </TypeDoesNotContainType>
+  </file>
+  <file src="src/View/Exception/MissingCellTemplateException.php">
+    <ImplementedReturnTypeMismatch>
+      <code><![CDATA[array{name: string, file: string, paths: array<string>}]]></code>
+    </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="src/View/View.php">
+    <InvalidReturnStatement>
+      <code>$config</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code>array{key:string, config:string}</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/View/XmlView.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[Xml::fromArray($data, $options)->saveXML()]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code>string</code>
+    </InvalidReturnType>
   </file>
 </files>

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use NumberFormatter;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Number helper library.

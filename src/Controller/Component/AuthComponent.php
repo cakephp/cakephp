@@ -31,6 +31,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
+use function Cake\I18n\__d;
 
 /**
  * Authentication control component class.

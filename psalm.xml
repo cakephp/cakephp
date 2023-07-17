@@ -1,12 +1,17 @@
 <?xml version="1.0"?>
 <psalm
+    errorLevel="5"
     allowStringToStandInForClass="true"
+    findUnusedPsalmSuppress="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
+    resolveFromConfigFile="true"
     usePhpDocMethodsWithoutMagicCall="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorBaseline="psalm-baseline.xml"
     autoloader="tests/bootstrap.php"
+    errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
         <directory name="src"/>

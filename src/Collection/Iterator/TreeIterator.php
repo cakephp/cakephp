@@ -24,6 +24,8 @@ use RecursiveIteratorIterator;
 /**
  * A Recursive iterator used to flatten nested structures and also exposes
  * all Collection methods
+ *
+ * @template-extends \RecursiveIteratorIterator<\RecursiveIterator>
  */
 class TreeIterator extends RecursiveIteratorIterator implements CollectionInterface
 {
