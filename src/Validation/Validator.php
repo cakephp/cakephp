@@ -2184,6 +2184,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function array(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        $message ??= 'The provided value must be an array';
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'array', $extra + [

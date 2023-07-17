@@ -2368,7 +2368,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->array('username');
         $this->assertEmpty($validator->validate(['username' => [1, 2, 3]]));
-        $this->assertNotEmpty($validator->validate(['username' => 'is not an array']));
+        $this->assertSame(
+            ['username' => ['array' => 'The provided value must be an array']],
+            $validator->validate(['username' => 'is not an array'])
+        );
     }
 
     /**
