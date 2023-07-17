@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Cache\Cache;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Cache\InvalidArgumentException;
 
 /**
  * Cache Clear Group command.
@@ -75,7 +75,7 @@ class CacheClearGroupCommand extends Command
             return static::CODE_ERROR;
         }
 
-        if (!Cache::clearGroup($args->getArgument('group'))) {
+        if (!Cache::clearGroup($group)) {
             $io->error(sprintf('Error encountered clearing group "%s"', $group));
 
             return static::CODE_ERROR;
