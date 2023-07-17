@@ -2379,7 +2379,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->scalar('username');
         $this->assertEmpty($validator->validate(['username' => 'scalar']));
-        $this->assertNotEmpty($validator->validate(['username' => ['array']]));
+        $this->assertSame(
+            ['username' => ['scalar' => 'The provided value must be scalar']],
+            $validator->validate(['username' => ['array']])
+        );
     }
 
     /**

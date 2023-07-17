@@ -2203,6 +2203,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function scalar(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        $message ??= 'The provided value must be scalar';
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'scalar', $extra + [
