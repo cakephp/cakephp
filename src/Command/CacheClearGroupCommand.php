@@ -47,15 +47,14 @@ class CacheClearGroupCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser->setDescription('Clear all data in the configured cache groups.');
+        $parser->setDescription('Clear all data in a single cache group.');
         $parser->addArgument('group', [
             'help' => 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
                 'all caches belonging to group "mygroup".',
             'required' => true,
         ]);
         $parser->addArgument('config', [
-            'help' => 'Name of the configuration to use. Defaults to "default"',
-            'default' => 'default'
+            'help' => 'Name of the configuration to use. Defaults to "default".',
         ]);
 
         return $parser;
