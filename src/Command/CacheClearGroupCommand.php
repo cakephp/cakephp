@@ -53,6 +53,10 @@ class CacheClearGroupCommand extends Command
                 'all caches belonging to group "mygroup".',
             'required' => true,
         ]);
+        $parser->addArgument('config', [
+            'help' => 'Name of the configuration to use. Defaults to "default"',
+            'default' => 'default'
+        ]);
 
         return $parser;
     }
@@ -75,7 +79,14 @@ class CacheClearGroupCommand extends Command
             return static::CODE_ERROR;
         }
 
-        if (!Cache::clearGroup($group)) {
+        $config = $args->getArgument('config');
+        if ($config !== null && Cache::getConfig($config) === null) {
+            $io->error(sprintf('Cache config "%s" not found', $config));
+
+            return static::CODE_ERROR;
+        }
+
+        if (!Cache::clearGroup($group, $args->getArgument('config'))) {
             $io->error(sprintf('Error encountered clearing group "%s"', $group));
 
             return static::CODE_ERROR;
