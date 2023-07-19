@@ -50,7 +50,7 @@ class CacheClearGroupCommand extends Command
         $parser->setDescription('Clear all data in a single cache group.');
         $parser->addArgument('group', [
             'help' => 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
-                'all caches belonging to group "mygroup".',
+                'all cache items belonging to group "mygroup".',
             'required' => true,
         ]);
         $parser->addArgument('config', [
