@@ -41,6 +41,16 @@ interface RepositoryInterface
     public function getAlias(): string;
 
     /**
+     * Alias a field with the repository's current alias.
+     *
+     * If field is already aliased it will result in no-op.
+     *
+     * @param string $field The field to alias.
+     * @return string The field prefixed with the repository alias.
+     */
+    public function aliasField(string $field): string;
+
+    /**
      * Sets the table registry key used to create this table instance.
      *
      * @param string $registryAlias The key used to access this object.
