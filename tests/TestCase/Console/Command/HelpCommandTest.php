@@ -86,6 +86,10 @@ class HelpCommandTest extends TestCase
             '- test_plugin.sample',
             'only short alias for plugin command.'
         );
+        $this->assertOutputNotContains(
+            ' - abstract',
+            'Abstract command classes should not appear.'
+        );
         $this->assertOutputContains('<info>App</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');
         $this->assertOutputContains('<info>CakePHP</info>', 'cakephp header should appear');
