@@ -2184,10 +2184,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function array(string $field, ?string $message = null, Closure|string|null $when = null)
     {
-        $message ??= 'The provided value must be an array';
-        if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value must be an array');
-        }
+        $message ??= $this->getValidationMessage(
+            'The provided value must be an array',
+            __d('cake', 'The provided value must be an array')
+        );
 
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
@@ -2208,11 +2208,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function scalar(string $field, ?string $message = null, Closure|string|null $when = null)
     {
-        $message ??= 'The provided value must be scalar';
-        if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value must be scalar');
-        }
-
+        $message ??= $this->getValidationMessage(
+            'The provided value must be scalar',
+            __d('cake', 'The provided value must be scalar')
+        );
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'scalar', $extra + [
@@ -2389,11 +2388,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return $this->_presenceMessages[$field];
         }
 
-        if ($this->_useI18n) {
-            return __d('cake', 'This field is required');
-        }
-
-        return 'This field is required';
+        return $this->getValidationMessage(
+            'This field is required',
+            __d('cake', 'This field is required')
+        );
     }
 
     /**
@@ -2418,11 +2416,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return $this->_allowEmptyMessages[$field];
         }
 
-        if ($this->_useI18n) {
-            return __d('cake', 'This field cannot be left empty');
-        }
-
-        return 'This field cannot be left empty';
+        return $this->getValidationMessage(
+            'This field cannot be left empty',
+            __d('cake', 'This field cannot be left empty')
+        );
     }
 
     /**
@@ -2542,11 +2539,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
         // Loading default provider in case there is none
         $this->getProvider('default');
-        $message = 'The provided value is invalid';
 
-        if ($this->_useI18n) {
-            $message = __d('cake', 'The provided value is invalid');
-        }
+        $message = $this->getValidationMessage(
+            'The provided value is invalid',
+            __d('cake', 'The provided value is invalid')
+        );
 
         foreach ($rules as $name => $rule) {
             $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
@@ -2595,5 +2592,23 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             '_providers' => array_keys($this->_providers),
             '_fields' => $fields,
         ];
+    }
+
+    /**
+     * Return the untranslated or translated validation message depending on whether I18n is used
+     *
+     * @param string $untranslatedMessage The untranslated validation message to use if I18n is not used.
+     * @param string $translatedMessage The translated validation message to use if I18n is used.
+     * @return string|null Either the untranslated or translated validation message depending on whether I18n is used.
+     */
+    protected function getValidationMessage(
+        string $untranslatedMessage,
+        string $translatedMessage
+    ): ?string {
+        if ($this->_useI18n) {
+            return $translatedMessage;
+        }
+
+        return $untranslatedMessage;
     }
 }
