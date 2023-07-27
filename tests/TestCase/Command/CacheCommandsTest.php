@@ -35,6 +35,7 @@ class CacheCommandsTest extends TestCase
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);
+        Cache::setConfig('test2', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);
         $this->setAppNamespace();
         $this->useCommandRunner();
     }
@@ -46,6 +47,7 @@ class CacheCommandsTest extends TestCase
     {
         parent::tearDown();
         Cache::drop('test');
+        Cache::drop('test2');
     }
 
     /**
@@ -143,6 +145,17 @@ class CacheCommandsTest extends TestCase
     }
 
     public function testClearGroup(): void
+    {
+        Cache::add('key', 'value1', 'test');
+        Cache::add('key', 'value1', 'test2');
+        $this->exec('cache clear_group test_group');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertNull(Cache::read('key', 'test'));
+        $this->assertNull(Cache::read('key', 'test2'));
+    }
+
+    public function testClearGroupWithConfig(): void
     {
         Cache::add('key', 'value1', 'test');
         $this->exec('cache clear_group test_group test');

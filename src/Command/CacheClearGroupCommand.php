@@ -71,7 +71,7 @@ class CacheClearGroupCommand extends Command
     {
         $group = (string)$args->getArgument('group');
         try {
-            Cache::groupConfigs($group);
+            $groupConfigs = Cache::groupConfigs($group);
         } catch (InvalidArgumentException $e) {
             $io->error(sprintf('Cache group "%s" not found', $group));
 
@@ -85,13 +85,18 @@ class CacheClearGroupCommand extends Command
             return static::CODE_ERROR;
         }
 
-        if (!Cache::clearGroup($group, $args->getArgument('config'))) {
-            $io->error(sprintf('Error encountered clearing group "%s"', $group));
+        foreach ($groupConfigs[$group] as $groupConfig) {
+            if ($config !== null && $config !== $groupConfig) {
+                continue;
+            }
 
-            return static::CODE_ERROR;
+            if (!Cache::clearGroup($group, $groupConfig)) {
+                $io->error(sprintf('Error encountered clearing group "%s"', $group));
+                $this->abort();
+            } else {
+                $io->success(sprintf('Group "%s" was cleared', $group));
+            }
         }
-
-        $io->success(sprintf('Group "%s" was cleared', $group));
 
         return static::CODE_SUCCESS;
     }
