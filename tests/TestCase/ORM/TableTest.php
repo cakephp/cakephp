@@ -1850,6 +1850,7 @@ class TableTest extends TestCase
         $this->assertTrue($table->exists(['id' => 1]));
         $this->assertFalse($table->exists(['id' => 3]));
         $this->assertTrue($table->exists(['id' => 3], ['skipCreatedCondition' => TRUE]));
+        $table->removeBehavior('Test4');
     }
 
     /**
