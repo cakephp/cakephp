@@ -11,7 +11,7 @@ use Cake\ORM\Query;
 class Test4Behavior extends Behavior
 {
     /**
-     * Test for event bindings.
+     * Add a where-clause to the query unless a truthy `skipCreatedCondition` option was provided
      */
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options, $primary): void
     {
@@ -27,28 +27,10 @@ class Test4Behavior extends Behavior
     /**
      * implementedEvents
      *
-     * This class does pretend to implement beforeFind
-     *
      * @return array<string, mixed>
      */
     public function implementedEvents(): array
     {
         return ['Model.beforeFind' => 'beforeFind'];
-    }
-
-    /**
-     * implementedFinders
-     */
-    public function implementedFinders(): array
-    {
-        return [];
-    }
-
-    /**
-     * implementedMethods
-     */
-    public function implementedMethods(): array
-    {
-        return [];
     }
 }
