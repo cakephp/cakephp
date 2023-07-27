@@ -6,14 +6,14 @@ namespace TestApp\Model\Behavior;
 use ArrayObject;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 
 class Test4Behavior extends Behavior
 {
     /**
      * Add a where-clause to the query unless a truthy `skipCreatedCondition` option was provided
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options, $primary): void
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, $primary): void
     {
         if (!empty($options['skipCreatedCondition'])) {
             return;
