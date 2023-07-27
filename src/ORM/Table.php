@@ -1743,10 +1743,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists($conditions): bool
+    public function exists($conditions, array $options = []): bool
     {
+        $finder = $options['finder'] ?? 'all';
+
         return (bool)count(
-            $this->find('all')
+            $this->find($finder)
+            ->applyOptions($options)
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
