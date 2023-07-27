@@ -46,7 +46,9 @@ class ExistsIn
      *
      * @var array<string, mixed>
      */
-    protected array $_options = [];
+    protected array $_options = [
+        'allowNullableNulls' => false,
+    ];
 
     /**
      * Constructor.
@@ -63,10 +65,8 @@ class ExistsIn
      */
     public function __construct(array|string $fields, Table|Association|string $repository, array $options = [])
     {
-        $options += ['allowNullableNulls' => false];
-        $this->_options = $options;
-
         $this->_fields = (array)$fields;
+        $this->_options = $options + $this->_options;
         $this->_repository = $repository;
     }
 
@@ -141,7 +141,10 @@ class ExistsIn
             $entity->extract($fields)
         );
 
-        return $target->exists($conditions);
+        $options = $this->_options;
+        unset($options['allowNullableNulls']);
+
+        return $target->exists($conditions, $options);
     }
 
     /**

@@ -47,6 +47,8 @@ class RulesChecker extends BaseRulesChecker
      * ### Options
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
+     * - 'message' sets a custom error message.
+     * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
      *
      * @param array<string> $fields The list of fields to check for uniqueness.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
@@ -86,9 +88,11 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->existsIn('site_id', new SitesTable(), 'Invalid Site'));
      * ```
      *
-     * Available $options are error 'message' and 'allowNullableNulls' flag.
-     * 'message' sets a custom error message.
-     * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
+     * ### Options
+     *
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
+     * - 'message' sets a custom error message.
+     * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
      *
      * @param array<string>|string $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
@@ -102,12 +106,9 @@ class RulesChecker extends BaseRulesChecker
         Table|Association|string $table,
         array|string|null $message = null
     ): RuleInvoker {
-        $options = [];
-        if (is_array($message)) {
-            $options = $message + ['message' => null];
-            $message = $options['message'];
-            unset($options['message']);
-        }
+        $options = is_array($message) ? $message : ['message' => $message];
+        $message = $options['message'] ?? null;
+        unset($options['message']);
 
         if (!$message) {
             if ($this->_useI18n) {

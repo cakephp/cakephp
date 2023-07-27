@@ -158,9 +158,10 @@ interface RepositoryInterface
      * conditions.
      *
      * @param \Closure|array|string|null $conditions list of conditions to pass to the query
+     * @param array $options list of options to apply to the query
      * @return bool
      */
-    public function exists(Closure|array|string|null $conditions): bool;
+    public function exists(Closure|array|string|null $conditions, array $options = []): bool;
 
     /**
      * Persists an entity based on the fields that are marked as dirty and

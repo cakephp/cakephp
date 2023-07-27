@@ -85,7 +85,12 @@ class IsUnique
             }
         }
 
-        return !$options['repository']->exists($conditions);
+        $repository = $options['repository'];
+
+        $options = $this->_options;
+        unset($options['allowNullableNulls']);
+
+        return ! $repository->exists($conditions, $options);
     }
 
     /**
