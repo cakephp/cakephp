@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace TestApp\Model\Behavior;
@@ -9,7 +8,8 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
 
-class Test4Behavior extends Behavior {
+class Test4Behavior extends Behavior
+{
     /**
      * Test for event bindings.
      */

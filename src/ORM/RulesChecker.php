@@ -103,7 +103,7 @@ class RulesChecker extends BaseRulesChecker
     public function existsIn($field, $table, $message = null): RuleInvoker
     {
         $options = is_array($message) ? $message : ['message' => $message];
-        $message = $options['message'] ?? NULL;
+        $message = $options['message'] ?? null;
         unset($options['message']);
 
         if (!$message) {

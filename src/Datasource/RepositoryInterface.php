@@ -136,7 +136,6 @@ interface RepositoryInterface
      *
      * @param array $conditions list of conditions to pass to the query
      * @param array $options list of options to apply to the query
-     *
      * @return bool
      */
     public function exists($conditions, array $options = []): bool;

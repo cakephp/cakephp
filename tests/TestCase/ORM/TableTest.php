@@ -1844,12 +1844,13 @@ class TableTest extends TestCase
     /**
      * Tests the exists function with options
      */
-    public function testExistsWithQueryOptions (): void {
+    public function testExistsWithQueryOptions(): void
+    {
         $table = $this->getTableLocator()->get('users');
         $table->addBehavior('Test4');
         $this->assertTrue($table->exists(['id' => 1]));
         $this->assertFalse($table->exists(['id' => 3]));
-        $this->assertTrue($table->exists(['id' => 3], ['skipCreatedCondition' => TRUE]));
+        $this->assertTrue($table->exists(['id' => 3], ['skipCreatedCondition' => true]));
         $table->removeBehavior('Test4');
     }
 

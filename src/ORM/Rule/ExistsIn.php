@@ -47,7 +47,7 @@ class ExistsIn
      * @var array<string, mixed>
      */
     protected $_options = [
-        'allowNullableNulls' => FALSE,
+        'allowNullableNulls' => false,
     ];
 
     /**
