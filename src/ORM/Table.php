@@ -1741,7 +1741,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @inheritDoc
+     * Returns true if there is any record in this repository matching the specified
+     * conditions.
+     *
+     * @param array $conditions list of conditions to pass to the query
+     * @param array $options list of options to apply to the query
+     * @return bool
      */
     public function exists($conditions, array $options = []): bool
     {
