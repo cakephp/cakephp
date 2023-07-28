@@ -48,6 +48,7 @@ class RulesChecker extends BaseRulesChecker
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      * - 'message' sets a custom error message.
+     *
      * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
      *
      * @param array<string> $fields The list of fields to check for uniqueness.
@@ -92,6 +93,7 @@ class RulesChecker extends BaseRulesChecker
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
      * - 'message' sets a custom error message.
+     *
      * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
      *
      * @param array<string>|string $field The field or list of fields to check for existence by
