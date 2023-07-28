@@ -65,6 +65,17 @@ class ProgressHelperTest extends TestCase
         $this->assertSame($helper, $this->helper, 'Should be chainable');
     }
 
+    public function testIncrementWithoutInit(): void
+    {
+        $this->helper->increment(10);
+        $this->helper->draw();
+        $expected = [
+            '',
+            '======>                                                                      10%',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
     /**
      * Test that a callback is required.
      */
