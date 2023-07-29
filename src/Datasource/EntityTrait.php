@@ -45,7 +45,7 @@ trait EntityTrait
     protected array $_original = [];
 
     /**
-     * Holds all fields that have been initially set on instantiation resp. after marking it clean
+     * Holds all fields that have been initially set on instantiation, or after marking as clean
      *
      * @var array<string>
      */
@@ -226,12 +226,25 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
+     * You can use the `asOriginal` option to set the given field as original, if it wasn't
+     * present when the entity was instantiated.
+     *
+     * ```
+     * $entity = new Entity(['name' => 'andrew', 'id' => 1]);
+     *
+     * $entity->set('phone_number', '555-0134');
+     * print_r($entity->getOriginalFields()) // prints ['name', 'id']
+     *
+     * $entity->set('phone_number', '555-0134', ['asOriginal' => true]);
+     * print_r($entity->getOriginalFields()) // prints ['name', 'id', 'phone_number']
+     * ```
+     *
      * @param array<string, mixed>|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
      * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
-     * keys are `setter` and `guard`
+     * keys are `setter`, `guard` and `asOriginal`
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -796,8 +809,8 @@ trait EntityTrait
     }
 
     /**
-     * Returns an array of original fields
-     * The entity was initialized with
+     * Returns an array of original fields.
+     * Original fields are those that the entity was initialized with.
      *
      * @return array<string>
      */
