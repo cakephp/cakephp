@@ -248,7 +248,11 @@ trait EntityTrait
         if (!is_array($field)) {
             throw new InvalidArgumentException('Cannot set an empty field');
         }
-        $options += ['setter' => true, 'guard' => $guard];
+        $options += ['setter' => true, 'guard' => $guard, 'asOriginal' => false];
+
+        if ($options['asOriginal'] === true) {
+            $this->setOriginalField(array_keys($field));
+        }
 
         foreach ($field as $name => $value) {
             /** @psalm-suppress RedundantCastGivenDocblockType */
@@ -792,7 +796,7 @@ trait EntityTrait
     }
 
     /**
-     * Returns an array of field names previously set using `setOriginalField()`
+     * Returns an array of original fields
      * The entity was initialized with
      *
      * @return array<string>
@@ -810,26 +814,21 @@ trait EntityTrait
      * @param bool $merge
      * @return $this
      */
-    public function setOriginalField(string|array $field, bool $merge = true)
+    protected function setOriginalField(string|array $field, bool $merge = true)
     {
         if (!$merge) {
             $this->_originalFields = (array)$field;
-
-            //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
-            sort($this->_originalFields);
 
             return $this;
         }
 
         $fields = (array)$field;
         foreach ($fields as $field) {
+            $field = (string)$field;
             if (!$this->isOriginalField($field)) {
                 $this->_originalFields[] = $field;
             }
         }
-
-        //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
-        sort($this->_originalFields);
 
         return $this;
     }

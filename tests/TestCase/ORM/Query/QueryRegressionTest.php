@@ -509,7 +509,8 @@ class QueryRegressionTest extends TestCase
             ->contain(['Authors', 'ArticlesTags.Authors'])
             ->first();
 
-        $this->assertEquals($resultA, $resultB);
+        $this->assertEquals($resultA->author, $resultB->author);
+        $this->assertEquals($resultA->articles_tag, $resultB->articles_tag);
         $this->assertNotEmpty($resultA->author);
         $this->assertNotEmpty($resultA->articles_tag->author);
     }

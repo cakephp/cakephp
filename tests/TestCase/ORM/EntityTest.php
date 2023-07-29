@@ -36,10 +36,9 @@ class EntityTest extends TestCase
     public function testSetOneParamNoSetters(): void
     {
         $entity = new Entity();
-        $entity->setOriginalField(['id', 'foo']);
 
         $this->assertNull($entity->getOriginal('foo'));
-        $entity->set('foo', 'bar');
+        $entity->set('foo', 'bar', ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
         $this->assertSame('bar', $entity->getOriginal('foo'));
 
@@ -47,7 +46,7 @@ class EntityTest extends TestCase
         $this->assertSame('baz', $entity->foo);
         $this->assertSame('bar', $entity->getOriginal('foo'));
 
-        $entity->set('id', 1);
+        $entity->set('id', 1, ['asOriginal' => true]);
         $this->assertSame(1, $entity->id);
         $this->assertSame(1, $entity->getOriginal('id'));
         $this->assertSame('bar', $entity->getOriginal('foo'));
@@ -60,9 +59,8 @@ class EntityTest extends TestCase
     {
         $entity = new Entity();
         $entity->setAccess('*', true);
-        $entity->setOriginalField(['id', 'foo']);
 
-        $entity->set(['foo' => 'bar', 'id' => 1]);
+        $entity->set(['foo' => 'bar', 'id' => 1], ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
         $this->assertSame(1, $entity->id);
 
@@ -1703,41 +1701,14 @@ class EntityTest extends TestCase
         $entity = new Entity(['foo' => 'foo', 'bar' => 'bar']);
         $entity->set('baz', 'baz');
         $return = $entity->getOriginalFields();
-        $this->assertEqualsCanonicalizing(['foo', 'bar'], $return);
-        $this->assertNotEqualsCanonicalizing(['foo', 'bar', 'baz'], $return);
+        $this->assertEquals(['foo', 'bar'], $return);
 
         $entity = new Entity([]);
         $entity->set('foo', 'foo');
         $entity->set('bar', 'bar');
         $entity->set('baz', 'baz');
         $return = $entity->getOriginalFields();
-        $this->assertEqualsCanonicalizing([], $return);
-        $this->assertNotEqualsCanonicalizing(['foo', 'bar', 'baz'], $return);
-    }
-
-    /**
-     * Test setOriginalField()
-     */
-    public function testSetOriginalField(): void
-    {
-        $entity = new Entity([]);
-        $entity->set('foo', 'bar');
-        $return = $entity->isOriginalField('foo');
-        $this->assertSame(false, $return);
-        $return = $entity->getOriginalFields();
-        $this->assertSame([], $return);
-
-        $entity->setOriginalField('foo');
-        $return = $entity->getOriginalFields();
-        $this->assertSame(['foo'], $return);
-
-        $entity->setOriginalField('bar');
-        $return = $entity->getOriginalFields();
-        $this->assertEqualsCanonicalizing(['foo', 'bar'], $return);
-
-        $entity->setOriginalField('baz', false);
-        $return = $entity->getOriginalFields();
-        $this->assertEqualsCanonicalizing(['baz'], $return);
+        $this->assertEquals([], $return);
     }
 
     /**
