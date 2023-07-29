@@ -254,8 +254,7 @@ trait EntityTrait
 
             if (
                 !array_key_exists($name, $this->_original) &&
-                array_key_exists($name, $this->_fields) &&
-                $this->_fields[$name] !== $value
+                array_key_exists($name, $this->_fields)
             ) {
                 $this->_original[$name] = $this->_fields[$name];
             }
