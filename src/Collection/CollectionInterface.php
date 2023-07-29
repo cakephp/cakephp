@@ -253,8 +253,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *
      * @param callable|string $path The column name to use for sorting or callback that returns the value.
-     * @param int $sort The sort type, one of SORT_STRING
-     * SORT_NUMERIC or SORT_NATURAL
+     * @param int $sort The sort type, one of SORT_STRING, SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
@@ -279,8 +278,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *
      * @param callable|string $path The column name to use for sorting or callback that returns the value.
-     * @param int $sort The sort type, one of SORT_STRING
-     * SORT_NUMERIC or SORT_NATURAL
+     * @param int $sort The sort type, one of SORT_STRING, SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the bottom element in the collection
      */
@@ -309,9 +307,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The average of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param callable|string|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to compute the average or a function
      * If no value is passed, an identity function will be used.
-     * that will return the value of the property to sum.
+     * that will return the value of the property to compute the average.
      * @return float|int|null
      */
     public function avg(callable|string|null $path = null): float|int|null;
@@ -342,18 +340,17 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The median of an empty set or 0 rows is `null`. Collections with `null`
      * values are not considered empty.
      *
-     * @param callable|string|null $path The property name to sum or a function
+     * @param callable|string|null $path The property name to compute the median or a function
      * If no value is passed, an identity function will be used.
-     * that will return the value of the property to sum.
+     * that will return the value of the property to compute the median.
      * @return float|int|null
      */
     public function median(callable|string|null $path = null): float|int|null;
 
     /**
      * Returns a sorted iterator out of the elements in this collection,
-     * ranked in ascending order by the results of running each value through a
-     * callback. $callback can also be a string representing the column or property
-     * name.
+     * ranked based on the results of applying a callback function to each value.
+     * The parameter $path can also be a string representing the column or property name.
      *
      * The callback will receive as its first argument each of the elements in $items,
      * the value returned by the callback will be used as the value for sorting such
@@ -381,8 +378,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $order The sort order, either SORT_DESC or SORT_ASC
-     * @param int $sort The sort type, one of SORT_STRING
-     * SORT_NUMERIC or SORT_NATURAL
+     * @param int $sort The sort type, one of SORT_STRING, SORT_NUMERIC or SORT_NATURAL
      * @return self
      */
     public function sortBy(
@@ -520,7 +516,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      * $items = [
      *  ['invoice' => ['total' => 100]],
-     *  ['invoice' => ['total' => 200]]
+     *  ['invoice' => ['total' => 200]],
      * ];
      *
      * $total = (new Collection($items))->sumOf('invoice.total');
@@ -547,7 +543,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function shuffle(): CollectionInterface;
 
     /**
-     * Returns a new collection with maximum $size random elements
+     * Returns a new collection with maximum $length random elements
      * from this collection
      *
      * @param int $length the maximum number of elements to randomly
@@ -557,7 +553,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function sample(int $length = 10): CollectionInterface;
 
     /**
-     * Returns a new collection with maximum $size elements in the internal
+     * Returns a new collection with maximum $length elements in the internal
      * order this collection was created. If a second parameter is passed, it
      * will determine from what position to start taking elements.
      *
@@ -605,19 +601,19 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      * $items = [
      *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']],
      * ];
      *
      * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
      *
      * // Result will look like this when converted to array
      * [
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]]
      * ]
      * ```
      *
      * @param array $conditions a key-value list of conditions where
-     * the key is a property path as accepted by `Collection::extract,
+     * the key is a property path as accepted by `Collection::extract`,
      * and the value the condition against with each element will be matched
      * @return self
      */
@@ -712,7 +708,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * // Result will look like this when converted to array
      * [
      *  'a' => [1 => 'foo', 3 => 'baz'],
-     *  'b' => [2 => 'bar']
+     *  'b' => [2 => 'bar'],
      * ];
      * ```
      *
@@ -735,9 +731,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * based on an id property path and a parent id property path.
      *
      * @param callable|string $idPath the column name path to use for determining
-     * whether an element is parent of another
+     * whether an element is a parent of another
      * @param callable|string $parentPath the column name path to use for determining
-     * whether an element is child of another
+     * whether an element is a child of another
      * @param string $nestingKey The key name under which children are nested
      * @return self
      */
@@ -850,7 +846,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Returns a new collection where any operations chained after it are guaranteed
-     * to be run lazily. That is, elements will be yieleded one at a time.
+     * to be run lazily. That is, elements will be yielded one at a time.
      *
      * A lazy collection can only be iterated once. A second attempt results in an error.
      *
@@ -1182,7 +1178,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Create a new collection that is the cartesian product of the current collection
      *
-     * In order to create a carteisan product a collection must contain a single dimension
+     * In order to create a cartesian product a collection must contain a single dimension
      * of data.
      *
      * ### Example
