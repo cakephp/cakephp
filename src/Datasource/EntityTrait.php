@@ -45,6 +45,13 @@ trait EntityTrait
     protected array $_original = [];
 
     /**
+     * Holds all fields that have been initially set on instantiation resp. after marking it clean
+     *
+     * @var array<string>
+     */
+    protected array $_originalFields = [];
+
+    /**
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
@@ -252,23 +259,22 @@ trait EntityTrait
 
             $this->setDirty($name, true);
 
+            if ($options['setter']) {
+                $setter = static::_accessor($name, 'set');
+                if ($setter) {
+                    $value = $this->{$setter}($value);
+                }
+            }
+
             if (
+                $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->_original) &&
                 array_key_exists($name, $this->_fields) &&
-                $this->_fields[$name] !== $value
+                $value !== $this->_fields[$name]
             ) {
                 $this->_original[$name] = $this->_fields[$name];
             }
 
-            if (!$options['setter']) {
-                $this->_fields[$name] = $value;
-                continue;
-            }
-
-            $setter = static::_accessor($name, 'set');
-            if ($setter) {
-                $value = $this->{$setter}($value);
-            }
             $this->_fields[$name] = $value;
         }
 
@@ -325,19 +331,35 @@ trait EntityTrait
     }
 
     /**
+     * Returns whether a field has an original value
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function hasOriginal(string $field): bool
+    {
+        return array_key_exists($field, $this->_original);
+    }
+
+    /**
      * Returns the value of an original field by name
      *
      * @param string $field the name of the field for which original value is retrieved.
+     * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed.
      */
-    public function getOriginal(string $field): mixed
+    public function getOriginal(string $field, bool $allowFallback = true): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
         if (array_key_exists($field, $this->_original)) {
             return $this->_original[$field];
+        }
+
+        if (!$allowFallback) {
+            throw new InvalidArgumentException(sprintf('Cannot retrieve original value for field `%s`', $field));
         }
 
         return $this->get($field);
@@ -353,7 +375,10 @@ trait EntityTrait
         $originals = $this->_original;
         $originalKeys = array_keys($originals);
         foreach ($this->_fields as $key => $value) {
-            if (!in_array($key, $originalKeys, true)) {
+            if (
+                !in_array($key, $originalKeys, true) &&
+                $this->isOriginalField($key)
+            ) {
                 $originals[$key] = $value;
             }
         }
@@ -468,7 +493,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_dirty[$p]);
         }
 
         return $this;
@@ -719,7 +744,11 @@ trait EntityTrait
     {
         $result = [];
         foreach ($fields as $field) {
-            $result[$field] = $this->getOriginal($field);
+            if ($this->hasOriginal($field)) {
+                $result[$field] = $this->getOriginal($field);
+            } elseif ($this->isOriginalField($field)) {
+                $result[$field] = $this->get($field);
+            }
         }
 
         return $result;
@@ -739,6 +768,10 @@ trait EntityTrait
     {
         $result = [];
         foreach ($fields as $field) {
+            if (!$this->hasOriginal($field)) {
+                continue;
+            }
+
             $original = $this->getOriginal($field);
             if ($original !== $this->get($field)) {
                 $result[$field] = $original;
@@ -746,6 +779,59 @@ trait EntityTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Returns whether a field is an original one
+     *
+     * @return bool
+     */
+    public function isOriginalField(string $name): bool
+    {
+        return in_array($name, $this->_originalFields);
+    }
+
+    /**
+     * Returns an array of field names previously set using `setOriginalField()`
+     * The entity was initialized with
+     *
+     * @return array
+     */
+    public function getOriginalFields(): array
+    {
+        return $this->_originalFields;
+    }
+
+    /**
+     * Sets the given field or a list of fields to as original.
+     * Normally there is no need to call this method manually.
+     *
+     * @param array<string>|string $field the name of a field or a list of fields to set as original
+     * @param bool $merge
+     * @return $this
+     */
+    public function setOriginalField(string|array $field, bool $merge = true)
+    {
+        if (!$merge) {
+            $this->_originalFields = (array)$field;
+
+            //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
+            sort($this->_originalFields);
+
+            return $this;
+        }
+
+        $fields = (array)$field;
+        foreach ($fields as $field) {
+            if (!$this->isOriginalField($field)) {
+                $this->_originalFields[] = $field;
+            }
+        }
+
+        //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
+        sort($this->_originalFields);
+
+        return $this;
     }
 
     /**
@@ -759,7 +845,9 @@ trait EntityTrait
     public function setDirty(string $field, bool $isDirty = true)
     {
         if ($isDirty === false) {
-            unset($this->_dirty[$field]);
+            $this->setOriginalField($field);
+
+            unset($this->_dirty[$field], $this->_original[$field]);
 
             return $this;
         }
@@ -808,6 +896,7 @@ trait EntityTrait
         $this->_errors = [];
         $this->_invalid = [];
         $this->_original = [];
+        $this->setOriginalField(array_keys($this->_fields), false);
     }
 
     /**
@@ -1249,6 +1338,7 @@ trait EntityTrait
             '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
+            '[originalFields]' => $this->_originalFields,
             '[virtual]' => $this->_virtual,
             '[hasErrors]' => $this->hasErrors(),
             '[errors]' => $this->_errors,

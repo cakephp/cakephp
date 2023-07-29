@@ -62,6 +62,30 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function getVirtual(): array;
 
     /**
+     * Returns whether a field is an original one
+     *
+     * @return bool
+     */
+    public function isOriginalField(string $name): bool;
+
+    /**
+     * Returns an array of field names previously set using `setOriginalField()`
+     * The entity was initialized with
+     *
+     * @return array<string>
+     */
+    public function getOriginalFields(): array;
+
+    /**
+     * Sets the given field or a list of fields to set as original
+     *
+     * @param array<string>|string $field the name of a field or a list of fields to set as original
+     * @param bool $merge
+     * @return $this
+     */
+    public function setOriginalField(string|array $field, bool $merge = true);
+
+    /**
      * Sets the dirty status of a single field.
      *
      * @param string $field the field to set or check status for
@@ -217,12 +241,21 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function requireFieldPresence(bool $value = true): void;
 
     /**
+     * Returns whether a field has an original value
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function hasOriginal(string $field): bool;
+
+    /**
      * Returns the original value of a field.
      *
      * @param string $field The name of the field.
+     * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
      * @return mixed
      */
-    public function getOriginal(string $field): mixed;
+    public function getOriginal(string $field, bool $allowFallback = true): mixed;
 
     /**
      * Gets all original values of the entity.
