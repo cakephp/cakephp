@@ -62,6 +62,21 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function getVirtual(): array;
 
     /**
+     * Returns whether a field is an original one
+     *
+     * @return bool
+     */
+    public function isOriginalField(string $name): bool;
+
+    /**
+     * Returns an array of field names previously set using `setOriginalField()`
+     * The entity was initialized with
+     *
+     * @return array<string>
+     */
+    public function getOriginalFields(): array;
+
+    /**
      * Sets the given field or a list of fields to set as original
      *
      * @param array<string>|string $field the name of a field or a list of fields to set as original

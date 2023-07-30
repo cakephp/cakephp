@@ -267,9 +267,9 @@ trait EntityTrait
             }
 
             if (
+                $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->_original) &&
-                in_array($name, $this->_originalFields) &&
-                in_array($name, $this->_fields) &&
+                array_key_exists($name, $this->_fields) &&
                 $value !== $this->_fields[$name]
             ) {
                 $this->_original[$name] = $this->_fields[$name];
@@ -360,7 +360,7 @@ trait EntityTrait
         }
 
         if (!$allowFallback) {
-            throw new InvalidArgumentException(sprintf('Could not retrieve original value for field `%s`', $field));
+            throw new InvalidArgumentException(sprintf('Cannot retrieve original value for field `%s`', $field));
         }
 
         return $this->get($field);
@@ -378,7 +378,7 @@ trait EntityTrait
         foreach ($this->_fields as $key => $value) {
             if (
                 !in_array($key, $originalKeys, true) &&
-                in_array($key, $this->_originalFields)
+                $this->isOriginalField($key)
             ) {
                 $originals[$key] = $value;
             }
@@ -746,9 +746,9 @@ trait EntityTrait
         $result = [];
         foreach ($fields as $field) {
             if ($this->hasOriginal($field)) {
-            $result[$field] = $this->getOriginal($field);
-        }
-            elseif (in_array($field, $this->_originalFields)) {
+                $result[$field] = $this->getOriginal($field);
+            }
+            elseif ($this->isOriginalField($field)) {
                 $result[$field] = $this->get($field);
             };
         }
@@ -784,7 +784,29 @@ trait EntityTrait
     }
 
     /**
-     * Sets the given field or a list of fields to set as original
+     * Returns whether a field is an original one
+     *
+     * @return bool
+     */
+    public function isOriginalField(string $name): bool
+    {
+        return in_array($name, $this->_originalFields);
+    }
+
+    /**
+     * Returns an array of field names previously set using `setOriginalField()`
+     * The entity was initialized with
+     *
+     * @return array
+     */
+    public function getOriginalFields(): array
+    {
+        return $this->_originalFields;
+    }
+
+    /**
+     * Sets the given field or a list of fields to as original.
+     * Normally there is no need to call this method manually.
      *
      * @param array<string>|string $field the name of a field or a list of fields to set as original
      * @param bool $merge
@@ -795,20 +817,20 @@ trait EntityTrait
             $this->_originalFields = (array)$field;
 
             //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
-            //sort($this->_originalFields);
+            sort($this->_originalFields);
 
             return $this;
         }
 
         $fields = (array)$field;
         foreach ($fields as $field) {
-            if (!in_array($field, $this->_originalFields)) {
+            if (!$this->isOriginalField($field)) {
                 $this->_originalFields[] = $field;
             }
         }
 
         //WIP? Tests with assertEqual fail as long as the values of $this->_originalFields aren't in the same order.
-        //sort($this->_originalFields);
+        sort($this->_originalFields);
 
         return $this;
     }

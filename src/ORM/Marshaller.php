@@ -213,12 +213,14 @@ class Marshaller
         }
 
         if (isset($options['fields'])) {
+            $entity->setOriginalField($options['fields'], false);
             foreach ((array)$options['fields'] as $field) {
                 if (array_key_exists($field, $properties)) {
                     $entity->set($field, $properties[$field]);
                 }
             }
         } else {
+            $entity->setOriginalField(array_keys($properties), false);
             $entity->set($properties);
         }
 
