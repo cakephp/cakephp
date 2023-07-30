@@ -62,6 +62,7 @@ define('CONFIG', TEST_APP . 'config' . DS);
 @mkdir(CACHE . 'models');
 // phpcs:enable
 
+require_once 'check.php';
 require_once CORE_PATH . 'config/bootstrap.php';
 
 date_default_timezone_set('UTC');
