@@ -1845,19 +1845,66 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists(QueryExpression|Closure|array|string|null $conditions, array $options = []): bool
+    public function exists(QueryExpression|Closure|array|string|null $conditions, array|string|null $finder = 'all'): bool
     {
-        $finder = $options['finder'] ?? 'all';
+        $finder = $finder ?: 'all';
+        [$finder, $opts] = $this->_extractFinder($finder);
 
         return (bool)count(
-            $this->find($finder)
-            ->applyOptions($options)
+            $this->find($finder, ...$opts)
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
             ->disableHydration()
             ->toArray()
         );
+    }
+
+    /**
+     * Helper method to infer the requested finder and its options.
+     *
+     * Returns the inferred options from the finder $finderData.
+     *
+     * ### Examples:
+     *
+     * Given you're using the Muffin/TrashBehavior
+     * The following will call the finder 'withTrashed' with the value of the finder as its options:
+     * ```
+     * $table->Articles->exists(['id' => 1], 'withTrashed');
+     * $table->Articles->exists(['id' => 1], ['withTrashed' => []]);
+     * //this is the same as
+     * $table->Articles->exists(['id' => 1], ['all' => ['skipAddTrashCondition' => true]]);
+     * ```
+     *
+     * Only return true if an article with `en` and `es` locales exist
+     * ```
+     * $table->Articles->exists(['id' => 1], ['translations' => ['locales' => ['en', 'es']]]
+     * ```
+     *
+     * The following will call the finder 'published' with additional options. Those options will be available
+     * inside the attached behaviors (resp. their beforeFind-events):
+     * ```
+     * $table->Articles->exists(['id' => 1], [
+     *  'published' => [
+     *      'published_before' => '2010-01-01 00:00:00',
+     *      'skipAddTrashCondition' => true,
+     *  ]
+     * ]);
+     * ```
+     *
+     * @param array|string $finderData The finder name or an array having the name as key
+     * and options as value.
+     * @return array
+     */
+    protected function _extractFinder(array|string $finderData): array
+    {
+        $finderData = (array)$finderData;
+
+        if (is_numeric(key($finderData))) {
+            return [current($finderData), []];
+        }
+
+        return [key($finderData), current($finderData)];
     }
 
     /**

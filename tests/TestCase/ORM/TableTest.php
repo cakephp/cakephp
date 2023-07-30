@@ -2059,14 +2059,34 @@ class TableTest extends TestCase
     /**
      * Tests the exists function with options
      */
-    public function testExistsWithQueryOptions(): void
+    public function testExistsWithFinder(): void
     {
         $table = $this->getTableLocator()->get('users');
-        $table->addBehavior('Test4');
+        $table->addBehavior('CreatedBeforeCondition');
+
         $this->assertTrue($table->exists(['id' => 1]));
         $this->assertFalse($table->exists(['id' => 3]));
-        $this->assertTrue($table->exists(['id' => 3], ['skipCreatedCondition' => true]));
-        $table->removeBehavior('Test4');
+
+        //Using a finder
+        $this->assertTrue($table->exists(['id' => 3], 'everything'));
+
+        //Using a finder with additional parameters
+        $this->assertTrue($table->exists(['id' => 3], ['createdBefore' => ['dateTime' => '2010-05-10 01:20:24']]));
+        $this->assertFalse($table->exists(['id' => 3], ['all' => ['createdBefore' => '2010-05-10 01:20:23']]));
+
+        //Passing the options to the beforeFind method directly using findAll()
+        $this->assertTrue($table->exists(['id' => 3], ['all' => ['createdBefore' => '2010-05-10 01:20:24']]));
+        $this->assertTrue($table->exists(['id' => 3], ['all' => ['skipCreatedCondition' => true]]));
+
+        //Using a finder with additional parameters, one not being used.
+        $this->assertTrue($table->exists(['id' => 3], [
+            'createdBefore' => [
+                'dateTime' => '2010-05-10 01:20:24',
+                'unknownParameter' => 'unknown',
+            ]
+        ]));
+
+        $table->removeBehavior('CreatedBeforeCondition');
     }
 
     /**

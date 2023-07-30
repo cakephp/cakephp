@@ -35,6 +35,13 @@ class ExistsIn
     protected array $_fields;
 
     /**
+     * The finder to use for checking for existing records
+     *
+     * @var array<string, array>|string|null
+     */
+    protected array|string|null $_finder;
+
+    /**
      * The repository where the field will be looked for
      *
      * @var \Cake\ORM\Table|\Cake\ORM\Association|string
@@ -60,12 +67,18 @@ class ExistsIn
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array<string, mixed> $options The options that modify the rule's behavior.
+     * @param array<string, array>|string|null $finder The finder to use for checking for existing records
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
      *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
-    public function __construct(array|string $fields, Table|Association|string $repository, array $options = [])
+    public function __construct(
+        array|string $fields,
+        Table|Association|string $repository,
+        array $options = [],
+        array|string|null $finder = null)
     {
         $this->_fields = (array)$fields;
+        $this->_finder = $finder;
         $this->_options = $options + $this->_options;
         $this->_repository = $repository;
     }
@@ -141,10 +154,7 @@ class ExistsIn
             $entity->extract($fields)
         );
 
-        $options = $this->_options;
-        unset($options['allowNullableNulls']);
-
-        return $target->exists($conditions, $options);
+        return $target->exists($conditions, $this->_finder);
     }
 
     /**

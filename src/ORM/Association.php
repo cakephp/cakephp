@@ -858,17 +858,17 @@ abstract class Association
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to use
      * for checking if any record matches.
-     * @param array $options list of options to apply to the query
+     * @param array<string, array>|string|null $finder The finder to use for checking for existing records
      * @see \Cake\ORM\Table::exists()
      * @return bool
      */
-    public function exists(ExpressionInterface|Closure|array|string|null $conditions, array $options = []): bool
+    public function exists(ExpressionInterface|Closure|array|string|null $conditions, array|string|null $finder = null): bool
     {
         $conditions = $this->find()
             ->where($conditions)
             ->clause('where');
 
-        return $this->getTarget()->exists($conditions, $options);
+        return $this->getTarget()->exists($conditions, $finder);
     }
 
     /**

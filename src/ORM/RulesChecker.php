@@ -46,17 +46,15 @@ class RulesChecker extends BaseRulesChecker
      *
      * ### Options
      *
-     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
-     * - 'message' sets a custom error message.
-     *
-     * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
+     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to true.
+     * - `message` Sets a custom error message.
      *
      * @param array<string> $fields The list of fields to check for uniqueness.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
      */
-    public function isUnique(array $fields, array|string|null $message = null): RuleInvoker
+    public function isUnique(array $fields, array|string|null $message = null, array|string|null $finder = null): RuleInvoker
     {
         $options = is_array($message) ? $message : ['message' => $message];
         $message = $options['message'] ?? null;
@@ -72,7 +70,7 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields, $options, $finder), '_isUnique', compact('errorField', 'message'));
     }
 
     /**
@@ -91,8 +89,9 @@ class RulesChecker extends BaseRulesChecker
      *
      * ### Options
      *
-     * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to false.
-     * - 'message' sets a custom error message.
+     * - `allowNullableNulls` Accept composite foreign keys where one or more nullable columns are null.
+     *   Defaults to false.
+     * - `message` sets a custom error message.
      *
      * Other options will be applied to the query in `\Cake\ORM\Table::exists()`
      *
@@ -106,7 +105,8 @@ class RulesChecker extends BaseRulesChecker
     public function existsIn(
         array|string $field,
         Table|Association|string $table,
-        array|string|null $message = null
+        array|string|null $message = null,
+        array|string|null $finder = null
     ): RuleInvoker {
         $options = is_array($message) ? $message : ['message' => $message];
         $message = $options['message'] ?? null;
@@ -122,7 +122,7 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
 
-        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table, $options, $finder), '_existsIn', compact('errorField', 'message'));
     }
 
     /**

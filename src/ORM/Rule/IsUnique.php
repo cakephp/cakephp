@@ -32,6 +32,13 @@ class IsUnique
     protected array $_fields;
 
     /**
+     * The finder to use for checking for existing records
+     *
+     * @var array<string, array>|string|null
+     */
+    protected array|string|null $_finder;
+
+    /**
      * The unique check options
      *
      * @var array<string, mixed>
@@ -49,10 +56,12 @@ class IsUnique
      *
      * @param array<string> $fields The list of fields to check uniqueness for
      * @param array<string, mixed> $options The options for unique checks.
+     * @param array<string, array>|string|null $finder The finder to use for checking for existing records
      */
-    public function __construct(array $fields, array $options = [])
+    public function __construct(array $fields, array $options = [], array|string|null $finder = null)
     {
         $this->_fields = $fields;
+        $this->_finder = $finder;
         $this->_options = $options + $this->_options;
     }
 
@@ -85,12 +94,7 @@ class IsUnique
             }
         }
 
-        $repository = $options['repository'];
-
-        $options = $this->_options;
-        unset($options['allowNullableNulls']);
-
-        return ! $repository->exists($conditions, $options);
+        return !$options['repository']->exists($conditions, $this->_finder);
     }
 
     /**
