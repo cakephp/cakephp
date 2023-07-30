@@ -260,10 +260,10 @@ trait EntityTrait
             $this->setDirty($name, true);
 
             if ($options['setter']) {
-            $setter = static::_accessor($name, 'set');
-            if ($setter) {
-                $value = $this->{$setter}($value);
-            }
+                $setter = static::_accessor($name, 'set');
+                if ($setter) {
+                    $value = $this->{$setter}($value);
+                }
             }
 
             if (
