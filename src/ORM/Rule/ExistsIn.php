@@ -75,8 +75,8 @@ class ExistsIn
         array|string $fields,
         Table|Association|string $repository,
         array $options = [],
-        array|string|null $finder = null)
-    {
+        array|string|null $finder = null
+    ) {
         $this->_fields = (array)$fields;
         $this->_finder = $finder;
         $this->_options = $options + $this->_options;

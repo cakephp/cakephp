@@ -44,12 +44,13 @@ class CreatedBeforeConditionBehavior extends Behavior
         return ['Model.beforeFind' => 'beforeFind'];
     }
 
-    public function findCreatedBefore(SelectQuery $query, string $dateTime = '2010-05-10 01:20:23'): SelectQuery {
+    public function findCreatedBefore(SelectQuery $query, string $dateTime = '2010-05-10 01:20:23'): SelectQuery
+    {
         return $query->applyOptions(['createdBefore' => $dateTime]);
     }
 
-    public function findEverything(SelectQuery $query): SelectQuery {
+    public function findEverything(SelectQuery $query): SelectQuery
+    {
         return $query->applyOptions(['skipCreatedCondition' => true]);
     }
-
 }

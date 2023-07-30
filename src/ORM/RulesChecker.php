@@ -54,8 +54,11 @@ class RulesChecker extends BaseRulesChecker
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return \Cake\Datasource\RuleInvoker
      */
-    public function isUnique(array $fields, array|string|null $message = null, array|string|null $finder = null): RuleInvoker
-    {
+    public function isUnique(
+        array $fields,
+        array|string|null $message = null,
+        array|string|null $finder = null
+    ): RuleInvoker {
         $options = is_array($message) ? $message : ['message' => $message];
         $message = $options['message'] ?? null;
         unset($options['message']);
@@ -70,7 +73,11 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options, $finder), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(
+            new IsUnique($fields, $options, $finder),
+            '_isUnique',
+            compact('errorField', 'message')
+        );
     }
 
     /**
@@ -122,7 +129,11 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
 
-        return $this->_addError(new ExistsIn($field, $table, $options, $finder), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(
+            new ExistsIn($field, $table, $options, $finder),
+            '_existsIn',
+            compact('errorField', 'message')
+        );
     }
 
     /**

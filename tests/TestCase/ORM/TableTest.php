@@ -2083,7 +2083,7 @@ class TableTest extends TestCase
             'createdBefore' => [
                 'dateTime' => '2010-05-10 01:20:24',
                 'unknownParameter' => 'unknown',
-            ]
+            ],
         ]));
 
         $table->removeBehavior('CreatedBeforeCondition');

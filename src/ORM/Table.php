@@ -1845,8 +1845,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists(QueryExpression|Closure|array|string|null $conditions, array|string|null $finder = 'all'): bool
-    {
+    public function exists(
+        QueryExpression|Closure|array|string|null $conditions,
+        array|string|null $finder = 'all'
+    ): bool {
         $finder = $finder ?: 'all';
         [$finder, $opts] = $this->_extractFinder($finder);
 
