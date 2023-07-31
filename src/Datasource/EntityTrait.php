@@ -795,7 +795,7 @@ trait EntityTrait
      * Returns an array of field names previously set using `setOriginalField()`
      * The entity was initialized with
      *
-     * @return array
+     * @return array<string>
      */
     public function getOriginalFields(): array
     {
