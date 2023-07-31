@@ -244,7 +244,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns whether a field has an original value
      *
      * @param string $field
-     *
      * @return bool
      */
     public function hasOriginal(string $field): bool;
