@@ -334,7 +334,6 @@ trait EntityTrait
      * Returns whether a field has an original value
      *
      * @param string $field
-     *
      * @return bool
      */
     public function hasOriginal(string $field): bool
@@ -747,10 +746,9 @@ trait EntityTrait
         foreach ($fields as $field) {
             if ($this->hasOriginal($field)) {
                 $result[$field] = $this->getOriginal($field);
-            }
-            elseif ($this->isOriginalField($field)) {
+            } elseif ($this->isOriginalField($field)) {
                 $result[$field] = $this->get($field);
-            };
+            }
         }
 
         return $result;
@@ -812,7 +810,8 @@ trait EntityTrait
      * @param bool $merge
      * @return $this
      */
-    public function setOriginalField(string|array $field, bool $merge = true) {
+    public function setOriginalField(string|array $field, bool $merge = true)
+    {
         if (!$merge) {
             $this->_originalFields = (array)$field;
 
