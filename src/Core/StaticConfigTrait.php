@@ -95,7 +95,7 @@ trait StaticConfigTrait
             $config = ['className' => $config];
         }
 
-        if (isset($config['url'])) {
+        if (is_array($config) && isset($config['url'])) {
             $parsed = static::parseDsn($config['url']);
             unset($config['url']);
             $config = $parsed + $config;
