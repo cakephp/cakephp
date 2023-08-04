@@ -54,7 +54,7 @@ class CacheClearGroupCommand extends Command
             'required' => true,
         ]);
         $parser->addArgument('config', [
-            'help' => 'Name of the configuration to use. Defaults to "default".',
+            'help' => 'Name of the configuration to use. Defaults to no value which clears all cache configurations.',
         ]);
 
         return $parser;
