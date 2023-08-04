@@ -69,6 +69,19 @@ class StaticConfigTraitTest extends TestCase
         $className::parseDsn(['url' => 'http://:80']);
     }
 
+    public function testSetConfigValues(): void
+    {
+        $className = get_class($this->subject);
+        $className::setConfig('foo', true);
+
+        $result = $className::getConfigOrFail('foo');
+        $this->assertTrue($result);
+
+        $className::setConfig('bar', 'value');
+        $result = $className::getConfigOrFail('bar');
+        $this->assertSame('value', $result);
+    }
+
     public function testGetConfigOrFail(): void
     {
         $className = get_class($this->subject);
