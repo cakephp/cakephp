@@ -91,7 +91,7 @@ class CacheClearGroupCommand extends Command
             }
 
             if (!Cache::clearGroup($group, $groupConfig)) {
-                $io->error(sprintf('Error encountered clearing group "%s"', $group));
+                $io->error(sprintf('Error encountered clearing group "%s". Was unable to clear entries for "%s".', $group, $groupConfig));
                 $this->abort();
             } else {
                 $io->success(sprintf('Group "%s" was cleared.', $group));
