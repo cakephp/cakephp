@@ -475,13 +475,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 $this->_table
             ));
         }
-        if (empty($attrs['columns'])) {
-            throw new DatabaseException(sprintf(
-                'Index "%s" in table "%s" must have at least one column.',
-                $name,
-                $this->_table
-            ));
-        }
         $attrs['columns'] = (array)$attrs['columns'];
         foreach ($attrs['columns'] as $field) {
             if (empty($this->_columns[$field])) {

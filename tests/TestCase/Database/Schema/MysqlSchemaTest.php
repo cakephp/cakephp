@@ -519,6 +519,42 @@ SQL;
         $this->assertEquals(['config_id'], $constraint['columns']);
     }
 
+    public function testDescribeTableFunctionalIndex(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->execute('DROP TABLE IF EXISTS functional_index');
+        $table = <<<SQL
+CREATE TABLE functional_index (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    properties JSON,
+    child_ids VARCHAR(400) GENERATED ALWAYS AS (
+        properties->>'$.children[*].id'
+    ) VIRTUAL
+);
+SQL;
+        $index = <<<SQL
+CREATE INDEX child_ids_idx ON functional_index ((CAST(child_ids AS UNSIGNED ARRAY)));
+SQL;
+        try {
+            $connection->execute($table);
+            $connection->execute($index);
+        } catch (Exception $e) {
+            $this->markTestSkipped('Could not create table with functional index');
+        }
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('functional_index');
+        $connection->execute('DROP TABLE IF EXISTS functional_index');
+
+        $column = $result->getColumn('child_ids');
+        $this->assertNotEmpty($column, 'Virtual property column should be reflected');
+        $this->assertEquals('string', $column['type']);
+
+        $index = $result->getIndex('child_ids_idx');
+        $this->assertNotEmpty($index);
+        $this->assertEquals('index', $index['type']);
+        $this->assertEquals([], $index['columns']);
+    }
+
     /**
      * Test describing a table creates options
      */
