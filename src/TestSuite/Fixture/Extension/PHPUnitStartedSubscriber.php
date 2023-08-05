@@ -20,6 +20,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\ConnectionHelper;
 use PHPUnit\Event\TestSuite\Started;
 use PHPUnit\Event\TestSuite\StartedSubscriber as PHPUnitStarted;
+use function Cake\Core\env;
 
 class PHPUnitStartedSubscriber implements PHPUnitStarted
 {
@@ -34,8 +35,8 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
         $helper = new ConnectionHelper();
         $helper->addTestAliases();
 
-        $enableLogging = in_array('--debug', $_SERVER['argv'] ?? [], true);
-        if ($enableLogging) {
+        $enableLogging = env('LOG_QUERIES', false);
+        if ((int)$enableLogging !== 0) {
             $helper->enableQueryLogging();
             Log::drop('queries');
             Log::setConfig('queries', [
