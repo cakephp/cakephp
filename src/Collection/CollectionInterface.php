@@ -99,6 +99,19 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function reject(callable $callback): CollectionInterface;
 
     /**
+     * Loops through each value in the collection and returns a new collection
+     * with only unique values based on the value returned by ``callback``.
+     *
+     * The callback is passed the value as the first argument and the key as the
+     * second argument.
+     *
+     * @param callable $callback the method that will receive each of the elements and
+     * returns the value used to determine uniqueness.
+     * @return self
+     */
+    public function unique(?callable $callback = null): CollectionInterface;
+
+    /**
      * Returns true if all values in this collection pass the truth test provided
      * in the callback.
      *
