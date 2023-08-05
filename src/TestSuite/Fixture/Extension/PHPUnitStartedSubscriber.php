@@ -35,7 +35,7 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
         $helper = new ConnectionHelper();
         $helper->addTestAliases();
 
-        $enableLogging = env('LOG_QUERIES') ?? 0;
+        $enableLogging = env('LOG_QUERIES', false);
         if ((int)$enableLogging !== 0) {
             $helper->enableQueryLogging();
             Log::drop('queries');
