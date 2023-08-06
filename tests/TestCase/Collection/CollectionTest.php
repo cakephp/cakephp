@@ -279,6 +279,11 @@ class CollectionTest extends TestCase
             return false;
         });
         $this->assertSame([], iterator_to_array($result));
+        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+
+        $collection = new Collection(['a' => null, 'b' => 2, 'c' => false]);
+        $result = $collection->reject();
+        $this->assertEquals(['a' => null, 'c' => false], iterator_to_array($result));
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -288,7 +293,6 @@ class CollectionTest extends TestCase
             return $v > 2;
         });
         $this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
-        $this->assertInstanceOf('Cake\Collection\Collection', $result);
     }
 
     /**
