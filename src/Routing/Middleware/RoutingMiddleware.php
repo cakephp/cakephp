@@ -173,7 +173,8 @@ class RoutingMiddleware implements MiddlewareInterface
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
-                $e->getCode()
+                $e->getCode(),
+                $e->getHeaders()
             );
         } catch (DeprecatedRedirectException $e) {
             return new RedirectResponse(
