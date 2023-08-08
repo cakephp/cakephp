@@ -93,10 +93,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *
      * @param callable $callback the method that will receive each of the elements and
-     * returns true whether they should be out of the resulting collection.
+     *   returns true whether they should be out of the resulting collection.
+     *   If left null, a callback that filters out truthy values will be used.
      * @return self
      */
-    public function reject(callable $callback): CollectionInterface;
+    public function reject(?callable $callback = null): CollectionInterface;
 
     /**
      * Returns true if all values in this collection pass the truth test provided

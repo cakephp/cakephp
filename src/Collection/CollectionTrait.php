@@ -90,9 +90,13 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function reject(callable $callback): CollectionInterface
+    public function reject(?callable $callback = null): CollectionInterface
     {
-        return new FilterIterator($this->unwrap(), fn ($key, $value, $items) => !$callback($key, $value, $items));
+        $callback ??= function ($v, $k, $i) {
+            return (bool)$v;
+        };
+
+        return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
     }
 
     /**
