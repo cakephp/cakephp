@@ -209,7 +209,7 @@ class SelectBoxWidget extends BasicWidget
         string $label,
         ArrayAccess|array $optgroup,
         ?array $disabled,
-        array|string|int|false|null $selected,
+        mixed $selected,
         array $templateVars,
         bool $escape
     ): string {
@@ -237,7 +237,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param iterable $options The options to render.
      * @param array<string>|null $disabled The options to disable.
-     * @param array|string|int|false|null $selected The options to select.
+     * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array<string> Option elements.
@@ -245,7 +245,7 @@ class SelectBoxWidget extends BasicWidget
     protected function _renderOptions(
         iterable $options,
         ?array $disabled,
-        array|string|int|false|null $selected,
+        mixed $selected,
         array $templateVars,
         bool $escape
     ): array {
@@ -310,10 +310,10 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param array<string>|string|int|false|null $selected The selected values.
+     * @param mixed $selected The selected values.
      * @return bool
      */
-    protected function _isSelected(string $key, array|string|int|false|null $selected): bool
+    protected function _isSelected(string $key, mixed $selected): bool
     {
         if ($selected === null) {
             return false;
