@@ -134,19 +134,18 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function get(string $name): CookieInterface
     {
-        $key = mb_strtolower($name);
-        foreach ($this->cookies as $cookie) {
-            if (mb_strtolower($cookie->getName()) === $key) {
-                return $cookie;
-            }
+        $cookie = $this->__get($name);
+
+        if ($cookie === null) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Cookie `%s` not found. Use `has()` to check first for existence.',
+                    $name
+                )
+            );
         }
 
-        throw new InvalidArgumentException(
-            sprintf(
-                'Cookie `%s` not found. Use `has()` to check first for existence.',
-                $name
-            )
-        );
+        return $cookie;
     }
 
     /**
@@ -157,14 +156,19 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has(string $name): bool
     {
+        return null !== $this->__get($name);
+    }
+
+    public function __get(string $name): ?CookieInterface
+    {
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
             if (mb_strtolower($cookie->getName()) === $key) {
-                return true;
+                return $cookie;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
