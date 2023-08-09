@@ -71,7 +71,7 @@ class TimeHelper extends Helper
     {
         $time = new FrozenTime($dateString);
         if ($timezone !== null) {
-            $time = $time->timezone($timezone);
+            $time = $time->setTimezone($timezone);
         }
 
         return $time;
@@ -226,7 +226,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new FrozenTime($dateString))->timezone($timezone)->toAtomString();
+        return (new FrozenTime($dateString))->setTimeZone($timezone)->toAtomString();
     }
 
     /**
@@ -240,7 +240,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new FrozenTime($dateString))->timezone($timezone)->toRssString();
+        return (new FrozenTime($dateString))->setTimeZone($timezone)->toRssString();
     }
 
     /**
