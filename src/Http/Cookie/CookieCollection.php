@@ -156,7 +156,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has(string $name): bool
     {
-        return null !== $this->__get($name);
+        return $this->__get($name) !== null;
     }
 
     public function __get(string $name): ?CookieInterface
@@ -179,7 +179,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function __isset(string $name): bool
     {
-        return null !== $this->__get($name);
+        return $this->__get($name) !== null;
     }
 
     /**
