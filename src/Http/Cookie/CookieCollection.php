@@ -159,6 +159,13 @@ class CookieCollection implements IteratorAggregate, Countable
         return $this->__get($name) !== null;
     }
 
+
+    /**
+     * Get the first cookie by name if cookie with provided name exists
+     *
+     * @param string $name The name of the cookie.
+     * @return \Cake\Http\Cookie\CookieInterface|null
+     */
     public function __get(string $name): ?CookieInterface
     {
         $key = mb_strtolower($name);
