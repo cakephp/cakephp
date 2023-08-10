@@ -159,7 +159,6 @@ class CookieCollection implements IteratorAggregate, Countable
         return $this->__get($name) !== null;
     }
 
-
     /**
      * Get the first cookie by name if cookie with provided name exists
      *
