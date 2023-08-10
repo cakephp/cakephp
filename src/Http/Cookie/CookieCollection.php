@@ -172,6 +172,17 @@ class CookieCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Check if a cookie with the given name exists
+     *
+     * @param string $name The cookie name to check.
+     * @return bool True if the cookie exists, otherwise false.
+     */
+    public function __isset(string $name): bool
+    {
+        return null !== $this->__get($name);
+    }
+
+    /**
      * Create a new collection with all cookies matching $name removed.
      *
      * If the cookie is not in the collection, this method will do nothing.
