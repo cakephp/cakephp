@@ -200,7 +200,7 @@ class SelectBoxWidget extends BasicWidget
      * @param string $label The optgroup label text
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
      * @param array|null $disabled The options to disable.
-     * @param array|string|int|false|null $selected The options to select.
+     * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
