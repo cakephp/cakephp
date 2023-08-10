@@ -115,6 +115,23 @@ class SelectBoxWidgetTest extends TestCase
     }
 
     /**
+     * Test render float options
+     */
+    public function testRenderFloat(): void
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'id' => 'enabled',
+            'name' => 'enabled',
+            'options' => [0.5, 1.5],
+            'val' => 0.5,
+        ];
+        $result = $select->render($data, $this->context);
+        $this->assertStringContainsString('<option value="0">0.5</option>', $result);
+        $this->assertStringContainsString('<option value="1">1.5</option>', $result);
+    }
+
+    /**
      * test simple iterator rendering
      */
     public function testRenderSimpleIterator(): void
