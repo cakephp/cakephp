@@ -104,7 +104,7 @@ class ErrorTrapTest extends TestCase
             // PHP error level, expected log level
             [E_USER_WARNING, 'warning'],
             [E_USER_NOTICE, 'notice'],
-            [E_USER_DEPRECATED, 'notice'],
+            [E_USER_DEPRECATED, 'debug'],
         ];
     }
 
