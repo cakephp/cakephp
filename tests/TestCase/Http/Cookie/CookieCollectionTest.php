@@ -136,11 +136,13 @@ class CookieCollectionTest extends TestCase
         ];
 
         $collection = new CookieCollection($cookies);
+
         $this->assertFalse(isset($collection->nope));
         $this->assertTrue(isset($collection->remember_me));
         $this->assertTrue(isset($collection->REMEMBER_me));
-        $this->assertEquals('a', $collection->remember_me);
-        $this->assertEquals('b', $collection->GTM);
+
+        $this->assertEquals('a', $collection->remember_me->getValue());
+        $this->assertEquals('b', $collection->GTM->getValue());
         $this->assertNull($collection->nope);
     }
 
