@@ -128,7 +128,7 @@ class CookieCollectionTest extends TestCase
     /**
      * Tests the magic __isset() method
      */
-    public function testMagicIsset(): void
+    public function testMagicIssetAndGet(): void
     {
         $cookies = [
             new Cookie('remember_me', 'a'),
