@@ -126,7 +126,7 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
-     * Tests the magic __isset() method
+     * Tests the magic __isset() and  __get() methods
      */
     public function testMagicIssetAndGet(): void
     {
