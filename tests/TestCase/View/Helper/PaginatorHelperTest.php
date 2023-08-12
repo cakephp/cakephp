@@ -2135,9 +2135,13 @@ class PaginatorHelperTest extends TestCase
             ],
         ]));
 
+        $this->Paginator->setTemplates([
+            'current' => '<li class="active"><a href="{{url}}">{{text}}</a></li>',
+        ]);
+
         $result = $this->Paginator->numbers(['modulus' => 10]);
         $expected = [
-            ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
         ];
@@ -2145,7 +2149,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->numbers(['modulus' => 3]);
         $expected = [
-            ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
         ];
@@ -2168,7 +2172,7 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4894']], '4,894', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '4,895', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=4895']], '4,895', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4896']], '4,896', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4897']], '4,897', '/a', '/li',
         ];
@@ -2182,7 +2186,7 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             ['li' => []], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4896']], '4,896', '/a', '/li',
@@ -2194,7 +2198,7 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             ['li' => []], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4']], '4', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=5']], '5', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=6']], '6', '/a', '/li',
@@ -2220,7 +2224,7 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4891']], '4,891', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4892']], '4,892', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '4,893', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=4893']], '4,893', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4894']], '4,894', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4895']], '4,895', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4896']], '4,896', '/a', '/li',
@@ -2241,7 +2245,7 @@ class PaginatorHelperTest extends TestCase
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=56']], '56', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=57']], '57', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '58', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=58']], '58', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=59']], '59', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=60']], '60', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
@@ -2262,7 +2266,7 @@ class PaginatorHelperTest extends TestCase
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4']], '4', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '5', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=5']], '5', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=6']], '6', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=7']], '7', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
@@ -2281,7 +2285,7 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             ['li' => []], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4']], '4', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4896']], '4,896', '/a', '/li',
@@ -2296,7 +2300,7 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             ['li' => []], ['a' => ['href' => '/']], '1', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=2']], '2', '/a', '/li',
-            ['li' => ['class' => 'active']], '<a href=""', '3', '/a', '/li',
+            ['li' => ['class' => 'active']], ['a' => ['href' => '/?page=3']], '3', '/a', '/li',
             ['li' => ['class' => 'ellipsis']], '&hellip;', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4896']], '4,896', '/a', '/li',
             ['li' => []], ['a' => ['href' => '/?page=4897']], '4,897', '/a', '/li',
