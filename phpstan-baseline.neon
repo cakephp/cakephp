@@ -86,11 +86,6 @@ parameters:
 			path: src/Database/Driver.php
 
 		-
-			message: "#^Class Cake\\\\Chronos\\\\Date not found\\.$#"
-			count: 1
-			path: src/Database/Expression/CaseStatementExpression.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
@@ -101,11 +96,6 @@ parameters:
 			path: src/Database/Expression/TupleComparison.php
 
 		-
-			message: "#^Class Cake\\\\Chronos\\\\Date not found\\.$#"
-			count: 1
-			path: src/Database/Expression/WhenThenExpression.php
-
-		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
@@ -114,11 +104,6 @@ parameters:
 			message: "#^PHPDoc type PDOStatement of property Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:\\$_statement is not covariant with PHPDoc type Cake\\\\Database\\\\StatementInterface of overridden property Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:\\$_statement\\.$#"
 			count: 1
 			path: src/Database/Statement/PDOStatement.php
-
-		-
-			message: "#^Parameter \\#1 \\$class of method Cake\\\\Database\\\\Type\\\\DateTimeType\\:\\:_setClassName\\(\\) expects class\\-string\\<DateTime\\>\\|class\\-string\\<DateTimeImmutable\\>, string given\\.$#"
-			count: 2
-			path: src/Database/Type/DateType.php
 
 		-
 			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) in isset\\(\\) is not nullable\\.$#"
