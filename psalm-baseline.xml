@@ -52,8 +52,8 @@
       <code>$exceptions[$i - 1]</code>
     </InvalidArrayOffset>
   </file>
-  <file src="src/I18n/Date.php">
-    <DeprecatedClass occurrences="2">
+  <file src="src/I18n/DateFormatTrait.php">
+    <DeprecatedClass occurences="2">
       <code>MutableDate</code>
       <code>parent::__construct($time, $tz)</code>
     </DeprecatedClass>
@@ -63,90 +63,16 @@
       <code>$time !== false</code>
     </RedundantCondition>
   </file>
-  <file src="src/ORM/SaveOptionsBuilder.php">
-    <MissingTemplateParam>
-    <DeprecatedClass occurrences="5">
-      <code>$time-&gt;setTimezone($timezone)</code>
-      <code>Time::UNIX_TIMESTAMP_FORMAT</code>
-      <code>static|null</code>
-      <code>static|null</code>
-      <code>static|null</code>
-    </DeprecatedClass>
-    <MissingParamType occurrences="1">
-      <code>$format</code>
-    </MissingParamType>
-  </file>
   <file src="src/I18n/Time.php">
-    <DeprecatedClass occurrences="2">
+    <DeprecatedClass occurences="2">
       <code>MutableDateTime</code>
       <code>parent::__construct($time, $tz)</code>
     </DeprecatedClass>
   </file>
-  <file src="src/I18n/functions.php">
-    <InternalMethod occurrences="8">
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-      <code>translate</code>
-    </InternalMethod>
-  </file>
-  <file src="src/Log/Engine/ArrayLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/ConsoleLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/FileLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Log/Engine/SyslogLog.php">
-    <DeprecatedMethod occurrences="1">
-      <code>_format</code>
-    </DeprecatedMethod>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <DeprecatedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </DeprecatedProperty>
-    <DeprecatedTrait occurrences="1">
-      <code>ModelAwareTrait</code>
-    </DeprecatedTrait>
-  </file>
-  <file src="src/Mailer/Transport/SmtpTransport.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;_content</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>array{headers: string, message: string}</code>
-    </MoreSpecificReturnType>
-  </file>
-  <file src="src/ORM/Locator/LocatorAwareTrait.php">
-    <DeprecatedClass occurrences="1">
-      <code>$this</code>
-    </DeprecatedClass>
-  </file>
-  <file src="src/ORM/Locator/TableLocator.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$instances</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="src/ORM/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;_repository</code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/ORM/Table.php">
-    <DeprecatedClass occurrences="6">
+  <file src="src/ORM/SaveOptionsBuilder.php">
+    <MissingTemplateParam>
+      <code>SaveOptionsBuilder</code>
+    </MissingTemplateParam>
   </file>
   <file src="src/Shell/Helper/TableHelper.php">
     <InvalidCast>
