@@ -126,6 +126,27 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Tests the magic __isset() and  __get() methods
+     */
+    public function testMagicIssetAndGet(): void
+    {
+        $cookies = [
+            new Cookie('remember_me', 'a'),
+            new Cookie('gtm', 'b'),
+        ];
+
+        $collection = new CookieCollection($cookies);
+
+        $this->assertFalse(isset($collection->nope));
+        $this->assertTrue(isset($collection->remember_me));
+        $this->assertTrue(isset($collection->REMEMBER_me));
+
+        $this->assertEquals('a', $collection->remember_me->getValue());
+        $this->assertEquals('b', $collection->GTM->getValue());
+        $this->assertNull($collection->nope);
+    }
+
+    /**
      * Test removing cookies
      */
     public function testRemove(): void

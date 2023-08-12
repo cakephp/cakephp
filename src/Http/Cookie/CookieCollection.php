@@ -134,19 +134,18 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function get(string $name): CookieInterface
     {
-        $key = mb_strtolower($name);
-        foreach ($this->cookies as $cookie) {
-            if (mb_strtolower($cookie->getName()) === $key) {
-                return $cookie;
-            }
+        $cookie = $this->__get($name);
+
+        if ($cookie === null) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Cookie `%s` not found. Use `has()` to check first for existence.',
+                    $name
+                )
+            );
         }
 
-        throw new InvalidArgumentException(
-            sprintf(
-                'Cookie `%s` not found. Use `has()` to check first for existence.',
-                $name
-            )
-        );
+        return $cookie;
     }
 
     /**
@@ -157,14 +156,36 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has(string $name): bool
     {
+        return $this->__get($name) !== null;
+    }
+
+    /**
+     * Get the first cookie by name if cookie with provided name exists
+     *
+     * @param string $name The name of the cookie.
+     * @return \Cake\Http\Cookie\CookieInterface|null
+     */
+    public function __get(string $name): ?CookieInterface
+    {
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
             if (mb_strtolower($cookie->getName()) === $key) {
-                return true;
+                return $cookie;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    /**
+     * Check if a cookie with the given name exists
+     *
+     * @param string $name The cookie name to check.
+     * @return bool True if the cookie exists, otherwise false.
+     */
+    public function __isset(string $name): bool
+    {
+        return $this->__get($name) !== null;
     }
 
     /**
