@@ -295,6 +295,30 @@ class CollectionTest extends TestCase
         $this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
     }
 
+    public function testUnique(): void
+    {
+        $collection = new Collection([]);
+        $result = $collection->unique();
+        $this->assertSame([], iterator_to_array($result));
+        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $result = $collection->unique();
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3], iterator_to_array($result));
+
+        $items = ['a' => 1, 'b' => 2, 'c' => 1, 'd' => 2, 'e' => 1, 'f' => 3];
+        $collection = new Collection($items);
+        $result = $collection->unique();
+        $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
+
+        $result = $collection->unique(fn ($v) => (string)$v);
+        $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
+
+        $result = $collection->unique(fn ($v, $k) => $k);
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 1, 'd' => 2, 'e' => 1, 'f' => 3], iterator_to_array($result));
+    }
+
     /**
      * Tests every when the callback returns true for all elements
      */

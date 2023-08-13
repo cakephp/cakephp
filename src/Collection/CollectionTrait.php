@@ -29,6 +29,7 @@ use Cake\Collection\Iterator\SortIterator;
 use Cake\Collection\Iterator\StoppableIterator;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
+use Cake\Collection\Iterator\UniqueIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use InvalidArgumentException;
@@ -97,6 +98,18 @@ trait CollectionTrait
         };
 
         return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unique(?callable $callback = null): CollectionInterface
+    {
+        $callback ??= function ($v) {
+            return $v;
+        };
+
+        return new UniqueIterator($this->unwrap(), $callback);
     }
 
     /**
