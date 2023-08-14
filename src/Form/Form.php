@@ -236,6 +236,17 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
+     * Returns validation errors for the given field
+     *
+     * @param string $field Field name to get the errors from.
+     * @return array The validation errors for the given field.
+     */
+    public function getError(string $field): array
+    {
+        return $this->_errors[$field] ?? [];
+    }
+
+    /**
      * Set the errors in the form.
      *
      * ```
