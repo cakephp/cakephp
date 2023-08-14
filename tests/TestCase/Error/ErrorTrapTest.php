@@ -105,7 +105,7 @@ class ErrorTrapTest extends TestCase
             [E_USER_WARNING, 'warning'],
             [E_USER_NOTICE, 'notice'],
             // Log level is notice on windows because windows log levels are different.
-            [E_USER_DEPRECATED, DS === '\\' ?  'notice' : 'debug'],
+            [E_USER_DEPRECATED, DS === '\\' ? 'notice' : 'debug'],
         ];
     }
 
