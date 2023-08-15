@@ -2044,7 +2044,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::uuid()
+     * @see \Cake\Validation\Validation::geoCoordinate()
      * @return $this
      */
     public function latLong(string $field, ?string $message = null, Closure|string|null $when = null)
