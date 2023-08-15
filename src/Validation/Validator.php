@@ -1071,6 +1071,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notBlank(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must not be blank';
+            } else {
+                $message = __d('cake', 'The provided value must not be blank');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notBlank', $extra + [
@@ -1090,6 +1098,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function alphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be alphanumeric';
+            } else {
+                $message = __d('cake', 'The provided value must be alphanumeric');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'alphaNumeric', $extra + [
@@ -1109,6 +1125,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notAlphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must not be alphanumeric';
+            } else {
+                $message = __d('cake', 'The provided value must not be alphanumeric');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notAlphaNumeric', $extra + [
@@ -1128,6 +1152,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function asciiAlphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be ASCII-alphanumeric';
+            } else {
+                $message = __d('cake', 'The provided value must be ASCII-alphanumeric');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'asciiAlphaNumeric', $extra + [
@@ -1147,6 +1179,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notAsciiAlphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must not be ASCII-alphanumeric';
+            } else {
+                $message = __d('cake', 'The provided value must not be ASCII-alphanumeric');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notAsciiAlphaNumeric', $extra + [
@@ -1175,10 +1215,30 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         if (count($range) !== 2) {
             throw new InvalidArgumentException('The $range argument requires 2 numbers');
         }
+        $lowerBound = array_shift($range);
+        $upperBound = array_shift($range);
+
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf(
+                    'The length of the provided value must be between `%s` and `%s`, inclusively',
+                    $lowerBound,
+                    $upperBound
+                );
+            } else {
+                $message = __d(
+                    'cake',
+                    'The length of the provided value must be between `{0}` and `{1}`, inclusively',
+                    $lowerBound,
+                    $upperBound
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lengthBetween', $extra + [
-            'rule' => ['lengthBetween', array_shift($range), array_shift($range)],
+            'rule' => ['lengthBetween', $lowerBound, $upperBound],
         ]);
     }
 
@@ -1200,6 +1260,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a credit card number';
+            } else {
+                $message = __d('cake', 'The provided value must be a credit card number');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'creditCard', $extra + [
@@ -1224,6 +1292,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be greater than `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must be greater than `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThan', $extra + [
@@ -1248,6 +1324,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be greater than or equal to `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must be greater than or equal to `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanOrEqual', $extra + [
@@ -1272,6 +1356,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be less than `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must be less than `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThan', $extra + [
@@ -1296,6 +1388,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be less than or equal to `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must be less than or equal to `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanOrEqual', $extra + [
@@ -1320,6 +1420,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be equals to `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must be equals to `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'equals', $extra + [
@@ -1344,6 +1452,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must not be equals to `%s`', $value);
+            } else {
+                $message = __d('cake', 'The provided value must not be equals to `{0}`', $value);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notEquals', $extra + [
@@ -1370,6 +1486,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be same as `%s`', $secondField);
+            } else {
+                $message = __d('cake', 'The provided value must be same as `{0}`', $secondField);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'sameAs', $extra + [
@@ -1395,6 +1519,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must not be same as `%s`', $secondField);
+            } else {
+                $message = __d('cake', 'The provided value not must be same as `{0}`', $secondField);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notSameAs', $extra + [
@@ -1420,6 +1552,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be equal to the one of field `%s`', $secondField);
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be equal to the one of field `0`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'equalToField', $extra + [
@@ -1445,6 +1589,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must not be equal to the one of field `%s`', $secondField);
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must not be equal to the one of field `0`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notEqualToField', $extra + [
@@ -1470,6 +1626,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be greater than the one of field `%s`', $secondField);
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be greater than the one of field `{0}`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanField', $extra + [
@@ -1495,6 +1663,21 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf(
+                    'The provided value must be greater than or equal to the one of field `%s`',
+                    $secondField
+                );
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be greater than or equal to the one of field `{0}`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanOrEqualToField', $extra + [
@@ -1520,6 +1703,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be less than the one of field `%s`', $secondField);
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be less than the one of field `{0}`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanField', $extra + [
@@ -1545,6 +1740,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be less than or equal to the one of field `%s`', $secondField);
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be less than or equal to the one of field `{0}`',
+                    $secondField
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanOrEqualToField', $extra + [
@@ -1569,6 +1776,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a date';
+            } else {
+                $message = __d('cake', 'The provided value must be a date');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'date', $extra + [
@@ -1593,6 +1808,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a date and time';
+            } else {
+                $message = __d('cake', 'The provided value must be a date and time');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'dateTime', $extra + [
@@ -1612,6 +1835,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function time(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a time';
+            } else {
+                $message = __d('cake', 'The provided value must be a time');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'time', $extra + [
@@ -1636,6 +1867,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a localized time, date or date and time';
+            } else {
+                $message = __d('cake', 'The provided value must be a localized time, date or date and time');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'localizedTime', $extra + [
@@ -1655,6 +1894,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function boolean(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a boolean';
+            } else {
+                $message = __d('cake', 'The provided value must be a boolean');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'boolean', $extra + [
@@ -1679,6 +1926,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be decimal';
+            } else {
+                $message = __d('cake', 'The provided value must be decimal');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'decimal', $extra + [
@@ -1703,6 +1958,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an e-mail address';
+            } else {
+                $message = __d('cake', 'The provided value must be an e-mail address');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'email', $extra + [
@@ -1724,6 +1987,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function ip(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an IP address';
+            } else {
+                $message = __d('cake', 'The provided value must be an IP address');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'ip', $extra + [
@@ -1743,6 +2014,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function ipv4(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an IPv4 address';
+            } else {
+                $message = __d('cake', 'The provided value must be an IPv4 address');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'ipv4', $extra + [
@@ -1762,6 +2041,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function ipv6(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an IPv6 address';
+            } else {
+                $message = __d('cake', 'The provided value must be an IPv6 address');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'ipv6', $extra + [
@@ -1782,6 +2069,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function minLength(string $field, int $min, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be at least `%s` characters long', $min);
+            } else {
+                $message = __d('cake', 'The provided value must be at least `{0}` characters long', $min);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'minLength', $extra + [
@@ -1802,6 +2097,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function minLengthBytes(string $field, int $min, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be at least `%s` bytes long', $min);
+            } else {
+                $message = __d('cake', 'The provided value must be at least `{0}` bytes long', $min);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'minLengthBytes', $extra + [
@@ -1822,6 +2125,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function maxLength(string $field, int $max, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be at most `%s` characters long', $max);
+            } else {
+                $message = __d('cake', 'The provided value must be at most `{0}` characters long', $max);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'maxLength', $extra + [
@@ -1842,6 +2153,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function maxLengthBytes(string $field, int $max, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be at be most `%s` bytes long', $max);
+            } else {
+                $message = __d('cake', 'The provided value must be at most `{0}` bytes long', $max);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'maxLengthBytes', $extra + [
@@ -1861,6 +2180,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function numeric(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be numeric';
+            } else {
+                $message = __d('cake', 'The provided value must be numeric');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'numeric', $extra + [
@@ -1880,6 +2207,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function naturalNumber(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a natural number';
+            } else {
+                $message = __d('cake', 'The provided value must be a natural number');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'naturalNumber', $extra + [
@@ -1899,6 +2234,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function nonNegativeInteger(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a non-negative integer';
+            } else {
+                $message = __d('cake', 'The provided value must be a non-negative integer');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'nonNegativeInteger', $extra + [
@@ -1923,10 +2266,30 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         if (count($range) !== 2) {
             throw new InvalidArgumentException('The $range argument requires 2 numbers');
         }
+        $lowerBound = array_shift($range);
+        $upperBound = array_shift($range);
+
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf(
+                    'The provided value must be between `%s` and `%s`, inclusively',
+                    $lowerBound,
+                    $upperBound
+                );
+            } else {
+                $message = __d(
+                    'cake',
+                    'The provided value must be between `{0}` and `{1}`, inclusively',
+                    $lowerBound,
+                    $upperBound
+                );
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'range', $extra + [
-            'rule' => ['range', array_shift($range), array_shift($range)],
+            'rule' => ['range', $lowerBound, $upperBound],
         ]);
     }
 
@@ -1944,6 +2307,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function url(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a URL';
+            } else {
+                $message = __d('cake', 'The provided value must be a URL');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'url', $extra + [
@@ -1965,6 +2336,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function urlWithProtocol(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a URL with protocol';
+            } else {
+                $message = __d('cake', 'The provided value must be a URL with protocol');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'urlWithProtocol', $extra + [
@@ -1985,6 +2364,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function inList(string $field, array $list, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be one from the list of allowed values';
+            } else {
+                $message = __d('cake', 'The provided value must be one from the list of allowed values');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'inList', $extra + [
@@ -2004,6 +2391,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function uuid(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a UUID';
+            } else {
+                $message = __d('cake', 'The provided value must be a UUID');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'uuid', $extra + [
@@ -2028,6 +2423,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an uploaded file';
+            } else {
+                $message = __d('cake', 'The provided value must be an uploaded file');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'uploadedFile', $extra + [
@@ -2049,6 +2452,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function latLong(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a latitude/longitude coordinate';
+            } else {
+                $message = __d('cake', 'The provided value must be a latitude/longitude coordinate');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'latLong', $extra + [
@@ -2068,6 +2479,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function latitude(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a latitude';
+            } else {
+                $message = __d('cake', 'The provided value must be a latitude');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'latitude', $extra + [
@@ -2087,6 +2506,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function longitude(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be a longitude';
+            } else {
+                $message = __d('cake', 'The provided value must be a longitude');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'longitude', $extra + [
@@ -2106,6 +2533,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function ascii(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be ASCII bytes only';
+            } else {
+                $message = __d('cake', 'The provided value must be ASCII bytes only');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'ascii', $extra + [
@@ -2125,6 +2560,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function utf8(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be UTF-8 bytes only';
+            } else {
+                $message = __d('cake', 'The provided value must be UTF-8 bytes only');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'utf8', $extra + [
@@ -2146,6 +2589,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function utf8Extended(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be 3 and 4 byte UTF-8 sequences only';
+            } else {
+                $message = __d('cake', 'The provided value must be 3 and 4 byte UTF-8 sequences only');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'utf8Extended', $extra + [
@@ -2165,6 +2616,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function integer(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = 'The provided value must be an integer';
+            } else {
+                $message = __d('cake', 'The provided value must be an integer');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'integer', $extra + [
@@ -2237,6 +2696,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function hexColor(string $field, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            $message = 'The provided value must be a hex color';
+            if ($this->_useI18n) {
+                $message = __d('cake', 'The provided value must be a hex color');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'hexColor', $extra + [
@@ -2262,6 +2728,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if ($message === null) {
+            $message = 'The provided value must be a set of multiple options';
+            if ($this->_useI18n) {
+                $message = __d('cake', 'The provided value must be a set of multiple options');
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
         $caseInsensitive = $options['caseInsensitive'] ?? false;
         unset($options['caseInsensitive']);
@@ -2285,6 +2758,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function hasAtLeast(string $field, int $count, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must have at least `%s` elements', $count);
+            } else {
+                $message = __d('cake', 'The provided value must have at least `{0}` elements', $count);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'hasAtLeast', $extra + [
@@ -2312,6 +2793,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function hasAtMost(string $field, int $count, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must have at most `%s`elements', $count);
+            } else {
+                $message = __d('cake', 'The provided value must have at most `{0}`elements', $count);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'hasAtMost', $extra + [
@@ -2371,6 +2860,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function regex(string $field, string $regex, ?string $message = null, Closure|string|null $when = null)
     {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must match against the pattern `%s`', $regex);
+            } else {
+                $message = __d('cake', 'The provided value must match against the pattern `{0}`', $regex);
+            }
+        }
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'regex', $extra + [
