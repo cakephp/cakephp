@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
@@ -80,7 +79,6 @@ class BaseApplicationTest extends TestCase
         $container = $app->getContainer();
         $this->assertSame($request, $container->get(ServerRequest::class));
         $this->assertSame($container, $container->get(ContainerInterface::class));
-        $this->assertInstanceOf(ComponentRegistry::class, $container->get(ComponentRegistry::class));
     }
 
     /**
