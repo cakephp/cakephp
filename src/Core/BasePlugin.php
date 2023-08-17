@@ -175,7 +175,7 @@ class BasePlugin implements PluginInterface
     public function enable($hook)
     {
         $this->checkHook($hook);
-        $this->{"{$hook}Enabled}"} = true;
+        $this->{"{$hook}Enabled"} = true;
 
         return $this;
     }
