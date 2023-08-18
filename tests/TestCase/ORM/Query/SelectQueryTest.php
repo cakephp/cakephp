@@ -1864,7 +1864,7 @@ class SelectQueryTest extends TestCase
         $cacher->expects($this->once())
             ->method('get')
             ->with('my_key')
-            ->will($this->returnValue($resultSet));
+            ->willReturn($resultSet);
 
         $query->cache('my_key', $cacher)
             ->where(['id' => 1]);
@@ -2342,7 +2342,7 @@ class SelectQueryTest extends TestCase
 
         $query->expects($this->once())
             ->method('_performCount')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');

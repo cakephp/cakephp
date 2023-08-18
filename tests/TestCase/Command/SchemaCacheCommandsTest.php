@@ -106,7 +106,7 @@ class SchemaCacheCommandsTest extends TestCase
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('set')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->exec('schema_cache build --connection test');
         $this->assertExitSuccess();
@@ -120,10 +120,10 @@ class SchemaCacheCommandsTest extends TestCase
         $this->cache->expects($this->once())
             ->method('set')
             ->with('test_articles')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->cache->expects($this->never())
             ->method('delete')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->exec('schema_cache build --connection test articles');
         $this->assertExitSuccess();
@@ -137,12 +137,12 @@ class SchemaCacheCommandsTest extends TestCase
         $this->cache->expects($this->once())
             ->method('set')
             ->with('test_articles')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->cache->expects($this->never())
             ->method('get');
         $this->cache->expects($this->never())
             ->method('delete')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->exec('schema_cache build --connection test articles');
         $this->assertExitSuccess();
@@ -173,7 +173,7 @@ class SchemaCacheCommandsTest extends TestCase
     {
         $this->cache->expects($this->atLeastOnce())
             ->method('delete')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();
@@ -186,11 +186,11 @@ class SchemaCacheCommandsTest extends TestCase
     {
         $this->cache->expects($this->never())
             ->method('set')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->cache->expects($this->once())
             ->method('delete')
             ->with('test_articles')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->exec('schema_cache clear --connection test articles');
         $this->assertExitSuccess();

@@ -122,7 +122,7 @@ class PluginAssetsCommandsTest extends TestCase
         $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
             ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
             ->getMock();
-        $command->method('getOptionParser')->will($this->returnValue($parser));
+        $command->method('getOptionParser')->willReturn($parser);
 
         $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 

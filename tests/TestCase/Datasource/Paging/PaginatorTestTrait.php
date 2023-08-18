@@ -86,12 +86,12 @@ trait PaginatorTestTrait
     {
         $this->Post->expects($this->any())
             ->method('getAlias')
-            ->will($this->returnValue('Posts'));
+            ->willReturn('Posts');
 
         $query = $this->_getMockFindQuery();
         $this->Post->expects($this->any())
             ->method('find')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $params = ['page' => '1 " onclick="alert(\'xss\');">'];
         $settings = ['limit' => 1, 'maxLimit' => 10];
@@ -120,7 +120,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('applyOptions')
@@ -195,7 +195,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('applyOptions')
@@ -225,7 +225,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('applyOptions')
@@ -257,7 +257,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('applyOptions')
@@ -615,7 +615,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -643,10 +643,10 @@ trait PaginatorTestTrait
         $model = $this->getMockRepository();
         $model->expects($this->any())
             ->method('getAlias')
-            ->will($this->returnValue('model'));
+            ->willReturn('model');
         $model->expects($this->any())
             ->method('hasField')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $options = ['sort' => 'something', 'direction' => 'boogers'];
         $result = $this->Paginator->validateSort($model, $options);
@@ -665,7 +665,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -698,7 +698,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -740,7 +740,7 @@ trait PaginatorTestTrait
 
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())->method('applyOptions')
             ->with([
@@ -867,9 +867,9 @@ trait PaginatorTestTrait
         $model = $this->getMockRepository();
         $model->expects($this->any())
             ->method('getAlias')
-            ->will($this->returnValue('model'));
+            ->willReturn('model');
         $model->expects($this->once())->method('hasField')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $options = [
             'sort' => 'score',
@@ -929,10 +929,10 @@ trait PaginatorTestTrait
         $model = $this->getMockRepository();
         $model->expects($this->any())
             ->method('getAlias')
-            ->will($this->returnValue($modelAlias));
+            ->willReturn($modelAlias);
         $model->expects($this->any())
             ->method('hasField')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $model;
     }
@@ -1297,11 +1297,11 @@ trait PaginatorTestTrait
 
         $query->expects($this->any())
             ->method('count')
-            ->will($this->returnValue(2));
+            ->willReturn(2);
 
         $query->expects($this->any())
             ->method('all')
-            ->will($this->returnValue($results));
+            ->willReturn($results);
 
         if ($table) {
             $query->setRepository($table);

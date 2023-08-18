@@ -1008,7 +1008,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -1057,7 +1057,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -1139,12 +1139,12 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
-            ->will($this->returnValue('5.6.0'));
+            ->willReturn('5.6.0');
 
         $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
@@ -1207,12 +1207,12 @@ SQL;
             ->getMock();
         $connection->expects($this->any())
             ->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $this->pdo
             ->expects($this->any())
             ->method('getAttribute')
-            ->will($this->returnValue('5.7.0'));
+            ->willReturn('5.7.0');
 
         $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
@@ -1253,7 +1253,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
@@ -1273,7 +1273,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
@@ -1337,7 +1337,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
@@ -1355,7 +1355,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);

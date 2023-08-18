@@ -172,7 +172,7 @@ class AssociationProxyTest extends TestCase
 
         $mock->expects($this->once())->method('crazy')
             ->with('a', 'b')
-            ->will($this->returnValue('thing'));
+            ->willReturn('thing');
         $this->assertSame('thing', $articles->authors->crazy('a', 'b'));
     }
 }

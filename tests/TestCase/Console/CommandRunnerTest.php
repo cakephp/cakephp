@@ -520,7 +520,7 @@ class CommandRunnerTest extends TestCase
             ->setConstructorArgs([$this->config])
             ->getMock();
         $collection = new CommandCollection($commands);
-        $app->method('console')->will($this->returnValue($collection));
+        $app->method('console')->willReturn($collection);
 
         return $app;
     }
