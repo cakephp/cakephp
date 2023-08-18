@@ -179,9 +179,9 @@ class SqliteTest extends TestCase
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
+            ->willReturnCallback(function ($value) {
                 return '"' . $value . '"';
-            }));
+            });
 
         $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])

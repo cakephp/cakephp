@@ -712,11 +712,11 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->once())
             ->method('save')
-            ->will($this->returnCallback(function (EntityInterface $e) {
+            ->willReturnCallback(function (EntityInterface $e) {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
-            }));
+            });
 
         $this->assertTrue($assoc->link($entity, $tags));
         $this->assertSame($entity->tags, $tags);
