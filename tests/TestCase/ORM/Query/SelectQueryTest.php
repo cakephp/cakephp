@@ -2364,7 +2364,7 @@ class SelectQueryTest extends TestCase
 
         $query->expects($this->exactly(2))
             ->method('_performCount')
-            ->will($this->onConsecutiveCalls(1, 2));
+            ->willReturn(1, 2);
 
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');

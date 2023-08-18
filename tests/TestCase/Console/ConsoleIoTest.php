@@ -368,13 +368,13 @@ class ConsoleIoTest extends TestCase
                     [PHP_EOL, 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 $number,
                 9,
                 9,
                 1,
                 0
-            ));
+            );
 
         $this->io->out('Some <info>text</info> I want to overwrite', 0);
         $this->io->overwrite('Less text');
@@ -403,7 +403,7 @@ class ConsoleIoTest extends TestCase
                     [str_repeat(' ', $length - 2), 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 $length,
                 $length,
                 3,
@@ -411,7 +411,7 @@ class ConsoleIoTest extends TestCase
                 $length,
                 2,
                 $length - 2
-            ));
+            );
 
         $this->io->out('12345');
         $this->io->overwrite('123', 0);
@@ -436,13 +436,13 @@ class ConsoleIoTest extends TestCase
                     ['12345', 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 1,
                 1,
                 3,
                 3,
                 5
-            ));
+            );
 
         $this->io->out('1');
         $this->io->overwrite('123', 0);

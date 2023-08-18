@@ -65,11 +65,7 @@ class PostgresTest extends TestCase
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
-            ->will($this->onConsecutiveCalls(
-                $this->returnArgument(0),
-                $this->returnArgument(0),
-                $this->returnArgument(0)
-            ));
+            ->willReturnArgument(0);
 
         $connection->expects($this->exactly(2))
             ->method('exec')
@@ -125,11 +121,7 @@ class PostgresTest extends TestCase
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
-            ->will($this->onConsecutiveCalls(
-                $this->returnArgument(0),
-                $this->returnArgument(0),
-                $this->returnArgument(0)
-            ));
+            ->willReturnArgument(0);
 
         $connection->expects($this->exactly(5))
             ->method('exec')

@@ -452,13 +452,13 @@ class DriverTest extends TestCase
             ->willReturn(true);
         $pdo->expects($this->exactly(5))
             ->method('inTransaction')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 false,
                 true,
                 true,
                 false,
                 true,
-            ));
+            );
 
         $driver = $this->getMockForAbstractClass(
             StubDriver::class,
