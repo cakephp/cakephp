@@ -78,7 +78,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
             ->method('read')
-            ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
+            ->willReturn("220 Welcome message\r\n", "250 Accepted\r\n");
         $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
     }
@@ -93,12 +93,12 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(4))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
                 "220 Server ready\r\n",
                 "250 Accepted\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(3))
             ->method('write')
             ->with(
@@ -124,11 +124,11 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
                 "500 5.3.3 Unrecognized command\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -161,12 +161,12 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(4))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "504 5.7.4 Unrecognized authentication type\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(3))
             ->method('write')
             ->with(
@@ -188,11 +188,11 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
                 "235 OK\r\n",
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -213,13 +213,13 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->any())
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH LOGIN\r\n",
                 "334 Login\r\n",
                 "334 Pass\r\n",
                 "235 OK\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(4))
             ->method('write')
             ->with(
@@ -243,11 +243,11 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(3))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "200 Not Accepted\r\n",
                 "250 Accepted\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -268,11 +268,11 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(3))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "200 Not Accepted\r\n",
                 "200 Not Accepted\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -307,10 +307,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
-            ));
+            );
         $this->socket->expects($this->exactly(1))
             ->method('write')
             ->with(
@@ -333,10 +333,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
-            ));
+            );
         $this->socket->expects($this->exactly(1))
             ->method('write')
             ->with(
@@ -358,10 +358,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
-            ));
+            );
         $this->socket->expects($this->exactly(1))
             ->method('write')
             ->with(
@@ -380,10 +380,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
-            ));
+            );
         $this->socket->expects($this->exactly(1))
             ->method('write')
             ->with(...self::withConsecutive(
@@ -409,12 +409,12 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(4))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "334 Login\r\n",
                 "334 Pass\r\n",
                 "235 OK\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(4))
             ->method('write')
             ->with(
@@ -443,9 +443,9 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(1))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "235 OK\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(1))
             ->method('write')
             ->with(
@@ -469,10 +469,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "500 5.3.3 Unrecognized command\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -496,10 +496,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "502 5.3.3 Command not implemented\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -522,10 +522,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "503 5.5.1 Already authenticated\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(2))
             ->method('write')
             ->with(
@@ -545,11 +545,11 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(3))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "334 Login\r\n",
                 "535 5.7.8 Authentication failed\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(3))
             ->method('write')
             ->with(
@@ -581,12 +581,12 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(4))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "334 Login\r\n",
                 "334 Pass\r\n",
                 "535 5.7.8 Authentication failed\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(4))
             ->method('write')
             ->with(
@@ -701,10 +701,10 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "354 OK\r\n",
                 "250 OK\r\n"
-            ));
+            );
 
         $this->socket->expects($this->exactly(2))
             ->method('write')
@@ -737,7 +737,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
            ->method('read')
-           ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
+           ->willReturn("220 Welcome message\r\n", "250 Accepted\r\n");
 
         $this->SmtpTransport->setConfig(['client' => '']);
 
@@ -756,7 +756,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250-PIPELINING\r\n",
                 "250-SIZE 102400000\r\n",
@@ -768,7 +768,7 @@ class SmtpTransportTest extends TestCase
                 "250-ENHANCEDSTATUSCODES\r\n",
                 "250-8BITMIME\r\n",
                 "250 DSN\r\n"
-            ));
+            );
         $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
 
@@ -863,10 +863,10 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->exactly(2))
             ->method('isConnected')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 true,
                 false
-            ));
+            );
 
         $this->assertTrue($this->SmtpTransport->connected());
         $this->assertFalse($this->SmtpTransport->connected());
@@ -932,7 +932,7 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->exactly(11))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
                 "250 OK\r\n",
@@ -945,7 +945,7 @@ class SmtpTransportTest extends TestCase
                 "250 OK\r\n",
                 "354 OK\r\n",
                 "250 OK\r\n"
-            ));
+            );
         $this->socket->expects($this->exactly(10))
             ->method('write')
             ->with(
@@ -988,14 +988,14 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->atLeast(6))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "354 OK\r\n",
                 "250 OK\r\n"
-            ));
+            );
 
         $this->socket->expects($this->atLeast(6))
             ->method('write')
@@ -1032,14 +1032,14 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->expects($this->atLeast(6))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "250 OK\r\n",
                 "354 OK\r\n",
                 'Message size too large'
-            ));
+            );
 
         $this->socket->expects($this->exactly(5))
             ->method('write')
@@ -1067,10 +1067,10 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->once())->method('connect')->willReturn(true);
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n"
-            ));
+            );
         $this->socket->expects($this->once())
             ->method('write')
             ->with("EHLO localhost\r\n");

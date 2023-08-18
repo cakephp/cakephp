@@ -782,7 +782,7 @@ class ClientTest extends TestCase
                     ]
                 )
             )
-            ->will($this->onConsecutiveCalls([$redirect], [$redirect2], [$response]));
+            ->willReturn([$redirect], [$redirect2], [$response]);
 
         $client = new Client([
             'adapter' => $adapter,
@@ -874,7 +874,7 @@ class ClientTest extends TestCase
                     ]
                 )
             )
-            ->will($this->OnConsecutiveCalls([$redirect], [$response]));
+            ->willReturn([$redirect], [$response]);
 
         $client = new Client([
             'adapter' => $adapter,
