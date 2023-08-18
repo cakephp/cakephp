@@ -1218,7 +1218,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
@@ -1249,7 +1248,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
@@ -1281,7 +1279,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
@@ -1310,7 +1307,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
