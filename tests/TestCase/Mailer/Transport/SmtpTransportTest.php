@@ -902,7 +902,7 @@ class SmtpTransportTest extends TestCase
         $callback = function ($arg): void {
             $this->assertNotEquals("QUIT\r\n", $arg);
         };
-        $this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
+        $this->socket->expects($this->any())->method('write')->willReturnCallback($callback);
         $this->socket->expects($this->never())->method('disconnect');
         $this->SmtpTransport->disconnect();
     }
@@ -927,7 +927,7 @@ class SmtpTransportTest extends TestCase
 
             return 1;
         };
-        $this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
+        $this->socket->expects($this->any())->method('write')->willReturnCallback($callback);
         $this->socket->expects($this->never())->method('disconnect');
 
         $this->socket->expects($this->exactly(11))

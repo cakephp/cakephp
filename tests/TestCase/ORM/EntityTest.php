@@ -167,11 +167,11 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->name);
     }
@@ -187,18 +187,18 @@ class EntityTest extends TestCase
         $entity->setAccess('*', true);
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->expects($this->once())->method('_setStuff')
             ->with(['a', 'b'])
-            ->will($this->returnCallback(function ($stuff) {
+            ->willReturnCallback(function ($stuff) {
                 $this->assertEquals(['a', 'b'], $stuff);
 
                 return ['c', 'd'];
-            }));
+            });
         $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
         $this->assertSame('Dr. Jones', $entity->name);
         $this->assertEquals(['c', 'd'], $entity->stuff);
@@ -309,9 +309,9 @@ class EntityTest extends TestCase
         $entity->expects($this->any())
             ->method('_getName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->get('name'));
         $this->assertSame('Dr. Jones', $entity->get('name'));
@@ -327,9 +327,9 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->any())
             ->method('_getName')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->get('name'));
         $this->assertSame('Dr. Jones', $entity->get('name'));
@@ -349,9 +349,9 @@ class EntityTest extends TestCase
             ->addMethods(['_getName'])
             ->getMock();
         $entity->expects($this->any())->method('_getName')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->get('name'));
 
@@ -368,9 +368,9 @@ class EntityTest extends TestCase
             ->addMethods(['_getListIdName'])
             ->getMock();
         $entity->expects($this->any())->method('_getListIdName')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function () {
                 return 'A name';
-            }));
+            });
         $entity->setVirtual(['ListIdName']);
         $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
         $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
@@ -398,11 +398,11 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->name = 'Jones';
         $this->assertSame('Dr. Jones', $entity->name);
     }
@@ -418,11 +418,11 @@ class EntityTest extends TestCase
         $entity->expects($this->once())
             ->method('_setName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->Name = 'Jones';
         $this->assertSame('Dr. Jones', $entity->Name);
     }
@@ -437,11 +437,11 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->once())->method('_getName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->name);
     }
@@ -457,11 +457,11 @@ class EntityTest extends TestCase
         $entity->expects($this->once())
             ->method('_getName')
             ->with('Jones')
-            ->will($this->returnCallback(function ($name) {
+            ->willReturnCallback(function ($name) {
                 $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
-            }));
+            });
         $entity->set('Name', 'Jones');
         $this->assertSame('Dr. Jones', $entity->Name);
     }

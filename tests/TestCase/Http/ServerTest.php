@@ -138,9 +138,9 @@ class ServerTest extends TestCase
         $app->expects($this->once())
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))
-            ->will($this->returnCallback(function ($middleware) {
+            ->willReturnCallback(function ($middleware) {
                 return $middleware;
-            }));
+            });
 
         $server = new Server($app);
         $res = $server->run($request);

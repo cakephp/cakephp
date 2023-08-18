@@ -3389,11 +3389,11 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->will($this->returnCallback(function (EventInterface $event) {
+            ->willReturnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
 
                 return $event;
-            }));
+            });
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
@@ -3411,12 +3411,12 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->will($this->returnCallback(function (EventInterface $event) {
+            ->willReturnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
                 $event->setResult('got stopped');
 
                 return $event;
-            }));
+            });
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
