@@ -105,7 +105,7 @@ class DebuggerTest extends TestCase
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
-        $pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
+        $pattern = '/<code.*?>.*?<span style="color: #[0-9A-F]+">.*?&lt;\?php/';
         $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $result = Debugger::excerpt(__FILE__, 11, 2);
