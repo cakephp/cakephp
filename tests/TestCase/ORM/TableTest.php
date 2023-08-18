@@ -1262,7 +1262,7 @@ class TableTest extends TestCase
         $options = ['fields' => ['a', 'b']];
         $query->expects($this->any())
             ->method('select')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $query->expects($this->once())->method('getOptions')
             ->will($this->returnValue([]));
@@ -5437,7 +5437,7 @@ class TableTest extends TestCase
             ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => 10])
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
@@ -5489,7 +5489,7 @@ class TableTest extends TestCase
             ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => 10])
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
@@ -5557,10 +5557,10 @@ class TableTest extends TestCase
             ->with(['fields' => ['id']]);
         $query->expects($this->once())->method('where')
             ->with([$table->getAlias() . '.bar' => $primaryKey])
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $query->expects($this->once())->method('cache')
             ->with($cacheKey, $cacheConfig)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $query->expects($this->once())->method('firstOrFail')
             ->will($this->returnValue($entity));
 

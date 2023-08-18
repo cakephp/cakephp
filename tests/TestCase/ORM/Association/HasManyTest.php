@@ -477,7 +477,7 @@ class HasManyTest extends TestCase
         );
         $query->expects($this->once())->method('andWhere')
             ->with($tuple)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
         $row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
