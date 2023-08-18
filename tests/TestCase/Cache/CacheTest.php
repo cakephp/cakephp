@@ -260,7 +260,7 @@ class CacheTest extends TestCase
     public function testConfigFailedInit(): void
     {
         $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
-        $mock->method('init')->will($this->returnValue(false));
+        $mock->method('init')->willReturn(false);
         Cache::setConfig('tests', [
             'engine' => $mock,
         ]);

@@ -1174,7 +1174,7 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())
             ->method('updateQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('execute')
@@ -1234,7 +1234,7 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())
             ->method('deleteQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('execute')
@@ -1257,7 +1257,7 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())
             ->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $options = ['fields' => ['a', 'b']];
         $query->expects($this->any())
@@ -1265,7 +1265,7 @@ class TableTest extends TestCase
             ->will($this->returnSelf());
 
         $query->expects($this->once())->method('getOptions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
         $query->expects($this->once())
             ->method('applyOptions')
             ->with($options);
@@ -1442,12 +1442,12 @@ class TableTest extends TestCase
         $table->expects($this->once())
             ->method('find')
             ->with('threaded', ['order' => ['name' => 'ASC']])
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $table->expects($this->once())
             ->method('findList')
             ->with($query, 'id')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $result = $table
             ->find('threaded', ['order' => ['name' => 'ASC']])
@@ -2477,13 +2477,13 @@ class TableTest extends TestCase
         ]);
 
         $table->expects($this->once())->method('insertQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())->method('execute')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
 
         $statement->expects($this->once())->method('rowCount')
-            ->will($this->returnValue(0));
+            ->willReturn(0);
 
         $called = false;
         $listener = function ($e, $entity, $options) use (&$called): void {
@@ -2576,7 +2576,7 @@ class TableTest extends TestCase
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
-        $connection->expects($this->any())->method('inTransaction')->will($this->returnValue(true));
+        $connection->expects($this->any())->method('inTransaction')->willReturn(true);
         $data = new Entity([
             'username' => 'superuser',
             'created' => new DateTime('2013-10-10 00:00'),
@@ -2609,10 +2609,10 @@ class TableTest extends TestCase
             ->setConstructorArgs([$table])
             ->getMock();
         $table->expects($this->any())->method('getConnection')
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $table->expects($this->once())->method('insertQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
@@ -2651,20 +2651,20 @@ class TableTest extends TestCase
             ->getMock();
 
         $table->expects($this->any())->method('getConnection')
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $table->expects($this->once())->method('insertQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())
             ->method('rowCount')
-            ->will($this->returnValue(0));
+            ->willReturn(0);
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
 
         $data = new Entity([
             'username' => 'superuser',
@@ -2828,10 +2828,10 @@ class TableTest extends TestCase
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
-            ->will($this->returnValue('00000'));
+            ->willReturn('00000');
 
         $connection->expects($this->once())->method('run')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
 
         $entity = new Entity([
             'id' => 2,
@@ -4218,17 +4218,17 @@ class TableTest extends TestCase
         $articles->expects($this->once())
             ->method('_insert')
             ->with($entity, ['title' => 'bar'])
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $authors->expects($this->once())
             ->method('_insert')
             ->with($entity->author, ['name' => 'Juan'])
-            ->will($this->returnValue($entity->author));
+            ->willReturn($entity->author);
 
         $supervisors->expects($this->once())
             ->method('_insert')
             ->with($entity->author->supervisor, ['name' => 'Marc'])
-            ->will($this->returnValue($entity->author->supervisor));
+            ->willReturn($entity->author->supervisor);
 
         $tags->expects($this->never())->method('_insert');
 
@@ -5430,7 +5430,7 @@ class TableTest extends TestCase
             ->getMock();
 
         $table->expects($this->once())->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $entity = new Entity();
         $query->expects($this->once())->method('applyOptions')
@@ -5440,7 +5440,7 @@ class TableTest extends TestCase
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $result = $table->get(10, ...$options);
         $this->assertSame($entity, $result);
@@ -5480,7 +5480,7 @@ class TableTest extends TestCase
             ->getMock();
 
         $table->expects($this->once())->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $table->expects($this->any())->method('findCustom')
             ->willReturn($query);
 
@@ -5492,7 +5492,7 @@ class TableTest extends TestCase
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $result = $table->get(10, ...$options);
         $this->assertSame($entity, $result);
@@ -5550,7 +5550,7 @@ class TableTest extends TestCase
             ->getMock();
 
         $table->expects($this->once())->method('selectQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $entity = new Entity();
         $query->expects($this->once())->method('applyOptions')
@@ -5562,7 +5562,7 @@ class TableTest extends TestCase
             ->with($cacheKey, $cacheConfig)
             ->will($this->returnSelf());
         $query->expects($this->once())->method('firstOrFail')
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $result = $table->get($primaryKey, ...$options);
         $this->assertSame($entity, $result);
@@ -5642,14 +5642,14 @@ class TableTest extends TestCase
         $table->belongsTo('users');
         $table->hasMany('articles');
         $table->expects($this->once())->method('marshaller')
-            ->will($this->returnValue($marshaller));
+            ->willReturn($marshaller);
 
         $entity = new Entity();
         $data = ['foo' => 'bar'];
         $marshaller->expects($this->once())
             ->method('merge')
             ->with($entity, $data, ['associated' => ['users', 'articles']])
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
         $table->patchEntity($entity, $data);
     }
 
@@ -5683,14 +5683,14 @@ class TableTest extends TestCase
         $table->belongsTo('users');
         $table->hasMany('articles');
         $table->expects($this->once())->method('marshaller')
-            ->will($this->returnValue($marshaller));
+            ->willReturn($marshaller);
 
         $entities = [new Entity()];
         $data = [['foo' => 'bar']];
         $marshaller->expects($this->once())
             ->method('mergeMany')
             ->with($entities, $data, ['associated' => ['users', 'articles']])
-            ->will($this->returnValue($entities));
+            ->willReturn($entities);
         $table->patchEntities($entities, $data);
     }
 

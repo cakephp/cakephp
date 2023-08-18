@@ -119,7 +119,7 @@ class MysqlTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
         $driver->connect($config);
     }
 
@@ -180,7 +180,7 @@ class MysqlTest extends TestCase
         $connection->expects($this->once())
             ->method('getAttribute')
             ->with(PDO::ATTR_SERVER_VERSION)
-            ->will($this->returnValue($dbVersion));
+            ->willReturn($dbVersion);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
         $driver = $this->getMockBuilder(Mysql::class)

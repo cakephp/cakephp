@@ -240,7 +240,7 @@ class AssociationTest extends TestCase
         $this->association
             ->expects($this->once())
             ->method('isOwningSide')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $result = $this->association->getBindingKey();
         $this->assertEquals(['id', 'site_id'], $result);
     }
@@ -258,7 +258,7 @@ class AssociationTest extends TestCase
         $this->association
             ->expects($this->once())
             ->method('isOwningSide')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $result = $this->association->getBindingKey();
         $this->assertEquals(['foo', 'site_id'], $result);
     }

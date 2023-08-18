@@ -105,7 +105,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('y'));
+            ->willReturn('y');
 
         $result = $this->io->askChoice('Just a test?', $choices);
         $this->assertSame('y', $result);
@@ -121,7 +121,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('Y'));
+            ->willReturn('Y');
 
         $result = $this->io->askChoice('Just a test?', $choices);
         $this->assertSame('Y', $result);
@@ -138,7 +138,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('y'));
+            ->willReturn('y');
 
         $result = $this->io->ask('Just a test?');
         $this->assertSame('y', $result);
@@ -155,7 +155,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue(''));
+            ->willReturn('');
 
         $result = $this->io->ask('Just a test?', 'n');
         $this->assertSame('n', $result);
@@ -711,7 +711,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('q'));
+            ->willReturn('q');
 
         $this->io->createFile($file, 'some content');
     }
@@ -730,7 +730,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('n'));
+            ->willReturn('n');
 
         $contents = 'new content';
         $result = $this->io->createFile($file, $contents);
@@ -774,7 +774,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('a'));
+            ->willReturn('a');
 
         $this->io->createFile($file, 'new content');
         $this->assertStringEqualsFile($file, 'new content');

@@ -497,7 +497,7 @@ class EntityTest extends TestCase
             ->addMethods(['_getThings'])
             ->getMock();
         $entity->expects($this->never())->method('_getThings')
-            ->will($this->returnValue(0));
+            ->willReturn(0);
         $this->assertTrue($entity->has('things'));
     }
 
@@ -588,10 +588,7 @@ class EntityTest extends TestCase
             ->with(
                 ...self::withConsecutive(['foo'], ['bar'])
             )
-            ->will($this->onConsecutiveCalls(
-                $this->returnValue('worked'),
-                $this->returnValue('worked too')
-            ));
+            ->willReturn('worked', 'worked too');
 
         $this->assertSame('worked', $entity['foo']);
         $this->assertSame('worked too', $entity['bar']);
@@ -705,7 +702,7 @@ class EntityTest extends TestCase
         $phone = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['jsonSerialize'])
             ->getMock();
-        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue(['something']));
+        $phone->expects($this->once())->method('jsonSerialize')->willReturn(['something']);
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);
         $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something']];
@@ -995,7 +992,7 @@ class EntityTest extends TestCase
         $entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
         $entity->expects($this->any())
             ->method('_getName')
-            ->will($this->returnValue('Jose'));
+            ->willReturn('Jose');
 
         $expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
@@ -1065,7 +1062,7 @@ class EntityTest extends TestCase
 
         $entity->expects($this->any())
             ->method('_getName')
-            ->will($this->returnValue('Jose'));
+            ->willReturn('Jose');
         $entity->set(['email' => 'mark@example.com']);
 
         $entity->setVirtual(['name']);

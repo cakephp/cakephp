@@ -625,7 +625,7 @@ class ControllerTest extends TestCase
                     })]
                 )
             )
-            ->will($this->returnValue(new Event('stub')));
+            ->willReturn(new Event('stub'));
 
         $controller->startupProcess();
     }
@@ -643,7 +643,7 @@ class ControllerTest extends TestCase
             ->with($this->callback(function (EventInterface $event) {
                 return $event->getName() === 'Controller.shutdown';
             }))
-            ->will($this->returnValue(new Event('stub')));
+            ->willReturn(new Event('stub'));
 
         $controller->shutdownProcess();
     }

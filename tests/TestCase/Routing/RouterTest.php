@@ -2999,7 +2999,7 @@ class RouterTest extends TestCase
             ->getMock();
         $route->expects($this->any())
             ->method('match')
-            ->will($this->returnValue($url));
+            ->willReturn($url);
 
         Router::createRouteBuilder('/')->connect($route);
 

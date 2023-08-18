@@ -181,7 +181,7 @@ class ResultSetFactoryTest extends TestCase
         $row = ['Other__field' => 'test'];
         $statement = $this->createMock(StatementInterface::class);
         $statement->method('fetchAll')
-            ->will($this->returnValue([$row]));
+            ->willReturn([$row]);
 
         $results = $this->factory->createResultSet($query, $statement->fetchAll());
         $this->assertNotEmpty($results);

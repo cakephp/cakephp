@@ -180,7 +180,7 @@ class SqlserverTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $driver->connect();
     }
@@ -239,9 +239,9 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('version')
-            ->will($this->returnValue('12'));
+            ->willReturn('12');
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -284,9 +284,9 @@ class SqlserverTest extends TestCase
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
-            ->will($this->returnValue('8'));
+            ->willReturn('8');
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -406,7 +406,7 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $connection = new Connection(['driver' => $driver, 'log' => false]);
         $query = new InsertQuery($connection);
         $query->insert(['title'])
@@ -427,9 +427,9 @@ class SqlserverTest extends TestCase
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
-            ->will($this->returnValue('8'));
+            ->willReturn('8');
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -458,9 +458,9 @@ class SqlserverTest extends TestCase
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
-            ->will($this->returnValue('8'));
+            ->willReturn('8');
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 

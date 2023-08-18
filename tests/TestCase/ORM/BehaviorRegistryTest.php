@@ -267,7 +267,7 @@ class BehaviorRegistryTest extends TestCase
             ->expects($this->once())
             ->method('slugify')
             ->with(['some value'])
-            ->will($this->returnValue('some-thing'));
+            ->willReturn('some-thing');
         $return = $this->Behaviors->call('slugify', [['some value']]);
         $this->assertSame('some-thing', $return);
     }
@@ -303,7 +303,7 @@ class BehaviorRegistryTest extends TestCase
             ->expects($this->once())
             ->method('findNoSlug')
             ->with($query)
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $return = $this->Behaviors->callFinder('noSlug', $query);
         $this->assertSame($query, $return);
     }

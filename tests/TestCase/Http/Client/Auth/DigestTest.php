@@ -86,7 +86,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -114,7 +114,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
         $request = $this->auth->authentication($request, $auth);
@@ -137,7 +137,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -160,7 +160,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -181,7 +181,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -339,7 +339,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', $method, [], $data);
         $request = $this->auth->authentication($request, $auth);
@@ -357,7 +357,7 @@ class DigestTest extends TestCase
         $response = new Response($headers, '');
         $this->client->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($response));
+            ->willReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);

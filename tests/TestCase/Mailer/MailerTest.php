@@ -397,7 +397,7 @@ class MailerTest extends TestCase
             ->with('foo', 'bar');
         $mailer->expects($this->any())
             ->method('deliver')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $mailer->send('test', ['foo', 'bar']);
 
@@ -1113,7 +1113,7 @@ class MailerTest extends TestCase
             ->with('foo', 'bar');
         $mailer->expects($this->any())
             ->method('deliver')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertSame('test', $mailer->viewBuilder()->getTemplate());
@@ -1306,7 +1306,7 @@ class MailerTest extends TestCase
             ->with('foo', 'bar');
         $mailer->expects($this->once())
             ->method('deliver')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());

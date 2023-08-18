@@ -82,7 +82,7 @@ class PostgresTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $driver->connect();
     }
@@ -145,7 +145,7 @@ class PostgresTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $driver->connect();
     }
@@ -180,7 +180,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -208,7 +208,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 

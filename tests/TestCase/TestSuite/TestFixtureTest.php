@@ -174,7 +174,7 @@ class TestFixtureTest extends TestCase
             ->getMock();
         $db->expects($this->once())
             ->method('insertQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $query->expects($this->once())
             ->method('insert')
@@ -206,7 +206,7 @@ class TestFixtureTest extends TestCase
 
         $query->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
 
         $this->assertSame(true, $fixture->insert($db));
     }

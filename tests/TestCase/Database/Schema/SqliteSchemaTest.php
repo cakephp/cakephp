@@ -687,7 +687,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('posts');
 
@@ -705,7 +705,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('posts');
         $result = $table->dropConstraintSql($connection);
@@ -893,7 +893,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('articles'))->addColumn('id', [
                 'type' => 'integer',
@@ -943,7 +943,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
@@ -963,7 +963,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
@@ -1029,7 +1029,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
@@ -1047,7 +1047,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $statement = $this->getMockBuilder('\PDOStatement')
             ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
@@ -1055,11 +1055,11 @@ SQL;
         $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
         $statement->expects($this->once())
             ->method('fetch')
-            ->will($this->returnValue(['1']));
-        $statement->method('execute')->will($this->returnValue(true));
+            ->willReturn(['1']);
+        $statement->method('execute')->willReturn(true);
 
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
@@ -1078,7 +1078,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $statement = $this->getMockBuilder('\PDOStatement')
             ->onlyMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
@@ -1086,11 +1086,11 @@ SQL;
         $this->pdo->expects($this->once())
             ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
         $statement->expects($this->once())
             ->method('fetch')
-            ->will($this->returnValue(false));
-        $statement->method('execute')->will($this->returnValue(true));
+            ->willReturn(false);
+        $statement->method('execute')->willReturn(true);
 
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);

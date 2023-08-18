@@ -75,7 +75,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectEhlo(): void
     {
-        $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
             ->method('read')
             ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
@@ -89,7 +89,7 @@ class SmtpTransportTest extends TestCase
     public function testConnectEhloTls(): void
     {
         $this->SmtpTransport->setConfig(['tls' => true]);
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(4))
             ->method('read')
@@ -109,8 +109,7 @@ class SmtpTransportTest extends TestCase
                 )
             );
         $this->socket->expects($this->once())->method('enableCrypto')
-            ->with('tls')
-            ->will($this->returnValue(true));
+            ->with('tls');
 
         $this->SmtpTransport->connect();
     }
@@ -121,7 +120,7 @@ class SmtpTransportTest extends TestCase
     public function testConnectEhloTlsOnNonTlsServer(): void
     {
         $this->SmtpTransport->setConfig(['tls' => true]);
-        $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->any())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
@@ -178,14 +177,14 @@ class SmtpTransportTest extends TestCase
                 )
             );
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->SmtpTransport->connect();
     }
 
     public function testConnectEhloWithAuthPlain(): void
     {
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
@@ -210,7 +209,7 @@ class SmtpTransportTest extends TestCase
 
     public function testConnectEhloWithAuthLogin(): void
     {
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->any())
             ->method('read')
@@ -258,7 +257,7 @@ class SmtpTransportTest extends TestCase
                 )
             );
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
         $this->SmtpTransport->connect();
     }
 
@@ -282,7 +281,7 @@ class SmtpTransportTest extends TestCase
                     ["HELO localhost\r\n"]
                 )
             );
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $e = null;
         try {
@@ -304,7 +303,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testAuthTypeSet(): void
     {
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
@@ -330,7 +329,7 @@ class SmtpTransportTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unsupported auth type. Available types are: PLAIN, LOGIN, XOAUTH2');
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
@@ -355,7 +354,7 @@ class SmtpTransportTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unsupported auth type: CRAM-MD5');
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
@@ -377,7 +376,7 @@ class SmtpTransportTest extends TestCase
 
     public function testAuthTypeParsingIsSkippedIfNoCredentialsProvided(): void
     {
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(2))
             ->method('read')
@@ -398,7 +397,7 @@ class SmtpTransportTest extends TestCase
     public function testAuthPlain(): void
     {
         $this->socket->expects($this->once())->method('write')->with("AUTH PLAIN {$this->credentialsEncoded}\r\n");
-        $this->socket->expects($this->once())->method('read')->will($this->returnValue("235 OK\r\n"));
+        $this->socket->expects($this->once())->method('read')->willReturn("235 OK\r\n");
         $this->SmtpTransport->setConfig($this->credentials);
         $this->SmtpTransport->auth();
     }
@@ -624,7 +623,7 @@ class SmtpTransportTest extends TestCase
         $message->setBcc('phpnut@cakephp.org');
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
 
-        $this->socket->expects($this->any())->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->any())->method('read')->willReturn("250 OK\r\n");
 
         $this->socket->expects($this->exactly(5))
             ->method('write')
@@ -651,7 +650,7 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
-        $this->socket->expects($this->exactly(2))->method('read')->will($this->returnValue("250 OK\r\n"));
+        $this->socket->expects($this->exactly(2))->method('read')->willReturn("250 OK\r\n");
 
         $this->socket->expects($this->exactly(2))
             ->method('write')
@@ -735,7 +734,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testEmptyClientName(): void
     {
-        $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
            ->method('read')
            ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
@@ -754,7 +753,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->assertEmpty($this->SmtpTransport->getLastResponse());
 
-        $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->any())->method('connect')->willReturn(true);
         $this->socket->expects($this->any())
             ->method('read')
             ->will($this->onConsecutiveCalls(
@@ -808,7 +807,7 @@ class SmtpTransportTest extends TestCase
             );
         $this->socket->expects($this->exactly(2))
             ->method('read')
-            ->will($this->returnValue("250 OK\r\n"));
+            ->willReturn("250 OK\r\n");
 
         $this->SmtpTransport->sendRcpt($message);
 
@@ -921,7 +920,7 @@ class SmtpTransportTest extends TestCase
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->exactly(2))->method('getBody')->will($this->returnValue(['First Line']));
+        $message->expects($this->exactly(2))->method('getBody')->willReturn(['First Line']);
 
         $callback = function ($arg) {
             $this->assertNotEquals("QUIT\r\n", $arg);
@@ -965,7 +964,7 @@ class SmtpTransportTest extends TestCase
                 )
             );
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->SmtpTransport->send($message);
         $this->socket->expects($this->once())->method('isConnected')->willReturn(true);
@@ -983,9 +982,9 @@ class SmtpTransportTest extends TestCase
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
+        $message->expects($this->once())->method('getBody')->willReturn(['First Line']);
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->atLeast(6))
             ->method('read')
@@ -1027,9 +1026,9 @@ class SmtpTransportTest extends TestCase
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
+        $message->expects($this->once())->method('getBody')->willReturn(['First Line']);
 
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
         $this->socket->expects($this->atLeast(6))
             ->method('read')
@@ -1065,7 +1064,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testSerializeCleanupSocket(): void
     {
-        $this->socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->once())->method('connect')->willReturn(true);
         $this->socket->expects($this->exactly(2))
             ->method('read')
             ->will($this->onConsecutiveCalls(

@@ -111,7 +111,7 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
             ->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $driver;
     }
