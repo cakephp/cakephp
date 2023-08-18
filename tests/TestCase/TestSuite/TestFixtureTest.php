@@ -179,12 +179,12 @@ class TestFixtureTest extends TestCase
         $query->expects($this->once())
             ->method('insert')
             ->with(['author_id', 'title', 'body', 'published'], ['author_id' => 'integer', 'title' => 'string', 'body' => 'text', 'published' => 'string'])
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $query->expects($this->once())
             ->method('into')
             ->with('articles')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $expected = [
             ['author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
@@ -200,7 +200,7 @@ class TestFixtureTest extends TestCase
                     [$expected[2]]
                 )
             )
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $statement = $this->createMock(StatementInterface::class);
 

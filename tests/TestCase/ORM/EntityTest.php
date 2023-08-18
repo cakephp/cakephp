@@ -612,10 +612,7 @@ class EntityTest extends TestCase
             ->with(
                 ...self::withConsecutive(['foo', 1], ['bar', 2])
             )
-            ->will($this->onConsecutiveCalls(
-                $this->returnSelf(),
-                $this->returnSelf()
-            ));
+            ->willReturnSelf();
 
         $entity['foo'] = 1;
         $entity['bar'] = 2;
