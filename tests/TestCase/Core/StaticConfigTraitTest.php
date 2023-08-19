@@ -38,7 +38,9 @@ class StaticConfigTraitTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->subject = $this->getObjectForTrait(StaticConfigTrait::class);
+        $this->subject = new class {
+            use StaticConfigTrait;
+        };
     }
 
     /**
@@ -85,20 +87,19 @@ class StaticConfigTraitTest extends TestCase
     public function testGetConfigOrFail(): void
     {
         $className = get_class($this->subject);
-        $className::setConfig('foo', ['bar' => true]);
+        $className::setConfig('foo2', ['bar' => true]);
 
-        $result = $className::getConfigOrFail('foo');
+        $result = $className::getConfigOrFail('foo2');
         $this->assertSame(['bar' => true], $result);
     }
 
     public function testGetConfigOrFailException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected configuration `foo` not found.');
+        $this->expectExceptionMessage('Expected configuration `unknown` not found.');
 
         $className = get_class($this->subject);
-        $result = $className::getConfigOrFail('foo');
-        $this->assertSame('bar', $result);
+        $className::getConfigOrFail('unknown');
     }
 
     /**
