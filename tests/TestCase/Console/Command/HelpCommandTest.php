@@ -20,6 +20,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,10 +39,13 @@ class HelpCommandTest extends TestCase
         $this->setAppNamespace();
         Plugin::getCollection()->clear();
 
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            ['']
-        );
+        $app = new class ('') extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
         $app->addPlugin('TestPlugin');
     }
 
