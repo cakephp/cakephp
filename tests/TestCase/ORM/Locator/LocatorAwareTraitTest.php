@@ -41,7 +41,9 @@ class LocatorAwareTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait(LocatorAwareTrait::class);
+        $this->subject = new class {
+            use LocatorAwareTrait;
+        };
     }
 
     /**
