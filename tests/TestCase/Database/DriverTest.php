@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Log\QueryLogger;
@@ -58,15 +57,9 @@ class DriverTest extends TestCase
             'scopes' => ['queriesLog'],
         ]);
 
-        $this->driver = $this->getMockForAbstractClass(
-            StubDriver::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['createPdo', 'prepare']
-        );
+        $this->driver = $this->getMockBuilder(StubDriver::class)
+            ->onlyMethods(['createPdo', 'prepare'])
+            ->getMock();
     }
 
     public function tearDown(): void
@@ -81,9 +74,8 @@ class DriverTest extends TestCase
      */
     public function testConstructorException(): void
     {
-        $arg = ['login' => 'Bear'];
         try {
-            $this->getMockForAbstractClass(Driver::class, [$arg]);
+            new StubDriver(['login' => 'Bear']);
         } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
@@ -97,14 +89,10 @@ class DriverTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $arg = ['quoteIdentifiers' => true];
-        $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
-
+        $driver = new StubDriver(['quoteIdentifiers' => true]);
         $this->assertTrue($driver->isAutoQuotingEnabled());
 
-        $arg = ['username' => 'GummyBear'];
-        $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
-
+        $driver = new StubDriver(['username' => 'GummyBear']);
         $this->assertFalse($driver->isAutoQuotingEnabled());
     }
 
@@ -223,9 +211,9 @@ class DriverTest extends TestCase
             ->method('compile')
             ->willReturn('1');
 
-        $driver = $this->getMockBuilder(Driver::class)
+        $driver = $this->getMockBuilder(StubDriver::class)
             ->onlyMethods(['newCompiler', 'transformQuery'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $driver
             ->expects($this->once())
@@ -400,26 +388,15 @@ class DriverTest extends TestCase
 
     public function testGetLoggerDefault(): void
     {
-        $driver = $this->getMockForAbstractClass(
-            StubDriver::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['createPdo', 'prepare']
-        );
+        $driver = $this->getMockBuilder(StubDriver::class)
+            ->onlyMethods(['createPdo', 'prepare'])
+            ->getMock();
         $this->assertNull($driver->getLogger());
 
-        $driver = $this->getMockForAbstractClass(
-            StubDriver::class,
-            [['log' => true]],
-            '',
-            true,
-            true,
-            true,
-            ['createPdo']
-        );
+        $driver = $this->getMockBuilder(StubDriver::class)
+            ->setConstructorArgs([['log' => true]])
+            ->onlyMethods(['createPdo'])
+            ->getMock();
 
         $logger = $driver->getLogger();
         $this->assertInstanceOf(QueryLogger::class, $logger);
@@ -460,15 +437,10 @@ class DriverTest extends TestCase
                 true,
             );
 
-        $driver = $this->getMockForAbstractClass(
-            StubDriver::class,
-            [['log' => true]],
-            '',
-            true,
-            true,
-            true,
-            ['getPdo']
-        );
+        $driver = $this->getMockBuilder(StubDriver::class)
+            ->setConstructorArgs([['log' => true]])
+            ->onlyMethods(['getPdo'])
+            ->getMock();
 
         $driver->expects($this->any())
             ->method('getPdo')

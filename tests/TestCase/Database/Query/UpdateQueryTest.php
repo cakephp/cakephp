@@ -23,7 +23,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
 use Cake\Database\Statement\Statement;
-use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
