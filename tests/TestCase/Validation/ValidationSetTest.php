@@ -217,10 +217,10 @@ class ValidationSetTest extends TestCase
 
         $this->assertTrue($set->isEmptyAllowed());
 
-        $set->allowEmpty(true);
-        $this->assertTrue($set->isEmptyAllowed());
-
         $set->allowEmpty(false);
         $this->assertFalse($set->isEmptyAllowed());
+
+        $set->allowEmpty(true);
+        $this->assertTrue($set->isEmptyAllowed());
     }
 }
