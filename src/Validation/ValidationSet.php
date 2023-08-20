@@ -48,9 +48,9 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Denotes if a field is allowed to be empty
      *
-     * @var callable|string|bool
+     * @var callable|string|bool|null
      */
-    protected $_allowEmpty = false;
+    protected $_allowEmpty;
 
     /**
      * Returns whether a field can be left out.
@@ -82,7 +82,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function isEmptyAllowed(): callable|string|bool
     {
-        return $this->_allowEmpty;
+        return $this->_allowEmpty ?? true;
     }
 
     /**
@@ -145,6 +145,10 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
             $rule = new ValidationRule($rule);
         }
         $this->_rules[$name] = $rule;
+
+        if (null === $this->_allowEmpty) {
+            $this->_allowEmpty = false;
+        }
 
         return $this;
     }

@@ -140,7 +140,7 @@ class FormContextTest extends TestCase
         $context = new FormContext([
             'entity' => $form,
         ]);
-        $this->assertTrue($context->isRequired('name'));
+        $this->assertFalse($context->isRequired('name'));
         $this->assertTrue($context->isRequired('email'));
         $this->assertNull($context->isRequired('body'));
         $this->assertNull($context->isRequired('Prefix.body'));

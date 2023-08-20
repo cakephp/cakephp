@@ -202,7 +202,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedManyWithExtra(): void
     {
         $inner = new Validator();
-        $inner->requirePresence('body');
+        $inner->notEmptyString('body');
 
         $validator = new Validator();
         $validator->addNestedMany('comments', $inner, 'errors found', 'create');
@@ -1792,7 +1792,7 @@ class ValidatorTest extends TestCase
                 ],
                 'body' => [
                     'isPresenceRequired' => true,
-                    'isEmptyAllowed' => false,
+                    'isEmptyAllowed' => true,
                     'rules' => [],
                 ],
                 'published' => [

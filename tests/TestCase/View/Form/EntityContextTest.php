@@ -943,8 +943,8 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertTrue($context->isRequired('tags.0._joinData.article_id'));
-        $this->assertTrue($context->isRequired('tags.0._joinData.tag_id'));
+        $this->assertFalse($context->isRequired('tags.0._joinData.article_id'));
+        $this->assertFalse($context->isRequired('tags.0._joinData.tag_id'));
     }
 
     /**
