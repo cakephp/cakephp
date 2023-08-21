@@ -26,6 +26,7 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
@@ -305,15 +306,10 @@ class CommandTest extends TestCase
 
     /**
      * @param \Cake\Console\ConsoleOutput $output
-     * @return \Cake\Console\ConsoleIo|\PHPUnit\Framework\MockObject\MockObject
+     * @return \Cake\Console\ConsoleIo|\Mockery\MockInterface
      */
     protected function getMockIo($output)
     {
-        $io = $this->getMockBuilder(ConsoleIo::class)
-            ->setConstructorArgs([$output, $output, null, null])
-            ->addMethods(['in'])
-            ->getMock();
-
-        return $io;
+        return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
     }
 }

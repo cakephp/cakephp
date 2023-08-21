@@ -20,6 +20,7 @@ use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;

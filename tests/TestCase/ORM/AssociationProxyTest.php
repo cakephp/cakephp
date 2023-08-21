@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Exception\DatabaseException;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * Tests the features related to proxying methods from the Association
@@ -163,16 +164,15 @@ class AssociationProxyTest extends TestCase
     public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['crazy'])
-            ->getMock();
+        $mock = Mockery::mock('Cake\ORM\Table')
+            ->shouldAllowMockingMethod('crazy');
         $articles->belongsTo('authors', [
             'targetTable' => $mock,
         ]);
 
-        $mock->expects($this->once())->method('crazy')
+        $mock->shouldReceive('crazy')
             ->with('a', 'b')
-            ->willReturn('thing');
+            ->andReturn('thing');
         $this->assertSame('thing', $articles->authors->crazy('a', 'b'));
     }
 }

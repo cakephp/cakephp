@@ -20,6 +20,7 @@ use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PDO;
 
 /**
@@ -62,10 +63,8 @@ class StringTypeTest extends TestCase
      */
     public function testToDatabase(): void
     {
-        $obj = $this->getMockBuilder('StdClass')
-            ->addMethods(['__toString'])
-            ->getMock();
-        $obj->method('__toString')->willReturn('toString called');
+        $obj = Mockery::mock('StdClass')->shouldAllowMockingMethod('__toString');
+        $obj->shouldReceive('__toString')->andReturn('toString called');
 
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame('word', $this->type->toDatabase('word', $this->driver));

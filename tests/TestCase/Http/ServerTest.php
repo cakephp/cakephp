@@ -30,6 +30,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Response as LaminasResponse;
 use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
+use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use TestApp\Http\MiddlewareApplication;
 
@@ -127,18 +128,13 @@ class ServerTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
-        /** @var \TestApp\Http\MiddlewareApplication|\PHPUnit\Framework\MockObject\MockObject $app */
-        $app = $this->getMockBuilder(MiddlewareApplication::class)
-            ->onlyMethods(['pluginBootstrap', 'pluginMiddleware'])
-            ->addMethods(['pluginEvents'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $app->expects($this->once())
-            ->method('pluginBootstrap');
-        $app->expects($this->once())
-            ->method('pluginMiddleware')
-            ->with($this->isInstanceOf(MiddlewareQueue::class))
-            ->willReturnCallback(function ($middleware) {
+        /** @var \TestApp\Http\MiddlewareApplication|\Mockery\MockInterface $app */
+        $app = Mockery::mock(MiddlewareApplication::class, [$this->config])
+            ->shouldAllowMockingMethod('pluginEvents')
+            ->makePartial();
+        $app->shouldReceive('pluginBootstrap', 'pluginMiddleware')
+            ->with(Mockery::type(MiddlewareQueue::class))
+            ->andReturnUsing(function ($middleware) {
                 return $middleware;
             });
 
