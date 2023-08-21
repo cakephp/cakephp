@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         0.2.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
@@ -90,7 +92,7 @@ use UnexpectedValueException;
  * @property \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\SecurityComponent $Security
- * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property Authentication\Controller\Component\AuthenticationComponent $Authentication
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 #[\AllowDynamicProperties]
@@ -231,14 +233,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if (isset($this->components)) {
             triggerWarning(
                 'Support for loading components using $components property is removed. ' .
-                'Use $this->loadComponent() instead in initialize().'
+                    'Use $this->loadComponent() instead in initialize().'
             );
         }
 
         if (isset($this->helpers)) {
             triggerWarning(
                 'Support for loading helpers using $helpers property is removed. ' .
-                'Use $this->viewBuilder()->setHelpers() instead.'
+                    'Use $this->viewBuilder()->setHelpers() instead.'
             );
         }
 
@@ -352,7 +354,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($name === 'components') {
             triggerWarning(
                 'Support for loading components using $components property is removed. ' .
-                'Use $this->loadComponent() instead in initialize().'
+                    'Use $this->loadComponent() instead in initialize().'
             );
 
             return;
@@ -361,7 +363,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($name === 'helpers') {
             triggerWarning(
                 'Support for loading helpers using $helpers property is removed. ' .
-                'Use $this->viewBuilder()->setHelpers() instead.'
+                    'Use $this->viewBuilder()->setHelpers() instead.'
             );
 
             return;
@@ -548,7 +550,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($result !== null && !$result instanceof ResponseInterface) {
             throw new UnexpectedValueException(sprintf(
                 'Controller actions can only return ResponseInterface instance or null. '
-                . 'Got %s instead.',
+                    . 'Got %s instead.',
                 getTypeName($result)
             ));
         }
@@ -724,7 +726,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         deprecationWarning(
             'Controller::setAction() is deprecated. Either refactor your code to use `redirect()`, ' .
-            'or call the other action as a method.'
+                'or call the other action as a method.'
         );
         $this->setRequest($this->request->withParam('action', $action));
 
@@ -935,7 +937,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $settings['className'] = $settings['paginator'];
             deprecationWarning(
                 '`paginator` option is deprecated,'
-                . ' use `className` instead a specify a paginator name/FQCN.'
+                    . ' use `className` instead a specify a paginator name/FQCN.'
             );
         }
 
