@@ -28,6 +28,7 @@ use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use stdClass;
@@ -68,10 +69,13 @@ class CommandRunnerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->config]
-        );
+        $app = new class ($this->config) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
 
         $runner = new CommandRunner($app);
         $this->assertSame($app->getEventManager(), $runner->getEventManager());

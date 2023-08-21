@@ -22,12 +22,13 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
-use Cake\Database\StatementInterface;
+use Cake\Database\Statement\Statement;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
+use PDOStatement;
 
 /**
  * Tests UpdateQuery class
@@ -329,9 +330,12 @@ class UpdateQueryTest extends TestCase
      */
     public function testRowCountAndClose(): void
     {
-        $statementMock = $this->getMockBuilder(StatementInterface::class)
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statementMock = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->connection->getDriver()])
             ->onlyMethods(['rowCount', 'closeCursor'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $statementMock->expects($this->once())
             ->method('rowCount')

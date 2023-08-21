@@ -86,7 +86,9 @@ class QueryTest extends TestCase
 
     protected function newQuery()
     {
-        return $this->getMockForAbstractClass(Query::class, [$this->connection]);
+        return new class ($this->connection) extends Query
+        {
+        };
     }
 
     /**
