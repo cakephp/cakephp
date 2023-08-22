@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Http\Exception\RedirectException;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\FailedRouteCacheException;
 use Cake\Routing\Exception\MissingRouteException;
@@ -34,6 +35,7 @@ use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
 use TestApp\Middleware\UnserializableMiddleware;
+use TestApp\Routing\Route\HeaderRedirectRoute;
 
 /**
  * Test for RoutingMiddleware
@@ -95,18 +97,17 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponseWithHeaders(): void
     {
-        $this->builder->scope('/', function (RouteBuilder $routes): void {
-            $routes->redirect('/testpath', '/pages');
-        });
+        $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $handler = new TestRequestHandler(function ($request) {
-            return new Response('php://memory', 200, ['X-testing' => 'Yes']);
+            return new Response();
         });
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
         $this->assertSame(301, $response->getStatusCode());
         $this->assertSame('http://localhost/pages', $response->getHeaderLine('Location'));
+        $this->assertSame('yes', $response->getHeaderLine('Redirect-Exception'));
     }
 
     /**
