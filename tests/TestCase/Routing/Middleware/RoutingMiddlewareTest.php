@@ -20,7 +20,6 @@ use Cake\Cache\Cache;
 use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\Core\HttpApplicationInterface;
-use Cake\Http\Exception\RedirectException;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\FailedRouteCacheException;
 use Cake\Routing\Exception\MissingRouteException;
