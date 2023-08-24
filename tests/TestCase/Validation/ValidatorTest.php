@@ -1983,7 +1983,7 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'creditCard';
-        $expectedMessage = 'The provided value must be a credit card number';
+        $expectedMessage = 'The provided value must be a valid credit card number';
         $cardType = 'all';
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $cardType);
     }

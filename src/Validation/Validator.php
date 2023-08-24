@@ -1262,9 +1262,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must be a credit card number';
+                $message = 'The provided value must be a valid credit card number';
             } else {
-                $message = __d('cake', 'The provided value must be a credit card number');
+                $message = __d('cake', 'The provided value must be a valid credit card number');
             }
         }
 
