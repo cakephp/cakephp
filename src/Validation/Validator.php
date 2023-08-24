@@ -1558,7 +1558,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             } else {
                 $message = __d(
                     'cake',
-                    'The provided value must be equal to the one of field `0`',
+                    'The provided value must be equal to the one of field `{0}`',
                     $secondField
                 );
             }
@@ -1595,7 +1595,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             } else {
                 $message = __d(
                     'cake',
-                    'The provided value must not be equal to the one of field `0`',
+                    'The provided value must not be equal to the one of field `{0}`',
                     $secondField
                 );
             }
