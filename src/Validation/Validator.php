@@ -1422,9 +1422,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must be equals to `%s`', $value);
+                $message = sprintf('The provided value must be equal to `%s`', $value);
             } else {
-                $message = __d('cake', 'The provided value must be equals to `{0}`', $value);
+                $message = __d('cake', 'The provided value must be equal to `{0}`', $value);
             }
         }
 
@@ -1454,9 +1454,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must not be equals to `%s`', $value);
+                $message = sprintf('The provided value must not be equal to `%s`', $value);
             } else {
-                $message = __d('cake', 'The provided value must not be equals to `{0}`', $value);
+                $message = __d('cake', 'The provided value must not be equal to `{0}`', $value);
             }
         }
 
