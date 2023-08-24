@@ -1523,7 +1523,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf('The provided value must not be same as `%s`', $secondField);
             } else {
-                $message = __d('cake', 'The provided value not must be same as `{0}`', $secondField);
+                $message = __d('cake', 'The provided value must not be same as `{0}`', $secondField);
             }
         }
 
