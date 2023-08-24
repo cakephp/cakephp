@@ -1073,9 +1073,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must not be blank';
+                $message = 'This field cannot be left empty';
             } else {
-                $message = __d('cake', 'The provided value must not be blank');
+                $message = __d('cake', 'This field cannot be left empty');
             }
         }
 
