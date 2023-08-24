@@ -806,7 +806,7 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid',
+                'uploadedFile' => 'The provided value must be an uploaded file',
             ],
         ];
         $result = $validator->validate($data);
