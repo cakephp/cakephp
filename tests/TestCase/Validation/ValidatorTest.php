@@ -1709,6 +1709,20 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the getIterator method
+     */
+    public function testGetIterator(): void
+    {
+        $validator = new Validator();
+        $validator
+            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+            ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
+        $fieldIterator = $validator->getIterator();
+        $this->assertInstanceOf(\Traversable::class, $fieldIterator);
+        $this->assertCount(2, $validator);
+    }
+
+    /**
      * Tests the countable interface
      */
     public function testCount(): void
