@@ -2795,9 +2795,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must have at most `%s`elements', $count);
+                $message = sprintf('The provided value must have at most `%s` elements', $count);
             } else {
-                $message = __d('cake', 'The provided value must have at most `{0}`elements', $count);
+                $message = __d('cake', 'The provided value must have at most `{0}` elements', $count);
             }
         }
 
