@@ -1872,14 +1872,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notBlank');
         $this->assertNotEmpty($validator->validate(['username' => '  ']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notBlank('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'notBlank' => 'This field cannot be left empty',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => '  ']));
+        $fieldName = 'field_name';
+        $rule = 'notBlank';
+        $expectedMessage = 'This field cannot be left empty';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -1891,14 +1887,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'alphaNumeric');
         $this->assertNotEmpty($validator->validate(['username' => '$']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->alphaNumeric('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'alphaNumeric' => 'The provided value must be alphanumeric',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => '$']));
+        $fieldName = 'field_name';
+        $rule = 'alphaNumeric';
+        $expectedMessage = 'The provided value must be alphanumeric';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -1910,14 +1902,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notAlphaNumeric');
         $this->assertEmpty($validator->validate(['username' => '$']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notAlphaNumeric('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'notAlphaNumeric' => 'The provided value must not be alphanumeric',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'a']));
+        $fieldName = 'field_name';
+        $rule = 'notAlphaNumeric';
+        $expectedMessage = 'The provided value must not be alphanumeric';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -1929,14 +1917,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'asciiAlphaNumeric');
         $this->assertNotEmpty($validator->validate(['username' => '$']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->asciiAlphaNumeric('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'asciiAlphaNumeric' => 'The provided value must be ASCII-alphanumeric',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => '$']));
+        $fieldName = 'field_name';
+        $rule = 'asciiAlphaNumeric';
+        $expectedMessage = 'The provided value must be ASCII-alphanumeric';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -1948,14 +1932,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notAsciiAlphaNumeric');
         $this->assertEmpty($validator->validate(['username' => '$']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notAsciiAlphaNumeric('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'notAsciiAlphaNumeric' => 'The provided value must not be ASCII-alphanumeric',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'a']));
+        $fieldName = 'field_name';
+        $rule = 'notAsciiAlphaNumeric';
+        $expectedMessage = 'The provided value must not be ASCII-alphanumeric';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -1967,14 +1947,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'lengthBetween', [5, 7], [5, 7]);
         $this->assertNotEmpty($validator->validate(['username' => 'foo']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->lengthBetween('field_name', [5, 7]);
-        $expectedMessage = [
-            'field_name' => [
-                'lengthBetween' => 'The length of the provided value must be between `5` and `7`, inclusively',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'foo']));
+        $fieldName = 'field_name';
+        $rule = 'lengthBetween';
+        $expectedMessage = 'The length of the provided value must be between `5` and `7`, inclusively';
+        $lengthBetween = [5, 7];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $lengthBetween);
     }
 
     /**
@@ -1996,14 +1973,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
         $this->assertNotEmpty($validator->validate(['username' => 'foo']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->creditCard('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'creditCard' => 'The provided value must be a credit card number',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'foo']));
+        $fieldName = 'field_name';
+        $rule = 'creditCard';
+        $expectedMessage = 'The provided value must be a credit card number';
+        $cardType = 'all';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $cardType);
     }
 
     /**
@@ -2015,14 +1989,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'greaterThan', 5, [Validation::COMPARE_GREATER, 5], 'comparison');
         $this->assertNotEmpty($validator->validate(['username' => 2]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->greaterThan('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'greaterThan' => 'The provided value must be greater than `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2]));
+        $fieldName = 'field_name';
+        $rule = 'greaterThan';
+        $expectedMessage = 'The provided value must be greater than `5`';
+        $greaterThan = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $greaterThan);
     }
 
     /**
@@ -2034,14 +2005,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->validate(['username' => 2]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->greaterThanOrEqual('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'greaterThanOrEqual' => 'The provided value must be greater than or equal to `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2]));
+        $fieldName = 'field_name';
+        $rule = 'greaterThanOrEqual';
+        $expectedMessage = 'The provided value must be greater than or equal to `5`';
+        $greaterThanOrEqualTo = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $greaterThanOrEqualTo);
     }
 
     /**
@@ -2053,14 +2021,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'lessThan', 5, [Validation::COMPARE_LESS, 5], 'comparison');
         $this->assertNotEmpty($validator->validate(['username' => 5]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->lessThan('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'lessThan' => 'The provided value must be less than `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 5]));
+        $fieldName = 'field_name';
+        $rule = 'lessThan';
+        $expectedMessage = 'The provided value must be less than `5`';
+        $lessThan = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $lessThan);
     }
 
     /**
@@ -2072,14 +2037,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->validate(['username' => 6]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->lessThanOrEqual('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'lessThanOrEqual' => 'The provided value must be less than or equal to `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 6]));
+        $fieldName = 'field_name';
+        $rule = 'lessThanOrEqual';
+        $expectedMessage = 'The provided value must be less than or equal to `5`';
+        $lessThanOrEqualTo = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $lessThanOrEqualTo);
     }
 
     /**
@@ -2092,14 +2054,11 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 5]));
         $this->assertNotEmpty($validator->validate(['username' => 6]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->equals('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'equals' => 'The provided value must be equals to `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 6]));
+        $fieldName = 'field_name';
+        $rule = 'equals';
+        $expectedMessage = 'The provided value must be equals to `5`';
+        $equalTo = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $equalTo);
     }
 
     /**
@@ -2111,14 +2070,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notEquals', 5, [Validation::COMPARE_NOT_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->validate(['username' => 5]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notEquals('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'notEquals' => 'The provided value must not be equals to `5`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 5]));
+        $fieldName = 'field_name';
+        $rule = 'notEquals';
+        $expectedMessage = 'The provided value must not be equals to `5`';
+        $notEqualTo = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $notEqualTo);
     }
 
     /**
@@ -2131,14 +2087,11 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['username' => 'foo']));
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => '1']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->sameAs('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'sameAs' => 'The provided value must be same as `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 1, 'other' => 2]));
+        $fieldName = 'field_name';
+        $rule = 'sameAs';
+        $expectedMessage = 'The provided value must be same as `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2150,14 +2103,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notSameAs('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'notSameAs' => 'The provided value must not be same as `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 1, 'other' => 1]));
+        $fieldName = 'field_name';
+        $rule = 'notSameAs';
+        $expectedMessage = 'The provided value must not be same as `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2170,14 +2120,11 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['username' => 'foo']));
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'bar']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->equalToField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'equalToField' => 'The provided value must be equal to the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'foo', 'other' => 'bar']));
+        $fieldName = 'field_name';
+        $rule = 'equalToField';
+        $expectedMessage = 'The provided value must be equal to the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2189,14 +2136,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->notEqualToField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'notEqualToField' => 'The provided value must not be equal to the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'foo', 'other' => 'foo']));
+        $fieldName = 'field_name';
+        $rule = 'notEqualToField';
+        $expectedMessage = 'The provided value must not be equal to the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2209,14 +2153,11 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->greaterThanField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'greaterThanField' => 'The provided value must be greater than the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 1, 'other' => 1]));
+        $fieldName = 'field_name';
+        $rule = 'greaterThanField';
+        $expectedMessage = 'The provided value must be greater than the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2228,14 +2169,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->greaterThanOrEqualToField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'greaterThanOrEqualToField' => 'The provided value must be greater than or equal to the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 1, 'other' => 2]));
+        $fieldName = 'field_name';
+        $rule = 'greaterThanOrEqualToField';
+        $expectedMessage = 'The provided value must be greater than or equal to the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2248,14 +2186,11 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->lessThanField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'lessThanField' => 'The provided value must be less than the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2, 'other' => 1]));
+        $fieldName = 'field_name';
+        $rule = 'lessThanField';
+        $expectedMessage = 'The provided value must be less than the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2267,14 +2202,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->lessThanOrEqualToField('field_name', 'other');
-        $expectedMessage = [
-            'field_name' => [
-                'lessThanOrEqualToField' => 'The provided value must be less than or equal to the one of field `other`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2, 'other' => 1]));
+        $fieldName = 'field_name';
+        $rule = 'lessThanOrEqualToField';
+        $expectedMessage = 'The provided value must be less than or equal to the one of field `other`';
+        $otherField = 'other';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $otherField);
     }
 
     /**
@@ -2286,14 +2218,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'date', ['ymd'], [['ymd']]);
         $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->date('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'date' => 'The provided value must be a date',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not a date']));
+        $fieldName = 'field_name';
+        $rule = 'date';
+        $expectedMessage = 'The provided value must be a date';
+        $format = ['ymd'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
     }
 
     /**
@@ -2308,14 +2237,11 @@ class ValidatorTest extends TestCase
         $validator = (new Validator())->dateTime('thedate', ['iso8601']);
         $this->assertEmpty($validator->validate(['thedate' => '2020-05-01T12:34:56Z']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->dateTime('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'dateTime' => 'The provided value must be a date and time',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not a date']));
+        $fieldName = 'field_name';
+        $rule = 'dateTime';
+        $expectedMessage = 'The provided value must be a date and time';
+        $format = ['ymd'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
     }
 
     /**
@@ -2327,14 +2253,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'time');
         $this->assertNotEmpty($validator->validate(['username' => 'not a time']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->time('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'time' => 'The provided value must be a time',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not a time']));
+        $fieldName = 'field_name';
+        $rule = 'time';
+        $expectedMessage = 'The provided value must be a time';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2346,14 +2268,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'localizedTime', 'date', ['date']);
         $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->localizedTime('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'localizedTime' => 'The provided value must be a localized time, date or date and time',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not a date']));
+        $fieldName = 'field_name';
+        $rule = 'localizedTime';
+        $expectedMessage = 'The provided value must be a localized time, date or date and time';
+        $type = 'datetime';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $type);
     }
 
     /**
@@ -2365,14 +2284,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'boolean');
         $this->assertNotEmpty($validator->validate(['username' => 'not a boolean']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->boolean('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'boolean' => 'The provided value must be a boolean',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not a boolean']));
+        $fieldName = 'field_name';
+        $rule = 'boolean';
+        $expectedMessage = 'The provided value must be a boolean';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2384,14 +2299,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'decimal', 2, [2]);
         $this->assertNotEmpty($validator->validate(['username' => 10.1]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->decimal('field_name', 2);
-        $expectedMessage = [
-            'field_name' => [
-                'decimal' => 'The provided value must be decimal'
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 10.1]));
+        $fieldName = 'field_name';
+        $rule = 'decimal';
+        $expectedMessage = 'The provided value must be decimal';
+        $places = 2;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $places);
     }
 
     /**
@@ -2409,32 +2321,20 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'ipv6', null, ['ipv6'], 'ip');
         $this->assertNotEmpty($validator->validate(['username' => 'not ip']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->ip('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'ip' => 'The provided value must be an IP address',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not an ip']));
+        $fieldName = 'field_name';
+        $rule = 'ip';
+        $expectedMessage = 'The provided value must be an IP address';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->ipv4('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'ipv4' => 'The provided value must be an IPv4 address',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not an ip']));
+        $fieldName = 'field_name';
+        $rule = 'ipv4';
+        $expectedMessage = 'The provided value must be an IPv4 address';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->ipv6('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'ipv6' => 'The provided value must be an IPv6 address',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not an ip']));
+        $fieldName = 'field_name';
+        $rule = 'ipv6';
+        $expectedMessage = 'The provided value must be an IPv6 address';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2446,14 +2346,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'minLength', 2, [2]);
         $this->assertNotEmpty($validator->validate(['username' => 'a']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->minLength('field_name', 2);
-        $expectedMessage = [
-            'field_name' => [
-                'minLength' => 'The provided value must be at least `2` characters long',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'a']));
+        $fieldName = 'field_name';
+        $rule = 'minLength';
+        $expectedMessage = 'The provided value must be at least `2` characters long';
+        $minLength = 2;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $minLength);
     }
 
     /**
@@ -2465,14 +2362,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'minLengthBytes', 11, [11]);
         $this->assertNotEmpty($validator->validate(['username' => 'ÆΔΩЖÇ']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->minLengthBytes('field_name', 11);
-        $expectedMessage = [
-            'field_name' => [
-                'minLengthBytes' => 'The provided value must be at least `11` bytes long',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'ÆΔΩЖÇ']));
+        $fieldName = 'field_name';
+        $rule = 'minLengthBytes';
+        $expectedMessage = 'The provided value must be at least `11` bytes long';
+        $minLengthBytes = 11;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $minLengthBytes);
     }
 
     /**
@@ -2484,14 +2378,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'maxLength', 2, [2]);
         $this->assertNotEmpty($validator->validate(['username' => 'aaa']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->maxLength('field_name', 2);
-        $expectedMessage = [
-            'field_name' => [
-                'maxLength' => 'The provided value must be at most `2` characters long',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'aaa']));
+        $fieldName = 'field_name';
+        $rule = 'maxLength';
+        $expectedMessage = 'The provided value must be at most `2` characters long';
+        $maxLength = 2;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $maxLength);
     }
 
     /**
@@ -2503,14 +2394,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'maxLengthBytes', 9, [9]);
         $this->assertNotEmpty($validator->validate(['username' => 'ÆΔΩЖÇ']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->maxLengthBytes('field_name', 9);
-        $expectedMessage = [
-            'field_name' => [
-                'maxLengthBytes' => 'The provided value must be at most `9` bytes long',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'ÆΔΩЖÇ']));
+        $fieldName = 'field_name';
+        $rule = 'maxLengthBytes';
+        $expectedMessage = 'The provided value must be at most `11` bytes long';
+        $maxLengthBytes = 11;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $maxLengthBytes);
     }
 
     /**
@@ -2523,14 +2411,10 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => '22']));
         $this->assertNotEmpty($validator->validate(['username' => 'a']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->numeric('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'numeric' => 'The provided value must be numeric',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'a']));
+        $fieldName = 'field_name';
+        $rule = 'numeric';
+        $expectedMessage = 'The provided value must be numeric';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2542,14 +2426,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'naturalNumber', null, [false]);
         $this->assertNotEmpty($validator->validate(['username' => 0]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->naturalNumber('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'naturalNumber' => 'The provided value must be a natural number',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 0]));
+        $fieldName = 'field_name';
+        $rule = 'naturalNumber';
+        $expectedMessage = 'The provided value must be a natural number';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2561,14 +2441,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'nonNegativeInteger', null, [true], 'naturalNumber');
         $this->assertNotEmpty($validator->validate(['username' => -1]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->nonNegativeInteger('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'nonNegativeInteger' => 'The provided value must be a non-negative integer',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => -1]));
+        $fieldName = 'field_name';
+        $rule = 'nonNegativeInteger';
+        $expectedMessage = 'The provided value must be a non-negative integer';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2580,14 +2456,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'range', [1, 4], [1, 4]);
         $this->assertNotEmpty($validator->validate(['username' => 5]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->range('field_name', [1, 4]);
-        $expectedMessage = [
-            'field_name' => [
-                'range' => 'The provided value must be between `1` and `4`, inclusively',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 5]));
+        $fieldName = 'field_name';
+        $rule = 'range';
+        $expectedMessage = 'The provided value must be between `1` and `4`, inclusively';
+        $range = [1, 4];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $range);
     }
 
     /**
@@ -2609,14 +2482,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'url', null, [false]);
         $this->assertNotEmpty($validator->validate(['username' => 'not url']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->url('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'url' => 'The provided value must be a URL',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not url']));
+        $fieldName = 'field_name';
+        $rule = 'url';
+        $expectedMessage = 'The provided value must be a URL';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2628,14 +2497,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'urlWithProtocol', null, [true], 'url');
         $this->assertNotEmpty($validator->validate(['username' => 'google.com']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->urlWithProtocol('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'urlWithProtocol' => 'The provided value must be a URL with protocol',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'google.com']));
+        $fieldName = 'field_name';
+        $rule = 'urlWithProtocol';
+        $expectedMessage = 'The provided value must be a URL with protocol';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2647,14 +2512,11 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'inList', ['a', 'b'], [['a', 'b']]);
         $this->assertNotEmpty($validator->validate(['username' => 'c']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->inList('field_name', ['a', 'b']);
-        $expectedMessage = [
-            'field_name' => [
-                'inList' => 'The provided value must be one from the list of allowed values',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'c']));
+        $fieldName = 'field_name';
+        $rule = 'inList';
+        $expectedMessage = 'The provided value must be one from the list of allowed values';
+        $range = ['a', 'b'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $range);
     }
 
     /**
@@ -2666,14 +2528,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'uuid');
         $this->assertNotEmpty($validator->validate(['username' => 'not uuid']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->uuid('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'uuid' => 'The provided value must be a UUID',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not uuid']));
+        $fieldName = 'field_name';
+        $rule = 'uuid';
+        $expectedMessage = 'The provided value must be a UUID';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2685,14 +2543,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'uploadedFile', ['foo' => 'bar'], [['foo' => 'bar']]);
         $this->assertNotEmpty($validator->validate(['username' => []]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->uploadedFile('field_name', ['foo' => 'bar']);
-        $expectedMessage = [
-            'field_name' => [
-                'uploadedFile' => 'The provided value must be an uploaded file',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => []]));
+        $fieldName = 'field_name';
+        $rule = 'uploadedFile';
+        $expectedMessage = 'The provided value must be an uploaded file';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, ['foo' => 'bar']);
     }
 
     /**
@@ -2710,32 +2564,18 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'longitude');
         $this->assertNotEmpty($validator->validate(['username' => 2000]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->latLong('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'latLong' => 'The provided value must be a latitude/longitude coordinate',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2000]));
+        $fieldName = 'field_name';
+        $rule = 'latLong';
+        $expectedMessage = 'The provided value must be a latitude/longitude coordinate';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->latitude('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'latitude' => 'The provided value must be a latitude',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2000]));
+        $rule = 'latitude';
+        $expectedMessage = 'The provided value must be a latitude';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->longitude('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'longitude' => 'The provided value must be a longitude',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 2000]));
+        $rule = 'longitude';
+        $expectedMessage = 'The provided value must be a longitude';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2747,14 +2587,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'ascii');
         $this->assertNotEmpty($validator->validate(['username' => 'ü']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->ascii('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'ascii' => 'The provided value must be ASCII bytes only',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'ü']));
+        $fieldName = 'field_name';
+        $rule = 'ascii';
+        $expectedMessage = 'The provided value must be ASCII bytes only';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2770,14 +2606,10 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 'ü']));
         $this->assertNotEmpty($validator->validate(['username' => $extended]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->utf8('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'utf8' => 'The provided value must be UTF-8 bytes only',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => "\xf0\x9f\x98\x80"]));
+        $fieldName = 'field_name';
+        $rule = 'utf8';
+        $expectedMessage = 'The provided value must be UTF-8 bytes only';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2793,14 +2625,10 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 'ü']));
         $this->assertEmpty($validator->validate(['username' => $extended]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->utf8Extended('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'utf8Extended' => 'The provided value must be 3 and 4 byte UTF-8 sequences only',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => "\xf0\x9f\x98\x80\x80"]));
+        $fieldName = 'field_name';
+        $rule = 'utf8Extended';
+        $expectedMessage = 'The provided value must be 3 and 4 byte UTF-8 sequences only';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2813,14 +2641,11 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 'test@example.com']));
         $this->assertNotEmpty($validator->validate(['username' => 'not an email']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->email('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'email' => 'The provided value must be an e-mail address',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not an email']));
+        $fieldName = 'field_name';
+        $rule = 'email';
+        $expectedMessage = 'The provided value must be an e-mail address';
+        $checkMx = false;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $checkMx);
     }
 
     /**
@@ -2832,14 +2657,10 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'integer', null, [], 'isInteger');
         $this->assertNotEmpty($validator->validate(['username' => 'not integer']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->integer('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'integer' => 'The provided value must be an integer',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'not integer']));
+        $fieldName = 'field_name';
+        $rule = 'integer';
+        $expectedMessage = 'The provided value must be an integer';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2855,14 +2676,10 @@ class ValidatorTest extends TestCase
             $validator->validate(['username' => 'is not an array'])
         );
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->array('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'array' => 'The provided value must be an array',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'is not an array']));
+        $fieldName = 'field_name';
+        $rule = 'array';
+        $expectedMessage = 'The provided value must be an array';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2878,14 +2695,10 @@ class ValidatorTest extends TestCase
             $validator->validate(['username' => ['array']])
         );
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->scalar('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'scalar' => 'The provided value must be scalar',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => ['array']]));
+        $fieldName = 'field_name';
+        $rule = 'scalar';
+        $expectedMessage = 'The provided value must be scalar';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2898,14 +2711,10 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => '#FFFFFF']));
         $this->assertNotEmpty($validator->validate(['username' => 'FFFFFF']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->hexColor('field_name');
-        $expectedMessage = [
-            'field_name' => [
-                'hexColor' => 'The provided value must be a hex color',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'FFFFFF']));
+        $fieldName = 'field_name';
+        $rule = 'hexColor';
+        $expectedMessage = 'The provided value must be a hex color';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage);
     }
 
     /**
@@ -2932,17 +2741,11 @@ class ValidatorTest extends TestCase
 
         $this->assertNotEmpty($validator->validate(['username' => '']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->multipleOptions(
-            'field_name',
-            ['min' => 1, 'caseInsensitive' => false]
-        );
-        $expectedMessage = [
-            'field_name' => [
-                'multipleOptions' => 'The provided value must be a set of multiple options',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => '']));
+        $fieldName = 'field_name';
+        $rule = 'multipleOptions';
+        $expectedMessage = 'The provided value must be a set of multiple options';
+        $options = ['min' => 1, 'caseInsensitive' => false];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $options);
     }
 
     /**
@@ -2964,14 +2767,11 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['things' => ['_ids' => []]]));
         $this->assertNotEmpty($validator->validate(['things' => ['_ids' => 'string']]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->hasAtLeast('field_name', 5);
-        $expectedMessage = [
-            'field_name' => [
-                'hasAtLeast' => 'The provided value must have at least `5` elements',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => ['_ids' => 'string']]));
+        $fieldName = 'field_name';
+        $rule = 'hasAtLeast';
+        $expectedMessage = 'The provided value must have at least `5` elements';
+        $atLeast = 5;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $atLeast);
     }
 
     /**
@@ -2989,14 +2789,11 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['things' => ['_ids' => [1, 2]]]));
         $this->assertNotEmpty($validator->validate(['things' => ['_ids' => [1, 2, 3, 4]]]));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->hasAtMost('field_name', 3);
-        $expectedMessage = [
-            'field_name' => [
-                'hasAtMost' => 'The provided value must have at most `3` elements',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => ['_ids' => [1, 2, 3, 4]]]));
+        $fieldName = 'field_name';
+        $rule = 'hasAtMost';
+        $expectedMessage = 'The provided value must have at most `4` elements';
+        $atMost = 4;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $atMost);
     }
 
     /**
@@ -3009,14 +2806,11 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => '123']));
         $this->assertNotEmpty($validator->validate(['username' => 'Foo']));
 
-        $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->regex('field_name', '/(?<!\\S)\\d++(?!\\S)/');
-        $expectedMessage = [
-            'field_name' => [
-                'regex' => 'The provided value must match against the pattern `/(?<!\S)\d++(?!\S)/`',
-            ]
-        ];;
-        $this->assertSame($expectedMessage, $noI18nValidator->validate(['field_name' => 'Foo']));
+        $fieldName = 'field_name';
+        $rule = 'regex';
+        $expectedMessage = 'The provided value must match against the pattern `/(?<!\S)\d++(?!\S)/`';
+        $regex = '/(?<!\\S)\\d++(?!\\S)/';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $regex);
     }
 
     /**
@@ -3093,5 +2887,41 @@ class ValidatorTest extends TestCase
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+    }
+
+    /**
+     * Assert for the data validation message for a given field's rule for a I18n-enabled & a I18n-disabled validator
+     *
+     * @param string $fieldName The field name.
+     * @param string $rule The rule name.
+     * @param string $expectedMessage The expected data validation message.
+     * @param mixed $additional Additional configuration (optional).
+     * @return void
+     */
+    protected function assertValidationMessage(
+        string $fieldName,
+        string $rule,
+        string $expectedMessage,
+        mixed $additional = null
+    ): void {
+        $validator = new Validator();
+        if ($additional) {
+            $validator->{$rule}($fieldName, $additional);
+        } else {
+            $validator->{$rule}($fieldName);
+        }
+
+        $this->assertSame(
+            $expectedMessage,
+            $validator->field($fieldName)->rule($rule)->get('message')
+        );
+
+        $noI18nValidator = new NoI18nValidator();
+        $noI18nValidator->{$rule}($fieldName, $additional);
+
+        $this->assertSame(
+            $expectedMessage,
+            $noI18nValidator->field($fieldName)->rule($rule)->get('message')
+        );
     }
 }
