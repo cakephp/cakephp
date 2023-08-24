@@ -25,6 +25,7 @@ use Cake\Validation\Validator;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use stdClass;
+use Traversable;
 
 /**
  * Tests Validator class
@@ -1718,7 +1719,7 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $fieldIterator = $validator->getIterator();
-        $this->assertInstanceOf(\Traversable::class, $fieldIterator);
+        $this->assertInstanceOf(Traversable::class, $fieldIterator);
         $this->assertCount(2, $validator);
     }
 
