@@ -1497,6 +1497,14 @@ class ValidatorTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $errors);
+
+        $noI18nValidator = new NoI18nValidator();
+        $noI18nValidator
+            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+            ->add('email', 'notBlank', ['rule' => 'notBlank'])
+            ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
+        $errors = $noI18nValidator->validate(['email' => 'not an email!']);
+        $this->assertEquals($expected, $errors);
     }
 
     /**
