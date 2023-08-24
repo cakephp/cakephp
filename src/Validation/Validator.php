@@ -2155,7 +2155,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must be at be most `%s` bytes long', $max);
+                $message = sprintf('The provided value must be at most `%s` bytes long', $max);
             } else {
                 $message = __d('cake', 'The provided value must be at most `{0}` bytes long', $max);
             }
