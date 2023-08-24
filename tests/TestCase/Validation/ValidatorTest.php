@@ -2064,7 +2064,7 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'equals';
-        $expectedMessage = 'The provided value must be equals to `5`';
+        $expectedMessage = 'The provided value must be equal to `5`';
         $equalTo = 5;
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $equalTo);
     }
@@ -2080,7 +2080,7 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'notEquals';
-        $expectedMessage = 'The provided value must not be equals to `5`';
+        $expectedMessage = 'The provided value must not be equal to `5`';
         $notEqualTo = 5;
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $notEqualTo);
     }
