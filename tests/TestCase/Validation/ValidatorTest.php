@@ -1239,7 +1239,7 @@ class ValidatorTest extends TestCase
     public function testNotEmptyDateTimeUpdate(): void
     {
         $validator = new Validator();
-        $validator->notEmptyDatetime('published', 'message', 'update');
+        $validator->notEmptyDateTime('published', 'message', 'update');
         $this->assertTrue($validator->isEmptyAllowed('published', true));
         $this->assertFalse($validator->isEmptyAllowed('published', false));
 
