@@ -1742,7 +1742,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must be less than or equal to the one of field `%s`', $secondField);
+                $message = sprintf(
+                    'The provided value must be less than or equal to the one of field `%s`',
+                    $secondField
+                );
             } else {
                 $message = __d(
                     'cake',
