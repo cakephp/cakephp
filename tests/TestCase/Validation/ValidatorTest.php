@@ -1505,7 +1505,7 @@ class ValidatorTest extends TestCase
             ->addMethods(['isCool'])
             ->getMock();
         $thing->expects($this->once())->method('isCool')
-            ->will($this->returnCallback(function ($data, $context) use ($thing) {
+            ->willReturnCallback(function ($data, $context) use ($thing) {
                 $this->assertSame('bar', $data);
                 $expected = [
                     'default' => new RulesProvider(),
@@ -1523,7 +1523,7 @@ class ValidatorTest extends TestCase
                 $this->assertEquals($expected, $context);
 
                 return "That ain't cool, yo";
-            }));
+            });
 
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
@@ -1549,7 +1549,7 @@ class ValidatorTest extends TestCase
             ->addMethods(['isCool'])
             ->getMock();
         $thing->expects($this->once())->method('isCool')
-            ->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {
+            ->willReturnCallback(function ($data, $a, $b, $context) use ($thing) {
                 $this->assertSame('bar', $data);
                 $this->assertSame('and', $a);
                 $this->assertSame('awesome', $b);
@@ -1569,7 +1569,7 @@ class ValidatorTest extends TestCase
                 $this->assertEquals($expected, $context);
 
                 return "That ain't cool, yo";
-            }));
+            });
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [

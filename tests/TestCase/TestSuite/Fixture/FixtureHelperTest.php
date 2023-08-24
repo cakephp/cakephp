@@ -109,12 +109,12 @@ class FixtureHelperTest extends TestCase
         $fixture1 = $this->createMock(TestFixture::class);
         $fixture1->expects($this->once())
             ->method('connection')
-            ->will($this->returnValue('test1'));
+            ->willReturn('test1');
 
         $fixture2 = $this->createMock(TestFixture::class);
         $fixture2->expects($this->once())
             ->method('connection')
-            ->will($this->returnValue('test2'));
+            ->willReturn('test2');
 
         ConnectionManager::alias('test', 'test1');
         ConnectionManager::alias('test', 'test2');
@@ -155,7 +155,7 @@ class FixtureHelperTest extends TestCase
         $fixture = $this->getMockBuilder(TestFixture::class)->getMock();
         $fixture->expects($this->once())
             ->method('connection')
-            ->will($this->returnValue('test'));
+            ->willReturn('test');
         $fixture->expects($this->once())
             ->method('insert')
             ->will($this->throwException(new PDOException('Missing key')));
@@ -165,7 +165,7 @@ class FixtureHelperTest extends TestCase
             ->getMock();
         $helper->expects($this->any())
             ->method('sortByConstraint')
-            ->will($this->returnValue([$fixture]));
+            ->willReturn([$fixture]);
 
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to insert rows for table ``');
@@ -200,7 +200,7 @@ class FixtureHelperTest extends TestCase
         $fixture = $this->getMockBuilder(TestFixture::class)->getMock();
         $fixture->expects($this->once())
             ->method('connection')
-            ->will($this->returnValue('test'));
+            ->willReturn('test');
         $fixture->expects($this->once())
             ->method('truncate')
             ->will($this->throwException(new PDOException('Missing key')));
@@ -210,7 +210,7 @@ class FixtureHelperTest extends TestCase
             ->getMock();
         $helper->expects($this->any())
             ->method('sortByConstraint')
-            ->will($this->returnValue([$fixture]));
+            ->willReturn([$fixture]);
 
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to truncate table ``');

@@ -126,7 +126,6 @@ class AssociationCollectionTest extends TestCase
     public function testGetByProperty(): void
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', [
@@ -246,7 +245,6 @@ class AssociationCollectionTest extends TestCase
     public function testSaveParents(): void
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
@@ -274,7 +272,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options)
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -294,7 +292,6 @@ class AssociationCollectionTest extends TestCase
     public function testSaveParentsFiltered(): void
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
@@ -322,7 +319,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, ['atomic' => true, 'associated' => ['Others']])
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');
@@ -342,7 +339,6 @@ class AssociationCollectionTest extends TestCase
     public function testSaveChildrenFiltered(): void
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\HasMany')
@@ -370,7 +366,7 @@ class AssociationCollectionTest extends TestCase
         $mockOne->expects($this->once())
             ->method('saveAssociated')
             ->with($entity, $options + ['associated' => ['Other']])
-            ->will($this->returnValue($entity));
+            ->willReturn($entity);
 
         $mockTwo->expects($this->never())
             ->method('saveAssociated');

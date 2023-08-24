@@ -247,7 +247,7 @@ class HasManyTest extends TestCase
         $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $keys = [1, 2, 3, 4];
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
@@ -290,7 +290,7 @@ class HasManyTest extends TestCase
         $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $association->eagerLoader(compact('keys', 'query'));
 
@@ -327,7 +327,7 @@ class HasManyTest extends TestCase
 
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $association->eagerLoader([
             'conditions' => ['Articles.id !=' => 3],
@@ -377,7 +377,7 @@ class HasManyTest extends TestCase
         $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $association->eagerLoader([
             'fields' => ['id', 'title'],
@@ -403,7 +403,7 @@ class HasManyTest extends TestCase
         $query = $this->article->query();
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $queryBuilder = function ($query) {
             return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
@@ -455,10 +455,10 @@ class HasManyTest extends TestCase
             ->setConstructorArgs([$this->article])
             ->getMock();
         $query->method('getRepository')
-            ->will($this->returnValue($this->article));
+            ->willReturn($this->article);
         $this->article->method('find')
             ->with('all')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $results = new ResultSet([]);
 
@@ -467,7 +467,7 @@ class HasManyTest extends TestCase
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ]);
         $query->method('all')
-            ->will($this->returnValue($results));
+            ->willReturn($results);
 
         $tuple = new TupleComparison(
             ['Articles.author_id', 'Articles.site_id'],
@@ -477,7 +477,7 @@ class HasManyTest extends TestCase
         );
         $query->expects($this->once())->method('andWhere')
             ->with($tuple)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
         $row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];

@@ -65,11 +65,7 @@ class PostgresTest extends TestCase
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
-            ->will($this->onConsecutiveCalls(
-                $this->returnArgument(0),
-                $this->returnArgument(0),
-                $this->returnArgument(0)
-            ));
+            ->willReturnArgument(0);
 
         $connection->expects($this->exactly(2))
             ->method('exec')
@@ -82,7 +78,7 @@ class PostgresTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $driver->connect();
     }
@@ -125,11 +121,7 @@ class PostgresTest extends TestCase
             ->getMock();
         $connection->expects($this->any())
             ->method('quote')
-            ->will($this->onConsecutiveCalls(
-                $this->returnArgument(0),
-                $this->returnArgument(0),
-                $this->returnArgument(0)
-            ));
+            ->willReturnArgument(0);
 
         $connection->expects($this->exactly(5))
             ->method('exec')
@@ -145,7 +137,7 @@ class PostgresTest extends TestCase
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $driver->connect();
     }
@@ -180,7 +172,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -208,7 +200,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 

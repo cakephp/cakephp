@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\MiddlewareApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -48,7 +49,16 @@ class MiddlewareApplicationTest extends TestCase
             'pass' => [],
         ]);
 
-        $app = $this->getMockForAbstractClass(MiddlewareApplication::class);
+        $app = new class extends MiddlewareApplication {
+            public function bootstrap(): void
+            {
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame('Not found', '' . $result->getBody());

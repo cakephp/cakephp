@@ -24,6 +24,7 @@ use Cake\I18n\PackageLocator;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
+use TestApp\Cache\Engine\TestAppCacheEngine;
 
 class TranslatorRegistryTest extends TestCase
 {
@@ -36,7 +37,7 @@ class TranslatorRegistryTest extends TestCase
         $package = $this->getMockBuilder(Package::class)->getMock();
         $formatter = $this->getMockBuilder(SprintfFormatter::class)->getMock();
         $formatterLocator = $this->getMockBuilder(FormatterLocator::class)->getMock();
-        $cacheEngineNullPackage = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['read']);
+        $cacheEngineNullPackage = $this->getMockBuilder(TestAppCacheEngine::class)->getMock();
         $translatorNullPackage = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
 
         $translatorNonNullPackage = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
@@ -56,7 +57,7 @@ class TranslatorRegistryTest extends TestCase
             ->willReturn($package);
 
         $cacheEngineNullPackage
-            ->method('read')
+            ->method('get')
             ->willReturn($translatorNullPackage);
 
         $registry = new TranslatorRegistry($packageLocator, $formatterLocator, 'en_CA');

@@ -1407,7 +1407,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a equal to comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param float|int $value The value user data must be equal to.
+     * @param mixed $value The value user data must be equal to.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1416,7 +1416,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function equals(
         string $field,
-        float|int $value,
+        mixed $value,
         ?string $message = null,
         Closure|string|null $when = null
     ) {
@@ -1439,7 +1439,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a not equal to comparison rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param float|int $value The value user data must be not be equal to.
+     * @param mixed $value The value user data must be not be equal to.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1448,7 +1448,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function notEquals(
         string $field,
-        float|int $value,
+        mixed $value,
         ?string $message = null,
         Closure|string|null $when = null
     ) {

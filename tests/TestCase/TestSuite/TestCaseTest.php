@@ -371,7 +371,7 @@ class TestCaseTest extends TestCase
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->once())
             ->method('save')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->assertSame(false, $Posts->save($entity));
         $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
@@ -384,14 +384,14 @@ class TestCaseTest extends TestCase
         $SluggedPosts->expects($this->once())
             ->method('slugify')
             ->with('some value')
-            ->will($this->returnValue('mocked'));
+            ->willReturn('mocked');
         $this->assertSame('mocked', $SluggedPosts->slugify('some value'));
 
         $SluggedPosts = $this->getMockForModel('SluggedPosts', ['save', 'slugify']);
         $SluggedPosts->expects($this->once())
             ->method('slugify')
             ->with('some value two')
-            ->will($this->returnValue('mocked'));
+            ->willReturn('mocked');
         $this->assertSame('mocked', $SluggedPosts->slugify('some value two'));
     }
 
@@ -425,7 +425,7 @@ class TestCaseTest extends TestCase
         $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
         $TestPluginComment->expects($this->exactly(1))
             ->method('save')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $entity = new Entity([]);
         $this->assertFalse($TestPluginComment->save($entity));
@@ -453,7 +453,7 @@ class TestCaseTest extends TestCase
 
         $Mock->expects($this->exactly(1))
             ->method('save')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $entity = new Entity([]);
         $this->assertFalse($Mock->save($entity));

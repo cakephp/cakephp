@@ -138,9 +138,9 @@ class ServerTest extends TestCase
         $app->expects($this->once())
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))
-            ->will($this->returnCallback(function ($middleware) {
+            ->willReturnCallback(function ($middleware) {
                 return $middleware;
-            }));
+            });
 
         $server = new Server($app);
         $res = $server->run($request);
@@ -305,11 +305,13 @@ class ServerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        /** @var \Cake\Http\BaseApplication|\PHPUnit\Framework\MockObject\MockObject $app */
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->config]
-        );
+        $app = new class ($this->config) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
 
         $server = new Server($app);
         $this->assertSame($app->getEventManager(), $server->getEventManager());

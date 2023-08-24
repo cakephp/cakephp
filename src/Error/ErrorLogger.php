@@ -64,12 +64,12 @@ class ErrorLogger implements ErrorLoggerInterface
         if ($includeTrace) {
             $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
         }
-        $logMap = [
+        $label = $error->getLabel();
+        $level = match ($label) {
             'strict' => LOG_NOTICE,
-            'deprecated' => LOG_NOTICE,
-        ];
-        $level = $error->getLabel();
-        $level = $logMap[$level] ?? $level;
+            'deprecated' => LOG_DEBUG,
+            default => $label,
+        };
 
         Log::write($level, $message);
     }

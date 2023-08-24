@@ -269,7 +269,7 @@ class EventManagerTest extends TestCase
         $listener->expects($this->once())
             ->method('listenerFunction')
             ->with($event)
-            ->will($this->returnValue('something special'));
+            ->willReturn('something special');
         $anotherListener->expects($this->once())
             ->method('listenerFunction')
             ->with($event);
@@ -295,7 +295,7 @@ class EventManagerTest extends TestCase
 
         $listener->expects($this->once())->method('listenerFunction')
             ->with($event)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $anotherListener->expects($this->never())
             ->method('listenerFunction');
         $manager->dispatch($event);
@@ -439,7 +439,7 @@ class EventManagerTest extends TestCase
         $generalManager->expects($this->any())
                 ->method('prioritisedListeners')
                 ->with('fake.event')
-                ->will($this->returnValue([]));
+                ->willReturn([]);
 
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', ['priority' => 8], [$listener, 'stopListener']);
@@ -468,11 +468,11 @@ class EventManagerTest extends TestCase
         $generalManager->expects($this->any())
                 ->method('prioritisedListeners')
                 ->with('fake.event')
-                ->will($this->returnValue(
+                ->willReturn(
                     [11 => [
                         ['callable' => [$listener, 'secondListenerFunction']],
                     ]]
-                ));
+                );
 
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', ['priority' => 15], [$listener, 'thirdListenerFunction']);
@@ -500,11 +500,11 @@ class EventManagerTest extends TestCase
         $generalManager->expects($this->any())
                 ->method('prioritisedListeners')
                 ->with('fake.event')
-                ->will($this->returnValue(
+                ->willReturn(
                     [10 => [
                         ['callable' => [$listener, 'listenerFunction']],
                     ]]
-                ));
+                );
 
         $manager->on('fake.event', [$listener, 'secondListenerFunction']);
 

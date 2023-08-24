@@ -487,13 +487,13 @@ class RoutingMiddlewareTest extends TestCase
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')
-            ->will($this->returnCallback(function (RouteBuilder $routes) {
+            ->willReturnCallback(function (RouteBuilder $routes) {
                 return $routes;
-            }));
+            });
 
         if ($handleCallback) {
             $mock->method('handle')
-                ->will($this->returnCallback($handleCallback));
+                ->willReturnCallback($handleCallback);
         }
 
         return $mock;

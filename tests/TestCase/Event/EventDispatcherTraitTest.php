@@ -37,7 +37,9 @@ class EventDispatcherTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait(EventDispatcherTrait::class);
+        $this->subject = new class {
+            use EventDispatcherTrait;
+        };
     }
 
     /**

@@ -45,6 +45,9 @@
         <ini name="error_reporting" value="32767"/>
         <env name="FIXTURE_SCHEMA_METADATA" value="./tests/schema.php"/>
 
+        <!-- Enable query logging output for the testrun.
+        <env name="LOG_QUERIES" value="1" />
+        -->
         <!-- SQLite
         <env name="DB_URL" value="sqlite:///:memory:"/>
         -->
@@ -58,6 +61,7 @@
         <env name="DB_URL" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
 
+        <const name="PHPUNIT_TESTSUITE" value="true"/>
         <!-- Constants used by Http Interop's Http Factory tests -->
         <const name="REQUEST_FACTORY" value="Cake\Http\RequestFactory"/>
         <const name="RESPONSE_FACTORY" value="Cake\Http\ResponseFactory"/>

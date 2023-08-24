@@ -245,7 +245,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
         $result = $http->get('http://cakephp.org/test.html', [], [
@@ -277,7 +277,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -308,7 +308,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -341,7 +341,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -375,7 +375,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -432,7 +432,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -484,7 +484,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -535,7 +535,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -563,7 +563,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -610,7 +610,7 @@ class ClientTest extends TestCase
         $response = new Response($headers, '');
         $adapter->expects($this->once())
             ->method('send')
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -702,7 +702,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -782,7 +782,7 @@ class ClientTest extends TestCase
                     ]
                 )
             )
-            ->will($this->onConsecutiveCalls([$redirect], [$redirect2], [$response]));
+            ->willReturn([$redirect], [$redirect2], [$response]);
 
         $client = new Client([
             'adapter' => $adapter,
@@ -827,7 +827,7 @@ class ClientTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([$response]));
+            ->willReturn([$response]);
 
         $http = new Client(['adapter' => $mock]);
         $request = new LaminasRequest(
@@ -874,7 +874,7 @@ class ClientTest extends TestCase
                     ]
                 )
             )
-            ->will($this->OnConsecutiveCalls([$redirect], [$response]));
+            ->willReturn([$redirect], [$response]);
 
         $client = new Client([
             'adapter' => $adapter,

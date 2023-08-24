@@ -1046,7 +1046,7 @@ class RouteTest extends TestCase
         $route->expects($this->once())
             ->method('parse')
             ->with('/forward', 'GET')
-            ->will($this->returnValue(['works!']));
+            ->willReturn(['works!']);
 
         $request = new ServerRequest([
             'environment' => [

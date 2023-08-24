@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
@@ -40,9 +39,9 @@ use TestPlugin\Plugin as TestPlugin;
 class BaseApplicationTest extends TestCase
 {
     /**
-     * @var string
+     * @var \Cake\Http\BaseApplication
      */
-    protected $path;
+    protected BaseApplication $app;
 
     /**
      * Setup
@@ -51,13 +50,23 @@ class BaseApplicationTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $this->path = dirname(dirname(__DIR__));
+        $this->app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
     }
 
+    /**
+     * @return void
+     */
     public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
+        unset($this->app);
     }
 
     /**
@@ -73,14 +82,13 @@ class BaseApplicationTest extends TestCase
             'pass' => [],
         ]);
 
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame('Hello Jane', '' . $result->getBody());
         $container = $app->getContainer();
         $this->assertSame($request, $container->get(ServerRequest::class));
         $this->assertSame($container, $container->get(ContainerInterface::class));
-        $this->assertInstanceOf(ComponentRegistry::class, $container->get(ComponentRegistry::class));
     }
 
     /**
@@ -89,7 +97,7 @@ class BaseApplicationTest extends TestCase
      */
     public function testAddPluginUnknownClass(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $app->addPlugin('PluginJs');
         $plugin = $app->getPlugins()->get('PluginJs');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
@@ -110,7 +118,7 @@ class BaseApplicationTest extends TestCase
 
     public function testAddPluginValidShortName(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $app->addPlugin('TestPlugin');
 
         $this->assertCount(1, $app->getPlugins());
@@ -123,7 +131,7 @@ class BaseApplicationTest extends TestCase
 
     public function testAddPluginValid(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $app->addPlugin(TestPlugin::class);
 
         $this->assertCount(1, $app->getPlugins());
@@ -133,10 +141,7 @@ class BaseApplicationTest extends TestCase
     public function testPluginMiddleware(): void
     {
         $start = new MiddlewareQueue();
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
+        $app = $this->app;
         $app->addPlugin(TestPlugin::class);
 
         $after = $app->pluginMiddleware($start);
@@ -148,10 +153,7 @@ class BaseApplicationTest extends TestCase
     {
         $collection = new RouteCollection();
         $routes = new RouteBuilder($collection, '/');
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
+        $app = $this->app;
         $app->addPlugin(TestPlugin::class);
 
         $result = $app->pluginRoutes($routes);
@@ -167,10 +169,7 @@ class BaseApplicationTest extends TestCase
 
     public function testPluginBootstrap(): void
     {
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
+        $app = $this->app;
         $app->addPlugin(TestPlugin::class);
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
@@ -184,10 +183,7 @@ class BaseApplicationTest extends TestCase
      */
     public function testPluginBootstrapRecursivePlugins(): void
     {
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
+        $app = $this->app;
         $app->addPlugin('Named');
         $app->pluginBootstrap();
         $this->assertTrue(
@@ -211,7 +207,7 @@ class BaseApplicationTest extends TestCase
      */
     public function testAddOptionalPluginLoadingNonExistentPlugin(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $pluginCountBefore = count($app->getPlugins());
         $nonExistingPlugin = 'NonExistentPlugin';
         $app->addOptionalPlugin($nonExistingPlugin);
@@ -226,7 +222,7 @@ class BaseApplicationTest extends TestCase
      */
     public function testAddOptionalPluginLoadingNonExistentPluginValid(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $app->addOptionalPlugin(TestPlugin::class);
 
         $this->assertCount(1, $app->getPlugins());
@@ -235,7 +231,7 @@ class BaseApplicationTest extends TestCase
 
     public function testGetContainer(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $container = $app->getContainer();
 
         $this->assertInstanceOf(ContainerInterface::class, $container);
@@ -244,7 +240,7 @@ class BaseApplicationTest extends TestCase
 
     public function testBuildContainerEvent(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $called = false;
         $app->getEventManager()->on('Application.buildContainer', function ($event, $container) use (&$called): void {
             $this->assertInstanceOf(BaseApplication::class, $event->getSubject());
@@ -259,7 +255,7 @@ class BaseApplicationTest extends TestCase
 
     public function testBuildContainerEventReplaceContainer(): void
     {
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app = $this->app;
         $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event) {
             $new = new Container();
             $new->add('testing', 'yes');

@@ -16,11 +16,39 @@ declare(strict_types=1);
 namespace TestApp\Database\Driver;
 
 use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\Schema\SqliteSchemaDialect;
 
-abstract class StubDriver extends Driver
+class StubDriver extends Driver
 {
     public function connect(): void
     {
         $this->pdo = $this->createPdo('', []);
+    }
+
+    public function enabled(): bool
+    {
+        return true;
+    }
+
+    public function disableForeignKeySQL(): string
+    {
+        return '';
+    }
+
+    public function enableForeignKeySQL(): string
+    {
+        return '';
+    }
+
+    public function schemaDialect(): SchemaDialect
+    {
+        return new SqliteSchemaDialect($this);
+    }
+
+    public function supports(DriverFeatureEnum $feature): bool
+    {
+        return true;
     }
 }

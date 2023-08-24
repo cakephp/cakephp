@@ -197,7 +197,7 @@ class CommandTest extends TestCase
         $parser = new ConsoleOptionParser('cake example');
         $parser->addArgument('name', ['required' => true]);
 
-        $command->method('getOptionParser')->will($this->returnValue($parser));
+        $command->method('getOptionParser')->willReturn($parser);
 
         $output = new StubConsoleOutput();
         $result = $command->run([], $this->getMockIo($output));

@@ -103,7 +103,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
                 ->getMock();
             $mock->expects($this->once())
                 ->method('render')
-                ->will($this->returnValue($response));
+                ->willReturn($response);
 
             return $mock;
         };

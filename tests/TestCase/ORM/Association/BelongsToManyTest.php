@@ -259,7 +259,7 @@ class BelongsToManyTest extends TestCase
         $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
             ->method('enabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $mock = $this->getMockBuilder(Connection::class)
             ->setConstructorArgs([['name' => 'other_source', 'driver' => $driver]])
@@ -654,7 +654,7 @@ class BelongsToManyTest extends TestCase
         $saveOptions = ['foo' => 'bar'];
 
         $joint->method('getPrimaryKey')
-            ->will($this->returnValue(['article_id', 'tag_id']));
+            ->willReturn(['article_id', 'tag_id']);
 
         $joint->expects($this->exactly(2))
             ->method('save')
@@ -708,15 +708,15 @@ class BelongsToManyTest extends TestCase
         $tags = [new Entity(['id' => 2], $opts)];
 
         $joint->method('getPrimaryKey')
-            ->will($this->returnValue(['article_id', 'tag_id']));
+            ->willReturn(['article_id', 'tag_id']);
 
         $joint->expects($this->once())
             ->method('save')
-            ->will($this->returnCallback(function (EntityInterface $e) {
+            ->willReturnCallback(function (EntityInterface $e) {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
-            }));
+            });
 
         $this->assertTrue($assoc->link($entity, $tags));
         $this->assertSame($entity->tags, $tags);
@@ -1218,7 +1218,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
@@ -1249,7 +1248,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
@@ -1266,7 +1264,7 @@ class BelongsToManyTest extends TestCase
         $assoc->expects($this->once())
             ->method('replaceLinks')
             ->with($entity, [])
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $assoc->expects($this->never())
             ->method('_saveTarget');
@@ -1281,7 +1279,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
@@ -1299,7 +1296,7 @@ class BelongsToManyTest extends TestCase
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
         $assoc->expects($this->once())->method('replaceLinks')
             ->with($entity, $entity->tags, $options)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->assertSame($entity, $assoc->saveAssociated($entity, $options));
     }
 
@@ -1310,7 +1307,6 @@ class BelongsToManyTest extends TestCase
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['table'])
             ->getMock();
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
@@ -1328,7 +1324,7 @@ class BelongsToManyTest extends TestCase
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
         $assoc->expects($this->once())->method('replaceLinks')
             ->with($entity, $entity->tags, $options)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->assertFalse($assoc->saveAssociated($entity, $options));
     }
 

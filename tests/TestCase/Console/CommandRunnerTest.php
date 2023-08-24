@@ -28,6 +28,7 @@ use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use stdClass;
@@ -68,10 +69,13 @@ class CommandRunnerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->config]
-        );
+        $app = new class ($this->config) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
 
         $runner = new CommandRunner($app);
         $this->assertSame($app->getEventManager(), $runner->getEventManager());
@@ -485,9 +489,9 @@ class CommandRunnerTest extends TestCase
         $app->expects($this->once())
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
-            ->will($this->returnCallback(function ($commands) {
+            ->willReturnCallback(function ($commands) {
                 return $commands;
-            }));
+            });
         $app->expects($this->once())->method('routes');
         $app->expects($this->once())->method('pluginRoutes');
 
@@ -520,7 +524,7 @@ class CommandRunnerTest extends TestCase
             ->setConstructorArgs([$this->config])
             ->getMock();
         $collection = new CommandCollection($commands);
-        $app->method('console')->will($this->returnValue($collection));
+        $app->method('console')->willReturn($collection);
 
         return $app;
     }

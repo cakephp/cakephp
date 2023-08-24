@@ -28,6 +28,7 @@ use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
+use TestApp\Cache\Engine\TestAppCacheEngine;
 
 /**
  * CacheTest class
@@ -259,8 +260,8 @@ class CacheTest extends TestCase
      */
     public function testConfigFailedInit(): void
     {
-        $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
-        $mock->method('init')->will($this->returnValue(false));
+        $mock = $this->getMockBuilder(TestAppCacheEngine::class)->getMock();
+        $mock->method('init')->willReturn(false);
         Cache::setConfig('tests', [
             'engine' => $mock,
         ]);

@@ -212,7 +212,7 @@ class FormHelperTest extends TestCase
         $mock->expects($this->once())
             ->method('render')
             ->with($data)
-            ->will($this->returnValue('HTML'));
+            ->willReturn('HTML');
         $result = $this->Form->widget('test', $data);
         $this->assertSame('HTML', $result);
     }
@@ -237,12 +237,12 @@ class FormHelperTest extends TestCase
         $mock->expects($this->once())
             ->method('render')
             ->with($data)
-            ->will($this->returnValue('HTML'));
+            ->willReturn('HTML');
 
         $mock->expects($this->once())
             ->method('secureFields')
             ->with($data)
-            ->will($this->returnValue(['test']));
+            ->willReturn(['test']);
 
         $this->Form->create();
         $result = $this->Form->widget('test', $data + ['secure' => true]);

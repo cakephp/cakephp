@@ -925,7 +925,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -974,7 +974,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -1023,7 +1023,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
@@ -1097,7 +1097,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
@@ -1115,7 +1115,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
-            ->will($this->returnValue($driver));
+            ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
@@ -1146,9 +1146,9 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->will($this->returnCallback(function ($value) {
+            ->willReturnCallback(function ($value) {
                 return "'$value'";
-            }));
+            });
 
         $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])

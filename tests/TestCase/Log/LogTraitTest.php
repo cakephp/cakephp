@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Log;
 
 use Cake\Log\Log;
+use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -45,7 +46,9 @@ class LogTraitTest extends TestCase
             );
 
         Log::setConfig('trait_test', ['engine' => $mock]);
-        $subject = $this->getObjectForTrait('Cake\Log\LogTrait');
+        $subject = new class {
+            use LogTrait;
+        };
 
         $subject->log('Testing');
         $subject->log('message', 'debug');

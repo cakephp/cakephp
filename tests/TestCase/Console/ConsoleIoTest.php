@@ -105,7 +105,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('y'));
+            ->willReturn('y');
 
         $result = $this->io->askChoice('Just a test?', $choices);
         $this->assertSame('y', $result);
@@ -121,7 +121,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('Y'));
+            ->willReturn('Y');
 
         $result = $this->io->askChoice('Just a test?', $choices);
         $this->assertSame('Y', $result);
@@ -138,7 +138,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('y'));
+            ->willReturn('y');
 
         $result = $this->io->ask('Just a test?');
         $this->assertSame('y', $result);
@@ -155,7 +155,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue(''));
+            ->willReturn('');
 
         $result = $this->io->ask('Just a test?', 'n');
         $this->assertSame('n', $result);
@@ -368,13 +368,13 @@ class ConsoleIoTest extends TestCase
                     [PHP_EOL, 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 $number,
                 9,
                 9,
                 1,
                 0
-            ));
+            );
 
         $this->io->out('Some <info>text</info> I want to overwrite', 0);
         $this->io->overwrite('Less text');
@@ -403,7 +403,7 @@ class ConsoleIoTest extends TestCase
                     [str_repeat(' ', $length - 2), 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 $length,
                 $length,
                 3,
@@ -411,7 +411,7 @@ class ConsoleIoTest extends TestCase
                 $length,
                 2,
                 $length - 2
-            ));
+            );
 
         $this->io->out('12345');
         $this->io->overwrite('123', 0);
@@ -436,13 +436,13 @@ class ConsoleIoTest extends TestCase
                     ['12345', 0]
                 )
             )
-            ->will($this->onConsecutiveCalls(
+            ->willReturn(
                 1,
                 1,
                 3,
                 3,
                 5
-            ));
+            );
 
         $this->io->out('1');
         $this->io->overwrite('123', 0);
@@ -711,7 +711,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('q'));
+            ->willReturn('q');
 
         $this->io->createFile($file, 'some content');
     }
@@ -730,7 +730,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('n'));
+            ->willReturn('n');
 
         $contents = 'new content';
         $result = $this->io->createFile($file, $contents);
@@ -774,7 +774,7 @@ class ConsoleIoTest extends TestCase
 
         $this->in->expects($this->once())
             ->method('read')
-            ->will($this->returnValue('a'));
+            ->willReturn('a');
 
         $this->io->createFile($file, 'new content');
         $this->assertStringEqualsFile($file, 'new content');

@@ -20,6 +20,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,10 +39,13 @@ class HelpCommandTest extends TestCase
         $this->setAppNamespace();
         Plugin::getCollection()->clear();
 
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            ['']
-        );
+        $app = new class ('') extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
         $app->addPlugin('TestPlugin');
     }
 
@@ -85,6 +89,10 @@ class HelpCommandTest extends TestCase
         $this->assertOutputNotContains(
             '- test_plugin.sample',
             'only short alias for plugin command.'
+        );
+        $this->assertOutputNotContains(
+            ' - abstract',
+            'Abstract command classes should not appear.'
         );
         $this->assertOutputContains('<info>App</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');

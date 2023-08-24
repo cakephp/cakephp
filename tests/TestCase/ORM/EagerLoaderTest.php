@@ -265,7 +265,7 @@ class EagerLoaderTest extends TestCase
                     ]
                 )
             )
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $loader = new EagerLoader();
         $loader->contain($contains);
