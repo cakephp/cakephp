@@ -77,7 +77,7 @@ class I18nCommandTest extends TestCase
         if (file_exists($deDir . 'default.po')) {
             unlink($deDir . 'default.po');
         }
-        if (file_exists($deDir . 'default.po')) {
+        if (file_exists($deDir . 'cake.po')) {
             unlink($deDir . 'cake.po');
         }
 
@@ -106,7 +106,7 @@ class I18nCommandTest extends TestCase
         if (file_exists($deDir . 'default.po')) {
             unlink($deDir . 'default.po');
         }
-        if (file_exists($deDir . 'default.po')) {
+        if (file_exists($deDir . 'cake.po')) {
             unlink($deDir . 'cake.po');
         }
 

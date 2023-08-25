@@ -395,7 +395,6 @@ class I18nExtractCommandTest extends TestCase
 
     /**
      * Test with associative arrays in App.path.locales and App.path.templates.
-     * A simple
      */
     public function testExtractWithAssociativePaths(): void
     {
@@ -410,7 +409,9 @@ class I18nExtractCommandTest extends TestCase
             '--merge=no ' .
             '--extract-core=no ',
             [
-                '', //Sending two empty inputs so \Cake\Command\I18nExtractCommand::_getPaths() loops through all paths
+                // Sending two empty inputs so \Cake\Command\I18nExtractCommand::_getPaths()
+                // loops through all paths
+                '',
                 '',
                 'D',
                 $this->path . DS,
