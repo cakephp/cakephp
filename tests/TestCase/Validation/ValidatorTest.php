@@ -2526,9 +2526,15 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'inList';
-        $expectedMessage = 'The provided value must be one from the list of allowed values';
-        $range = ['a', 'b'];
-        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $range);
+        $expectedMessage = 'The provided value must be one of: `a, b`';
+        $list = ['a', 'b'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $list);
+
+        // This should lead to a RangeException or an UnexpectedValueException, instead.
+        // As it could never successfully validate the data.
+        $expectedMessage = 'The provided value must be one of: ``';
+        $list = [];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $list);
     }
 
     /**

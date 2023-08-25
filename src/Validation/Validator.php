@@ -2382,11 +2382,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function inList(string $field, array $list, ?string $message = null, Closure|string|null $when = null)
     {
+        $listEnumeration = implode(', ', $list);
+
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must be one from the list of allowed values';
+                $message = sprintf('The provided value must be one of: `%s`', $listEnumeration);
             } else {
-                $message = __d('cake', 'The provided value must be one from the list of allowed values');
+                $message = __d(
+                    'cake',
+                    'The provided value must be one of: `{0}`',
+                    $listEnumeration
+                );
             }
         }
 
