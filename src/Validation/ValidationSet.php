@@ -146,7 +146,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
         }
         $this->_rules[$name] = $rule;
 
-        if (null === $this->_allowEmpty) {
+        if ($this->_allowEmpty === null) {
             $this->_allowEmpty = false;
         }
 
