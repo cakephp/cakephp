@@ -2255,8 +2255,16 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'dateTime';
-        $expectedMessage = 'The provided value must be a date and time';
+        $expectedMessage = 'The provided value must be a date and time of one of these formats: `ymd`';
         $format = ['ymd'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
+
+        $format = null;
+        // Same message expected
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
+
+        $expectedMessage = 'The provided value must be a date and time of one of these formats: `ymd, dmy`';
+        $format = ['ymd', 'dmy'];
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
     }
 

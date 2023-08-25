@@ -1835,11 +1835,20 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        $formatEnumeration = implode(', ', $formats);
+
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must be a date and time';
+                $message = sprintf(
+                    'The provided value must be a date and time of one of these formats: `%s`',
+                    $formatEnumeration
+                );
             } else {
-                $message = __d('cake', 'The provided value must be a date and time');
+                $message = __d(
+                    'cake',
+                    'The provided value must be a date and time of one of these formats: `{0}`',
+                    $formatEnumeration
+                );
             }
         }
 
