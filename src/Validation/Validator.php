@@ -1246,7 +1246,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a credit card rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param string $type The type of cards you want to allow. Defaults to 'all'.
+     * @param array|string $type The type of cards you want to allow. Defaults to 'all'.
      *   You can also supply an array of accepted card types. e.g `['mastercard', 'visa', 'amex']`
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
@@ -1256,7 +1256,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function creditCard(
         string $field,
-        string $type = 'all',
+        array|string $type = 'all',
         ?string $message = null,
         Closure|string|null $when = null
     ) {
