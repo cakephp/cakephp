@@ -1931,9 +1931,24 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must be decimal';
+                if ($places === null) {
+                    $message = 'The provided value must be decimal with any number of decimal places, including none';
+                } else {
+                    $message = sprintf('The provided value must be decimal with `%s` decimal places', $places);
+                }
             } else {
-                $message = __d('cake', 'The provided value must be decimal');
+                if ($places === null) {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be decimal with any number of decimal places, including none'
+                    );
+                } else {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be decimal with `{0}` decimal places',
+                        $places
+                    );
+                }
             }
         }
 

@@ -2309,8 +2309,12 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'field_name';
         $rule = 'decimal';
-        $expectedMessage = 'The provided value must be decimal';
+        $expectedMessage = 'The provided value must be decimal with `2` decimal places';
         $places = 2;
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $places);
+
+        $expectedMessage = 'The provided value must be decimal with any number of decimal places, including none';
+        $places = null;
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $places);
     }
 
