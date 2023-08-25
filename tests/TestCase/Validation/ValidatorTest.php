@@ -2943,7 +2943,11 @@ class ValidatorTest extends TestCase
         );
 
         $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator->{$rule}($fieldName, $additional);
+        if ($additional !== null) {
+            $noI18nValidator->{$rule}($fieldName, $additional);
+        } else {
+            $noI18nValidator->{$rule}($fieldName);
+        }
 
         $this->assertSame(
             $expectedMessage,
