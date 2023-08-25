@@ -2917,7 +2917,7 @@ class ValidatorTest extends TestCase
         mixed $additional = null
     ): void {
         $validator = new Validator();
-        if ($additional) {
+        if ($additional !== null) {
             $validator->{$rule}($fieldName, $additional);
         } else {
             $validator->{$rule}($fieldName);
