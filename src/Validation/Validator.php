@@ -1260,11 +1260,35 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?string $message = null,
         Closure|string|null $when = null
     ) {
+        if (is_array($type)) {
+            $typeEnumeration = implode(', ', $type);
+        } else {
+            $typeEnumeration = $type;
+        }
+
         if ($message === null) {
             if (!$this->_useI18n) {
-                $message = 'The provided value must be a valid credit card number';
+                if ($type === 'all') {
+                    $message = 'The provided value must be a valid credit card number of any type';
+                } else {
+                    $message = sprintf(
+                        'The provided value must be a valid credit card number of these types: `%s`',
+                        $typeEnumeration
+                    );
+                }
             } else {
-                $message = __d('cake', 'The provided value must be a valid credit card number');
+                if ($type === 'all') {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be a valid credit card number of any type'
+                    );
+                } else {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be a valid credit card number of these types: `{0}`',
+                        $typeEnumeration
+                    );
+                }
             }
         }
 
