@@ -1994,6 +1994,12 @@ class ValidatorTest extends TestCase
         $expectedMessage = 'The provided value must be a valid credit card number of these types: `amex`';
         $cardType = 'amex';
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $cardType);
+
+        // This should lead to a RangeException or an UnexpectedValueException, instead.
+        // As it could never successfully validate the data.
+        $expectedMessage = 'The provided value must be a valid credit card number of these types: ``';
+        $cardType = [];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $cardType);
     }
 
     /**
@@ -2247,6 +2253,12 @@ class ValidatorTest extends TestCase
         $expectedMessage = 'The provided value must be a date of one of these formats: `ymd, dmy`';
         $format = ['ymd', 'dmy'];
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
+
+        // This should lead to a RangeException or an UnexpectedValueException, instead.
+        // As it could never successfully validate the data.
+        $expectedMessage = 'The provided value must be a date of one of these formats: ``';
+        $format = [];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
     }
 
     /**
@@ -2273,6 +2285,12 @@ class ValidatorTest extends TestCase
 
         $expectedMessage = 'The provided value must be a date and time of one of these formats: `ymd, dmy`';
         $format = ['ymd', 'dmy'];
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
+
+        // This should lead to a RangeException or an UnexpectedValueException, instead.
+        // As it could never successfully validate the data.
+        $expectedMessage = 'The provided value must be a date and time of one of these formats: ``';
+        $format = [];
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $format);
     }
 
