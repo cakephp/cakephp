@@ -42,9 +42,11 @@ class MailerSendFailsEmailIsReset extends TestCase
     }
 }
 
+// phpcs:disable
 class CustomMailer extends Mailer
 {
     public function welcome()
     {
     }
 }
+// phpcs:enable

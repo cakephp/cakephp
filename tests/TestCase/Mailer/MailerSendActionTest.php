@@ -37,9 +37,11 @@ class MailerSendActionTest extends TestCase
     }
 }
 
+// phpcs:disable
 class CustomMailer extends Mailer
 {
     public function test($to, $subject)
     {
     }
 }
+// phpcs:enable
