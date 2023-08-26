@@ -73,9 +73,6 @@ trait CellTrait
             throw new MissingCellException(['className' => $pluginAndCell . 'Cell']);
         }
 
-        if (!empty($data)) {
-            $data = array_values($data);
-        }
         $options = ['action' => $action, 'args' => $data] + $options;
 
         return $this->_createCell($className, $action, $plugin, $options);
