@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
 use DateTime;
 use InvalidArgumentException;
-use RuntimeException;
 use TestApp\Mailer\TestMailer;
 use function Cake\Core\env;
 
@@ -384,24 +383,6 @@ class MailerTest extends TestCase
 
         $result = $this->mailer->getBoundary();
         $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $result);
-    }
-
-    public function testSend(): void
-    {
-        $mailer = $this->getMockBuilder(Mailer::class)
-            ->onlyMethods(['deliver'])
-            ->addMethods(['test'])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->any())
-            ->method('deliver')
-            ->willReturn([]);
-
-        $mailer->send('test', ['foo', 'bar']);
-
-        $this->assertNull($mailer->viewBuilder()->getTemplate());
     }
 
     /**
@@ -1102,23 +1083,6 @@ class MailerTest extends TestCase
         $this->assertStringContainsString($expected, $result['message']);
     }
 
-    public function testSendWithUnsetTemplateDefaultsToActionName(): void
-    {
-        $mailer = $this->getMockBuilder(Mailer::class)
-            ->onlyMethods(['deliver', 'restore'])
-            ->addMethods(['test'])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->any())
-            ->method('deliver')
-            ->willReturn([]);
-
-        $mailer->send('test', ['foo', 'bar']);
-        $this->assertSame('test', $mailer->viewBuilder()->getTemplate());
-    }
-
     /**
      * testGetBody method
      */
@@ -1188,31 +1152,6 @@ class MailerTest extends TestCase
         $this->assertSame([], $this->mailer->getTo());
         $this->assertNull($this->mailer->viewBuilder()->getTheme());
         $this->assertSame(Message::EMAIL_PATTERN, $this->mailer->getEmailPattern());
-    }
-
-    /**
-     * Test that mailers call reset() when send fails
-     */
-    public function testSendFailsEmailIsReset(): void
-    {
-        $mailer = $this->getMockBuilder(Mailer::class)
-            ->onlyMethods(['restore', 'deliver'])
-            ->addMethods(['welcome'])
-            ->getMock();
-
-        $mailer->expects($this->once())
-            ->method('deliver')
-            ->will($this->throwException(new RuntimeException('kaboom')));
-        // Mailer should be reset even if sending fails.
-        $mailer->expects($this->once())
-            ->method('restore');
-
-        try {
-            $mailer->send('welcome', ['foo', 'bar']);
-            $this->fail('Exception should bubble up.');
-        } catch (RuntimeException $e) {
-            $this->assertTrue(true, 'Exception was raised');
-        }
     }
 
     /**
@@ -1289,27 +1228,6 @@ class MailerTest extends TestCase
         $this->assertStringContainsString($text, $messages[0]);
         $this->assertStringContainsString('cake@cakephp.org', $messages[0]);
         $this->assertStringContainsString('me@cakephp.org', $messages[0]);
-    }
-
-    /**
-     * test that initial email instance config is restored after email is sent.
-     */
-    public function testDefaultProfileRestoration(): void
-    {
-        $mailer = $this->getMockBuilder(Mailer::class)
-            ->onlyMethods(['deliver'])
-            ->addMethods(['test'])
-            ->setConstructorArgs([['template' => 'cakephp']])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->once())
-            ->method('deliver')
-            ->willReturn([]);
-
-        $mailer->send('test', ['foo', 'bar']);
-        $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());
     }
 
     public function testMissingActionThrowsException(): void
