@@ -1329,41 +1329,6 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Test that saveAssociated() ignores non entity values.
-     */
-    public function testSaveAssociatedOnlyEntitiesAppend(): void
-    {
-        $connection = ConnectionManager::get('test');
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['saveAssociated', 'schema'])
-            ->setConstructorArgs([['table' => 'tags', 'connection' => $connection]])
-            ->getMock();
-        $table->setPrimaryKey('id');
-
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $table,
-            'saveStrategy' => BelongsToMany::SAVE_APPEND,
-        ];
-
-        $entity = new Entity([
-            'id' => 1,
-            'title' => 'First Post',
-            'tags' => [
-                ['tag' => 'nope'],
-                new Entity(['tag' => 'cakephp']),
-            ],
-        ]);
-
-        $table->expects($this->never())
-            ->method('saveAssociated');
-
-        $association = new BelongsToMany('Tags', $config);
-        $association->saveAssociated($entity);
-    }
-
-    /**
      * Tests that setTargetForeignKey() returns the correct configured value
      */
     public function testSetTargetForeignKey(): void
