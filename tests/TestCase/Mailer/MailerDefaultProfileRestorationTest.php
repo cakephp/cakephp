@@ -21,7 +21,7 @@ class MailerDefaultProfileRestorationTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(CustomMailer::class)
+        $mailer = $this->getMockBuilder(DefaultProfileRestorationMailer::class)
             ->onlyMethods(['deliver', 'test'])
             ->setConstructorArgs([['template' => 'cakephp']])
             ->getMock();
@@ -38,7 +38,7 @@ class MailerDefaultProfileRestorationTest extends TestCase
 }
 
 // phpcs:disable
-class CustomMailer extends Mailer
+class DefaultProfileRestorationMailer extends Mailer
 {
     public function test($to, $subject)
     {

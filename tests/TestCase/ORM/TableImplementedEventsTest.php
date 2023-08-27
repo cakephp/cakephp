@@ -24,7 +24,7 @@ class TableImplementedEventsTest extends TestCase
      */
     public function testImplementedEvents(): void
     {
-        $table = new CustomTable();
+        $table = new ImplementedEventsTable();
         $result = $table->implementedEvents();
         $expected = [
             'Model.beforeMarshal' => 'beforeMarshal',
@@ -41,7 +41,7 @@ class TableImplementedEventsTest extends TestCase
 }
 
 // phpcs:disable
-class CustomTable extends Table
+class ImplementedEventsTable extends Table
 {
     public function buildValidator(): void {}
     public function beforeMarshal(): void {}

@@ -21,7 +21,7 @@ class MailerSendActionTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(CustomMailer::class)
+        $mailer = $this->getMockBuilder(SendActionMailer::class)
             ->onlyMethods(['deliver', 'test'])
             ->getMock();
         $mailer->expects($this->once())
@@ -38,7 +38,7 @@ class MailerSendActionTest extends TestCase
 }
 
 // phpcs:disable
-class CustomMailer extends Mailer
+class SendActionMailer extends Mailer
 {
     public function test($to, $subject)
     {

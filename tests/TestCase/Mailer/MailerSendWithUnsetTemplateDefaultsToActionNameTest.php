@@ -21,7 +21,7 @@ class MailerSendWithUnsetTemplateDefaultsToActionNameTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(CustomMailer::class)
+        $mailer = $this->getMockBuilder(SendWithUnsetTemplateDefaultsToActionNameMailer::class)
             ->onlyMethods(['deliver', 'restore', 'test'])
             ->getMock();
         $mailer->expects($this->once())
@@ -37,7 +37,7 @@ class MailerSendWithUnsetTemplateDefaultsToActionNameTest extends TestCase
 }
 
 // phpcs:disable
-class CustomMailer extends Mailer
+class SendWithUnsetTemplateDefaultsToActionNameMailer extends Mailer
 {
     public function test($to, $subject)
     {

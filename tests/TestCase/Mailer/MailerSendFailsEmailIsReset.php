@@ -22,7 +22,7 @@ class MailerSendFailsEmailIsReset extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(CustomMailer::class)
+        $mailer = $this->getMockBuilder(SendFailsEmailIsResetMailer::class)
             ->onlyMethods(['restore', 'deliver', 'welcome'])
             ->getMock();
 
@@ -43,7 +43,7 @@ class MailerSendFailsEmailIsReset extends TestCase
 }
 
 // phpcs:disable
-class CustomMailer extends Mailer
+class SendFailsEmailIsResetMailer extends Mailer
 {
     public function welcome()
     {

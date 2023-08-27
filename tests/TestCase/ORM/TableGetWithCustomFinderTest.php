@@ -47,7 +47,7 @@ class TableGetWithCustomFinderTest extends TestCase
      */
     public function testGetWithCustomFinder($options): void
     {
-        $table = $this->getMockBuilder(CustomTable::class)
+        $table = $this->getMockBuilder(GetWithCustomFinderTable::class)
             ->onlyMethods(['selectQuery', 'findCustom'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
@@ -85,7 +85,7 @@ class TableGetWithCustomFinderTest extends TestCase
 }
 
 // phpcs:disable
-class CustomTable extends Table
+class GetWithCustomFinderTable extends Table
 {
     public function findCustom($query)
     {

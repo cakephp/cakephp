@@ -24,7 +24,7 @@ class TableValidationWithDefinerTest extends TestCase
      */
     public function testValidationWithDefinerTest(): void
     {
-        $table = new CustomTable();
+        $table = new ValidationWithDefinerTable();
         $other = $table->getValidator('forOtherStuff');
         $this->assertNotSame($other, $table->getValidator());
         $this->assertSame($table, $other->getProvider('table'));
@@ -32,7 +32,7 @@ class TableValidationWithDefinerTest extends TestCase
 }
 
 // phpcs:disable
-class CustomTable extends Table
+class ValidationWithDefinerTable extends Table
 {
     public function validationForOtherStuff($validator)
     {
