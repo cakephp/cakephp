@@ -1087,10 +1087,10 @@ class ConnectionTest extends TestCase
 
         $newDriver->expects($this->exactly(2))
             ->method('execute')
-            ->will($this->onConsecutiveCalls(
+            ->willReturnOnConsecutiveCalls(
                 $this->throwException(new Exception('server gone away')),
-                $this->returnValue($statement)
-            ));
+                $statement
+            );
 
         $res = $conn->execute('SELECT 1');
         $this->assertInstanceOf(StatementInterface::class, $res);

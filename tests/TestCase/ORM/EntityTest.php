@@ -614,9 +614,9 @@ class EntityTest extends TestCase
                 return 'Dr. ' . $name;
             }
 
-            protected function _getBar(): string
+            protected function _getBar(string $bar): string
             {
-                return 'Dir. ' . $this->bar;
+                return 'Dir. ' . $bar;
             }
         };
         $entity2 = new class extends Entity {

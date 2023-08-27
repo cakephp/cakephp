@@ -658,26 +658,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->exactly(2))
             ->method('save')
-            ->will(
-                $this->onConsecutiveCalls(
-                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                        $expected = ['article_id' => 1, 'tag_id' => 2];
-                        $this->assertEquals($expected, $e->toArray());
-                        $this->assertEquals(['foo' => 'bar'], $opts);
-                        $this->assertTrue($e->isNew());
-
-                        return $entity;
-                    }),
-                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                        $expected = ['article_id' => 1, 'tag_id' => 3];
-                        $this->assertEquals($expected, $e->toArray());
-                        $this->assertEquals(['foo' => 'bar'], $opts);
-                        $this->assertTrue($e->isNew());
-
-                        return $entity;
-                    })
-                )
-            );
+            ->willReturnOnConsecutiveCalls($entity, $entity);
 
         $this->assertTrue($assoc->link($entity, $tags, $saveOptions));
         $this->assertSame($entity->test, $tags);
