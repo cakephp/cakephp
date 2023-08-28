@@ -1518,9 +1518,7 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
-        $thing = $this->getMockBuilder('\stdClass')
-            ->addMethods(['isCool'])
-            ->getMock();
+        $thing = $this->getMockBuilder(stdMock::class)->getMock();
         $thing->expects($this->once())->method('isCool')
             ->willReturnCallback(function ($data, $context) use ($thing) {
                 $this->assertSame('bar', $data);
@@ -1562,9 +1560,7 @@ class ValidatorTest extends TestCase
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing',
         ]);
-        $thing = $this->getMockBuilder('\stdClass')
-            ->addMethods(['isCool'])
-            ->getMock();
+        $thing = $this->getMockBuilder(stdMock::class)->getMock();
         $thing->expects($this->once())->method('isCool')
             ->willReturnCallback(function ($data, $a, $b, $context) use ($thing) {
                 $this->assertSame('bar', $data);
@@ -2989,3 +2985,10 @@ class ValidatorTest extends TestCase
         );
     }
 }
+
+// phpcs:disable
+class stdMock extends stdClass
+{
+    public function isCool() {}
+}
+// phpcs:enable

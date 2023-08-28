@@ -24,6 +24,7 @@ use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * Tests HasOne class
@@ -225,16 +226,14 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['saveAssociated'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = Mockery::mock('Cake\ORM\Table')
+            ->shouldAllowMockingMethod('saveAssociated')
+            ->makePartial();
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $mock,
         ];
-        $mock->expects($this->never())
-            ->method('saveAssociated');
+        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'username' => 'Mark',

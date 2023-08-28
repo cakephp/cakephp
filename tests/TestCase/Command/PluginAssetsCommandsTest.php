@@ -24,6 +24,7 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
+use Mockery;
 use SplFileInfo;
 
 /**
@@ -111,10 +112,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->loadPlugins(['TestTheme']);
 
         $output = new StubConsoleOutput();
-        $io = $this->getMockBuilder(ConsoleIo::class)
-            ->setConstructorArgs([$output, $output, null, null])
-            ->addMethods(['in'])
-            ->getMock();
+        $io = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
         $parser = new ConsoleOptionParser('cake example');
         $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);

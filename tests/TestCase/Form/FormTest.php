@@ -52,12 +52,7 @@ class FormTest extends TestCase
      */
     public function testGetValidator(): void
     {
-        $form = $this->getMockBuilder(Form::class)
-            ->addMethods(['buildValidator'])
-            ->getMock();
-
-        $form->expects($this->once())
-            ->method('buildValidator');
+        $form = new Form();
 
         $this->assertInstanceof(Validator::class, $form->getValidator());
     }

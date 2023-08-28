@@ -1287,7 +1287,6 @@ trait PaginatorTestTrait
         /** @var \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['all', 'count', 'applyOptions'])
-            ->addMethods(['total'])
             ->disableOriginalConstructor()
             ->getMock();
 

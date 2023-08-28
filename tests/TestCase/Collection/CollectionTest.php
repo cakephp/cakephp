@@ -2606,11 +2606,17 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
-        $callable = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['__invoke'])
+        $callable = $this->getMockBuilder(stdMock::class)
             ->getMock();
 
         $callable->expects($this->never())->method('__invoke');
         $collection->filter($callable)->filter($callable);
     }
 }
+
+// phpcs:disable
+class stdMock extends stdClass
+{
+    public function __invoke() {}
+}
+// phpcs:enable

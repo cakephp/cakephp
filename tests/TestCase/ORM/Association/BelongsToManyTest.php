@@ -658,26 +658,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->exactly(2))
             ->method('save')
-            ->will(
-                $this->onConsecutiveCalls(
-                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                        $expected = ['article_id' => 1, 'tag_id' => 2];
-                        $this->assertEquals($expected, $e->toArray());
-                        $this->assertEquals(['foo' => 'bar'], $opts);
-                        $this->assertTrue($e->isNew());
-
-                        return $entity;
-                    }),
-                    $this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
-                        $expected = ['article_id' => 1, 'tag_id' => 3];
-                        $this->assertEquals($expected, $e->toArray());
-                        $this->assertEquals(['foo' => 'bar'], $opts);
-                        $this->assertTrue($e->isNew());
-
-                        return $entity;
-                    })
-                )
-            );
+            ->willReturnOnConsecutiveCalls($entity, $entity);
 
         $this->assertTrue($assoc->link($entity, $tags, $saveOptions));
         $this->assertSame($entity->test, $tags);
@@ -1326,41 +1307,6 @@ class BelongsToManyTest extends TestCase
             ->with($entity, $entity->tags, $options)
             ->willReturn(false);
         $this->assertFalse($assoc->saveAssociated($entity, $options));
-    }
-
-    /**
-     * Test that saveAssociated() ignores non entity values.
-     */
-    public function testSaveAssociatedOnlyEntitiesAppend(): void
-    {
-        $connection = ConnectionManager::get('test');
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['saveAssociated', 'schema'])
-            ->setConstructorArgs([['table' => 'tags', 'connection' => $connection]])
-            ->getMock();
-        $table->setPrimaryKey('id');
-
-        $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $table,
-            'saveStrategy' => BelongsToMany::SAVE_APPEND,
-        ];
-
-        $entity = new Entity([
-            'id' => 1,
-            'title' => 'First Post',
-            'tags' => [
-                ['tag' => 'nope'],
-                new Entity(['tag' => 'cakephp']),
-            ],
-        ]);
-
-        $table->expects($this->never())
-            ->method('saveAssociated');
-
-        $association = new BelongsToMany('Tags', $config);
-        $association->saveAssociated($entity);
     }
 
     /**

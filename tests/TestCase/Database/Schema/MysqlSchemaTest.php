@@ -1409,9 +1409,8 @@ SQL;
     {
         $this->_needsConnection();
 
-        $this->pdo = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote', 'getAttribute'])
-            ->addMethods(['quoteIdentifier'])
+        $this->pdo = $this->getMockBuilder(PDOMocked::class)
+            ->onlyMethods(['quote', 'getAttribute', 'quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
             $this->pdo->expects($this->any())
@@ -1433,3 +1432,10 @@ SQL;
         return $driver;
     }
 }
+
+// phpcs:disable
+class PDOMocked extends PDO
+{
+    public function quoteIdentifier(): void {}
+}
+// phpcs:enable

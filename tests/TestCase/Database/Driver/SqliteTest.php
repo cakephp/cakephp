@@ -21,6 +21,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PDO;
 
 /**
@@ -172,14 +173,11 @@ class SqliteTest extends TestCase
      */
     public function testSchemaValue($input, $expected): void
     {
-        $mock = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote'])
-            ->addMethods(['quoteIdentifier'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mock->expects($this->any())
-            ->method('quote')
-            ->willReturnCallback(function ($value) {
+        $mock = Mockery::mock(PDO::class)
+            ->shouldAllowMockingMethod('quoteIdentifier')
+            ->makePartial();
+        $mock->shouldReceive('quote')
+            ->andReturnUsing(function ($value) {
                 return '"' . $value . '"';
             });
 

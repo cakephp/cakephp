@@ -29,6 +29,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use function Cake\I18n\__;
 
 /**
@@ -625,10 +626,9 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
-            ->addMethods(['saveAssociated'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = Mockery::mock('Cake\ORM\Table')
+            ->shouldAllowMockingMethod('saveAssociated')
+            ->makePartial();
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $mock,
@@ -643,11 +643,11 @@ class HasManyTest extends TestCase
             ],
         ]);
 
-        $mock->expects($this->never())
-            ->method('saveAssociated');
+        $mock->shouldNotReceive('saveAssociated');
 
         $association = new HasMany('Articles', $config);
-        $association->saveAssociated($entity);
+        $result = $association->saveAssociated($entity);
+        $this->assertSame($result, $entity);
     }
 
     /**

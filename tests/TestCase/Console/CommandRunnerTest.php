@@ -31,6 +31,7 @@ use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
@@ -531,11 +532,8 @@ class CommandRunnerTest extends TestCase
 
     protected function getMockIo(StubConsoleOutput $output): ConsoleIo
     {
-        $io = $this->getMockBuilder(ConsoleIo::class)
-            ->setConstructorArgs([$output, $output, null, null])
-            ->addMethods(['in'])
-            ->getMock();
-
-        return $io;
+        return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
     }
 }

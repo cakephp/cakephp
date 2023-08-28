@@ -23,6 +23,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use Mockery;
 
 /**
  * Test case for BehaviorRegistry.
@@ -257,17 +258,12 @@ class BehaviorRegistryTest extends TestCase
     public function testCall(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->addMethods(['slugify'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedBehavior = Mockery::mock('Cake\ORM\Behavior')->makePartial();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $mockedBehavior
-            ->expects($this->once())
-            ->method('slugify')
+        $mockedBehavior->shouldReceive('slugify')
             ->with(['some value'])
-            ->willReturn('some-thing');
+            ->andReturn('some-thing');
         $return = $this->Behaviors->call('slugify', [['some value']]);
         $this->assertSame('some-thing', $return);
     }
@@ -292,18 +288,16 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->addMethods(['findNoSlug'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedBehavior = Mockery::mock('Cake\ORM\Behavior')
+            ->shouldAllowMockingMethod('findNoSlug')
+            ->makePartial();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = new SelectQuery($this->Table);
-        $mockedBehavior
-            ->expects($this->once())
-            ->method('findNoSlug')
+        $mockedBehavior->shouldReceive('findNoSlug')
+            ->once()
             ->with($query)
-            ->willReturn($query);
+            ->andReturn($query);
         $return = $this->Behaviors->callFinder('noSlug', $query);
         $this->assertSame($query, $return);
     }

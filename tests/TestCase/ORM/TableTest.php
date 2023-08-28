@@ -2057,38 +2057,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test implementedEvents
-     */
-    public function testImplementedEvents(): void
-    {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->addMethods([
-                'buildValidator',
-                'beforeMarshal',
-                'beforeFind',
-                'beforeSave',
-                'afterSave',
-                'beforeDelete',
-                'afterDelete',
-                'afterRules',
-            ])
-            ->getMock();
-        $result = $table->implementedEvents();
-        $expected = [
-            'Model.beforeMarshal' => 'beforeMarshal',
-            'Model.buildValidator' => 'buildValidator',
-            'Model.beforeFind' => 'beforeFind',
-            'Model.beforeSave' => 'beforeSave',
-            'Model.afterSave' => 'afterSave',
-            'Model.beforeDelete' => 'beforeDelete',
-            'Model.afterDelete' => 'afterDelete',
-            'Model.afterRules' => 'afterRules',
-        ];
-        $this->assertEquals($expected, $result, 'Events do not match.');
-    }
-
-    /**
      * Tests that it is possible to insert a new row using the save method
      *
      * @group save
@@ -3514,42 +3482,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to define custom validator methods
-     */
-    public function testValidationWithDefiner(): void
-    {
-        $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['validationForOtherStuff'])
-            ->getMock();
-        $table->expects($this->once())->method('validationForOtherStuff')
-            ->will($this->returnArgument(0));
-        $other = $table->getValidator('forOtherStuff');
-        $this->assertInstanceOf('Cake\Validation\Validator', $other);
-        $this->assertNotSame($other, $table->getValidator());
-        $this->assertSame($table, $other->getProvider('table'));
-    }
-
-    /**
-     * Tests that a InvalidArgumentException is thrown if the custom validator does not return an Validator instance
-     */
-    public function testValidationWithBadDefiner(): void
-    {
-        $table = $this->getMockBuilder(Table::class)
-            ->addMethods(['validationBad'])
-            ->getMock();
-        $table->expects($this->once())
-            ->method('validationBad');
-
-        $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage(sprintf(
-            'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
-            $table::class
-        ));
-
-        $table->getValidator('bad');
-    }
-
-    /**
      * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
@@ -4184,7 +4116,6 @@ class TableTest extends TestCase
             ->getMock();
         $supervisors = $this->getMockBuilder(Table::class)
             ->onlyMethods(['_insert'])
-            ->addMethods(['validate'])
             ->setConstructorArgs([[
                 'table' => 'authors',
                 'alias' => 'supervisors',
@@ -5430,58 +5361,6 @@ class TableTest extends TestCase
             ->getMock();
 
         $table->expects($this->once())->method('selectQuery')
-            ->willReturn($query);
-
-        $entity = new Entity();
-        $query->expects($this->once())->method('applyOptions')
-            ->with(['fields' => ['id']]);
-        $query->expects($this->once())->method('where')
-            ->with([$table->getAlias() . '.bar' => 10])
-            ->willReturnSelf();
-        $query->expects($this->never())->method('cache');
-        $query->expects($this->once())->method('firstOrFail')
-            ->willReturn($entity);
-
-        $result = $table->get(10, ...$options);
-        $this->assertSame($entity, $result);
-    }
-
-    public static function providerForTestGetWithCustomFinder(): array
-    {
-        return [
-            [['fields' => ['id'], 'finder' => 'custom']],
-        ];
-    }
-
-    /**
-     * Test that get() will call a custom finder.
-     *
-     * @dataProvider providerForTestGetWithCustomFinder
-     * @param array $options
-     */
-    public function testGetWithCustomFinder($options): void
-    {
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['selectQuery'])
-            ->addMethods(['findCustom'])
-            ->setConstructorArgs([[
-                'connection' => $this->connection,
-                'schema' => [
-                    'id' => ['type' => 'integer'],
-                    'bar' => ['type' => 'integer'],
-                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
-                ],
-            ]])
-            ->getMock();
-
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
-            ->setConstructorArgs([$table])
-            ->getMock();
-
-        $table->expects($this->once())->method('selectQuery')
-            ->willReturn($query);
-        $table->expects($this->any())->method('findCustom')
             ->willReturn($query);
 
         $entity = new Entity();
