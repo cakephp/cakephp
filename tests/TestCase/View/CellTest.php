@@ -121,9 +121,20 @@ class CellTest extends TestCase
      */
     public function testCellWithArguments(): void
     {
+        $cell = $this->View->cell('Articles::doEcho', ['dummy', ' message']);
+        $render = "{$cell}";
+        $this->assertStringContainsString('dummy message', $render);
+    }
+
+    public function testCellWithNamedArguments(): void
+    {
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
         $render = "{$cell}";
         $this->assertStringContainsString('dummy message', $render);
+
+        $cell = $this->View->cell('Articles::doEcho', ['msg2' => ' dummy', 'msg1' => 'message']);
+        $render = "{$cell}";
+        $this->assertStringContainsString('message dummy', $render);
     }
 
     /**
@@ -207,7 +218,7 @@ class CellTest extends TestCase
     public function testCellRenderThemed(): void
     {
         $this->View->setTheme('TestTheme');
-        $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
+        $cell = $this->View->cell('Articles');
 
         $this->assertEquals($this->View->getTheme(), $cell->viewBuilder()->getTheme());
         $this->assertStringContainsString('Themed cell content.', $cell->render());
