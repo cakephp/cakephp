@@ -4315,7 +4315,7 @@ class TableTest extends TestCase
 
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
-        $this->assertEquals($article->tags[3], $tags[1]);
+        $this->assertEqualsCanonicalizing($article->tags[3], $tags[1]);
     }
 
     /**
@@ -6292,7 +6292,8 @@ class TableTest extends TestCase
         $this->assertSame($entity, $result);
 
         $expected = $table->get(1, contain: ['SiteArticles', 'Articles.Tags']);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected->site_articles, $result->site_articles);
+        $this->assertEquals($expected->articles, $result->articles);
     }
 
     /**
@@ -6315,7 +6316,10 @@ class TableTest extends TestCase
         $result = $table->loadInto($entity, $options);
         $this->assertSame($entity, $result);
         $expected = $table->get(1, contain: $options);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected->site_articles, $result->site_articles);
+        $this->assertEquals(['title', 'author_id'], $expected->site_articles[0]->getOriginalFields());
+        $this->assertEquals($expected->articles, $result->articles);
+        $this->assertSame('tag2', $expected->articles[0]->tags[0]->name);
     }
 
     /**
@@ -6353,8 +6357,11 @@ class TableTest extends TestCase
             $this->assertSame($v, $result[$k]);
         }
 
-        $expected = $table->find()->contain($contain)->toArray();
-        $this->assertEquals($expected, $result);
+        $entities = $table->find()->contain($contain)->toArray();
+        foreach ($entities as $k => $v) {
+            $this->assertEquals($v->site_articles, $result[$k]->site_articles);
+            $this->assertEquals($v->articles, $result[$k]->articles);
+        }
     }
 
     /**

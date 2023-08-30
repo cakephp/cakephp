@@ -215,11 +215,11 @@ class Marshaller
         if (isset($options['fields'])) {
             foreach ((array)$options['fields'] as $field) {
                 if (array_key_exists($field, $properties)) {
-                    $entity->set($field, $properties[$field]);
+                    $entity->set($field, $properties[$field], ['asOriginal' => true]);
                 }
             }
         } else {
-            $entity->set($properties);
+            $entity->set($properties, ['asOriginal' => true]);
         }
 
         // Don't flag clean association entities as

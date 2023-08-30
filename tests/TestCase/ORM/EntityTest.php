@@ -37,8 +37,9 @@ class EntityTest extends TestCase
     public function testSetOneParamNoSetters(): void
     {
         $entity = new Entity();
+
         $this->assertNull($entity->getOriginal('foo'));
-        $entity->set('foo', 'bar');
+        $entity->set('foo', 'bar', ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
         $this->assertSame('bar', $entity->getOriginal('foo'));
 
@@ -46,7 +47,7 @@ class EntityTest extends TestCase
         $this->assertSame('baz', $entity->foo);
         $this->assertSame('bar', $entity->getOriginal('foo'));
 
-        $entity->set('id', 1);
+        $entity->set('id', 1, ['asOriginal' => true]);
         $this->assertSame(1, $entity->id);
         $this->assertSame(1, $entity->getOriginal('id'));
         $this->assertSame('bar', $entity->getOriginal('foo'));
@@ -60,7 +61,7 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $entity->setAccess('*', true);
 
-        $entity->set(['foo' => 'bar', 'id' => 1]);
+        $entity->set(['foo' => 'bar', 'id' => 1], ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
         $this->assertSame(1, $entity->id);
 
@@ -98,6 +99,22 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
+    }
+
+    /**
+     * Test that getOriginal throws an exception for fields without original value
+     * when called with second parameter "false"
+     */
+    public function testGetOriginalFallback(): void
+    {
+        $entity = new Entity(
+            ['foo' => 'foo', 'bar' => 'bar'],
+            ['markNew' => true]
+        );
+        $this->assertNull($entity->getOriginal('baz', true));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot retrieve original value for field `baz`');
+        $entity->getOriginal('baz', false);
     }
 
     /**
@@ -1446,6 +1463,7 @@ class EntityTest extends TestCase
             '[accessible]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
             '[original]' => [],
+            '[originalFields]' => ['foo'],
             '[virtual]' => ['baz'],
             '[hasErrors]' => true,
             '[errors]' => ['foo' => ['An error']],
@@ -1629,5 +1647,75 @@ class EntityTest extends TestCase
         $this->assertTrue($entity->hasValue('floatZero'));
         $this->assertTrue($entity->hasValue('floatNonZero'));
         $this->assertFalse($entity->hasValue('null'));
+    }
+
+    /**
+     * Test isOriginalField()
+     */
+    public function testIsOriginalField(): void
+    {
+        $entity = new Entity(['foo' => null]);
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(true, $return);
+
+        $entity = new Entity([]);
+        $entity->set('foo', null);
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(false, $return);
+
+        $return = $entity->isOriginalField('bar');
+        $this->assertSame(false, $return);
+    }
+
+    /**
+     * Test getOriginalFields()
+     */
+    public function testGetOriginalFields(): void
+    {
+        $entity = new Entity(['foo' => 'foo', 'bar' => 'bar']);
+        $entity->set('baz', 'baz');
+        $return = $entity->getOriginalFields();
+        $this->assertEquals(['foo', 'bar'], $return);
+
+        $entity = new Entity([]);
+        $entity->set('foo', 'foo');
+        $entity->set('bar', 'bar');
+        $entity->set('baz', 'baz');
+        $return = $entity->getOriginalFields();
+        $this->assertEquals([], $return);
+    }
+
+    /**
+     * Test setOriginalField() inside EntityInterface::setDirty()
+     */
+    public function testSetOriginalFieldInSetDirty(): void
+    {
+        $entity = new Entity([]);
+        $entity->set('foo', 'bar');
+
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(false, $return);
+
+        $entity->setDirty('foo', false);
+
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(true, $return);
+    }
+
+    /**
+     * Test setOriginalField() inside EntityInterface::clean()
+     */
+    public function testSetOriginalFieldInClean(): void
+    {
+        $entity = new Entity([]);
+        $entity->set('foo', 'bar');
+
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(false, $return);
+
+        $entity->clean();
+
+        $return = $entity->isOriginalField('foo');
+        $this->assertSame(true, $return);
     }
 }
