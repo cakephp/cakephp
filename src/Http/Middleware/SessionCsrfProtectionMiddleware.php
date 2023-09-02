@@ -18,6 +18,7 @@ namespace Cake\Http\Middleware;
 
 use ArrayAccess;
 use Cake\Http\Exception\InvalidCsrfTokenException;
+use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -267,5 +268,25 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             'cake',
             'CSRF token from either the request body or request headers did not match or is missing.'
         ));
+    }
+
+    /**
+     * Replace the token in the provided request.
+     *
+     * Replace the token in the session and request attribute. Replacing
+     * tokens is a good idea during privilege escalation or privilege reduction.
+     *
+     * @param \Cake\Http\ServerRequest $request The request to update
+     * @param string $key The session key/attribute to set.
+     * @return \Cake\Http\ServerRequest An updated request.
+     */
+    public static function replaceToken(ServerRequest $request, string $key = 'csrfToken'): ServerRequest
+    {
+        $middleware = new SessionCsrfProtectionMiddleware(['key' => $key]);
+
+        $token = $middleware->createToken();
+        $request->getSession()->write($key, $token);
+
+        return $request->withAttribute('csrfToken', $middleware->saltToken($token));
     }
 }
