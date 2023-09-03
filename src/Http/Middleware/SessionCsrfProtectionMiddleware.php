@@ -287,6 +287,6 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
         $token = $middleware->createToken();
         $request->getSession()->write($key, $token);
 
-        return $request->withAttribute('csrfToken', $middleware->saltToken($token));
+        return $request->withAttribute($key, $middleware->saltToken($token));
     }
 }
