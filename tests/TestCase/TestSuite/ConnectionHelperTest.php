@@ -40,6 +40,19 @@ class ConnectionHelperTest extends TestCase
         );
     }
 
+    public function testAliasNonDefaultConnections(): void
+    {
+        $connection = new Connection(['driver' => TestDriver::class]);
+        ConnectionManager::setConfig('something', $connection);
+
+        (new ConnectionHelper())->addTestAliases();
+
+        $this->assertSame(
+            ConnectionManager::get('test_something'),
+            ConnectionManager::get('something')
+        );
+    }
+
     public function testEnableQueryLogging(): void
     {
         $connection = new Connection(['driver' => TestDriver::class]);
