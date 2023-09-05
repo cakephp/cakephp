@@ -120,6 +120,16 @@ trait EntityTrait
     protected $_registryAlias = '';
 
     /**
+     * Set to true in your entity's class definition or
+     * via application logic. When true. has() and related
+     * methods will use `array_key_exists` instead of `isset`
+     * to decide if fields are 'defined' in an entity.
+     *
+     * @var bool
+     */
+    protected $_hasAllowsNull = false;
+
+    /**
      * Magic getter to access fields that have been set in this entity
      *
      * @param string $field Name of the field to access
@@ -362,7 +372,11 @@ trait EntityTrait
     public function has($field): bool
     {
         foreach ((array)$field as $prop) {
-            if ($this->get($prop) === null) {
+            if ($this->_hasAllowsNull) {
+                if (!array_key_exists($prop, $this->_fields) && !static::_accessor($prop, 'get')) {
+                    return false;
+                }
+            } elseif ($this->get($prop) === null) {
                 return false;
             }
         }

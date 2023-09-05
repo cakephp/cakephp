@@ -21,6 +21,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Model\Entity\Extending;
+use TestApp\Model\Entity\ForwardsCompatHas;
 use TestApp\Model\Entity\NonExtending;
 
 /**
@@ -466,6 +467,30 @@ class EntityTest extends TestCase
         $this->assertTrue($entity->has(['id']));
         $this->assertTrue($entity->has(['id', 'name']));
         $this->assertFalse($entity->has(['id', 'foo']));
+        $this->assertFalse($entity->has(['id', 'nope']));
+
+        $entity = $this->getMockBuilder(Entity::class)
+            ->addMethods(['_getThings'])
+            ->getMock();
+        $entity->expects($this->once())->method('_getThings')
+            ->will($this->returnValue(0));
+        $this->assertTrue($entity->has('things'));
+    }
+
+    /**
+     * Tests has() method with 5.x behavior
+     */
+    public function testHasForwardsCompat(): void
+    {
+        $entity = new ForwardsCompatHas(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+        $this->assertTrue($entity->has('id'));
+        $this->assertTrue($entity->has('name'));
+        $this->assertTrue($entity->has('foo'));
+        $this->assertFalse($entity->has('last_name'));
+
+        $this->assertTrue($entity->has(['id']));
+        $this->assertTrue($entity->has(['id', 'name']));
+        $this->assertTrue($entity->has(['id', 'foo']));
         $this->assertFalse($entity->has(['id', 'nope']));
 
         $entity = $this->getMockBuilder(Entity::class)
