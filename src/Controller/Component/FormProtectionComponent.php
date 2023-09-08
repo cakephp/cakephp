@@ -67,6 +67,14 @@ class FormProtectionComponent extends Component
         'validationFailureCallback' => null,
     ];
 
+    protected function _getSessionId(): string
+    {
+        $session = $this->getController()->getRequest()->getSession();
+        $session->start();
+        
+        return $session->id();
+    }
+
     /**
      * Component startup.
      *
@@ -86,12 +94,11 @@ class FormProtectionComponent extends Component
             && $hasData
             && $this->_config['validate']
         ) {
-            $session = $request->getSession();
-            $session->start();
+            $sessionId = $this->_getSessionId();
             $url = Router::url($request->getRequestTarget());
 
             $formProtector = new FormProtector($this->_config);
-            $isValid = $formProtector->validate($data, $url, $session->id());
+            $isValid = $formProtector->validate($data, $url, $sessionId);
 
             if (!$isValid) {
                 return $this->validationFailure($formProtector);
