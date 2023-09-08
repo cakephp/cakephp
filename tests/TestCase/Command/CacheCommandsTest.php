@@ -149,7 +149,7 @@ class CacheCommandsTest extends TestCase
         Cache::add('key', 'value1', 'test2');
         $this->exec('cache clear_group test_group');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
         $this->assertNull(Cache::read('key', 'test2'));
     }
@@ -159,7 +159,7 @@ class CacheCommandsTest extends TestCase
         Cache::add('key', 'value1', 'test');
         $this->exec('cache clear_group test_group test');
 
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
     }
 
@@ -167,7 +167,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache clear_group test_group does_not_exist');
 
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Cache config "does_not_exist" not found');
     }
 
@@ -175,7 +175,7 @@ class CacheCommandsTest extends TestCase
     {
         $this->exec('cache clear_group does_not_exist');
 
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Cache group "does_not_exist" not found');
     }
 }
