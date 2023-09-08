@@ -67,6 +67,12 @@ class FormProtectionComponent extends Component
         'validationFailureCallback' => null,
     ];
 
+    /**
+     * Get Session id for FormProtector
+     * Must be the same as in FormHelper()
+     *
+     * @return string
+     */
     protected function _getSessionId(): string
     {
         $session = $this->getController()->getRequest()->getSession();
