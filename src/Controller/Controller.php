@@ -96,6 +96,7 @@ use function Cake\Core\triggerWarning;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\SecurityComponent $Security
  * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property \Cake\Controller\Component\CheckHttpCacheComponent $CheckHttpCache
  * @link https://book.cakephp.org/4/en/controllers.html
  */
 #[\AllowDynamicProperties]
