@@ -636,12 +636,12 @@ class FormHelper extends Helper
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
     }
 
-   /**
-    * Get Session id for FormProtector
-    * Must be the same as in FormProtectionComponent
-    *
-    * @return string
-    */
+    /**
+     * Get Session id for FormProtector
+     * Must be the same as in FormProtectionComponent
+     *
+     * @return string
+     */
     protected function _getFormProtectorSessionId(): string
     {
         return $this->_View->getRequest()->getSession()->id();
