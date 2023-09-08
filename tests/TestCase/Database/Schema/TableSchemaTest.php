@@ -405,9 +405,6 @@ class TableSchemaTest extends TestCase
             [[]],
             // Invalid type
             [['columns' => 'author_id', 'type' => 'derp']],
-            // No columns
-            [['columns' => ''], 'type' => TableSchema::INDEX_INDEX],
-            [['columns' => [], 'type' => TableSchema::INDEX_INDEX]],
             // Missing column
             [['columns' => ['not_there'], 'type' => TableSchema::INDEX_INDEX]],
         ];

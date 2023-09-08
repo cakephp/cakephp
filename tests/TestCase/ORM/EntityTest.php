@@ -23,6 +23,7 @@ use Exception;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Model\Entity\Extending;
+use TestApp\Model\Entity\ForwardsCompatHas;
 use TestApp\Model\Entity\NonExtending;
 use TestApp\Model\Entity\VirtualUser;
 

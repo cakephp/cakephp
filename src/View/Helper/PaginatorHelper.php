@@ -801,11 +801,9 @@ class PaginatorHelper extends Helper
             ]);
         }
 
-        $url = $options['url'];
-        $url['?']['page'] = $params['currentPage'];
         $out .= $templater->format('current', [
-            'text' => $this->Number->format($params['currentPage']),
-            'url' => $this->generateUrl($url),
+            'text' => $this->Number->format((string)$params['currentPage']),
+            'url' => $this->generateUrl(['page' => $params['currentPage']], $options['url']),
         ]);
 
         $start = (int)$params['currentPage'] + 1;

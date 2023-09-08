@@ -68,7 +68,7 @@ trait StaticConfigTrait
      * ```
      *
      * @param array<string, mixed>|string $key The name of the configuration, or an array of multiple configs.
-     * @param mixed $config The value for the config key. Generally an array of name => configuration data for adapter.
+     * @param mixed $config Configuration value. Generally an array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
@@ -97,7 +97,7 @@ trait StaticConfigTrait
             $config = ['className' => $config];
         }
 
-        if (isset($config['url'])) {
+        if (is_array($config) && isset($config['url'])) {
             $parsed = static::parseDsn($config['url']);
             unset($config['url']);
             $config = $parsed + $config;

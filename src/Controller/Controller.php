@@ -90,6 +90,7 @@ use function Cake\Core\pluginSplit;
  *
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
+ * @property \Cake\Controller\Component\CheckHttpCacheComponent $CheckHttpCache
  * @link https://book.cakephp.org/4/en/controllers.html
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
  */

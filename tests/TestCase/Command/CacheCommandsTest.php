@@ -34,7 +34,8 @@ class CacheCommandsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
+        Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);
+        Cache::setConfig('test2', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);
         $this->setAppNamespace();
     }
 
@@ -45,6 +46,7 @@ class CacheCommandsTest extends TestCase
     {
         parent::tearDown();
         Cache::drop('test');
+        Cache::drop('test2');
     }
 
     /**
@@ -139,5 +141,41 @@ class CacheCommandsTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
         $this->assertNull(Cache::read('key', '_cake_core_'));
+    }
+
+    public function testClearGroup(): void
+    {
+        Cache::add('key', 'value1', 'test');
+        Cache::add('key', 'value1', 'test2');
+        $this->exec('cache clear_group test_group');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertNull(Cache::read('key', 'test'));
+        $this->assertNull(Cache::read('key', 'test2'));
+    }
+
+    public function testClearGroupWithConfig(): void
+    {
+        Cache::add('key', 'value1', 'test');
+        $this->exec('cache clear_group test_group test');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertNull(Cache::read('key', 'test'));
+    }
+
+    public function testClearGroupInvalidConfig(): void
+    {
+        $this->exec('cache clear_group test_group does_not_exist');
+
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('Cache config "does_not_exist" not found');
+    }
+
+    public function testClearInvalidGroup(): void
+    {
+        $this->exec('cache clear_group does_not_exist');
+
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('Cache group "does_not_exist" not found');
     }
 }
