@@ -69,7 +69,7 @@ class FormProtectionComponent extends Component
 
     /**
      * Get Session id for FormProtector
-     * Must be the same as in FormHelper()
+     * Must be the same as in FormHelper
      *
      * @return string
      */
