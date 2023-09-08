@@ -77,7 +77,7 @@ class FormProtectionComponent extends Component
     {
         $session = $this->getController()->getRequest()->getSession();
         $session->start();
-        
+
         return $session->id();
     }
 
