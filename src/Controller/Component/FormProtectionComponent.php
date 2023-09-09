@@ -68,6 +68,20 @@ class FormProtectionComponent extends Component
     ];
 
     /**
+     * Get Session id for FormProtector
+     * Must be the same as in FormHelper
+     *
+     * @return string
+     */
+    protected function _getSessionId(): string
+    {
+        $session = $this->getController()->getRequest()->getSession();
+        $session->start();
+
+        return $session->id();
+    }
+
+    /**
      * Component startup.
      *
      * Token check happens here.
@@ -86,12 +100,11 @@ class FormProtectionComponent extends Component
             && $hasData
             && $this->_config['validate']
         ) {
-            $session = $request->getSession();
-            $session->start();
+            $sessionId = $this->_getSessionId();
             $url = Router::url($request->getRequestTarget());
 
             $formProtector = new FormProtector($this->_config);
-            $isValid = $formProtector->validate($data, $url, $session->id());
+            $isValid = $formProtector->validate($data, $url, $sessionId);
 
             if (!$isValid) {
                 return $this->validationFailure($formProtector);
