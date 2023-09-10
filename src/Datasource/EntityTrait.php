@@ -775,7 +775,9 @@ trait EntityTrait
                 $result[$field] = $this->getOriginal($field);
             } elseif ($this->isOriginalField($field)) {
                 $result[$field] = $this->get($field);
-            }
+            } else {
+				$result[$field] = null;
+			}
         }
 
         return $result;
