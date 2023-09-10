@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
-use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use function Cake\Core\env;
 
@@ -163,7 +162,7 @@ class ConsoleOutput
      * Checks for a pretty console environment. Ansicon and ConEmu allows
      *  pretty consoles on Windows, and is supported.
      *
-     * @param string|resource $stream The identifier of the stream to write output to.
+     * @param resource|string $stream The identifier of the stream to write output to.
      * @throws \Cake\Console\Exception\ConsoleException If the given stream is not a valid resource.
      */
     public function __construct($stream = 'php://stdout')

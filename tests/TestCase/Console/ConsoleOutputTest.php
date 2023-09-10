@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleOutput;
+use Cake\Console\Exception\ConsoleException;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 
@@ -249,16 +250,16 @@ class ConsoleOutputTest extends TestCase
 
     public function testWithInvalidStreamNum(): void
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $this->expectExceptionMessage('Invalid stream in constructor. It is not a valid resource.');
-        $output = new StubConsoleOutput(1);
+        new StubConsoleOutput(1);
     }
 
     public function testWithInvalidStreamArray(): void
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectException(ConsoleException::class);
         $this->expectExceptionMessage('Invalid stream in constructor. It is not a valid resource.');
-        $output = new StubConsoleOutput([]);
+        new StubConsoleOutput([]);
     }
 
     public function testWorkingWithStub(): void
