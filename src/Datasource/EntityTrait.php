@@ -136,16 +136,6 @@ trait EntityTrait
     protected bool $requireFieldPresence = false;
 
     /**
-     * Set to true in your entity's class definition or
-     * via application logic. When true. has() and related
-     * methods will use `array_key_exists` instead of `isset`
-     * to decide if fields are 'defined' in an entity.
-     *
-     * @var bool
-     */
-    protected $_hasAllowsNull = false;
-
-    /**
      * Magic getter to access fields that have been set in this entity
      *
      * @param string $field Name of the field to access
