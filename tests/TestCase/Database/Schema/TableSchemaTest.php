@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
@@ -513,7 +514,13 @@ class TableSchemaTest extends TestCase
     public function testConstraintForeignKey(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
-        $compositeConstraint = $table->getSchema()->getConstraint('tag_id_fk');
+
+        $name = 'tag_id_fk';
+        if ($table->getConnection()->getDriver() instanceof Sqlite) {
+            $name = 'tag_id_0_fk';
+        }
+
+        $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
             'columns' => ['tag_id'],
@@ -524,7 +531,7 @@ class TableSchemaTest extends TestCase
         ];
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <tag_id_fk> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)';
+        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<tag_id>\\) REFERENCES <tags> \\(<id>\\)";
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }
 
@@ -540,7 +547,13 @@ class TableSchemaTest extends TestCase
             $connection->getDriver() instanceof Postgres,
             'Constraints get dropped in postgres for some reason'
         );
-        $compositeConstraint = $table->getSchema()->getConstraint('product_category_fk');
+
+        $name = 'product_category_fk';
+        if ($table->getConnection()->getDriver() instanceof Sqlite) {
+            $name = 'product_category_product_id_0_fk';
+        }
+
+        $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
             'columns' => [
@@ -557,7 +570,7 @@ class TableSchemaTest extends TestCase
         ];
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
+        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)" .
             ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);

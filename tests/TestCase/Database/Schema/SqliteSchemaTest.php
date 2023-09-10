@@ -261,6 +261,51 @@ SQL;
         $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
         $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
 
+        $table = <<<SQL
+CREATE TABLE schema_no_rowid_pk (
+id INT PRIMARY KEY
+);
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE TABLE schema_unique_constraint_variations (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+no_quotes INTEGER,
+'single_''quotes' INTEGER,
+"double_""quotes" INTEGER,
+`tick_``quotes` INTEGER,
+[bracket_[quotes] INTEGER,
+foo INTEGER,
+bar INTEGER,
+baz INTEGER,
+zap INTEGER,
+CONSTRAINT no_quotes_idx UNIQUE (no_quotes)
+CONSTRAINT duplicate_idx UNIQUE (no_quotes)
+CONSTRAINT 'single_''quotes_idx' UNIQUE ('single_''quotes')
+CONSTRAINT "double_""quotes_idx" UNIQUE ("double_""quotes")
+CONSTRAINT `tick_``quotes_idx` UNIQUE (`tick_``quotes`)
+CONSTRAINT [bracket_[quotes_idx] UNIQUE ([bracket_[quotes])
+CONSTraint
+    a_cat_walked_over_my_keyboard_idx     UNIque
+        (    id  ,'foo',
+            	    "bar",     `baz`,
+    [zap])
+);
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE TABLE schema_foreign_key_variations (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+author_id INT(11),
+author_name VARCHAR(50),
+CONSTRAINT author_fk FOREIGN KEY (author_id) REFERENCES schema_authors (id) ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT multi_col_author_fk FOREIGN KEY (author_id, author_name) REFERENCES schema_authors (id, name) ON UPDATE CASCADE
+);
+SQL;
+        $connection->execute($table);
+
         $sql = <<<SQL
 CREATE TABLE schema_composite (
     "id" INTEGER NOT NULL,
@@ -455,12 +500,12 @@ SQL;
                 'columns' => ['id'],
                 'length' => [],
             ],
-            'sqlite_autoindex_schema_articles_1' => [
+            'title_idx' => [
                 'type' => 'unique',
                 'columns' => ['title', 'body'],
                 'length' => [],
             ],
-            'author_id_fk' => [
+            'author_id_0_fk' => [
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
@@ -479,12 +524,12 @@ SQL;
         $this->assertCount(4, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals(
-            $expected['sqlite_autoindex_schema_articles_1'],
-            $result->getConstraint('sqlite_autoindex_schema_articles_1')
+            $expected['title_idx'],
+            $result->getConstraint('title_idx')
         );
         $this->assertEquals(
-            $expected['author_id_fk'],
-            $result->getConstraint('author_id_fk')
+            $expected['author_id_0_fk'],
+            $result->getConstraint('author_id_0_fk')
         );
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
@@ -495,6 +540,132 @@ SQL;
             'length' => [],
         ];
         $this->assertEquals($expected, $result->getIndex('created_idx'));
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_no_rowid_pk');
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+
+        $this->assertSame(['primary'], $result->constraints());
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_unique_constraint_variations');
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+
+        $expected = [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+                'length' => [],
+            ],
+            'a_cat_walked_over_my_keyboard_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'id',
+                    'foo',
+                    'bar',
+                    'baz',
+                    'zap',
+                ],
+                'length' => [],
+            ],
+            'bracket_[quotes_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'bracket_[quotes',
+                ],
+                'length' => [],
+            ],
+            'tick_`quotes_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'tick_`quotes',
+                ],
+                'length' => [],
+            ],
+            'double_"quotes_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'double_"quotes',
+                ],
+                'length' => [],
+            ],
+            "single_'quotes_idx" => [
+                'type' => 'unique',
+                'columns' => [
+                    "single_'quotes",
+                ],
+                'length' => [],
+            ],
+            'no_quotes_idx' => [
+                'type' => 'unique',
+                'columns' => [
+                    'no_quotes',
+                ],
+                'length' => [],
+            ],
+        ];
+        foreach ($expected as $name => $constraint) {
+            $this->assertSame($constraint, $result->getConstraint($name));
+        }
+        $this->assertCount(7, $result->constraints());
+
+        $this->assertEmpty($result->indexes());
+    }
+
+    /**
+     * Test describing a table with foreign keys
+     */
+    public function testDescribeTableForeignKeys(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_foreign_key_variations');
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+
+        $expected = [
+            'primary' => [
+                'type' => 'primary',
+                'columns' => [
+                    'id',
+                ],
+                'length' => [],
+            ],
+            'author_id_author_name_0_fk' => [
+                'type' => 'foreign',
+                'columns' => [
+                    'author_id',
+                    'author_name',
+                ],
+                'references' => [
+                    'schema_authors',
+                    ['id', 'name'],
+                ],
+                'update' => 'cascade',
+                'delete' => 'noAction',
+                'length' => [],
+            ],
+            'author_id_1_fk' => [
+                'type' => 'foreign',
+                'columns' => [
+                    'author_id',
+                ],
+                'references' => [
+                    'schema_authors',
+                    'id',
+                ],
+                'update' => 'cascade',
+                'delete' => 'restrict',
+                'length' => [],
+            ],
+        ];
+        foreach ($expected as $name => $constraint) {
+            $this->assertSame($constraint, $result->getConstraint($name));
+        }
+        $this->assertCount(3, $result->constraints());
     }
 
     /**
