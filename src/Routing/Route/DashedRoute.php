@@ -26,16 +26,6 @@ use Cake\Utility\Inflector;
 class DashedRoute extends Route
 {
     /**
-     * Flag for tracking whether the defaults have been inflected.
-     *
-     * Default values need to be inflected so that they match the inflections that
-     * match() will create.
-     *
-     * @var bool
-     */
-    protected bool $_inflectedDefaults = false;
-
-    /**
      * Camelizes the previously dashed plugin route taking into account plugin vendors
      *
      * @param string $plugin Plugin name
@@ -85,24 +75,11 @@ class DashedRoute extends Route
     }
 
     /**
-     * Dasherizes the controller, action and plugin params before passing them on
-     * to the parent class.
-     *
-     * @param array $url Array of parameters to convert to a string.
-     * @param array $context An array of the current request context.
-     *   Contains information such as the current host, scheme, port, and base
-     *   directory.
-     * @return string|null Either a string URL or null.
+     * @inheritDoc
      */
-    public function match(array $url, array $context = []): ?string
+    protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $url = $this->_dasherize($url);
-        if (!$this->_inflectedDefaults) {
-            $this->_inflectedDefaults = true;
-            $this->defaults = $this->_dasherize($this->defaults);
-        }
-
-        return parent::match($url, $context);
+        return parent::_writeUrl($this->_dasherize($params), $pass, $query);
     }
 
     /**

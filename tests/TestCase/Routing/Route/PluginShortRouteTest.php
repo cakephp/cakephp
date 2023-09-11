@@ -57,7 +57,7 @@ class PluginShortRouteTest extends TestCase
      */
     public function testMatch(): void
     {
-        $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'foo|bar']);
+        $route = new PluginShortRoute('/{plugin}', ['action' => 'index'], ['plugin' => 'Foo|Bar']);
 
         $result = $route->match(['plugin' => 'Foo', 'controller' => 'Posts', 'action' => 'index']);
         $this->assertNull($result, 'plugin controller mismatch was converted. %s');

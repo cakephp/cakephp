@@ -25,16 +25,6 @@ use Cake\Utility\Inflector;
 class InflectedRoute extends Route
 {
     /**
-     * Flag for tracking whether the defaults have been inflected.
-     *
-     * Default values need to be inflected so that they match the inflections that match()
-     * will create.
-     *
-     * @var bool
-     */
-    protected bool $_inflectedDefaults = false;
-
-    /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
      * plugin keys to their camelized form.
      *
@@ -64,24 +54,11 @@ class InflectedRoute extends Route
     }
 
     /**
-     * Underscores the prefix, controller and plugin params before passing them on to the
-     * parent class
-     *
-     * @param array $url Array of parameters to convert to a string.
-     * @param array $context An array of the current request context.
-     *   Contains information such as the current host, scheme, port, and base
-     *   directory.
-     * @return string|null Either a string URL for the parameters if they match or null.
+     * @inheritDoc
      */
-    public function match(array $url, array $context = []): ?string
+    protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $url = $this->_underscore($url);
-        if (!$this->_inflectedDefaults) {
-            $this->_inflectedDefaults = true;
-            $this->defaults = $this->_underscore($this->defaults);
-        }
-
-        return parent::match($url, $context);
+        return parent::_writeUrl($this->_underscore($params), $pass, $query);
     }
 
     /**
