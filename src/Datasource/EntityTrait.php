@@ -749,7 +749,7 @@ trait EntityTrait
 
     /**
      * Returns an array with the requested original fields
-     * stored in this entity, indexed by field name.
+     * stored in this entity, indexed by field name, if they exist.
      *
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
@@ -765,8 +765,6 @@ trait EntityTrait
                 $result[$field] = $this->getOriginal($field);
             } elseif ($this->isOriginalField($field)) {
                 $result[$field] = $this->get($field);
-            } else {
-                $result[$field] = null;
             }
         }
 
@@ -775,7 +773,7 @@ trait EntityTrait
 
     /**
      * Returns an array with only the original fields
-     * stored in this entity, indexed by field name.
+     * stored in this entity, indexed by field name, if they exist.
      *
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.

@@ -135,18 +135,17 @@ class EntityTest extends TestCase
             'title' => 'original',
             'body' => 'no',
             'null' => null,
-            'undefined' => null,
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null']);
+        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null', 'undefined']);
         $expected = [
             'body' => 'no',
         ];
         $this->assertEquals($expected, $result);
 
         $entity->set('null', 'not null');
-        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null']);
+        $result = $entity->extractOriginalChanged(['id', 'title', 'body', 'null', 'undefined']);
         $expected = [
             'null' => null,
             'body' => 'no',
