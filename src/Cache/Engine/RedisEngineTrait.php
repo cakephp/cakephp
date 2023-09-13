@@ -46,7 +46,7 @@ trait RedisEngineTrait
             return $this->_Redis->set($key, $value);
         }
 
-        return $this->_Redis->setEx($key, $duration, $value);
+        return $this->_Redis->setex($key, $duration, $value);
     }
 
     /**
