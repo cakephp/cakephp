@@ -81,6 +81,7 @@ class Cache
         'memcached' => Engine\MemcachedEngine::class,
         'null' => Engine\NullEngine::class,
         'redis' => Engine\RedisEngine::class,
+        'rediscluster' => Engine\RedisClusterEngine::class,
         'wincache' => Engine\WincacheEngine::class,
     ];
 
