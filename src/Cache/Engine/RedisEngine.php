@@ -158,7 +158,7 @@ class RedisEngine extends CacheEngine
         while (true) {
             $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
 
-            if ($keys === false || $keys === []) {
+            if ($keys === false) {
                 break;
             }
 
