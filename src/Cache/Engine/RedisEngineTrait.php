@@ -11,13 +11,11 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         2.2.0
+ * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Cake\Cache\Engine;
-
-use Redis;
 
 /**
  * Redis storage engine trait for cache.
@@ -133,66 +131,6 @@ trait RedisEngineTrait
         $key = $this->_key($key);
 
         return $this->unlink($key);
-    }
-
-    /**
-     * Delete all keys from the cache
-     *
-     * @return bool True if the cache was successfully cleared, false otherwise
-     */
-    public function clear(): bool
-    {
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
-        $isAllDeleted = true;
-        $iterator = null;
-        $pattern = $this->_config['prefix'] . '*';
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ($this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
-        }
-
-        return $isAllDeleted;
-    }
-
-    /**
-     * Delete all keys from the cache by a blocking operation
-     *
-     * Faster than clear() using unlink method.
-     *
-     * @return bool True if the cache was successfully cleared, false otherwise
-     */
-    public function clearBlocking(): bool
-    {
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
-        $isAllDeleted = true;
-        $iterator = null;
-        $pattern = $this->_config['prefix'] . '*';
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = $this->unlink($key);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
-        }
-
-        return $isAllDeleted;
     }
 
     /**

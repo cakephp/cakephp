@@ -137,6 +137,71 @@ class RedisEngine extends CacheEngine
         return $return;
     }
 
+    protected function setRetryOption(): void
+    {
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+    }
+
+    /**
+     * Delete all keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clear(): bool
+    {
+        $this->setRetryOption();
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+
+            if ($keys === false || $keys === []) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->del($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
+    /**
+     * Delete all keys from the cache by a blocking operation
+     *
+     * Faster than clear() using unlink method.
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        $this->setRetryOption();
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = $this->unlink($key);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
     /**
      * Unlink a key from the cache. The actual removal will happen later asynchronously.
      *

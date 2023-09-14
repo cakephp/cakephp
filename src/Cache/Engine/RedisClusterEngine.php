@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @link          https://cakephp.org CakePHP(tm) Project
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         2.2.0
+ * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -57,7 +57,7 @@ class RedisClusterEngine extends CacheEngine
         'cluster' => null,
         'seeds' => [],
         'timeout' => 0,
-        'read_timeout' => 0,
+        'readTimeout' => 0,
         'persistent' => true,
         'auth' => null,
 
@@ -99,7 +99,7 @@ class RedisClusterEngine extends CacheEngine
                 $this->_config['cluster'],
                 $this->_config['seeds'],
                 $this->_config['timeout'],
-                $this->_config['read_timeout'],
+                $this->_config['readTimeout'],
                 $this->_config['persistent'],
                 $this->_config['auth']
             );
@@ -114,6 +114,75 @@ class RedisClusterEngine extends CacheEngine
         return true;
     }
 
+    protected function setRetryOption(): void
+    {
+        $this->_Redis->setOption(RedisCluster::OPT_SCAN, (string)RedisCluster::SCAN_RETRY);
+    }
+
+    /**
+     * Delete all keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clear(): bool
+    {
+        $this->setRetryOption();
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        foreach ($this->_Redis->_masters() as $node) {
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
+
+                if ($keys === false) {
+                    break;
+                }
+
+                foreach ($keys as $key) {
+                    $isDeleted = ($this->_Redis->del($key) > 0);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
+                }
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
+       /**
+     * Delete all keys from the cache by a blocking operation
+     *
+     * Faster than clear() using unlink method.
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        $this->setRetryOption();
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        foreach ($this->_Redis->_masters() as $node) {
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
+
+                if ($keys === false) {
+                    break;
+                }
+
+                foreach ($keys as $key) {
+                    $isDeleted = $this->deleteAsync($key);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
+                }
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
     /**
      * Unlink a key from the cache. The actual removal will happen later asynchronously.
      * That what we should do but there is no easy way to do this now. So fallback to normal delete.
@@ -123,7 +192,7 @@ class RedisClusterEngine extends CacheEngine
      */
     protected function unlink(string $key): bool
     {
-        return $this->delete($key);
+        return $this->_Redis->del($key) > 0;
     }
 
     /**
