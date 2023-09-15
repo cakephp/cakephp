@@ -910,6 +910,17 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test lazy loading helpers in plugins
+     */
+    public function testLazyLoadHelpersPlugin(): void
+    {
+        $view = new View(null, null, null, ['plugin' => 'TestPlugin']);
+
+        $this->assertEquals('hello other', $view->OtherHelper->hello());
+        $this->assertEquals('hello plugged, hello other', $view->PluggedHelper->hello());
+    }
+
+    /**
      * Test manipulating class properties in initialize()
      */
     public function testInitialize(): void
