@@ -167,6 +167,19 @@ class BaseApplicationTest extends TestCase
         $this->assertNotEmpty($collection->match($url, []));
     }
 
+    public function testAppBootstrapPlugins(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . DS . 'test_app' . DS . 'config_plugins') extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->bootstrap();
+        $this->assertTrue($app->getPlugins()->has('TestPlugin'), 'TestPlugin was not loaded via plugins.php');
+    }
+
     public function testPluginBootstrap(): void
     {
         $app = $this->app;
