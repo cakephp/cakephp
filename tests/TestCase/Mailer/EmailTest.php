@@ -379,6 +379,11 @@ class EmailTest extends TestCase
         $expected = ['"\"Last\" First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
+        // See https://datatracker.ietf.org/doc/html/rfc5322#section-3.2.4
+        $result = $this->Email->getMessage()->fmtAddress(['me@example.com' => 'Quotes: " Backslashes: \\']);
+        $expected = ['"Quotes: \\" Backslashes: \\\\" <me@example.com>'];
+        $this->assertSame($expected, $result);
+
         $result = $this->Email->getMessage()->fmtAddress(['me@example.com' => 'Last First']);
         $expected = ['Last First <me@example.com>'];
         $this->assertSame($expected, $result);
@@ -389,6 +394,10 @@ class EmailTest extends TestCase
 
         $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>'];
+        $this->assertSame($expected, $result);
+
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => 'Test <test@test.local>, Über']);
+        $expected = ['"Test <test@test.local>, =?UTF-8?B?w5xiZXI=?=" <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
     }
 
@@ -403,12 +412,12 @@ class EmailTest extends TestCase
         $this->assertSame($expected, $result);
 
         $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
-        $expected = ["=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
+        $expected = ["\"=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJV0kTiU3JWUhPCVqJXMlLCVzJTclZSE8JWolcyUsJXMkTiUwGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCITwlaiVzJUAlJCUwITwlaiVzJUAlJCROJV0lcyVdJTMlVCE8GyhC?=\r\n" .
-            ' =?ISO-2022-JP?B?GyRCJE4lXSVzJV0lMyVKITwkTkQ5NVdMPyRORDk9dRsoQg==?= <cake@cakephp.org>'];
+            ' =?ISO-2022-JP?B?GyRCJE4lXSVzJV0lMyVKITwkTkQ5NVdMPyRORDk9dRsoQg==?=" <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
     }
 

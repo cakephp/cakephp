@@ -999,8 +999,8 @@ class Message implements JsonSerializable, Serializable
                 $return[] = $email;
             } else {
                 $encoded = $this->encodeForHeader($alias);
-                if ($encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded)) {
-                    $encoded = '"' . str_replace('"', '\"', $encoded) . '"';
+                if (preg_match('/[^a-z0-9+\-\\=? ]/i', $encoded)) {
+                    $encoded = '"' . addcslashes($encoded, '"\\') . '"';
                 }
                 $return[] = sprintf('%s <%s>', $encoded, $email);
             }
