@@ -184,9 +184,11 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     }
 
     /**
-     * X-XSS-Protection
+     * X-XSS-Protection. It's a non standard feature and outdated. For modern browsers
+     * use a strong Content-Security-Policy that disables the use of inline JavaScript 
+     * via 'unsafe-inline' option.
      *
-     * @link https://blogs.msdn.microsoft.com/ieinternals/2011/01/31/controlling-the-xss-filter
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
