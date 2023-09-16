@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
-use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
@@ -448,7 +447,7 @@ class Validation
      */
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof ChronosDate || $check instanceof Chronos) {
+        if ($check instanceof ChronosDate || $check instanceof DateTimeInterface) {
             return true;
         }
         if (is_object($check)) {
@@ -526,7 +525,7 @@ class Validation
      */
     public static function datetime(mixed $check, array|string $dateFormat = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_object($check)) {
@@ -594,7 +593,7 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -626,7 +625,7 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (!is_string($check)) {
