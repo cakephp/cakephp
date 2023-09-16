@@ -190,7 +190,7 @@ class HtmlFormatter implements FormatterInterface
      */
     protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
     {
-        $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
+        $objectId = "cake-db-object-$this->id-{$var->getId()}";
         $out = sprintf(
             '<span class="cake-debug-object" id="%s">',
             $objectId

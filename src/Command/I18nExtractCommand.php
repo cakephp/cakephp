@@ -333,7 +333,7 @@ class I18nExtractCommand extends Command
         $this->_translations = $this->_tokens = [];
         $io->out();
         if ($this->_countMarkerError) {
-            $io->err("{$this->_countMarkerError} marker error(s) detected.");
+            $io->err("$this->_countMarkerError marker error(s) detected.");
             $io->err(' => Use the --marker-error option to display errors.');
         }
 
@@ -555,14 +555,14 @@ class I18nExtractCommand extends Command
 
                     $sentence = '';
                     if ($context !== '') {
-                        $sentence .= "msgctxt \"{$context}\"\n";
+                        $sentence .= "msgctxt \"$context\"\n";
                     }
                     if ($plural === false) {
-                        $sentence .= "msgid \"{$msgid}\"\n";
+                        $sentence .= "msgid \"$msgid\"\n";
                         $sentence .= "msgstr \"\"\n\n";
                     } else {
-                        $sentence .= "msgid \"{$msgid}\"\n";
-                        $sentence .= "msgid_plural \"{$plural}\"\n";
+                        $sentence .= "msgid \"$msgid\"\n";
+                        $sentence .= "msgid_plural \"$plural\"\n";
                         $sentence .= "msgstr[0] \"\"\n";
                         $sentence .= "msgstr[1] \"\"\n\n";
                     }

@@ -56,7 +56,7 @@ class Curl implements AdapterInterface
             $error = curl_error($ch);
             curl_close($ch);
 
-            $message = "cURL Error ({$errorCode}) {$error}";
+            $message = "cURL Error ($errorCode) $error";
             $errorNumbers = [
                 CURLE_FAILED_INIT,
                 CURLE_URL_MALFORMAT,

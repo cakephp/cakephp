@@ -290,7 +290,7 @@ class QueryCompiler
             if ($condition === '') {
                 $joins .= ' ON 1 = 1';
             } else {
-                $joins .= " ON {$condition}";
+                $joins .= " ON $condition";
             }
         }
 
@@ -356,7 +356,7 @@ class QueryCompiler
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
-                return "{$prefix}({$p['query']})";
+                return "$prefix({$p['query']})";
             }
 
             return $prefix . $p['query'];

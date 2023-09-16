@@ -705,7 +705,7 @@ class ConsoleOptionParser
         if (!isset($this->_shortOptions[$key])) {
             $options = [];
             foreach ($this->_shortOptions as $short => $long) {
-                $options[] = "{$short} (short for `--{$long}`)";
+                $options[] = "$short (short for `--$long`)";
             }
             throw new MissingOptionException(
                 sprintf('Unknown short option `%s`.', $key),

@@ -140,9 +140,9 @@ TEXT;
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = "[{$visibility}] {$name} => " . $this->export($property->getValue(), $indent);
+                $props[] = "[$visibility] $name => " . $this->export($property->getValue(), $indent);
             } else {
-                $props[] = "{$name} => " . $this->export($property->getValue(), $indent);
+                $props[] = "$name => " . $this->export($property->getValue(), $indent);
             }
         }
         if (count($props)) {

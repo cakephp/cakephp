@@ -322,7 +322,7 @@ class Oauth
                 // Numeric keys result in a=b&a=c. While this isn't
                 // standard behavior in PHP, it is common in other platforms.
                 if (!is_numeric($key)) {
-                    $key = "{$path}[{$key}]";
+                    $key = "{$path}[$key]";
                 } else {
                     $key = $path;
                 }

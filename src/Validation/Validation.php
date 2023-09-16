@@ -709,21 +709,21 @@ class Validation
 
         if ($regex === null) {
             $lnum = '[0-9]+';
-            $dnum = "[0-9]*[\.]{$lnum}";
+            $dnum = "[0-9]*[\.]$lnum";
             $sign = '[+-]?';
-            $exp = "(?:[eE]{$sign}{$lnum})?";
+            $exp = "(?:[eE]$sign$lnum)?";
 
             if ($places === null) {
-                $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
+                $regex = "/^$sign(?:$lnum|$dnum)$exp$/";
             } elseif ($places === true) {
                 if (is_float($check) && floor($check) === $check) {
                     $check = sprintf('%.1f', $check);
                 }
-                $regex = "/^{$sign}{$dnum}{$exp}$/";
+                $regex = "/^$sign$dnum$exp$/";
             } else {
                 $places = '[0-9]{' . $places . '}';
-                $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
-                $regex = "/^{$sign}{$dnum}{$exp}$/";
+                $dnum = "(?:[0-9]*[\.]$places|{$lnum}[\.]$places)";
+                $regex = "/^$sign$dnum$exp$/";
             }
         }
 

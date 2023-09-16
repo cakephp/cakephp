@@ -836,7 +836,7 @@ class Route
                 $host .= ':' . $params['_port'];
             }
             $scheme = $params['_scheme'] ?? 'http';
-            $out = "{$scheme}://{$host}{$out}";
+            $out = "$scheme://$host$out";
         }
         if (!empty($params['_ext']) || !empty($query)) {
             $out = rtrim($out, '/');

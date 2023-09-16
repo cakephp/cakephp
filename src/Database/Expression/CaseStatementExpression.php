@@ -538,7 +538,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
 
         $else = $this->compileNullableValue($binder, $this->else, $this->elseType);
 
-        return "CASE {$value}{$whenThen} ELSE $else END";
+        return "CASE $value$whenThen ELSE $else END";
     }
 
     /**

@@ -379,7 +379,7 @@ class Cookie implements CookieInterface
      */
     public function getId(): string
     {
-        return "{$this->name};{$this->domain};{$this->path}";
+        return "$this->name;$this->domain;$this->path";
     }
 
     /**

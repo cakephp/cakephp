@@ -77,7 +77,7 @@ class CommandCollection implements IteratorAggregate, Countable
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
             throw new InvalidArgumentException(
-                "The command name `{$name}` is invalid. Names can only be a maximum of three words."
+                "The command name `$name` is invalid. Names can only be a maximum of three words."
             );
         }
 

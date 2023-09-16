@@ -136,7 +136,7 @@ class Sqlserver extends Driver
             $port = ',' . $config['port'];
         }
 
-        $dsn = "sqlsrv:Server={$config['host']}{$port};Database={$config['database']};MultipleActiveResultSets=false";
+        $dsn = "sqlsrv:Server={$config['host']}$port;Database={$config['database']};MultipleActiveResultSets=false";
         if ($config['app'] !== null) {
             $dsn .= ";APP={$config['app']}";
         }
@@ -167,7 +167,7 @@ class Sqlserver extends Driver
         }
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
-                $this->pdo->exec("SET {$key} {$value}");
+                $this->pdo->exec("SET $key $value");
             }
         }
         if (!empty($config['attributes']) && is_array($config['attributes'])) {

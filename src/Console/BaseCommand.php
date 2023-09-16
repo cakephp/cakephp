@@ -54,7 +54,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     {
         assert(
             str_contains($name, ' ') && !str_starts_with($name, ' '),
-            "The name '{$name}' is missing a space. Names should look like `cake routes`"
+            "The name '$name' is missing a space. Names should look like `cake routes`"
         );
         $this->name = $name;
 

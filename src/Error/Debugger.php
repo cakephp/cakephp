@@ -719,7 +719,7 @@ class Debugger
             if (method_exists($var, '__debugInfo')) {
                 try {
                     foreach ((array)$var->__debugInfo() as $key => $val) {
-                        $node->addProperty(new PropertyNode("'{$key}'", null, static::export($val, $context)));
+                        $node->addProperty(new PropertyNode("'$key'", null, static::export($val, $context)));
                     }
 
                     return $node;

@@ -859,16 +859,16 @@ class Router
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             foreach ($paramsArray as $param) {
-                if (strpos($param, '=') !== false) {
+                if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
-                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                            "Could not parse a key=value from `$param` in route path `$url`."
                         );
                     }
                     $paramKey = $paramMatches['key'];
                     if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
                         throw new InvalidArgumentException(
-                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                            "Param key `$paramKey` is not valid in route path `$url`."
                         );
                     }
                     $defaults[$paramKey] = trim($paramMatches['value'], '\'"');

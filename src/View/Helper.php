@@ -130,7 +130,7 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm(string $okCode, string $cancelCode): string
     {
-        return "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
+        return "if (confirm(this.dataset.confirmMessage)) { $okCode } $cancelCode";
     }
 
     /**

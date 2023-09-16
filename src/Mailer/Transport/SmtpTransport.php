@@ -259,7 +259,7 @@ class SmtpTransport extends AbstractTransport
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+            if (strlen($line['message']) === 0 || str_starts_with($line['message'], 'AUTH ')) {
                 $auth = $line['message'];
                 break;
             }
@@ -310,11 +310,11 @@ class SmtpTransport extends AbstractTransport
         }
 
         try {
-            $this->_smtpSend("EHLO {$host}", '250');
+            $this->_smtpSend("EHLO $host", '250');
             if ($config['tls']) {
                 $this->_smtpSend('STARTTLS', '220');
                 $this->_socket->enableCrypto('tls');
-                $this->_smtpSend("EHLO {$host}", '250');
+                $this->_smtpSend("EHLO $host", '250');
             }
         } catch (SocketException $e) {
             if ($config['tls']) {
@@ -325,7 +325,7 @@ class SmtpTransport extends AbstractTransport
                 );
             }
             try {
-                $this->_smtpSend("HELO {$host}", '250');
+                $this->_smtpSend("HELO $host", '250');
             } catch (SocketException $e2) {
                 throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }

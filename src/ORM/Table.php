@@ -611,7 +611,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $nameLength = $maxLength - 2;
                 throw new DatabaseException(
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
-                    "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
+                    "The table alias `$table` and column `$name` create an alias longer than ($nameLength). " .
                     'You must change the table schema in the database and shorten either the table or column ' .
                     'identifier so they fit within the database alias limits.'
                 );
@@ -912,7 +912,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$association) {
             $assocations = $this->associations()->keys();
 
-            $message = "The `{$name}` association is not defined on `{$this->getAlias()}`.";
+            $message = "The `$name` association is not defined on `{$this->getAlias()}`.";
             if ($assocations) {
                 $message .= "\nValid associations are: " . implode(', ', $assocations);
             }

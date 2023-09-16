@@ -123,7 +123,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $io->out('<info>Available Commands:</info>', 2);
 
         foreach ($grouped as $prefix => $names) {
-            $io->out("<info>{$prefix}</info>:");
+            $io->out("<info>$prefix</info>:");
             sort($names);
             foreach ($names as $data) {
                 $io->out(' - ' . $data['name']);
@@ -135,8 +135,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $root = $this->getRootName();
 
-        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
-        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+        $io->out("To run a command, type <info>`$root command_name [args|options]`</info>");
+        $io->out("To get help on a specific command, type <info>`$root command_name --help`</info>", 2);
     }
 
     /**
@@ -164,7 +164,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $io->out('<info>Current Paths:</info>', 2);
         foreach ($paths as $key => $value) {
-            $io->out("* {$key}: {$value}");
+            $io->out("* $key: $value");
         }
         $io->out('');
     }

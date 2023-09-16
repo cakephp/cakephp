@@ -45,7 +45,7 @@ trait HttpClientTrait
      */
     public function newClientResponse(int $code = 200, array $headers = [], string $body = ''): Response
     {
-        $headers = array_merge(["HTTP/1.1 {$code}"], $headers);
+        $headers = array_merge(["HTTP/1.1 $code"], $headers);
 
         return new Response($headers, $body);
     }
@@ -118,7 +118,7 @@ trait HttpClientTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Http\TestSuite\HttpClientTrait', 
+    'Cake\Http\TestSuite\HttpClientTrait',
     'Cake\TestSuite\HttpClientTrait'
 );
 // phpcs:enable

@@ -692,7 +692,7 @@ class QueryExpression implements ExpressionInterface, Countable
             if (preg_match('/(is not|not \w+)$/i', $expression)) {
                 $last = array_pop($parts);
                 $second = array_pop($parts);
-                $parts[] = "{$second} {$last}";
+                $parts[] = "$second $last";
             }
             $operator = array_pop($parts);
             $expression = implode(' ', $parts);

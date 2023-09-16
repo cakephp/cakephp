@@ -97,7 +97,7 @@ class ConsoleInput
         /** @var string|null $error */
         $error = null;
         set_error_handler(function (int $code, string $message) use (&$error) {
-            $error = "stream_select failed with code={$code} message={$message}.";
+            $error = "stream_select failed with code=$code message=$message.";
 
             return true;
         });

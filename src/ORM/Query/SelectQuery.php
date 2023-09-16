@@ -377,15 +377,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        $results = null;
-        if ($this->_cache) {
-            $results = $this->_cache->fetch($this);
-        }
+        $results = $this->_cache?->fetch($this);
         if ($results === null) {
             $results = $this->_decorateResults($this->_execute());
-            if ($this->_cache) {
-                $this->_cache->store($this, $results);
-            }
+            $this->_cache?->store($this, $results);
         }
         $this->_results = $results;
 

@@ -120,7 +120,7 @@ class TreeBehavior extends Behavior
                 $edge = $parentNode->get($config['right']);
                 $entity->set($config['left'], $edge);
                 $entity->set($config['right'], $edge + 1);
-                $this->_sync(2, '+', ">= {$edge}");
+                $this->_sync(2, '+', ">= $edge");
 
                 if ($level) {
                     $entity->set($level, $parentNode[$level] + 1);
@@ -256,7 +256,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        $this->_sync($diff, '-', "> {$right}");
+        $this->_sync($diff, '-', "> $right");
     }
 
     /**
@@ -307,10 +307,10 @@ class TreeBehavior extends Behavior
             // Correcting internal subtree
             $internalLeft = $left + 1;
             $internalRight = $right - 1;
-            $this->_sync($targetLeft - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}", true);
+            $this->_sync($targetLeft - $left, '+', "BETWEEN $internalLeft AND $internalRight", true);
         }
 
-        $this->_sync($diff, '+', "BETWEEN {$min} AND {$max}");
+        $this->_sync($diff, '+', "BETWEEN $min AND $max");
 
         if ($right - $left > 1) {
             $this->_unmarkInternalTree();
@@ -342,10 +342,10 @@ class TreeBehavior extends Behavior
             //Correcting internal subtree
             $internalLeft = $left + 1;
             $internalRight = $right - 1;
-            $this->_sync($edge - $diff - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}", true);
+            $this->_sync($edge - $diff - $left, '+', "BETWEEN $internalLeft AND $internalRight", true);
         }
 
-        $this->_sync($diff + 1, '-', "BETWEEN {$right} AND {$edge}");
+        $this->_sync($diff + 1, '-', "BETWEEN $right AND $edge");
 
         if ($right - $left > 1) {
             $this->_unmarkInternalTree();
@@ -467,8 +467,8 @@ class TreeBehavior extends Behavior
 
         return $this->_scope($query)
             ->where([
-                "{$right} <" => $node->get($config['right']),
-                "{$left} >" => $node->get($config['left']),
+                "$right <" => $node->get($config['right']),
+                "$left >" => $node->get($config['left']),
             ]);
     }
 
@@ -579,7 +579,7 @@ class TreeBehavior extends Behavior
             [$config['parent'] => $node->get($primary)]
         );
         $this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
-        $this->_sync(2, '-', "> {$right}");
+        $this->_sync(2, '-', "> $right");
         $edge = $this->_getMax();
         $node->set($config['left'], $edge + 1);
         $node->set($config['right'], $edge + 2);
@@ -667,9 +667,9 @@ class TreeBehavior extends Behavior
         $nodeToEdge = $edge - $nodeLeft + 1;
         $shift = $nodeRight - $nodeLeft + 1;
         $nodeToHole = $edge - $leftBoundary + 1;
-        $this->_sync($nodeToEdge, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
-        $this->_sync($shift, '+', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
-        $this->_sync($nodeToHole, '-', "> {$edge}");
+        $this->_sync($nodeToEdge, '+', "BETWEEN $nodeLeft AND $nodeRight");
+        $this->_sync($shift, '+', "BETWEEN $leftBoundary AND $rightBoundary");
+        $this->_sync($nodeToHole, '-', "> $edge");
 
         /** @var string $left */
         $node->set($left, $targetLeft);
@@ -756,9 +756,9 @@ class TreeBehavior extends Behavior
         $nodeToEdge = $edge - $nodeLeft + 1;
         $shift = $nodeRight - $nodeLeft + 1;
         $nodeToHole = $edge - $rightBoundary + $shift;
-        $this->_sync($nodeToEdge, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
-        $this->_sync($shift, '-', "BETWEEN {$leftBoundary} AND {$rightBoundary}");
-        $this->_sync($nodeToHole, '-', "> {$edge}");
+        $this->_sync($nodeToEdge, '+', "BETWEEN $nodeLeft AND $nodeRight");
+        $this->_sync($shift, '-', "BETWEEN $leftBoundary AND $rightBoundary");
+        $this->_sync($nodeToHole, '-', "> $edge");
 
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
         $node->set($right, $targetRight);

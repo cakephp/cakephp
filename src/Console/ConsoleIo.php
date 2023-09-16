@@ -318,10 +318,10 @@ class ConsoleIo
     {
         if (is_array($message)) {
             foreach ($message as $k => $v) {
-                $message[$k] = "<{$messageType}>{$v}</{$messageType}>";
+                $message[$k] = "<$messageType>$v</$messageType>";
             }
         } else {
-            $message = "<{$messageType}>{$message}</{$messageType}>";
+            $message = "<$messageType>$message</$messageType>";
         }
 
         return $message;
@@ -626,7 +626,7 @@ class ConsoleIo
         $forceOverwrite = $forceOverwrite || $this->forceOverwrite;
 
         if (file_exists($path) && $forceOverwrite === false) {
-            $this->warning("File `{$path}` exists");
+            $this->warning("File `$path` exists");
             $key = $this->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
             $key = strtolower($key);
 
@@ -639,12 +639,12 @@ class ConsoleIo
                 $key = 'y';
             }
             if ($key !== 'y') {
-                $this->out("Skip `{$path}`", 2);
+                $this->out("Skip `$path`", 2);
 
                 return false;
             }
         } else {
-            $this->out("Creating file {$path}");
+            $this->out("Creating file $path");
         }
 
         try {
@@ -656,7 +656,7 @@ class ConsoleIo
 
             $file = new SplFileObject($path, 'w');
         } catch (RuntimeException) {
-            $this->error("Could not write to `{$path}`. Permission denied.", 2);
+            $this->error("Could not write to `$path`. Permission denied.", 2);
 
             return false;
         }
@@ -664,11 +664,11 @@ class ConsoleIo
         $file->rewind();
         $file->fwrite($contents);
         if (file_exists($path)) {
-            $this->out("<success>Wrote</success> `{$path}`");
+            $this->out("<success>Wrote</success> `$path`");
 
             return true;
         }
-        $this->error("Could not write to `{$path}`.", 2);
+        $this->error("Could not write to `$path`.", 2);
 
         return false;
     }

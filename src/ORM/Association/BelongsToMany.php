@@ -413,7 +413,7 @@ class BelongsToMany extends Association
                 $target !== $belongsTo->getTarget()
             ) {
                 throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
+                    "The existing `$tAlias` association on `{$junction->getAlias()}` " .
                     "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
                 );
             }

@@ -69,15 +69,15 @@ class CacheClearCommand extends Command
     {
         $name = (string)$args->getArgument('engine');
         try {
-            $io->out("Clearing {$name}");
+            $io->out("Clearing $name");
 
             $engine = Cache::pool($name);
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
-                $io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
-                    "but {$name} web cache must be cleared separately.");
+                $io->warning("ApcuEngine detected: Cleared $name CLI cache successfully " .
+                    "but $name web cache must be cleared separately.");
             } else {
-                $io->out("<success>Cleared {$name} cache</success>");
+                $io->out("<success>Cleared $name cache</success>");
             }
         } catch (InvalidArgumentException $e) {
             $io->error($e->getMessage());

@@ -517,7 +517,7 @@ class Response implements ResponseInterface, Stringable
         }
 
         if ($charset && !str_contains($type, ';')) {
-            $this->_setHeader('Content-Type', "{$type}; charset={$this->_charset}");
+            $this->_setHeader('Content-Type', "$type; charset=$this->_charset");
         } else {
             $this->_setHeader('Content-Type', $type);
         }

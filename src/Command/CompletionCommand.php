@@ -60,7 +60,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         ];
         $modeHelp = '';
         foreach ($modes as $key => $help) {
-            $modeHelp .= "- <info>{$key}</info> {$help}\n";
+            $modeHelp .= "- <info>$key</info> $help\n";
         }
 
         $parser->setDescription(

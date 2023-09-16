@@ -154,7 +154,7 @@ class FlashMessage
      */
     public function consume(string $key): ?array
     {
-        return $this->session->consume("Flash.{$key}");
+        return $this->session->consume("Flash.$key");
     }
 
     /**
