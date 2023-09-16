@@ -59,7 +59,7 @@ class TestAppLibSession implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    public function gc($maxlifetime): int|false
+    public function gc($max_lifetime): int|false
     {
         return 0;
     }

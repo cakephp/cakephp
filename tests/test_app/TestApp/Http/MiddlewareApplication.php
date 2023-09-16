@@ -39,7 +39,7 @@ class MiddlewareApplication extends BaseApplication
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
      */
-    public function handle(ServerRequestInterface $req): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $res = new Response(['status' => 200]);
 

@@ -740,10 +740,10 @@ class ResponseTest extends TestCase
         $this->assertEquals(99, $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', false));
-        $this->assertEquals(false, $new->getCookie('testing')['value']);
+        $this->assertSame('', $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', true));
-        $this->assertEquals(true, $new->getCookie('testing')['value']);
+        $this->assertSame('1', $new->getCookie('testing')['value']);
     }
 
     /**

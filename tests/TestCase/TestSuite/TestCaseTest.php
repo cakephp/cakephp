@@ -195,7 +195,7 @@ class TestCaseTest extends TestCase
         try {
             $this->deprecated(function () {
                 trigger_error('deprecation message', E_USER_DEPRECATED);
-                $this->assertTrue(false, 'A random message');
+                $this->fail('A random message');
             });
 
             $this->fail();

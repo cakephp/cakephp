@@ -40,10 +40,10 @@ class ApplicationWithDefaultRoutes extends BaseApplication
         // Do nothing.
     }
 
-    public function middleware(MiddlewareQueue $middlewareQueueQueue): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueueQueue->add(new RoutingMiddleware($this));
+        $middlewareQueue->add(new RoutingMiddleware($this));
 
-        return $middlewareQueueQueue;
+        return $middlewareQueue;
     }
 }

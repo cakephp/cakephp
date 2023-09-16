@@ -37,9 +37,9 @@ class ApplicationWithExceptionsInMiddleware extends BaseApplication
         // Do nothing.
     }
 
-    public function middleware(MiddlewareQueue $middlewareQueueQueue): MiddlewareQueue
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueueQueue
+        $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response
             ->add(ErrorHandlerMiddleware::class)
@@ -50,6 +50,6 @@ class ApplicationWithExceptionsInMiddleware extends BaseApplication
             // Add routing middleware.
             ->add(new RoutingMiddleware($this));
 
-        return $middlewareQueueQueue;
+        return $middlewareQueue;
     }
 }
