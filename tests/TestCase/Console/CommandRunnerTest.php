@@ -62,7 +62,7 @@ class CommandRunnerTest extends TestCase
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-        $this->config = dirname(dirname(__DIR__));
+        $this->config = dirname(__DIR__, 2);
     }
 
     /**

@@ -1283,7 +1283,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $found = false;
         foreach ($association->getConditions() as $key => $value) {
-            if (strpos($key, 'comment_translation.model') !== false) {
+            if (str_contains($key, 'comment_translation.model')) {
                 $found = true;
                 $this->assertSame('Comments', $value);
                 break;
@@ -1311,7 +1311,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $found = false;
         foreach ($association->getConditions() as $key => $value) {
-            if (strpos($key, 'body_translation.model') !== false) {
+            if (str_contains($key, 'body_translation.model')) {
                 $found = true;
                 $this->assertSame('Posts', $value);
                 break;

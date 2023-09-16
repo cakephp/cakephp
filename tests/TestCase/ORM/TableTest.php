@@ -135,7 +135,7 @@ class TableTest extends TestCase
         ]);
 
         $config = $this->connection->config();
-        if (strpos($config['driver'], 'Postgres') !== false) {
+        if (str_contains($config['driver'], 'Postgres')) {
             $this->usersTypeMap = new TypeMap([
                 'Users.id' => 'integer',
                 'id' => 'integer',
@@ -153,7 +153,7 @@ class TableTest extends TestCase
                 'Users__updated' => 'timestampfractional',
                 'updated' => 'timestampfractional',
             ]);
-        } elseif (strpos($config['driver'], 'Sqlserver') !== false) {
+        } elseif (str_contains($config['driver'], 'Sqlserver')) {
             $this->usersTypeMap = new TypeMap([
                 'Users.id' => 'integer',
                 'id' => 'integer',

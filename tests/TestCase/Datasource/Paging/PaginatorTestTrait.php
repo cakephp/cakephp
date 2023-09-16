@@ -1208,7 +1208,7 @@ trait PaginatorTestTrait
     public function testPaginateQueryWithBindValue(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
+        $this->skipIf(str_contains($config['driver'], 'Sqlserver'), 'Test temporarily broken in SQLServer');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])

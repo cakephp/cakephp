@@ -63,7 +63,7 @@ class ServerTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
-        $this->config = dirname(dirname(__DIR__)) . '/test_app/config';
+        $this->config = dirname(__DIR__, 2) . '/test_app/config';
         $GLOBALS['mockedHeaders'] = [];
         $GLOBALS['mockedHeadersSent'] = true;
     }
