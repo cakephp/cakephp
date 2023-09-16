@@ -18,8 +18,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
+use ArrayIterator;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\SerializationFailureException;
@@ -67,6 +69,14 @@ class JsonViewTest extends TestCase
                 ['no', 'user'],
                 null,
                 json_encode(['no' => 'nope', 'user' => 'fake']),
+            ],
+
+            // Test render with a PaginatedResultset in _serialize.
+            [
+                ['users' => new PaginatedResultSet(new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']), [])],
+                ['users'],
+                null,
+                json_encode(['users' => [1 => 'a', 2 => 'b', 3 => 'c']]),
             ],
 
             // Test render with an empty array in _serialize.

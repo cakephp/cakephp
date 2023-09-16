@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource\Paging;
 
+use ArrayIterator;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\TestSuite\TestCase;
@@ -30,5 +31,15 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
+    }
+
+    public function testJsonEncode()
+    {
+        $paginatedResults = new PaginatedResultSet(
+            new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
+            []
+        );
+
+        $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource\Paging;
 
 use IteratorIterator;
+use JsonSerializable;
 use Traversable;
 
 /**
@@ -25,7 +26,7 @@ use Traversable;
  * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
  * @template T
  */
-class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
+class PaginatedResultSet extends IteratorIterator implements JsonSerializable, PaginatedInterface
 {
     /**
      * Paging params.
@@ -63,6 +64,16 @@ class PaginatedResultSet extends IteratorIterator implements PaginatedInterface
     public function items(): Traversable
     {
         return $this->getInnerIterator();
+    }
+
+    /**
+     * Provide data which should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return iterator_to_array($this->items());
     }
 
     /**
