@@ -205,7 +205,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     /**
      * X-Permitted-Cross-Domain-Policies
      *
-     * @link https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
+     * @link https://web.archive.org/web/20170607190356/https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
      * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type',
      *     'by-ftp-filename'
      * @return $this
