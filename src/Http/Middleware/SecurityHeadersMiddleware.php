@@ -185,7 +185,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
 
     /**
      * X-XSS-Protection. It's a non standard feature and outdated. For modern browsers
-     * use a strong Content-Security-Policy that disables the use of inline JavaScript 
+     * use a strong Content-Security-Policy that disables the use of inline JavaScript
      * via 'unsafe-inline' option.
      *
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
