@@ -176,9 +176,7 @@ class Marshaller
         [$data, $options] = $this->_prepareDataAndOptions($data, $options);
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
-        $entityClass = $this->_table->getEntityClass();
-        $entity = new $entityClass();
-        $entity->setSource($this->_table->getRegistryAlias());
+        $entity = $this->_table->newEmptyEntity();
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
