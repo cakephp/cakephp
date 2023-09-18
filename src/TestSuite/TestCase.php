@@ -23,6 +23,7 @@ use Cake\Error\Debugger;
 use Cake\Error\PhpError;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -306,11 +307,17 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
-        /** @var \Cake\Http\BaseApplication $app */
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            ['']
-        );
+        $app = new class ('') extends BaseApplication
+        {
+            /**
+             * @param \Cake\Http\MiddlewareQueue $middlewareQueue
+             * @return \Cake\Http\MiddlewareQueue
+             */
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
 
         foreach ($plugins as $pluginName => $config) {
             if (is_array($config)) {
@@ -935,6 +942,8 @@ abstract class TestCase extends BaseTestCase
         }
 
         if ($nonExistingMethods) {
+            trigger_error('Adding non existent methods to your model ' .
+                'via testing will not work in future PHPUnit versions.', E_USER_DEPRECATED);
             $builder->addMethods($nonExistingMethods);
         }
 
