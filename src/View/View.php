@@ -82,9 +82,7 @@ class View implements EventDispatcherInterface
      * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
      */
     use EventDispatcherTrait;
-    use InstanceConfigTrait {
-        getConfig as protected;
-    }
+    use InstanceConfigTrait;
     use LogTrait;
 
     /**
