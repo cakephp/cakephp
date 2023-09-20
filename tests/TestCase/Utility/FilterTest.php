@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\I18n\Time;
+use Cake\ORM\Entity;
 use Cake\Utility\Filter;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -77,7 +77,7 @@ class FilterTest extends TestCase
             '(other) int-array' => [[5], null],
             '(other) string-array' => [['5'], null],
             '(other) simple object' => [new stdClass(), null],
-            '(other) Stringable object' => [new Time('10:10:10'), '10:10 AM'],
+            '(other) Stringable object' => [new Entity(), '[]'],
         ];
     }
 
