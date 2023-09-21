@@ -142,10 +142,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $failure = null;
         foreach ($config as $key => $value) {
-            if (!array_key_exists($key, $existingConfig)) {
-                $failure = " The `{$key}` was not defined in the previous configuration data.";
-                break;
-            }
             if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
                 $failure = sprintf(
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
