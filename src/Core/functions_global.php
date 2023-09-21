@@ -23,10 +23,10 @@ use function Cake\Core\namespaceSplit as cakeNamespaceSplit;
 use function Cake\Core\pj as cakePj;
 use function Cake\Core\pluginSplit as cakePluginSplit;
 use function Cake\Core\pr as cakePr;
-use function Cake\Core\triggerWarning as cakeTriggerWarning;
-use function Cake\Core\toString as cakeToString;
-use function Cake\Core\toInt as cakeToInt;
 use function Cake\Core\toBool as cakeToBool;
+use function Cake\Core\toInt as cakeToInt;
+use function Cake\Core\toString as cakeToString;
+use function Cake\Core\triggerWarning as cakeTriggerWarning;
 
 if (!function_exists('h')) {
     /**
