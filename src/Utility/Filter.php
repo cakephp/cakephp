@@ -10,7 +10,7 @@ declare(strict_types=1);
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         5.0.1
+ * @since         5.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
