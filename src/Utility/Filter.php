@@ -39,11 +39,14 @@ class Filter
     {
         if (is_string($value)) {
             return $value;
-        } elseif (is_int($value)) {
+        }
+        if (is_int($value)) {
             return (string)$value;
-        } elseif (is_bool($value)) {
+        }
+        if (is_bool($value)) {
             return $value ? '1' : '0';
-        } elseif (is_float($value)) {
+        }
+        if (is_float($value)) {
             if (is_nan($value) || is_infinite($value)) {
                 return null;
             }
@@ -58,11 +61,12 @@ class Filter
             }
 
             return $return;
-        } elseif ($value instanceof Stringable) {
-            return (string)$value;
-        } else {
-            return null;
         }
+        if ($value instanceof Stringable) {
+            return (string)$value;
+        }
+
+        return null;
     }
 
     /**
@@ -81,11 +85,13 @@ class Filter
     {
         if (is_int($value)) {
             return $value;
-        } elseif (is_string($value)) {
+        }
+        if (is_string($value)) {
             $value = filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
             return $value === PHP_INT_MIN ? null : $value;
-        } elseif (is_float($value)) {
+        }
+        if (is_float($value)) {
             /**
              * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
              * 9007199254740991 = 2^53-1 = the maximum safe integer that can be represented without losing precision.
@@ -96,11 +102,12 @@ class Filter
             }
 
             return null;
-        } elseif (is_bool($value)) {
-            return (int)$value;
-        } else {
-            return null;
         }
+        if (is_bool($value)) {
+            return (int)$value;
+        }
+
+        return null;
     }
 
     /**
@@ -117,10 +124,11 @@ class Filter
     {
         if ($value === '1' || $value === 1 || $value === 1.0 || $value === true) {
             return true;
-        } elseif ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
-            return false;
-        } else {
-            return null;
         }
+        if ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
+            return false;
+        }
+
+        return null;
     }
 }
