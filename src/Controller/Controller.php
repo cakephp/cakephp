@@ -778,7 +778,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 }
             }
 
-            throw new NotFoundException();
+            throw new NotFoundException(sprintf('View class for `%s` extension not found', $ext));
         }
 
         // Use accept header based negotiation.
