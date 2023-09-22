@@ -26,7 +26,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^3.0",
+        "cakephp/chronos": "dev-extend-datetimeimmutable",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^3.0",
         "laminas/laminas-httphandlerrunner": "^2.6",
