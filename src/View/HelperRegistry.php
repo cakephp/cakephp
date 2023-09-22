@@ -75,7 +75,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         } catch (MissingHelperException $exception) {
             $plugin = $this->_View->getPlugin();
             if (!empty($plugin)) {
-                $this->load($helper, ['className' => $plugin . '.' . $helper]);
+                $this->load($plugin . '.' . $helper);
 
                 return true;
             }
