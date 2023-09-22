@@ -18,6 +18,7 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use DateTimeInterface;
 use Iterator;
@@ -77,7 +78,11 @@ class SortIterator extends Collection
         $results = [];
         foreach ($items as $key => $val) {
             $val = $callback($val);
-            $isDateTime = $val instanceof DateTimeInterface || $val instanceof Chronos || $val instanceof ChronosDate;
+            $isDateTime =
+                $val instanceof DateTimeInterface ||
+                $val instanceof Chronos ||
+                $val instanceof ChronosDate ||
+                $val instanceof ChronosTime;
             if ($isDateTime && $type === SORT_NUMERIC) {
                 $val = $val->format('U');
             }

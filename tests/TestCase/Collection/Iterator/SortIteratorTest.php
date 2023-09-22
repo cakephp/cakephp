@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Collection\Iterator;
 use ArrayObject;
 use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Iterator\SortIterator;
 use Cake\TestSuite\TestCase;
 use DateInterval;
@@ -256,6 +257,40 @@ class SortIteratorTest extends TestCase
             new DateTimeImmutable('2013-08-12'),
             new Chronos('2014-07-21'),
             new ChronosDate('2015-06-30'),
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+    }
+
+    /**
+     * Tests sorting with Chronos time instances
+     */
+    public function testSortWithChronosTime(): void
+    {
+        $items = new ArrayObject([
+            new ChronosTime('12:00:00'),
+            new ChronosTime('10:00:01'),
+            new ChronosTime('11:00:00'),
+        ]);
+        $callback = fn ($d) => $d;
+        $sorted = new SortIterator($items, $callback);
+        $expected = [
+            new ChronosTime('12:00:00'),
+            new ChronosTime('11:00:00'),
+            new ChronosTime('10:00:01'),
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+
+        $items = new ArrayObject([
+            new ChronosTime('12:00:00'),
+            new ChronosTime('10:00:01'),
+            new ChronosTime('11:00:00'),
+        ]);
+
+        $sorted = new SortIterator($items, $callback, SORT_ASC);
+        $expected = [
+            new ChronosTime('10:00:01'),
+            new ChronosTime('11:00:00'),
+            new ChronosTime('12:00:00'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }
