@@ -477,6 +477,7 @@ class CookieTest extends TestCase
 
     public function testCreateFromHeaderStringEmptyValue(): void
     {
+        // Invalid cookie with no = separator or value.
         $header = 'cakephp; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org;';
         $result = Cookie::createFromHeaderString($header);
 
@@ -502,7 +503,7 @@ class CookieTest extends TestCase
         $this->expectExceptionMessage('Invalid type `array` for expire');
 
         Cookie::setDefaults(['expires' => ['ompalompa']]);
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        new Cookie('cakephp', 'cakephp-rocks');
     }
 
     public function testInvalidSameSiteForDefaults(): void
