@@ -281,7 +281,10 @@ class Cookie implements CookieInterface
             $parts = preg_split('/\;[ \t]*/', $cookie) ?: [];
         }
 
-        [$name, $value] = explode('=', (string)array_shift($parts), 2);
+        $nameValue = explode('=', array_shift($parts), 2);
+        $name = array_shift($nameValue);
+        $value = array_shift($nameValue) ?? '';
+
         $data = [
                 'name' => urldecode($name),
                 'value' => urldecode($value),
