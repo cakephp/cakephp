@@ -281,7 +281,7 @@ class Cookie implements CookieInterface
             $parts = preg_split('/\;[ \t]*/', $cookie) ?: [];
         }
 
-        $nameValue = explode('=', array_shift($parts), 2);
+        $nameValue = explode('=', (string)array_shift($parts), 2);
         $name = array_shift($nameValue);
         $value = array_shift($nameValue) ?? '';
 
