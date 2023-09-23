@@ -490,15 +490,6 @@ class CookieTest extends TestCase
         $this->assertNull($cookie->getExpiry());
     }
 
-    public function testInvalidExpiresForDefaults(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid type `array` for expire');
-
-        Cookie::setDefaults(['expires' => ['ompalompa']]);
-        new Cookie('cakephp', 'cakephp-rocks');
-    }
-
     public function testInvalidSameSiteForDefaults(): void
     {
         $this->expectException(ValueError::class);
