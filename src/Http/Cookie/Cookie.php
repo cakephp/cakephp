@@ -15,8 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
-use Cake\Chronos\Chronos;
 use Cake\Utility\Hash;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -75,9 +75,9 @@ class Cookie implements CookieInterface
     /**
      * Expiration time
      *
-     * @var \Cake\Chronos\Chronos|\DateTimeInterface|null
+     * @var \DateTimeInterface|null
      */
-    protected Chronos|DateTimeInterface|null $expiresAt = null;
+    protected ?DateTimeInterface $expiresAt = null;
 
     /**
      * Path
@@ -139,7 +139,7 @@ class Cookie implements CookieInterface
      * @link https://php.net/manual/en/function.setcookie.php
      * @param string $name Cookie name
      * @param array|string|float|int|bool $value Value of the cookie
-     * @param \Cake\Chronos\Chronos|\DateTimeInterface|null $expiresAt Expiration time and date
+     * @param \DateTimeInterface|null $expiresAt Expiration time and date
      * @param string|null $path Path
      * @param string|null $domain Domain
      * @param bool|null $secure Is secure
@@ -149,7 +149,7 @@ class Cookie implements CookieInterface
     public function __construct(
         string $name,
         array|string|float|int|bool $value = '',
-        Chronos|DateTimeInterface|null $expiresAt = null,
+        ?DateTimeInterface $expiresAt = null,
         ?string $path = null,
         ?string $domain = null,
         ?bool $secure = null,
@@ -168,6 +168,10 @@ class Cookie implements CookieInterface
         $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
 
         if ($expiresAt) {
+            if ($expiresAt instanceof DateTime) {
+                $expiresAt = clone $expiresAt;
+            }
+            /** @var \DateTimeImmutable|\DateTime $expiresAt */
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         } else {
             $expiresAt = static::$defaults['expires'];
@@ -537,8 +541,12 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpiry(Chronos|DateTimeInterface $dateTime): static
+    public function withExpiry(DateTimeInterface $dateTime): static
     {
+        if ($dateTime instanceof DateTime) {
+            $dateTime = clone $dateTime;
+        }
+
         $new = clone $this;
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
 
@@ -548,7 +556,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getExpiry(): Chronos|DateTimeInterface|null
+    public function getExpiry(): ?DateTimeInterface
     {
         return $this->expiresAt;
     }
@@ -580,9 +588,13 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function isExpired(Chronos|DateTimeInterface|null $time = null): bool
+    public function isExpired(?DateTimeInterface $time = null): bool
     {
         $time = $time ?: new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        if ($time instanceof DateTime) {
+            $time = clone $time;
+        }
+
         if (!$this->expiresAt) {
             return false;
         }

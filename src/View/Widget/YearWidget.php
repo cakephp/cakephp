@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
@@ -87,7 +86,6 @@ class YearWidget extends BasicWidget
         $data['max'] = (int)$data['max'];
 
         if (
-            $data['val'] instanceof Chronos ||
             $data['val'] instanceof ChronosDate ||
             $data['val'] instanceof DateTimeInterface
         ) {
