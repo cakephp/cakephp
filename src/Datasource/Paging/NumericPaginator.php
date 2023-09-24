@@ -261,7 +261,7 @@ class NumericPaginator implements PaginatorInterface
         $options = $data['options'];
         $queryOptions = array_intersect_key(
             $options,
-            ['order' => null, 'page' => null, 'limit' => null],
+            ['order' => null, 'page' => null, 'limit' => null, 'contain' => null],
         );
 
         if ($query === null) {
