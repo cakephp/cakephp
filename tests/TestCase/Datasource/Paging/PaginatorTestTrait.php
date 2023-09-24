@@ -128,6 +128,7 @@ trait PaginatorTestTrait
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
                 'page' => 1,
+                'contain' => ['PaginatorAuthor'],
             ]);
 
         $this->Paginator->paginate($table, $params, $settings);
