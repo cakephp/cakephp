@@ -185,11 +185,11 @@ if (!function_exists('Cake\Core\env')) {
      * environment information.
      *
      * @param string $key Environment variable name.
-     * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
-     * @return string|float|int|bool|null Environment variable setting.
+     * @param array|string|float|int|bool|null $default Specify a default value in case the environment variable is not defined.
+     * @return array|string|float|int|bool|null Environment variable setting.
      * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#env
      */
-    function env(string $key, string|float|int|bool|null $default = null): string|float|int|bool|null
+    function env(string $key, array|string|float|int|bool|null $default = null): array|string|float|int|bool|null
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
@@ -204,7 +204,6 @@ if (!function_exists('Cake\Core\env')) {
         }
 
         $val = $_SERVER[$key] ?? $_ENV[$key] ?? null;
-        assert($val === null || is_scalar($val));
         if ($val == null && getenv($key) !== false) {
             $val = (string)getenv($key);
         }

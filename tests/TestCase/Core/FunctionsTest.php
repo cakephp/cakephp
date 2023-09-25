@@ -63,6 +63,8 @@ class FunctionsTest extends TestCase
 
         $this->assertSame('', env('DOCUMENT_ROOT'));
         $this->assertStringContainsString('phpunit', env('PHP_SELF'));
+
+        $this->assertSame($_SERVER['argv'], env('argv'));
     }
 
     public function testEnv2(): void
