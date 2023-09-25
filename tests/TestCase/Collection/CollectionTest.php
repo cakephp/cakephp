@@ -393,6 +393,58 @@ class CollectionTest extends TestCase
         $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
+    public function testNoneReturnTrue(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $this->assertTrue($collection->none(fn ($value, $key) => $key === 'd'));
+        $this->assertTrue($collection->none(fn ($value) => $value > 3));
+    }
+
+    public function testNoneReturnFalse(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $this->assertFalse($collection->none(fn ($value, $key) => $key === 'b'));
+        $this->assertFalse($collection->none(fn ($value) => $value < 2));
+    }
+
+    public function testAtLeast(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $hasABKeys = fn ($value, $key) => in_array($key, ['b', 'c']);
+        $this->assertTrue($collection->atLeast(0, $hasABKeys));
+        $this->assertTrue($collection->atLeast(1, $hasABKeys));
+        $this->assertTrue($collection->atLeast(2, $hasABKeys));
+        $this->assertFalse($collection->atLeast(3, $hasABKeys));
+        $this->assertFalse($collection->atLeast(4, $hasABKeys));
+    }
+
+    public function testAtMost(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $condition = fn ($value, $key) => $value <= 2;
+        $this->assertTrue($collection->atMost(4, $condition));
+        $this->assertTrue($collection->atMost(3, $condition));
+        $this->assertTrue($collection->atMost(2, $condition));
+        $this->assertFalse($collection->atMost(1, $condition));
+        $this->assertFalse($collection->atMost(0, $condition));
+    }
+
+    public function testExactly(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $condition = fn ($value, $key) => $value <= 2;
+        $this->assertFalse($collection->exactly(4, $condition));
+        $this->assertFalse($collection->exactly(3, $condition));
+        $this->assertTrue($collection->exactly(2, $condition));
+        $this->assertFalse($collection->exactly(1, $condition));
+        $this->assertFalse($collection->exactly(0, $condition));
+    }
+
     /**
      * Tests contains
      */
@@ -1028,6 +1080,22 @@ class CollectionTest extends TestCase
             new DateTime('2017-01-04'),
         ];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testPaginate(): void
+    {
+        $collection = new Collection(range(1, 10));
+        $this->assertEquals([1, 2], $collection->paginate(1, 2)->toList());
+        $this->assertEquals([3, 4], $collection->paginate(2, 2)->toList());
+        $this->assertEquals([5, 6], $collection->paginate(3, 2)->toList());
+        $this->assertEquals([7, 8], $collection->paginate(4, 2)->toList());
+        $this->assertEquals([9, 10], $collection->paginate(5, 2)->toList());
+        $this->assertEquals([], $collection->paginate(6, 2)->toList());
+        $this->assertEquals([], $collection->paginate(2, 11)->toList());
+        $this->assertEquals([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], $collection->paginate(1, 10)->toList());
+        $this->assertEquals([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], $collection->paginate(1, 20)->toList());
+        $this->assertEquals([5], $collection->paginate(5, 1)->toList());
+        $this->assertEquals([], $collection->paginate(11, 1)->toList());
     }
 
     /**

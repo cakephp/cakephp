@@ -157,6 +157,81 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function some(callable $callback): bool;
 
     /**
+     * Returns true if none of the elements in this collection satisfy a given condition.
+     *
+     * The callback is passed the value and key of each element in the collection and should return true
+     * if the condition is not met for that element.
+     *
+     * ### Example:
+     *
+     * ```
+     * // $result will be false since some numbers are even in the collection.
+     * $result = (new Collection([2, 4, 6, 8, 10]))->none(fn ($item, $key) => $item % 2 !== 0);
+     * ```
+     *
+     * @param callable $callback The callback function to evaluate each element.
+     * @return bool Returns true if none of the elements satisfy the condition, otherwise false.
+     */
+    public function none(callable $callback): bool;
+
+    /**
+     * Returns true if at most a specified number of elements in this collection satisfy a given condition.
+     *
+     * The callback is passed the value and key of each element in the collection and should return true
+     * if the condition is met for that element.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Checks if at most 2 even numbers are in the collection.
+     * $result = (new Collection([2, 4, 6, 8, 10]))->atMost(2, fn ($item, $key) => $item % 2 === 0)
+     * ```
+     *
+     * @param int<0, max> $count The maximum number of elements that should satisfy the condition.
+     * @param callable $callback The callback function to evaluate each element.
+     * @return bool Returns true if at most $count elements satisfy the condition, otherwise false.
+     */
+    public function atMost(int $count, callable $callback): bool;
+
+    /**
+     * Returns true if at least a specified number of elements in this collection satisfy a given condition.
+     *
+     * The callback is passed the value and key of each element in the collection and should return true
+     * if the condition is met for that element.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Checks if at least 3 even numbers are in the collection.
+     * $result = (new Collection([2, 4, 6, 8, 10]))->atLeast(3, fn ($item, $key) => $item % 2 === 0);
+     * ```
+     *
+     * @param int<0, max> $count The minimum number of elements that should satisfy the condition.
+     * @param callable $callback The callback function to evaluate each element.
+     * @return bool Returns true if at least $count elements satisfy the condition, otherwise false.
+     */
+    public function atLeast(int $count, callable $callback): bool;
+
+    /**
+     * Returns true if exactly a specified number of elements in this collection satisfy a given condition.
+     *
+     * The callback is passed the value and key of each element in the collection and should return true
+     * if the condition is met for that element.
+     *
+     * ### Example:
+     *
+     * ```
+     * // Checks if exactly 3 even numbers are in the collection.
+     * $result = (new Collection([2, 4, 6, 8, 10]))->exactly(3, fn ($item, $key) => $item % 2 === 0);
+     * ```
+     *
+     * @param int<0, max> $count The exact number of elements that should satisfy the condition.
+     * @param callable $callback The callback function to evaluate each element.
+     * @return bool Returns true if exactly $count elements satisfy the condition, otherwise false.
+     */
+    public function exactly(int $count, callable $callback): bool;
+
+    /**
      * Returns true if $value is present in this collection. Comparisons are made
      * both by value and type.
      *
@@ -577,6 +652,27 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @return self
      */
     public function take(int $length = 1, int $offset = 0): CollectionInterface;
+
+    /**
+     * Returns a new collection containing a subset of elements for a specified page.
+     *
+     * This method paginates the collection by dividing it into pages, where each page
+     * contains a maximum of $perPage elements. The $page parameter indicates the
+     * desired page number, and $perPage specifies the number of elements per page.
+     *
+     * ### Example:
+     *
+     * ```
+     * $collection = new Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+     * $pagedCollection = $collection->paginate(page: 2, perPage: 3);
+     * // $pagedCollection will contain elements [4, 5, 6] for page 2.
+     * ```
+     *
+     * @param int<1, max> $page The page number to retrieve (1-based index).
+     * @param int<1, max> $perPage The number of elements per page.
+     * @return self A new collection containing elements for the specified page.
+     */
+    public function paginate(int $page, int $perPage): CollectionInterface;
 
     /**
      * Returns the last N elements of a collection

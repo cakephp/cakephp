@@ -143,6 +143,74 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function none(callable $callback): bool
+    {
+        foreach ($this->optimizeUnwrap() as $key => $value) {
+            if ($callback($value, $key) === true) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function atMost(int $count, callable $callback): bool
+    {
+        $matches = 0;
+        foreach ($this->optimizeUnwrap() as $key => $value) {
+            if ($callback($value, $key) === true) {
+                $matches++;
+                if ($matches > $count) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function atLeast(int $count, callable $callback): bool
+    {
+        $matches = 0;
+        foreach ($this->optimizeUnwrap() as $key => $value) {
+            if ($callback($value, $key) === true) {
+                $matches++;
+                if ($matches >= $count) {
+                    return true;
+                }
+            }
+        }
+
+        return $matches >= $count;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function exactly(int $count, callable $callback): bool
+    {
+        $matches = 0;
+        foreach ($this->optimizeUnwrap() as $key => $value) {
+            if ($callback($value, $key) === true) {
+                $matches++;
+                if ($matches > $count) {
+                    return false;
+                }
+            }
+        }
+
+        return $matches === $count;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function contains(mixed $value): bool
     {
         foreach ($this->optimizeUnwrap() as $v) {
@@ -373,6 +441,14 @@ trait CollectionTrait
     public function take(int $length = 1, int $offset = 0): CollectionInterface
     {
         return $this->newCollection(new LimitIterator($this, $offset, $length));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function paginate(int $page, int $perPage): CollectionInterface
+    {
+        return $this->take($perPage, ($page - 1) * $perPage);
     }
 
     /**
