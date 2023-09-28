@@ -101,8 +101,8 @@ class DashedRoute extends Route
             $this->compile();
             $this->_inflectedDefaults = $this->_dasherize($this->defaults);
         }
+        $restore = $this->defaults;
         try {
-            $restore = $this->defaults;
             $this->defaults = $this->_inflectedDefaults;
 
             return parent::match($url, $context);
