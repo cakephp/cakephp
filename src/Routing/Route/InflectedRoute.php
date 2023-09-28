@@ -30,9 +30,9 @@ class InflectedRoute extends Route
      * Default values need to be inflected so that they match the inflections that match()
      * will create.
      *
-     * @var bool
+     * @var array|null
      */
-    protected $_inflectedDefaults = false;
+    protected $_inflectedDefaults;
 
     /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
@@ -76,12 +76,18 @@ class InflectedRoute extends Route
     public function match(array $url, array $context = []): ?string
     {
         $url = $this->_underscore($url);
-        if (!$this->_inflectedDefaults) {
-            $this->_inflectedDefaults = true;
-            $this->defaults = $this->_underscore($this->defaults);
+        if ($this->_inflectedDefaults === null) {
+            $this->compile();
+            $this->_inflectedDefaults = $this->_underscore($this->defaults);
         }
+        $restore = $this->defaults;
+        try {
+            $this->defaults = $this->_inflectedDefaults;
 
-        return parent::match($url, $context);
+            return parent::match($url, $context);
+        } finally {
+            $this->defaults = $restore;
+        }
     }
 
     /**
