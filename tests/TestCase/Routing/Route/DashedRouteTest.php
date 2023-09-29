@@ -206,4 +206,21 @@ class DashedRouteTest extends TestCase
         $this->assertSame('actionName', $result['action']);
         $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
+
+    public function testMatchDoesNotCorruptDefaults()
+    {
+        $route = new DashedRoute('/user-permissions/edit', [
+            'controller' => 'UserPermissions',
+            'action' => 'edit',
+        ]);
+        $route->match(['controller' => 'UserPermissions', 'action' => 'edit'], []);
+
+        $this->assertSame('UserPermissions', $route->defaults['controller']);
+        $this->assertSame('edit', $route->defaults['action']);
+
+        // Do the match again to ensure that state doesn't become incorrect.
+        $route->match(['controller' => 'UserPermissions', 'action' => 'edit'], []);
+        $this->assertSame('UserPermissions', $route->defaults['controller']);
+        $this->assertSame('edit', $route->defaults['action']);
+    }
 }

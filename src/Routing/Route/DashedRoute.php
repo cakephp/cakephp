@@ -31,9 +31,9 @@ class DashedRoute extends Route
      * Default values need to be inflected so that they match the inflections that
      * match() will create.
      *
-     * @var bool
+     * @var array|null
      */
-    protected $_inflectedDefaults = false;
+    protected $_inflectedDefaults;
 
     /**
      * Camelizes the previously dashed plugin route taking into account plugin vendors
@@ -97,12 +97,18 @@ class DashedRoute extends Route
     public function match(array $url, array $context = []): ?string
     {
         $url = $this->_dasherize($url);
-        if (!$this->_inflectedDefaults) {
-            $this->_inflectedDefaults = true;
-            $this->defaults = $this->_dasherize($this->defaults);
+        if ($this->_inflectedDefaults === null) {
+            $this->compile();
+            $this->_inflectedDefaults = $this->_dasherize($this->defaults);
         }
+        $restore = $this->defaults;
+        try {
+            $this->defaults = $this->_inflectedDefaults;
 
-        return parent::match($url, $context);
+            return parent::match($url, $context);
+        } finally {
+            $this->defaults = $restore;
+        }
     }
 
     /**
