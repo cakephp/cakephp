@@ -21,7 +21,7 @@ namespace Cake\Core;
  *
  * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
- * @link https://book.cakephp.org/4/en/plugins.html
+ * @link https://book.cakephp.org/5/en/plugins.html
  */
 class Plugin
 {

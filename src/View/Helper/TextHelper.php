@@ -33,7 +33,7 @@ use function Cake\Core\h;
  * @method string tail(string $text, int $length = 100, array $options = []) See Text::tail()
  * @method string toList(array $list, ?string $and = null, string $separator = ', ') See Text::toList()
  * @method string truncate(string $text, int $length = 100, array $options = []) See Text::truncate()
- * @link https://book.cakephp.org/4/en/views/helpers/text.html
+ * @link https://book.cakephp.org/5/en/views/helpers/text.html
  * @see \Cake\Utility\Text
  */
 class TextHelper extends Helper
@@ -76,7 +76,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-urls
+     * @link https://book.cakephp.org/5/en/views/helpers/text.html#linking-urls
      */
     public function autoLinkUrls(string $text, array $options = []): string
     {
@@ -198,7 +198,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-email-addresses
+     * @link https://book.cakephp.org/5/en/views/helpers/text.html#linking-email-addresses
      */
     public function autoLinkEmails(string $text, array $options = []): string
     {
@@ -228,7 +228,7 @@ class TextHelper extends Helper
      * @param string $text Text
      * @param array<string, mixed> $options Array of HTML options, and options listed above.
      * @return string The text with links
-     * @link https://book.cakephp.org/4/en/views/helpers/text.html#linking-both-urls-and-email-addresses
+     * @link https://book.cakephp.org/5/en/views/helpers/text.html#linking-both-urls-and-email-addresses
      */
     public function autoLink(string $text, array $options = []): string
     {
@@ -244,7 +244,7 @@ class TextHelper extends Helper
      *
      * @param string|null $text Text
      * @return string The text with proper <p> and <br> tags
-     * @link https://book.cakephp.org/4/en/views/helpers/text.html#converting-text-into-paragraphs
+     * @link https://book.cakephp.org/5/en/views/helpers/text.html#converting-text-into-paragraphs
      */
     public function autoParagraph(?string $text): string
     {

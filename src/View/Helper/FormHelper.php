@@ -46,7 +46,7 @@ use function Cake\I18n\__d;
  * @method string search(string $fieldName, array $options = []) Creates input of type search.
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
- * @link https://book.cakephp.org/4/en/views/helpers/form.html
+ * @link https://book.cakephp.org/5/en/views/helpers/form.html
  */
 class FormHelper extends Helper
 {
@@ -361,7 +361,7 @@ class FormHelper extends Helper
      *   array of meta data. You can use `null` to make a context-less form.
      * @param array<string, mixed> $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
      */
     public function create(mixed $context = null, array $options = []): string
     {
@@ -556,7 +556,7 @@ class FormHelper extends Helper
      * @param array<string, mixed> $secureAttributes Secure attributes which will be passed as HTML attributes
      *   into the hidden input elements generated for the Security Component.
      * @return string A closing FORM tag.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#closing-the-form
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#closing-the-form
      */
     public function end(array $secureAttributes = []): string
     {
@@ -700,7 +700,7 @@ class FormHelper extends Helper
      *
      * @param string $field This should be "modelname.fieldname"
      * @return bool If there are errors this method returns true, else false.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#displaying-and-checking-errors
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#displaying-and-checking-errors
      */
     public function isFieldError(string $field): bool
     {
@@ -722,7 +722,7 @@ class FormHelper extends Helper
      *   it should be a hash of key names => messages.
      * @param array<string, mixed> $options See above.
      * @return string Formatted errors or ''.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#displaying-and-checking-errors
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#displaying-and-checking-errors
      */
     public function error(string $field, array|string|null $text = null, array $options = []): string
     {
@@ -836,7 +836,7 @@ class FormHelper extends Helper
      *   fieldName.
      * @param array<string, mixed> $options An array of HTML attributes.
      * @return string The formatted LABEL element
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-labels
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-labels
      */
     public function label(string $fieldName, ?string $text = null, array $options = []): string
     {
@@ -905,7 +905,7 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
      *    to customize the legend text.
      * @return string Completed form controls.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#generating-entire-forms
      */
     public function allControls(array $fields = [], array $options = []): string
     {
@@ -942,7 +942,7 @@ class FormHelper extends Helper
      * - `legend` Set to false to disable the legend for the generated input set.
      *    Or supply a string to customize the legend text.
      * @return string Completed form inputs.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#generating-entire-forms
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#generating-entire-forms
      */
     public function controls(array $fields, array $options = []): string
     {
@@ -1036,7 +1036,7 @@ class FormHelper extends Helper
      * @param string $fieldName This should be "modelname.fieldname"
      * @param array<string, mixed> $options Each type of input takes different options.
      * @return string Completed form widget.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-form-controls
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-form-controls
      */
     public function control(string $fieldName, array $options = []): string
     {
@@ -1500,7 +1500,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return array<string>|string An HTML text input element.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-checkboxes
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox(string $fieldName, array $options = []): array|string
     {
@@ -1559,7 +1559,7 @@ class FormHelper extends Helper
      * @param iterable $options Radio button options array.
      * @param array<string, mixed> $attributes Array of attributes.
      * @return string Completed radio widget set.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-radio-buttons
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-radio-buttons
      */
     public function radio(string $fieldName, iterable $options = [], array $attributes = []): string
     {
@@ -1638,7 +1638,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes, and special options above.
      * @return string A generated HTML text input element
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-textareas
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-textareas
      */
     public function textarea(string $fieldName, array $options = []): string
     {
@@ -1654,7 +1654,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form of "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A generated hidden input
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-hidden-inputs
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-hidden-inputs
      */
     public function hidden(string $fieldName, array $options = []): string
     {
@@ -1687,7 +1687,7 @@ class FormHelper extends Helper
      * @param string $fieldName Name of a field, in the form "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A generated file input.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-file-inputs
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-file-inputs
      */
     public function file(string $fieldName, array $options = []): string
     {
@@ -1712,7 +1712,7 @@ class FormHelper extends Helper
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string A HTML button tag.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-button-elements
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-button-elements
      */
     public function button(string $title, array $options = []): string
     {
@@ -1758,7 +1758,7 @@ class FormHelper extends Helper
      * @param array|string $url URL as string or array
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string A HTML button tag.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postButton(string $title, array|string $url, array $options = []): string
     {
@@ -1811,7 +1811,7 @@ class FormHelper extends Helper
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return string An `<a>` element.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postLink(string $title, array|string|null $url = null, array $options = []): string
     {
@@ -1922,7 +1922,7 @@ class FormHelper extends Helper
      *  OR if the first character is not /, image is relative to webroot/img.
      * @param array<string, mixed> $options Array of options. See above.
      * @return string A HTML submit button
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-buttons-and-submit-elements
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-buttons-and-submit-elements
      */
     public function submit(?string $caption = null, array $options = []): string
     {
@@ -2041,7 +2041,7 @@ class FormHelper extends Helper
      * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-select-pickers
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-select-pickers
      */
     public function select(string $fieldName, iterable $options = [], array $attributes = []): string
     {
@@ -2176,7 +2176,7 @@ class FormHelper extends Helper
      * @param string $fieldName The field name.
      * @param array<string, mixed> $options Options & attributes for the select elements.
      * @return string Completed year select input
-     * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-year-inputs
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-year-inputs
      */
     public function year(string $fieldName, array $options = []): string
     {
