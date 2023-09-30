@@ -20,6 +20,8 @@ use Cake\Cache\Cache;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\Fixture\FixtureStrategyInterface;
+use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -70,6 +72,11 @@ class SchemaCacheTest extends TestCase
 
         unset($this->connection);
         Cache::drop('orm_cache');
+    }
+
+    protected function getFixtureStrategy(): FixtureStrategyInterface
+    {
+        return new TransactionStrategy();
     }
 
     /**
