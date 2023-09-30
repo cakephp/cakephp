@@ -126,8 +126,9 @@
             "@phpstan",
             "@psalm"
         ],
-        "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
-        "stan-baseline": "tools/phpstan --generate-baseline",
+        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "phpstan-baseline": "tools/phpstan --generate-baseline",
+        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
         "stan-setup": "phive install",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
