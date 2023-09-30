@@ -188,7 +188,8 @@ class FixtureHelper
             if ($connection instanceof Connection) {
                 $sortedFixtures = null;
                 if ($connection->getDriver()->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS)) {
-                    $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
+                    $sortedFixtures = $groupFixtures;
+                    //$sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 }
 
                 if ($sortedFixtures !== null) {
