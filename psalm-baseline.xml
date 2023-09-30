@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.13.0@a0a9c27630bcf8301ee78cb06741d2907d8c9fef">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
@@ -94,6 +94,7 @@
     <ImpureMethodCall>
       <code>_formatObject</code>
       <code>getDefaultLocale</code>
+      <code>toNative</code>
     </ImpureMethodCall>
     <ImpureStaticProperty>
       <code>static::$_jsonEncodeFormat</code>
