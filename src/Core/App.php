@@ -40,7 +40,7 @@ use Cake\Core\Exception\CakeException;
  * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
- * @link https://book.cakephp.org/4/en/core-libraries/app.html
+ * @link https://book.cakephp.org/5/en/core-libraries/app.html
  */
 class App
 {
@@ -185,7 +185,7 @@ class App
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
      * @return array<string>
-     * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
+     * @link https://book.cakephp.org/5/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
     {

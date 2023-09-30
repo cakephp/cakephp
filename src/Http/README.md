@@ -28,7 +28,7 @@ $response = $http->get('http://example.com/search', ['q' => 'widget'], [
 ]);
 ```
 
-To learn more read the [Http Client documentation](https://book.cakephp.org/4/en/core-libraries/httpclient.html).
+To learn more read the [Http Client documentation](https://book.cakephp.org/5/en/core-libraries/httpclient.html).
 
 ## Using the Http Server
 
@@ -109,4 +109,4 @@ php -S localhost:8765 -t ./webroot ./webroot/index.php
 ```
 
 For more information on middleware, [consult the
-documentation](https://book.cakephp.org/4/en/controllers/middleware.html)
+documentation](https://book.cakephp.org/5/en/controllers/middleware.html)
