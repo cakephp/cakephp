@@ -615,7 +615,7 @@ class FormHelper extends Helper
 
         $tokenData = $this->formProtector->buildTokenData(
             $this->_lastAction,
-            $this->_View->getRequest()->getSession()->id()
+            $this->_getFormProtectorSessionId()
         );
         $tokenFields = array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
@@ -633,6 +633,17 @@ class FormHelper extends Helper
         }
 
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
+    }
+
+    /**
+     * Get Session id for FormProtector
+     * Must be the same as in FormProtectionComponent
+     *
+     * @return string
+     */
+    protected function _getFormProtectorSessionId(): string
+    {
+        return $this->_View->getRequest()->getSession()->id();
     }
 
     /**

@@ -71,11 +71,6 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 2
-			path: src/Http/Cookie/Cookie.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Cookie/Cookie.php
@@ -146,11 +141,11 @@ parameters:
 			path: src/View/Form/NullContext.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\Chronos\\|Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
+			message: "#^Call to an undefined method Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php

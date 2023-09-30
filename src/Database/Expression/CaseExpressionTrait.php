@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
@@ -53,7 +52,7 @@ trait CaseExpressionTrait
             $type = 'boolean';
         } elseif ($value instanceof ChronosDate) {
             $type = 'date';
-        } elseif ($value instanceof Chronos || $value instanceof DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             $type = 'datetime';
         } elseif (
             is_object($value) &&
