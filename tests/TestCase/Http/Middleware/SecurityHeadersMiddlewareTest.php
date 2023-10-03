@@ -47,7 +47,8 @@ class SecurityHeadersMiddlewareTest extends TestCase
             ->setXFrameOptions()
             ->setXssProtection()
             ->noOpen()
-            ->noSniff();
+            ->noSniff()
+            ->setPermissionsPolicy('camera=(), geolocation=(), microphone=()');
 
         $expected = [
             'x-permitted-cross-domain-policies' => ['all'],
@@ -56,6 +57,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
             'x-frame-options' => ['sameorigin'],
             'x-download-options' => ['noopen'],
             'x-content-type-options' => ['nosniff'],
+            'permissions-policy' => ['camera=(), geolocation=(), microphone=()'],
         ];
 
         $result = $middleware->process($request, $handler);

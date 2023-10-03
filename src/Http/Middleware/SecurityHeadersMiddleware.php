@@ -227,6 +227,22 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Permissions Policy
+     *
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Permissions_Policy
+     * @link https://www.w3.org/TR/permissions-policy/
+     * @param string $policy Policy value.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function setPermissionsPolicy(string $policy)
+    {
+        $this->headers['permissions-policy'] = $policy;
+
+        return $this;
+    }
+
+    /**
      * Convenience method to check if a value is in the list of allowed args
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
