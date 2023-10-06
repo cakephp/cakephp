@@ -120,6 +120,8 @@ trait EntityTrait
 
     /**
      * Storing the current visitation status while recursing through entities getting errors.
+     *
+     * @var bool
      */
     private $_hasBeenVisited = false;
 
@@ -850,7 +852,7 @@ trait EntityTrait
      */
     public function hasErrors(bool $includeNested = true): bool
     {
-        if($this->_hasBeenVisited) {
+        if ($this->_hasBeenVisited) {
             // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
             return false;
         }
@@ -884,7 +886,7 @@ trait EntityTrait
      */
     public function getErrors(): array
     {
-        if($this->_hasBeenVisited) {
+        if ($this->_hasBeenVisited) {
             // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
             return [];
         }
