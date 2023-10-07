@@ -131,6 +131,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function getContext(): array
     {
         return [
+            'query' => $this->query,
             'numRows' => $this->numRows,
             'took' => $this->took,
             'role' => $this->driver ? $this->driver->getRole() : '',

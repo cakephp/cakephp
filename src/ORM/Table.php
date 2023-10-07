@@ -153,7 +153,7 @@ use function Cake\Core\namespaceSplit;
  * - `afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *
  * @see \Cake\Event\EventManager for reference on the events system.
- * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
+ * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface

@@ -38,7 +38,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp
+composer require cakephp/cakephp
 ```
 
 For details on the (minimum/maximum) PHP version see [version map](https://github.com/cakephp/cakephp/wiki#version-map).

@@ -36,7 +36,7 @@ use function Cake\I18n\__;
  * @property \Cake\View\Helper\NumberHelper $Number
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\FormHelper $Form
- * @link https://book.cakephp.org/4/en/views/helpers/paginator.html
+ * @link https://book.cakephp.org/5/en/views/helpers/paginator.html
  */
 class PaginatorHelper extends Helper
 {
@@ -198,7 +198,7 @@ class PaginatorHelper extends Helper
      * Gets the current page of the recordset for the given model
      *
      * @return int The current page number of the recordset.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#checking-the-pagination-state
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#checking-the-pagination-state
      */
     public function current(): int
     {
@@ -308,7 +308,7 @@ class PaginatorHelper extends Helper
      * @param string $title Title for the link. Defaults to '<< Previous'.
      * @param array<string, mixed> $options Options for pagination link. See above for list of keys.
      * @return string A "previous" link or a disabled link.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-jump-links
      */
     public function prev(string $title = '<< Previous', array $options = []): string
     {
@@ -345,7 +345,7 @@ class PaginatorHelper extends Helper
      * @param string $title Title for the link. Defaults to 'Next >>'.
      * @param array<string, mixed> $options Options for pagination link. See above for list of keys.
      * @return string A "next" link or $disabledTitle text if the link is disabled.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-jump-links
      */
     public function next(string $title = 'Next >>', array $options = []): string
     {
@@ -382,7 +382,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options for sorting link. See above for list of keys.
      * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified
      *  key the returned link will sort by 'desc'.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-sort-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-sort-links
      */
     public function sort(string $key, array|string|null $title = null, array $options = []): string
     {
@@ -457,7 +457,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $urlOptions Array of options
      * @return string By default, returns a full pagination URL string for use
      *   in non-standard contexts (i.e. JavaScript)
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#generating-pagination-urls
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#generating-pagination-urls
      */
     public function generateUrl(
         array $options = [],
@@ -573,7 +573,7 @@ class PaginatorHelper extends Helper
      * Returns true if the given result set is not at the first page
      *
      * @return bool True if the result set is not at the first page.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#checking-the-pagination-state
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#checking-the-pagination-state
      */
     public function hasPrev(): bool
     {
@@ -584,7 +584,7 @@ class PaginatorHelper extends Helper
      * Returns true if the given result set is not at the last page
      *
      * @return bool True if the result set is not at the last page.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#checking-the-pagination-state
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#checking-the-pagination-state
      */
     public function hasNext(): bool
     {
@@ -597,7 +597,7 @@ class PaginatorHelper extends Helper
      * @param int $page The page number - if not set defaults to 1.
      * @return bool True if the given result set has the specified page number.
      * @throws \InvalidArgumentException
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#checking-the-pagination-state
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#checking-the-pagination-state
      */
     public function hasPage(int $page = 1): bool
     {
@@ -614,7 +614,7 @@ class PaginatorHelper extends Helper
      *   following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}`
      *   and any custom content you would like.
      * @return string Counter string.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-a-page-counter
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-a-page-counter
      */
     public function counter(string $format = 'pages'): string
     {
@@ -684,7 +684,7 @@ class PaginatorHelper extends Helper
      *
      * @param array<string, mixed> $options Options for the numbers.
      * @return string Numbers string.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-page-number-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-page-number-links
      */
     public function numbers(array $options = []): string
     {
@@ -936,7 +936,7 @@ class PaginatorHelper extends Helper
      *   you want at the beginning of the range.
      * @param array<string, mixed> $options An array of options.
      * @return string Numbers string.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-jump-links
      */
     public function first(string|int $first = '<< first', array $options = []): string
     {
@@ -992,7 +992,7 @@ class PaginatorHelper extends Helper
      * @param string|int $last if string use as label for the link, if numeric print page numbers
      * @param array<string, mixed> $options Array of options
      * @return string Numbers string.
-     * @link https://book.cakephp.org/4/en/views/helpers/paginator.html#creating-jump-links
+     * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#creating-jump-links
      */
     public function last(string|int $last = 'last >>', array $options = []): string
     {
