@@ -37,7 +37,7 @@ if (!function_exists('h')) {
      * @param string|null $charset Character set to use when escaping.
      *   Defaults to config value in `mb_internal_encoding()` or 'UTF-8'.
      * @return mixed Wrapped text.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#h
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#h
      */
     function h(mixed $text, bool $double = true, ?string $charset = null): mixed
     {
@@ -59,7 +59,7 @@ if (!function_exists('pluginSplit')) {
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pluginSplit
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pluginSplit
      * @psalm-return array{string|null, string}
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
@@ -94,7 +94,7 @@ if (!function_exists('pr')) {
      *
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pr
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pr
      * @see debug()
      */
     function pr(mixed $var): mixed
@@ -115,7 +115,7 @@ if (!function_exists('pj')) {
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
      * @see pr()
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pj
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pj
      */
     function pj(mixed $var): mixed
     {
@@ -133,7 +133,7 @@ if (!function_exists('env')) {
      * @param string $key Environment variable name.
      * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
      * @return string|float|int|bool|null Environment variable setting.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#env
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#env
      */
     function env(string $key, string|float|int|bool|null $default = null): string|float|int|bool|null
     {

@@ -23,7 +23,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -330,14 +330,14 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
-     * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Event manager instance.
      * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
         ?ServerRequest $request = null,
         ?Response $response = null,
-        ?EventManager $eventManager = null,
+        ?EventManagerInterface $eventManager = null,
         array $viewOptions = []
     ) {
         if ($eventManager !== null) {

@@ -379,7 +379,8 @@ TEXT;
     public function testExportVarMockObject(): void
     {
         $result = Debugger::exportVar($this->getMockBuilder(Table::class)->getMock());
-        $this->assertStringContainsString('object(Mock_Table', $result);
+        $this->assertStringStartsWith('object(Mock', $result);
+        $this->assertStringContainsString('_Table_', $result);
     }
 
     /**

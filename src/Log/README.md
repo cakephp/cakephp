@@ -78,4 +78,4 @@ Log::warning('this gets written only to payments.log', ['scope' => ['payments']]
 
 ## Documentation
 
-Please make sure you check the [official documentation](https://book.cakephp.org/4/en/core-libraries/logging.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/5/en/core-libraries/logging.html)

@@ -91,7 +91,7 @@ use function Cake\Core\pluginSplit;
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @property \Cake\Controller\Component\CheckHttpCacheComponent $CheckHttpCache
- * @link https://book.cakephp.org/4/en/controllers.html
+ * @link https://book.cakephp.org/5/en/controllers.html
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
@@ -119,7 +119,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @link https://book.cakephp.org/4/en/controllers/request-response.html#request
+     * @link https://book.cakephp.org/5/en/controllers/request-response.html#request
      */
     protected ServerRequest $request;
 
@@ -127,7 +127,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
-     * @link https://book.cakephp.org/4/en/controllers/request-response.html#response
+     * @link https://book.cakephp.org/5/en/controllers/request-response.html#response
      */
     protected Response $response;
 
@@ -632,7 +632,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Psr\Http\Message\UriInterface|array|string $url A string, array-based URL or UriInterface instance.
      * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/4/en/controllers.html#Controller::redirect
+     * @link https://book.cakephp.org/5/en/controllers.html#Controller::redirect
      */
     public function redirect(UriInterface|array|string $url, int $status = 302): ?Response
     {
@@ -669,7 +669,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|null $template Template to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
-     * @link https://book.cakephp.org/4/en/controllers.html#rendering-a-view
+     * @link https://book.cakephp.org/5/en/controllers.html#rendering-a-view
      */
     public function render(?string $template = null, ?string $layout = null): Response
     {
@@ -852,7 +852,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
      * @return \Cake\Datasource\Paging\PaginatedInterface
-     * @link https://book.cakephp.org/4/en/controllers.html#paginating-a-model
+     * @link https://book.cakephp.org/5/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */
     public function paginate(
@@ -918,7 +918,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeFilter(EventInterface $event)
@@ -931,7 +931,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeRender(EventInterface $event)
@@ -952,7 +952,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response)
@@ -964,7 +964,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
      * @return \Cake\Http\Response|null|void
-     * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
+     * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function afterFilter(EventInterface $event)
