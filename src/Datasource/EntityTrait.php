@@ -123,7 +123,7 @@ trait EntityTrait
      *
      * @var bool
      */
-    private $_hasBeenVisited = false;
+    protected $_hasBeenVisited = false;
 
     /**
      * Magic getter to access fields that have been set in this entity
