@@ -116,6 +116,16 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
+			message: "#^Parameter \\#1 \\$methods of method PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\<Cake\\\\ORM\\\\Table\\>\\:\\:addMethods\\(\\) expects array\\<int, non\\-empty\\-string\\>, non\\-empty\\-array\\<string\\> given\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$methods of method PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\<Cake\\\\ORM\\\\Table\\>\\:\\:onlyMethods\\(\\) expects array\\<int, non\\-empty\\-string\\>, array\\<int, string\\> given\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
