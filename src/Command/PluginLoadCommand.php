@@ -114,7 +114,7 @@ class PluginLoadCommand extends Command
         $config[$plugin] = $options;
 
         if (class_exists(VarExporter::class)) {
-            $array = VarExporter::export($config);
+            $array = VarExporter::export($config, VarExporter::TRAILING_COMMA_IN_ARRAY);
         } else {
             $array = var_export($config, true);
         }
