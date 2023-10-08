@@ -118,7 +118,7 @@ class PluginLoadCommand extends Command
         } else {
             $array = var_export($config, true);
         }
-        $contents = '<?php' . "\n" . 'return ' . $array . ';';
+        $contents = '<?php' . PHP_EOL . 'return ' . $array . ';' . PHP_EOL;
 
         if (file_put_contents($this->configFile, $contents)) {
             return static::CODE_SUCCESS;
