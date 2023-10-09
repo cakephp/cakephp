@@ -160,17 +160,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $function = new ReflectionFunction($action);
         foreach ($function->getParameters() as $parameter) {
             $type = $parameter->getType();
-            if ($type && !$type instanceof ReflectionNamedType) {
-                // Only single types are supported
-                throw new InvalidParameterException([
-                    'template' => 'unsupported_type',
-                    'parameter' => $parameter->getName(),
-                    'controller' => $this->controller->getName(),
-                    'action' => $this->controller->getRequest()->getParam('action'),
-                    'prefix' => $this->controller->getRequest()->getParam('prefix'),
-                    'plugin' => $this->controller->getRequest()->getParam('plugin'),
-                ]);
-            }
 
             // Check for dependency injection for classes
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {

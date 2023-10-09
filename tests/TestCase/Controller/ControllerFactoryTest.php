@@ -879,6 +879,28 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
+    /**
+     * Test using an unsupported reflection type.
+     */
+    public function testInvokePassedParamUnsupportedReflectionType(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/unsupportedTypedUnion',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'typedUnion',
+                'pass' => ['1'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['one' => '1'], $data);
+    }
+
     public function testMiddleware(): void
     {
         $request = new ServerRequest([
