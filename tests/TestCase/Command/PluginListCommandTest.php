@@ -26,6 +26,8 @@ class PluginListCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
+    protected string $configPath;
+
     /**
      * setUp method
      */
@@ -34,6 +36,18 @@ class PluginListCommandTest extends TestCase
         parent::setUp();
 
         $this->setAppNamespace();
+        $this->configPath = ROOT . DS . 'cakephp-plugins.php';
+        if (file_exists($this->configPath)) {
+            unlink($this->configPath);
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        if (file_exists($this->configPath)) {
+            unlink($this->configPath);
+        }
     }
 
     /**
@@ -51,8 +65,6 @@ class PluginListCommandTest extends TestCase
      */
     public function testList(): void
     {
-        $configPath = ROOT . DS . 'cakephp-plugins.php';
-        $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
         $file = <<<PHP
 <?php
 declare(strict_types=1);
@@ -63,10 +75,9 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($configPath, $file);
+        file_put_contents($this->configPath, $file);
 
         $this->exec('plugin list');
-        unlink($configPath);
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('TestPlugin');
         $this->assertOutputContains('OtherPlugin');
@@ -77,17 +88,14 @@ PHP;
      */
     public function testListEmpty(): void
     {
-        $configPath = ROOT . DS . 'cakephp-plugins.php';
-        $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
         $file = <<<PHP
 <?php
 declare(strict_types=1);
 return [];
 PHP;
-        file_put_contents($configPath, $file);
+        file_put_contents($this->configPath, $file);
 
         $this->exec('plugin list');
-        unlink($configPath);
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertErrorContains('No plugins have been found.');
     }
