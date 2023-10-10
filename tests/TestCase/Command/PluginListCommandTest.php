@@ -26,7 +26,9 @@ class PluginListCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
-    protected string $configPath;
+    protected string $pluginsListPath;
+
+    protected string $pluginsConfigPath;
 
     /**
      * setUp method
@@ -36,17 +38,24 @@ class PluginListCommandTest extends TestCase
         parent::setUp();
 
         $this->setAppNamespace();
-        $this->configPath = ROOT . DS . 'cakephp-plugins.php';
-        if (file_exists($this->configPath)) {
-            unlink($this->configPath);
+        $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
+        if (file_exists($this->pluginsListPath)) {
+            unlink($this->pluginsListPath);
+        }
+        $this->pluginsConfigPath = CONFIG . DS . 'plugins.php';
+        if (file_exists($this->pluginsConfigPath)) {
+            unlink($this->pluginsConfigPath);
         }
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
-        if (file_exists($this->configPath)) {
-            unlink($this->configPath);
+        if (file_exists($this->pluginsListPath)) {
+            unlink($this->pluginsListPath);
+        }
+        if (file_exists($this->pluginsConfigPath)) {
+            unlink($this->pluginsConfigPath);
         }
     }
 
@@ -75,7 +84,7 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($this->configPath, $file);
+        file_put_contents($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
@@ -93,10 +102,43 @@ PHP;
 declare(strict_types=1);
 return [];
 PHP;
-        file_put_contents($this->configPath, $file);
+        file_put_contents($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertErrorContains('No plugins have been found.');
+    }
+
+    /**
+     * Test enabled plugins are being flagged as enabled
+     */
+    public function testListEnabled(): void
+    {
+        $file = <<<PHP
+<?php
+declare(strict_types=1);
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path',
+        'OtherPlugin' => '/config/path'
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+declare(strict_types=1);
+return [
+    'TestPlugin',
+    'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => true, 'optional' => true]
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        $this->exec('plugin list');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('TestPlugin');
+        $this->assertOutputContains('OtherPlugin');
     }
 }

@@ -20,7 +20,8 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-use Cake\Core\PluginCollection;
+use Cake\Core\Plugin;
+use Cake\Utility\Hash;
 use function Cake\I18n\__d;
 
 /**
@@ -45,10 +46,32 @@ class PluginListCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        new PluginCollection();
+        Plugin::getCollection();
+
+        // phpcs:ignore
+        $pluginsConfig = @include CONFIG . 'plugins.php';
+        if (is_array($pluginsConfig)) {
+            $pluginsConfig = Hash::normalize($pluginsConfig);
+        }
+
+        $table = [
+            ['Plugin', 'onlyDebug', 'onlyCli', 'optional'],
+        ];
+
         $plugins = Configure::read('plugins', []);
         if ($plugins && is_array($plugins)) {
-            $io->out(array_keys($plugins));
+            foreach ($plugins as $pluginName => $configPath) {
+                if ($pluginsConfig && array_key_exists($pluginName, $pluginsConfig)) {
+                    $options = $pluginsConfig[$pluginName];
+                    $onlyDebug = $options['onlyDebug'] ?? false;
+                    $onlyCli = $options['onlyCli'] ?? false;
+                    $optional = $options['optional'] ?? false;
+                    $table[] = [$pluginName, $onlyDebug ? 'X' : '', $onlyCli ? 'X' : '', $optional ? 'X' : ''];
+                } else {
+                    $table[] = [$pluginName, '', '', ''];
+                }
+            }
+            $io->helper('Table')->output($table);
         } else {
             $io->warning(__d('cake', 'No plugins have been found.'));
         }
