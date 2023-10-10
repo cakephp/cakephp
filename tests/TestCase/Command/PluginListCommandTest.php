@@ -30,6 +30,8 @@ class PluginListCommandTest extends TestCase
 
     protected string $pluginsConfigPath;
 
+    protected string $originalPluginsConfigContent = '';
+
     /**
      * setUp method
      */
@@ -44,7 +46,7 @@ class PluginListCommandTest extends TestCase
         }
         $this->pluginsConfigPath = CONFIG . DS . 'plugins.php';
         if (file_exists($this->pluginsConfigPath)) {
-            unlink($this->pluginsConfigPath);
+            $this->originalPluginsConfigContent = file_get_contents($this->pluginsConfigPath);
         }
     }
 
@@ -55,7 +57,7 @@ class PluginListCommandTest extends TestCase
             unlink($this->pluginsListPath);
         }
         if (file_exists($this->pluginsConfigPath)) {
-            unlink($this->pluginsConfigPath);
+            file_put_contents($this->pluginsConfigPath, $this->originalPluginsConfigContent);
         }
     }
 

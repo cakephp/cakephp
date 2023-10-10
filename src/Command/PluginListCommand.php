@@ -46,6 +46,7 @@ class PluginListCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        Plugin::resetCollection();
         Plugin::getCollection();
 
         // phpcs:ignore

@@ -227,7 +227,6 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
-        Plugin::resetCollection();
         if (class_exists(Mockery::class)) {
             Mockery::close();
         }
