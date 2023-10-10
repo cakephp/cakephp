@@ -57,7 +57,12 @@ class ExitCode extends Constraint
      */
     public function toString(): string
     {
-        return sprintf('matches exit code %s', $this->exitCode ?? 'null');
+        return sprintf('matches exit code `%s`', $this->exitCode ?? 'null');
+    }
+
+    public function failureDescription(mixed $other): string
+    {
+        return '`' . $other . '` ' . $this->toString();
     }
 }
 
