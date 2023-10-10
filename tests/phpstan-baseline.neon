@@ -11,11 +11,6 @@ parameters:
 			path: TestCase/Database/Expression/CaseStatementExpressionTest.php
 
 		-
-			message: "#^Static method Cake\\\\Chronos\\\\ChronosInterface\\:\\:now\\(\\) invoked with 0 parameters, 1 required\\.$#"
-			count: 5
-			path: TestCase/Database/Expression/CaseStatementExpressionTest.php
-
-		-
 			message: "#^Instantiated class Cake\\\\Chronos\\\\Date not found\\.$#"
 			count: 15
 			path: TestCase/Database/Type/DateTypeTest.php
