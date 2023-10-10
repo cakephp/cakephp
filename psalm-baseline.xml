@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.13.0@a0a9c27630bcf8301ee78cb06741d2907d8c9fef">
+<files psalm-version="5.15.0@5c774aca4746caf3d239d9c8cadb9f882ca29352">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
@@ -17,6 +17,11 @@
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
+  </file>
+  <file src="src/Command/PluginListCommand.php">
+    <RedundantCondition>
+      <code>is_array($pluginsConfig)</code>
+    </RedundantCondition>
   </file>
   <file src="src/Console/CommandCollection.php">
     <InvalidDocblock>
