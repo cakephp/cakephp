@@ -107,7 +107,7 @@ PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
-        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('No plugins have been found.');
     }
 

@@ -19,9 +19,7 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
-use Cake\Utility\Hash;
+use Cake\Core\PluginConfig;
 use function Cake\I18n\__d;
 
 /**
@@ -46,36 +44,33 @@ class PluginListCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        Plugin::resetCollection();
-        Plugin::getCollection();
-
-        // phpcs:ignore
-        $pluginsConfig = @include CONFIG . 'plugins.php';
-        if (is_array($pluginsConfig)) {
-            $pluginsConfig = Hash::normalize($pluginsConfig);
-        }
+        $instance = new PluginConfig();
+        $config = $instance->getConfig();
 
         $table = [
-            ['Plugin', 'onlyDebug', 'onlyCli', 'optional'],
+            ['Plugin', 'isActive', 'onlyDebug', 'onlyCli', 'optional'],
         ];
 
-        $plugins = Configure::read('plugins', []);
-        if ($plugins && is_array($plugins)) {
-            foreach ($plugins as $pluginName => $configPath) {
-                if ($pluginsConfig && array_key_exists($pluginName, $pluginsConfig)) {
-                    $options = $pluginsConfig[$pluginName];
-                    $onlyDebug = $options['onlyDebug'] ?? false;
-                    $onlyCli = $options['onlyCli'] ?? false;
-                    $optional = $options['optional'] ?? false;
-                    $table[] = [$pluginName, $onlyDebug ? 'X' : '', $onlyCli ? 'X' : '', $optional ? 'X' : ''];
-                } else {
-                    $table[] = [$pluginName, '', '', ''];
-                }
-            }
-            $io->helper('Table')->output($table);
-        } else {
+        if (empty($config)) {
             $io->warning(__d('cake', 'No plugins have been found.'));
+
+            return static::CODE_ERROR;
         }
+
+        foreach ($config as $pluginName => $options) {
+            $isActive = $options['isActive'] ?? false;
+            $onlyDebug = $options['onlyDebug'] ?? false;
+            $onlyCli = $options['onlyCli'] ?? false;
+            $optional = $options['optional'] ?? false;
+            $table[] = [
+                $pluginName,
+                $isActive ? 'X' : '',
+                $onlyDebug ? 'X' : '',
+                $onlyCli ? 'X' : '',
+                $optional ? 'X' : '',
+            ];
+        }
+        $io->helper('Table')->output($table);
 
         return static::CODE_SUCCESS;
     }

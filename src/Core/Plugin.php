@@ -129,14 +129,4 @@ class Plugin
     {
         return static::$plugins ??= new PluginCollection();
     }
-
-    /**
-     * Reset the state which holds the loaded plugins
-     *
-     * @return void
-     */
-    public static function resetCollection(): void
-    {
-        static::$plugins = null;
-    }
 }
