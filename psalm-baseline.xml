@@ -18,16 +18,16 @@
       <code>int|false</code>
     </InvalidReturnType>
   </file>
-  <file src="src/Command/PluginListCommand.php">
-    <RedundantCondition>
-      <code>is_array($pluginsConfig)</code>
-    </RedundantCondition>
-  </file>
   <file src="src/Console/CommandCollection.php">
     <InvalidDocblock>
       <code>public function get(string $name): CommandInterface|string</code>
       <code>public function getIterator(): Traversable</code>
     </InvalidDocblock>
+  </file>
+  <file src="src/Core/PluginConfig.php">
+    <RedundantCondition>
+      <code>is_array($pluginLoadConfig)</code>
+    </RedundantCondition>
   </file>
   <file src="src/Database/Query.php">
     <UnusedPsalmSuppress>
