@@ -887,7 +887,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'plugin' => null,
                 'controller' => 'Dependencies',
-                'action' => 'unsupportedTypedUnion',
+                'action' => 'typedUnion',
                 'pass' => ['1'],
             ],
         ]);
