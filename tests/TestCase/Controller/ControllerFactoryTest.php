@@ -887,15 +887,16 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'plugin' => null,
                 'controller' => 'Dependencies',
-                'action' => 'unsupportedTypedUnion',
-                'pass' => ['test'],
+                'action' => 'typedUnion',
+                'pass' => ['1'],
             ],
         ]);
         $controller = $this->factory->create($request);
 
-        $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Type declaration for `one` in action `Dependencies::unsupportedTypedUnion()` is unsupported.');
-        $this->factory->invoke($controller);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['one' => '1'], $data);
     }
 
     public function testMiddleware(): void
