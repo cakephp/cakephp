@@ -30,6 +30,9 @@ use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
 use stdClass;
+use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
+use TestApp\Model\Enum\Priority;
 
 require_once __DIR__ . '/stubs.php';
 
@@ -2012,6 +2015,26 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
         $this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
+    }
+
+    public function testEnum(): void
+    {
+        $this->assertTrue(Validation::enum(ArticleStatus::PUBLISHED, ArticleStatus::class));
+        $this->assertTrue(Validation::enum('Y', ArticleStatus::class));
+
+        $this->assertTrue(Validation::enum(Priority::LOW, Priority::class));
+        $this->assertTrue(Validation::enum(1, Priority::class));
+
+        $this->assertFalse(Validation::enum(Priority::LOW, ArticleStatus::class));
+        $this->assertFalse(Validation::enum(1, ArticleStatus::class));
+        $this->assertFalse(Validation::enum('non-existent', ArticleStatus::class));
+
+        $this->assertFalse(Validation::enum(ArticleStatus::PUBLISHED, Priority::class));
+        $this->assertFalse(Validation::enum('wrong type', Priority::class));
+        $this->assertFalse(Validation::enum(123, Priority::class));
+
+        $this->assertFalse(Validation::enum(NonBacked::Basic, NonBacked::class));
+        $this->assertFalse(Validation::enum('non-enum class', TestCase::class));
     }
 
     /**
