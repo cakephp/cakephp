@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use BackedEnum;
 use Closure;
 use Countable;
 use InvalidArgumentException;
@@ -2030,6 +2031,45 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'email', $extra + [
             'rule' => ['email', $checkMX],
+        ]);
+    }
+
+    /**
+     * Add a backed enum validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name.
+     * @param string|null $message The error message when the rule fails.
+     * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
+     *   true when the validation rule should be applied.
+     * @return $this
+     * @see \Cake\Validation\Validation::enum()
+     * @since 5.1.0
+     */
+    public function enum(
+        string $field,
+        string $enumClassName,
+        ?string $message = null,
+        Closure|string|null $when = null
+    ) {
+        if (!in_array(BackedEnum::class, (array)class_implements($enumClassName), true)) {
+            throw new InvalidArgumentException(
+                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+            );
+        }
+
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be a `\%s` enum instance or value', $enumClassName);
+            } else {
+                $message = __d('cake', 'The provided value must be a `\{0}` enum instance or value', $enumClassName);
+            }
+        }
+
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'enum', $extra + [
+            'rule' => ['enum', $enumClassName],
         ]);
     }
 

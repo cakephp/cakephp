@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
+use BackedEnum;
 use Cake\Chronos\ChronosDate;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
@@ -25,6 +26,8 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
+use ReflectionEnum;
+use ReflectionException;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -776,6 +779,48 @@ class Validation
             }
 
             return is_array(gethostbynamel($regs[1] . '.'));
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enum(mixed $check, string $enumClassName): bool
+    {
+        if (
+            $check instanceof $enumClassName &&
+            $check instanceof BackedEnum
+        ) {
+            return true;
+        }
+
+        if (
+            !is_string($check) &&
+            !is_int($check)
+        ) {
+            return false;
+        }
+
+        try {
+            $reflectionEnum = new ReflectionEnum($enumClassName);
+            $backingType = (string)$reflectionEnum->getBackingType();
+        } catch (ReflectionException) {
+            return false;
+        }
+
+        if (get_debug_type($check) !== $backingType) {
+            return false;
+        }
+
+        if ($enumClassName::tryFrom($check) !== null) {
+            return true;
         }
 
         return false;
