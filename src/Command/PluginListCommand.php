@@ -48,7 +48,7 @@ class PluginListCommand extends Command
         $config = $instance->getConfig();
 
         $table = [
-            ['Plugin', 'isActive', 'onlyDebug', 'onlyCli', 'optional'],
+            ['Plugin', 'Is Active', 'Only Debug', 'Only CLI', 'Optional'],
         ];
 
         if (empty($config)) {
