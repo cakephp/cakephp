@@ -91,6 +91,8 @@ class PluginLoadCommand extends Command
             $io->err('Failed to update `CONFIG/plugins.php`');
         }
 
+        $io->success('Plugin added successfully to `CONFIG/plugins.php`');
+
         return $result;
     }
 
