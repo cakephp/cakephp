@@ -819,11 +819,7 @@ class Validation
             return false;
         }
 
-        if ($enumClassName::tryFrom($check) !== null) {
-            return true;
-        }
-
-        return false;
+        return $enumClassName::tryFrom($check) !== null;
     }
 
     /**
