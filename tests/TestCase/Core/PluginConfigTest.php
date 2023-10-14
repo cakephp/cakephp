@@ -231,6 +231,10 @@ PHP;
             'OtherPlugin' => [
                 'isLoaded' => false,
             ],
+            'UnknownPlugin' => [
+                'isLoaded' => false,
+                'isUnknown' => true,
+            ],
         ], $config->getConfig());
     }
 }

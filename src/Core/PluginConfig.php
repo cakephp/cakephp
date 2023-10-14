@@ -101,6 +101,12 @@ class PluginConfig
             }
         }
 
+        $diff = array_diff(array_keys($pluginLoadConfig), $availablePlugins);
+        foreach ($diff as $unknownPlugin) {
+            $result[$unknownPlugin]['isLoaded'] = false;
+            $result[$unknownPlugin]['isUnknown'] = true;
+        }
+
         return $result;
     }
 }

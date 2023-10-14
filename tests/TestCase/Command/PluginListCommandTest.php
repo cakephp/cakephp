@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -142,5 +143,37 @@ PHP;
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('TestPlugin');
         $this->assertOutputContains('OtherPlugin');
+    }
+
+    /**
+     * Test listing unknown plugins throws an exception
+     */
+    public function testListUnknown(): void
+    {
+        $file = <<<PHP
+<?php
+declare(strict_types=1);
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path',
+        'OtherPlugin' => '/config/path'
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+declare(strict_types=1);
+return [
+    'Unknown'
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        $this->expectException(MissingPluginException::class);
+        $this->expectExceptionMessage('Plugin `Unknown` could not be found.');
+
+        $this->exec('plugin list');
     }
 }
