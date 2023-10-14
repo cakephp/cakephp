@@ -55,6 +55,8 @@ class PluginUnloadCommand extends Command
 
         $result = $this->modifyConfigFile($plugin);
         if ($result === null) {
+            $io->success('Plugin removed from `CONFIG/plugins.php`');
+
             return static::CODE_SUCCESS;
         }
 
