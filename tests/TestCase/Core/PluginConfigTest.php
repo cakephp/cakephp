@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;
 
@@ -81,10 +82,11 @@ return [
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
+        Configure::delete('plugins');
         $config = new PluginConfig();
         $result = [
             'TestPlugin' => [
-                'isActive' => true,
+                'isLoaded' => true,
                 'onlyDebug' => false,
                 'onlyCli' => false,
                 'optional' => false,
@@ -95,7 +97,7 @@ PHP;
                 'services' => true,
             ],
             'OtherPlugin' => [
-                'isActive' => true,
+                'isLoaded' => true,
                 'onlyDebug' => false,
                 'onlyCli' => false,
                 'optional' => false,
@@ -133,7 +135,7 @@ PHP;
         $config = new PluginConfig();
         $result = [
             'TestPlugin' => [
-                'isActive' => true,
+                'isLoaded' => true,
                 'onlyDebug' => false,
                 'onlyCli' => false,
                 'optional' => false,
@@ -144,7 +146,7 @@ PHP;
                 'services' => true,
             ],
             'OtherPlugin' => [
-                'isActive' => false,
+                'isLoaded' => false,
             ],
         ];
         $this->assertSame($result, $config->getConfig());
@@ -175,7 +177,7 @@ PHP;
         $config = new PluginConfig();
         $result = [
             'OtherPlugin' => [
-                'isActive' => true,
+                'isLoaded' => true,
                 'onlyDebug' => true,
                 'onlyCli' => false,
                 'optional' => true,
@@ -186,7 +188,7 @@ PHP;
                 'services' => true,
             ],
             'AnotherPlugin' => [
-                'isActive' => true,
+                'isLoaded' => true,
                 'onlyDebug' => false,
                 'onlyCli' => false,
                 'optional' => false,
@@ -224,10 +226,10 @@ PHP;
         $config = new PluginConfig();
         $this->assertSame([
             'TestPlugin' => [
-                'isActive' => false,
+                'isLoaded' => false,
             ],
             'OtherPlugin' => [
-                'isActive' => false,
+                'isLoaded' => false,
             ],
         ], $config->getConfig());
     }
