@@ -21,7 +21,7 @@ use Cake\Utility\Hash;
 /**
  * PluginConfig contains all available plugins and their config if/how they should be loaded
  *
- * @link https://book.cakephp.org/5/en/plugins.html
+ * @internal
  */
 class PluginConfig
 {
@@ -69,9 +69,6 @@ class PluginConfig
      */
     public function getConfig(): array
     {
-        // Make sure to load the current state of available plugins
-        Configure::delete('plugins');
-        Plugin::getCollection()->clear();
         $this->loadConfig();
 
         // phpcs:ignore
@@ -89,7 +86,7 @@ class PluginConfig
                     $options = $pluginLoadConfig[$pluginName];
                     $hooks = PluginInterface::VALID_HOOKS;
                     $mainConfig = [
-                        'isActive' => true,
+                        'isLoaded' => true,
                         'onlyDebug' => $options['onlyDebug'] ?? false,
                         'onlyCli' => $options['onlyCli'] ?? false,
                         'optional' => $options['optional'] ?? false,
@@ -99,7 +96,7 @@ class PluginConfig
                     }
                     $result[$pluginName] = $mainConfig;
                 } else {
-                    $result[$pluginName]['isActive'] = false;
+                    $result[$pluginName]['isLoaded'] = false;
                 }
             }
         }

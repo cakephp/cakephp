@@ -19,6 +19,7 @@ namespace Cake\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Plugin;
 use Cake\Core\PluginConfig;
 use function Cake\I18n\__d;
 
@@ -44,11 +45,12 @@ class PluginListCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $loadedPluginsCollection = Plugin::getCollection();
         $instance = new PluginConfig();
         $config = $instance->getConfig();
 
         $table = [
-            ['Plugin', 'Is Active', 'Only Debug', 'Only CLI', 'Optional'],
+            ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional'],
         ];
 
         if (empty($config)) {
@@ -58,13 +60,13 @@ class PluginListCommand extends Command
         }
 
         foreach ($config as $pluginName => $options) {
-            $isActive = $options['isActive'] ?? false;
+            $isLoaded = $loadedPluginsCollection->has($pluginName);
             $onlyDebug = $options['onlyDebug'] ?? false;
             $onlyCli = $options['onlyCli'] ?? false;
             $optional = $options['optional'] ?? false;
             $table[] = [
                 $pluginName,
-                $isActive ? 'X' : '',
+                $isLoaded ? 'X' : '',
                 $onlyDebug ? 'X' : '',
                 $onlyCli ? 'X' : '',
                 $optional ? 'X' : '',
