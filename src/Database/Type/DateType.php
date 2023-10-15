@@ -22,6 +22,8 @@ use Cake\I18n\I18nDateTimeInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Exception;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Class DateType
@@ -102,14 +104,61 @@ class DateType extends DateTimeType
      */
     public function marshal($value): ?DateTimeInterface
     {
-        $date = parent::marshal($value);
-        /** @psalm-var \DateTime|\DateTimeImmutable|null $date */
-        if ($date && !$date instanceof I18nDateTimeInterface) {
-            // Clear time manually when I18n types aren't available and raw DateTime used
-            $date = $date->setTime(0, 0, 0);
+        if ($value instanceof DateTimeInterface) {
+            return new FrozenDate($value);
         }
 
-        return $date;
+        /** @var class-string<\Cake\Chronos\ChronosDate> $class */
+        $class = $this->_className;
+        try {
+            if ($value === '' || $value === null || is_bool($value)) {
+                return null;
+            }
+
+            if (is_int($value) || (is_string($value) && ctype_digit($value))) {
+                /** @var \Cake\I18n\FrozenDate|\DateTimeImmutable $dateTime */
+                $dateTime = new $class('@' . $value);
+
+                return $dateTime;
+            }
+
+            if (is_string($value)) {
+                if ($this->_useLocaleMarshal) {
+                    $dateTime = $this->_parseLocaleValue($value);
+                } else {
+                    $dateTime = $this->_parseValue($value);
+                }
+
+                return $dateTime;
+            }
+        } catch (Exception $e) {
+            return null;
+        }
+
+        if (is_array($value) && implode('', $value) === '') {
+            return null;
+        }
+        $format = '';
+        if (
+            isset($value['year'], $value['month'], $value['day']) &&
+            (
+                is_numeric($value['year']) &&
+                is_numeric($value['month']) &&
+                is_numeric($value['day'])
+            )
+        ) {
+            $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
+        }
+
+        if (empty($format)) {
+            // Invalid array format.
+            return null;
+        }
+
+        /** @var \Cake\I18n\FrozenDate|\DateTimeImmutable $dateTime */
+        $dateTime = new $class($format);
+
+        return $dateTime;
     }
 
     /**

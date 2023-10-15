@@ -17,11 +17,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\DriverInterface;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
@@ -58,7 +61,10 @@ class LoggingStatementTest extends TestCase
         $inner->method('rowCount')->will($this->returnValue(3));
         $inner->method('execute')->will($this->returnValue(true));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(Connection::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -72,7 +78,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 
     /**
@@ -84,7 +90,11 @@ class LoggingStatementTest extends TestCase
         $inner->method('rowCount')->will($this->returnValue(4));
         $inner->method('execute')->will($this->returnValue(true));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(Connection::ROLE_WRITE));
+
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -98,7 +108,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=4 SELECT bar FROM foo WHERE x=1 AND y=2$/', $messages[0]);
     }
 
     /**
@@ -135,8 +145,8 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(2, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role= duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role= duration=\d+ rows=4 SELECT bar FROM foo WHERE a='1' AND b='2014-01-01'$/", $messages[1]);
     }
 
     /**
@@ -154,7 +164,10 @@ class LoggingStatementTest extends TestCase
             ->method('execute')
             ->will($this->throwException($exception));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(Connection::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -174,7 +187,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
@@ -190,7 +203,10 @@ class LoggingStatementTest extends TestCase
             ->method('execute')
             ->will($this->throwException($exception));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(ConnectionInterface::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -212,7 +228,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**
@@ -228,7 +244,10 @@ class LoggingStatementTest extends TestCase
             ->method('execute')
             ->will($this->throwException($exception));
 
-        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
+        $driver->expects($this->any())
+            ->method('getRole')
+            ->will($this->returnValue(ConnectionInterface::ROLE_WRITE));
         $st = $this->getMockBuilder(LoggingStatement::class)
             ->onlyMethods(['__get'])
             ->setConstructorArgs([$inner, $driver])
@@ -250,7 +269,7 @@ class LoggingStatementTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
+        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/", $messages[0]);
     }
 
     /**

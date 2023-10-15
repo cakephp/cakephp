@@ -92,12 +92,58 @@ class SchemaLoader
     }
 
     /**
-     * Load and apply CakePHP-specific schema file.
+     * Load and apply CakePHP schema file.
+     *
+     * This method will process the array returned by `$file` and treat
+     * the contents as a list of table schema.
+     *
+     * An example table is:
+     *
+     * ```
+     * return [
+     *   'articles' => [
+     *      'columns' => [
+     *          'id' => [
+     *              'type' => 'integer',
+     *          ],
+     *          'author_id' => [
+     *              'type' => 'integer',
+     *              'null' => true,
+     *          ],
+     *          'title' => [
+     *              'type' => 'string',
+     *              'null' => true,
+     *          ],
+     *          'body' => 'text',
+     *          'published' => [
+     *              'type' => 'string',
+     *              'length' => 1,
+     *              'default' => 'N',
+     *          ],
+     *      ],
+     *      'constraints' => [
+     *          'primary' => [
+     *              'type' => 'primary',
+     *              'columns' => [
+     *                  'id',
+     *              ],
+     *          ],
+     *      ],
+     *   ],
+     * ];
+     * ```
+     *
+     * This schema format can be useful for plugins that want to include
+     * tables to test against but don't need to include production
+     * ready schema via migrations. Applications should favour using migrations
+     * or SQL dump files over this format for ease of maintenance.
+     *
+     * A more complete example can be found in `tests/schema.php`.
      *
      * @param string $file Schema file
      * @param string $connectionName Connection name
+     * @throws \InvalidArgumentException For missing table name(s).
      * @return void
-     * @internal
      */
     public function loadInternalFile(string $file, string $connectionName = 'test'): void
     {
@@ -112,8 +158,15 @@ class SchemaLoader
 
         $connection = ConnectionManager::get($connectionName);
         $connection->disableConstraints(function ($connection) use ($tables) {
-            foreach ($tables as $table) {
-                $schema = new TableSchema($table['table'], $table['columns']);
+            foreach ($tables as $tableName => $table) {
+                $name = $table['table'] ?? $tableName;
+                if (!is_string($name)) {
+                    throw new InvalidArgumentException(
+                        sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
+                            . '(`\'articles\' => [...]`) or define the `table` key in the table definition.', $name)
+                    );
+                }
+                $schema = new TableSchema($name, $table['columns']);
                 if (isset($table['indexes'])) {
                     foreach ($table['indexes'] as $key => $index) {
                         $schema->addIndex($key, $index);

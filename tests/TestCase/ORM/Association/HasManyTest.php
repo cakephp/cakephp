@@ -31,6 +31,7 @@ use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use Closure;
 use InvalidArgumentException;
+use function Cake\I18n\__;
 
 /**
  * Tests HasMany class
@@ -198,7 +199,7 @@ class HasManyTest extends TestCase
             'strategy' => 'select',
         ];
         $association = new HasMany('Articles', $config);
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -241,7 +242,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
 
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -276,7 +277,7 @@ class HasManyTest extends TestCase
         $keys = [1, 2, 3, 4];
 
         /** @var \Cake\ORM\Query $query */
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $query->addDefaultTypes($this->article->Comments->getSource());
 
         $this->article->method('find')
@@ -328,7 +329,7 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -354,7 +355,7 @@ class HasManyTest extends TestCase
         $keys = [1, 2, 3, 4];
 
         /** @var \Cake\ORM\Query $query */
-        $query = $this->article->query();
+        $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
@@ -540,10 +541,10 @@ class HasManyTest extends TestCase
         $author = new Entity(['id' => 1, 'name' => 'mark']);
         $this->assertTrue($association->cascadeDelete($author));
 
-        $query = $articles->query()->where(['author_id' => 1]);
+        $query = $articles->find()->where(['author_id' => 1]);
         $this->assertSame(0, $query->count(), 'Cleared related rows');
 
-        $query = $articles->query()->where(['author_id' => 3]);
+        $query = $articles->find()->where(['author_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
     }
 
@@ -785,9 +786,9 @@ class HasManyTest extends TestCase
     protected function assertSelectClause($expected, $query): void
     {
         if ($this->autoQuote) {
-            $connection = $query->getConnection();
+            $driver = $query->getConnection()->getDriver();
             foreach ($expected as $key => $value) {
-                $expected[$connection->quoteIdentifier($key)] = $connection->quoteIdentifier($value);
+                $expected[$driver->quoteIdentifier($key)] = $driver->quoteIdentifier($value);
                 unset($expected[$key]);
             }
         }

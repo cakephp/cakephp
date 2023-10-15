@@ -23,6 +23,7 @@ use Cake\Validation\Validation;
 use Composer\CaBundle\CaBundle;
 use Exception;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * CakePHP network socket connection class.

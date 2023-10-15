@@ -118,7 +118,7 @@ class HasOneTest extends TestCase
             'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
-        $query = $this->user->query();
+        $query = $this->user->find();
         $association->attachTo($query, ['includeFields' => false]);
         $this->assertEmpty($query->clause('select'));
     }
@@ -258,7 +258,7 @@ class HasOneTest extends TestCase
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
-        $query = $this->user->query();
+        $query = $this->user->find();
 
         $this->listenerCalled = false;
         $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary): void {
@@ -324,15 +324,15 @@ class HasOneTest extends TestCase
         $entity = new Entity(['id' => 1]);
         $association->cascadeDelete($entity);
 
-        $query = $this->profile->query()->where(['user_id' => 1]);
+        $query = $this->profile->find()->where(['user_id' => 1]);
         $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
     }
 
@@ -363,7 +363,7 @@ class HasOneTest extends TestCase
         $this->assertNull($entity->article);
         $this->assertTrue($association->cascadeDelete($entity));
 
-        $query = $Articles->query();
+        $query = $Articles->find();
         $this->assertSame(4, $query->count(), 'No articles should be deleted');
     }
 
@@ -384,15 +384,15 @@ class HasOneTest extends TestCase
         $user = new Entity(['id' => 1]);
         $this->assertTrue($association->cascadeDelete($user));
 
-        $query = $this->profile->query()->where(['user_id' => 1]);
+        $query = $this->profile->find()->where(['user_id' => 1]);
         $this->assertSame(1, $query->count(), 'Left non-matching row behind');
 
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(1, $query->count(), 'other records left behind');
 
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
-        $query = $this->profile->query()->where(['user_id' => 3]);
+        $query = $this->profile->find()->where(['user_id' => 3]);
         $this->assertSame(0, $query->count(), 'Matching record was deleted.');
     }
 

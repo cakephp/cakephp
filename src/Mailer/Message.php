@@ -28,6 +28,7 @@ use JsonSerializable;
 use Psr\Http\Message\UploadedFileInterface;
 use Serializable;
 use SimpleXMLElement;
+use function Cake\Core\env;
 
 /**
  * Email message class.
@@ -300,6 +301,18 @@ class Message implements JsonSerializable, Serializable
      * @var string|null
      */
     protected $emailPattern = self::EMAIL_PATTERN;
+
+    /**
+     * Properties that could be serialized
+     *
+     * @var array<string>
+     */
+    protected $serializableProperties = [
+        'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
+        'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
+        'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
+        'textMessage', 'htmlMessage',
+    ];
 
     /**
      * Constructor
@@ -1151,7 +1164,7 @@ class Message implements JsonSerializable, Serializable
      * ```
      *
      * The `contentId` key allows you to specify an inline attachment. In your email text, you
-     * can use `<img src="cid:abc123"/>` to display the image inline.
+     * can use `<img src="cid:abc123">` to display the image inline.
      *
      * The `contentDisposition` key allows you to disable the `Content-Disposition` header, this can improve
      * attachment compatibility with outlook email clients.
@@ -1849,15 +1862,8 @@ class Message implements JsonSerializable, Serializable
      */
     public function jsonSerialize(): array
     {
-        $properties = [
-            'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
-            'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
-            'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
-            'textMessage', 'htmlMessage',
-        ];
-
         $array = [];
-        foreach ($properties as $property) {
+        foreach ($this->serializableProperties as $property) {
             $array[$property] = $this->{$property};
         }
 

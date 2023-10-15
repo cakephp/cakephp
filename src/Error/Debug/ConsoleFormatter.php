@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error\Debug;
 
 use RuntimeException;
+use function Cake\Core\env;
 
 /**
  * A Debugger formatter for generating output with ANSI escape codes

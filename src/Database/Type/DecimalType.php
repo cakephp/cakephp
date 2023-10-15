@@ -21,6 +21,7 @@ use Cake\I18n\Number;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
+use function Cake\Core\getTypeName;
 
 /**
  * Decimal type converter.

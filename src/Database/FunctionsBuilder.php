@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Contains methods related to generating FunctionExpression objects

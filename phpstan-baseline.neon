@@ -81,19 +81,9 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$object with type TObject is not subtype of native type object\\.$#"
-			count: 1
-			path: src/Core/ObjectRegistry.php
-
-		-
 			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
 			count: 2
 			path: src/Database/Driver.php
-
-		-
-			message: "#^Class Cake\\\\Chronos\\\\Date not found\\.$#"
-			count: 1
-			path: src/Database/Expression/CaseStatementExpression.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -106,11 +96,6 @@ parameters:
 			path: src/Database/Expression/TupleComparison.php
 
 		-
-			message: "#^Class Cake\\\\Chronos\\\\Date not found\\.$#"
-			count: 1
-			path: src/Database/Expression/WhenThenExpression.php
-
-		-
 			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
@@ -121,19 +106,9 @@ parameters:
 			path: src/Database/Statement/PDOStatement.php
 
 		-
-			message: "#^Parameter \\#1 \\$class of method Cake\\\\Database\\\\Type\\\\DateTimeType\\:\\:_setClassName\\(\\) expects class\\-string\\<DateTime\\>\\|class\\-string\\<DateTimeImmutable\\>, string given\\.$#"
-			count: 2
-			path: src/Database/Type/DateType.php
-
-		-
 			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: src/Database/Statement/PDOStatement.php
-
-		-
-			message: "#^Static property Cake\\\\Datasource\\\\ConnectionManager\\:\\:\\$_registry \\(Cake\\\\Datasource\\\\ConnectionRegistry\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: src/Datasource/ConnectionManager.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
@@ -401,6 +376,11 @@ parameters:
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
+			message: "#^Access to an undefined property Cake\\\\Error\\\\PhpError\\:\\:\\$_capturedError\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
@@ -444,9 +424,4 @@ parameters:
 			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
 			count: 1
 			path: src/View/Form/NullContext.php
-
-		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
-			count: 1
-			path: src/View/Helper/TimeHelper.php
 

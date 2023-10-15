@@ -18,6 +18,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
+use function Cake\Core\h;
 
 /**
  * Form 'widget' for creating labels.

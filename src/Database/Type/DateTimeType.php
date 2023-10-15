@@ -28,6 +28,7 @@ use Exception;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Datetime type converter.

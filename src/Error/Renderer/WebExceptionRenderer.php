@@ -44,6 +44,9 @@ use Cake\View\Exception\MissingTemplateException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use function Cake\Core\h;
+use function Cake\Core\namespaceSplit;
+use function Cake\I18n\__d;
 
 /**
  * Web Exception Renderer.
@@ -167,9 +170,17 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $params['controller'] = 'Error';
 
             $factory = new ControllerFactory(new Container());
+            // Check including plugin + prefix
             $class = $factory->getControllerClass($request->withAttribute('params', $params));
 
+            if (!$class && !empty($params['prefix']) && !empty($params['plugin'])) {
+                unset($params['prefix']);
+                // Fallback to only plugin
+                $class = $factory->getControllerClass($request->withAttribute('params', $params));
+            }
+
             if (!$class) {
+                // Fallback to app/core provided controller.
                 /** @var string $class */
                 $class = App::className('Error', 'Controller', 'Controller');
             }

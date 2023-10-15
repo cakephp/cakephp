@@ -1,5 +1,9 @@
 <?php
 declare(strict_types=1);
 
-// @deprecated Backwards compatibility alias. Will be removed in 5.0
-class_alias('Cake\Database\TypeFactory', 'Cake\Database\Type');
+use function Cake\Core\deprecationWarning;
+
+deprecationWarning(
+    'Since 4.0.0: Cake\Database\Type is deprecated. Use Cake\Database\TypeFactory instead.'
+);
+class_exists('Cake\Database\TypeFactory');

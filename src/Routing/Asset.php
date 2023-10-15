@@ -19,6 +19,7 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use function Cake\Core\pluginSplit;
 
 /**
  * Class for generating asset URLs.

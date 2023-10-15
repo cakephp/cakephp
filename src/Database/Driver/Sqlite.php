@@ -30,6 +30,7 @@ use Cake\Database\StatementInterface;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Class Sqlite

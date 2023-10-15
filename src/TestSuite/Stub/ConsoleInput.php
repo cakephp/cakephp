@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\StubConsoleInput;
+use function Cake\Core\deprecationWarning;
 
-class_alias(StubConsoleInput::class, 'Cake\TestSuite\Stub\ConsoleInput');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\Stub\ConsoleInput is deprecated. ' .
+    'Use Cake\Console\TestSuite\StubConsoleInput.'
+);
+class_exists('Cake\Console\TestSuite\StubConsoleInput');

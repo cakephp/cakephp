@@ -90,8 +90,7 @@ trait TupleComparisonTranslatorTrait
         }
 
         $surrogate = $query->getConnection()
-            ->newQuery()
-            ->select($true);
+            ->selectQuery($true);
 
         if (!is_array(current($value))) {
             $value = [$value];

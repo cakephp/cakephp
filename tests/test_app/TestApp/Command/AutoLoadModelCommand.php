@@ -8,4 +8,6 @@ use Cake\Command\Command;
 class AutoLoadModelCommand extends Command
 {
     protected $modelClass = 'Posts';
+
+    public $Posts = null;
 }

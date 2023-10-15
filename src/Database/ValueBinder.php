@@ -148,4 +148,16 @@ class ValueBinder
             $statement->bindValue($b['placeholder'], $b['value'], $b['type']);
         }
     }
+
+    /**
+     * Get verbose debugging data.
+     *
+     * @return array
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'bindings' => $this->bindings(),
+        ];
+    }
 }

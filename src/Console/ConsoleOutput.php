@@ -18,6 +18,7 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use InvalidArgumentException;
+use function Cake\Core\env;
 
 /**
  * Object wrapper for outputting information from a shell application.

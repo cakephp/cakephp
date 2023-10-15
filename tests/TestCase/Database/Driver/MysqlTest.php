@@ -141,22 +141,26 @@ class MysqlTest extends TestCase
      */
     public function testIsConnected(): void
     {
-        $connection = ConnectionManager::get('test');
-        $connection->disconnect();
-        $this->assertFalse($connection->isConnected(), 'Not connected now.');
+        $this->deprecated(function () {
+            $connection = ConnectionManager::get('test');
+            $connection->disconnect();
+            $this->assertFalse($connection->isConnected(), 'Not connected now.');
 
-        $connection->connect();
-        $this->assertTrue($connection->isConnected(), 'Should be connected.');
+            $connection->connect();
+            $this->assertTrue($connection->isConnected(), 'Should be connected.');
+        });
     }
 
     public function testRollbackTransactionAutoConnect(): void
     {
-        $connection = ConnectionManager::get('test');
-        $connection->disconnect();
+        $this->deprecated(function () {
+            $connection = ConnectionManager::get('test');
+            $connection->disconnect();
 
-        $driver = $connection->getDriver();
-        $this->assertFalse($driver->rollbackTransaction());
-        $this->assertTrue($driver->isConnected());
+            $driver = $connection->getDriver();
+            $this->assertFalse($driver->rollbackTransaction());
+            $this->assertTrue($driver->isConnected());
+        });
     }
 
     public function testCommitTransactionAutoConnect(): void

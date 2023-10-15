@@ -24,6 +24,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 use InvalidArgumentException;
 use LogicException;
+use function Cake\Core\getTypeName;
 
 /**
  * Represents a SQL when/then clause with a fluid API

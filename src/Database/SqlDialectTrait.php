@@ -1,5 +1,10 @@
 <?php
 declare(strict_types=1);
 
-// @deprecated 4.1.0 Add backwards compatible alias.
-class_alias('Cake\Database\Driver\SqlDialectTrait', 'Cake\Database\SqlDialectTrait');
+use function Cake\Core\deprecationWarning;
+
+deprecationWarning(
+    'Since 4.1.0: Cake\Database\SqlDialectTrait is deprecated. ' .
+    'Use Cake\Database\Driver\SqlDialectTrait instead.'
+);
+class_exists('Cake\Database\Driver\SqlDialectTrait');

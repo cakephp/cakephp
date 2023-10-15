@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use BadMethodCallException;
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use InvalidArgumentException;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -89,8 +91,23 @@ trait QueryTrait
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $repository The default table object to use
      * @return $this
+     * @deprecated 4.5.0 Use `setRepository()` instead.
      */
     public function repository(RepositoryInterface $repository)
+    {
+        deprecationWarning('`repository() method is deprecated. Use `setRepository()` instead.');
+
+        return $this->setRepository($repository);
+    }
+
+    /**
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
+     *
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $repository The default table object to use
+     * @return $this
+     */
+    public function setRepository(RepositoryInterface $repository)
     {
         $this->_repository = $repository;
 
@@ -562,6 +579,833 @@ trait QueryTrait
         throw new BadMethodCallException(
             sprintf('Unknown method "%s"', $method)
         );
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::each()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function each(callable $callback): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling each() on a Query is deprecated. ' .
+            'Instead call `$query->all()->each(...)` instead.'
+        );
+
+        return $this->all()->each($callback);
+    }
+
+    /**
+     * @param ?callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::filter()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function filter(?callable $callback = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling filter() on a Query is deprecated. ' .
+            'Instead call `$query->all()->filter(...)` instead.'
+        );
+
+        return $this->all()->filter($callback);
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::reject()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function reject(callable $callback): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling reject() on a Query is deprecated. ' .
+            'Instead call `$query->all()->reject(...)` instead.'
+        );
+
+        return $this->all()->reject($callback);
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::every()
+     * @return bool
+     * @deprecated
+     */
+    public function every(callable $callback): bool
+    {
+        deprecationWarning(
+            '4.3.0 - Calling every() on a Query is deprecated. ' .
+            'Instead call `$query->all()->every(...)` instead.'
+        );
+
+        return $this->all()->every($callback);
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::some()
+     * @return bool
+     * @deprecated
+     */
+    public function some(callable $callback): bool
+    {
+        deprecationWarning(
+            '4.3.0 - Calling some() on a Query is deprecated. ' .
+            'Instead call `$query->all()->some(...)` instead.'
+        );
+
+        return $this->all()->some($callback);
+    }
+
+    /**
+     * @param mixed $value The value to check.
+     * @see \Cake\Collection\CollectionInterface::contains()
+     * @return bool
+     * @deprecated
+     */
+    public function contains($value): bool
+    {
+        deprecationWarning(
+            '4.3.0 - Calling contains() on a Query is deprecated. ' .
+            'Instead call `$query->all()->contains(...)` instead.'
+        );
+
+        return $this->all()->contains($value);
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @see \Cake\Collection\CollectionInterface::map()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function map(callable $callback): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling map() on a Query is deprecated. ' .
+            'Instead call `$query->all()->map(...)` instead.'
+        );
+
+        return $this->all()->map($callback);
+    }
+
+    /**
+     * @param callable $callback The callback to apply
+     * @param mixed $initial The initial value
+     * @see \Cake\Collection\CollectionInterface::reduce()
+     * @return mixed
+     * @deprecated
+     */
+    public function reduce(callable $callback, $initial = null)
+    {
+        deprecationWarning(
+            '4.3.0 - Calling reduce() on a Query is deprecated. ' .
+            'Instead call `$query->all()->reduce(...)` instead.'
+        );
+
+        return $this->all()->reduce($callback, $initial);
+    }
+
+    /**
+     * @param callable|string $path The path to extract
+     * @see \Cake\Collection\CollectionInterface::extract()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function extract($path): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling extract() on a Query is deprecated. ' .
+            'Instead call `$query->all()->extract(...)` instead.'
+        );
+
+        return $this->all()->extract($path);
+    }
+
+    /**
+     * @param callable|string $path The path to max
+     * @param int $sort The SORT_ constant to order by.
+     * @see \Cake\Collection\CollectionInterface::max()
+     * @return mixed
+     * @deprecated
+     */
+    public function max($path, int $sort = \SORT_NUMERIC)
+    {
+        deprecationWarning(
+            '4.3.0 - Calling max() on a Query is deprecated. ' .
+            'Instead call `$query->all()->max(...)` instead.'
+        );
+
+        return $this->all()->max($path, $sort);
+    }
+
+    /**
+     * @param callable|string $path The path to max
+     * @param int $sort The SORT_ constant to order by.
+     * @see \Cake\Collection\CollectionInterface::min()
+     * @return mixed
+     * @deprecated
+     */
+    public function min($path, int $sort = \SORT_NUMERIC)
+    {
+        deprecationWarning(
+            '4.3.0 - Calling min() on a Query is deprecated. ' .
+            'Instead call `$query->all()->min(...)` instead.'
+        );
+
+        return $this->all()->min($path, $sort);
+    }
+
+    /**
+     * @param callable|string|null $path the path to average
+     * @see \Cake\Collection\CollectionInterface::avg()
+     * @return float|int|null
+     * @deprecated
+     */
+    public function avg($path = null)
+    {
+        deprecationwarning(
+            '4.3.0 - calling avg() on a query is deprecated. ' .
+            'instead call `$query->all()->avg(...)` instead.'
+        );
+
+        return $this->all()->avg($path);
+    }
+
+    /**
+     * @param callable|string|null $path the path to average
+     * @see \Cake\Collection\CollectionInterface::median()
+     * @return float|int|null
+     * @deprecated
+     */
+    public function median($path = null)
+    {
+        deprecationwarning(
+            '4.3.0 - calling median() on a query is deprecated. ' .
+            'instead call `$query->all()->median(...)` instead.'
+        );
+
+        return $this->all()->median($path);
+    }
+
+    /**
+     * @param callable|string $path the path to average
+     * @param int $order The \SORT_ constant for the direction you want results in.
+     * @param int $sort The \SORT_ method to use.
+     * @see \Cake\Collection\CollectionInterface::sortBy()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function sortBy($path, int $order = SORT_DESC, int $sort = \SORT_NUMERIC): CollectionInterface
+    {
+        deprecationwarning(
+            '4.3.0 - calling sortBy() on a query is deprecated. ' .
+            'instead call `$query->all()->sortBy(...)` instead.'
+        );
+
+        return $this->all()->sortBy($path, $order, $sort);
+    }
+
+    /**
+     * @param callable|string $path The path to group by
+     * @see \Cake\Collection\CollectionInterface::groupBy()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function groupBy($path): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling groupBy() on a Query is deprecated. ' .
+            'Instead call `$query->all()->groupBy(...)` instead.'
+        );
+
+        return $this->all()->groupBy($path);
+    }
+
+    /**
+     * @param string|callable $path The path to extract
+     * @see \Cake\Collection\CollectionInterface::indexBy()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function indexBy($path): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling indexBy() on a Query is deprecated. ' .
+            'Instead call `$query->all()->indexBy(...)` instead.'
+        );
+
+        return $this->all()->indexBy($path);
+    }
+
+    /**
+     * @param string|callable $path The path to count by
+     * @see \Cake\Collection\CollectionInterface::countBy()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function countBy($path): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling countBy() on a Query is deprecated. ' .
+            'Instead call `$query->all()->countBy(...)` instead.'
+        );
+
+        return $this->all()->countBy($path);
+    }
+
+    /**
+     * @param string|callable $path The path to sum
+     * @see \Cake\Collection\CollectionInterface::sumOf()
+     * @return int|float
+     * @deprecated
+     */
+    public function sumOf($path = null)
+    {
+        deprecationWarning(
+            '4.3.0 - Calling sumOf() on a Query is deprecated. ' .
+                'Instead call `$query->all()->sumOf(...)` instead.'
+        );
+
+        return $this->all()->sumOf($path);
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::shuffle()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function shuffle(): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling shuffle() on a Query is deprecated. ' .
+            'Instead call `$query->all()->shuffle(...)` instead.'
+        );
+
+        return $this->all()->shuffle();
+    }
+
+    /**
+     * @param int $length The number of samples to select
+     * @see \Cake\Collection\CollectionInterface::sample()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function sample(int $length = 10): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling sample() on a Query is deprecated. ' .
+            'Instead call `$query->all()->sample(...)` instead.'
+        );
+
+        return $this->all()->sample($length);
+    }
+
+    /**
+     * @param int $length The number of elements to take
+     * @param int $offset The offset of the first element to take.
+     * @see \Cake\Collection\CollectionInterface::take()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function take(int $length = 1, int $offset = 0): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling take() on a Query is deprecated. ' .
+            'Instead call `$query->all()->take(...)` instead.'
+        );
+
+        return $this->all()->take($length, $offset);
+    }
+
+    /**
+     * @param int $length The number of items to take.
+     * @see \Cake\Collection\CollectionInterface::takeLast()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function takeLast(int $length): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling takeLast() on a Query is deprecated. ' .
+            'Instead call `$query->all()->takeLast(...)` instead.'
+        );
+
+        return $this->all()->takeLast($length);
+    }
+
+    /**
+     * @param int $length The number of items to skip
+     * @see \Cake\Collection\CollectionInterface::skip()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function skip(int $length): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling skip() on a Query is deprecated. ' .
+            'Instead call `$query->all()->skip(...)` instead.'
+        );
+
+        return $this->all()->skip($length);
+    }
+
+    /**
+     * @param array $conditions The conditions to use.
+     * @see \Cake\Collection\CollectionInterface::match()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function match(array $conditions): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling match() on a Query is deprecated. ' .
+            'Instead call `$query->all()->match(...)` instead.'
+        );
+
+        return $this->all()->match($conditions);
+    }
+
+    /**
+     * @param array $conditions The conditions to apply
+     * @see \Cake\Collection\CollectionInterface::firstMatch()
+     * @return mixed
+     * @deprecated
+     */
+    public function firstMatch(array $conditions)
+    {
+        deprecationWarning(
+            '4.3.0 - Calling firstMatch() on a Query is deprecated. ' .
+            'Instead call `$query->all()->firstMatch(...)` instead.'
+        );
+
+        return $this->all()->firstMatch($conditions);
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::last()
+     * @deprecated
+     * @return mixed
+     */
+    public function last()
+    {
+        deprecationWarning(
+            '4.3.0 - Calling last() on a Query is deprecated. ' .
+            'Instead call `$query->all()->last(...)` instead.'
+        );
+
+        return $this->all()->last();
+    }
+
+    /**
+     * @param mixed $items The items to append
+     * @see \Cake\Collection\CollectionInterface::append()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function append($items): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling append() on a Query is deprecated. ' .
+            'Instead call `$query->all()->append(...)` instead.'
+        );
+
+        return $this->all()->append($items);
+    }
+
+    /**
+     * @param mixed $item The item to apply
+     * @param mixed $key The key to append with
+     * @see \Cake\Collection\CollectionInterface::appendItem()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function appendItem($item, $key = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling appendItem() on a Query is deprecated. ' .
+            'Instead call `$query->all()->appendItem(...)` instead.'
+        );
+
+        return $this->all()->appendItem($item, $key);
+    }
+
+    /**
+     * @param mixed $items The items to prepend.
+     * @see \Cake\Collection\CollectionInterface::prepend()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function prepend($items): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling prepend() on a Query is deprecated. ' .
+            'Instead call `$query->all()->prepend(...)` instead.'
+        );
+
+        return $this->all()->prepend($items);
+    }
+
+    /**
+     * @param mixed $item The item to prepend
+     * @param mixed $key The key to use.
+     * @see \Cake\Collection\CollectionInterface::prependItem()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function prependItem($item, $key = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling prependItem() on a Query is deprecated. ' .
+            'Instead call `$query->all()->prependItem(...)` instead.'
+        );
+
+        return $this->all()->prependItem($item, $key);
+    }
+
+    /**
+     * @param callable|string $keyPath The path for keys
+     * @param callable|string $valuePath The path for values
+     * @param callable|string|null $groupPath The path for grouping
+     * @see \Cake\Collection\CollectionInterface::combine()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function combine($keyPath, $valuePath, $groupPath = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling combine() on a Query is deprecated. ' .
+            'Instead call `$query->all()->combine(...)` instead.'
+        );
+
+        return $this->all()->combine($keyPath, $valuePath, $groupPath);
+    }
+
+    /**
+     * @param callable|string $idPath The path to ids
+     * @param callable|string $parentPath The path to parents
+     * @param string $nestingKey Key used for nesting children.
+     * @see \Cake\Collection\CollectionInterface::nest()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function nest($idPath, $parentPath, string $nestingKey = 'children'): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling nest() on a Query is deprecated. ' .
+            'Instead call `$query->all()->nest(...)` instead.'
+        );
+
+        return $this->all()->nest($idPath, $parentPath, $nestingKey);
+    }
+
+    /**
+     * @param string $path The path to insert on
+     * @param mixed $values The values to insert.
+     * @see \Cake\Collection\CollectionInterface::insert()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function insert(string $path, $values): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling insert() on a Query is deprecated. ' .
+            'Instead call `$query->all()->insert(...)` instead.'
+        );
+
+        return $this->all()->insert($path, $values);
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::toList()
+     * @return array
+     * @deprecated
+     */
+    public function toList(): array
+    {
+        deprecationWarning(
+            '4.3.0 - Calling toList() on a Query is deprecated. ' .
+            'Instead call `$query->all()->toList(...)` instead.'
+        );
+
+        return $this->all()->toList();
+    }
+
+    /**
+     * @param bool $keepKeys Whether or not keys should be kept
+     * @see \Cake\Collection\CollectionInterface::compile()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function compile(bool $keepKeys = true): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling compile() on a Query is deprecated. ' .
+            'Instead call `$query->all()->compile(...)` instead.'
+        );
+
+        return $this->all()->compile($keepKeys);
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::lazy()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function lazy(): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling lazy() on a Query is deprecated. ' .
+            'Instead call `$query->all()->lazy(...)` instead.'
+        );
+
+        return $this->all()->lazy();
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::buffered()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function buffered(): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling buffered() on a Query is deprecated. ' .
+            'Instead call `$query->all()->buffered(...)` instead.'
+        );
+
+        return $this->all()->buffered();
+    }
+
+    /**
+     * @param string|int $order The order in which to return the elements
+     * @param callable|string $nestingKey The key name under which children are nested
+     * @see \Cake\Collection\CollectionInterface::listNested()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function listNested($order = 'desc', $nestingKey = 'children'): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling listNested() on a Query is deprecated. ' .
+            'Instead call `$query->all()->listNested(...)` instead.'
+        );
+
+        return $this->all()->listNested($order, $nestingKey);
+    }
+
+    /**
+     * @param callable|array $condition the method that will receive each of the elements and
+     *   returns true when the iteration should be stopped.
+     * @see \Cake\Collection\CollectionInterface::stopWhen()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function stopWhen($condition): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling stopWhen() on a Query is deprecated. ' .
+            'Instead call `$query->all()->stopWhen(...)` instead.'
+        );
+
+        return $this->all()->stopWhen($condition);
+    }
+
+    /**
+     * @param callable|null $callback A callable function that will receive each of
+     *  items in the collection.
+     * @see \Cake\Collection\CollectionInterface::unfold()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function unfold(?callable $callback = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling unfold() on a Query is deprecated. ' .
+            'Instead call `$query->all()->unfold(...)` instead.'
+        );
+
+        return $this->all()->unfold($callback);
+    }
+
+    /**
+     * @param callable $callback A callable function that will receive each of
+     *  items in the collection.
+     * @see \Cake\Collection\CollectionInterface::through()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function through(callable $callback): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling through() on a Query is deprecated. ' .
+            'Instead call `$query->all()->through(...)` instead.'
+        );
+
+        return $this->all()->through($callback);
+    }
+
+    /**
+     * @param iterable ...$items The collections to zip.
+     * @see \Cake\Collection\CollectionInterface::zip()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function zip(iterable $items): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling zip() on a Query is deprecated. ' .
+            'Instead call `$query->all()->zip(...)` instead.'
+        );
+
+        return $this->all()->zip($items);
+    }
+
+    /**
+     * @param iterable ...$items The collections to zip.
+     * @param callable $callback The function to use for zipping the elements together.
+     * @see \Cake\Collection\CollectionInterface::zipWith()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function zipWith(iterable $items, $callback): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling zipWith() on a Query is deprecated. ' .
+            'Instead call `$query->all()->zipWith(...)` instead.'
+        );
+
+        return $this->all()->zipWith($items, $callback);
+    }
+
+    /**
+     * @param int $chunkSize The maximum size for each chunk
+     * @see \Cake\Collection\CollectionInterface::chunk()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function chunk(int $chunkSize): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling chunk() on a Query is deprecated. ' .
+            'Instead call `$query->all()->chunk(...)` instead.'
+        );
+
+        return $this->all()->chunk($chunkSize);
+    }
+
+    /**
+     * @param int $chunkSize The maximum size for each chunk
+     * @param bool $keepKeys If the keys of the array should be kept
+     * @see \Cake\Collection\CollectionInterface::chunkWithKeys()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling chunkWithKeys() on a Query is deprecated. ' .
+            'Instead call `$query->all()->chunkWithKeys(...)` instead.'
+        );
+
+        return $this->all()->chunkWithKeys($chunkSize, $keepKeys);
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::isEmpty()
+     * @return bool
+     * @deprecated
+     */
+    public function isEmpty(): bool
+    {
+        deprecationWarning(
+            '4.3.0 - Calling isEmpty() on a Query is deprecated. ' .
+            'Instead call `$query->all()->isEmpty(...)` instead.'
+        );
+
+        return $this->all()->isEmpty();
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::unwrap()
+     * @return \Traversable
+     * @deprecated
+     */
+    public function unwrap(): Traversable
+    {
+        deprecationWarning(
+            '4.3.0 - Calling unwrap() on a Query is deprecated. ' .
+            'Instead call `$query->all()->unwrap(...)` instead.'
+        );
+
+        return $this->all()->unwrap();
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::transpose()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function transpose(): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling transpose() on a Query is deprecated. ' .
+            'Instead call `$query->all()->transpose(...)` instead.'
+        );
+
+        return $this->all()->transpose();
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::count()
+     * @return int
+     * @deprecated
+     */
+    public function count(): int
+    {
+        deprecationWarning(
+            '4.3.0 - Calling count() on a Query is deprecated. ' .
+            'Instead call `$query->all()->count(...)` instead.'
+        );
+
+        return $this->all()->count();
+    }
+
+    /**
+     * @see \Cake\Collection\CollectionInterface::countKeys()
+     * @return int
+     * @deprecated
+     */
+    public function countKeys(): int
+    {
+        deprecationWarning(
+            '4.3.0 - Calling countKeys() on a Query is deprecated. ' .
+            'Instead call `$query->all()->countKeys(...)` instead.'
+        );
+
+        return $this->all()->countKeys();
+    }
+
+    /**
+     * @param callable|null $operation A callable that allows you to customize the product result.
+     * @param callable|null $filter A filtering callback that must return true for a result to be part
+     *   of the final results.
+     * @see \Cake\Collection\CollectionInterface::cartesianProduct()
+     * @return \Cake\Collection\CollectionInterface
+     * @deprecated
+     */
+    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface
+    {
+        deprecationWarning(
+            '4.3.0 - Calling cartesianProduct() on a Query is deprecated. ' .
+            'Instead call `$query->all()->cartesianProduct(...)` instead.'
+        );
+
+        return $this->all()->cartesianProduct($operation, $filter);
     }
 
     /**

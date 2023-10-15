@@ -59,3 +59,10 @@ class ContentsContainRow extends ContentsRegExp
         return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Console\TestSuite\Constraint\ContentsContainRow',
+    'Cake\TestSuite\Constraint\Console\ContentsContainRow'
+);
+// phpcs:enable

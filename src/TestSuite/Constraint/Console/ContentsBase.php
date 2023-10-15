@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Console\TestSuite\Constraint\ContentsBase;
+use function Cake\Core\deprecationWarning;
 
-class_alias(ContentsBase::class, 'Cake\TestSuite\Constraint\Console\ContentsBase');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\Constraint\Console\ContentsBase is deprecated. ' .
+    'Use Cake\Console\TestSuite\Constraint\ContentsBase instead.'
+);
+class_exists('Cake\Console\TestSuite\Constraint\ContentsBase');

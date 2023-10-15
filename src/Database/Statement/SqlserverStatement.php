@@ -45,7 +45,6 @@ class SqlserverStatement extends PDOStatement
             [$value, $type] = $this->cast($value, $type);
         }
         if ($type === PDO::PARAM_LOB) {
-            /** @psalm-suppress UndefinedConstant */
             $this->_statement->bindParam($column, $value, $type, 0, PDO::SQLSRV_ENCODING_BINARY);
         } else {
             $this->_statement->bindValue($column, $value, $type);

@@ -30,6 +30,10 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use RuntimeException;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\h;
+use function Cake\I18n\__;
+use function Cake\I18n\__d;
 
 /**
  * Form helper library.
@@ -113,9 +117,9 @@ class FormHelper extends Helper
             // Wrapper content used to hide other content.
             'hiddenBlock' => '<div style="display:none;">{{content}}</div>',
             // Generic input element.
-            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}/>',
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
             // Submit input element.
-            'inputSubmit' => '<input type="{{type}}"{{attrs}}/>',
+            'inputSubmit' => '<input type="{{type}}"{{attrs}}>',
             // Container element used by control().
             'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
             // Container element used by control() when a field has an error.
@@ -150,6 +154,8 @@ class FormHelper extends Helper
             'confirmJs' => '{{confirm}}',
             // selected class
             'selectedClass' => 'selected',
+            // required class
+            'requiredClass' => 'required',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -616,7 +622,7 @@ class FormHelper extends Helper
 
         $tokenData = $this->formProtector->buildTokenData(
             $this->_lastAction,
-            $this->_View->getRequest()->getSession()->id()
+            $this->_getFormProtectorSessionId()
         );
         $tokenFields = array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
@@ -634,6 +640,17 @@ class FormHelper extends Helper
         }
 
         return $this->formatTemplate('hiddenBlock', ['content' => $out]);
+    }
+
+    /**
+     * Get Session id for FormProtector
+     * Must be the same as in FormProtectionComponent
+     *
+     * @return string
+     */
+    protected function _getFormProtectorSessionId(): string
+    {
+        return $this->_View->getRequest()->getSession()->id();
     }
 
     /**
@@ -1133,6 +1150,7 @@ class FormHelper extends Helper
             'content' => $result,
             'error' => $error,
             'errorSuffix' => $errorSuffix,
+            'label' => $label,
             'options' => $options,
         ]);
 
@@ -1180,7 +1198,8 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
-            'required' => $options['options']['required'] ? ' required' : '',
+            'label' => $options['label'] ?? '',
+            'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
             'templateVars' => $options['options']['templateVars'] ?? [],
         ]);
@@ -1581,8 +1600,8 @@ class FormHelper extends Helper
 
     /**
      * Missing method handler - implements various simple input types. Is used to create inputs
-     * of various types. e.g. `$this->Form->text();` will create `<input type="text"/>` while
-     * `$this->Form->range();` will create `<input type="range"/>`
+     * of various types. e.g. `$this->Form->text();` will create `<input type="text">` while
+     * `$this->Form->range();` will create `<input type="range">`
      *
      * ### Usage
      *
@@ -1592,7 +1611,7 @@ class FormHelper extends Helper
      *
      * Will make an input like:
      *
-     * `<input type="search" id="UserQuery" name="User[query]" value="test"/>`
+     * `<input type="search" id="UserQuery" name="User[query]" value="test">`
      *
      * The first argument to an input type should always be the fieldname, in `Model.field` format.
      * The second argument should always be an array of attributes for the input.
@@ -1796,7 +1815,7 @@ class FormHelper extends Helper
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
-     * @return string An `<a />` element.
+     * @return string An `<a>` element.
      * @link https://book.cakephp.org/4/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postLink(string $title, $url = null, array $options = []): string
@@ -1892,7 +1911,7 @@ class FormHelper extends Helper
     }
 
     /**
-     * Creates a submit button element. This method will generate `<input />` elements that
+     * Creates a submit button element. This method will generate `<input>` elements that
      * can be used to submit, and reset forms by using $options. image submits can be created by supplying an
      * image path for $caption.
      *

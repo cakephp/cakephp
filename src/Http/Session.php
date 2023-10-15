@@ -23,6 +23,7 @@ use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
 use SessionHandlerInterface;
+use function Cake\Core\env;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
@@ -526,7 +527,6 @@ class Session
             $data = Hash::insert($data, $key, $val);
         }
 
-        /** @psalm-suppress PossiblyNullArgument */
         $this->_overwrite($_SESSION, $data);
     }
 

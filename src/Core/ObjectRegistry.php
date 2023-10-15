@@ -39,7 +39,8 @@ use Traversable;
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
- * @template TObject
+ * @template TObject of object
+ * @template-implements \IteratorAggregate<string, TObject>
  */
 abstract class ObjectRegistry implements Countable, IteratorAggregate
 {
@@ -336,7 +337,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object $object instance to store in the registry
      * @return $this
      * @psalm-param TObject $object
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function set(string $name, object $object)
     {
@@ -351,7 +351,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
         $this->_loaded[$objName] = $object;
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $this;
     }
 
@@ -362,7 +361,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name The name of the object to remove from the registry.
      * @return $this
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function unload(string $name)
     {
@@ -377,7 +375,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
         unset($this->_loaded[$name]);
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $this;
     }
 

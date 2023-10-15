@@ -413,4 +413,27 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         }
         $this->assertCount(10, array_unique($results));
     }
+
+    /**
+     * Ensure that tokens can be regenerated
+     */
+    public function testRegenerateToken(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/articles/',
+        ]);
+        $updated = SessionCsrfProtectionMiddleware::replaceToken($request);
+        $this->assertNotSame($request, $updated);
+
+        $session = $updated->getSession()->read('csrfToken');
+        $this->assertNotEmpty($session);
+        $attribute = $updated->getAttribute('csrfToken');
+        $this->assertNotEmpty($attribute);
+        $this->assertNotEquals($session, $attribute, 'Should not be equal because of salting');
+
+        $updated = SessionCsrfProtectionMiddleware::replaceToken($request, 'custom-key');
+        $this->assertNotSame($request, $updated);
+        $this->assertNotEmpty($updated->getSession()->read('custom-key'));
+        $this->assertNotEmpty($updated->getAttribute('custom-key'));
+    }
 }

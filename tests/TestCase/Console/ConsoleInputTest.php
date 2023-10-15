@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleInput;
 use Cake\Console\Exception\ConsoleException;
 use Cake\TestSuite\TestCase;
+use function Cake\Core\env;
 
 /**
  * ConsoleInput test.

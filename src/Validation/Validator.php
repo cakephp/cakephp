@@ -23,6 +23,9 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\UploadedFileInterface;
 use Traversable;
+use function Cake\Core\deprecationWarning;
+use function Cake\Core\getTypeName;
+use function Cake\I18n\__d;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -31,6 +34,8 @@ use Traversable;
  * Implements ArrayAccess to easily modify rules in the set
  *
  * @link https://book.cakephp.org/4/en/core-libraries/validation.html
+ * @template-implements \ArrayAccess<string, \Cake\Validation\ValidationSet>
+ * @template-implements \IteratorAggregate<string, \Cake\Validation\ValidationSet>
  */
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
@@ -193,7 +198,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function __construct()
     {
-        $this->_useI18n = function_exists('__d');
+        $this->_useI18n = function_exists('\Cake\I18n\__d');
         $this->_providers = self::$_defaultProviders;
     }
 
@@ -2349,8 +2354,30 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validation::isArray()
      * @return $this
      */
+    public function array(string $field, ?string $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'array', $extra + [
+            'rule' => 'isArray',
+        ]);
+    }
+
+    /**
+     * Add a validation rule to ensure that a field contains an array.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param callable|string|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isArray()
+     * @return $this
+     * @deprecated 4.5.0 Use Validator::array() instead.
+     */
     public function isArray(string $field, ?string $message = null, $when = null)
     {
+        deprecationWarning('`Validator::isArray()` is deprecated, use `Validator::array()` instead');
+
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'isArray', $extra + [

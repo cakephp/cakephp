@@ -26,6 +26,7 @@ use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Exception;
+use function Cake\Core\namespaceSplit;
 
 /**
  * Cake TestFixture is responsible for building and destroying tables to be used
@@ -335,7 +336,8 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     {
         if (!empty($this->records)) {
             [$fields, $values, $types] = $this->_getRecords();
-            $query = $connection->newQuery()
+            /** @var \Cake\Database\Connection $connection */
+            $query = $connection->insertQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
 

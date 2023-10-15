@@ -19,7 +19,6 @@ namespace Cake\View\Helper;
 use Cake\I18n\FrozenTime;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
-use DateTimeInterface;
 use Exception;
 
 /**
@@ -226,7 +225,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new FrozenTime($dateString))->setTimeZone($timezone)->toAtomString();
+        return (new FrozenTime($dateString))->setTimezone($timezone)->toAtomString();
     }
 
     /**
@@ -240,7 +239,7 @@ class TimeHelper extends Helper
     {
         $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new FrozenTime($dateString))->setTimeZone($timezone)->toRssString();
+        return (new FrozenTime($dateString))->setTimezone($timezone)->toRssString();
     }
 
     /**
@@ -268,8 +267,7 @@ class TimeHelper extends Helper
             'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        if ($options['timezone'] && $dateTime instanceof DateTimeInterface) {
+        if ($options['timezone'] && is_object($dateTime) && method_exists($dateTime, 'setTimezone')) {
             $dateTime = $dateTime->setTimezone($options['timezone']);
             unset($options['timezone']);
         }

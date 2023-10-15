@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use function Cake\Core\env;
 
 /**
  * RedisEngineTest class

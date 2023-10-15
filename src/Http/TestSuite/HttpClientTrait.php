@@ -115,3 +115,10 @@ trait HttpClientTrait
         Client::addMockResponse('DELETE', $url, $response, $options);
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Http\TestSuite\HttpClientTrait', 
+    'Cake\TestSuite\HttpClientTrait'
+);
+// phpcs:enable

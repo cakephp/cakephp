@@ -27,6 +27,7 @@ use Cake\I18n\FrozenTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use TestApp\Model\Entity\ProtectedUser;
+use function Cake\Core\env;
 
 /**
  * Test case for DigestAuthentication

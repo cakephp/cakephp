@@ -25,6 +25,9 @@ use Traversable;
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
  * methods to dynamically add or remove validation rules
+ *
+ * @template-implements \ArrayAccess<string, \Cake\Validation\ValidationRule>
+ * @template-implements \IteratorAggregate<string, \Cake\Validation\ValidationRule>
  */
 class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
 {

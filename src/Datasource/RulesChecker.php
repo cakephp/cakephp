@@ -112,7 +112,7 @@ class RulesChecker
     public function __construct(array $options = [])
     {
         $this->_options = $options;
-        $this->_useI18n = function_exists('__d');
+        $this->_useI18n = function_exists('\Cake\I18n\__d');
     }
 
     /**

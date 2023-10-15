@@ -23,6 +23,7 @@ use Cake\Event\EventManager;
 use Cake\Utility\Hash;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -232,6 +233,17 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function getErrors(): array
     {
         return $this->_errors;
+    }
+
+    /**
+     * Returns validation errors for the given field
+     *
+     * @param string $field Field name to get the errors from.
+     * @return array The validation errors for the given field.
+     */
+    public function getError(string $field): array
+    {
+        return $this->_errors[$field] ?? [];
     }
 
     /**

@@ -39,7 +39,9 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly($count))
             ->method('addTestFile');
 
-        $suite->addTestDirectory($testFolder);
+        $this->deprecated(function () use ($suite, $testFolder) {
+            $suite->addTestDirectory($testFolder);
+        });
     }
 
     /**
@@ -58,7 +60,9 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly($count))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($testFolder);
+        $this->deprecated(function () use ($suite, $testFolder) {
+            $suite->addTestDirectoryRecursive($testFolder);
+        });
     }
 
     /**
@@ -83,7 +87,9 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($path);
+        $this->deprecated(function () use ($suite, $path) {
+            $suite->addTestDirectoryRecursive($path);
+        });
 
         $fs->deleteDir($path);
     }
@@ -109,7 +115,9 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($path);
+        $this->deprecated(function () use ($suite, $path) {
+            $suite->addTestDirectoryRecursive($path);
+        });
 
         $fs->deleteDir($path);
     }

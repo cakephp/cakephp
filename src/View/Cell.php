@@ -245,7 +245,6 @@ abstract class Cell implements EventDispatcherInterface
             return $default;
         }
 
-        /** @psalm-suppress PossiblyFalseOperand */
         return $this->_cache + $default;
     }
 

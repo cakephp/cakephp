@@ -17,11 +17,15 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
 use Countable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
  * be a database result
+ *
+ * @template T of \Cake\Datasource\EntityInterface|array
+ * @implements \Cake\Datasource\ResultSetInterface<T>
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
 {
@@ -42,5 +46,16 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
         }
 
         return count($this->toArray());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __debugInfo(): array
+    {
+        $parentInfo = parent::__debugInfo();
+        $limit = Configure::read('App.ResultSetDebugLimit', 10);
+
+        return array_merge($parentInfo, ['items' => $this->take($limit)->toArray()]);
     }
 }

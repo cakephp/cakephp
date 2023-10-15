@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Http\TestSuite\HttpClientTrait;
+use function Cake\Core\deprecationWarning;
 
-class_alias(HttpClientTrait::class, 'Cake\TestSuite\HttpClientTrait');
+deprecationWarning(
+    'Since 4.3.0: Cake\TestSuite\HttpClientTrait is deprecated. ' .
+    'Use Cake\Http\TestSuite\HttpClientTrait instead.'
+);
+class_exists('Cake\Http\TestSuite\HttpClientTrait');
