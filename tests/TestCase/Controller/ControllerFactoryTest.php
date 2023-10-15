@@ -884,11 +884,12 @@ class ControllerFactoryTest extends TestCase
      */
     public function testInvokePassedParamUnsupportedReflectionType(): void
     {
+        $this->skipIf(version_compare(PHP_VERSION, '8.0', '<='), 'Unions require PHP 8');
         $request = new ServerRequest([
-            'url' => 'test_plugin_three/dependencies/unsupportedTypedUnion',
+            'url' => 'test_plugin_three/unionDependencies/typedUnion',
             'params' => [
                 'plugin' => null,
-                'controller' => 'Dependencies',
+                'controller' => 'UnionDependencies',
                 'action' => 'typedUnion',
                 'pass' => ['1'],
             ],
