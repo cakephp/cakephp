@@ -23,7 +23,6 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Traversable;
-use function Cake\Core\deprecationWarning;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -132,7 +131,7 @@ trait EntityTrait
      *
      * @var bool
      */
-    protected $_hasBeenVisited = false;
+    protected bool $_hasBeenVisited = false;
 
     /**
      * Whether the presence of a field is checked when accessing a property.
