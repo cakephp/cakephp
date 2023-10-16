@@ -46,8 +46,7 @@ class PluginListCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $loadedPluginsCollection = Plugin::getCollection();
-        $instance = new PluginConfig();
-        $config = $instance->getAppConfig();
+        $config = PluginConfig::getAppConfig();
 
         $table = [
             ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional'],

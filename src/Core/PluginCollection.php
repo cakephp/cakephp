@@ -79,8 +79,7 @@ class PluginCollection implements Iterator, Countable
         foreach ($plugins as $plugin) {
             $this->add($plugin);
         }
-        $pluginConfig = new PluginConfig();
-        $pluginConfig->loadInstallerConfig();
+        PluginConfig::loadInstallerConfig();
     }
 
     /**
@@ -144,8 +143,7 @@ class PluginCollection implements Iterator, Countable
         // Ensure plugin config is loaded each time. This is necessary primarily
         // for testing because the Configure::clear() call in TestCase::tearDown()
         // wipes out all configuration including plugin paths config.
-        $instance = new PluginConfig();
-        $instance->loadInstallerConfig();
+        PluginConfig::loadInstallerConfig();
 
         $path = Configure::read('plugins.' . $name);
         if ($path) {

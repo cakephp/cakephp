@@ -35,7 +35,7 @@ class PluginConfig
      * @internal
      * @return void
      */
-    public function loadInstallerConfig(): void
+    public static function loadInstallerConfig(): void
     {
         if (Configure::check('plugins')) {
             return;
@@ -59,9 +59,9 @@ class PluginConfig
      *
      * @return array
      */
-    public function getAppConfig(): array
+    public static function getAppConfig(): array
     {
-        $this->loadInstallerConfig();
+        self::loadInstallerConfig();
 
         // phpcs:ignore
         $pluginLoadConfig = @include CONFIG . 'plugins.php';

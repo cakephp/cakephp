@@ -83,7 +83,6 @@ PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');
-        $config = new PluginConfig();
         $result = [
             'TestPlugin' => [
                 'isLoaded' => true,
@@ -108,7 +107,7 @@ PHP;
                 'services' => true,
             ],
         ];
-        $this->assertSame($result, $config->getAppConfig());
+        $this->assertSame($result, PluginConfig::getAppConfig());
     }
 
     public function testOnlyOnePlugin(): void
@@ -132,7 +131,6 @@ return [
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
-        $config = new PluginConfig();
         $result = [
             'TestPlugin' => [
                 'isLoaded' => true,
@@ -149,7 +147,7 @@ PHP;
                 'isLoaded' => false,
             ],
         ];
-        $this->assertSame($result, $config->getAppConfig());
+        $this->assertSame($result, PluginConfig::getAppConfig());
     }
 
     public function testSpecificEnvironmentsAndHooks(): void
@@ -174,7 +172,6 @@ return [
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
-        $config = new PluginConfig();
         $result = [
             'OtherPlugin' => [
                 'isLoaded' => true,
@@ -199,7 +196,7 @@ PHP;
                 'services' => false,
             ],
         ];
-        $this->assertSame($result, $config->getAppConfig());
+        $this->assertSame($result, PluginConfig::getAppConfig());
     }
 
     public function testUnknownPlugin(): void
@@ -223,7 +220,6 @@ return [
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
-        $config = new PluginConfig();
         $this->assertSame([
             'TestPlugin' => [
                 'isLoaded' => false,
@@ -235,6 +231,6 @@ PHP;
                 'isLoaded' => false,
                 'isUnknown' => true,
             ],
-        ], $config->getAppConfig());
+        ], PluginConfig::getAppConfig());
     }
 }
