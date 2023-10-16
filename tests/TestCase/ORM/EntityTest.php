@@ -1718,4 +1718,37 @@ class EntityTest extends TestCase
         $return = $entity->isOriginalField('foo');
         $this->assertSame(true, $return);
     }
+
+    /**
+     * Test infinite recursion in getErrors and hasErrors
+     * See https://github.com/cakephp/cakephp/issues/17318
+     */
+    public function testGetErrorsRecursionError()
+    {
+        $entity = new Entity();
+        $secondEntity = new Entity();
+
+        $entity->set('child', $secondEntity);
+        $secondEntity->set('parent', $entity);
+
+        $expectedErrors = ['name' => ['_required' => 'Must be present.']];
+        $secondEntity->setErrors($expectedErrors);
+
+        $this->assertEquals(['child' => $expectedErrors], $entity->getErrors());
+    }
+
+    /**
+     * Test infinite recursion in getErrors and hasErrors
+     * See https://github.com/cakephp/cakephp/issues/17318
+     */
+    public function testHasErrorsRecursionError()
+    {
+        $entity = new Entity();
+        $secondEntity = new Entity();
+
+        $entity->set('child', $secondEntity);
+        $secondEntity->set('parent', $entity);
+
+        $this->assertFalse($entity->hasErrors());
+    }
 }
