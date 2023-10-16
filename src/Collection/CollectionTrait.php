@@ -604,14 +604,37 @@ trait CollectionTrait
             $rowVal = $options['valuePath'];
 
             if (!$options['groupPath']) {
-                $mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
+                $mapKey = $rowKey($value, $key);
+                if ($mapKey === null) {
+                    throw new InvalidArgumentException(
+                        'Cannot index by path that does not exist or contains a null value. ' .
+                        'Use a callback to return a default value for that path.'
+                    );
+                }
+
+                $mapReduce->emit($rowVal($value, $key), $mapKey);
 
                 return null;
             }
 
             $key = $options['groupPath']($value, $key);
+            if ($key === null) {
+                throw new InvalidArgumentException(
+                    'Cannot group by path that does not exist or contains a null value. ' .
+                    'Use a callback to return a default value for that path.'
+                );
+            }
+
+            $mapKey = $rowKey($value, $key);
+            if ($mapKey === null) {
+                throw new InvalidArgumentException(
+                    'Cannot index by path that does not exist or contains a null value. ' .
+                    'Use a callback to return a default value for that path.'
+                );
+            }
+
             $mapReduce->emitIntermediate(
-                [$rowKey($value, $key) => $rowVal($value, $key)],
+                [$mapKey => $rowVal($value, $key)],
                 $key
             );
         };
