@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\SelectBoxWidget;
+use TestApp\Model\Enum\ArticleStatus;
 
 /**
  * SelectBox test case
@@ -241,6 +242,28 @@ class SelectBoxWidgetTest extends TestCase
             ['option' => ['value' => '1x']], 'one x', '/option',
             ['option' => ['value' => '2', 'selected' => 'selected']], 'two', '/option',
             ['option' => ['value' => '2x']], 'two x', '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testRenderSelectedEnum(): void
+    {
+        $select = new SelectBoxWidget($this->templates);
+        $data = [
+            'id' => 'status',
+            'name' => 'status',
+            'val' => ArticleStatus::PUBLISHED,
+            'options' => [
+                'Y' => 'Published',
+                'N' => 'Unpublished',
+            ],
+        ];
+        $result = $select->render($data, $this->context);
+        $expected = [
+            'select' => ['name' => 'status', 'id' => 'status'],
+            ['option' => ['value' => 'Y', 'selected' => 'selected']], 'Published', '/option',
+            ['option' => ['value' => 'N']], 'Unpublished', '/option',
             '/select',
         ];
         $this->assertHtml($expected, $result);

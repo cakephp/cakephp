@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use ArrayAccess;
+use BackedEnum;
 use Cake\View\Form\ContextInterface;
 use Traversable;
 use function Cake\Core\h;
@@ -319,7 +320,11 @@ class SelectBoxWidget extends BasicWidget
             return false;
         }
         if (!is_array($selected)) {
-            $selected = $selected === false ? '0' : $selected;
+            if ($selected === false) {
+                $selected = '0';
+            } elseif ($selected instanceof BackedEnum) {
+                $selected = $selected->value;
+            }
 
             return $key === (string)$selected;
         }
