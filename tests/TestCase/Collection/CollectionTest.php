@@ -1241,6 +1241,45 @@ class CollectionTest extends TestCase
         $this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
     }
 
+    public function testCombineNullKey(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+            ['id' => null, 'name' => 'bar', 'parent' => 'b'],
+            ['id' => 3, 'name' => 'baz', 'parent' => 'a'],
+        ];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+        (new Collection($items))->combine('id', 'name');
+    }
+
+    public function testCombineNullGroup(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+            ['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+            ['id' => 3, 'name' => 'baz', 'parent' => null],
+        ];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot group by path that does not exist or contains a null value');
+        (new Collection($items))->combine('id', 'name', 'parent');
+    }
+
+    public function testCombineGroupNullKey(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+            ['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+            ['id' => null, 'name' => 'baz', 'parent' => 'a'],
+        ];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+        (new Collection($items))->combine('id', 'name', 'parent');
+    }
+
     /**
      * Tests the nest method with only one level
      */
