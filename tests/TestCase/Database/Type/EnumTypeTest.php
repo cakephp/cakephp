@@ -26,6 +26,7 @@ use PDO;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\Priority;
+use ValueError;
 
 /**
  * Test for the String type.
@@ -159,6 +160,12 @@ class EnumTypeTest extends TestCase
         $this->assertNull($this->intType->toPHP(null, $this->driver));
         $this->assertSame(Priority::HIGH, $this->intType->toPHP(3, $this->driver));
         $this->assertSame(Priority::HIGH, $this->intType->toPHP('3', $this->driver));
+    }
+
+    public function testToPHPInvalidEnumValue(): void
+    {
+        $this->expectException(ValueError::class);
+        $this->stringType->toPHP('Z', $this->driver);
     }
 
     /**
