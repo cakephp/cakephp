@@ -108,7 +108,7 @@ PHP;
                 'services' => true,
             ],
         ];
-        $this->assertSame($result, $config->getConfig());
+        $this->assertSame($result, $config->getAppConfig());
     }
 
     public function testOnlyOnePlugin(): void
@@ -149,7 +149,7 @@ PHP;
                 'isLoaded' => false,
             ],
         ];
-        $this->assertSame($result, $config->getConfig());
+        $this->assertSame($result, $config->getAppConfig());
     }
 
     public function testSpecificEnvironmentsAndHooks(): void
@@ -199,7 +199,7 @@ PHP;
                 'services' => false,
             ],
         ];
-        $this->assertSame($result, $config->getConfig());
+        $this->assertSame($result, $config->getAppConfig());
     }
 
     public function testUnknownPlugin(): void
@@ -235,6 +235,6 @@ PHP;
                 'isLoaded' => false,
                 'isUnknown' => true,
             ],
-        ], $config->getConfig());
+        ], $config->getAppConfig());
     }
 }

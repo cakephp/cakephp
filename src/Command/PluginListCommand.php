@@ -47,7 +47,7 @@ class PluginListCommand extends Command
     {
         $loadedPluginsCollection = Plugin::getCollection();
         $instance = new PluginConfig();
-        $config = $instance->getConfig();
+        $config = $instance->getAppConfig();
 
         $table = [
             ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional'],
