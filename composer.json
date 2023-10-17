@@ -31,7 +31,7 @@
         "laminas/laminas-diactoros": "^3.0",
         "laminas/laminas-httphandlerrunner": "^2.6",
         "league/container": "^4.2",
-        "psr/container": "^2.0",
+        "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.0.2",
         "psr/http-message": "^2.0",
