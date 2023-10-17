@@ -1795,3 +1795,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         return $this->_autoFields;
     }
 }
+
+// phpcs:disable
+class_exists('Cake\ORM\Query');
+// phpcs:enable
