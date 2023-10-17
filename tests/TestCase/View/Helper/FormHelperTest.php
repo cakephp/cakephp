@@ -37,6 +37,7 @@ use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
+use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -4490,6 +4491,24 @@ class FormHelperTest extends TestCase
             '/label',
         ];
         $this->assertHtml($expected, $result);
+
+        $article = new Article([
+            'status' => ArticleStatus::UNPUBLISHED,
+        ]);
+        $this->Form->create($article);
+        $result = $this->Form->radio('status', ['Y' => 'Published', 'N' => 'Unpublished']);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'status', 'value' => '', 'id' => 'status'],
+            ['label' => ['for' => 'status-y']],
+            ['input' => ['type' => 'radio', 'name' => 'status', 'value' => 'Y', 'id' => 'status-y']],
+            'Published',
+            '/label',
+            ['label' => ['for' => 'status-n']],
+            ['input' => ['type' => 'radio', 'name' => 'status', 'value' => 'N', 'id' => 'status-n', 'checked' => 'checked']],
+            'Unpublished',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -4872,6 +4891,19 @@ class FormHelperTest extends TestCase
             'select' => ['name' => 'Model[field]'],
             ['option' => ['value' => '0', 'selected' => 'selected']], 'No', '/option',
             ['option' => ['value' => '1']], 'Yes', '/option',
+            '/select',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $article = new Article([
+            'status' => ArticleStatus::UNPUBLISHED,
+        ]);
+        $this->Form->create($article);
+        $result = $this->Form->select('status', ['Y' => 'Published', 'N' => 'Unpublished']);
+        $expected = [
+            'select' => ['name' => 'status'],
+            ['option' => ['value' => 'Y']], 'Published', '/option',
+            ['option' => ['value' => 'N', 'selected' => 'selected']], 'Unpublished', '/option',
             '/select',
         ];
         $this->assertHtml($expected, $result);
@@ -6429,6 +6461,16 @@ class FormHelperTest extends TestCase
         $result = $this->Form->hidden('field', ['value' => 'my value']);
         $expected = [
             'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $article = new Article([
+            'status' => ArticleStatus::UNPUBLISHED,
+        ]);
+        $this->Form->create($article);
+        $result = $this->Form->hidden('status');
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'status', 'value' => 'N'],
         ];
         $this->assertHtml($expected, $result);
     }

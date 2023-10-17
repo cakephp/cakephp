@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Helper;
 
+use BackedEnum;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Form\FormProtector;
@@ -2344,6 +2345,10 @@ class FormHelper extends Helper
             $options['val'] = $options['default'];
         }
         unset($options['value'], $options['default']);
+
+        if ($options['val'] instanceof BackedEnum) {
+            $options['val'] = $options['val']->value;
+        }
 
         if ($context->hasError($field)) {
             $options = $this->addClass($options, $this->_config['errorClass']);
