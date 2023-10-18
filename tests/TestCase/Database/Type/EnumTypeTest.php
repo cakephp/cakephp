@@ -136,7 +136,7 @@ class EnumTypeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('`invalid` is not a valid value for `TestApp\Model\Enum\ArticleStatus`');
-        $this->assertSame('Y', $this->stringType->toDatabase('invalid', $this->driver));
+        $this->stringType->toDatabase('invalid', $this->driver);
     }
 
     /**
