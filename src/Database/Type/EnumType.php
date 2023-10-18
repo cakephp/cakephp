@@ -118,7 +118,7 @@ class EnumType extends BaseType
             }
         }
 
-        return $this->enumClassName::tryFrom($value);
+        return $this->enumClassName::from($value);
     }
 
     /**
