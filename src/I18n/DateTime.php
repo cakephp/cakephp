@@ -607,5 +607,5 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
 }
 
 // phpcs:disable
-class_alias(DateTime::class, 'Cake\I18n\FrozenTime');
+class_alias('Cake\I18n\DateTime', 'Cake\I18n\FrozenTime');
 // phpcs:enable
