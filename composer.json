@@ -38,7 +38,7 @@
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
         "psr/log": "^3.0",
-        "psr/simple-cache": "^3.0"
+        "psr/simple-cache": "^2.0 || ^3.0"
     },
     "replace": {
         "cakephp/cache": "self.version",
