@@ -801,21 +801,20 @@ class Validation
             return true;
         }
 
-        if (
-            !is_string($check) &&
-            !is_int($check)
-        ) {
-            return false;
-        }
-
+        $backingType = null;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $backingType = (string)$reflectionEnum->getBackingType();
+            $backingType = $reflectionEnum->getBackingType();
         } catch (ReflectionException) {
-            return false;
         }
 
-        if (get_debug_type($check) !== $backingType) {
+        if ($backingType === null) {
+            throw new InvalidArgumentException(
+                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+            );
+        }
+
+        if (get_debug_type($check) !== (string)$backingType) {
             return false;
         }
 
