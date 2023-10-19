@@ -18,6 +18,8 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Mock as MockAdapter;
 use Cake\Http\Client\Adapter\Stream;
@@ -100,10 +102,17 @@ use Psr\Http\Message\ResponseInterface;
  * a proxy if you need to use one. The type sub option can be used to
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Http\Client>
  */
-class Client implements ClientInterface
+class Client implements ClientInterface, EventDispatcherInterface
 {
     use InstanceConfigTrait;
+
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Http\Client>
+     */
+    use EventDispatcherTrait;
 
     /**
      * Default configuration for the client.
@@ -479,7 +488,9 @@ class Client implements ClientInterface
         }
 
         do {
+            $this->dispatchEvent('Client.beforeSend', [$request, $options]);
             $response = $this->_sendRequest($request, $options);
+            $this->dispatchEvent('Client.afterSend', [$request, $options, $response]);
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {

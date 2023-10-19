@@ -26,6 +26,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * HTTP client test.
@@ -1148,5 +1149,48 @@ class ClientTest extends TestCase
         $this->expectExceptionMessage('Match callback must');
 
         $client->post('http://example.com/path');
+    }
+
+    /**
+     * Make sure Client.beforeSend is being triggered
+     */
+    public function testBeforeSendEventDispatched(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one);
+
+        $client = new Client();
+        $eventTriggered = false;
+        $client->getEventManager()->on('Client.beforeSend', function ($event, $request, $options) use (&$eventTriggered): void {
+            $this->assertInstanceOf(RequestInterface::class, $request);
+            $this->assertTrue($options['clientOption']);
+            $eventTriggered = true;
+        });
+
+        $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
+        $this->assertTrue($eventTriggered);
+        $this->assertSame($one, $response);
+    }
+
+    /**
+     * Make sure Client.afterSend is being triggered
+     */
+    public function testAfterSendEventDispatched(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one);
+
+        $client = new Client();
+        $eventTriggered = false;
+        $client->getEventManager()->on('Client.afterSend', function ($event, $request, $options, $response) use (&$eventTriggered, $one): void {
+            $this->assertInstanceOf(RequestInterface::class, $request);
+            $this->assertSame($one, $response);
+            $this->assertTrue($options['clientOption']);
+            $eventTriggered = true;
+        });
+
+        $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
+        $this->assertTrue($eventTriggered);
+        $this->assertSame($one, $response);
     }
 }
