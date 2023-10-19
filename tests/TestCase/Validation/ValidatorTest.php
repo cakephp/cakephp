@@ -2722,7 +2722,7 @@ class ValidatorTest extends TestCase
 
         $fieldName = 'status';
         $rule = 'enum';
-        $expectedMessage = 'The provided value must be a `\TestApp\Model\Enum\ArticleStatus` enum instance or value';
+        $expectedMessage = 'The provided value must be one of `Y`, `N`';
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, ArticleStatus::class);
     }
 

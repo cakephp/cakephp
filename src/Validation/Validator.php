@@ -2059,10 +2059,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
+            $cases = array_map(fn ($case) => $case->value, $enumClassName::cases());
+            $caseOptions = implode('`, `', $cases);
             if (!$this->_useI18n) {
-                $message = sprintf('The provided value must be a `\%s` enum instance or value', $enumClassName);
+                $message = sprintf('The provided value must be one of `%s`', $caseOptions);
             } else {
-                $message = __d('cake', 'The provided value must be a `\{0}` enum instance or value', $enumClassName);
+                $message = __d('cake', 'The provided value must be one of `{0}`', $caseOptions);
             }
         }
 
