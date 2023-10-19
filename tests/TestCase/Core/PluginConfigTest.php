@@ -55,9 +55,7 @@ class PluginConfigTest extends TestCase
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
         }
-        if (file_exists($this->pluginsConfigPath)) {
-            file_put_contents($this->pluginsConfigPath, $this->originalPluginsConfigContent);
-        }
+        file_put_contents($this->pluginsConfigPath, $this->originalPluginsConfigContent);
     }
 
     public function testSimpleConfig(): void
@@ -230,6 +228,30 @@ PHP;
             'UnknownPlugin' => [
                 'isLoaded' => false,
                 'isUnknown' => true,
+            ],
+        ], PluginConfig::getAppConfig());
+    }
+
+    public function testNoPluginConfig(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path',
+        'OtherPlugin' => '/config/path',
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+        unlink($this->pluginsConfigPath);
+
+        $this->assertSame([
+            'TestPlugin' => [
+                'isLoaded' => false,
+            ],
+            'OtherPlugin' => [
+                'isLoaded' => false,
             ],
         ], PluginConfig::getAppConfig());
     }

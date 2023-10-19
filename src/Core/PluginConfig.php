@@ -67,6 +67,8 @@ class PluginConfig
         $pluginLoadConfig = @include CONFIG . 'plugins.php';
         if (is_array($pluginLoadConfig)) {
             $pluginLoadConfig = Hash::normalize($pluginLoadConfig);
+        } else {
+            $pluginLoadConfig = [];
         }
 
         $result = [];
