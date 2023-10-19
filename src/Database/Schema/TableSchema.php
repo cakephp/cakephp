@@ -385,6 +385,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $this->_columns[$name]['type'] = $type;
         $this->_typeMap[$name] = $type;
 
+        unset($this->_columns[$name]['baseType']);
+
         return $this;
     }
 
