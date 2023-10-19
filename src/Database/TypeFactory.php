@@ -162,10 +162,3 @@ class TypeFactory
         static::$_builtTypes = [];
     }
 }
-
-// phpcs:disable
-class_alias(
-    'Cake\Database\TypeFactory',
-    'Cake\Database\Type'
-);
-// phpcs:enable
