@@ -216,7 +216,6 @@ class SocketTest extends TestCase
         try {
             $this->assertTrue($this->Socket->connect());
 
-            $config = ['host' => '127.0.0.1', 'timeout' => 1];
             $this->Socket = new Socket($config);
             $this->assertNull($this->Socket->read(1024 * 1024));
             $this->assertSame('2: ' . 'Connection timed out', $this->Socket->lastError());
