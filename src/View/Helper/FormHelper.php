@@ -1278,24 +1278,16 @@ class FormHelper extends Helper
         }
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
-        switch (true) {
-            case isset($options['checked']):
-                return 'checkbox';
-            case isset($options['options']):
-                return 'select';
-            case in_array($fieldName, ['passwd', 'password'], true):
-                return 'password';
-            case in_array($fieldName, ['tel', 'telephone', 'phone'], true):
-                return 'tel';
-            case $fieldName === 'email':
-                return 'email';
-            case isset($options['rows']) || isset($options['cols']):
-                return 'textarea';
-            case $fieldName === 'year':
-                return 'year';
-        }
-
-        return $type;
+        return match (true) {
+            isset($options['checked']) => 'checkbox',
+            isset($options['options']) => 'select',
+            in_array($fieldName, ['passwd', 'password'], true) => 'password',
+            in_array($fieldName, ['tel', 'telephone', 'phone'], true) => 'tel',
+            $fieldName === 'email' => 'email',
+            isset($options['rows']) || isset($options['cols']) => 'textarea',
+            $fieldName === 'year' => 'year',
+            default => $type,
+        };
     }
 
     /**
