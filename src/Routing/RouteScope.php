@@ -33,8 +33,9 @@ class RouteScope
      */
     public function matchesPath(string $path): bool
     {
-        // TODO implement this.
-        return true;
+        $scopePath = $this->builder->path();
+
+        return str_starts_with($path, $scopePath);
     }
 
     /**

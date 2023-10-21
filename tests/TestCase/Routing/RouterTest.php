@@ -3164,6 +3164,42 @@ class RouterTest extends TestCase
         Router::routes();
     }
 
+    public function testLazyScopeEvaluation(): void
+    {
+        $routes = Router::createRouteBuilder('/');
+        $routes->scope('/path', function (RouteBuilder $builder) {
+            $builder->connect('/articles', ['controller' => 'Articles']);
+        });
+        $routes->scope('/alternate', function () {
+            throw new RuntimeException('Should not be called');
+        });
+        $request = new ServerRequest([
+            'url' => '/path/articles',
+        ]);
+        $params = Router::parseRequest($request);
+        $this->assertEquals('Articles', $params['controller']);
+        $this->assertEquals('index', $params['action']);
+    }
+
+    public function testLazyScopeEvaluationNested(): void
+    {
+        $routes = Router::createRouteBuilder('/');
+        $routes->scope('/path', function (RouteBuilder $builder) {
+            $builder->scope('/other', function (RouteBuilder $builder) {
+                $builder->connect('/articles', ['controller' => 'Articles']);
+            });
+        });
+        $routes->scope('/alternate', function () {
+            throw new RuntimeException('Should not be called');
+        });
+        $request = new ServerRequest([
+            'url' => '/path/other/articles',
+        ]);
+        $params = Router::parseRequest($request);
+        $this->assertEquals('Articles', $params['controller']);
+        $this->assertEquals('index', $params['action']);
+    }
+
     /**
      * Test that prefix() creates a scope.
      */
