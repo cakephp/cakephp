@@ -98,7 +98,7 @@ class CacheClearGroupCommand extends Command
                 ));
                 $this->abort();
             } else {
-                $io->success(sprintf('Group "%s" was cleared.', $group));
+                $io->success(sprintf('Group "%s" was cleared.', $groupConfig));
             }
         }
 
