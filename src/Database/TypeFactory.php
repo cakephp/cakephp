@@ -88,12 +88,11 @@ class TypeFactory
      */
     public static function buildAll(): array
     {
-        $result = [];
         foreach (static::$_types as $name => $type) {
-            $result[$name] = static::$_builtTypes[$name] ?? static::build($name);
+            static::$_builtTypes[$name] ??= static::build($name);
         }
 
-        return $result;
+        return static::$_builtTypes;
     }
 
     /**
@@ -106,7 +105,6 @@ class TypeFactory
     public static function set(string $name, TypeInterface $instance): void
     {
         static::$_builtTypes[$name] = $instance;
-        static::$_types[$name] = $instance::class;
     }
 
     /**

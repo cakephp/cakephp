@@ -14,14 +14,12 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         'core.ColumnSchemaAwareTypeValues',
     ];
 
-    /**
-     * @var \Cake\Database\TypeInterface|null
-     */
-    public $textType;
+    protected array $typeMap;
 
     public function setUp(): void
     {
-        $this->textType = TypeFactory::build('text');
+        $this->typeMap = TypeFactory::getMap();
+
         TypeFactory::map('text', ColumnSchemaAwareType::class);
         // For SQLServer.
         TypeFactory::map('nvarchar', ColumnSchemaAwareType::class);
@@ -32,11 +30,8 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        TypeFactory::set('text', $this->textType);
 
-        $map = TypeFactory::getMap();
-        unset($map['nvarchar']);
-        TypeFactory::setMap($map);
+        TypeFactory::setMap($this->typeMap);
     }
 
     public function testCustomTypesCanBeUsedInFixtures(): void
