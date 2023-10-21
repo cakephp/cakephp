@@ -941,7 +941,7 @@ class RouteBuilder
             'namePrefix' => $namePrefix,
             'middleware' => $this->middleware,
         ]);
-        $callback($builder);
+        $this->_collection->addScope($builder, $callback);
 
         return $this;
     }

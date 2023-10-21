@@ -18,6 +18,7 @@ namespace Cake\Routing;
 
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Route\Route;
 use Closure;
 use InvalidArgumentException;
@@ -61,6 +62,13 @@ class RouteCollection
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
     protected array $_paths = [];
+
+    /**
+     * A mapping of paths to unresolved routing scopes
+     *
+     * @var array<string, \Cake\Routing\RouteScope>
+     */
+    protected array $unresolvedScopes = [];
 
     /**
      * A map of middleware names and the related objects.
@@ -127,6 +135,62 @@ class RouteCollection
     }
 
     /**
+     * Add a scope to the collection.
+     *
+     * Scope builders allow deferred building of routes.
+     * This helps improve performance of routing during request handling.
+     *
+     * @param \Cake\Routing\RouteBuilder $builder
+     * @param \Closure $callback The callback that builds routes.
+     * @return void
+     */
+    public function addScope(RouteBuilder $builder, Closure $callback): void
+    {
+        $this->unresolvedScopes[] = new RouteScope($builder, $callback);
+    }
+
+    /**
+     * Resolve all scopes that could match the path;
+     *
+     * @param string|bool $path The path to match or true to resolve all scopes
+     */
+    protected function resolveScopes(string|bool $path): void
+    {
+        $resolved = [];
+        $start = 0;
+        $length = count($this->unresolvedScopes);
+        $repeat = true;
+        do {
+            // When a scope is resolved it can append new scopes.
+            // These scopes may also need to be resolved to ensure
+            // the necessary routes added to the collection.
+            $scopes = array_slice($this->unresolvedScopes, $start);
+            foreach ($scopes as $index => $scope) {
+                if ($path === true || $scope->matchesPath($path)) {
+                    $scope->resolve();
+                    $resolved[] = $start + $index;
+                }
+            }
+
+            // Check if the number of scopes has increased because of
+            // nested scopes.
+            $newLength = count($this->unresolvedScopes);
+            if ($newLength <= $length) {
+                $repeat = false;
+            } else {
+                // The next iteration should only visit the new scopes.
+                $start = $length;
+                $length = $newLength;
+            }
+        } while ($repeat);
+
+        // Remove resolved routes so we don't duplicate routes.
+        foreach (array_reverse($resolved) as $index) {
+            unset($this->unresolvedScopes[$index]);
+        }
+    }
+
+    /**
      * Takes the ServerRequestInterface, iterates the routes until one is able to parse the route.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse route data from.
@@ -140,6 +204,7 @@ class RouteCollection
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');
         }
+        $this->resolveScopes($urlPath);
 
         if (isset($this->staticPaths[$urlPath])) {
             foreach ($this->staticPaths[$urlPath] as $route) {
@@ -276,6 +341,8 @@ class RouteCollection
      */
     public function match(array $url, array $context): string
     {
+        $this->resolveScopes(true);
+
         // Named routes support optimization.
         if (isset($url['_name'])) {
             $name = $url['_name'];
@@ -318,6 +385,8 @@ class RouteCollection
      */
     public function routes(): array
     {
+        $this->resolveScopes(true);
+
         krsort($this->_paths);
 
         return array_reduce(
@@ -334,6 +403,8 @@ class RouteCollection
      */
     public function named(): array
     {
+        $this->resolveScopes(true);
+
         return $this->_named;
     }
 

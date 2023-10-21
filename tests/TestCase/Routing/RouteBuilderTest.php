@@ -502,6 +502,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/b/people', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
         });
+        $this->collection->routes();
     }
 
     /**
@@ -513,12 +514,14 @@ class RouteBuilderTest extends TestCase
         $routes->plugin('Contacts', ['_namePrefix' => 'contacts.'], function (RouteBuilder $r): void {
             $this->assertEquals('contacts.', $r->namePrefix());
         });
+        $this->collection->routes();
 
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->namePrefix('default.');
         $routes->plugin('Blog', ['_namePrefix' => 'blog.'], function (RouteBuilder $r): void {
             $this->assertEquals('default.blog.', $r->namePrefix(), 'Should combine nameprefix');
         });
+        $this->collection->routes();
     }
 
     /**
@@ -845,9 +848,9 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals(['prefix' => 'Api'], $routes->params());
 
             $routes->resources('Comments');
-            $route = $this->collection->routes()[3];
-            $this->assertSame('/api/articles/{article_id}/comments', $route->template);
         });
+        $route = $this->collection->routes()[3];
+        $this->assertSame('/api/articles/{article_id}/comments', $route->template);
     }
 
     /**
@@ -901,6 +904,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'Api', 'version' => 1], $routes->params());
         });
+        $this->collection->routes();
     }
 
     /**
@@ -950,6 +954,7 @@ class RouteBuilderTest extends TestCase
             $this->assertSame('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'Api'], $routes->params());
         });
+        $this->collection->routes();
     }
 
     /**

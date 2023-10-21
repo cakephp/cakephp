@@ -1738,6 +1738,7 @@ class RouterTest extends TestCase
                 $routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
             });
         });
+        Router::routes();
 
         $this->assertEquals(['json', 'rss', 'xml'], array_values(Router::extensions()));
     }
@@ -3090,6 +3091,7 @@ class RouterTest extends TestCase
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+        Router::routes();
     }
 
     /**
@@ -3111,7 +3113,7 @@ class RouterTest extends TestCase
             );
             $routes->connect('/home', []);
         });
-
+        Router::routes();
         $this->assertEquals(['json', 'rss'], array_values(Router::extensions()));
 
         $routes->scope('/api', function (RouteBuilder $routes): void {
@@ -3124,6 +3126,7 @@ class RouterTest extends TestCase
                 $this->assertEquals(['json', 'csv'], $routes->getExtensions());
             });
         });
+        Router::routes();
 
         $this->assertEquals(['json', 'rss', 'csv'], array_values(Router::extensions()));
     }
@@ -3141,6 +3144,7 @@ class RouterTest extends TestCase
             $this->assertSame('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
         });
+        Router::routes();
     }
 
     /**
@@ -3157,6 +3161,7 @@ class RouterTest extends TestCase
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+        Router::routes();
     }
 
     /**
@@ -3175,6 +3180,7 @@ class RouterTest extends TestCase
             $this->assertSame('admin:', $routes->namePrefix());
             $this->assertEquals(['prefix' => 'Admin'], $routes->params());
         });
+        Router::routes();
     }
 
     /**
@@ -3193,6 +3199,7 @@ class RouterTest extends TestCase
             $this->assertSame('/custom-path', $routes->path());
             $this->assertEquals(['prefix' => 'CustomPath'], $routes->params());
         });
+        Router::routes();
     }
 
     /**
@@ -3205,6 +3212,7 @@ class RouterTest extends TestCase
             $this->assertSame('/debug-kit', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
         });
+        Router::routes();
     }
 
     /**
@@ -3222,6 +3230,7 @@ class RouterTest extends TestCase
         $routes->plugin('Contacts', ['_namePrefix' => 'contacts:'], function (RouteBuilder $routes): void {
             $this->assertSame('contacts:', $routes->namePrefix());
         });
+        Router::routes();
     }
 
     /**
