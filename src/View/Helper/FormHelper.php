@@ -1365,6 +1365,7 @@ class FormHelper extends Helper
 
         $values = [];
         foreach ($enumClass::cases() as $case) {
+            /** @phpstan-ignore-next-line */
             $values[$case->value] = method_exists($case, 'label') ? $case->label() : $case->name;
         }
 
