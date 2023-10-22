@@ -107,13 +107,14 @@ trait EntityTrait
     protected array $_invalid = [];
 
     /**
-     * Map of fields in this entity that can be safely assigned, each
+     * Map of fields in this entity that can be safely mass assigned, each
      * field name points to a boolean indicating its status. An empty array
-     * means no fields are accessible
+     * means no fields are accessible for mass assigment.
      *
      * The special field '\*' can also be mapped, meaning that any other field
      * not defined in the map will take its value. For example, `'*' => true`
-     * means that any field not defined in the map will be accessible by default
+     * means that any field not defined in the map will be accessible for mass
+     * assignment by default.
      *
      * @var array<string, bool>
      */
