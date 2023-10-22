@@ -488,9 +488,9 @@ class Client implements ClientInterface, EventDispatcherInterface
         }
 
         do {
-            $this->dispatchEvent('Client.beforeSend', [$request, $options]);
+            $this->dispatchEvent('HttpClient.beforeSend', [$request, $options]);
             $response = $this->_sendRequest($request, $options);
-            $this->dispatchEvent('Client.afterSend', [$request, $options, $response]);
+            $this->dispatchEvent('HttpClient.afterSend', [$request, $options, $response]);
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {

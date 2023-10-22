@@ -1152,7 +1152,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Make sure Client.beforeSend is being triggered
+     * Make sure HttpClient.beforeSend is being triggered
      */
     public function testBeforeSendEventDispatched(): void
     {
@@ -1161,7 +1161,7 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('Client.beforeSend', function ($event, $request, $options) use (&$eventTriggered): void {
+        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, $request, $options) use (&$eventTriggered): void {
             $this->assertInstanceOf(RequestInterface::class, $request);
             $this->assertTrue($options['clientOption']);
             $eventTriggered = true;
@@ -1173,7 +1173,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Make sure Client.afterSend is being triggered
+     * Make sure HttpClient.afterSend is being triggered
      */
     public function testAfterSendEventDispatched(): void
     {
@@ -1182,7 +1182,7 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('Client.afterSend', function ($event, $request, $options, $response) use (&$eventTriggered, $one): void {
+        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $options, $response) use (&$eventTriggered, $one): void {
             $this->assertInstanceOf(RequestInterface::class, $request);
             $this->assertSame($one, $response);
             $this->assertTrue($options['clientOption']);
