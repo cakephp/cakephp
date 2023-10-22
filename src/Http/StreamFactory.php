@@ -19,6 +19,7 @@ namespace Cake\Http;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * Factory class for creating stream instances.
@@ -57,6 +58,10 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
+        if (!is_readable($filename)) {
+            throw new RuntimeException(sprintf('Cannot read file `%s`', $filename));
+        }
+
         return new Stream($filename, $mode);
     }
 

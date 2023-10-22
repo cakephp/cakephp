@@ -18,9 +18,9 @@
             <directory>tests/TestCase/Database/</directory>
             <directory>tests/TestCase/ORM/</directory>
         </testsuite>
-<!--        <testsuite name="http-interop-http-factory">-->
-<!--            <directory>./vendor/http-interop/http-factory-tests/test</directory>-->
-<!--        </testsuite>-->
+        <testsuite name="http-interop-http-factory">
+            <directory>./vendor/http-interop/http-factory-tests/test</directory>
+        </testsuite>
         <testsuite name="globalfunctions">
             <file>tests/TestCase/Collection/FunctionsGlobalTest.php</file>
             <file>tests/TestCase/Core/FunctionsGlobalTest.php</file>
