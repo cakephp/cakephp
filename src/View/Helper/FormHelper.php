@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\View\Helper;
 
+use BackedEnum;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Type\EnumType;
+use Cake\Database\TypeFactory;
 use Cake\Form\FormProtector;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -1304,6 +1307,20 @@ class FormHelper extends Helper
             return $options;
         }
 
+        $internalType = $this->_getContext()->type($fieldName);
+        if ($internalType && str_starts_with($internalType, 'enum-')) {
+            $dbType = TypeFactory::build($internalType);
+            if ($dbType instanceof EnumType) {
+                if ($options['type'] !== 'radio') {
+                    $options['type'] = 'select';
+                }
+
+                $options['options'] = $this->enumOptions($dbType->getEnumClassName());
+
+                return $options;
+            }
+        }
+
         $pluralize = true;
         if (str_ends_with($fieldName, '._ids')) {
             $fieldName = substr($fieldName, 0, -5);
@@ -1326,6 +1343,25 @@ class FormHelper extends Helper
         $options['options'] = $varOptions;
 
         return $options;
+    }
+
+    /**
+     * Get map of enum value => label for select/radio options.
+     *
+     * @param class-string<\BackedEnum> $enumClass Enum class name.
+     * @return array<int|string, string>
+     */
+    protected function enumOptions(string $enumClass): array
+    {
+        assert(is_subclass_of($enumClass, BackedEnum::class));
+
+        $values = [];
+        foreach ($enumClass::cases() as $case) {
+            /** @phpstan-ignore-next-line */
+            $values[$case->value] = method_exists($case, 'label') ? $case->label() : $case->name;
+        }
+
+        return $values;
     }
 
     /**
@@ -2336,6 +2372,10 @@ class FormHelper extends Helper
             $options['val'] = $options['default'];
         }
         unset($options['value'], $options['default']);
+
+        if ($options['val'] instanceof BackedEnum) {
+            $options['val'] = $options['val']->value;
+        }
 
         if ($context->hasError($field)) {
             $options = $this->addClass($options, $this->_config['errorClass']);

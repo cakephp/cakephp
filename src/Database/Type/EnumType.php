@@ -204,7 +204,7 @@ class EnumType extends BaseType
     }
 
     /**
-     * @return string
+     * @return class-string<\BackedEnum>
      */
     public function getEnumClassName(): string
     {
