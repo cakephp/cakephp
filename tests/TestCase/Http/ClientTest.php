@@ -1182,7 +1182,7 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $options, $response) use (&$eventTriggered, $one): void {
+        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $response, $options) use (&$eventTriggered, $one): void {
             $this->assertInstanceOf(RequestInterface::class, $request);
             $this->assertSame($one, $response);
             $this->assertTrue($options['clientOption']);
