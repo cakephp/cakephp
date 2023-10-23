@@ -83,7 +83,7 @@ class TransportFactory
             );
         }
 
-        if (is_array(static::$_config[$name]) && empty(static::$_config[$name]['className'])) {
+        if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
                 sprintf('Transport config `%s` is invalid, the required `className` option is missing', $name)
             );

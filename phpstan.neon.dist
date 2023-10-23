@@ -5,7 +5,6 @@ parameters:
 	level: 8
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
-	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
 		- tests/bootstrap.php
 	paths:

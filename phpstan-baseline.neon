@@ -46,6 +46,11 @@ parameters:
 			path: src/Datasource/QueryInterface.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/Error/ExceptionTrap.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
@@ -126,9 +131,24 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between string and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Utility/Hash.php
 
 		-
 			message: "#^Offset 0 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
@@ -139,6 +159,11 @@ parameters:
 			message: "#^Offset 1 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
 			count: 1
 			path: src/Validation/Validation.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Validation/ValidationRule.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

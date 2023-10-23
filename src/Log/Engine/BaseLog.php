@@ -73,7 +73,7 @@ abstract class BaseLog extends AbstractLogger
             $this->_config['levels'] = (array)$this->_config['types'];
         }
 
-        /** @var \Cake\Log\Formatter\AbstractFormatter|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
+        /** @var \Cake\Log\Formatter\AbstractFormatter|array|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
         $formatter = $this->_config['formatter'] ?? DefaultFormatter::class;
         if (!is_object($formatter)) {
             if (is_array($formatter)) {
