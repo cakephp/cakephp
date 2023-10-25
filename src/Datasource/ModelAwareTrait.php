@@ -128,7 +128,7 @@ trait ModelAwareTrait
             if (!$attributes) {
                 deprecationWarning(
                     '4.5.0 - Dynamic properties will be removed in PHP 8.2. ' .
-                    "Add `public \${$alias} = null;` to your class definition or use `#[AllowDynamicProperties]` attribute."
+                    "Add `public \${$alias};` to your class definition or use `#[AllowDynamicProperties]` attribute."
                 );
             }
         }
