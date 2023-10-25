@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use AllowDynamicProperties;
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\Locator\LocatorInterface;
 use InvalidArgumentException;
+use ReflectionClass;
 use UnexpectedValueException;
 use function Cake\Core\deprecationWarning;
 use function Cake\Core\getTypeName;
@@ -119,10 +121,16 @@ trait ModelAwareTrait
             $modelClass = $alias;
         }
         if (!property_exists($this, $alias)) {
-            deprecationWarning(
-                '4.5.0 - Dynamic properties will be removed in PHP 8.2. ' .
-                "Add `public \${$alias} = null;` to your class definition or use `#[AllowDynamicProperties]` attribute."
-            );
+            $reflection = new ReflectionClass($this);
+            $attributes = method_exists($reflection, 'getAttributes')
+                ? $reflection->getAttributes(AllowDynamicProperties::class)
+                : [];
+            if (!$attributes) {
+                deprecationWarning(
+                    '4.5.0 - Dynamic properties will be removed in PHP 8.2. ' .
+                    "Add `public \${$alias} = null;` to your class definition or use `#[AllowDynamicProperties]` attribute."
+                );
+            }
         }
 
         if (isset($this->{$alias})) {
