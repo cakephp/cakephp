@@ -69,7 +69,11 @@ class NumberHelper extends Helper
         $config = $this->_config;
 
         /** @psalm-var class-string<\Cake\I18n\Number>|null $engineClass */
-        $engineClass = App::className($config['engine'], 'Utility');
+        $engineClass = App::className($config['engine'], 'I18n');
+        if ($engineClass === null) {
+            // Legacy namespace lookup
+            $engineClass = App::className($config['engine'], 'Utility');
+        }
         if ($engineClass === null) {
             throw new CakeException(sprintf('Class for %s could not be found', $config['engine']));
         }

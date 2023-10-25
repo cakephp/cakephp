@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
-use TestApp\Utility\TestAppEngine;
+use TestApp\Utility\TestAppUtilityEngine;
 use TestApp\Utility\TextMock;
 use TestApp\View\Helper\TextHelperTestObject;
 use TestPlugin\Utility\TestPluginEngine;
@@ -134,8 +134,8 @@ class TextHelperTest extends TestCase
     public function testEngineOverride(): void
     {
         $this->deprecated(function () {
-            $Text = new TextHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-            $this->assertInstanceOf(TestAppEngine::class, $Text->engine());
+            $Text = new TextHelperTestObject($this->View, ['engine' => 'TestAppUtilityEngine']);
+            $this->assertInstanceOf(TestAppUtilityEngine::class, $Text->engine());
 
             $this->loadPlugins(['TestPlugin']);
             $Text = new TextHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
