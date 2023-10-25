@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use ArrayObject;
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -5996,6 +5997,20 @@ class FormHelperTest extends TestCase
     {
         $result = $this->Form->time('start_time', [
             'value' => '2014-03-08 16:30:00',
+        ]);
+
+        $expected = [
+            'input' => [
+                'type' => 'time',
+                'name' => 'start_time',
+                'value' => '16:30:00',
+                'step' => '1',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->time('start_time', [
+            'value' => new ChronosTime('16:30:00'),
         ]);
 
         $expected = [
