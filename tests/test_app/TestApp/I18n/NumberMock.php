@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace TestApp\Utility;
+namespace TestApp\I18n;
 
 class NumberMock
 {
