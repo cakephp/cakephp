@@ -273,8 +273,8 @@ trait IntegrationTestTrait
      * This data is cleared in the tearDown() method.
      *
      * You can call this method multiple times to append into
-     * the current state.
-     * Sub-keys like 'headers' will be reset, though.
+     * the current state. Sub-keys will be merged with existing
+     * state.
      *
      * @param array $data The request data to use.
      * @return void
