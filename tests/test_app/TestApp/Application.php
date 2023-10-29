@@ -31,6 +31,8 @@ use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DependencyCommand;
 use TestApp\Command\FormatSpecifierCommand;
+use TestApp\Middleware\DumbMiddleware;
+use TestApp\Middleware\SampleMiddleware;
 
 class Application extends BaseApplication
 {
@@ -72,7 +74,10 @@ class Application extends BaseApplication
      */
     public function routes(RouteBuilder $routes): void
     {
+        $routes->registerMiddleware('dumb', new DumbMiddleware());
+        $routes->registerMiddleware('sample', new SampleMiddleware());
         $routes->scope('/app', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('dumb', 'sample');
             $routes->connect('/articles', ['controller' => 'Articles']);
             $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);
 
