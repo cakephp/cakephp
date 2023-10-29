@@ -61,6 +61,14 @@ class TimeTypeTest extends TestCase
     }
 
     /**
+     * Test getTimeClassName
+     */
+    public function testGetTimeClassName(): void
+    {
+        $this->assertSame(Time::class, $this->type->getTimeClassName());
+    }
+
+    /**
      * Test toPHP
      */
     public function testToPHP(): void
