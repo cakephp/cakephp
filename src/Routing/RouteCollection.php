@@ -66,7 +66,7 @@ class RouteCollection
     /**
      * A mapping of paths to unresolved routing scopes
      *
-     * @var array<string, \Cake\Routing\RouteScope>
+     * @var array<int, \Cake\Routing\RouteScope>
      */
     protected array $unresolvedScopes = [];
 
@@ -158,6 +158,8 @@ class RouteCollection
     protected function resolveScopes(string|bool|null $path = null, ?array $url = null): void
     {
         assert($path === null || $url === null, 'Must provide one of `path` or `url`');
+        assert($path !== false, 'Path = false is undefined behavior');
+
         $resolved = [];
         $start = 0;
         $length = count($this->unresolvedScopes);

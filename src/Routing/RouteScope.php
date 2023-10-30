@@ -16,7 +16,7 @@ class RouteScope
     /**
      * Constructor
      *
-     * @param \Cake\Routing\RouterBuilder $builder The route builder to be used when resolving this scope.
+     * @param \Cake\Routing\RouteBuilder $builder The route builder to be used when resolving this scope.
      * @param \Closure $callback The closure containing the routes in a scope.
      */
     public function __construct(
