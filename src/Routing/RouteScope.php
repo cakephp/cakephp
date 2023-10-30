@@ -56,7 +56,17 @@ class RouteScope
             return true;
         }
 
-        return array_intersect_key($url, $defaults) === $defaults;
+        $fullMatch = array_intersect_key($url, $defaults) === $defaults;
+        if ($fullMatch) {
+            return $fullMatch;
+        }
+        // If there is no prefix key bail,
+        // The prefix key is special in that it can have partial matches.
+        if (!isset($url['prefix']) || !isset($defaults['prefix'])) {
+            return false;
+        }
+
+        return str_starts_with($url['prefix'], $defaults['prefix']);
     }
 
     /**
