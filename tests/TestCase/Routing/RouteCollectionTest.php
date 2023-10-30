@@ -828,4 +828,25 @@ class RouteCollectionTest extends TestCase
         $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
         $this->collection->middlewareGroup('group', ['bad']);
     }
+
+    public function testScopeResolution(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $builder) {
+            $builder->connect('/version', 'Versions::current');
+        });
+        $routes->scope('/api/2/', ['prefix' => 'Api2'], function (RouteBuilder $builder) {
+            $builder->connect('/manifest', 'Manifests::current');
+        });
+        $this->assertCount(2, $this->collection->unresolvedScopes());
+
+        $result = $this->collection->match([
+            'prefix' => 'Api',
+            'controller' => 'Versions',
+            'action' => 'current',
+            'plugin' => null,
+        ], []);
+        $this->assertEquals('api/version', $result);
+        $this->assertCount(1, $this->collection->unresolvedScopes());
+    }
 }

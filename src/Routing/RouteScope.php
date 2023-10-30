@@ -39,6 +39,27 @@ class RouteScope
     }
 
     /**
+     * Check if this scope's builder defaults matches the provided URL array.
+     *
+     * Scopes with no parameters match every scope as the routes within the scope
+     * are undefined and thus the scope could create routes that match.
+     *
+     * @array $url The url array being checked.
+     * @return bool
+     */
+    public function matchesUrl(array $url): bool
+    {
+        $defaults = $this->builder->params();
+        // If the defaults are empty, the URL could match routes
+        // defined by the scope.
+        if (empty($defaults)) {
+            return true;
+        }
+
+        return array_intersect_key($url, $defaults) === $defaults;
+    }
+
+    /**
      * Get the path prefix for this scope
      *
      * @return string

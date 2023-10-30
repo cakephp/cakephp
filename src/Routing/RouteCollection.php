@@ -152,23 +152,36 @@ class RouteCollection
     /**
      * Resolve all scopes that could match the path;
      *
-     * @param string|bool $path The path to match or true to resolve all scopes
+     * @param string|bool|null $path The path to match or true to resolve all scopes
+     * @param array $url The url array to match with.
      */
-    protected function resolveScopes(string|bool $path): void
+    protected function resolveScopes(string|bool|null $path = null, ?array $url = null): void
     {
+        assert($path === null || $url === null, 'Must provide one of `path` or `url`');
         $resolved = [];
         $start = 0;
         $length = count($this->unresolvedScopes);
         $repeat = true;
         do {
+            $scopes = array_slice($this->unresolvedScopes, $start);
+
             // When a scope is resolved it can append new scopes.
             // These scopes may also need to be resolved to ensure
             // the necessary routes added to the collection.
-            $scopes = array_slice($this->unresolvedScopes, $start);
-            foreach ($scopes as $index => $scope) {
-                if ($path === true || $scope->matchesPath($path)) {
-                    $scope->resolve();
-                    $resolved[] = $start + $index;
+            if ($path !== null) {
+                foreach ($scopes as $index => $scope) {
+                    if ($path === true || $scope->matchesPath($path)) {
+                        $scope->resolve();
+                        $resolved[] = $start + $index;
+                    }
+                }
+            }
+            if ($url !== null) {
+                foreach ($scopes as $index => $scope) {
+                    if ($url === [] || $scope->matchesUrl($url)) {
+                        $scope->resolve();
+                        $resolved[] = $start + $index;
+                    }
                 }
             }
 
@@ -191,6 +204,16 @@ class RouteCollection
     }
 
     /**
+     * Get the `RouteScope`s that have not been resolved.
+     *
+     * @return array<\Cake\Routing\RouteScope> List of scopes
+     */
+    public function unresolvedScopes(): array
+    {
+        return $this->unresolvedScopes;
+    }
+
+    /**
      * Takes the ServerRequestInterface, iterates the routes until one is able to parse the route.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse route data from.
@@ -204,7 +227,7 @@ class RouteCollection
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');
         }
-        $this->resolveScopes($urlPath);
+        $this->resolveScopes(path: $urlPath);
 
         if (isset($this->staticPaths[$urlPath])) {
             foreach ($this->staticPaths[$urlPath] as $route) {
@@ -341,10 +364,12 @@ class RouteCollection
      */
     public function match(array $url, array $context): string
     {
-        $this->resolveScopes(true);
-
         // Named routes support optimization.
         if (isset($url['_name'])) {
+            // If a named route is used we cannot partially match against scopes
+            // and must resolve all scopes.
+            $this->resolveScopes(path: true);
+
             $name = $url['_name'];
             unset($url['_name']);
             if (isset($this->_named[$name])) {
@@ -362,6 +387,7 @@ class RouteCollection
             throw new MissingRouteException(['url' => $name, 'context' => $context]);
         }
 
+        $this->resolveScopes(url: $url);
         foreach ($this->_getNames($url) as $name) {
             if (empty($this->_routeTable[$name])) {
                 continue;
@@ -385,7 +411,7 @@ class RouteCollection
      */
     public function routes(): array
     {
-        $this->resolveScopes(true);
+        $this->resolveScopes(path: true);
 
         krsort($this->_paths);
 
@@ -403,7 +429,7 @@ class RouteCollection
      */
     public function named(): array
     {
-        $this->resolveScopes(true);
+        $this->resolveScopes(path: true);
 
         return $this->_named;
     }
