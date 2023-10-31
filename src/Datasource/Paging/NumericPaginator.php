@@ -22,6 +22,7 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
+use function Cake\Core\triggerWarning;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -316,6 +317,17 @@ class NumericPaginator implements PaginatorInterface
     {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
+
+        $validSettings = array_keys($this->_defaultConfig);
+        $validSettings[] = 'order';
+        $extraSettings = array_diff_key($defaults, array_flip($validSettings));
+        if ($extraSettings) {
+            triggerWarning(
+                'Passing query options as paginator settings is no longer supported.'
+                . ' Use a custom finder through the `finder` config or pass a SelectQuery instance to paginate().'
+                . ' Extra keys found are: ' . implode(',', array_keys($extraSettings))
+            );
+        }
 
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
