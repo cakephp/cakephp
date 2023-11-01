@@ -276,6 +276,9 @@ class NumericPaginator implements PaginatorInterface
         }
 
         $query->applyOptions($queryOptions);
+        if (!empty($data['options']['contain'])) {
+            $query->contain($data['options']['contain']);
+        }
 
         return $query;
     }
