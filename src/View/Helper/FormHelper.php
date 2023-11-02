@@ -1356,8 +1356,8 @@ class FormHelper extends Helper
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
         $values = [];
+        /** @var \BackedEnum $case */
         foreach ($enumClass::cases() as $case) {
-            /** @phpstan-ignore-next-line */
             $values[$case->value] = method_exists($case, 'label') ? $case->label() : $case->name;
         }
 
