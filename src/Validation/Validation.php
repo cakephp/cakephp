@@ -790,7 +790,7 @@ class Validation
      * @param mixed $check Value to check
      * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name
      * @return bool Success
-     * @since 5.1.0
+     * @since 5.0.3
      */
     public static function enum(mixed $check, string $enumClassName): bool
     {
