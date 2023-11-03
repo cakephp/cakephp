@@ -41,6 +41,7 @@ use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
+use TestApp\Model\Enum\ArticleStatusLabelInterface;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -3654,6 +3655,31 @@ class FormHelperTest extends TestCase
             EnumType::from(ArticleStatusLabel::class)
         );
         $this->Form->create($articlesTable->newEmptyEntity());
+        $result = $this->Form->control('published');
+        $expected = [
+            'div' => ['class' => 'input select'],
+            'label' => ['for' => 'published'],
+            'Published',
+            '/label',
+            'select' => ['name' => 'published', 'id' => 'published'],
+            ['option' => ['value' => 'Y']],
+            'Is published',
+            '/option',
+            ['option' => ['value' => 'N', 'selected' => 'selected']],
+            'Is unpublished',
+            '/option',
+            '/select',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $articlesTable->getSchema()->setColumnType(
+            'published',
+            EnumType::from(ArticleStatusLabelInterface::class)
+        );
+
+        $article = $articlesTable->newEmptyEntity();
+        $this->Form->create($article);
         $result = $this->Form->control('published');
         $expected = [
             'div' => ['class' => 'input select'],

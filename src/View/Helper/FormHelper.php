@@ -19,6 +19,7 @@ namespace Cake\View\Helper;
 use BackedEnum;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Type\EnumLabelInterface;
 use Cake\Database\Type\EnumType;
 use Cake\Database\TypeFactory;
 use Cake\Form\FormProtector;
@@ -1358,7 +1359,8 @@ class FormHelper extends Helper
         $values = [];
         /** @var \BackedEnum $case */
         foreach ($enumClass::cases() as $case) {
-            $values[$case->value] = method_exists($case, 'label') ? $case->label() : $case->name;
+            $hasLabel = $case instanceof EnumLabelInterface || method_exists($case, 'label');
+            $values[$case->value] = $hasLabel ? $case->label() : $case->name;
         }
 
         return $values;
