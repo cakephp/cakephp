@@ -58,6 +58,17 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Data provider for lazy scope modes.
+     */
+    public static function scopeModeProvider(): array
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
+
+    /**
      * Test path()
      */
     public function testPath(): void
@@ -698,10 +709,13 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Test connecting resources.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testResourcesInScope(): void
+    public function testResourcesInScope($scopeMode): void
     {
         $builder = Router::createRouteBuilder('/');
+        $builder->useLazyScopes($scopeMode);
         $builder->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
@@ -896,10 +910,13 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Test adding a scope.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testScope(): void
+    public function testScope($scopeMode): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/v1', ['version' => 1], function (RouteBuilder $routes): void {
             $this->assertSame('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'Api', 'version' => 1], $routes->params());
@@ -909,10 +926,13 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Test adding a scope with action in the scope
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testScopeWithAction(): void
+    public function testScopeWithAction($scopeMode): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function (RouteBuilder $routes): void {
             $routes->connect('/shared', ['shared' => true]);
             $routes->get('/exclusive', ['exclusive' => true]);
@@ -1161,10 +1181,13 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Integration test for http method helpers and route fluent method
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testHttpMethodIntegration(): void
+    public function testHttpMethodIntegration($scopeMode): void
     {
         $routes = new RouteBuilder($this->collection, '/');
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/', function (RouteBuilder $routes): void {
             $routes->get('/faq/{page}', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
                 ->setPatterns(['page' => '[a-z0-9_]+'])

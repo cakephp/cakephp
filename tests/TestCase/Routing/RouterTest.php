@@ -3175,7 +3175,7 @@ class RouterTest extends TestCase
 
     /**
      * Test the scope() method
- *
+     *
      * @dataProvider scopeModeProvider
      */
     public function testScopeNamePrefix($scopeMode): void
