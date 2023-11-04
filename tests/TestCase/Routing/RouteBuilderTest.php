@@ -1216,4 +1216,25 @@ class RouteBuilderTest extends TestCase
         $plugin = Plugin::getCollection()->get('TestPlugin');
         $this->assertFalse($plugin->isEnabled('routes'), 'Hook should be disabled preventing duplicate routes');
     }
+
+    public function testUseLazyScopeInheritance(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->useLazyScopes(true);
+        $routes->scope('/admin', function ($builder) {
+            $builder->connect('/home');
+            $builder->scope('/pages', function ($builder) {
+                $builder->connect('/test');
+            });
+        });
+        $this->assertCount(1, $this->collection->unresolvedScopes());
+
+        // Parse a request to resolve the /admin scope.
+        // The /admin/pages scope should be added as unresolved.
+        $request = new ServerRequest(['url' => '/admin/home']);
+        $result = $this->collection->parseRequest($request);
+
+        $this->assertNotEmpty($result);
+        $this->assertCount(1, $this->collection->unresolvedScopes());
+    }
 }

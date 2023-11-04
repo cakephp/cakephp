@@ -948,6 +948,8 @@ class RouteBuilder
             'namePrefix' => $namePrefix,
             'middleware' => $this->middleware,
         ]);
+        $builder->useLazyScopes($this->lazyScopes);
+
         if ($this->lazyScopes) {
             $this->_collection->addScope($builder, $callback);
         } else {
@@ -963,6 +965,9 @@ class RouteBuilder
      * When enabled scopes will not be executed immediately.
      * Instead scopes and the routes they contain will be deferred until
      * CakePHP requires the routes in a scope.
+     *
+     * When a builder uses lazy scopes, any child scopes will also
+     * use lazy scopes.
      *
      * @param bool $value The scope evaluation mode
      * @return $this
