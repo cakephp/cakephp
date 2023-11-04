@@ -832,6 +832,7 @@ class RouteCollectionTest extends TestCase
     public function testScopeResolution(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
+        $routes->useLazyScopes(true);
         $routes->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $builder) {
             $builder->connect('/version', 'Versions::current');
         });

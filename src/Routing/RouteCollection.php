@@ -18,7 +18,6 @@ namespace Cake\Routing;
 
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Route\Route;
 use Closure;
 use InvalidArgumentException;
@@ -154,9 +153,13 @@ class RouteCollection
      *
      * @param string|bool|null $path The path to match or true to resolve all scopes
      * @param array $url The url array to match with.
+     * @return void
      */
     protected function resolveScopes(string|bool|null $path = null, ?array $url = null): void
     {
+        if (empty($this->unresolvedScopes)) {
+            return;
+        }
         assert($path === null || $url === null, 'Must provide one of `path` or `url`');
         assert($path !== false, 'Path = false is undefined behavior');
 

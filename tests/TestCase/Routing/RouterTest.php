@@ -60,6 +60,17 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Data provider for lazy scope modes.
+     */
+    public static function scopeModeProvider(): array
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
+
+    /**
      * testFullBaseUrl method
      */
     public function testBaseUrl(): void
@@ -1723,12 +1734,15 @@ class RouterTest extends TestCase
 
     /**
      * Test that route builders propagate extensions to the top.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testExtensionsWithScopedRoutes(): void
+    public function testExtensionsWithScopedRoutes($scopeMode): void
     {
         Router::extensions(['json']);
 
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/', function (RouteBuilder $routes): void {
             $routes->setExtensions('rss');
             $routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
@@ -1745,10 +1759,13 @@ class RouterTest extends TestCase
 
     /**
      * Test connecting resources.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testResourcesInScope(): void
+    public function testResourcesInScope($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
@@ -3080,10 +3097,13 @@ class RouterTest extends TestCase
 
     /**
      * Test the scope() method
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testScope(): void
+    public function testScope($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/path', ['param' => 'value'], function (RouteBuilder $routes): void {
             $this->assertSame('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
@@ -3097,11 +3117,14 @@ class RouterTest extends TestCase
     /**
      * Test to ensure that extensions defined in scopes don't leak.
      * And that global extensions are propagated.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testScopeExtensionsContained(): void
+    public function testScopeExtensionsContained($scopeMode): void
     {
         Router::extensions(['json']);
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/', function (RouteBuilder $routes): void {
             $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
             $routes->setExtensions(['rss']);
@@ -3133,11 +3156,14 @@ class RouterTest extends TestCase
 
     /**
      * Test the scope() options
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testScopeOptions(): void
+    public function testScopeOptions($scopeMode): void
     {
         $options = ['param' => 'value'];
         $routes = Router::createRouteBuilder('/', ['routeClass' => 'InflectedRoute', 'extensions' => ['json']]);
+        $routes->useLazyScopes($scopeMode);
         $routes->scope('/path', $options, function (RouteBuilder $routes): void {
             $this->assertSame('InflectedRoute', $routes->getRouteClass());
             $this->assertSame(['json'], $routes->getExtensions());
@@ -3149,10 +3175,13 @@ class RouterTest extends TestCase
 
     /**
      * Test the scope() method
+ *
+     * @dataProvider scopeModeProvider
      */
-    public function testScopeNamePrefix(): void
+    public function testScopeNamePrefix($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
 
         $routes->scope('/path', ['param' => 'value', '_namePrefix' => 'path:'], function (RouteBuilder $routes): void {
             $this->assertSame('/path', $routes->path());
@@ -3167,6 +3196,7 @@ class RouterTest extends TestCase
     public function testLazyScopeEvaluation(): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes(true);
         $routes->scope('/path', function (RouteBuilder $builder) {
             $builder->connect('/articles', ['controller' => 'Articles']);
         });
@@ -3184,6 +3214,7 @@ class RouterTest extends TestCase
     public function testLazyScopeEvaluationNested(): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes(true);
         $routes->scope('/path', function (RouteBuilder $builder) {
             $builder->scope('/other', function (RouteBuilder $builder) {
                 $builder->connect('/articles', ['controller' => 'Articles']);
@@ -3202,10 +3233,13 @@ class RouterTest extends TestCase
 
     /**
      * Test that prefix() creates a scope.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testPrefix(): void
+    public function testPrefix($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
 
         $routes->prefix('admin', function (RouteBuilder $routes): void {
             $this->assertSame('/admin', $routes->path());
@@ -3221,10 +3255,13 @@ class RouterTest extends TestCase
 
     /**
      * Test that prefix() accepts options
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testPrefixOptions(): void
+    public function testPrefixOptions($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
 
         $routes->prefix('admin', ['param' => 'value'], function (RouteBuilder $routes): void {
             $this->assertSame('/admin', $routes->path());
@@ -3240,10 +3277,13 @@ class RouterTest extends TestCase
 
     /**
      * Test that plugin() creates a scope.
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testPlugin(): void
+    public function testPlugin($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
         $routes->plugin('DebugKit', function (RouteBuilder $routes): void {
             $this->assertSame('/debug-kit', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
@@ -3253,10 +3293,13 @@ class RouterTest extends TestCase
 
     /**
      * Test that plugin() accepts options
+     *
+     * @dataProvider scopeModeProvider
      */
-    public function testPluginOptions(): void
+    public function testPluginOptions($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
+        $routes->useLazyScopes($scopeMode);
 
         $routes->plugin('DebugKit', ['path' => '/debugger'], function (RouteBuilder $routes): void {
             $this->assertSame('/debugger', $routes->path());
@@ -3544,8 +3587,6 @@ class RouterTest extends TestCase
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Test the url() function which wraps Router::url()
      *
      * @return void
@@ -3566,7 +3607,6 @@ class RouterTest extends TestCase
     }
 
     /**
->>>>>>> origin/4.next
      * Helper to create a request for a given URL and method.
      *
      * @param string $url The URL to create a request for
