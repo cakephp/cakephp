@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
       - '*'
-  schedule:
-    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -125,6 +123,10 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
+
+    - name: Run class deprecation aliasing validation script
+      if: always()
+      run: php contrib/validate-deprecation-aliases.php
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'

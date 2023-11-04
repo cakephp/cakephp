@@ -92,10 +92,22 @@ class EnumType extends BaseType
             return $value->value;
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Cannot convert value of type `%s` to string or integer',
-            get_debug_type($value)
-        ));
+        if (!is_string($value) && !is_int($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to string or integer',
+                get_debug_type($value)
+            ));
+        }
+
+        if ($this->enumClassName::tryFrom($value) === null) {
+            throw new InvalidArgumentException(sprintf(
+                '`%s` is not a valid value for `%s`',
+                $value,
+                $this->enumClassName
+            ));
+        }
+
+        return $value;
     }
 
     /**
@@ -118,7 +130,7 @@ class EnumType extends BaseType
             }
         }
 
-        return $this->enumClassName::tryFrom($value);
+        return $this->enumClassName::from($value);
     }
 
     /**
@@ -192,7 +204,7 @@ class EnumType extends BaseType
     }
 
     /**
-     * @return string
+     * @return class-string<\BackedEnum>
      */
     public function getEnumClassName(): string
     {

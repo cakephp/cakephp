@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior;
 
+use ArrayObject;
 use Cake\Datasource\QueryInterface;
+use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
@@ -211,9 +213,40 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         return [
             'Model.beforeFind' => 'beforeFind',
+            'Model.beforeMarshal' => 'beforeMarshal',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
         ];
+    }
+
+    /**
+     * Hoist fields for the default locale under `_translations` key to the root
+     * in the data.
+     *
+     * This allows `_translations.{locale}.field_name` type naming even for the
+     * default locale in forms.
+     *
+     * @param \Cake\Event\EventInterface $event
+     * @param \ArrayObject $data
+     * @param \ArrayObject $options
+     * @return void
+     */
+    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
+    {
+        if (isset($options['translations']) && !$options['translations']) {
+            return;
+        }
+
+        $defaultLocale = $this->getConfig('defaultLocale');
+        if (!isset($data['_translations'][$defaultLocale])) {
+            return;
+        }
+
+        foreach ($data['_translations'][$defaultLocale] as $field => $value) {
+            $data[$field] = $value;
+        }
+
+        unset($data['_translations'][$defaultLocale]);
     }
 
     /**

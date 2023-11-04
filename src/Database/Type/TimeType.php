@@ -182,6 +182,16 @@ class TimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
+     * Get the classname used for building objects.
+     *
+     * @return class-string<\Cake\Chronos\ChronosTime>
+     */
+    public function getTimeClassName(): string
+    {
+        return $this->_className;
+    }
+
+    /**
      * Converts a string into a Time object
      *
      * @param string $value The value to parse and convert to an object.

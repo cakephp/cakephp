@@ -2044,7 +2044,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @return $this
      * @see \Cake\Validation\Validation::enum()
-     * @since 5.1.0
+     * @since 5.0.3
      */
     public function enum(
         string $field,

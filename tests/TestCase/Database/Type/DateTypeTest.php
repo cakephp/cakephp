@@ -66,6 +66,14 @@ class DateTypeTest extends TestCase
     }
 
     /**
+     * Test getDateClassName
+     */
+    public function testGetDateClassName(): void
+    {
+        $this->assertSame(Date::class, $this->type->getDateClassName());
+    }
+
+    /**
      * Test toPHP
      */
     public function testToPHP(): void

@@ -1413,9 +1413,21 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
+            'defaultLocale' => 'en',
             'fields' => ['title'],
         ]);
         $table->setEntityClass(TranslateArticle::class);
+
+        $article = $table->patchEntity(
+            $table->newEmptyEntity(),
+            [
+                '_translations' => ['en' => ['title' => '']],
+            ],
+        );
+        $this->assertSame(
+            ['notBlank' => 'The provided value is invalid'],
+            $article->getError('title')
+        );
 
         $data = [
             'author_id' => 1,
@@ -1428,6 +1440,9 @@ class TranslateBehaviorEavTest extends TestCase
                 'es' => [
                     'title' => 'Title ES',
                 ],
+                'fr' => [
+                    'title' => 'Title FR',
+                ],
             ],
         ];
 
@@ -1438,9 +1453,9 @@ class TranslateBehaviorEavTest extends TestCase
 
         $expected = [
             [
-                'en' => [
-                    'title' => 'Title EN',
-                    'locale' => 'en',
+                'fr' => [
+                    'title' => 'Title FR',
+                    'locale' => 'fr',
                 ],
                 'es' => [
                     'title' => 'Title ES',
@@ -1448,8 +1463,12 @@ class TranslateBehaviorEavTest extends TestCase
                 ],
             ],
         ];
-        $result = $table->find('translations')->where(['id' => $result->id]);
+        $result = $table->find('translations')->where(['Articles.id' => $result->id])->all();
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+
+        $entity = $result->first();
+        $this->assertSame('Title EN', $entity->title);
+        $this->assertSame('Body EN', $entity->body);
     }
 
     /**
