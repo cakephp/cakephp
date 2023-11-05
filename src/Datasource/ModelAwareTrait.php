@@ -45,7 +45,6 @@ trait ModelAwareTrait
      * controller name.
      *
      * @var string|null
-     * @deprecated 4.3.0 Use `Cake\ORM\Locator\LocatorAwareTrait::$defaultTable` instead.
      */
     protected $modelClass;
 
