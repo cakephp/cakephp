@@ -21,6 +21,7 @@ use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\ClientEvent;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
@@ -1161,14 +1162,43 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, $request, $options) use (&$eventTriggered): void {
-            $this->assertInstanceOf(RequestInterface::class, $request);
-            $this->assertTrue($options['clientOption']);
+        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent) use (&$eventTriggered): void {
+            $this->assertInstanceOf(RequestInterface::class, $clientEvent->getRequest());
+            $this->assertTrue($clientEvent->getOptions()['clientOption']);
             $eventTriggered = true;
         });
 
         $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
         $this->assertTrue($eventTriggered);
+        $this->assertSame($one, $response);
+    }
+
+    /**
+     * Make sure HttpClient.beforeSend can be used to replace the request object
+     */
+    public function testBeforeSendRequestCanBeReplaced(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one);
+
+        $client = new Client();
+        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent): ClientEvent {
+            $request = $clientEvent->getRequest();
+            $this->assertInstanceOf(RequestInterface::class, $request);
+            $this->assertTrue($clientEvent->getOptions()['clientOption']);
+
+            $request = $request->withAddedHeader('X-Testing', 'a new header');
+            $clientEvent->setRequest($request);
+
+            return $clientEvent;
+        });
+
+        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $response, $options): void {
+            $this->assertInstanceOf(RequestInterface::class, $request);
+            $this->assertEquals('a new header', $request->getHeader('X-Testing')[0]);
+        });
+
+        $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
         $this->assertSame($one, $response);
     }
 
@@ -1184,12 +1214,13 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, $request, $options) use (&$eventTriggered, $cachedResponse): Response {
-            $this->assertInstanceOf(RequestInterface::class, $request);
-            $this->assertTrue($options['clientOption']);
+        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent) use (&$eventTriggered, $cachedResponse): ClientEvent {
+            $this->assertInstanceOf(RequestInterface::class, $clientEvent->getRequest());
+            $this->assertTrue($clientEvent->getOptions()['clientOption']);
             $eventTriggered = true;
+            $clientEvent->setResponse($cachedResponse);
 
-            return $cachedResponse;
+            return $clientEvent;
         });
 
         $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
