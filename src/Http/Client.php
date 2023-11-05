@@ -18,10 +18,13 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Mock as MockAdapter;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
@@ -101,8 +104,9 @@ use Psr\Http\Message\ResponseInterface;
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
  */
-class Client implements ClientInterface
+class Client implements EventDispatcherInterface, ClientInterface
 {
+    use EventDispatcherTrait;
     use InstanceConfigTrait;
 
     /**
@@ -184,6 +188,7 @@ class Client implements ClientInterface
      */
     public function __construct(array $config = [])
     {
+        $this->_eventClass = ClientEvent::class;
         $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
@@ -479,7 +484,17 @@ class Client implements ClientInterface
         }
 
         do {
-            $response = $this->_sendRequest($request, $options);
+            /** @var \Cake\Http\Client\ClientEvent $event */
+            $event = $this->dispatchEvent(
+                'HttpClient.beforeSend',
+                ['request' => $request, 'options' => $options]
+            );
+
+            $request = $event->getRequest();
+            $response = $event->getResult();
+            if ($response === null) {
+                $response = $this->_sendRequest($request, $event->getOptions());
+            }
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {

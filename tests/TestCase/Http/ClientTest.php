@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -839,6 +840,55 @@ class ClientTest extends TestCase
         $result = $http->sendRequest($request);
 
         $this->assertSame($result, $response);
+    }
+
+    public function testBeforeSend(): void
+    {
+        $client = new Client();
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $options) {
+                $this->assertSame('http://foo.test', (string)$request->getUri());
+                $this->assertSame('thing', $options['some']);
+            }
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'test'));
+
+        $response = $client->get('http://foo.test', options: ['some' => 'thing']);
+        $this->assertSame('test', $response->getStringBody());
+    }
+
+    public function testBeforeSendModifyRequest(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $options) {
+                $event->setRequest(new Request('http://bar.test'));
+            }
+        );
+
+        Client::addMockResponse('GET', 'http://bar.test', new Response(body: 'other'));
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('other', $response->getStringBody());
+    }
+
+    public function testBeforeSendReturnResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $options) {
+                return new Response(body: 'short circuit');
+            }
+        );
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('short circuit', $response->getStringBody());
     }
 
     /**
