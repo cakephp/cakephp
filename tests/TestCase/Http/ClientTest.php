@@ -1173,6 +1173,31 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Make sure HttpClient.beforeSend can be used to replace the response
+     */
+    public function testBeforeSendResponseCanBeReplaced(): void
+    {
+        $one = new Response(['HTTP/1.0 200'], 'one');
+        Client::addMockResponse('GET', 'http://example.com/info', $one);
+
+        $cachedResponse = new Response(['HTTP/1.0 200'], 'cached');
+
+        $client = new Client();
+        $eventTriggered = false;
+        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, $request, $options) use (&$eventTriggered, $cachedResponse): Response {
+            $this->assertInstanceOf(RequestInterface::class, $request);
+            $this->assertTrue($options['clientOption']);
+            $eventTriggered = true;
+
+            return $cachedResponse;
+        });
+
+        $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
+        $this->assertTrue($eventTriggered);
+        $this->assertSame($cachedResponse, $response);
+    }
+
+    /**
      * Make sure HttpClient.afterSend is being triggered
      */
     public function testAfterSendEventDispatched(): void

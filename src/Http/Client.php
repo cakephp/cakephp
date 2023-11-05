@@ -488,7 +488,11 @@ class Client implements ClientInterface, EventDispatcherInterface
         }
 
         do {
-            $this->dispatchEvent('HttpClient.beforeSend', [$request, $options]);
+            $event = $this->dispatchEvent('HttpClient.beforeSend', [$request, $options]);
+            $result = $event->getResult();
+            if ($result instanceof Response) {
+                return $result;
+            }
             $response = $this->_sendRequest($request, $options);
             $this->dispatchEvent('HttpClient.afterSend', [$request, $response, $options]);
 
