@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use PDO;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
 use TestApp\Model\Enum\Priority;
 use ValueError;
 
@@ -105,7 +106,29 @@ class EnumTypeTest extends TestCase
     public function testInvalidEnumClass(): void
     {
         $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use `TestApp\Model\Entity\Article` for type `invalid`. Class "TestApp\Model\Entity\Article" is not an enum');
         new EnumType('invalid', Article::class);
+    }
+
+    /**
+     * Check that 2nd argument must be a valid backed enum
+     */
+    public function testInvalidEnumInvalidClass(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use `App\Foo` for type `invalid`. Class "App\Foo" does not exist');
+        new EnumType('invalid', 'App\Foo');
+    }
+
+    /**
+     * Check that 2nd argument must be a valid backed enum
+     */
+    public function testInvalidEnumWithoutBackingType(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use enum `TestApp\Model\Enum\NonBacked` for type `invalid`, must be a backed enum');
+
+        new EnumType('invalid', NonBacked::class);
     }
 
     /**
