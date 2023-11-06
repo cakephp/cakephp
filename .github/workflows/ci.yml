@@ -128,6 +128,14 @@ jobs:
       if: always()
       run: php contrib/validate-deprecation-aliases.php
 
+    - name: Run composer.json validation for split packages
+      if: always()
+      run: php contrib/validate-split-packages.php
+
+    - name: Run PHPStan for split packages
+      if: always()
+      run: php contrib/validate-split-packages-phpstan.php
+
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'
       run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
