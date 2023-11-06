@@ -11,26 +11,6 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: "#^Call to method getOptionParser\\(\\) on an unknown class Cake\\\\Console\\\\Shell\\.$#"
-			count: 1
-			path: src/Command/CompletionCommand.php
-
-		-
-			message: "#^Method Cake\\\\Console\\\\CommandCollection\\:\\:get\\(\\) has invalid return type Cake\\\\Console\\\\Shell\\.$#"
-			count: 1
-			path: src/Console/CommandCollection.php
-
-		-
-			message: "#^Method Cake\\\\Console\\\\CommandCollection\\:\\:getIterator\\(\\) has invalid return type Cake\\\\Console\\\\Shell\\.$#"
-			count: 1
-			path: src/Console/CommandCollection.php
-
-		-
-			message: "#^PHPDoc tag @return with type Cake\\\\Console\\\\CommandInterface\\|Cake\\\\Console\\\\Shell\\|class\\-string\\<Cake\\\\Console\\\\CommandInterface\\> is not subtype of native type Cake\\\\Console\\\\CommandInterface\\|string\\.$#"
-			count: 1
-			path: src/Console/CommandCollection.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
