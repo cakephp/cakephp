@@ -1411,9 +1411,12 @@ class Validation
             return false;
         }
 
-        [$width, $height] = getimagesize($file) ?: [];
-        $validHeight = null;
-        $validWidth = null;
+        $width = $height = null;
+        $imageSize = getimagesize($file);
+        if ($imageSize) {
+            [$width, $height] = $imageSize;
+        }
+        $validWidth = $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
