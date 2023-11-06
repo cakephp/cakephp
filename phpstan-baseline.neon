@@ -131,16 +131,6 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Offset 0 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
-			count: 1
-			path: src/Validation/Validation.php
-
-		-
-			message: "#^Offset 1 does not exist on array\\{\\}\\|array\\{0\\: int, 1\\: int, 2\\: int, 3\\: string, mime\\: string, channels\\?\\: int, bits\\?\\: int\\}\\.$#"
-			count: 1
-			path: src/Validation/Validation.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/View/Form/ContextFactory.php
