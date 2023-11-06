@@ -4,7 +4,7 @@ parameters:
 	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
-		- tests/bootstrap.php
+		- tests/phpstan-bootstrap.php
 	paths:
 		- ./
 	excludePaths:

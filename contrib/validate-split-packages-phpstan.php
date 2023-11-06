@@ -50,6 +50,7 @@ foreach ($packages as $path => $package) {
     if ($exitCode !== 0) {
         $code = $exitCode;
     }
+    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
 }
 
 exit($code);
