@@ -18,12 +18,6 @@
       <code>int|false</code>
     </InvalidReturnType>
   </file>
-  <file src="src/Console/CommandCollection.php">
-    <InvalidDocblock>
-      <code>public function get(string $name): CommandInterface|string</code>
-      <code>public function getIterator(): Traversable</code>
-    </InvalidDocblock>
-  </file>
   <file src="src/Database/Query.php">
     <UnusedPsalmSuppress>
       <code>InvalidArrayOffset</code>
