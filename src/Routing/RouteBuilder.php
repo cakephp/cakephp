@@ -948,7 +948,7 @@ class RouteBuilder
             'namePrefix' => $namePrefix,
             'middleware' => $this->middleware,
         ]);
-        $builder->useLazyScopes($this->lazyScopes);
+        $builder->enableLazyScopes($this->lazyScopes);
 
         if ($this->lazyScopes) {
             $this->_collection->addScope($builder, $callback);
@@ -960,7 +960,20 @@ class RouteBuilder
     }
 
     /**
-     * Enable or disable lazy scopes
+     * Disable lazy scopes
+     *
+     * @return $this
+     * @see \Cake\Routing\RouteBuilder::enableLazyScopes()
+     */
+    public function disableLazyScopes()
+    {
+        $this->lazyScopes = false;
+
+        return $this;
+    }
+
+    /**
+     * Enable lazy scopes
      *
      * When enabled scopes will not be executed immediately.
      * Instead scopes and the routes they contain will be deferred until
@@ -972,7 +985,7 @@ class RouteBuilder
      * @param bool $value The scope evaluation mode
      * @return $this
      */
-    public function useLazyScopes(bool $value)
+    public function enableLazyScopes(bool $value = true)
     {
         $this->lazyScopes = $value;
 

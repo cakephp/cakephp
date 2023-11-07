@@ -160,7 +160,7 @@ class RouteCollection
         if (empty($this->unresolvedScopes)) {
             return;
         }
-        assert($path === null || $url === null, 'Must provide one of `path` or `url`');
+        assert($path === null || $url === null, 'Provide only one of `path` or `url`');
         assert($path !== false, 'Path = false is undefined behavior');
 
         $resolved = [];

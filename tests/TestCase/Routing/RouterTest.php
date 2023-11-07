@@ -1742,7 +1742,7 @@ class RouterTest extends TestCase
         Router::extensions(['json']);
 
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->scope('/', function (RouteBuilder $routes): void {
             $routes->setExtensions('rss');
             $routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
@@ -1765,7 +1765,7 @@ class RouterTest extends TestCase
     public function testResourcesInScope($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
@@ -3103,7 +3103,7 @@ class RouterTest extends TestCase
     public function testScope($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->scope('/path', ['param' => 'value'], function (RouteBuilder $routes): void {
             $this->assertSame('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
@@ -3124,7 +3124,7 @@ class RouterTest extends TestCase
     {
         Router::extensions(['json']);
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->scope('/', function (RouteBuilder $routes): void {
             $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
             $routes->setExtensions(['rss']);
@@ -3163,7 +3163,7 @@ class RouterTest extends TestCase
     {
         $options = ['param' => 'value'];
         $routes = Router::createRouteBuilder('/', ['routeClass' => 'InflectedRoute', 'extensions' => ['json']]);
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->scope('/path', $options, function (RouteBuilder $routes): void {
             $this->assertSame('InflectedRoute', $routes->getRouteClass());
             $this->assertSame(['json'], $routes->getExtensions());
@@ -3181,7 +3181,7 @@ class RouterTest extends TestCase
     public function testScopeNamePrefix($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
 
         $routes->scope('/path', ['param' => 'value', '_namePrefix' => 'path:'], function (RouteBuilder $routes): void {
             $this->assertSame('/path', $routes->path());
@@ -3196,7 +3196,7 @@ class RouterTest extends TestCase
     public function testLazyScopeEvaluation(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes(true);
+        $routes->enableLazyScopes(true);
         $routes->scope('/path', function (RouteBuilder $builder) {
             $builder->connect('/articles', ['controller' => 'Articles']);
         });
@@ -3214,7 +3214,7 @@ class RouterTest extends TestCase
     public function testLazyScopeEvaluationNested(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes(true);
+        $routes->enableLazyScopes(true);
         $routes->scope('/path', function (RouteBuilder $builder) {
             $builder->scope('/other', function (RouteBuilder $builder) {
                 $builder->connect('/articles', ['controller' => 'Articles']);
@@ -3239,7 +3239,7 @@ class RouterTest extends TestCase
     public function testPrefix($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
 
         $routes->prefix('admin', function (RouteBuilder $routes): void {
             $this->assertSame('/admin', $routes->path());
@@ -3261,7 +3261,7 @@ class RouterTest extends TestCase
     public function testPrefixOptions($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
 
         $routes->prefix('admin', ['param' => 'value'], function (RouteBuilder $routes): void {
             $this->assertSame('/admin', $routes->path());
@@ -3283,7 +3283,7 @@ class RouterTest extends TestCase
     public function testPlugin($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
         $routes->plugin('DebugKit', function (RouteBuilder $routes): void {
             $this->assertSame('/debug-kit', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
@@ -3299,7 +3299,7 @@ class RouterTest extends TestCase
     public function testPluginOptions($scopeMode): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->useLazyScopes($scopeMode);
+        $routes->enableLazyScopes($scopeMode);
 
         $routes->plugin('DebugKit', ['path' => '/debugger'], function (RouteBuilder $routes): void {
             $this->assertSame('/debugger', $routes->path());
