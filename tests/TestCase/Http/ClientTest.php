@@ -891,6 +891,23 @@ class ClientTest extends TestCase
         $this->assertSame('short circuit', $response->getStringBody());
     }
 
+    public function testAfterSendModifyResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $options) {
+                return new Response(body: 'modified response');
+            }
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'response text'));
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('modified response', $response->getStringBody());
+    }
+
     /**
      * test redirect across sub domains
      */

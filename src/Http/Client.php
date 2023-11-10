@@ -494,6 +494,13 @@ class Client implements EventDispatcherInterface, ClientInterface
             $response = $event->getResult();
             if ($response === null) {
                 $response = $this->_sendRequest($request, $event->getOptions());
+
+                /** @var \Cake\Http\Client\ClientEvent $event */
+                $event = $this->dispatchEvent(
+                    'HttpClient.afterSend',
+                    ['request' => $request, 'options' => $options, 'response' => $response]
+                );
+                $response = $event->getResult();
             }
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;

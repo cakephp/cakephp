@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client;
 
 use Cake\Event\Event;
+use Cake\Http\Client;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 
@@ -25,6 +26,24 @@ use Psr\Http\Message\RequestInterface;
  */
 class ClientEvent extends Event
 {
+    /**
+     * Constructor
+     *
+     * @param string $name Name of the event
+     * @param \Cake\Http\Client $subject The Http Client instance this event applies to.
+     * @param array $data Any value you wish to be transported
+     *   with this event to it can be read by listeners.
+     */
+    public function __construct(string $name, Client $subject, array $data = [])
+    {
+        if (isset($data['response'])) {
+            $this->result = $data['response'];
+            unset($data['response']);
+        }
+
+        parent::__construct($name, $subject, $data);
+    }
+
     /**
      * The result value of the event listeners
      *
