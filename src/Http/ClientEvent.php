@@ -15,32 +15,34 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Event\Event;
 use Cake\Http\Client\Response;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Used as a wrapper class to hold request and response data before
+ * Custom HTTP Client event to hold request and response data before
  * the HTTP client actually does the request.
+ *
+ * @template TSubject of \Cake\Http\Client
+ * @extends \Cake\Event\Event<\Cake\Http\Client>
  */
-class ClientEvent
+class ClientEvent extends Event
 {
+    public RequestInterface $request;
+
+    public ?array $options = null;
+
     public ?Response $response = null;
 
     /**
      * @param \Psr\Http\Message\RequestInterface $request
-     * @param array $options
+     * @return $this
      */
-    public function __construct(protected RequestInterface $request, protected array $options = [])
-    {
-    }
-
-    /**
-     * @param \Psr\Http\Message\RequestInterface $request
-     * @return void
-     */
-    public function setRequest(RequestInterface $request): void
+    public function setRequest(RequestInterface $request)
     {
         $this->request = $request;
+
+        return $this;
     }
 
     /**
@@ -53,28 +55,32 @@ class ClientEvent
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
-    public function setOptions(array $options): void
+    public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getOptions(): array
+    public function getOptions(): ?array
     {
         return $this->options;
     }
 
     /**
      * @param \Cake\Http\Client\Response|null $response
-     * @return void
+     * @return $this
      */
-    public function setResponse(?Response $response): void
+    public function setResponse(?Response $response)
     {
         $this->response = $response;
+
+        return $this;
     }
 
     /**

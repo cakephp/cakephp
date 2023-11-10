@@ -1162,9 +1162,9 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent) use (&$eventTriggered): void {
-            $this->assertInstanceOf(RequestInterface::class, $clientEvent->getRequest());
-            $this->assertTrue($clientEvent->getOptions()['clientOption']);
+        $client->getEventManager()->on('HttpClient.beforeSend', function (ClientEvent $event) use (&$eventTriggered): void {
+            $this->assertInstanceOf(RequestInterface::class, $event->getRequest());
+            $this->assertTrue($event->getOptions()['clientOption']);
             $eventTriggered = true;
         });
 
@@ -1182,20 +1182,18 @@ class ClientTest extends TestCase
         Client::addMockResponse('GET', 'http://example.com/info', $one);
 
         $client = new Client();
-        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent): ClientEvent {
-            $request = $clientEvent->getRequest();
+        $client->getEventManager()->on('HttpClient.beforeSend', function (ClientEvent $event): void {
+            $request = $event->getRequest();
             $this->assertInstanceOf(RequestInterface::class, $request);
-            $this->assertTrue($clientEvent->getOptions()['clientOption']);
+            $this->assertTrue($event->getOptions()['clientOption']);
 
             $request = $request->withAddedHeader('X-Testing', 'a new header');
-            $clientEvent->setRequest($request);
-
-            return $clientEvent;
+            $event->setRequest($request);
         });
 
-        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $response, $options): void {
-            $this->assertInstanceOf(RequestInterface::class, $request);
-            $this->assertEquals('a new header', $request->getHeader('X-Testing')[0]);
+        $client->getEventManager()->on('HttpClient.afterSend', function (ClientEvent $event): void {
+            $this->assertInstanceOf(RequestInterface::class, $event->getRequest());
+            $this->assertEquals('a new header', $event->getRequest()->getHeader('X-Testing')[0]);
         });
 
         $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
@@ -1214,13 +1212,11 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.beforeSend', function ($event, ClientEvent $clientEvent) use (&$eventTriggered, $cachedResponse): ClientEvent {
-            $this->assertInstanceOf(RequestInterface::class, $clientEvent->getRequest());
-            $this->assertTrue($clientEvent->getOptions()['clientOption']);
+        $client->getEventManager()->on('HttpClient.beforeSend', function (ClientEvent $event) use (&$eventTriggered, $cachedResponse): void {
+            $this->assertInstanceOf(RequestInterface::class, $event->getRequest());
+            $this->assertTrue($event->getOptions()['clientOption']);
             $eventTriggered = true;
-            $clientEvent->setResponse($cachedResponse);
-
-            return $clientEvent;
+            $event->setResult($cachedResponse);
         });
 
         $response = $client->get('http://example.com/info', [], ['clientOption' => true]);
@@ -1238,10 +1234,10 @@ class ClientTest extends TestCase
 
         $client = new Client();
         $eventTriggered = false;
-        $client->getEventManager()->on('HttpClient.afterSend', function ($event, $request, $response, $options) use (&$eventTriggered, $one): void {
-            $this->assertInstanceOf(RequestInterface::class, $request);
-            $this->assertSame($one, $response);
-            $this->assertTrue($options['clientOption']);
+        $client->getEventManager()->on('HttpClient.afterSend', function (ClientEvent $event) use (&$eventTriggered, $one): void {
+            $this->assertInstanceOf(RequestInterface::class, $event->getRequest());
+            $this->assertSame($one, $event->getResponse());
+            $this->assertTrue($event->getOptions()['clientOption']);
             $eventTriggered = true;
         });
 
