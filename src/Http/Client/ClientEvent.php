@@ -23,6 +23,8 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Class Client Event
+ *
+ * @extends \Cake\Event\Event<\Cake\Http\Client>
  */
 class ClientEvent extends Event
 {
