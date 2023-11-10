@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2']
+        php-version: ['8.1', '8.3']
         db-type: [sqlite, pgsql]
         prefer-lowest: ['']
         include:
@@ -29,7 +29,7 @@ jobs:
           - php-version: '8.1'
             db-type: 'mysql'
             prefer-lowest: 'prefer-lowest'
-          - php-version: '8.3'
+          - php-version: '8.2'
             db-type: 'mysql'
 
     services:
@@ -90,8 +90,6 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
-        elif ${{ matrix.php-version == '8.3' }}; then
-          composer update --ignore-platform-reqs
         else
           composer update
         fi
