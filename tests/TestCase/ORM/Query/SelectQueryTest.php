@@ -30,6 +30,7 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
@@ -3272,6 +3273,19 @@ class SelectQueryTest extends TestCase
             ->first();
         $this->assertInstanceOf(DateTime::class, $result->created);
         $this->assertInstanceOf(DateTime::class, $result->updated_time);
+    }
+
+    /**
+     * Test that a string is not interpreted as a column alias.
+     */
+    public function testSelectTypeNotInterpretedAsColumnAlias(): void
+    {
+        $table = $this->getTableLocator()->get('comments');
+        $result = $table
+            ->find()
+            ->select(['created', 'updated_time' => 'string_not_column_alias'])
+            ->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
     }
 
     /**
