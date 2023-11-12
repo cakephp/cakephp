@@ -48,6 +48,11 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
         }
 
+        // For now to shim binary(16)
+        if ($column === 'UUID_BLOB') {
+            $column = 'BINARYUUID';
+        }
+
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
@@ -120,6 +125,9 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
+        if ($col === 'binaryuuid') {
+            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
+        }
         if ($col === 'binary' && $length === 16) {
             return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
         }
