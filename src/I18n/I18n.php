@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\I18n\Exception\I18nException;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
@@ -71,7 +72,12 @@ class I18n
         );
 
         if (class_exists(Cache::class)) {
-            static::$_collection->setCacher(Cache::pool('_cake_translations_'));
+            try {
+                $pool = Cache::pool('_cake_translations_');
+            } catch (InvalidArgumentException) {
+                $pool = Cache::pool('_cake_core_');
+            }
+            static::$_collection->setCacher($pool);
         }
 
         return static::$_collection;
