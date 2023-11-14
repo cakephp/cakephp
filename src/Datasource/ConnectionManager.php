@@ -122,7 +122,7 @@ class ConnectionManager
         }
 
         if (empty($config['driver'])) {
-            $config['driver'] = $config['className'];
+            $config['driver'] = $config['className'] ?? null;
             $config['className'] = Connection::class;
         }
 
