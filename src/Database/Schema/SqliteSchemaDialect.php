@@ -48,6 +48,10 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
         }
 
+        if ($column === 'UUID_BLOB') {
+            $column = 'BINARYUUID';
+        }
+
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
