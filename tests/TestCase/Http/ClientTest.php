@@ -844,12 +844,12 @@ class ClientTest extends TestCase
 
     public function testBeforeSend(): void
     {
+        $eventTriggered = false;
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $options) {
-                $this->assertSame('http://foo.test', (string)$request->getUri());
-                $this->assertSame('thing', $options['some']);
+            function (ClientEvent $event, Request $request, array $options) use (&$eventTriggered) {
+                $eventTriggered = true;
             }
         );
 
@@ -857,6 +857,7 @@ class ClientTest extends TestCase
 
         $response = $client->get('http://foo.test', options: ['some' => 'thing']);
         $this->assertSame('test', $response->getStringBody());
+        $this->assertTrue($eventTriggered);
     }
 
     public function testBeforeSendModifyRequest(): void
@@ -867,10 +868,20 @@ class ClientTest extends TestCase
             'HttpClient.beforeSend',
             function (ClientEvent $event, Request $request, array $options) {
                 $event->setRequest(new Request('http://bar.test'));
+                $event->setOptions(['some' => 'value']);
             }
         );
 
-        Client::addMockResponse('GET', 'http://bar.test', new Response(body: 'other'));
+        Client::addMockResponse(
+            'GET',
+            'http://bar.test',
+            new Response(body: 'other'),
+            ['match' => function (Request $request, array $options) {
+                $this->assertSame(['some' => 'value'], $options);
+
+                return true;
+            }]
+        );
 
         $response = $client->get('http://foo.test');
         $this->assertSame('other', $response->getStringBody());
