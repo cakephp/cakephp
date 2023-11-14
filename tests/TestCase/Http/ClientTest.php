@@ -848,7 +848,7 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $options) use (&$eventTriggered) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered) {
                 $eventTriggered = true;
             }
         );
@@ -866,9 +866,9 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $options) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
                 $event->setRequest(new Request('http://bar.test'));
-                $event->setOptions(['some' => 'value']);
+                $event->setAdapterOptions(['some' => 'value']);
             }
         );
 
@@ -893,8 +893,15 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $options) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
                 return new Response(body: 'short circuit');
+            }
+        );
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                $this->assertFalse($event->getData('requestSent'));
             }
         );
 
@@ -908,7 +915,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
-            function (ClientEvent $event, Request $request, array $options) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
                 return new Response(body: 'modified response');
             }
         );

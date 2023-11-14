@@ -97,24 +97,24 @@ class ClientEvent extends Event
     }
 
     /**
-     * Set the request options.
+     * Set the adapter options.
      *
      * @return $this
      */
-    public function setOptions(array $options = [])
+    public function setAdapterOptions(array $options = [])
     {
-        $this->_data['options'] = $options;
+        $this->_data['adapterOptions'] = $options;
 
         return $this;
     }
 
     /**
-     * Get the request options.
+     * Get the adapter options.
      *
      * @return array
      */
-    public function getOptions(): array
+    public function getAdapterOptions(): array
     {
-        return $this->_data['options'];
+        return $this->_data['adapterOptions'];
     }
 }

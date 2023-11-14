@@ -492,22 +492,30 @@ class Client implements EventDispatcherInterface, ClientInterface
             /** @var \Cake\Http\Client\ClientEvent $event */
             $event = $this->dispatchEvent(
                 'HttpClient.beforeSend',
-                ['request' => $request, 'options' => $options]
+                ['request' => $request, 'adapterOptions' => $options, 'redirects' => $redirects]
             );
 
             $request = $event->getRequest();
             $response = $event->getResult();
+            $requestSent = false;
             if ($response === null) {
-                $response = $this->_sendRequest($request, $event->getOptions());
-
-                /** @var \Cake\Http\Client\ClientEvent $event */
-                $event = $this->dispatchEvent(
-                    'HttpClient.afterSend',
-                    ['request' => $request, 'options' => $options, 'response' => $response]
-                );
-                $response = $event->getResult();
-                assert($response instanceof Response);
+                $requestSent = true;
+                $response = $this->_sendRequest($request, $event->getAdapterOptions());
             }
+
+            /** @var \Cake\Http\Client\ClientEvent $event */
+            $event = $this->dispatchEvent(
+                'HttpClient.afterSend',
+                [
+                    'request' => $request,
+                    'adapterOptions' => $options,
+                    'redirects' => $redirects,
+                    'requestSent' => $requestSent,
+                    'response' => $response,
+                ]
+            );
+            $response = $event->getResult();
+            assert($response instanceof Response);
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {
