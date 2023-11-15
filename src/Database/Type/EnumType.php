@@ -106,7 +106,8 @@ class EnumType extends BaseType
 
         if (!is_string($value) && !is_int($value)) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to string or integer',
+                'Cannot convert value `%s` of type `%s` to string or int',
+                print_r($value, true),
                 get_debug_type($value)
             ));
         }
