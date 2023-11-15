@@ -110,7 +110,7 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
-        if (($col === 'binary' && $length === 16) || (str_contains(strtolower($column), 'blob') && $col === 'uuid')) {
+        if (($col === 'binary' && $length === 16) || strtolower($column) === 'uuid_blob') {
             return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
         }
         if (($col === 'char' && $length === 36) || $col === 'uuid') {
