@@ -22,6 +22,7 @@ use Cake\I18n\Exception\I18nException;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
+use function Cake\Core\deprecationWarning;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -76,6 +77,10 @@ class I18n
                 $pool = Cache::pool('_cake_translations_');
             } catch (InvalidArgumentException) {
                 $pool = Cache::pool('_cake_core_');
+                deprecationWarning(
+                    '5.1.0',
+                    'Cache config `_cake_core_` is deprecated. Use `_cake_translations_` instead'
+                );
             }
             static::$_collection->setCacher($pool);
         }
