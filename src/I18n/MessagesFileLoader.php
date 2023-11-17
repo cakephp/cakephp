@@ -174,13 +174,6 @@ class MessagesFileLoader
 
         $searchPaths = [];
 
-        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
-            $basePath = App::path('locales', $this->_plugin)[0];
-            foreach ($folders as $folder) {
-                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
-            }
-        }
-
         $localePaths = App::path('locales');
         if (empty($localePaths) && defined('APP')) {
             $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
@@ -188,6 +181,13 @@ class MessagesFileLoader
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
                 $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
+            }
+        }
+
+        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
+            $basePath = App::path('locales', $this->_plugin)[0];
+            foreach ($folders as $folder) {
+                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
             }
         }
 
