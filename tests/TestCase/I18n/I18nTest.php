@@ -166,7 +166,7 @@ class I18nTest extends TestCase
 
         $translator = I18n::getTranslator('test_plugin');
         $this->assertSame(
-            'Plural Rule 1 (from plugin)',
+            'Plural Rule 1 (from test app)',
             $translator->translate('Plural Rule 1')
         );
 

@@ -1,0 +1,2 @@
+msgid "Plural Rule 1"
+msgstr "Plural Rule 1 (from test app)"
