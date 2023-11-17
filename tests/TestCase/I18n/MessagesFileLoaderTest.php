@@ -78,14 +78,14 @@ class MessagesFileLoaderTest extends TestCase
         $package = $loader();
         $this->assertFalse($package);
     }
-    
+
     /**
      * Testing MessagesFileLoader::translationsFilder array sequence
      */
     public function testTranslationFoldersSequence(): void
     {
         $this->loadPlugins([
-            'TestPluginTwo' => []
+            'TestPluginTwo' => [],
         ]);
         $loader = new MessagesFileLoader('test_plugin_two', 'en');
 
@@ -106,16 +106,16 @@ class MessagesFileLoaderTest extends TestCase
     {
         $this->loadPlugins([
             'TestPlugin' => [],
-            'TestPluginTwo' => []
+            'TestPluginTwo' => [],
         ]);
 
         $loader = new MessagesFileLoader('test_plugin', 'en');
-        $package  = $loader();
+        $package = $loader();
         $messages = $package->getMessages();
         $this->assertSame('Plural Rule 1 (from plugin)', $messages['Plural Rule 1']['_context']['']);
-        
+
         $loader = new MessagesFileLoader('test_plugin_two', 'en');
-        $package  = $loader();
+        $package = $loader();
         $messages = $package->getMessages();
         $this->assertSame('Test Message (from app)', $messages['Test Message']['_context']['']);
     }
