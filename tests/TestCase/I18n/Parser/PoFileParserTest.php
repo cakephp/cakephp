@@ -55,7 +55,7 @@ class PoFileParserTest extends TestCase
         parent::tearDown();
         I18n::clear();
         I18n::setLocale(I18n::getDefaultLocale());
-        Cache::clear('_cake_core_');
+        Cache::clear('_cake_translations_');
     }
 
     /**

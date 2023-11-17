@@ -180,12 +180,12 @@ class StaticConfigTraitTest extends TestCase
         ];
         $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
 
-        $dsn = 'file:///?prefix=myapp_cake_core_&serialize=true&duration=%2B2 minutes';
+        $dsn = 'file:///?prefix=myapp_cake_translations_&serialize=true&duration=%2B2 minutes';
         $expected = [
             'className' => 'Cake\Log\Engine\FileLog',
             'duration' => '+2 minutes',
             'path' => '/',
-            'prefix' => 'myapp_cake_core_',
+            'prefix' => 'myapp_cake_translations_',
             'scheme' => 'file',
             'serialize' => true,
         ];
