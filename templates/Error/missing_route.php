@@ -43,7 +43,7 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 <?php endif; ?>
 
 <details>
-    <summary style="font-size: 1.25rem">Connected Routes</summary>
+    <summary style="font-size: 1.25rem; cursor: pointer">Connected Routes</summary>
     <div>
         <table cellspacing="0" cellpadding="0" width="100%">
             <tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
