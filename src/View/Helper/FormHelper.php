@@ -1072,7 +1072,6 @@ class FormHelper extends Helper
         if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
             $isFieldError = $this->isFieldError($fieldName);
             $options += [
-                'aria-required' => $options['required'] ? 'true' : null,
                 'aria-invalid' => $isFieldError ? 'true' : null,
             ];
             // Don't include aria-describedby unless we have a good chance of

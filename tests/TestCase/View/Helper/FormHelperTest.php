@@ -507,7 +507,6 @@ class FormHelperTest extends TestCase
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
-                'aria-required' => 'true',
             ],
             '/div',
         ];
@@ -2564,7 +2563,6 @@ class FormHelperTest extends TestCase
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
-                'aria-required' => 'true',
                 'aria-invalid' => 'true',
                 'aria-describedby' => 'title-error',
             ],
@@ -2587,7 +2585,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
-                'aria-required' => 'true',
                 'aria-invalid' => 'true',
                 'aria-describedby' => 'title-error',
                 'class' => 'form-error',
@@ -6392,7 +6389,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'placeholder' => 'Add title',
@@ -6419,7 +6415,6 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['class' => 'input text required'],
             'input' => [
-                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'id' => 'title',
@@ -7728,7 +7723,6 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
-                    'aria-required' => 'true',
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
@@ -7834,7 +7828,6 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7853,7 +7846,6 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7873,7 +7865,6 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7918,7 +7909,6 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7935,7 +7925,6 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7957,7 +7946,6 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7996,7 +7984,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
-                'aria-required' => 'true',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
@@ -8873,7 +8860,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8918,7 +8904,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8955,7 +8940,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8992,7 +8976,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9035,7 +9018,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9070,7 +9052,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
