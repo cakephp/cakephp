@@ -325,7 +325,7 @@ class NumericPaginator implements PaginatorInterface
             triggerWarning(
                 'Passing query options as paginator settings is no longer supported.'
                 . ' Use a custom finder through the `finder` config or pass a SelectQuery instance to paginate().'
-                . ' Extra keys found are: ' . implode(',', array_keys($extraSettings))
+                . ' Extra keys found are: `' . implode('`, `', array_keys($extraSettings)) . '`.'
             );
         }
 
