@@ -58,11 +58,11 @@ foreach ($packages as $fullPackageName => $package) {
 
     $missing[] = $package;
 }
-if (!empty($mainReplace)) {
+if ($mainReplace) {
     echo "\033[31m" . ' * Missing "replace" statement in ROOT composer.json for package `' . $package . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
 }
-if (!empty($missing)) {
+if ($missing) {
     echo "\033[31m" . ' * Extra "replace" statement in ROOT composer.json for non-existent package(s) `' . implode(', ', $missing)  . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
 }
