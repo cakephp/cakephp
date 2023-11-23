@@ -99,7 +99,7 @@ class NumberHelper extends Helper
     /**
      * Formats a number with a level of precision.
      *
-     * @param string|float $number A floating point number.
+     * @param string|float|int $number A floating point number.
      * @param int $precision The precision of the returned number.
      * @param array<string, mixed> $options Additional options.
      * @return string Formatted float.
@@ -114,7 +114,7 @@ class NumberHelper extends Helper
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param string|int $size Size in bytes
+     * @param string|float|int $size Size in bytes
      * @return string Human readable size
      * @see \Cake\I18n\Number::toReadableSize()
      * @link https://book.cakephp.org/4/en/views/helpers/number.html#interacting-with-human-readable-values
@@ -131,7 +131,7 @@ class NumberHelper extends Helper
      *
      * - `multiply`: Multiply the input value by 100 for decimal percentages.
      *
-     * @param string|float $number A floating point number
+     * @param string|float|int $number A floating point number
      * @param int $precision The precision of the returned number
      * @param array<string, mixed> $options Options
      * @return string Percentage string
