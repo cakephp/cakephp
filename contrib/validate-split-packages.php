@@ -29,7 +29,7 @@ $path = dirname(__DIR__) . DS . 'src' . DS;
 $di = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
 $iterator = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::LEAVES_ONLY);
 /** @var array<\SplFileInfo> $iterator */
-$iterator = new RegexIterator($iterator, '~composer.json$~');
+$iterator = new RegexIterator($iterator, '~/src/\w+/composer.json$~');
 
 $packages = [];
 $code = 0;
