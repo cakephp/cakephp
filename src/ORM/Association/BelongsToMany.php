@@ -1282,6 +1282,7 @@ class BelongsToMany extends Association
         }
 
         foreach ($existing as $existingLink) {
+            /** @var \Cake\ORM\Entity $existingLink */
             $existingKeys = $existingLink->extract($keys);
             $found = false;
             foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {
