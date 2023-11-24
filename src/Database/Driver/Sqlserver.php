@@ -412,7 +412,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function ($q) use ($distinct, $order) {
+            ->select(function (Query $q) use ($distinct, $order) {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->newExpr()->add($distinct)->setConjunction(','))
