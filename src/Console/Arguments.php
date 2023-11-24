@@ -39,7 +39,7 @@ class Arguments
     /**
      * Named options
      *
-     * @var array<string, string|bool|null>
+     * @var array<string, list<string>|string|bool|null>
      */
     protected array $options;
 
@@ -84,7 +84,7 @@ class Arguments
     }
 
     /**
-     * Check if a positional argument exists
+     * Check if a positional argument exists by index
      *
      * @param int $index The argument index to check.
      * @return bool
@@ -111,7 +111,7 @@ class Arguments
     }
 
     /**
-     * Check if a positional argument exists by name
+     * Returns positional argument value by name or null if doesn't exist
      *
      * @param string $name The argument name to check.
      * @return string|null
@@ -129,7 +129,7 @@ class Arguments
     /**
      * Get an array of all the options
      *
-     * @return array<string, string|bool|null>
+     * @return array<string, list<string>|string|bool|null>
      */
     public function getOptions(): array
     {
@@ -137,14 +137,43 @@ class Arguments
     }
 
     /**
-     * Get an option's value or null
+     * Get a non-multiple option's value or null if not set.
      *
      * @param string $name The name of the option to check.
-     * @return string|bool|null The option value or null.
+     * @return string|bool|null
      */
     public function getOption(string $name): string|bool|null
     {
-        return $this->options[$name] ?? null;
+        $value = $this->options[$name] ?? null;
+        assert($value === null || is_string($value) || is_bool($value));
+
+        return $value;
+    }
+
+    /**
+     * Get a boolean option's value or null if not set.
+     *
+     * @return bool|null
+     */
+    public function getBooleanOption(string $name): ?bool
+    {
+        $value = $this->options[$name] ?? null;
+        assert($value === null || is_bool($value));
+
+        return $value;
+    }
+
+    /**
+     * Gets a multiple option's value or null if not set.
+     *
+     * @return list<string>|null
+     */
+    public function getMultipleOption(string $name): ?array
+    {
+        $value = $this->options[$name] ?? null;
+        assert($value === null || is_array($value));
+
+        return $value;
     }
 
     /**
