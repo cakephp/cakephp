@@ -6,6 +6,12 @@
     </TooManyTemplateParams>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
+    <InvalidCast>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+    </InvalidCast>
     <InvalidReturnStatement>
       <code><![CDATA[$this->_Redis->set($key, $value)]]></code>
       <code><![CDATA[$this->_Redis->setEx($key, $duration, $value)]]></code>
