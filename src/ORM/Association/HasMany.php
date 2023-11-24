@@ -234,9 +234,11 @@ class HasMany extends Association
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\ORM\Entity $originEntity */
+                $originEntity = $original[$k];
+                $originEntity->setErrors($entity->getErrors());
                 if ($entity instanceof InvalidPropertyInterface) {
-                    $original[$k]->setInvalid($entity->getInvalid());
+                    $originEntity->setInvalid($entity->getInvalid());
                 }
 
                 return false;
