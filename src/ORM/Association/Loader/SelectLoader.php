@@ -171,19 +171,22 @@ class SelectLoader
             $query = $query->find($finderName, ...$opts);
         }
 
+        /** @var \Cake\ORM\Query\SelectQuery $selectQuery */
+        $selectQuery = $options['query'];
+
         $fetchQuery = $query
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->enableHydration($options['query']->isHydrationEnabled());
-        if ($options['query']->isResultsCastingEnabled()) {
+            ->enableHydration($selectQuery->isHydrationEnabled());
+        if ($selectQuery->isResultsCastingEnabled()) {
             $fetchQuery->enableResultsCasting();
         } else {
             $fetchQuery->disableResultsCasting();
         }
 
         if ($useSubquery) {
-            $filter = $this->_buildSubquery($options['query']);
+            $filter = $this->_buildSubquery($selectQuery);
             $fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
         } else {
             $fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
@@ -449,6 +452,7 @@ class SelectLoader
         $fields = $query->aliasFields($keys, $this->sourceAlias);
         $group = $fields = array_values($fields);
 
+        /** @var \Cake\Database\Expression\QueryExpression $order */
         $order = $query->clause('order');
         if ($order) {
             $columns = $query->clause('select');

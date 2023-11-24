@@ -402,6 +402,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         if ($id) {
             $where['id'] = $id;
 
+            /** @var \Cake\Datasource\EntityInterface|null $translation */
             $translation = $this->translationTable->find()
                 ->select(array_merge(['id', 'locale'], $fields))
                 ->where($where)

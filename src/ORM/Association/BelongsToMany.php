@@ -475,7 +475,9 @@ class BelongsToMany extends Association
 
         $foreignKey = $this->getTargetForeignKey();
         $thisJoin = $query->clause('join')[$this->getName()];
-        $thisJoin['conditions']->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
+        /** @var \Cake\Database\Expression\QueryExpression $conditions */
+        $conditions = $thisJoin['conditions'];
+        $conditions->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
     }
 
     /**
@@ -752,7 +754,9 @@ class BelongsToMany extends Association
             // Saving the new linked entity failed, copy errors back into the
             // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\Datasource\EntityInterface $originalEntity */
+                $originalEntity = $original[$k];
+                $originalEntity->setErrors($entity->getErrors());
             }
 
             return false;
