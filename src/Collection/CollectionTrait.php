@@ -18,7 +18,6 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
-use ArrayObject;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -696,7 +695,10 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(fn (ArrayObject|ArrayIterator $value) => $isObject ? $value : $value->getArrayCopy());
+            ->map(function ($value) use ($isObject) {
+                /** @var \ArrayIterator|\ArrayObject $value */
+                return $isObject ? $value : $value->getArrayCopy();
+            });
     }
 
     /**
