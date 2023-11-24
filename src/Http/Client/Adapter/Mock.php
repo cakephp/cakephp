@@ -81,7 +81,9 @@ class Mock implements AdapterInterface
         $requestUri = (string)$request->getUri();
 
         foreach ($this->responses as $index => $mock) {
-            if ($method !== $mock['request']->getMethod()) {
+            /** @var \Psr\Http\Message\RequestInterface $request */
+            $request = $mock['request'];
+            if ($method !== $request->getMethod()) {
                 continue;
             }
             if (!$this->urlMatches($requestUri, $mock['request'])) {

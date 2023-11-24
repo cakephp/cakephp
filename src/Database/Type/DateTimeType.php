@@ -135,6 +135,8 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value = new $class('@' . $value);
         }
 
+        assert($value instanceof NativeDateTime || $value instanceof DateTimeImmutable);
+
         if (
             $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()

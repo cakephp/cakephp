@@ -695,7 +695,10 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(fn ($value) => $isObject ? $value : $value->getArrayCopy());
+            ->map(function ($value) use ($isObject) {
+                /** @var \ArrayIterator|\ArrayObject $value */
+                return $isObject ? $value : $value->getArrayCopy();
+            });
     }
 
     /**

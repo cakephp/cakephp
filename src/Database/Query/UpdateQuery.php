@@ -109,14 +109,18 @@ class UpdateQuery extends Query
 
         if ($key instanceof Closure) {
             $exp = $this->newExpr()->setConjunction(',');
-            $this->_parts['set']->add($key($exp));
+            /** @var \Cake\Database\Expression\QueryExpression $setExpr */
+            $setExpr = $this->_parts['set'];
+            $setExpr->add($key($exp));
 
             return $this;
         }
 
         if (is_array($key) || $key instanceof ExpressionInterface) {
             $types = (array)$value;
-            $this->_parts['set']->add($key, $types);
+            /** @var \Cake\Database\Expression\QueryExpression $setExpr */
+            $setExpr = $this->_parts['set'];
+            $setExpr->add($key, $types);
 
             return $this;
         }
@@ -124,7 +128,9 @@ class UpdateQuery extends Query
         if (!is_string($types)) {
             $types = null;
         }
-        $this->_parts['set']->eq($key, $value, $types);
+        /** @var \Cake\Database\Expression\QueryExpression $setExpr */
+        $setExpr = $this->_parts['set'];
+        $setExpr->eq($key, $value, $types);
 
         return $this;
     }

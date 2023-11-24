@@ -162,6 +162,8 @@ class TimeType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
+        assert(method_exists($value, 'format'));
+
         return $value->format($this->_format);
     }
 
