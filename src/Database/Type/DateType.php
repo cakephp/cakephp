@@ -91,6 +91,8 @@ class DateType extends BaseType implements BatchCastingInterface
             $value = new $class('@' . $value);
         }
 
+        assert(is_object($value) && method_exists($value, 'format'));
+
         return $value->format($this->_format);
     }
 
