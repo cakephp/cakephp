@@ -122,22 +122,6 @@ jobs:
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
 
-    - name: Run class deprecation aliasing validation script
-      if: always()
-      run: php contrib/validate-deprecation-aliases.php
-
-    - name: Run composer.json validation for split packages
-      if: always()
-      run: php contrib/validate-split-packages.php
-
-    - name: Run PHPStan for split packages
-      if: always()
-      run: php contrib/validate-split-packages-phpstan.php
-
-    - name: Prefer lowest check
-      if: matrix.prefer-lowest == 'prefer-lowest'
-      run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
-
     - name: Submit code coverage
       if: matrix.php-version == '8.1'
       uses: codecov/codecov-action@v3
@@ -217,7 +201,56 @@ jobs:
           vendor/bin/phpunit --display-incomplete --display-skipped --testsuite=database
 
   cs-stan:
-    uses: cakephp/.github/.github/workflows/cs-stan.yml@5.x
-    secrets: inherit
-    with:
-      check_tests: true
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, intl
+          coverage: none
+          tools: phive, cs2pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Composer install
+        uses: ramsey/composer-install@v2
+
+      - name: Install PHP tools with phive.
+        run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
+
+      - name: Run phpcs
+        if: always()
+        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+
+      - name: Run psalm
+        if: always()
+        run: tools/psalm --output-format=github
+
+      - name: Run phpstan
+        if: always()
+        run: vendor/bin/phpstan analyse --error-format=github
+
+      - name: Run phpstan for tests
+        if: ${{ inputs.check_tests }}
+        run: vendor/bin/phpstan analyse -c tests/phpstan.neon --error-format=github
+
+      - name: Run class deprecation aliasing validation script
+        if: always()
+        run: php contrib/validate-deprecation-aliases.php
+
+      - name: Run composer.json validation for split packages
+        if: always()
+        run: php contrib/validate-split-packages.php
+
+      - name: Run PHPStan for split packages
+        if: always()
+        run: php contrib/validate-split-packages-phpstan.php
+
+      - name: Prefer lowest check
+        if: matrix.prefer-lowest == 'prefer-lowest'
+        run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
