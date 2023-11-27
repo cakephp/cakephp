@@ -2187,13 +2187,13 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->checkbox('Model.checkbox', ['disabled' => true]);
-        $this->Form->text('Model.text', ['disabled' => true]);
-        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->textarea('Model.textarea', ['disabled' => true]);
         $this->Form->select('Model.select', [1, 2], ['disabled' => true]);
         $this->Form->radio('Model.radio', [1, 2], ['disabled' => [1, 2]]);
         $this->Form->year('Model.year', ['disabled' => true]);
         $this->Form->month('Model.month', ['disabled' => true]);
+        $this->Form->text('Model.text', ['disabled' => true]);
+        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->day('Model.day', ['disabled' => true]);
         $this->Form->hour('Model.hour', ['disabled' => true]);
         $this->Form->minute('Model.minute', ['disabled' => true]);

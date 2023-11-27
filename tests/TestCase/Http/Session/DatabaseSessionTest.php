@@ -29,9 +29,7 @@ use Cake\TestSuite\TestCase;
 class DatabaseSessionTest extends TestCase
 {
     /**
-     * fixtures
-     *
-     * @var string
+     * @var array
      */
     protected array $fixtures = ['core.Sessions'];
 

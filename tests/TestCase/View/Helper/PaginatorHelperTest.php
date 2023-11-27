@@ -42,7 +42,7 @@ class PaginatorHelperTest extends TestCase
     protected $Paginator;
 
     /**
-     * @var \Cake\Datasource\Pagination\PaginatedResultSet
+     * @var \Cake\Datasource\Paging\PaginatedResultSet
      */
     protected $paginatedResult;
 

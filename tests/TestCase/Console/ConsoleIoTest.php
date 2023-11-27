@@ -513,6 +513,7 @@ class ConsoleIoTest extends TestCase
         $this->io->setLoggers(ConsoleIo::VERBOSE);
 
         $this->assertNotEmpty(Log::engine('stderr'));
+        /** @var \Cake\Log\Log $engine */
         $engine = Log::engine('stdout');
         $this->assertEquals(['notice', 'info', 'debug'], $engine->getConfig('levels'));
     }
