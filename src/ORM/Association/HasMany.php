@@ -34,6 +34,9 @@ use InvalidArgumentException;
  * will have one or multiple records per each one in the source side.
  *
  * An example of a HasMany association would be Author has many Articles.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class HasMany extends Association
 {
