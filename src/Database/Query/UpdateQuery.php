@@ -87,7 +87,7 @@ class UpdateQuery extends Query
      * Passing a callback:
      *
      * ```
-     * $query->update('articles')->set(function ($exp) {
+     * $query->update('articles')->set(function (ExpressionInterface $exp) {
      *   return $exp->eq('title', 'The title', 'string');
      * });
      * ```

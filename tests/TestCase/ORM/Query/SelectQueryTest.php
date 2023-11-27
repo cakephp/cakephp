@@ -26,6 +26,7 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -3078,7 +3079,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find()->where(['id >' => 1]);
-        $query->where(function ($exp) {
+        $query->where(function (ExpressionInterface $exp) {
             return $exp->add('author_id = :author');
         });
         $query->bind(':author', 1, 'integer');
