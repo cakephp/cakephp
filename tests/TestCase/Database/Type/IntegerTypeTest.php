@@ -136,7 +136,7 @@ class IntegerTypeTest extends TestCase
     /**
      * Invalid Integer Data Provider
      *
-     * @return void
+     * @return array
      */
     public static function invalidIntegerProvider(): array
     {

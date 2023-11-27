@@ -181,6 +181,6 @@ class ContentTypeNegotiationTest extends TestCase
             ],
         ]);
         $expected = ['en-us', 'en-ca', 'pt-br'];
-        $this->assertEquals($expected, $content->acceptedLanguages($request, 'es-mx'));
+        $this->assertEquals($expected, $content->acceptedLanguages($request));
     }
 }

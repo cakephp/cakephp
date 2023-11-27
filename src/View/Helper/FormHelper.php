@@ -48,6 +48,10 @@ use function Cake\I18n\__d;
  * @method string email(string $fieldName, array $options = []) Creates input of type email.
  * @method string password(string $fieldName, array $options = []) Creates input of type password.
  * @method string search(string $fieldName, array $options = []) Creates input of type search.
+ * @method string day(string $fieldName, array $options = []) Creates input of type day.
+ * @method string hour(string $fieldName, array $options = []) Creates input of type hour.
+ * @method string minute(string $fieldName, array $options = []) Creates input of type minute.
+ * @method string meridian(string $fieldName, array $options = []) Creates input of type meridian.
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/5/en/views/helpers/form.html

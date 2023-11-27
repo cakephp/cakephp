@@ -69,7 +69,7 @@ class MysqlTest extends TestCase
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
 
-        $driver->connect([]);
+        $driver->connect();
     }
 
     /**
@@ -120,7 +120,7 @@ class MysqlTest extends TestCase
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
             ->willReturn($connection);
-        $driver->connect($config);
+        $driver->connect();
     }
 
     /**

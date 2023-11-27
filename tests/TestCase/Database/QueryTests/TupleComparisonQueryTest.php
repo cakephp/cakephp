@@ -54,7 +54,7 @@ class TupleComparisonQueryTest extends TestCase
     protected $connection;
 
     /**
-     * @var \Cake\Database\SelectQuery
+     * @var \Cake\Database\Query\SelectQuery
      */
     protected $query;
 
