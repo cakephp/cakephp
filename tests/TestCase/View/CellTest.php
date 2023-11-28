@@ -450,4 +450,24 @@ class CellTest extends TestCase
         Cache::delete('celltest');
         Cache::drop('default');
     }
+
+    /**
+     * Tests events are dispatched correctly
+     */
+    public function testCellRenderDispatchesEvents(): void
+    {
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
+        $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
+
+        $manager = $this->View->getEventManager();
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action) use ($cell) {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+        });
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action) use ($cell) {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+        });
+        $this->assertStringContainsString('dummy message', $cell->render());
+    }
 }
