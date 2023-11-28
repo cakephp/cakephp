@@ -460,4 +460,32 @@ class CellTest extends TestCase
         Cache::delete('celltest');
         Cache::drop('default');
     }
+
+    /**
+     * Tests events are dispatched correctly
+     */
+    public function testCellRenderDispatchesEvents(): void
+    {
+        $args = ['msg1' => 'dummy', 'msg2' => ' message'];
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
+        $cell = $this->View->cell('Articles::doEcho', $args);
+
+        $beforeEventIsCalled = $afterEventIsCalled = false;
+        $manager = $this->View->getEventManager();
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled) {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+            $this->assertEquals($args, $eventArgs);
+            $beforeEventIsCalled = true;
+        });
+        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$afterEventIsCalled) {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+            $this->assertEquals($args, $eventArgs);
+            $afterEventIsCalled = true;
+        });
+        $cell->render();
+        $this->assertTrue($beforeEventIsCalled);
+        $this->assertTrue($afterEventIsCalled);
+    }
 }
