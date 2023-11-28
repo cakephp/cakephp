@@ -170,8 +170,10 @@ abstract class Cell implements EventDispatcherInterface, Stringable
 
         $render = function () use ($template) {
             try {
+                $this->dispatchEvent('Cell.beforeAction', [$this, $this->action, $this->args]);
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
+                $this->dispatchEvent('Cell.afterAction', [$this, $this->action, $this->args]);
             } catch (ReflectionException $e) {
                 throw new BadMethodCallException(sprintf(
                     'Class `%s` does not have a `%s` method.',
