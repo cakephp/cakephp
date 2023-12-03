@@ -29,6 +29,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -1792,10 +1793,27 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * @return array[]
+     */
+    public static function localeProvider(): array
+    {
+        return [
+            ['en_US'],
+            ['de_DE'],
+            ['de_AT'],
+            ['pl_PL'],
+            ['da_DK'],
+        ];
+    }
+
+    /**
      * Test numbers with any number of decimal places, including none.
      */
-    public function testDecimalWithPlacesNull(): void
+    #[DataProvider('uploadedFileProvider')]
+    public function testDecimalWithPlacesNull(string $locale): void
     {
+        $this->skipIf(Locale::setDefault($locale) === false, "The $locale locale isn't available.");
+
         $this->assertTrue(Validation::decimal('+1234.54321', null));
         $this->assertTrue(Validation::decimal('-1234.54321', null));
         $this->assertTrue(Validation::decimal('1234.54321', null));
@@ -1826,8 +1844,11 @@ class ValidationTest extends TestCase
     /**
      * Test numbers with any number of decimal places greater than 0, or a float|double.
      */
-    public function testDecimalWithPlacesTrue(): void
+    #[DataProvider('uploadedFileProvider')]
+    public function testDecimalWithPlacesTrue(string $locale): void
     {
+        $this->skipIf(Locale::setDefault($locale) === false, "The $locale locale isn't available.");
+
         $this->assertTrue(Validation::decimal('+1234.54321', true));
         $this->assertTrue(Validation::decimal('-1234.54321', true));
         $this->assertTrue(Validation::decimal('1234.54321', true));
@@ -1858,8 +1879,11 @@ class ValidationTest extends TestCase
     /**
      * Test numbers with exactly that many number of decimal places.
      */
-    public function testDecimalWithPlacesNumeric(): void
+    #[DataProvider('uploadedFileProvider')]
+    public function testDecimalWithPlacesNumeric(string $locale): void
     {
+        $this->skipIf(Locale::setDefault($locale) === false, "The $locale locale isn't available.");
+
         $this->assertTrue(Validation::decimal(0.27, 2));
         $this->assertTrue(Validation::decimal(-0.27, 2));
         $this->assertTrue(Validation::decimal(0.27, 2));
@@ -1897,21 +1921,126 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test numbers with any number of decimal places, including none.
+     */
+    public function testLocalizedDecimalWithPlacesNull(): void
+    {
+        $this->assertTrue(Validation::localizedDecimal('+1234.54321', null));
+        $this->assertTrue(Validation::localizedDecimal('-1234.54321', null));
+        $this->assertTrue(Validation::localizedDecimal('1234.54321', null));
+        $this->assertTrue(Validation::localizedDecimal('+0123.45e6', null));
+        $this->assertTrue(Validation::localizedDecimal('-0123.45e6', null));
+        $this->assertTrue(Validation::localizedDecimal('0123.45e6', null));
+        $this->assertTrue(Validation::localizedDecimal(1234.56, null));
+        $this->assertTrue(Validation::localizedDecimal(1234.00, null));
+        $this->assertTrue(Validation::localizedDecimal(1234., null));
+        $this->assertTrue(Validation::localizedDecimal('1234.00', null));
+        $this->assertTrue(Validation::localizedDecimal(.0, null));
+        $this->assertTrue(Validation::localizedDecimal(.00, null));
+        $this->assertTrue(Validation::localizedDecimal('.00', null));
+        $this->assertTrue(Validation::localizedDecimal(.01, null));
+        $this->assertTrue(Validation::localizedDecimal('.01', null));
+        $this->assertTrue(Validation::localizedDecimal('1234', null));
+        $this->assertTrue(Validation::localizedDecimal('-1234', null));
+        $this->assertTrue(Validation::localizedDecimal('+1234', null));
+        $this->assertTrue(Validation::localizedDecimal((float)1234, null));
+        $this->assertTrue(Validation::localizedDecimal((float)1234, null));
+        $this->assertTrue(Validation::localizedDecimal((int)1234, null));
+
+        $this->assertFalse(Validation::localizedDecimal('', null));
+        $this->assertFalse(Validation::localizedDecimal('string', null));
+        $this->assertFalse(Validation::localizedDecimal('1234.', null));
+    }
+
+    /**
+     * Test numbers with any number of decimal places greater than 0, or a float|double.
+     */
+    public function testLocalizedDecimalWithPlacesTrue(): void
+    {
+        $this->assertTrue(Validation::localizedDecimal('+1234.54321', true));
+        $this->assertTrue(Validation::localizedDecimal('-1234.54321', true));
+        $this->assertTrue(Validation::localizedDecimal('1234.54321', true));
+        $this->assertTrue(Validation::localizedDecimal('+0123.45e6', true));
+        $this->assertTrue(Validation::localizedDecimal('-0123.45e6', true));
+        $this->assertTrue(Validation::localizedDecimal('0123.45e6', true));
+        $this->assertTrue(Validation::localizedDecimal(1234.56, true));
+        $this->assertTrue(Validation::localizedDecimal(1234.00, true));
+        $this->assertTrue(Validation::localizedDecimal(1234., true));
+        $this->assertTrue(Validation::localizedDecimal('1234.00', true));
+        $this->assertTrue(Validation::localizedDecimal(.0, true));
+        $this->assertTrue(Validation::localizedDecimal(.00, true));
+        $this->assertTrue(Validation::localizedDecimal('.00', true));
+        $this->assertTrue(Validation::localizedDecimal(.01, true));
+        $this->assertTrue(Validation::localizedDecimal('.01', true));
+        $this->assertTrue(Validation::localizedDecimal((float)1234, true));
+        $this->assertTrue(Validation::localizedDecimal((float)1234, true));
+
+        $this->assertFalse(Validation::localizedDecimal('', true));
+        $this->assertFalse(Validation::localizedDecimal('string', true));
+        $this->assertFalse(Validation::localizedDecimal('1234.', true));
+        $this->assertFalse(Validation::localizedDecimal((int)1234, true));
+        $this->assertFalse(Validation::localizedDecimal('1234', true));
+        $this->assertFalse(Validation::localizedDecimal('-1234', true));
+        $this->assertFalse(Validation::localizedDecimal('+1234', true));
+    }
+
+    /**
+     * Test numbers with exactly that many number of decimal places.
+     */
+    public function testLocalizedDecimalWithPlacesNumeric(): void
+    {
+        $this->assertTrue(Validation::localizedDecimal(0.27, 2));
+        $this->assertTrue(Validation::localizedDecimal(-0.27, 2));
+        $this->assertTrue(Validation::localizedDecimal(0.27, 2));
+        $this->assertTrue(Validation::localizedDecimal(0.277, 3));
+        $this->assertTrue(Validation::localizedDecimal(-0.277, 3));
+        $this->assertTrue(Validation::localizedDecimal(0.277, 3));
+        $this->assertTrue(Validation::localizedDecimal(1234.5678, 4));
+        $this->assertTrue(Validation::localizedDecimal(-1234.5678, 4));
+        $this->assertTrue(Validation::localizedDecimal(1234.5678, 4));
+        $this->assertTrue(Validation::localizedDecimal('.00', 2));
+        $this->assertTrue(Validation::localizedDecimal(.01, 2));
+        $this->assertTrue(Validation::localizedDecimal('.01', 2));
+
+        $this->assertFalse(Validation::localizedDecimal('', 1));
+        $this->assertFalse(Validation::localizedDecimal('string', 1));
+        $this->assertFalse(Validation::localizedDecimal(1234., 1));
+        $this->assertFalse(Validation::localizedDecimal('1234.', 1));
+        $this->assertFalse(Validation::localizedDecimal(.0, 1));
+        $this->assertFalse(Validation::localizedDecimal(.00, 2));
+        $this->assertFalse(Validation::localizedDecimal((float)1234, 1));
+        $this->assertFalse(Validation::localizedDecimal((float)1234, 1));
+        $this->assertFalse(Validation::localizedDecimal((int)1234, 1));
+        $this->assertFalse(Validation::localizedDecimal(1234.5678, 3));
+        $this->assertFalse(Validation::localizedDecimal(-1234.5678, 3));
+        $this->assertFalse(Validation::localizedDecimal(1234.5678, 3));
+    }
+
+    /**
+     * testDecimalCustomRegex method
+     */
+    public function testLocalizedDecimalCustomRegex(): void
+    {
+        $this->assertTrue(Validation::localizedDecimal('1.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
+        $this->assertFalse(Validation::localizedDecimal('.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
+    }
+
+    /**
      * Test localized floats with decimal.
      */
-    public function testDecimalLocaleSet(): void
+    public function testLocalizedDecimalLocaleSet(): void
     {
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
         $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
 
-        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid decimal');
-        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal(1.54), '1.54 should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('1.54'), '"1.54" should be considered a valid decimal');
 
-        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid decimal');
-        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal(12345.67), '12345.67 should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
 
         $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
-        $this->assertTrue(Validation::decimal('1 200,99'), 'should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('1 200,99'), 'should be considered a valid decimal');
     }
 
     /**
@@ -2716,9 +2845,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploadedFile with a PSR7 object.
-     *
-     * @dataProvider uploadedFileProvider
      */
+    #[DataProvider('uploadedFileProvider')]
     public function testUploadedFile(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';

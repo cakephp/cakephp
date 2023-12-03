@@ -2003,6 +2003,53 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a decimal validation rule relative to your set locale to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|null $places The number of decimal places to require.
+     * @param string|null $message The error message when the rule fails.
+     * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::localizedDecimal()
+     * @return $this
+     */
+    public function localizedDecimal(
+        string $field,
+        ?int $places = null,
+        ?string $message = null,
+        Closure|string|null $when = null
+    ) {
+        if ($message === null) {
+            if (!$this->_useI18n) {
+                if ($places === null) {
+                    $message = 'The provided value must be decimal with any number of decimal places, including none';
+                } else {
+                    $message = sprintf('The provided value must be decimal with `%s` decimal places', $places);
+                }
+            } else {
+                if ($places === null) {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be decimal with any number of decimal places, including none'
+                    );
+                } else {
+                    $message = __d(
+                        'cake',
+                        'The provided value must be decimal with `{0}` decimal places',
+                        $places
+                    );
+                }
+            }
+        }
+
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'localizedDecimal', $extra + [
+            'rule' => ['localizedDecimal', $places],
+        ]);
+    }
+
+    /**
      * Add an email validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.

@@ -690,7 +690,51 @@ class Validation
     }
 
     /**
-     * Checks that a value is a valid decimal. Both the sign and exponent are optional.
+     * Checks that a value is a valid decimal.
+     *
+     *  Valid Places:
+     *
+     *  - null => Any number of decimal places, including none. The '.' is not required.
+     *  - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
+     *  - 1..N => Exactly that many number of decimal places. The '.' is required.
+     *
+     * @param mixed $check The value the test for decimal.
+     * @param int|true|null $places Decimal places.
+     * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
+     * @return bool
+     */
+    public static function decimal(mixed $check, int|bool|null $places = null, ?string $regex = null): bool
+    {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
+        if ($regex === null) {
+            $lnum = '[0-9]+';
+            $dnum = "[0-9]*[\.]{$lnum}";
+            $sign = '[+-]?';
+            $exp = "(?:[eE]{$sign}{$lnum})?";
+
+            if ($places === null) {
+                $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
+            } elseif ($places === true) {
+                if (is_float($check) && floor($check) === $check) {
+                    $check = sprintf('%.1f', $check);
+                }
+                $regex = "/^{$sign}{$dnum}{$exp}$/";
+            } else {
+                $places = '[0-9]{' . $places . '}';
+                $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
+                $regex = "/^{$sign}{$dnum}{$exp}$/";
+            }
+        }
+
+        return static::_check($check, $regex);
+    }
+
+    /**
+     * Checks that a value is a valid decimal relative to the currently set locale.
+     * Both the sign and exponent are optional.
      *
      * Valid Places:
      *
@@ -703,7 +747,7 @@ class Validation
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
-    public static function decimal(mixed $check, int|bool|null $places = null, ?string $regex = null): bool
+    public static function localizedDecimal(mixed $check, int|bool|null $places = null, ?string $regex = null): bool
     {
         if (!is_scalar($check)) {
             return false;
