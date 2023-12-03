@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Log\Log;
-use Cake\TestSuite\LogTrait;
+use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -27,7 +27,7 @@ use InvalidArgumentException;
  */
 class LogTraitTest extends TestCase
 {
-    use LogTrait;
+    use LogTestTrait;
 
     /**
      * Test expecting log messages

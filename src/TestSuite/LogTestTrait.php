@@ -23,7 +23,7 @@ use InvalidArgumentException;
 /**
  * Make assertions on logs
  */
-trait LogTrait
+trait LogTestTrait
 {
     /**
      * Reset log configs
