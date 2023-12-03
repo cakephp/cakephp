@@ -692,6 +692,9 @@ class Validation
     /**
      * Checks that a value is a valid decimal. Both the sign and exponent are optional.
      *
+     * Be aware, that the currently set locale is being used to determine
+     * the decimal and thousands separator of the given number.
+     *
      * Valid Places:
      *
      * - null => Any number of decimal places, including none. The '.' is not required.
