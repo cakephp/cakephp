@@ -31,6 +31,9 @@ use function Cake\Core\pluginSplit;
  * related to only one record in the target table.
  *
  * An example of a BelongsTo association would be Article belongs to Author.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsTo extends Association
 {

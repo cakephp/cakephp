@@ -241,7 +241,7 @@ $query->where(['OR' => ['id >' => 1, 'title' => 'My title']]);
 For even more complex conditions you can use closures and expression objects:
 
 ```php
-$query->where(function ($exp) {
+$query->where(function (ExpressionInterface $exp) {
         return $exp
             ->eq('author_id', 2)
             ->eq('published', true)
@@ -264,7 +264,7 @@ WHERE
 Combining expressions is also possible:
 
 ```php
-$query->where(function ($exp) {
+$query->where(function (ExpressionInterface $exp) {
         $orConditions = $exp->or(['author_id' => 2])
             ->eq('author_id', 5);
         return $exp

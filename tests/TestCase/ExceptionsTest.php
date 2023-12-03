@@ -173,7 +173,6 @@ class ExceptionsTest extends TestCase
             ['Cake\ORM\Exception\MissingTableClassException', 0],
             ['Cake\ORM\Exception\RolledbackTransactionException', 0],
             ['Cake\Routing\Exception\DuplicateNamedRouteException', 0],
-            ['Cake\Routing\Exception\MissingDispatcherFilterException', 0],
             ['Cake\Routing\Exception\MissingRouteException', 0],
             ['Cake\Utility\Exception\XmlException', 0],
             ['Cake\View\Exception\MissingCellException', 0],

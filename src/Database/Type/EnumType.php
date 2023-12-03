@@ -57,14 +57,26 @@ class EnumType extends BaseType
     ) {
         parent::__construct($name);
         $this->enumClassName = $enumClassName;
+
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $this->backingType = (string)$reflectionEnum->getBackingType();
-        } catch (ReflectionException) {
+        } catch (ReflectionException $e) {
+            throw new DatabaseException(sprintf(
+                'Unable to use `%s` for type `%s`. %s.',
+                $enumClassName,
+                $name,
+                $e->getMessage()
+            ));
+        }
+
+        $namedType = $reflectionEnum->getBackingType();
+        if ($namedType == null) {
             throw new DatabaseException(
-                sprintf('Unable to use enum %s for type %s, must be a backed enum.', $enumClassName, $name)
+                sprintf('Unable to use enum `%s` for type `%s`, must be a backed enum.', $enumClassName, $name)
             );
         }
+
+        $this->backingType = (string)$namedType;
     }
 
     /**
@@ -94,7 +106,8 @@ class EnumType extends BaseType
 
         if (!is_string($value) && !is_int($value)) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to string or integer',
+                'Cannot convert value `%s` of type `%s` to string or int',
+                print_r($value, true),
                 get_debug_type($value)
             ));
         }

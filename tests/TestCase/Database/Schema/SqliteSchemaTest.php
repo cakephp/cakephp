@@ -153,6 +153,10 @@ class SqliteSchemaTest extends TestCase
                 'UUID_TEXT',
                 ['type' => 'uuid', 'length' => null],
             ],
+            [
+                'UUID_BLOB',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
         ];
     }
 

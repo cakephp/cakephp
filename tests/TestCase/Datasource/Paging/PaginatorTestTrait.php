@@ -27,7 +27,7 @@ use Cake\ORM\Query\SelectQuery;
 trait PaginatorTestTrait
 {
     /**
-     * @var \Cake\Datasource\Paginator
+     * @var \Cake\Datasource\Paging\NumericPaginator
      */
     protected $Paginator;
 

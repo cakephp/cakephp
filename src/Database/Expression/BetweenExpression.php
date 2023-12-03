@@ -117,10 +117,10 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      *
      * @param mixed $value The value to bind
      * @param \Cake\Database\ValueBinder $binder The value binder to use
-     * @param string $type The type of $value
+     * @param string|null $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue(mixed $value, ValueBinder $binder, string $type): string
+    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type): string
     {
         $placeholder = $binder->placeholder('c');
         $binder->bind($placeholder, $value, $type);

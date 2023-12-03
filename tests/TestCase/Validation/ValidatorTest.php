@@ -755,7 +755,9 @@ class ValidatorTest extends TestCase
             'title' => '',
             'otherField' => false,
         ];
-        $this->assertNotEmpty($validator->validate($data));
+        $result = $validator->validate($data);
+        $this->assertNotEmpty($result);
+        $this->assertEquals(['_empty' => 'very required'], $result['title']);
 
         $data = [
             'title' => '',

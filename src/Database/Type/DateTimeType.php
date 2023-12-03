@@ -132,6 +132,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
         if (is_int($value)) {
             $class = $this->_className;
+            /** @var \DateTime|\DateTimeImmutable $value */
             $value = new $class('@' . $value);
         }
 

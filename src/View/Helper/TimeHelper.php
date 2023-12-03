@@ -395,7 +395,7 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
-     * @param string|int|null $format date format string (or a UNIX timestamp,
+     * @param array<int>|string|int|null $format date format string (or a UNIX timestamp,
      *   `strtotime()` valid string or DateTime object).
      * @param string|false $invalid Default value to display on invalid dates
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
@@ -404,7 +404,7 @@ class TimeHelper extends Helper
      */
     public function format(
         ChronosDate|DateTimeInterface|string|int|null $date,
-        string|int|null $format = null,
+        array|string|int|null $format = null,
         string|false $invalid = false,
         DateTimeZone|string|null $timezone = null
     ): string|int|false {

@@ -136,12 +136,14 @@ class CounterCacheBehavior extends Behavior
 
                 $registryAlias = $assoc->getTarget()->getRegistryAlias();
                 $entityAlias = $assoc->getProperty();
+                /** @var \Cake\Datasource\EntityInterface $assocEntity */
+                $assocEntity = $entity->$entityAlias;
 
                 if (
                     !is_callable($config) &&
                     isset($config['ignoreDirty']) &&
                     $config['ignoreDirty'] === true &&
-                    $entity->$entityAlias->isDirty($field)
+                    $assocEntity->isDirty($field)
                 ) {
                     $this->_ignoreDirty[$registryAlias][$field] = true;
                 }

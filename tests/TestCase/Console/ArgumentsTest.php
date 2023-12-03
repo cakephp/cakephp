@@ -151,4 +151,24 @@ class ArgumentsTest extends TestCase
         $this->assertSame('0', $args->getOption('zero'));
         $this->assertNull($args->getOption('undef'));
     }
+
+    public function testGetBooleanOption(): void
+    {
+        $options = [
+            'verbose' => true,
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertTrue($args->getBooleanOption('verbose'));
+        $this->assertNull($args->getBooleanOption('missing'));
+    }
+
+    public function testGetMultipleOption(): void
+    {
+        $options = [
+            'types' => ['one', 'two', 'three'],
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertSame(['one', 'two', 'three'], $args->getMultipleOption('types'));
+        $this->assertNull($args->getMultipleOption('missing'));
+    }
 }

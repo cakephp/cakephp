@@ -45,7 +45,8 @@ class BoolType extends BaseType implements BatchCastingInterface
         }
 
         throw new InvalidArgumentException(sprintf(
-            'Cannot convert value of type `%s` to bool',
+            'Cannot convert value `%s` of type `%s` to bool',
+            print_r($value, true),
             get_debug_type($value)
         ));
     }
