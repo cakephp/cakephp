@@ -181,8 +181,14 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
+        $pragma = 'table_xinfo';
+        if (version_compare($this->_driver->version(), '3.26.0', '<')) {
+            $pragma = 'table_info';
+        }
+
         $sql = sprintf(
-            'PRAGMA table_xinfo(%s)',
+            'PRAGMA %s(%s)',
+            $pragma,
             $this->_driver->quoteIdentifier($tableName)
         );
 
