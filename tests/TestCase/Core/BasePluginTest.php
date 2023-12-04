@@ -88,11 +88,14 @@ class BasePluginTest extends TestCase
         $this->assertSame($commands, $plugin->console($commands));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testServices(): void
     {
         $plugin = new BasePlugin();
         $container = new Container();
-        $this->assertNull($plugin->services($container));
+        $plugin->services($container);
     }
 
     public function testConsoleFind(): void

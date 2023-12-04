@@ -49,7 +49,7 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
+        if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
@@ -110,6 +110,9 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
+        if (($col === 'binary' && $length === 16) || strtolower($column) === 'uuid_blob') {
+            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
+        }
         if (($col === 'char' && $length === 36) || $col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }
@@ -120,9 +123,6 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
-        if ($col === 'binary' && $length === 16) {
-            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
-        }
         if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
         }
@@ -182,7 +182,7 @@ class SqliteSchemaDialect extends SchemaDialect
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = sprintf(
-            'PRAGMA table_info(%s)',
+            'PRAGMA table_xinfo(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
 

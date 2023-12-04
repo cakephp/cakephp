@@ -37,6 +37,9 @@ use SplObjectStorage;
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
  * In this example 'Article' is the source table and 'Tags' is the target table.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsToMany extends Association
 {
@@ -475,7 +478,9 @@ class BelongsToMany extends Association
 
         $foreignKey = $this->getTargetForeignKey();
         $thisJoin = $query->clause('join')[$this->getName()];
-        $thisJoin['conditions']->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
+        /** @var \Cake\Database\Expression\QueryExpression $conditions */
+        $conditions = $thisJoin['conditions'];
+        $conditions->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
     }
 
     /**
@@ -752,7 +757,9 @@ class BelongsToMany extends Association
             // Saving the new linked entity failed, copy errors back into the
             // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\Datasource\EntityInterface $originalEntity */
+                $originalEntity = $original[$k];
+                $originalEntity->setErrors($entity->getErrors());
             }
 
             return false;
@@ -1282,6 +1289,7 @@ class BelongsToMany extends Association
         }
 
         foreach ($existing as $existingLink) {
+            /** @var \Cake\ORM\Entity $existingLink */
             $existingKeys = $existingLink->extract($keys);
             $found = false;
             foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {

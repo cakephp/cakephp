@@ -375,7 +375,7 @@ class MailerTest extends TestCase
     public function testRenderWithLayoutAndAttachment(): void
     {
         $this->mailer->setEmailFormat('html');
-        $this->mailer->viewBuilder()->setTemplate('html', 'default');
+        $this->mailer->viewBuilder()->setTemplate('html');
         $this->mailer->setAttachments([__FILE__]);
         $this->mailer->render();
         $result = $this->mailer->getBody();
@@ -705,7 +705,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $this->mailer->viewBuilder()->setTemplate('default');
         $result = $this->mailer->send();
 
         $this->assertStringContainsString('This email was sent using the CakePHP Framework', $result['message']);
@@ -744,7 +744,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $this->mailer->viewBuilder()->setTemplate('default');
         $this->mailer->setEmailFormat('both');
         $result = $this->mailer->send();
 
@@ -814,7 +814,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTheme('TestTheme');
-        $this->mailer->viewBuilder()->setTemplate('themed', 'default');
+        $this->mailer->viewBuilder()->setTemplate('themed');
         $result = $this->mailer->send();
 
         $this->assertStringContainsString('In TestTheme', $result['message']);
@@ -837,7 +837,7 @@ class MailerTest extends TestCase
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
         $this->mailer->setEmailFormat('html');
-        $this->mailer->viewBuilder()->setTemplate('html', 'default');
+        $this->mailer->viewBuilder()->setTemplate('html');
         $result = $this->mailer->send();
 
         $this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
@@ -855,7 +855,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->viewBuilder()->setTemplate('custom', 'default');
+        $this->mailer->viewBuilder()->setTemplate('custom');
         $this->mailer->setViewVars(['value' => 12345]);
         $result = $this->mailer->send();
 
@@ -873,7 +873,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->viewBuilder()->setTemplate('japanese', 'default');
+        $this->mailer->viewBuilder()->setTemplate('japanese');
         $this->mailer->setViewVars(['value' => '日本語の差し込み123']);
         $this->mailer->setCharset('ISO-2022-JP');
         $result = $this->mailer->send();
@@ -1015,7 +1015,7 @@ class MailerTest extends TestCase
         $this->mailer->setFrom('cake@cakephp.org');
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
-        $this->mailer->viewBuilder()->setTemplate('custom', 'default');
+        $this->mailer->viewBuilder()->setTemplate('custom');
         $this->mailer->setProfile([]);
         $this->mailer->setViewVars(['value' => 12345]);
         $this->mailer->setEmailFormat('both');
@@ -1093,7 +1093,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile(['empty']);
-        $this->mailer->viewBuilder()->setTemplate('default', 'default');
+        $this->mailer->viewBuilder()->setTemplate('default');
         $this->mailer->setEmailFormat('both');
         $this->mailer->send();
 

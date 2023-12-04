@@ -736,7 +736,7 @@ class Validation
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
         // There are two types of non-breaking spaces - we inject a space to account for human input
-        if ($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+        if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
             $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
         } else {
             $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
@@ -1411,9 +1411,12 @@ class Validation
             return false;
         }
 
-        [$width, $height] = getimagesize($file) ?: [];
-        $validHeight = null;
-        $validWidth = null;
+        $width = $height = null;
+        $imageSize = getimagesize($file);
+        if ($imageSize) {
+            [$width, $height] = $imageSize;
+        }
+        $validWidth = $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

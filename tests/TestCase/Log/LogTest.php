@@ -551,6 +551,7 @@ class LogTest extends TestCase
             'scopes' => ['foo', 'bar'],
         ]);
 
+        /** @var \TestApp\Log\Engine\TestAppLog $engine */
         $engine = Log::engine('scope_test');
         $this->assertNull($engine->passedScope);
 

@@ -1296,7 +1296,9 @@ abstract class Query implements ExpressionInterface, Stringable
         if (!$this->_parts['order']) {
             $this->_parts['order'] = new OrderByExpression();
         }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'ASC'));
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'ASC'));
 
         return $this;
     }
@@ -1349,7 +1351,10 @@ abstract class Query implements ExpressionInterface, Stringable
         if (!$this->_parts['order']) {
             $this->_parts['order'] = new OrderByExpression();
         }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'DESC'));
+
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'DESC'));
 
         return $this;
     }
@@ -1734,6 +1739,7 @@ abstract class Query implements ExpressionInterface, Stringable
         string $conjunction,
         array $types
     ): void {
+        /** @var \Cake\Database\Expression\QueryExpression $expression */
         $expression = $this->_parts[$part] ?: $this->newExpr();
         if (empty($append)) {
             $this->_parts[$part] = $expression;

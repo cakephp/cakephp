@@ -3285,7 +3285,7 @@ class MarshallerTest extends TestCase
     public function testInvalidTypesWhenLoadingAssociatedByIds(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
+        $this->expectExceptionMessage('Cannot convert value `foobar` of type `string` to int');
 
         $data = [
             'title' => 'article',
@@ -3305,7 +3305,7 @@ class MarshallerTest extends TestCase
     public function testInvalidTypesWhenLoadingAssociatedByCompositeIds(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot convert value of type `string` to integer');
+        $this->expectExceptionMessage('Cannot convert value `foo` of type `string` to int');
 
         $data = [
             'title' => 'article',

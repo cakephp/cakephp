@@ -309,7 +309,11 @@ class QueryCompiler
     {
         $windows = [];
         foreach ($parts as $window) {
-            $windows[] = $window['name']->sql($binder) . ' AS (' . $window['window']->sql($binder) . ')';
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $window['name'];
+            /** @var \Cake\Database\Expression\IdentifierExpression $windowExpr */
+            $windowExpr = $window['window'];
+            $windows[] = $expr->sql($binder) . ' AS (' . $windowExpr->sql($binder) . ')';
         }
 
         return ' WINDOW ' . implode(', ', $windows);
@@ -352,7 +356,9 @@ class QueryCompiler
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $parts = array_map(function ($p) use ($binder) {
-            $p['query'] = $p['query']->sql($binder);
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $p['query'];
+            $p['query'] = $expr->sql($binder);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
