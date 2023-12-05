@@ -44,36 +44,54 @@ trait LogTestTrait
     {
         Log::reset();
         $engines = (array)$engines;
-        foreach ($engines as $engine) {
-            Log::setConfig($engine, ['className' => 'Array']);
+        foreach ($engines as $engineName => $engineConfig) {
+            if (is_string($engineConfig)) {
+                Log::setConfig($engineConfig, ['className' => 'Array']);
+            } else {
+                $engineConfig['className'] = 'Array';
+                Log::setConfig($engineName, $engineConfig);
+            }
         }
     }
 
     /**
      * @param string $engine The engine which should receive a log message
      * @param string $expectedMessage The message which should be inside the log engine
+     * @param string|null $level The level of the expected message
      * @param string $failMsg The error message if the message was not in the log engine
      * @return void
      */
-    public function assertLogMessage(string $engine, string $expectedMessage, string $failMsg = ''): void
-    {
-        $this->_expectLogMessage($engine, $expectedMessage, $failMsg);
+    public function assertLogMessage(
+        string $engine,
+        string $expectedMessage,
+        ?string $level = null,
+        string $failMsg = ''
+    ): void {
+        $level ??= $engine;
+        $this->_expectLogMessage($engine, $expectedMessage, $level, $failMsg);
     }
 
     /**
      * @param string $engine The engine which should receive a log message
      * @param string $expectedMessage The message which should be inside the log engine
+     * @param string|null $level The level of the expected message
      * @param string $failMsg The error message if the message was not in the log engine
      * @return void
      */
-    public function assertLogMessageContains(string $engine, string $expectedMessage, string $failMsg = ''): void
-    {
-        $this->_expectLogMessage($engine, $expectedMessage, $failMsg, true);
+    public function assertLogMessageContains(
+        string $engine,
+        string $expectedMessage,
+        ?string $level = null,
+        string $failMsg = ''
+    ): void {
+        $level ??= $engine;
+        $this->_expectLogMessage($engine, $expectedMessage, $level, $failMsg, true);
     }
 
     /**
      * @param string $engine The engine which should receive a log message
      * @param string $expectedMessage The message which should be inside the log engine
+     * @param string $level The level of the expected message
      * @param string $failMsg The error message if the message was not in the log engine
      * @param bool $contains Flag to decide if the expectedMessage can only be part of the logged message
      * @return void
@@ -81,6 +99,7 @@ trait LogTestTrait
     protected function _expectLogMessage(
         string $engine,
         string $expectedMessage,
+        string $level,
         string $failMsg = '',
         bool $contains = false
     ): void {
@@ -95,7 +114,7 @@ trait LogTestTrait
         $messageFound = false;
         $messages = $engineObj->read();
 
-        $expectedMessage = sprintf('%s: %s', $engine, $expectedMessage);
+        $expectedMessage = sprintf('%s: %s', $level, $expectedMessage);
         foreach ($messages as $message) {
             if ($contains && str_contains($message, $expectedMessage) || $message === $expectedMessage) {
                 $messageFound = true;
