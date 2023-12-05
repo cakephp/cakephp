@@ -21,6 +21,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\ExpectationFailedException;
 
 /**
  * Tests LogTrait assertions
@@ -49,6 +50,32 @@ class LogTraitTest extends TestCase
         Log::error('Some error message');
         $this->assertLogMessage('debug', 'This usually needs to happen inside your app');
         $this->assertLogMessage('error', 'Some error message');
+    }
+
+    /**
+     * Test log messages from lower levels don't get mixed up with upper level ones
+     */
+    public function testExpectMultipleLogsMixedUpWithHigherFails(): void
+    {
+        $this->setupLog(['debug', 'error']);
+        Log::debug('This usually needs to happen inside your app');
+        Log::error('Some error message');
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->assertLogMessage('error', 'This usually needs to happen inside your app');
+    }
+
+    /**
+     * Test log messages from higher levels don't get mixed up with lower level ones
+     */
+    public function testExpectMultipleLogsMixedUpWithLowerFails(): void
+    {
+        $this->setupLog(['debug', 'error']);
+        Log::debug('This usually needs to happen inside your app');
+        Log::error('Some error message');
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->assertLogMessage('debug', 'Some error message');
     }
 
     /**
