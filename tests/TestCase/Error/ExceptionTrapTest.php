@@ -306,7 +306,6 @@ class ExceptionTrapTest extends TestCase
         $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error) {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
-            $event->stopPropagation();
         });
         $error = new InvalidArgumentException('nope', 100);
 
