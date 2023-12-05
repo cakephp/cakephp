@@ -97,4 +97,33 @@ class LogTraitTest extends TestCase
         $this->expectExceptionMessage('`debug` is not of type ArrayLog. Make sure to call `setupLog(\'debug\')` before expecting a log message.');
         $this->assertLogMessage('debug', '');
     }
+
+    /**
+     * Test expecting log messages from different engines with custom configs
+     */
+    public function testExpectMultipleLogWithLevels(): void
+    {
+        $this->setupLog([
+            'debug' => [
+                'levels' => ['notice', 'info', 'debug'],
+            ],
+            'error' => [
+                'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            ],
+        ]);
+        Log::notice('This is a notice message');
+        Log::info('This is a info message');
+        Log::debug('This is a debug message');
+        Log::warning('This is a warning message');
+        Log::error('This is a error message');
+        Log::critical('This is a critical message');
+        Log::emergency('This is a emergency message');
+        $this->assertLogMessage('debug', 'This is a notice message', 'notice');
+        $this->assertLogMessage('debug', 'This is a info message', 'info');
+        $this->assertLogMessage('debug', 'This is a debug message', 'debug');
+        $this->assertLogMessage('error', 'This is a warning message', 'warning');
+        $this->assertLogMessage('error', 'This is a error message', 'error');
+        $this->assertLogMessage('error', 'This is a critical message', 'critical');
+        $this->assertLogMessage('error', 'This is a emergency message', 'emergency');
+    }
 }
