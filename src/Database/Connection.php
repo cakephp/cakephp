@@ -422,8 +422,7 @@ class Connection implements ConnectionInterface
      * connection's driver
      *
      * @param \Cake\Database\Query $query The query to be compiled
-     * @param \Cake\Database\ValueBinder $binder Value binder.
-
+     * @param \Cake\Database\ValueBinder $binder Value binder
      * @return string
      * @deprecated 4.5.0 Use getDriver()->compileQuery() instead.
      */
