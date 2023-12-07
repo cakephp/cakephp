@@ -316,6 +316,23 @@ class ExceptionTrapTest extends TestCase
         $this->assertNotEmpty($out);
     }
 
+    public function testBeforeRenderEventAborted(): void
+    {
+        $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
+            $this->assertEquals(100, $error->getCode());
+            $this->assertStringContainsString('nope', $error->getMessage());
+            $event->stopPropagation();
+        });
+        $error = new InvalidArgumentException('nope', 100);
+
+        ob_start();
+        $trap->handleException($error);
+        $out = ob_get_clean();
+
+        $this->assertSame('', $out);
+    }
+
     public function testBeforeRenderEventExceptionChanged(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
