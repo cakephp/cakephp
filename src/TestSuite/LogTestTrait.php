@@ -18,7 +18,6 @@ namespace Cake\TestSuite;
 
 use Cake\Log\Engine\ArrayLog;
 use Cake\Log\Log;
-use InvalidArgumentException;
 
 /**
  * Make assertions on logs
@@ -37,90 +36,128 @@ trait LogTestTrait
     }
 
     /**
-     * @param array|string $engines The engine(s) which should receive a log message
+     * @param array|string $levels The levels(s) which should receive a log message
      * @return void
      */
-    public function setupLog(array|string $engines): void
+    public function setupLog(array|string $levels): void
     {
         Log::reset();
-        $engines = (array)$engines;
-        foreach ($engines as $engineName => $engineConfig) {
-            if (is_string($engineConfig)) {
-                Log::setConfig($engineConfig, ['className' => 'Array']);
-            } else {
-                $engineConfig['className'] = 'Array';
-                Log::setConfig($engineName, $engineConfig);
+
+        $levels = (array)$levels;
+        foreach ($levels as $levelName => $levelConfig) {
+            if (is_int($levelName) && is_string($levelConfig)) {
+                // string value = level name.
+                Log::setConfig("test-{$levelConfig}", [
+                    'className' => 'Array',
+                    'levels' => [$levelConfig],
+                ]);
+            }
+            if (is_array($levelConfig)) {
+                $levelConfig['className'] = 'Array';
+                $levelConfig['levels'] ??= $levelName;
+                $name = $levelConfig['name'] ?? "test-{$levelName}";
+                Log::setConfig($name, $levelConfig);
             }
         }
     }
 
     /**
-     * @param string $engine The engine which should receive a log message
+     * Ensure that no log messages of a given level were captured by test loggers.
+     *
+     * @param string $level The level of the expected message
+     * @param string $failMsg The error message if the message was not in the log engine
+     * @return void
+     */
+    public function assertLogAbsent(string $level, string $failMsg = ''): void
+    {
+        foreach (Log::configured() as $engineName) {
+            $engineObj = Log::engine($engineName);
+            if (!$engineObj instanceof ArrayLog) {
+                continue;
+            }
+            $levels = $engineObj->levels();
+            if (in_array($level, $levels)) {
+                $this->assertEquals(0, count($engineObj->read()), $failMsg);
+            }
+        }
+    }
+
+    /**
+     * @param string $level The level of the expected message
+     * @param string|null $scope The scope of the expected message. If a message has
+     *   multiple scopes, the provided scope must be within the message's set.
      * @param string $expectedMessage The message which should be inside the log engine
-     * @param string|null $level The level of the expected message
      * @param string $failMsg The error message if the message was not in the log engine
      * @return void
      */
     public function assertLogMessage(
-        string $engine,
+        string $level,
         string $expectedMessage,
-        ?string $level = null,
+        ?string $scope = null,
         string $failMsg = ''
     ): void {
-        $level ??= $engine;
-        $this->_expectLogMessage($engine, $expectedMessage, $level, $failMsg);
+        $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg);
     }
 
     /**
-     * @param string $engine The engine which should receive a log message
+     * @param string $level The level which should receive a log message
      * @param string $expectedMessage The message which should be inside the log engine
-     * @param string|null $level The level of the expected message
+     * @param string|null $scope The scope of the expected message. If a message has
+     *   multiple scopes, the provided scope must be within the message's set.
      * @param string $failMsg The error message if the message was not in the log engine
      * @return void
      */
     public function assertLogMessageContains(
-        string $engine,
+        string $level,
         string $expectedMessage,
-        ?string $level = null,
+        ?string $scope = null,
         string $failMsg = ''
     ): void {
-        $level ??= $engine;
-        $this->_expectLogMessage($engine, $expectedMessage, $level, $failMsg, true);
+        $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg, true);
     }
 
     /**
-     * @param string $engine The engine which should receive a log message
+     * @param string $level The level which should receive a log message
      * @param string $expectedMessage The message which should be inside the log engine
-     * @param string $level The level of the expected message
+     * @param string|null $scope The scope of the expected message. If a message has
+     *   multiple scopes, the provided scope must be within the message's set.
      * @param string $failMsg The error message if the message was not in the log engine
      * @param bool $contains Flag to decide if the expectedMessage can only be part of the logged message
      * @return void
      */
     protected function _expectLogMessage(
-        string $engine,
-        string $expectedMessage,
         string $level,
+        string $expectedMessage,
+        ?string $scope,
         string $failMsg = '',
         bool $contains = false
     ): void {
-        $engineObj = Log::engine($engine);
-
-        if (!$engineObj instanceof ArrayLog) {
-            $msg = sprintf('`%s` is not of type ArrayLog. ' .
-                'Make sure to call `setupLog(\'%s\')` before expecting a log message.', $engine, $engine);
-            throw new InvalidArgumentException($msg);
-        }
-
         $messageFound = false;
-        $messages = $engineObj->read();
-
         $expectedMessage = sprintf('%s: %s', $level, $expectedMessage);
-        foreach ($messages as $message) {
-            if ($contains && str_contains($message, $expectedMessage) || $message === $expectedMessage) {
-                $messageFound = true;
-                break;
+        foreach (Log::configured() as $engineName) {
+            $engineObj = Log::engine($engineName);
+            if (!$engineObj instanceof ArrayLog) {
+                continue;
+            }
+            $messages = $engineObj->read();
+            $engineScopes = $engineObj->scopes();
+            if ($scope !== null) {
+                // No overlapping scopes
+                if (!in_array($scope, $engineScopes, true)) {
+                    continue;
+                }
+            }
+            foreach ($messages as $message) {
+                if ($contains && str_contains($message, $expectedMessage) || $message === $expectedMessage) {
+                    $messageFound = true;
+                    break;
+                }
             }
         }
-        $this->assertTrue($messageFound, $failMsg);
+        if (!$messageFound) {
+            $failMsg = "Could not find the message `{$expectedMessage}` in logs. " . $failMsg;
+            $this->fail($failMsg);
+        }
+        $this->assertTrue(true);
     }
 }

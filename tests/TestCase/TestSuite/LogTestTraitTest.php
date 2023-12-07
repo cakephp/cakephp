@@ -20,13 +20,12 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
-use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * Tests LogTrait assertions
  */
-class LogTraitTest extends TestCase
+class LogTestTraitTest extends TestCase
 {
     use LogTestTrait;
 
@@ -61,7 +60,7 @@ class LogTraitTest extends TestCase
         Log::debug('This usually needs to happen inside your app');
         Log::error('Some error message');
 
-        $this->expectException(ExpectationFailedException::class);
+        $this->expectException(AssertionFailedError::class);
         $this->assertLogMessage('error', 'This usually needs to happen inside your app');
     }
 
@@ -74,7 +73,7 @@ class LogTraitTest extends TestCase
         Log::debug('This usually needs to happen inside your app');
         Log::error('Some error message');
 
-        $this->expectException(ExpectationFailedException::class);
+        $this->expectException(AssertionFailedError::class);
         $this->assertLogMessage('debug', 'Some error message');
     }
 
@@ -93,8 +92,8 @@ class LogTraitTest extends TestCase
      */
     public function testExpectLogWithoutSetup(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('`debug` is not of type ArrayLog. Make sure to call `setupLog(\'debug\')` before expecting a log message.');
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Could not find the message `debug: ` in logs.');
         $this->assertLogMessage('debug', '');
     }
 
@@ -118,12 +117,68 @@ class LogTraitTest extends TestCase
         Log::error('This is a error message');
         Log::critical('This is a critical message');
         Log::emergency('This is a emergency message');
-        $this->assertLogMessage('debug', 'This is a notice message', 'notice');
-        $this->assertLogMessage('debug', 'This is a info message', 'info');
-        $this->assertLogMessage('debug', 'This is a debug message', 'debug');
-        $this->assertLogMessage('error', 'This is a warning message', 'warning');
-        $this->assertLogMessage('error', 'This is a error message', 'error');
-        $this->assertLogMessage('error', 'This is a critical message', 'critical');
-        $this->assertLogMessage('error', 'This is a emergency message', 'emergency');
+        $this->assertLogMessage('notice', 'This is a notice message');
+        $this->assertLogMessage('info', 'This is a info message');
+        $this->assertLogMessage('debug', 'This is a debug message');
+        $this->assertLogMessage('warning', 'This is a warning message');
+        $this->assertLogMessage('error', 'This is a error message');
+        $this->assertLogMessage('critical', 'This is a critical message');
+        $this->assertLogMessage('emergency', 'This is a emergency message');
+    }
+
+    /**
+     * Test expecting log messages from different engines with custom configs
+     */
+    public function testExpectMultipleLogAbsent(): void
+    {
+        $this->setupLog([
+            'error' => [
+                'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            ],
+        ]);
+        Log::notice('This is a notice message');
+        Log::info('This is a info message');
+        Log::debug('This is a debug message');
+        Log::warning('This is a warning message');
+        Log::error('This is a error message');
+        Log::critical('This is a critical message');
+        Log::emergency('This is a emergency message');
+
+        $this->assertLogAbsent('notice', 'No notice messages should be captured');
+        $this->assertLogAbsent('info', 'No info messages should be captured');
+        $this->assertLogAbsent('debug', 'No debug messages should be captured');
+        $this->assertLogMessage('warning', 'This is a warning message');
+        $this->assertLogMessage('error', 'This is a error message');
+        $this->assertLogMessage('critical', 'This is a critical message');
+        $this->assertLogMessage('emergency', 'This is a emergency message');
+    }
+
+    /**
+     * Test expecting log messages from different engines with custom configs
+     */
+    public function testExpectMultipleLogWithLevelsAndScopes(): void
+    {
+        $this->setupLog([
+            'debug' => [
+                'levels' => ['notice', 'info', 'debug'],
+            ],
+            'error' => [
+                'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            ],
+            'scoped' => [
+                'scopes' => ['app.security'],
+                'levels' => ['info'],
+            ],
+        ]);
+        Log::info('This is a info message');
+        Log::info('security settings changed', 'app.security');
+        Log::warning('This is a warning message');
+        Log::error('This is a error message');
+
+        $this->assertLogMessage('info', 'This is a info message');
+        $this->assertLogMessage('info', 'security settings changed');
+        $this->assertLogMessage('info', 'security settings changed', 'app.security');
+        $this->assertLogMessage('warning', 'This is a warning message');
+        $this->assertLogMessage('error', 'This is a error message');
     }
 }
