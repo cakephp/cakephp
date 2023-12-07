@@ -2241,10 +2241,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function disableBufferedResults()
     {
-        deprecationWarning(
-            '4.5.0 disableBufferedResults() is deprecated. Results will always be buffered in 5.0.'
-        );
-
         $this->_dirty();
         $this->_useBufferedResults = false;
 
@@ -2266,10 +2262,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function isBufferedResultsEnabled(): bool
     {
-        deprecationWarning(
-            '4.5.0 isBufferedResultsEnabled() is deprecated. Results will always be buffered in 5.0.'
-        );
-
         return $this->_useBufferedResults;
     }
 
