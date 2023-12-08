@@ -20,6 +20,7 @@ use ArrayIterator;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\TestSuite\TestCase;
+use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
 {
@@ -31,6 +32,24 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
+    }
+
+    public function testCall()
+    {
+        $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
+        $resultSet
+            ->expects($this->once())
+            ->method('extract')
+            ->with('foo')
+            ->willReturn(collection(['bar']));
+
+        $paginatedResults = new PaginatedResultSet(
+            $resultSet,
+            []
+        );
+
+        $result = $paginatedResults->extract('foo')->toList();
+        $this->assertEquals(['bar'], $result);
     }
 
     public function testJsonEncode()
