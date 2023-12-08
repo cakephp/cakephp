@@ -16,18 +16,25 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Paging;
 
-use IteratorIterator;
+use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
 
 /**
  * Paginated resultset.
  *
- * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
+ * @template-implements \IteratorAggregate<mixed, \Traversable<mixed>>
  * @template T
  */
-class PaginatedResultSet extends IteratorIterator implements JsonSerializable, PaginatedInterface
+class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
+    /**
+     * Resultset instance.
+     *
+     * @var \Traversable<T>
+     */
+    protected Traversable $results;
+
     /**
      * Paging params.
      *
@@ -43,8 +50,7 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
      */
     public function __construct(Traversable $results, array $params)
     {
-        parent::__construct($results);
-
+        $this->results = $results;
         $this->params = $params;
     }
 
@@ -63,7 +69,7 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
      */
     public function items(): Traversable
     {
-        return $this->getInnerIterator();
+        return $this->results;
     }
 
     /**
@@ -138,5 +144,25 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
     public function pagingParams(): array
     {
         return $this->params;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIterator(): Traversable
+    {
+        return $this->results;
+    }
+
+    /**
+     * Proxies method calls to internal result set instance.
+     *
+     * @param string $name Method name
+     * @param array $arguments Arguments
+     * @return mixed
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return $this->results->$name(...$arguments);
     }
 }
