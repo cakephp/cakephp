@@ -315,6 +315,7 @@ class Connection implements ConnectionInterface
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
      * @return bool true, if the connection was already established or the attempt was successful.
+     * @deprecated 4.5.0 Use getDriver()->connect() instead.
      */
     public function connect(): bool
     {
@@ -423,6 +424,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Query $query The query to be compiled
      * @param \Cake\Database\ValueBinder $binder Value binder
      * @return string
+     * @deprecated 4.5.0 Use getDriver()->compileQuery() instead.
      */
     public function compileQuery(Query $query, ValueBinder $binder): string
     {
@@ -479,6 +481,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $sql The SQL query to execute.
      * @return \Cake\Database\StatementInterface
+     * @deprecated 4.5.0 Use either `selectQuery`, `insertQuery`, `deleteQuery`, `updateQuery` instead.
      */
     public function query(string $sql): StatementInterface
     {
@@ -496,6 +499,7 @@ class Connection implements ConnectionInterface
      * Create a new Query instance for this connection.
      *
      * @return \Cake\Database\Query
+     * @deprecated 4.5.0 Use `insertQuery()`, `deleteQuery()`, `selectQuery()` or `updateQuery()` instead.
      */
     public function newQuery(): Query
     {
