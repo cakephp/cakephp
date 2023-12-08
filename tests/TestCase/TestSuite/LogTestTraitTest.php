@@ -21,6 +21,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
+use TestApp\Log\Engine\TestAppLog;
 
 /**
  * Tests LogTrait assertions
@@ -35,6 +36,12 @@ class LogTestTraitTest extends TestCase
     public function testExpectLog(): void
     {
         $this->setupLog('debug');
+        Log::setConfig([
+            'error' => [
+                'className' => TestAppLog::class,
+                'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            ],
+        ]);
         Log::debug('This usually needs to happen inside your app');
         $this->assertLogMessage('debug', 'This usually needs to happen inside your app');
     }
@@ -116,6 +123,7 @@ class LogTestTraitTest extends TestCase
         Log::warning('This is a warning message');
         Log::error('This is a error message');
         Log::critical('This is a critical message');
+        Log::alert('This is a alert message');
         Log::emergency('This is a emergency message');
         $this->assertLogMessage('notice', 'This is a notice message');
         $this->assertLogMessage('info', 'This is a info message');
@@ -123,6 +131,7 @@ class LogTestTraitTest extends TestCase
         $this->assertLogMessage('warning', 'This is a warning message');
         $this->assertLogMessage('error', 'This is a error message');
         $this->assertLogMessage('critical', 'This is a critical message');
+        $this->assertLogMessage('alert', 'This is a alert message');
         $this->assertLogMessage('emergency', 'This is a emergency message');
     }
 
@@ -142,6 +151,7 @@ class LogTestTraitTest extends TestCase
         Log::warning('This is a warning message');
         Log::error('This is a error message');
         Log::critical('This is a critical message');
+        Log::alert('This is a alert message');
         Log::emergency('This is a emergency message');
 
         $this->assertLogAbsent('notice', 'No notice messages should be captured');
@@ -150,7 +160,35 @@ class LogTestTraitTest extends TestCase
         $this->assertLogMessage('warning', 'This is a warning message');
         $this->assertLogMessage('error', 'This is a error message');
         $this->assertLogMessage('critical', 'This is a critical message');
+        $this->assertLogMessage('alert', 'This is a alert message');
         $this->assertLogMessage('emergency', 'This is a emergency message');
+    }
+
+    public function testAbsentLogWithSetup(): void
+    {
+        $this->setupLog([
+            'error' => [
+                'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            ],
+        ]);
+        $this->assertLogAbsent('warning', 'This is a warning message');
+        $this->assertLogAbsent('error', 'This is a error message');
+        $this->assertLogAbsent('critical', 'This is a critical message');
+        $this->assertLogAbsent('alert', 'This is a critical message');
+        $this->assertLogAbsent('emergency', 'This is a emergency message');
+    }
+
+    public function testAbsentLogWithoutSetup(): void
+    {
+        Log::setConfig([
+            'debug' => [
+                'className' => TestAppLog::class,
+                'levels' => ['notice', 'info', 'debug'],
+            ],
+        ]);
+        Log::debug('This is a debug message');
+        $this->expectNotToPerformAssertions();
+        $this->assertLogAbsent('debug', 'Some error message');
     }
 
     /**
