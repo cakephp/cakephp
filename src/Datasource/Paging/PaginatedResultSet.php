@@ -23,7 +23,6 @@ use Traversable;
 /**
  * Paginated resultset.
  *
- * @template-implements \IteratorAggregate<mixed, \Traversable<mixed>>
  * @template T
  */
 class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
