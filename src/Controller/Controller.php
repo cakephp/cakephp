@@ -288,7 +288,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get(string $name): mixed
     {
-        if (!empty($this->defaultTable)) {
+        if ($this->defaultTable) {
             if (str_contains($this->defaultTable, '\\')) {
                 $class = App::shortName($this->defaultTable, 'Model/Table', 'Table');
             } else {

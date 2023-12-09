@@ -309,7 +309,7 @@ class Route
      */
     protected function _writeRoute(): void
     {
-        if (empty($this->template) || ($this->template === '/')) {
+        if (!$this->template || ($this->template === '/')) {
             $this->_compiledRoute = '#^/*$#';
             $this->keys = [];
 
@@ -375,7 +375,7 @@ class Route
      */
     public function getName(): string
     {
-        if (!empty($this->_name)) {
+        if ($this->_name) {
             return $this->_name;
         }
         $name = '';
@@ -619,7 +619,7 @@ class Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        if (empty($this->_compiledRoute)) {
+        if (!$this->_compiledRoute) {
             $this->compile();
         }
         $defaults = $this->defaults;
@@ -731,7 +731,7 @@ class Route
         }
 
         // check patterns for routed params
-        if (!empty($this->options)) {
+        if ($this->options) {
             foreach ($this->options as $key => $pattern) {
                 if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
                     return null;

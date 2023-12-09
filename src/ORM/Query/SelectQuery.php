@@ -736,7 +736,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $decorator = $this->_decoratorClass();
 
-        if (!empty($this->_mapReduce)) {
+        if ($this->_mapReduce) {
             foreach ($this->_mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
@@ -747,7 +747,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $result = new $decorator($result);
         }
 
-        if (!empty($this->_formatters)) {
+        if ($this->_formatters) {
             foreach ($this->_formatters as $formatter) {
                 $result = $formatter($result, $this);
             }

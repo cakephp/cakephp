@@ -85,7 +85,7 @@ class CorsBuilder
     public function build(): ResponseInterface
     {
         $response = $this->_response;
-        if (empty($this->_origin)) {
+        if (!$this->_origin) {
             return $response;
         }
 

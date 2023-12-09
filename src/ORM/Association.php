@@ -232,7 +232,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className)) {
+        if (!$this->_className) {
             $this->_className = $alias;
         }
 

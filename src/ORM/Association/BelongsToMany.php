@@ -1470,7 +1470,7 @@ class BelongsToMany extends Association
     protected function _junctionTableName(?string $name = null): string
     {
         if ($name === null) {
-            if (empty($this->_junctionTableName)) {
+            if (!$this->_junctionTableName) {
                 $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable(),

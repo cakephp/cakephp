@@ -471,7 +471,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function groups(): array
     {
-        if (empty($this->_compiledGroupNames)) {
+        if (!$this->_compiledGroupNames) {
             foreach ($this->_config['groups'] as $group) {
                 $this->_compiledGroupNames[] = $this->_config['prefix'] . $group;
             }

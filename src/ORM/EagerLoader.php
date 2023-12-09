@@ -400,7 +400,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (empty($this->_containments) && $this->_matching === null) {
+        if (!$this->_containments && $this->_matching === null) {
             return;
         }
 

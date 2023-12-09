@@ -342,7 +342,7 @@ class Socket
      */
     public function lastError(): ?string
     {
-        if (empty($this->lastError)) {
+        if (!$this->lastError) {
             return null;
         }
 

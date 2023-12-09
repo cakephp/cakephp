@@ -161,7 +161,7 @@ class ConsoleInputArgument
      */
     public function validChoice(string $value): bool
     {
-        if (empty($this->_choices)) {
+        if (!$this->_choices) {
             return true;
         }
         if (!in_array($value, $this->_choices, true)) {
