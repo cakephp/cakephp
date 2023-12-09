@@ -91,7 +91,7 @@ trait ContainerStubTrait
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
-        if (!empty($this->containerServices) && method_exists($app, 'getEventManager')) {
+        if ($this->containerServices && method_exists($app, 'getEventManager')) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 
@@ -142,7 +142,7 @@ trait ContainerStubTrait
      */
     public function modifyContainer(EventInterface $event, ContainerInterface $container): void
     {
-        if (empty($this->containerServices)) {
+        if (!$this->containerServices) {
             return;
         }
         foreach ($this->containerServices as $key => $factory) {

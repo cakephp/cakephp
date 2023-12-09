@@ -532,7 +532,7 @@ class Mailer implements EventListenerInterface
      */
     protected function logDelivery(array $contents): void
     {
-        if (empty($this->logConfig)) {
+        if (!$this->logConfig) {
             return;
         }
 

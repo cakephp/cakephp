@@ -261,7 +261,7 @@ class I18nExtractCommand extends Command
 
         $this->_markerError = (bool)$args->getOption('marker-error');
 
-        if (empty($this->_files)) {
+        if (!$this->_files) {
             $this->_searchFiles();
         }
 
@@ -816,7 +816,7 @@ class I18nExtractCommand extends Command
     protected function _searchFiles(): void
     {
         $pattern = false;
-        if (!empty($this->_exclude)) {
+        if ($this->_exclude) {
             $exclude = [];
             foreach ($this->_exclude as $e) {
                 if (DIRECTORY_SEPARATOR !== '\\' && $e[0] !== DIRECTORY_SEPARATOR) {
