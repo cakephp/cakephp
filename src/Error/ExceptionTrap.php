@@ -240,11 +240,14 @@ class ExceptionTrap
 
         try {
             $event = $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception, 'request' => $request]);
+            if ($event->isStopped()) {
+                return;
+            }
             $exception = $event->getData('exception');
             assert($exception instanceof Throwable);
 
             $renderer = $this->renderer($exception, $request);
-            $renderer->write($event->getResult() ?? $renderer->render());
+            $renderer->write($event->getResult() ?: $renderer->render());
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
