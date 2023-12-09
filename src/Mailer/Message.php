@@ -324,7 +324,7 @@ class Message implements JsonSerializable
             $this->charset = $this->appCharset;
         }
         $this->domain = (string)preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
-        if (empty($this->domain)) {
+        if (!$this->domain) {
             $this->domain = php_uname('n');
         }
 
@@ -1257,7 +1257,7 @@ class Message implements JsonSerializable
      */
     public function getBody(): array
     {
-        if (empty($this->message)) {
+        if (!$this->message) {
             $this->message = $this->generateMessage();
         }
 

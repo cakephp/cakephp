@@ -231,7 +231,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      */
     protected function _cacheConfig(string $action, ?string $template = null): array
     {
-        if (empty($this->_cache)) {
+        if (!$this->_cache) {
             return [];
         }
         $template = $template ?: 'default';

@@ -95,15 +95,15 @@ trait CellTrait
         $builder = $instance->viewBuilder();
         $builder->setTemplate(Inflector::underscore($action));
 
-        if (!empty($plugin)) {
+        if ($plugin) {
             $builder->setPlugin($plugin);
         }
-        if (!empty($this->helpers)) {
+        if ($this->helpers) {
             $builder->addHelpers($this->helpers);
         }
 
         if ($this instanceof View) {
-            if (!empty($this->theme)) {
+            if ($this->theme) {
                 $builder->setTheme($this->theme);
             }
 

@@ -137,7 +137,7 @@ class StringTemplate
      */
     public function pop(): void
     {
-        if (empty($this->_configStack)) {
+        if (!$this->_configStack) {
             return;
         }
         [$this->_config, $this->_compiled] = array_pop($this->_configStack);
