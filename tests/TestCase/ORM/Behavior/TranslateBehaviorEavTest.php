@@ -2041,14 +2041,14 @@ class TranslateBehaviorEavTest extends TestCase
     /**
      * Tests that modified entities aren't marked as clean after EavStrategy::rowMapper
      */
-    public function testModifiedEntityNotCleanAfterTranslationMapping (): void
+    public function testModifiedEntityNotCleanAfterTranslationMapping(): void
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->setLocale('fra');
 
         $articles = $table->find()->all();
-        $articles->each(function($article) {
+        $articles->each(function ($article) {
             $article->published = 'N';
         });
 

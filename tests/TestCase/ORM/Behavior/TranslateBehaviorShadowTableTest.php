@@ -1130,7 +1130,6 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         );
     }
 
-
     /**
      * Tests that modified entities aren't marked as clean after ShadowTableStrategy::rowMapper
      */
