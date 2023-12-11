@@ -2037,4 +2037,21 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertSame('abc', $result->articles[0]->_locale);
         $this->assertSame('xyz', $result->articles[0]->_matchingData['Tags']->_locale);
     }
+
+    /**
+     * Tests that modified entities aren't marked as clean after EavStrategy::rowMapper
+     */
+    public function testModifiedEntityNotCleanAfterTranslationMapping (): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->setLocale('fra');
+
+        $articles = $table->find()->all();
+        $articles->each(function($article) {
+            $article->published = 'N';
+        });
+
+        $this->assertTrue($articles->first()->isDirty('published'));
+    }
 }
