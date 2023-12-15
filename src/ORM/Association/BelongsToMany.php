@@ -993,6 +993,10 @@ class BelongsToMany extends Association
      */
     public function getThrough(): Table|string
     {
+        if (!isset($this->_through)) {
+            return '';
+        }
+
         return $this->_through;
     }
 
