@@ -29,7 +29,7 @@ use function Cake\Core\h;
  * @method string precision(string|float|int $number, int $precision = 3, array $options = []) See Number::precision()
  * @method string toPercentage(string|float|int $value, int $precision = 3, array $options = []) See Number::toPercentage()
  * @method string toReadableSize(string|float|int $size) See Number::toReadableSize()
- * @link https://book.cakephp.org/4/en/views/helpers/number.html
+ * @link https://book.cakephp.org/5/en/views/helpers/number.html
  * @see \Cake\I18n\Number
  */
 class NumberHelper extends Helper
@@ -61,7 +61,7 @@ class NumberHelper extends Helper
      * @param string|float|int $number A floating point number.
      * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
-     * @link https://book.cakephp.org/4/en/views/helpers/number.html#formatting-numbers
+     * @link https://book.cakephp.org/5/en/views/helpers/number.html#formatting-numbers
      */
     public function format(string|float|int $number, array $options = []): string
     {

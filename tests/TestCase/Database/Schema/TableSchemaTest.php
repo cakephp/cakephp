@@ -170,8 +170,11 @@ class TableSchemaTest extends TestCase
             'null' => false,
         ]);
         $this->assertSame('string', $table->getColumnType('title'));
+        $this->assertSame('string', $table->baseColumnType('title'));
+
         $table->setColumnType('title', 'json');
         $this->assertSame('json', $table->getColumnType('title'));
+        $this->assertSame('json', $table->baseColumnType('title'));
     }
 
     /**

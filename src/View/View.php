@@ -23,7 +23,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -330,14 +330,14 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
-     * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager Event manager instance.
      * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
         ?ServerRequest $request = null,
         ?Response $response = null,
-        ?EventManager $eventManager = null,
+        ?EventManagerInterface $eventManager = null,
         array $viewOptions = []
     ) {
         if ($eventManager !== null) {
@@ -786,7 +786,7 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -1451,7 +1451,7 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -1590,7 +1590,7 @@ class View implements EventDispatcherInterface
             $pluginPaths[] = Plugin::templatePath($plugin);
         }
 
-        if (!empty($this->theme)) {
+        if ($this->theme) {
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {

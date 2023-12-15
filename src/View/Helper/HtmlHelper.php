@@ -27,7 +27,7 @@ use function Cake\Core\h;
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
  * @property \Cake\View\Helper\UrlHelper $Url
- * @link https://book.cakephp.org/4/en/views/helpers/html.html
+ * @link https://book.cakephp.org/5/en/views/helpers/html.html
  */
 class HtmlHelper extends Helper
 {
@@ -131,7 +131,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
      * @return string|null A completed `<link>` element, or null if the element was sent to a block.
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-meta-tags
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta(array|string $type, array|string|null $content = null, array $options = []): ?string
     {
@@ -214,7 +214,7 @@ class HtmlHelper extends Helper
      * @param string|null $charset The character set to be used in the meta tag. If empty,
      *  The App.encoding value will be used. Example: "utf-8".
      * @return string A meta tag containing the specified character set.
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-charset-tags
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-charset-tags
      */
     public function charset(?string $charset = null): string
     {
@@ -249,7 +249,7 @@ class HtmlHelper extends Helper
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An `<a>` element.
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
      */
     public function link(array|string $title, array|string|null $url = null, array $options = []): string
     {
@@ -317,7 +317,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An `<a>` element.
      * @see \Cake\Routing\Router::pathUrl()
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-links
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
      */
     public function linkFromPath(string $title, string $path, array $params = [], array $options = []): string
     {
@@ -373,7 +373,7 @@ class HtmlHelper extends Helper
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array<string, mixed> $options Array of options and HTML arguments.
      * @return string|null CSS `<link>` or `<style>` tag, depending on the type of link.
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-css-files
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#linking-to-css-files
      */
     public function css(array|string $path, array $options = []): ?string
     {
@@ -473,7 +473,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Array of options, and html attributes see above.
      * @return string|null String of `<script>` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-javascript-files
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#linking-to-javascript-files
      */
     public function script(array|string $url, array $options = []): ?string
     {
@@ -532,7 +532,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options The options to use. Options not listed above will be
      *    treated as HTML attributes.
      * @return string|null String or null depending on the value of `$options['block']`
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-inline-javascript-blocks
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
@@ -566,7 +566,7 @@ class HtmlHelper extends Helper
      *
      * @param array<string, mixed> $options Options for the code block.
      * @return void
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-inline-javascript-blocks
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptStart(array $options = []): void
     {
@@ -580,7 +580,7 @@ class HtmlHelper extends Helper
      * the settings used when the scriptBlock was started
      *
      * @return string|null Depending on the settings of scriptStart() either a script tag or null
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-inline-javascript-blocks
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptEnd(): ?string
     {
@@ -606,7 +606,7 @@ class HtmlHelper extends Helper
      * @param array<string, string> $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-css-programatically
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-css-programatically
      */
     public function style(array $data, bool $oneLine = true): string
     {
@@ -650,7 +650,7 @@ class HtmlHelper extends Helper
      * @param array|string $path Path to the image file, relative to the webroot/img/ directory.
      * @param array<string, mixed> $options Array of HTML attributes. See above for special options.
      * @return string completed img tag
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#linking-to-images
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#linking-to-images
      */
     public function image(array|string $path, array $options = []): string
     {
@@ -696,7 +696,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed>|null $trOptions HTML options for TR elements.
      * @param array<string, mixed>|null $thOptions HTML options for TH elements.
      * @return string Completed table headers
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-table-headings
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-table-headings
      */
     public function tableHeaders(array $names, ?array $trOptions = null, ?array $thOptions = null): string
     {
@@ -732,7 +732,7 @@ class HtmlHelper extends Helper
      * @param bool $continueOddEven If false, will use a non-static $count variable,
      *    so that the odd/even count is reset to zero just for that call.
      * @return string Formatted HTML
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-table-cells
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-table-cells
      */
     public function tableCells(
         array|string $data,
@@ -1079,7 +1079,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Options and additional HTML attributes of the list (ol/ul) tag.
      * @param array<string, mixed> $itemOptions Options and additional HTML attributes of the list item (LI) tag.
      * @return string The nested list
-     * @link https://book.cakephp.org/4/en/views/helpers/html.html#creating-nested-lists
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-nested-lists
      */
     public function nestedList(array $list, array $options = [], array $itemOptions = []): string
     {

@@ -787,7 +787,7 @@ class ConsoleOptionParser
      */
     protected function _parseArg(string $argument, array $args): array
     {
-        if (empty($this->_args)) {
+        if (!$this->_args) {
             $args[] = $argument;
 
             return $args;

@@ -75,17 +75,20 @@ class IsUnique
             return true;
         }
 
-        $alias = $options['repository']->getAlias();
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $options['repository'];
+
+        $alias = $repository->getAlias();
         $conditions = $this->_alias($alias, $fields);
         if ($entity->isNew() === false) {
-            $keys = (array)$options['repository']->getPrimaryKey();
+            $keys = (array)$repository->getPrimaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys));
             if (Hash::filter($keys)) {
                 $conditions['NOT'] = $keys;
             }
         }
 
-        return !$options['repository']->exists($conditions);
+        return !$repository->exists($conditions);
     }
 
     /**

@@ -35,7 +35,7 @@ use function Cake\I18n\__d;
  *   flags to indicate a field is required. The value can also be a string to be used
  *   as the required error message
  * - `schema` An array of data that emulate the column structures that
- *   Cake\Database\Schema\Schema uses. This array allows you to control
+ *   {@link \Cake\Database\Schema\TableSchema} uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
  *   like maxlength, step and other HTML attributes. If you want
  *   primary key/id detection to work. Make sure you have provided a `_constraints`

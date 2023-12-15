@@ -162,6 +162,8 @@ class TimeType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
+        assert(method_exists($value, 'format'));
+
         return $value->format($this->_format);
     }
 
@@ -179,6 +181,16 @@ class TimeType extends BaseType implements BatchCastingInterface
         }
 
         return new $this->_className($value);
+    }
+
+    /**
+     * Get the classname used for building objects.
+     *
+     * @return class-string<\Cake\Chronos\ChronosTime>
+     */
+    public function getTimeClassName(): string
+    {
+        return $this->_className;
     }
 
     /**

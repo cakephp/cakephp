@@ -39,7 +39,7 @@ class CacheClearallCommand extends Command
     /**
      * Hook method for defining this command's option parser.
      *
-     * @see https://book.cakephp.org/4/en/console-commands/option-parsers.html
+     * @see https://book.cakephp.org/5/en/console-commands/option-parsers.html
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */

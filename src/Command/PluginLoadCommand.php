@@ -91,6 +91,8 @@ class PluginLoadCommand extends Command
             $io->err('Failed to update `CONFIG/plugins.php`');
         }
 
+        $io->success('Plugin added successfully to `CONFIG/plugins.php`');
+
         return $result;
     }
 
@@ -114,11 +116,11 @@ class PluginLoadCommand extends Command
         $config[$plugin] = $options;
 
         if (class_exists(VarExporter::class)) {
-            $array = VarExporter::export($config);
+            $array = VarExporter::export($config, VarExporter::TRAILING_COMMA_IN_ARRAY);
         } else {
             $array = var_export($config, true);
         }
-        $contents = '<?php' . "\n" . 'return ' . $array . ';';
+        $contents = '<?php' . "\n\n" . 'return ' . $array . ';' . "\n";
 
         if (file_put_contents($this->configFile, $contents)) {
             return static::CODE_SUCCESS;

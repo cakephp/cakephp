@@ -149,6 +149,14 @@ class SqliteSchemaTest extends TestCase
                 'UNSIGNED DECIMAL(11,2)',
                 ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
             ],
+            [
+                'UUID_TEXT',
+                ['type' => 'uuid', 'length' => null],
+            ],
+            [
+                'UUID_BLOB',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
         ];
     }
 

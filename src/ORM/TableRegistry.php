@@ -34,9 +34,6 @@ use Cake\ORM\Locator\LocatorInterface;
  *
  * ```
  * TableRegistry::getTableLocator()->setConfig('Users', ['table' => 'my_users']);
- *
- * // Prior to 3.6.0
- * TableRegistry::config('Users', ['table' => 'my_users']);
  * ```
  *
  * Configuration data is stored *per alias* if you use the same table with
@@ -51,9 +48,6 @@ use Cake\ORM\Locator\LocatorInterface;
  *
  * ```
  * $table = TableRegistry::getTableLocator()->get('Users', $config);
- *
- * // Prior to 3.6.0
- * $table = TableRegistry::get('Users', $config);
  * ```
  */
 class TableRegistry

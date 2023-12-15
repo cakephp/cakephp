@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
       - '*'
-  schedule:
-    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -22,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2']
+        php-version: ['8.1', '8.3']
         db-type: [sqlite, pgsql]
         prefer-lowest: ['']
         include:
@@ -31,7 +29,7 @@ jobs:
           - php-version: '8.1'
             db-type: 'mysql'
             prefer-lowest: 'prefer-lowest'
-          - php-version: '8.3'
+          - php-version: '8.2'
             db-type: 'mysql'
 
     services:
@@ -92,8 +90,6 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
-        elif ${{ matrix.php-version == '8.3' }}; then
-          composer update --ignore-platform-reqs
         else
           composer update
         fi
@@ -125,6 +121,18 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         fi
+
+    - name: Run class deprecation aliasing validation script
+      if: always()
+      run: php contrib/validate-deprecation-aliases.php
+
+    - name: Run composer.json validation for split packages
+      if: always()
+      run: php contrib/validate-split-packages.php
+
+    - name: Run PHPStan for split packages
+      if: always()
+      run: php contrib/validate-split-packages-phpstan.php
 
     - name: Prefer lowest check
       if: matrix.prefer-lowest == 'prefer-lowest'

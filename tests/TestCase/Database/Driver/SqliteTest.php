@@ -66,7 +66,7 @@ class SqliteTest extends TestCase
         ];
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
-        $driver->connect([]);
+        $driver->connect();
     }
 
     /**
@@ -111,7 +111,7 @@ class SqliteTest extends TestCase
             ->with($dsn, $expected)
             ->willReturn($connection);
 
-        $driver->connect($config);
+        $driver->connect();
     }
 
     /**

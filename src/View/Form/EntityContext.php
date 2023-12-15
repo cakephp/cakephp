@@ -644,6 +644,7 @@ class EntityContext implements ContextInterface
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
                 if ($assoc !== null) {
+                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;

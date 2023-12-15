@@ -38,7 +38,8 @@ class IntegerType extends BaseType implements BatchCastingInterface
     {
         if (!is_numeric($value) && !is_bool($value)) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to integer',
+                'Cannot convert value `%s` of type `%s` to int',
+                print_r($value, true),
                 get_debug_type($value)
             ));
         }

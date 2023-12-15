@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) <https://book.cakephp.org/4/en/development/testing.html>
+ * CakePHP(tm) <https://book.cakephp.org/5/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -551,6 +551,7 @@ class LogTest extends TestCase
             'scopes' => ['foo', 'bar'],
         ]);
 
+        /** @var \TestApp\Log\Engine\TestAppLog $engine */
         $engine = Log::engine('scope_test');
         $this->assertNull($engine->passedScope);
 

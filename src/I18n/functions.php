@@ -23,7 +23,7 @@ namespace Cake\I18n;
  * @param string $singular Text to translate.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string The translated text.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__
  */
 function __(string $singular, mixed ...$args): string
 {
@@ -46,7 +46,7 @@ function __(string $singular, mixed ...$args): string
  * @param int $count Count.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Plural form of translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__n
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__n
  */
 function __n(string $singular, string $plural, int $count, mixed ...$args): string
 {
@@ -70,7 +70,7 @@ function __n(string $singular, string $plural, int $count, mixed ...$args): stri
  * @param string $msg String to translate.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__d
  */
 function __d(string $domain, string $msg, mixed ...$args): string
 {
@@ -95,7 +95,7 @@ function __d(string $domain, string $msg, mixed ...$args): string
  * @param int $count Count.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Plural form of translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dn
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__dn
  */
 function __dn(string $domain, string $singular, string $plural, int $count, mixed ...$args): string
 {
@@ -121,7 +121,7 @@ function __dn(string $domain, string $singular, string $plural, int $count, mixe
  * @param string $singular Text to translate.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__x
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__x
  */
 function __x(string $context, string $singular, mixed ...$args): string
 {
@@ -147,7 +147,7 @@ function __x(string $context, string $singular, mixed ...$args): string
  * @param int $count Count.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Plural form of translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__xn
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__xn
  */
 function __xn(string $context, string $singular, string $plural, int $count, mixed ...$args): string
 {
@@ -174,7 +174,7 @@ function __xn(string $context, string $singular, string $plural, int $count, mix
  * @param string $msg String to translate.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dx
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__dx
  */
 function __dx(string $domain, string $context, string $msg, mixed ...$args): string
 {
@@ -204,7 +204,7 @@ function __dx(string $domain, string $context, string $msg, mixed ...$args): str
  * @param int $count Count.
  * @param mixed ...$args Array with arguments or multiple arguments in function.
  * @return string Plural form of translated string.
- * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dxn
+ * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#__dxn
  */
 function __dxn(
     string $domain,

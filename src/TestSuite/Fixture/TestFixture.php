@@ -71,7 +71,7 @@ class TestFixture implements FixtureInterface
      */
     public function __construct()
     {
-        if (!empty($this->connection)) {
+        if ($this->connection) {
             $connection = $this->connection;
             if (!str_starts_with($connection, 'test')) {
                 $message = sprintf(
@@ -109,7 +109,7 @@ class TestFixture implements FixtureInterface
      */
     public function init(): void
     {
-        if (empty($this->table)) {
+        if (!$this->table) {
             $this->table = $this->_tableFromClass();
         }
 
@@ -169,7 +169,7 @@ class TestFixture implements FixtureInterface
     public function insert(ConnectionInterface $connection): bool
     {
         assert($connection instanceof Connection);
-        if (!empty($this->records)) {
+        if ($this->records) {
             [$fields, $values, $types] = $this->_getRecords();
             $query = $connection->insertQuery()
                 ->insert($fields, $types)

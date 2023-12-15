@@ -120,6 +120,6 @@ class HelloCommand extends BaseCommand
 Next we can run our command with `php bin/tool.php hello Syd`. To learn more
 about the various features we've used in this example read the docs:
 
-* [Option Parsing](https://book.cakephp.org/4/en/console-commands/option-parsers.html)
-* [Input & Output](https://book.cakephp.org/4/en/console-commands/input-output.html)
+* [Option Parsing](https://book.cakephp.org/5/en/console-commands/option-parsers.html)
+* [Input & Output](https://book.cakephp.org/5/en/console-commands/input-output.html)
 

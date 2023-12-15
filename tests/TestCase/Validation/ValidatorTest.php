@@ -25,6 +25,9 @@ use Cake\Validation\Validator;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use stdClass;
+use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
+use TestApp\Model\Enum\Priority;
 use Traversable;
 
 /**
@@ -752,7 +755,9 @@ class ValidatorTest extends TestCase
             'title' => '',
             'otherField' => false,
         ];
-        $this->assertNotEmpty($validator->validate($data));
+        $result = $validator->validate($data);
+        $this->assertNotEmpty($result);
+        $this->assertEquals(['_empty' => 'very required'], $result['title']);
 
         $data = [
             'title' => '',
@@ -2702,6 +2707,43 @@ class ValidatorTest extends TestCase
         $expectedMessage = 'The provided value must be an e-mail address';
         $checkMx = false;
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $checkMx);
+    }
+
+    public function testEnum(): void
+    {
+        $validator = new Validator();
+        $validator->enum('status', ArticleStatus::class);
+
+        $this->assertEmpty($validator->validate(['status' => ArticleStatus::PUBLISHED]));
+        $this->assertEmpty($validator->validate(['status' => 'Y']));
+
+        $this->assertNotEmpty($validator->validate(['status' => Priority::LOW]));
+        $this->assertNotEmpty($validator->validate(['status' => 'wrong type']));
+        $this->assertNotEmpty($validator->validate(['status' => 123]));
+        $this->assertNotEmpty($validator->validate(['status' => NonBacked::Basic]));
+
+        $fieldName = 'status';
+        $rule = 'enum';
+        $expectedMessage = 'The provided value must be one of `Y`, `N`';
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, ArticleStatus::class);
+    }
+
+    public function testEnumNonBacked(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
+
+        $validator = new Validator();
+        $validator->enum('status', NonBacked::class);
+    }
+
+    public function testEnumNonEnum(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
+
+        $validator = new Validator();
+        $validator->enum('status', TestCase::class);
     }
 
     /**

@@ -228,7 +228,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     public static function assertionFailureMessagesProvider(): array
     {
         return [
-            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0', 'routes', CommandInterface::CODE_ERROR],
+            'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
             'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
             'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
-use Cake\Chronos\Chronos;
+use BackedEnum;
 use Cake\Chronos\ChronosDate;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
@@ -26,6 +26,8 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use NumberFormatter;
 use Psr\Http\Message\UploadedFileInterface;
+use ReflectionEnum;
+use ReflectionException;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -448,7 +450,7 @@ class Validation
      */
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof ChronosDate || $check instanceof Chronos) {
+        if ($check instanceof ChronosDate || $check instanceof DateTimeInterface) {
             return true;
         }
         if (is_object($check)) {
@@ -526,7 +528,7 @@ class Validation
      */
     public static function datetime(mixed $check, array|string $dateFormat = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_object($check)) {
@@ -594,7 +596,7 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -626,7 +628,7 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface || $check instanceof Chronos) {
+        if ($check instanceof DateTimeInterface) {
             return true;
         }
         if (!is_string($check)) {
@@ -690,6 +692,9 @@ class Validation
     /**
      * Checks that a value is a valid decimal. Both the sign and exponent are optional.
      *
+     * Be aware that the currently set locale is being used to determine
+     * the decimal and thousands separator of the given number.
+     *
      * Valid Places:
      *
      * - null => Any number of decimal places, including none. The '.' is not required.
@@ -734,7 +739,7 @@ class Validation
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
         // There are two types of non-breaking spaces - we inject a space to account for human input
-        if ($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+        if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
             $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
         } else {
             $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
@@ -780,6 +785,43 @@ class Validation
         }
 
         return false;
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name
+     * @return bool Success
+     * @since 5.0.3
+     */
+    public static function enum(mixed $check, string $enumClassName): bool
+    {
+        if (
+            $check instanceof $enumClassName &&
+            $check instanceof BackedEnum
+        ) {
+            return true;
+        }
+
+        $backingType = null;
+        try {
+            $reflectionEnum = new ReflectionEnum($enumClassName);
+            $backingType = $reflectionEnum->getBackingType();
+        } catch (ReflectionException) {
+        }
+
+        if ($backingType === null) {
+            throw new InvalidArgumentException(
+                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+            );
+        }
+
+        if (get_debug_type($check) !== (string)$backingType) {
+            return false;
+        }
+
+        return $enumClassName::tryFrom($check) !== null;
     }
 
     /**
@@ -1372,9 +1414,12 @@ class Validation
             return false;
         }
 
-        [$width, $height] = getimagesize($file) ?: [];
-        $validHeight = null;
-        $validWidth = null;
+        $width = $height = null;
+        $imageSize = getimagesize($file);
+        if ($imageSize) {
+            [$width, $height] = $imageSize;
+        }
+        $validWidth = $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

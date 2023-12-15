@@ -34,6 +34,9 @@ use InvalidArgumentException;
  * will have one or multiple records per each one in the source side.
  *
  * An example of a HasMany association would be Author has many Articles.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class HasMany extends Association
 {
@@ -234,9 +237,11 @@ class HasMany extends Association
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\ORM\Entity $originEntity */
+                $originEntity = $original[$k];
+                $originEntity->setErrors($entity->getErrors());
                 if ($entity instanceof InvalidPropertyInterface) {
-                    $original[$k]->setInvalid($entity->getInvalid());
+                    $originEntity->setInvalid($entity->getInvalid());
                 }
 
                 return false;

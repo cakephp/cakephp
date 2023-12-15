@@ -392,8 +392,9 @@ class Xml
         $key = $data['key'];
         $format = $data['format'];
         $value = $data['value'];
+        /** @var \DOMDocument $dom */
         $dom = $data['dom'];
-
+        /** @var \DOMNode $node */
         $node = $data['node'];
 
         $childNS = $childValue = null;

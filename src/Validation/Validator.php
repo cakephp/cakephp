@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use BackedEnum;
 use Closure;
 use Countable;
 use InvalidArgumentException;
@@ -32,7 +33,7 @@ use function Cake\I18n\__d;
  *
  * Implements ArrayAccess to easily modify rules in the set
  *
- * @link https://book.cakephp.org/4/en/core-libraries/validation.html
+ * @link https://book.cakephp.org/5/en/core-libraries/validation.html
  * @template-implements \ArrayAccess<string, \Cake\Validation\ValidationSet>
  * @template-implements \IteratorAggregate<string, \Cake\Validation\ValidationSet>
  */
@@ -2030,6 +2031,47 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'email', $extra + [
             'rule' => ['email', $checkMX],
+        ]);
+    }
+
+    /**
+     * Add a backed enum validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name.
+     * @param string|null $message The error message when the rule fails.
+     * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
+     *   true when the validation rule should be applied.
+     * @return $this
+     * @see \Cake\Validation\Validation::enum()
+     * @since 5.0.3
+     */
+    public function enum(
+        string $field,
+        string $enumClassName,
+        ?string $message = null,
+        Closure|string|null $when = null
+    ) {
+        if (!in_array(BackedEnum::class, (array)class_implements($enumClassName), true)) {
+            throw new InvalidArgumentException(
+                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+            );
+        }
+
+        if ($message === null) {
+            $cases = array_map(fn ($case) => $case->value, $enumClassName::cases());
+            $caseOptions = implode('`, `', $cases);
+            if (!$this->_useI18n) {
+                $message = sprintf('The provided value must be one of `%s`', $caseOptions);
+            } else {
+                $message = __d('cake', 'The provided value must be one of `{0}`', $caseOptions);
+            }
+        }
+
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'enum', $extra + [
+            'rule' => ['enum', $enumClassName],
         ]);
     }
 

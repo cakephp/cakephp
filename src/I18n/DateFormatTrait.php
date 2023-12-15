@@ -30,6 +30,13 @@ use IntlDateFormatter;
 trait DateFormatTrait
 {
     /**
+     * In-memory cache of date formatters
+     *
+     * @var array<string, \IntlDateFormatter>
+     */
+    protected static array $formatters = [];
+
+    /**
      * Returns a translated and localized date string.
      * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
      *
@@ -66,29 +73,35 @@ trait DateFormatTrait
         }
 
         $timezone = $date->getTimezone()->getName();
-        if ($timezone === '+00:00' || $timezone === 'Z') {
-            $timezone = 'UTC';
-        } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
-            $timezone = 'GMT' . $timezone;
-        }
+        $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
 
-        $formatter = datefmt_create(
-            $locale,
-            $dateFormat,
-            $timeFormat,
-            $timezone,
-            $calendar,
-            $pattern
-        );
-        if (!$formatter) {
-            $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
-            throw new CakeException(
-                'Your version of icu does not support creating a date formatter for ' .
-                "`$key`. You should try to upgrade libicu and the intl extension."
+        if (!isset(static::$formatters[$key])) {
+            if ($timezone === '+00:00' || $timezone === 'Z') {
+                $timezone = 'UTC';
+            } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
+                $timezone = 'GMT' . $timezone;
+            }
+
+            $formatter = datefmt_create(
+                $locale,
+                $dateFormat,
+                $timeFormat,
+                $timezone,
+                $calendar,
+                $pattern
             );
+
+            if (!$formatter) {
+                throw new CakeException(
+                    'Your version of icu does not support creating a date formatter for ' .
+                    "`$key`. You should try to upgrade libicu and the intl extension."
+                );
+            }
+
+            static::$formatters[$key] = $formatter;
         }
 
-        return (string)$formatter->format($date->format('U'));
+        return (string)static::$formatters[$key]->format($date->format('U'));
     }
 
     /**

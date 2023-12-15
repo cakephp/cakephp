@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.15.0@5c774aca4746caf3d239d9c8cadb9f882ca29352">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
     </TooManyTemplateParams>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
+    <InvalidCast>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+    </InvalidCast>
     <InvalidReturnStatement>
       <code><![CDATA[$this->_Redis->set($key, $value)]]></code>
       <code><![CDATA[$this->_Redis->setEx($key, $duration, $value)]]></code>
@@ -17,12 +23,6 @@
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
-  </file>
-  <file src="src/Console/CommandCollection.php">
-    <InvalidDocblock>
-      <code>public function get(string $name): CommandInterface|string</code>
-      <code>public function getIterator(): Traversable</code>
-    </InvalidDocblock>
   </file>
   <file src="src/Database/Query.php">
     <UnusedPsalmSuppress>
@@ -94,6 +94,7 @@
     <ImpureMethodCall>
       <code>_formatObject</code>
       <code>getDefaultLocale</code>
+      <code>toNative</code>
     </ImpureMethodCall>
     <ImpureStaticProperty>
       <code>static::$_jsonEncodeFormat</code>
@@ -162,6 +163,12 @@
   <file src="src/Utility/Hash.php">
     <RedundantCondition>
       <code>is_array($_list)</code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Validation/Validation.php">
+    <RedundantCondition>
+      <code><![CDATA[$check instanceof $enumClassName &&
+            $check instanceof BackedEnum]]></code>
     </RedundantCondition>
   </file>
   <file src="src/View/Exception/MissingCellTemplateException.php">

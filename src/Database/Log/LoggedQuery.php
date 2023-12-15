@@ -131,6 +131,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function getContext(): array
     {
         return [
+            'query' => $this->query,
             'numRows' => $this->numRows,
             'took' => $this->took,
             'role' => $this->driver ? $this->driver->getRole() : '',
@@ -183,7 +184,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function __toString(): string
     {
         $sql = $this->query;
-        if (!empty($this->params)) {
+        if ($this->params) {
             $sql = $this->interpolate();
         }
 

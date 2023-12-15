@@ -82,7 +82,10 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (is_string($this->_repository)) {
-            if (!$options['repository']->hasAssociation($this->_repository)) {
+            /** @var \Cake\ORM\Table $table */
+            $table = $options['repository'];
+
+            if (!$table->hasAssociation($this->_repository)) {
                 throw new DatabaseException(sprintf(
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
@@ -90,7 +93,7 @@ class ExistsIn
                     get_class($options['repository'])
                 ));
             }
-            $repository = $options['repository']->getAssociation($this->_repository);
+            $repository = $table->getAssociation($this->_repository);
             $this->_repository = $repository;
         }
 
@@ -124,6 +127,7 @@ class ExistsIn
         }
 
         if ($this->_options['allowNullableNulls']) {
+            /** @var \Cake\ORM\Table $source */
             $schema = $source->getSchema();
             foreach ($fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {

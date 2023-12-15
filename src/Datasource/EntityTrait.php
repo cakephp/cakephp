@@ -107,13 +107,14 @@ trait EntityTrait
     protected array $_invalid = [];
 
     /**
-     * Map of fields in this entity that can be safely assigned, each
+     * Map of fields in this entity that can be safely mass assigned, each
      * field name points to a boolean indicating its status. An empty array
-     * means no fields are accessible
+     * means no fields are accessible for mass assigment.
      *
      * The special field '\*' can also be mapped, meaning that any other field
      * not defined in the map will take its value. For example, `'*' => true`
-     * means that any field not defined in the map will be accessible by default
+     * means that any field not defined in the map will be accessible for mass
+     * assignment by default.
      *
      * @var array<string, bool>
      */
@@ -125,6 +126,13 @@ trait EntityTrait
      * @var string
      */
     protected string $_registryAlias = '';
+
+    /**
+     * Storing the current visitation status while recursing through entities getting errors.
+     *
+     * @var bool
+     */
+    protected bool $_hasBeenVisited = false;
 
     /**
      * Whether the presence of a field is checked when accessing a property.
@@ -951,6 +959,11 @@ trait EntityTrait
      */
     public function hasErrors(bool $includeNested = true): bool
     {
+        if ($this->_hasBeenVisited) {
+            // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
+            return false;
+        }
+
         if (Hash::filter($this->_errors)) {
             return true;
         }
@@ -959,10 +972,15 @@ trait EntityTrait
             return false;
         }
 
-        foreach ($this->_fields as $field) {
-            if ($this->_readHasErrors($field)) {
-                return true;
+        $this->_hasBeenVisited = true;
+        try {
+            foreach ($this->_fields as $field) {
+                if ($this->_readHasErrors($field)) {
+                    return true;
+                }
             }
+        } finally {
+            $this->_hasBeenVisited = false;
         }
 
         return false;
@@ -975,17 +993,29 @@ trait EntityTrait
      */
     public function getErrors(): array
     {
+        if ($this->_hasBeenVisited) {
+            // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
+            return [];
+        }
+
         $diff = array_diff_key($this->_fields, $this->_errors);
 
-        return $this->_errors + (new Collection($diff))
-            ->filter(function ($value) {
-                return is_array($value) || $value instanceof EntityInterface;
-            })
-            ->map(function ($value) {
-                return $this->_readError($value);
-            })
-            ->filter()
-            ->toArray();
+        $this->_hasBeenVisited = true;
+        try {
+            $errors = $this->_errors + (new Collection($diff))
+                ->filter(function ($value) {
+                    return is_array($value) || $value instanceof EntityInterface;
+                })
+                ->map(function ($value) {
+                    return $this->_readError($value);
+                })
+                ->filter()
+                ->toArray();
+        } finally {
+            $this->_hasBeenVisited = false;
+        }
+
+        return $errors;
     }
 
     /**

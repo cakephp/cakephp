@@ -5,10 +5,12 @@
 We support fixing security issues on the following releases:
 
 | Version | Supported          | Security fixes until
-| ------- | ------------------ | -------------------- 
-| 4.4     | :white_check_mark: | 24 Months after the release of 5.0
-| 4.3     | :white_check_mark: | Release of 5.0
-| 4.2     | :white_check_mark: | Release of 4.5
+| ------- | ------------------ | --------------------
+| 5.0     | :white_check_mark: | The release of 5.2
+| 4.5     | :white_check_mark: | 24 Months after the release of 5.0
+| 4.4     | :x:                | 24 Months after the release of 5.0
+| 4.3     | :x:                | No longer supported
+| 4.2     | :x:                | No longer supported
 | 4.1     | :x:                | No longer supported
 | 4.0     | :x:                | No longer supported
 | 3.10.x  | :x:                | No longer supported

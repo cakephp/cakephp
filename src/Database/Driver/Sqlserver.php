@@ -336,15 +336,16 @@ class Sqlserver extends Driver
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
-        if ($original->clause('order')) {
+        /** @var \Cake\Database\Expression\OrderByExpression $originalOrder */
+        $originalOrder = $original->clause('order');
+        if ($originalOrder) {
             // SQL server does not support column aliases in OVER clauses.  But
             // the only practical way to specify the use of calculated columns
             // is with their alias.  So substitute the select SQL in place of
             // any column aliases for those entries in the order clause.
             $select = $original->clause('select');
             $order = new OrderByExpression();
-            $original
-                ->clause('order')
+            $originalOrder
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
@@ -412,7 +413,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function ($q) use ($distinct, $order) {
+            ->select(function (Query $q) use ($distinct, $order) {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->newExpr()->add($distinct)->setConjunction(','))

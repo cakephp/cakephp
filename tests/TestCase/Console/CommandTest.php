@@ -108,7 +108,7 @@ class CommandTest extends TestCase
      */
     public function testRunCallsInitialize(): void
     {
-        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
+        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->onlyMethods(['initialize'])
             ->getMock();
@@ -191,7 +191,7 @@ class CommandTest extends TestCase
      */
     public function testRunOptionParserFailure(): void
     {
-        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
+        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->onlyMethods(['getOptionParser'])
             ->getMock();

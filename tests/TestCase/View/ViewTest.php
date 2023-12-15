@@ -983,7 +983,7 @@ class ViewTest extends TestCase
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
-        ], false);
+        ]);
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
         $View->render('index');
@@ -998,7 +998,7 @@ class ViewTest extends TestCase
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
-        ], false);
+        ]);
         $this->PostsController->set('variable', 'values');
 
         $View = $this->PostsController->createView();

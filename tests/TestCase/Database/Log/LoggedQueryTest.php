@@ -172,6 +172,7 @@ class LoggedQueryTest extends TestCase
         ]);
 
         $expected = [
+            'query' => 'SELECT a FROM b where a = :p1',
             'numRows' => 10,
             'took' => 15.0,
             'role' => '',

@@ -25,8 +25,8 @@ use function Cake\Core\pluginSplit;
  * Provides functionality for loading table classes
  * and other repositories onto properties of the host object.
  *
- * Example users of this trait are Cake\Controller\Controller and
- * Cake\Console\Shell.
+ * Example users of this trait are {@link \Cake\Controller\Controller} and
+ * {@link \Cake\Command\Command}.
  */
 trait ModelAwareTrait
 {

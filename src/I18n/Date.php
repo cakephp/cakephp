@@ -327,5 +327,5 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
 }
 
 // phpcs:disable
-class_alias(Date::class, 'Cake\I18n\FrozenDate');
+class_alias('Cake\I18n\Date', 'Cake\I18n\FrozenDate');
 // phpcs:enable

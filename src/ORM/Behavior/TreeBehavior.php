@@ -482,7 +482,7 @@ class TreeBehavior extends Behavior
      *   return the key out of the provided row.
      * @param \Closure|string|null $valuePath A dot separated path to fetch the field to use for the array value, or a closure to
      *   return the value out of the provided row.
-     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
+     * @param string|null $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTreeList(
@@ -505,11 +505,11 @@ class TreeBehavior extends Behavior
      * indicate relative depth in the tree.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query object to format.
-     * @param \Closure|string|null $keyPath  A dot separated path to the field that will be the result array key, or a closure to
+     * @param \Closure|string|null $keyPath A dot separated path to the field that will be the result array key, or a closure to
      *   return the key from the provided row.
-     * @param \Closure|string|null $valuePath: A dot separated path to the field that is the array's value, or a closure to
+     * @param \Closure|string|null $valuePath A dot separated path to the field that is the array's value, or a closure to
      *   return the value from the provided row.
-     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
+     * @param string|null $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery Augmented query.
      */
     public function formatTreeList(

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
@@ -359,7 +360,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
-        $query = $table->find()->select()->where(function ($exp) {
+        $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
             return $exp->lt(new QueryExpression('1'), 50);
         });
 
@@ -880,9 +881,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table = $this->getTableLocator()->get('Articles');
         $table->getValidator()->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->addBehavior('Translate', [
+            'defaultLocale' => 'en',
             'fields' => ['title'],
         ]);
         $table->setEntityClass(TranslateArticle::class);
+
+        $article = $table->patchEntity(
+            $table->newEmptyEntity(),
+            [
+                '_translations' => ['en' => ['title' => '']],
+            ],
+        );
+        $this->assertSame(
+            ['notBlank' => 'The provided value is invalid'],
+            $article->getError('title')
+        );
 
         $data = [
             'author_id' => 1,
@@ -895,6 +908,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
                 'es' => [
                     'title' => 'Title ES',
                 ],
+                'fr' => [
+                    'title' => 'Title FR',
+                ],
             ],
         ];
 
@@ -905,10 +921,10 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 
         $expected = [
             [
-                'en' => [
-                    'title' => 'Title EN',
-                    'locale' => 'en',
-                    'body' => 'Body EN',
+                'fr' => [
+                    'title' => 'Title FR',
+                    'locale' => 'fr',
+                    'body' => null,
                 ],
                 'es' => [
                     'title' => 'Title ES',
@@ -917,8 +933,12 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
                 ],
             ],
         ];
-        $result = $table->find('translations')->where(['id' => $result->id]);
+        $result = $table->find('translations')->where(['Articles.id' => $result->id])->all();
         $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+
+        $entity = $result->first();
+        $this->assertSame('Title EN', $entity->title);
+        $this->assertSame('Body EN', $entity->body);
     }
 
     /**

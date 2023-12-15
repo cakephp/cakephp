@@ -26,19 +26,19 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^3.0",
+        "cakephp/chronos": "^3.0.2",
         "composer/ca-bundle": "^1.2",
         "laminas/laminas-diactoros": "^3.0",
         "laminas/laminas-httphandlerrunner": "^2.6",
         "league/container": "^4.2",
-        "psr/container": "^2.0",
+        "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.0.2",
-        "psr/http-message": "^2.0",
+        "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
         "psr/log": "^3.0",
-        "psr/simple-cache": "^3.0"
+        "psr/simple-cache": "^2.0 || ^3.0"
     },
     "replace": {
         "cakephp/cache": "self.version",
@@ -58,6 +58,7 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^5.0",
+        "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.10",
         "mockery/mockery": "^1.6",
         "paragonie/csp-builder": "^2.3",
@@ -126,8 +127,9 @@
             "@phpstan",
             "@psalm"
         ],
-        "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
-        "stan-baseline": "tools/phpstan --generate-baseline",
+        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "phpstan-baseline": "tools/phpstan --generate-baseline",
+        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
         "stan-setup": "phive install",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",

@@ -599,7 +599,7 @@ class Router
      * handled in order to reverse a params array into a string URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Http\ServerRequest object that needs to be reversed.
+     *     {@link \Cake\Http\ServerRequest} object that needs to be reversed.
      * @return array The URL array ready to be used for redirect or HTML link.
      */
     public static function reverseToArray(ServerRequest|array $params): array
@@ -649,7 +649,7 @@ class Router
      * handled in order to reverse a params array into a string URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Http\ServerRequest object that needs to be reversed.
+     *     {@link \Cake\Http\ServerRequest} object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array

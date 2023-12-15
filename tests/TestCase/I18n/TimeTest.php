@@ -28,7 +28,7 @@ use InvalidArgumentException;
 class TimeTest extends TestCase
 {
     /**
-     * @var \Cake\Chronos\ChronosInterface|null
+     * @var \Cake\Chronos\Chronos|null
      */
     protected $now;
 

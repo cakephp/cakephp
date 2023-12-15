@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
-use Cake\Chronos\Chronos;
 use Cake\Chronos\ChronosDate;
 use Cake\Chronos\DifferenceFormatterInterface;
 use DateTimeInterface;
@@ -31,25 +30,30 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     /**
      * Get the difference in a human readable format.
      *
-     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate $first The datetime to start with.
-     * @param \Cake\Chronos\Chronos|\Cake\Chronos\ChronosDate|\DateTimeInterface|null $second The datetime to compare against.
+     * @param \Cake\Chronos\ChronosDate|\DateTimeInterface $first The datetime to start with.
+     * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|null $second The datetime to compare against.
      * @param bool $absolute Removes time difference modifiers ago, after, etc.
      * @return string The difference between the two days in a human readable format.
      * @see \Cake\Chronos\Chronos::diffForHumans
      */
     public function diffForHumans(
-        Chronos|ChronosDate $first,
-        Chronos|ChronosDate|DateTimeInterface|null $second = null,
+        ChronosDate|DateTimeInterface $first,
+        ChronosDate|DateTimeInterface|null $second = null,
         bool $absolute = false
     ): string {
         $isNow = $second === null;
         if ($second === null) {
             if ($first instanceof ChronosDate) {
-                $second = $first->now();
+                $second = Date::now();
             } else {
-                $second = $first->now($first->getTimezone());
+                $second = DateTime::now($first->getTimezone());
             }
         }
+        assert(
+            ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
+            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface)
+        );
+
         $diffInterval = $first->diff($second);
 
         switch (true) {
@@ -109,8 +113,10 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $time = $time->setTimezone($options['timezone']);
         }
 
-        $now = $options['from']->format('U');
-        $inSeconds = $time->format('U');
+        /** @var \Cake\Chronos\Chronos $from */
+        $from = $options['from'];
+        $now = (int)$from->format('U');
+        $inSeconds = (int)$time->format('U');
         $backwards = ($inSeconds > $now);
 
         $futureTime = $now;
@@ -125,7 +131,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new DateTime($options['end']))->format('U'))) {
+        if ($diff > abs($now - (int)(new DateTime($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
@@ -331,8 +337,10 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $date = $date->setTimezone($options['timezone']);
         }
 
-        $now = $options['from']->format('U');
-        $inSeconds = $date->format('U');
+        /** @var \Cake\Chronos\Chronos $from */
+        $from = $options['from'];
+        $now = (int)$from->format('U');
+        $inSeconds = (int)$date->format('U');
         $backwards = ($inSeconds > $now);
 
         $futureTime = $now;
@@ -347,7 +355,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'today');
         }
 
-        if ($diff > abs($now - (new Date($options['end']))->format('U'))) {
+        if ($diff > abs($now - (int)(new Date($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 

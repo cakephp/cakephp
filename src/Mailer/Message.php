@@ -324,7 +324,7 @@ class Message implements JsonSerializable
             $this->charset = $this->appCharset;
         }
         $this->domain = (string)preg_replace('/\:\d+$/', '', (string)env('HTTP_HOST'));
-        if (empty($this->domain)) {
+        if (!$this->domain) {
             $this->domain = php_uname('n');
         }
 
@@ -1008,8 +1008,8 @@ class Message implements JsonSerializable
                 $return[] = $email;
             } else {
                 $encoded = $this->encodeForHeader($alias);
-                if ($encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded)) {
-                    $encoded = '"' . str_replace('"', '\"', $encoded) . '"';
+                if (preg_match('/[^a-z0-9+\-\\=? ]/i', $encoded)) {
+                    $encoded = '"' . addcslashes($encoded, '"\\') . '"';
                 }
                 $return[] = sprintf('%s <%s>', $encoded, $email);
             }
@@ -1257,7 +1257,7 @@ class Message implements JsonSerializable
      */
     public function getBody(): array
     {
-        if (empty($this->message)) {
+        if (!$this->message) {
             $this->message = $this->generateMessage();
         }
 

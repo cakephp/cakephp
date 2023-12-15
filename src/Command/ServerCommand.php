@@ -77,7 +77,7 @@ class ServerCommand extends Command
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return void
-     * @link https://book.cakephp.org/4/en/console-and-shells.html#hook-methods
+     * @link https://book.cakephp.org/5/en/console-and-shells.html#hook-methods
      */
     protected function startup(Arguments $args, ConsoleIo $io): void
     {
@@ -136,7 +136,7 @@ class ServerCommand extends Command
             escapeshellarg($this->_documentRoot)
         );
 
-        if (!empty($this->_iniPath)) {
+        if ($this->_iniPath) {
             $command = sprintf('%s -c %s', $command, $this->_iniPath);
         }
 

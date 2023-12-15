@@ -6,23 +6,26 @@ declare(strict_types=1);
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
+ * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         3.0.0
+ * @since         5.0.3
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Routing\Exception;
+namespace TestApp\Model\Enum;
 
-use Cake\Core\Exception\CakeException;
+use Cake\Database\Type\EnumLabelInterface;
 
-/**
- * Exception raised when a Dispatcher filter could not be found
- */
-class MissingDispatcherFilterException extends CakeException
+enum ArticleStatusLabelInterface: string implements EnumLabelInterface
 {
+    case PUBLISHED = 'Y';
+    case UNPUBLISHED = 'N';
+
     /**
-     * @inheritDoc
+     * @return string
      */
-    protected string $_messageTemplate = 'Dispatcher filter `%s` could not be found.';
+    public function label(): string
+    {
+        return 'Is ' . strtolower($this->name);
+    }
 }

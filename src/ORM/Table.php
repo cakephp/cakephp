@@ -153,7 +153,7 @@ use function Cake\Core\namespaceSplit;
  * - `afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *
  * @see \Cake\Event\EventManager for reference on the events system.
- * @link https://book.cakephp.org/4/en/orm/table-objects.html#event-list
+ * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
@@ -338,6 +338,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
+        /** @var \Cake\ORM\BehaviorRegistry $behaviors */
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
         $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
@@ -2327,6 +2328,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         /** @var array<bool> $isNew */
         $isNew = [];
         $cleanupOnFailure = function ($entities) use (&$isNew): void {
+            /** @var iterable<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());

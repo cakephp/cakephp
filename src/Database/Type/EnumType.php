@@ -57,14 +57,26 @@ class EnumType extends BaseType
     ) {
         parent::__construct($name);
         $this->enumClassName = $enumClassName;
+
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $this->backingType = (string)$reflectionEnum->getBackingType();
-        } catch (ReflectionException) {
+        } catch (ReflectionException $e) {
+            throw new DatabaseException(sprintf(
+                'Unable to use `%s` for type `%s`. %s.',
+                $enumClassName,
+                $name,
+                $e->getMessage()
+            ));
+        }
+
+        $namedType = $reflectionEnum->getBackingType();
+        if ($namedType == null) {
             throw new DatabaseException(
-                sprintf('Unable to use enum %s for type %s, must be a backed enum.', $enumClassName, $name)
+                sprintf('Unable to use enum `%s` for type `%s`, must be a backed enum.', $enumClassName, $name)
             );
         }
+
+        $this->backingType = (string)$namedType;
     }
 
     /**
@@ -92,10 +104,23 @@ class EnumType extends BaseType
             return $value->value;
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Cannot convert value of type `%s` to string or integer',
-            get_debug_type($value)
-        ));
+        if (!is_string($value) && !is_int($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value `%s` of type `%s` to string or int',
+                print_r($value, true),
+                get_debug_type($value)
+            ));
+        }
+
+        if ($this->enumClassName::tryFrom($value) === null) {
+            throw new InvalidArgumentException(sprintf(
+                '`%s` is not a valid value for `%s`',
+                $value,
+                $this->enumClassName
+            ));
+        }
+
+        return $value;
     }
 
     /**
@@ -118,7 +143,7 @@ class EnumType extends BaseType
             }
         }
 
-        return $this->enumClassName::tryFrom($value);
+        return $this->enumClassName::from($value);
     }
 
     /**
@@ -192,7 +217,7 @@ class EnumType extends BaseType
     }
 
     /**
-     * @return string
+     * @return class-string<\BackedEnum>
      */
     public function getEnumClassName(): string
     {

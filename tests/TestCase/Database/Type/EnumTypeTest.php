@@ -25,7 +25,9 @@ use InvalidArgumentException;
 use PDO;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
 use TestApp\Model\Enum\Priority;
+use ValueError;
 
 /**
  * Test for the String type.
@@ -104,7 +106,29 @@ class EnumTypeTest extends TestCase
     public function testInvalidEnumClass(): void
     {
         $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use `TestApp\Model\Entity\Article` for type `invalid`. Class "TestApp\Model\Entity\Article" is not an enum');
         new EnumType('invalid', Article::class);
+    }
+
+    /**
+     * Check that 2nd argument must be a valid backed enum
+     */
+    public function testInvalidEnumInvalidClass(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use `App\Foo` for type `invalid`. Class "App\Foo" does not exist');
+        new EnumType('invalid', 'App\Foo');
+    }
+
+    /**
+     * Check that 2nd argument must be a valid backed enum
+     */
+    public function testInvalidEnumWithoutBackingType(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Unable to use enum `TestApp\Model\Enum\NonBacked` for type `invalid`, must be a backed enum');
+
+        new EnumType('invalid', NonBacked::class);
     }
 
     /**
@@ -117,29 +141,26 @@ class EnumTypeTest extends TestCase
     }
 
     /**
-     * Test converting to database format with string backed enum
+     * Test converting enums to database format
      */
-    public function testToDatabaseString(): void
+    public function testToDatabaseEnum(): void
     {
         $this->assertNull($this->stringType->toDatabase(null, $this->driver));
         $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::PUBLISHED, $this->driver));
-        $this->expectException(InvalidArgumentException::class);
-        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver));
-        $this->stringType->toDatabase([1, 2], $this->driver);
-        $this->stringType->toDatabase(Priority::HIGH, $this->driver);
+        $this->assertSame(3, $this->intType->toDatabase(Priority::HIGH, $this->driver));
     }
 
-    /**
-     * Test converting to database format with integer backed enum
-     */
-    public function testToDatabaseInteger(): void
+    public function testToDatabaseValidValue(): void
     {
-        $this->assertNull($this->intType->toDatabase(null, $this->driver));
-        $this->assertSame(3, $this->intType->toDatabase(Priority::HIGH, $this->driver));
-        $this->expectException(InvalidArgumentException::class);
+        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::PUBLISHED->value, $this->driver));
         $this->assertSame(3, $this->intType->toDatabase(Priority::HIGH->value, $this->driver));
-        $this->intType->toDatabase('Y', $this->driver);
-        $this->intType->toDatabase(ArticleStatus::PUBLISHED, $this->driver);
+    }
+
+    public function testToDatabaseInValidValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`invalid` is not a valid value for `TestApp\Model\Enum\ArticleStatus`');
+        $this->stringType->toDatabase('invalid', $this->driver);
     }
 
     /**
@@ -159,6 +180,12 @@ class EnumTypeTest extends TestCase
         $this->assertNull($this->intType->toPHP(null, $this->driver));
         $this->assertSame(Priority::HIGH, $this->intType->toPHP(3, $this->driver));
         $this->assertSame(Priority::HIGH, $this->intType->toPHP('3', $this->driver));
+    }
+
+    public function testToPHPInvalidEnumValue(): void
+    {
+        $this->expectException(ValueError::class);
+        $this->stringType->toPHP('Z', $this->driver);
     }
 
     /**

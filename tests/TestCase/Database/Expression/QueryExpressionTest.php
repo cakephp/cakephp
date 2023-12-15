@@ -193,7 +193,7 @@ class QueryExpressionTest extends TestCase
     /**
      * Returns the list of specific comparison methods
      *
-     * @return void
+     * @return array
      */
     public static function methodsProvider(): array
     {
