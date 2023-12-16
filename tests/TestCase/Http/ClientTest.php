@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -839,6 +840,90 @@ class ClientTest extends TestCase
         $result = $http->sendRequest($request);
 
         $this->assertSame($result, $response);
+    }
+
+    public function testBeforeSend(): void
+    {
+        $eventTriggered = false;
+        $client = new Client();
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered) {
+                $eventTriggered = true;
+            }
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'test'));
+
+        $response = $client->get('http://foo.test', options: ['some' => 'thing']);
+        $this->assertSame('test', $response->getStringBody());
+        $this->assertTrue($eventTriggered);
+    }
+
+    public function testBeforeSendModifyRequest(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                $event->setRequest(new Request('http://bar.test'));
+                $event->setAdapterOptions(['some' => 'value']);
+            }
+        );
+
+        Client::addMockResponse(
+            'GET',
+            'http://bar.test',
+            new Response(body: 'other'),
+            ['match' => function (Request $request, array $options) {
+                $this->assertSame(['some' => 'value'], $options);
+
+                return true;
+            }]
+        );
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('other', $response->getStringBody());
+    }
+
+    public function testBeforeSendReturnResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                return new Response(body: 'short circuit');
+            }
+        );
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                $this->assertFalse($event->getData('requestSent'));
+            }
+        );
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('short circuit', $response->getStringBody());
+    }
+
+    public function testAfterSendModifyResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                return new Response(body: 'modified response');
+            }
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'response text'));
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('modified response', $response->getStringBody());
     }
 
     /**

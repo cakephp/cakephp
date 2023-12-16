@@ -37,6 +37,9 @@ class RoutesCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
+        if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+            $header[] = 'Middlewares';
+        }
         if ($args->getOption('verbose')) {
             $header[] = 'Defaults';
         }
@@ -57,6 +60,9 @@ class RoutesCommand extends Command
                 implode(', ', $methods),
             ];
 
+            if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+                $item[] = implode(', ', $route->getMiddleware());
+            }
             if ($args->getOption('verbose')) {
                 ksort($route->defaults);
                 $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
@@ -133,6 +139,11 @@ class RoutesCommand extends Command
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',
+                'boolean' => true,
+            ])
+            ->addOption('with-middlewares', [
+                'help' => 'Show route specific middlewares',
+                'short' => 'm',
                 'boolean' => true,
             ]);
 

@@ -118,6 +118,7 @@ class RoutesCommandTest extends TestCase
             '<info>Controller</info>',
             '<info>Action</info>',
             '<info>Method(s)</info>',
+            '<info>Middlewares</info>',
             '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
@@ -128,6 +129,7 @@ class RoutesCommandTest extends TestCase
             'Articles',
             'index',
             '',
+            'dumb, sample',
             '{"action":"index","controller":"Articles","plugin":null}',
         ]);
     }
@@ -144,6 +146,25 @@ class RoutesCommandTest extends TestCase
         $this->exec('routes -s');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('_aRoute', $this->_out->messages()[3]);
+    }
+
+    /**
+     * Test routes with --with-middlewares option
+     */
+    public function testRouteWithMiddlewares(): void
+    {
+        $this->exec('routes -m');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/app/articles/{action}/*',
+            '',
+            '',
+            'Articles',
+            'index',
+            '',
+            'dumb, sample',
+        ]);
     }
 
     /**
@@ -182,7 +203,7 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContainsRow([
             'articles:_action',
             '/app/articles/check',
-            '{"action":"check","controller":"Articles","pass":[],"plugin":null}',
+            '{"_middleware":["dumb","sample"],"action":"check","controller":"Articles","pass":[],"plugin":null}',
         ]);
     }
 
@@ -201,7 +222,7 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContainsRow([
             'testName',
             '/app/tests/index',
-            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
+            '{"_middleware":["dumb","sample"],"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
         ]);
     }
 
