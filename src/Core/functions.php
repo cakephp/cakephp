@@ -396,16 +396,11 @@ function toInt(mixed $value): ?int
         return $value === PHP_INT_MIN ? null : $value;
     }
     if (is_float($value)) {
-        /**
-         * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
-         * 9007199254740991 = 2^53-1 = the maximum safe integer that can be represented without losing precision.
-         * Beyond this numerical limit, the equality (int)9007199254740993.0 === 9007199254740992 returns true.
-         */
-        if ($value >= -9007199254740991 && $value <= 9007199254740991) {
+        if (is_nan($value) || is_infinite($value)) {
+            return null;
+        } else {
             return (int)$value;
         }
-
-        return null;
     }
     if (is_bool($value)) {
         return (int)$value;
