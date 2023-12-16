@@ -337,28 +337,4 @@ class FunctionsGlobalTest extends TestCase
             $this->assertTrue(true);
         });
     }
-
-    /**
-     * @dataProvider \Cake\Test\TestCase\Core\FunctionsTest::toStringProvider
-     */
-    public function testToString(mixed $rawValue, ?string $expected): void
-    {
-        $this->assertSame($expected, toString($rawValue));
-    }
-
-    /**
-     * @dataProvider \Cake\Test\TestCase\Core\FunctionsTest::toIntProvider
-     */
-    public function testToInt(mixed $rawValue, null|int $expected): void
-    {
-        $this->assertSame($expected, toInt($rawValue));
-    }
-
-    /**
-     * @dataProvider \Cake\Test\TestCase\Core\FunctionsTest::toBoolProvider
-     */
-    public function testToBool(mixed $rawValue, ?bool $expected): void
-    {
-        $this->assertSame($expected, toBool($rawValue));
-    }
 }
