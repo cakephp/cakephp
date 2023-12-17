@@ -37,26 +37,11 @@ require_once __DIR__ . '/stubs.php';
 class ValidationTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $_appEncoding;
-
-    /**
-     * setUp method
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->_appEncoding = Configure::read('App.encoding');
-    }
-
-    /**
      * tearDown method
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        Configure::write('App.encoding', $this->_appEncoding);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 

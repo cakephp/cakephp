@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -76,9 +77,40 @@ class I18nCommandTest extends TestCase
         if (file_exists($deDir . 'default.po')) {
             unlink($deDir . 'default.po');
         }
-        if (file_exists($deDir . 'default.po')) {
+        if (file_exists($deDir . 'cake.po')) {
             unlink($deDir . 'cake.po');
         }
+
+        $this->exec('i18n init --verbose', [
+            'de_DE',
+            $this->localeDir,
+        ]);
+
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Generated 2 PO files');
+        $this->assertFileExists($deDir . 'default.po');
+        $this->assertFileExists($deDir . 'cake.po');
+    }
+
+    /**
+     * Tests that init() creates the PO files from POT files when App.path.locales contains an associative array
+     */
+    public function testInitWithAssociativePaths(): void
+    {
+        $deDir = $this->localeDir . 'de_DE' . DS;
+        if (!is_dir($deDir)) {
+            mkdir($deDir, 0770, true);
+        }
+        file_put_contents($this->localeDir . 'default.pot', 'Testing POT file.');
+        file_put_contents($this->localeDir . 'cake.pot', 'Testing POT file.');
+        if (file_exists($deDir . 'default.po')) {
+            unlink($deDir . 'default.po');
+        }
+        if (file_exists($deDir . 'cake.po')) {
+            unlink($deDir . 'cake.po');
+        }
+
+        Configure::write('App.paths.locales', ['customKey' => TEST_APP . 'resources' . DS . 'locales' . DS]);
 
         $this->exec('i18n init --verbose', [
             'de_DE',
