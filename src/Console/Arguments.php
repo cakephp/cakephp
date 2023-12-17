@@ -47,7 +47,7 @@ class Arguments
      * Constructor
      *
      * @param array<int, string> $args Positional arguments
-     * @param array<string, string|bool|null> $options Named arguments
+     * @param array<string, list<string>|string|bool|null> $options Named arguments
      * @param array<int, string> $argNames List of argument names. Order is expected to be
      *  the same as $args.
      */

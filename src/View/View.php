@@ -786,7 +786,7 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -1451,7 +1451,7 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -1590,7 +1590,7 @@ class View implements EventDispatcherInterface
             $pluginPaths[] = Plugin::templatePath($plugin);
         }
 
-        if (!empty($this->theme)) {
+        if ($this->theme) {
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
