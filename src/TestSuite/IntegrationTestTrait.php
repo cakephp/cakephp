@@ -676,7 +676,11 @@ trait IntegrationTestTrait
             $tokenData = $formProtector->buildTokenData($url, 'cli');
 
             $data['_Token'] = $tokenData;
-            $data['_Token']['debug'] = 'FormProtector debug data would be added here';
+
+            /** @see \Cake\Form\FormProtector::extractToken() */
+            if (!Configure::read('debug') && isset($data['_Token']['debug'])) {
+                unset($data['_Token']['debug']);
+            }
         }
 
         if ($this->_csrfToken === true) {
