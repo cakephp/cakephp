@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
+use Cake\Http\Cookie\CookieCollection;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 use Psr\Http\Message\ResponseInterface;
@@ -53,5 +54,25 @@ abstract class ResponseBase extends Constraint
     protected function _getBodyAsString(): string
     {
         return (string)$this->response->getBody();
+    }
+
+    /**
+     * Read a cookie from either the response cookie collection,
+     * or headers
+     *
+     * @param string $name The name of the cookie you want to read.
+     * @return array|null Null if the cookie does not exist, array with `value` as the only key.
+     */
+    protected function readCookie(string $name): ?array
+    {
+        if (method_exists($this->response, 'getCookie')) {
+            return $this->response->getCookie($name);
+        }
+        $cookies = CookieCollection::createFromHeader($this->response->getHeader('Set-Cookie'));
+        if (!$cookies->has($name)) {
+            return null;
+        }
+
+        return $cookies->get($name)->toArray();
     }
 }
