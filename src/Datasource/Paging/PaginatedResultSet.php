@@ -23,8 +23,8 @@ use Traversable;
 /**
  * Paginated resultset.
  *
- * @template-implements \IteratorAggregate<T>
- * @template T
+ * @template T of mixed
+ * @template-implements \IteratorAggregate<mixed, T>
  */
 class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
@@ -163,6 +163,17 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
      */
     public function __call(string $name, array $arguments): mixed
     {
+        deprecationWarning(
+            '5.1.0',
+            sprintf(
+                'Calling `%s` methods, such as `%s()`, on result set is deprecated. ' .
+                'You must call `items()` first (for example, `items()->%s()`).',
+                $this->results::class,
+                $name,
+                $name,
+            ),
+        );
+
         return $this->results->$name(...$arguments);
     }
 }
