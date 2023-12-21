@@ -61,4 +61,18 @@ class PaginatedResultSetTest extends TestCase
 
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
     }
+
+    public function testSerialization()
+    {
+        $paginatedResults = new PaginatedResultSet(
+            new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
+            ['foo' => 'bar']
+        );
+
+        $serialized = serialize($paginatedResults);
+        $unserialized = unserialize($serialized);
+
+        $this->assertEquals($paginatedResults->pagingParams(), $unserialized->pagingParams());
+        $this->assertEquals($paginatedResults->items(), $unserialized->items());
+    }
 }
