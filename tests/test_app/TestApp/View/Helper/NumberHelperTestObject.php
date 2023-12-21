@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\View\Helper;
 
 use Cake\View\Helper\NumberHelper;
-use TestApp\Utility\NumberMock;
+use TestApp\I18n\NumberMock;
 
 /**
  * NumberHelperTestObject class

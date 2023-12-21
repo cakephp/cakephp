@@ -35,7 +35,7 @@ class CookieSet extends ResponseBase
      */
     public function matches($other): bool
     {
-        $cookie = $this->response->getCookie($other);
+        $cookie = $this->readCookie($other);
 
         return $cookie !== null && $cookie['value'] !== '';
     }

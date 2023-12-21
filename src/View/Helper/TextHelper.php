@@ -88,7 +88,7 @@ class TextHelper extends Helper
         /** @psalm-var class-string<\Cake\Utility\Text>|null $engineClass */
         $engineClass = App::className($config['engine'], 'Utility');
         if ($engineClass === null) {
-            throw new CakeException(sprintf('Class for %s could not be found', $config['engine']));
+            throw new CakeException(sprintf('Class for `%s` could not be found', $config['engine']));
         }
         if ($engineClass != Text::class) {
             deprecationWarning('4.5.0 - The `engine` option for TextHelper will be removed in 5.0');

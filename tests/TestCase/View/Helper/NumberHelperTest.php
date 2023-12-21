@@ -18,16 +18,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\Configure;
 use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
 use ReflectionMethod;
-use TestApp\Utility\NumberMock;
-use TestApp\Utility\TestAppEngine;
+use TestApp\I18n\NumberMock;
+use TestApp\I18n\TestAppI18nEngine;
+use TestApp\Utility\TestAppUtilityEngine;
 use TestApp\View\Helper\NumberHelperTestObject;
-use TestPlugin\Utility\TestPluginEngine;
+use TestPlugin\I18n\TestPluginEngine;
 
 /**
  * NumberHelperTest class
@@ -40,19 +40,12 @@ class NumberHelperTest extends TestCase
     protected $View;
 
     /**
-     * @var string
-     */
-    protected $appNamespace;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
-
-        $this->appNamespace = Configure::read('App.namespace');
         static::setAppNamespace();
     }
 
@@ -63,7 +56,6 @@ class NumberHelperTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        static::setAppNamespace($this->appNamespace);
         unset($this->View);
     }
 
@@ -126,8 +118,24 @@ class NumberHelperTest extends TestCase
     public function testEngineOverride(): void
     {
         $this->deprecated(function () {
-            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-            $this->assertInstanceOf(TestAppEngine::class, $Number->engine());
+            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppI18nEngine']);
+            $this->assertInstanceOf(TestAppI18nEngine::class, $Number->engine());
+
+            $this->loadPlugins(['TestPlugin']);
+            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
+            $this->assertInstanceOf(TestPluginEngine::class, $Number->engine());
+            $this->removePlugins(['TestPlugin']);
+        });
+    }
+
+    /**
+     * test engine override for legacy namespace Utility instead of I18n
+     */
+    public function testEngineOverrideLegacy(): void
+    {
+        $this->deprecated(function () {
+            $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppUtilityEngine']);
+            $this->assertInstanceOf(TestAppUtilityEngine::class, $Number->engine());
 
             $this->loadPlugins(['TestPlugin']);
             $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);

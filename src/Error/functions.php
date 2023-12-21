@@ -98,7 +98,7 @@ function dd($var, $showHtml = null): void
         return;
     }
 
-    $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
+    $trace = Debugger::trace(['start' => 0, 'depth' => 2, 'format' => 'array']);
     /** @psalm-suppress PossiblyInvalidArrayOffset */
     $location = [
         'line' => $trace[0]['line'],

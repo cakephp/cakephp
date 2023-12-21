@@ -26,29 +26,6 @@ use Cake\TestSuite\TestCase;
 class MessagesFileLoaderTest extends TestCase
 {
     /**
-     * @var string[]
-     */
-    protected $localePaths;
-
-    /**
-     * Set Up
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->localePaths = Configure::read('App.paths.locales');
-    }
-
-    /**
-     * Tear down method
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::write('App.paths.locales', $this->localePaths);
-    }
-
-    /**
      * test reading file from custom locale folder
      */
     public function testCustomLocalePath(): void
@@ -77,5 +54,46 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('missing', 'es', 'mo');
         $package = $loader();
         $this->assertFalse($package);
+    }
+
+    /**
+     * Testing MessagesFileLoader::translationsFilder array sequence
+     */
+    public function testTranslationFoldersSequence(): void
+    {
+        $this->loadPlugins([
+            'TestPluginTwo' => [],
+        ]);
+        $loader = new MessagesFileLoader('test_plugin_two', 'en');
+
+        $expected = [
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
+        ];
+        $result = $loader->translationsFolders();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Testing plugin override from app
+     */
+    public function testAppOverridesPlugin(): void
+    {
+        $this->loadPlugins([
+            'TestPlugin' => [],
+            'TestPluginTwo' => [],
+        ]);
+
+        $loader = new MessagesFileLoader('test_plugin', 'en');
+        $package = $loader();
+        $messages = $package->getMessages();
+        $this->assertSame('Plural Rule 1 (from plugin)', $messages['Plural Rule 1']['_context']['']);
+
+        $loader = new MessagesFileLoader('test_plugin_two', 'en');
+        $package = $loader();
+        $messages = $package->getMessages();
+        $this->assertSame('Test Message (from app)', $messages['Test Message']['_context']['']);
     }
 }

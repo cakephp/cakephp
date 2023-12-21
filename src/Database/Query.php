@@ -186,6 +186,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * are enabled.
      *
      * @var bool
+     * @deprecated 4.5.0 Results will always be buffered in 5.0.
      */
     protected $_useBufferedResults = true;
 
@@ -2214,6 +2215,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param bool $enable Whether to enable buffering
      * @return $this
+     * @deprecated 4.5.0 Results will always be buffered in 5.0.
      */
     public function enableBufferedResults(bool $enable = true)
     {
@@ -2235,6 +2237,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * remembered for future iterations.
      *
      * @return $this
+     * @deprecated 4.5.0 Results will always be buffered in 5.0.
      */
     public function disableBufferedResults()
     {
@@ -2255,6 +2258,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * remembered for future iterations.
      *
      * @return bool
+     * @deprecated 4.5.0 Results will always be buffered in 5.0.
      */
     public function isBufferedResultsEnabled(): bool
     {

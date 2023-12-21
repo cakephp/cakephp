@@ -45,7 +45,6 @@ trait ModelAwareTrait
      * controller name.
      *
      * @var string|null
-     * @deprecated 4.3.0 Use `Cake\ORM\Locator\LocatorAwareTrait::$defaultTable` instead.
      */
     protected $modelClass;
 
@@ -121,7 +120,7 @@ trait ModelAwareTrait
         if (!property_exists($this, $alias)) {
             deprecationWarning(
                 '4.5.0 - Dynamic properties will be removed in PHP 8.2. ' .
-                "Add `public \${$alias} = null;` to your class definition."
+                "Add `public \${$alias} = null;` to your class definition or use `#[AllowDynamicProperties]` attribute."
             );
         }
 
