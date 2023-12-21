@@ -19,12 +19,13 @@ namespace Cake\Datasource\Paging;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Paginated resultset.
  *
  * @template T of mixed
- * @template-implements \IteratorAggregate<mixed, T>
+ * @template-implements \IteratorAggregate<mixed>
  */
 class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
