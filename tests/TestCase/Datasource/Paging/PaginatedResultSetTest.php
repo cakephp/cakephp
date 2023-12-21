@@ -48,8 +48,10 @@ class PaginatedResultSetTest extends TestCase
             []
         );
 
-        $result = $paginatedResults->extract('foo')->toList();
-        $this->assertEquals(['bar'], $result);
+        $this->deprecated(function () use ($paginatedResults) {
+            $result = $paginatedResults->extract('foo')->toList();
+            $this->assertEquals(['bar'], $result);
+        });
     }
 
     public function testJsonEncode()
