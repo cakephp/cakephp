@@ -167,7 +167,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
         deprecationWarning(
             '5.1.0',
             sprintf(
-                'Calling `%s` methods, such as `%s()`, on result set is deprecated. ' .
+                'Calling `%s` methods, such as `%s()`, on PaginatedResultSet is deprecated. ' .
                 'You must call `items()` first (for example, `items()->%s()`).',
                 $this->results::class,
                 $name,
