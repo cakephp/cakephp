@@ -625,7 +625,7 @@ class Debugger
         $highlight = highlight_string($str, true);
         if ($added) {
             $highlight = str_replace(
-                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php'],
+                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
                 $highlight
             );
