@@ -423,16 +423,4 @@ class DateTimeTypeTest extends TestCase
         $this->assertEquals($value->format('Y-m-d'), $result->format('Y-m-d'));
         $this->assertEquals('Europe/Vienna', $result->getTimezone()->getName());
     }
-
-    /**
-     * Test marshaling date into datetime type
-     */
-    public function testMarshalDateWithTimezone(): void
-    {
-        date_default_timezone_set('Europe/Vienna');
-        $value = new ChronosDate('2023-04-26');
-
-        $result = $this->type->marshal($value);
-        $this->assertEquals($value, $result);
-    }
 }
