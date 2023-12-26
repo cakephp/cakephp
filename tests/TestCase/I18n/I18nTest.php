@@ -191,11 +191,25 @@ class I18nTest extends TestCase
     {
         $this->loadPlugins([
             'TestTheme' => [],
+            'TestPluginTwo' => [],
         ]);
+
         $translator = I18n::getTranslator('test_theme');
         $this->assertSame(
             'translated',
             $translator->translate('A Message')
+        );
+
+        $translator = I18n::getTranslator('test_plugin_two');
+        $this->assertSame(
+            'Test Message (from app)',
+            $translator->translate('Test Message')
+        );
+
+        $translator = I18n::getTranslator('test_plugin_two.custom');
+        $this->assertSame(
+            'Test Custom (from test plugin two)',
+            $translator->translate('Test Custom')
         );
     }
 

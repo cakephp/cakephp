@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
@@ -408,5 +409,18 @@ class DateTimeTypeTest extends TestCase
         $expected = new DateTime('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test marshaling date into datetime type
+     */
+    public function testMarshalDateWithTimezone(): void
+    {
+        date_default_timezone_set('Europe/Vienna');
+        $value = new ChronosDate('2023-04-26');
+
+        $result = $this->type->marshal($value);
+        $this->assertEquals($value->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertEquals('Europe/Vienna', $result->getTimezone()->getName());
     }
 }

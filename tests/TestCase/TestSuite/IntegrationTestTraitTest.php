@@ -741,7 +741,10 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertCookieNotSet(): void
     {
         $this->cookie('test', 'value');
-        $this->get('/cookie_component_test/remove_cookie/test');
+        $this->get('/posts/index');
+        $this->assertCookieNotSet('test');
+
+        $this->get('/posts/redirectWithCookie');
         $this->assertCookieNotSet('test');
     }
 
@@ -774,6 +777,9 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/posts/secretCookie');
         $this->assertCookieIsSet('secrets');
+
+        $this->get('/posts/redirectWithCookie');
+        $this->assertCookieIsSet('remember');
     }
 
     /**
