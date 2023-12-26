@@ -20,6 +20,7 @@ use ArrayIterator;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\TestSuite\TestCase;
+use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
 {
@@ -33,6 +34,26 @@ class PaginatedResultSetTest extends TestCase
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
+    public function testCall()
+    {
+        $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
+        $resultSet
+            ->expects($this->once())
+            ->method('extract')
+            ->with('foo')
+            ->willReturn(collection(['bar']));
+
+        $paginatedResults = new PaginatedResultSet(
+            $resultSet,
+            []
+        );
+
+        $this->deprecated(function () use ($paginatedResults) {
+            $result = $paginatedResults->extract('foo')->toList();
+            $this->assertEquals(['bar'], $result);
+        });
+    }
+
     public function testJsonEncode()
     {
         $paginatedResults = new PaginatedResultSet(
@@ -41,5 +62,19 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
+    }
+
+    public function testSerialization()
+    {
+        $paginatedResults = new PaginatedResultSet(
+            new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
+            ['foo' => 'bar']
+        );
+
+        $serialized = serialize($paginatedResults);
+        $unserialized = unserialize($serialized);
+
+        $this->assertEquals($paginatedResults->pagingParams(), $unserialized->pagingParams());
+        $this->assertEquals($paginatedResults->items(), $unserialized->items());
     }
 }
