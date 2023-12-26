@@ -32,6 +32,23 @@ class SqliteSchemaTest extends TestCase
 {
     protected PDO $pdo;
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        if ($connection->getDriver() instanceof Sqlite) {
+            $connection->execute('DROP VIEW IF EXISTS view_schema_articles');
+            $connection->execute('DROP TABLE IF EXISTS schema_articles');
+            $connection->execute('DROP TABLE IF EXISTS schema_authors');
+            $connection->execute('DROP TABLE IF EXISTS schema_no_rowid_pk');
+            $connection->execute('DROP TABLE IF EXISTS schema_unique_constraint_variations');
+            $connection->execute('DROP TABLE IF EXISTS schema_foreign_key_variations');
+            $connection->execute('DROP TABLE IF EXISTS schema_composite');
+        }
+    }
+
     /**
      * Helper method for skipping tests that need a real connection.
      */

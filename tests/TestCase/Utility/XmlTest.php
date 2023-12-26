@@ -35,27 +35,12 @@ use TypeError;
 class XmlTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $appEncoding;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->appEncoding = Configure::read('App.encoding');
         Configure::write('App.encoding', 'UTF-8');
-    }
-
-    /**
-     * tearDown method
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::write('App.encoding', $this->appEncoding);
     }
 
     public function testExceptionChainingForInvalidInput(): void

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\DateTime;
@@ -291,6 +292,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             }
 
             return $value->setTimezone($this->defaultTimezone);
+        }
+        if ($value instanceof ChronosDate) {
+            return $value->toNative();
         }
 
         $class = $this->_className;

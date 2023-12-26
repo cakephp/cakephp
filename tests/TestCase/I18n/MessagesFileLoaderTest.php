@@ -26,29 +26,6 @@ use Cake\TestSuite\TestCase;
 class MessagesFileLoaderTest extends TestCase
 {
     /**
-     * @var string[]
-     */
-    protected $localePaths;
-
-    /**
-     * Set Up
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->localePaths = Configure::read('App.paths.locales');
-    }
-
-    /**
-     * Tear down method
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::write('App.paths.locales', $this->localePaths);
-    }
-
-    /**
      * test reading file from custom locale folder
      */
     public function testCustomLocalePath(): void
