@@ -291,6 +291,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                 $value = clone $value;
             }
 
+            /** @var \Datetime|\DateTimeImmutable $value */
             return $value->setTimezone($this->defaultTimezone);
         }
         if ($value instanceof ChronosDate) {
