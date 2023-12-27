@@ -105,7 +105,10 @@ class DebuggerTest extends TestCase
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
-        $pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
+        // Due to different highlight_string() function behavior, see. https://3v4l.org/HcfBN. Since 8.3, it wraps it around <pre>
+        $pattern = version_compare(PHP_VERSION, '8.3', '<')
+            ? '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/'
+            : '/<pre>.*?<code style\="color\: \#\d+">.*?<span style\="color\: \#[a-zA-Z0-9]+">.*?&lt;\?php/';
         $this->assertMatchesRegularExpression($pattern, $result[0]);
 
         $result = Debugger::excerpt(__FILE__, 11, 2);
@@ -594,6 +597,10 @@ TEXT;
      */
     public function testExportVarSplFixedArray(): void
     {
+        $this->skipIf(
+            version_compare(PHP_VERSION, '8.3', '>='),
+            'Due to different get_object_vars() function behavior used in Debugger::exportObject()' // see. https://3v4l.org/DWpRl
+        );
         $subject = new SplFixedArray(2);
         $subject[0] = 'red';
         $subject[1] = 'blue';
