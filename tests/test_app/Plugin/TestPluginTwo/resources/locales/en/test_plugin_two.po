@@ -1,0 +1,2 @@
+msgid "Test Message"
+msgstr "Test Message (from test plugin two)"

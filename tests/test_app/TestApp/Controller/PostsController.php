@@ -18,6 +18,7 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Exception\RedirectException;
 use Cake\View\JsonView;
 use OutOfBoundsException;
 use RuntimeException;
@@ -192,6 +193,21 @@ class PostsController extends AppController
         return $this->response
             ->withCookie(new Cookie('secrets', 'name'))
             ->withStringBody('ok');
+    }
+
+    public function redirectWithCookie()
+    {
+        $cookies = [
+            Cookie::create('remember', '1'),
+            Cookie::create('expired', '')->withExpired(),
+        ];
+        $values = [];
+        foreach ($cookies as $cookie) {
+            $values[] = $cookie->toHeaderValue();
+        }
+        $headers = ['Set-Cookie' => $values];
+
+        throw new RedirectException('/posts', 302, $headers);
     }
 
     /**
