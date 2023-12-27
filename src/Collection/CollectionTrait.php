@@ -822,16 +822,9 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($item) {
-            return $item;
-        };
+        $callback ??= fn ($item) => $item;
 
-        return $this->newCollection(
-            new RecursiveIteratorIterator(
-                new UnfoldIterator($this->unwrap(), $callback),
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
-        );
+        return $this->newCollection(new UnfoldIterator($this->unwrap(), $callback));
     }
 
     /**
