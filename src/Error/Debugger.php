@@ -514,9 +514,6 @@ class Debugger
      */
     protected static function _highlight(string $str): string
     {
-        if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
-            return htmlentities($str);
-        }
         $added = false;
         if (!str_contains($str, '<?php')) {
             $added = true;
@@ -525,7 +522,7 @@ class Debugger
         $highlight = highlight_string($str, true);
         if ($added) {
             $highlight = str_replace(
-                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />'],
+                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
                 $highlight
             );
