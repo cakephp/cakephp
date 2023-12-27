@@ -1792,14 +1792,16 @@ class CollectionTest extends TestCase
         ];
 
         $collection = (new Collection($items))->unfold();
-        $this->assertEquals(range(1, 8), $collection->toArray(false));
+        $this->assertEquals(range(1, 8), $collection->toList());
+        $this->assertEquals(range(1, 8), $collection->toArray());
 
         $items = [
             [1, 2],
             new Collection([3, 4]),
         ];
         $collection = (new Collection($items))->unfold();
-        $this->assertEquals(range(1, 4), $collection->toArray(false));
+        $this->assertEquals(range(1, 4), $collection->toList());
+        $this->assertEquals(range(1, 4), $collection->toArray());
     }
 
     /**
@@ -1809,11 +1811,13 @@ class CollectionTest extends TestCase
     {
         $items = [[], [1, 2], []];
         $collection = (new Collection($items))->unfold();
-        $this->assertEquals(range(1, 2), $collection->toArray(false));
+        $this->assertEquals(range(1, 2), $collection->toList());
+        $this->assertEquals(range(1, 2), $collection->toArray());
 
         $items = [];
         $collection = (new Collection($items))->unfold();
-        $this->assertEmpty($collection->toArray(false));
+        $this->assertEmpty($collection->toList());
+        $this->assertEmpty($collection->toArray());
     }
 
     /**
@@ -1826,7 +1830,8 @@ class CollectionTest extends TestCase
             return range($item, $item * 2);
         });
         $expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
-        $this->assertEquals($expected, $collection->toArray(false));
+        $this->assertEquals($expected, $collection->toList());
+        $this->assertEquals($expected, $collection->toArray());
     }
 
     /**
