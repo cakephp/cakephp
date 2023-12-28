@@ -167,7 +167,7 @@ class EnumType extends BaseType
      */
     public function marshal(mixed $value): ?BackedEnum
     {
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return null;
         }
 
@@ -191,9 +191,10 @@ class EnumType extends BaseType
         $enumInstance = $this->enumClassName::tryFrom($value);
         if ($enumInstance === null) {
             throw new InvalidArgumentException(sprintf(
-                'Unable to marshal value to %s, got %s',
-                $this->enumClassName,
+                'Unable to marshal value `%s` of type `%s` to `%s`',
+                print_r($value, true),
                 get_debug_type($value),
+                $this->enumClassName,
             ));
         }
 
