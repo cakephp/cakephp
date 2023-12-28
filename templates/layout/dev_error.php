@@ -292,6 +292,12 @@ use function Cake\Core\h;
     .excerpt-line {
         padding: 0;
     }
+    /* php 8.3 adds pre around highlighted code */
+    .code-highlight > pre,
+    .excerpt-line > pre {
+        padding: 0;
+        background: none;
+    }
     .excerpt-line > code {
         padding-left: 4px;
     }
