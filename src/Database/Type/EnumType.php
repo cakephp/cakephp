@@ -95,9 +95,10 @@ class EnumType extends BaseType
         if ($value instanceof BackedEnum) {
             if (!$value instanceof $this->enumClassName) {
                 throw new InvalidArgumentException(sprintf(
-                    'Given value type `%s` does not match associated `%s` backed enum',
+                    'Given value type `%s` does not match associated `%s` backed enum in `%s`',
                     get_debug_type($value),
-                    $this->backingType
+                    $this->backingType,
+                    $this->enumClassName
                 ));
             }
 
@@ -174,11 +175,16 @@ class EnumType extends BaseType
             return $value;
         }
 
+        if ($this->backingType === 'int' && is_numeric($value) && is_string($value)) {
+            $value = (int)$value;
+        }
+
         if (get_debug_type($value) !== $this->backingType) {
             throw new InvalidArgumentException(sprintf(
-                'Given value type `%s` does not match associated `%s` backed enum',
+                'Given value type `%s` does not match associated `%s` backed enum in `%s`',
                 get_debug_type($value),
-                $this->backingType
+                $this->backingType,
+                $this->enumClassName
             ));
         }
 
