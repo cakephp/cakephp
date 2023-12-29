@@ -135,9 +135,7 @@ class Server implements EventDispatcherInterface
      */
     public function emit(ResponseInterface $response, ?ResponseEmitter $emitter = null): void
     {
-        if (!$emitter) {
-            $emitter = new ResponseEmitter();
-        }
+        $emitter ??= new ResponseEmitter();
         $emitter->emit($response);
     }
 
