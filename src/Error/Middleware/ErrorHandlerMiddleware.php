@@ -146,9 +146,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
         $response = $event->getResult();
         try {
-            if ($response === null) {
-                $response = $renderer->render();
-            }
+            $response ??= $renderer->render();
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);
             }
