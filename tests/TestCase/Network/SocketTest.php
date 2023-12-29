@@ -82,11 +82,11 @@ class SocketTest extends TestCase
     /**
      * test host() method
      */
-    //public function testHost(): void
-    //{
-    //    $this->Socket = new Socket(['host' => '8.8.8.8']);
-    //    $this->assertSame('dns.google', $this->Socket->host());
-    //}
+    public function testHost(): void
+    {
+        $this->Socket = new Socket(['host' => '1.1.1.1']);
+        $this->assertSame('one.one.one.one', $this->Socket->host());
+    }
 
     /**
      * test addresses() method
