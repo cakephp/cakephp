@@ -29,6 +29,7 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
 use TestApp\Model\Table\SecondaryPostsTable;
@@ -222,6 +223,7 @@ class TestCaseTest extends TestCase
     /**
      * test deprecated() with duplicate deprecation with same messsage and line
      */
+    #[WithoutErrorHandler]
     public function testDeprecatedWithDuplicatedDeprecation(): void
     {
         /**

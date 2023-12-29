@@ -20,6 +20,7 @@ use ArrayIterator;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
@@ -34,6 +35,7 @@ class PaginatedResultSetTest extends TestCase
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
+    #[WithoutErrorHandler]
     public function testCall()
     {
         $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
