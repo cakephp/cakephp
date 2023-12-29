@@ -2024,7 +2024,7 @@ class ValidationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
 
-        Validation::enum(NonBacked::Basic, NonBacked::class);
+        Validation::enum(NonBacked::BASIC, NonBacked::class);
     }
 
     public function testEnumNonEnum(): void

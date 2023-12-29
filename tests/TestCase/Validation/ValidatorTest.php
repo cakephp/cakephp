@@ -2720,7 +2720,7 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->validate(['status' => Priority::LOW]));
         $this->assertNotEmpty($validator->validate(['status' => 'wrong type']));
         $this->assertNotEmpty($validator->validate(['status' => 123]));
-        $this->assertNotEmpty($validator->validate(['status' => NonBacked::Basic]));
+        $this->assertNotEmpty($validator->validate(['status' => NonBacked::BASIC]));
 
         $fieldName = 'status';
         $rule = 'enum';
