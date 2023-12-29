@@ -203,8 +203,10 @@ class EnumTypeTest extends TestCase
     public function testMarshalString(): void
     {
         $this->assertNull($this->stringType->marshal(null));
+        $this->assertNull($this->stringType->marshal(''));
         $this->assertSame(ArticleStatus::PUBLISHED, $this->stringType->marshal('Y'));
         $this->assertSame(ArticleStatus::PUBLISHED, $this->stringType->marshal(ArticleStatus::PUBLISHED));
+
         $this->expectException(InvalidArgumentException::class);
         $this->stringType->marshal(1);
     }
@@ -215,8 +217,11 @@ class EnumTypeTest extends TestCase
     public function testMarshalInteger(): void
     {
         $this->assertNull($this->intType->marshal(null));
+        $this->assertNull($this->stringType->marshal(''));
         $this->assertSame(Priority::LOW, $this->intType->marshal(1));
+        $this->assertSame(Priority::LOW, $this->intType->marshal('1'));
         $this->assertSame(Priority::MEDIUM, $this->intType->marshal(Priority::MEDIUM));
+
         $this->expectException(InvalidArgumentException::class);
         $this->intType->marshal('Y');
     }
