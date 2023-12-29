@@ -57,6 +57,7 @@ use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
 use PDOException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\Tag;
@@ -608,6 +609,8 @@ class TableTest extends TestCase
         $result = $table->getSchema();
         $this->assertSame('foobar', $result->getColumnType('username'));
     }
+
+    #[WithoutErrorHandler]
 
     /**
      * Undocumented function
@@ -1573,6 +1576,8 @@ class TableTest extends TestCase
         $this->assertSame($expected, $query->toArray());
     }
 
+    #[WithoutErrorHandler]
+
     /**
      * Tests find(list) with backwards compatibile options
      */
@@ -1649,6 +1654,8 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
     }
+
+    #[WithoutErrorHandler]
 
     /**
      * Test find('list') called with option array instead of named args for backwards compatility
@@ -5446,6 +5453,8 @@ class TableTest extends TestCase
         $result = $table->get($primaryKey, ...$options);
         $this->assertSame($entity, $result);
     }
+
+    #[WithoutErrorHandler]
 
     /**
      * Test get() with options array.

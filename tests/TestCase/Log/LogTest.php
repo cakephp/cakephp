@@ -21,6 +21,7 @@ use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 
 /**
  * LogTest class
@@ -395,6 +396,8 @@ class LogTest extends TestCase
 
         Log::drop('shops');
     }
+
+    #[WithoutErrorHandler]
 
     /**
      * Test scoped logging backwards compat
