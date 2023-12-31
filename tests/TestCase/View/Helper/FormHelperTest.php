@@ -3663,10 +3663,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'Is published',
+            'Is Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            'Is Unpublished',
             '/option',
             '/select',
             '/div',
@@ -3688,10 +3688,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'Is published',
+            'Is Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            'Is Unpublished',
             '/option',
             '/select',
             '/div',
@@ -4569,7 +4569,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->radio('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -4994,7 +4994,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->select('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -6577,7 +6577,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->hidden('status');

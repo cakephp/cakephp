@@ -2004,17 +2004,17 @@ class ValidationTest extends TestCase
 
     public function testEnum(): void
     {
-        $this->assertTrue(Validation::enum(ArticleStatus::PUBLISHED, ArticleStatus::class));
+        $this->assertTrue(Validation::enum(ArticleStatus::Published, ArticleStatus::class));
         $this->assertTrue(Validation::enum('Y', ArticleStatus::class));
 
-        $this->assertTrue(Validation::enum(Priority::LOW, Priority::class));
+        $this->assertTrue(Validation::enum(Priority::Low, Priority::class));
         $this->assertTrue(Validation::enum(1, Priority::class));
 
-        $this->assertFalse(Validation::enum(Priority::LOW, ArticleStatus::class));
+        $this->assertFalse(Validation::enum(Priority::Low, ArticleStatus::class));
         $this->assertFalse(Validation::enum(1, ArticleStatus::class));
         $this->assertFalse(Validation::enum('non-existent', ArticleStatus::class));
 
-        $this->assertFalse(Validation::enum(ArticleStatus::PUBLISHED, Priority::class));
+        $this->assertFalse(Validation::enum(ArticleStatus::Published, Priority::class));
         $this->assertFalse(Validation::enum('wrong type', Priority::class));
         $this->assertFalse(Validation::enum(123, Priority::class));
     }
@@ -2024,7 +2024,7 @@ class ValidationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
 
-        Validation::enum(NonBacked::BASIC, NonBacked::class);
+        Validation::enum(NonBacked::Basic, NonBacked::class);
     }
 
     public function testEnumNonEnum(): void
