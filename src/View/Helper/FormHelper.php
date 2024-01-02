@@ -1365,7 +1365,7 @@ class FormHelper extends Helper
         foreach ($enumClass::cases() as $case) {
             $hasLabel = $case instanceof EnumLabelInterface || method_exists($case, 'label');
             $values[$case->value] = $hasLabel ? $case->label()
-                : Inflector::humanize(mb_strtolower($case->name));
+                : Inflector::humanize(Inflector::underscore($case->name));
         }
 
         return $values;
