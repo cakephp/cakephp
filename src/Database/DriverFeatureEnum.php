@@ -26,7 +26,7 @@ enum DriverFeatureEnum: string
     /**
      * Disabling constraints without being in transaction support.
      */
-    case DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disble-constarint-without-transaction';
+    case DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disable-constraint-without-transaction';
 
     /**
      * Native JSON data type support.
