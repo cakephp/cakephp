@@ -57,6 +57,7 @@ use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
 use PDOException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\Tag;
@@ -615,6 +616,7 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
+    #[WithoutErrorHandler]
     public function testFindAllOldStyleOptionsArray(): void
     {
         $this->deprecated(function () {
@@ -1576,6 +1578,7 @@ class TableTest extends TestCase
     /**
      * Tests find(list) with backwards compatibile options
      */
+    #[WithoutErrorHandler]
     public function testFindListArrayOptions(): void
     {
         $table = new Table([
@@ -1656,6 +1659,7 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
+    #[WithoutErrorHandler]
     public function testFindListWithArray(): void
     {
         $this->deprecated(function () {
@@ -5452,6 +5456,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
+    #[WithoutErrorHandler]
     public function testGetBackwardsCompatibility(): void
     {
         $this->deprecated(function () {
