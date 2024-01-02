@@ -36,19 +36,6 @@ use InvalidArgumentException;
 class SchemaLoader
 {
     /**
-     * @var \Cake\TestSuite\ConnectionHelper
-     */
-    protected ConnectionHelper $helper;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->helper = new ConnectionHelper();
-    }
-
-    /**
      * Load and apply schema sql file, or an array of files.
      *
      * @param array<string>|string $paths Schema files to load
@@ -71,7 +58,7 @@ class SchemaLoader
         }
 
         if ($dropTables) {
-            $this->helper->dropTables($connectionName);
+            ConnectionHelper::dropTables($connectionName);
         }
 
         /** @var \Cake\Database\Connection $connection */
@@ -92,7 +79,7 @@ class SchemaLoader
         }
 
         if ($truncateTables) {
-            $this->helper->truncateTables($connectionName);
+            ConnectionHelper::truncateTables($connectionName);
         }
     }
 
@@ -157,7 +144,7 @@ class SchemaLoader
             return;
         }
 
-        $this->helper->dropTables($connectionName);
+        ConnectionHelper::dropTables($connectionName);
 
         $tables = include $file;
 
