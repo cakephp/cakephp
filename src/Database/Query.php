@@ -1240,9 +1240,7 @@ abstract class Query implements ExpressionInterface, Stringable
             return $this;
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
+        $this->_parts['order'] ??= new OrderByExpression();
         $this->_conjugate('order', $fields, '', []);
 
         return $this;
@@ -1293,9 +1291,8 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
+        $this->_parts['order'] ??= new OrderByExpression();
+
         /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
         $queryExpr = $this->_parts['order'];
         $queryExpr->add(new OrderClauseExpression($field, 'ASC'));
@@ -1348,9 +1345,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
+        $this->_parts['order'] ??= new OrderByExpression();
 
         /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
         $queryExpr = $this->_parts['order'];

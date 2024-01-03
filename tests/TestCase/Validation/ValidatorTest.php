@@ -2714,10 +2714,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->enum('status', ArticleStatus::class);
 
-        $this->assertEmpty($validator->validate(['status' => ArticleStatus::PUBLISHED]));
+        $this->assertEmpty($validator->validate(['status' => ArticleStatus::Published]));
         $this->assertEmpty($validator->validate(['status' => 'Y']));
 
-        $this->assertNotEmpty($validator->validate(['status' => Priority::LOW]));
+        $this->assertNotEmpty($validator->validate(['status' => Priority::Low]));
         $this->assertNotEmpty($validator->validate(['status' => 'wrong type']));
         $this->assertNotEmpty($validator->validate(['status' => 123]));
         $this->assertNotEmpty($validator->validate(['status' => NonBacked::Basic]));

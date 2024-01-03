@@ -27,8 +27,8 @@ use const PHP_SESSION_ACTIVE;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
- * several defaults for the most common session configuration
- * via external handlers and helps with using session in CLI without any warnings.
+ * several presets for the most common session configuration
+ * via external handlers and helps with using sessions in CLI without any warnings.
  *
  * Sessions can be created from the defaults using `Session::create()` or you can get
  * an instance of a new session by just instantiating this class and passing the complete
@@ -96,7 +96,8 @@ class Session
      * - defaults: either 'php', 'database', 'cache' or 'cake' as explained above.
      * - handler: An array containing the handler configuration
      * - ini: A list of php.ini directives to set before the session starts.
-     * - timeout: The time in minutes the session should stay active
+     * - timeout: The 'idle timeout' in minutes. If not request is received for `timeout`
+     *   minutes the session will be regenerated.
      *
      * @param array $sessionConfig Session config.
      * @return static

@@ -14,13 +14,15 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Enum;
 
+use Cake\Utility\Inflector;
+
 enum ArticleStatusLabel: string
 {
-    case PUBLISHED = 'Y';
-    case UNPUBLISHED = 'N';
+    case Published = 'Y';
+    case Unpublished = 'N';
 
     public function label(): string
     {
-        return 'Is ' . strtolower($this->name);
+        return 'Is ' . Inflector::humanize(Inflector::underscore($this->name));
     }
 }

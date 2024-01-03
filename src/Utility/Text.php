@@ -204,14 +204,12 @@ class Text
         }
 
         $format = $options['format'];
-        if ($format === null) {
-            $format = sprintf(
-                '/(?<!%s)%s%%s%s/',
-                preg_quote($options['escape'], '/'),
-                str_replace('%', '%%', preg_quote($options['before'], '/')),
-                str_replace('%', '%%', preg_quote($options['after'], '/'))
-            );
-        }
+        $format ??= sprintf(
+            '/(?<!%s)%s%%s%s/',
+            preg_quote($options['escape'], '/'),
+            str_replace('%', '%%', preg_quote($options['before'], '/')),
+            str_replace('%', '%%', preg_quote($options['after'], '/'))
+        );
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map('md5', $dataKeys);
