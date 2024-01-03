@@ -118,9 +118,9 @@ class BelongsToMany extends Association
     /**
      * The table instance for the junction relation.
      *
-     * @var \Cake\ORM\Table|string
+     * @var \Cake\ORM\Table|string|null
      */
-    protected Table|string $_through;
+    protected Table|string|null $_through = null;
 
     /**
      * Valid strategies for this type of association
@@ -261,7 +261,7 @@ class BelongsToMany extends Association
         }
 
         $tableLocator = $this->getTableLocator();
-        if ($table === null && isset($this->_through)) {
+        if ($table === null && $this->_through !== null) {
             $table = $this->_through;
         } elseif ($table === null) {
             $tableName = $this->_junctionTableName();
@@ -988,10 +988,11 @@ class BelongsToMany extends Association
 
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
+     * Returns null if not defined.
      *
-     * @return \Cake\ORM\Table|string
+     * @return \Cake\ORM\Table|string|null
      */
-    public function getThrough(): Table|string
+    public function getThrough(): Table|string|null
     {
         return $this->_through;
     }
