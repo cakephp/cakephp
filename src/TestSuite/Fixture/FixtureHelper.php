@@ -139,8 +139,7 @@ class FixtureHelper
                 if ($sortedFixtures) {
                     $this->insertConnection($connection, $sortedFixtures);
                 } else {
-                    $helper = new ConnectionHelper();
-                    $helper->runWithoutConstraints(
+                    ConnectionHelper::runWithoutConstraints(
                         $connection,
                         fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures)
                     );
