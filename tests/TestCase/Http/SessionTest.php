@@ -65,6 +65,25 @@ class SessionTest extends TestCase
     }
 
     /**
+     * test setting ini properties with Session configuration.
+     *
+     * @preserveGlobalState disabled
+     * @runInSeparateProcess
+     */
+    public function testSessionConfigTimeout(): void
+    {
+        $_SESSION = null;
+
+        $config = [
+            'defaults' => 'php',
+            'timeout' => 0,
+        ];
+
+        Session::create($config);
+        $this->assertEquals(60 * 60 * 24 * 30, ini_get('session.gc_maxlifetime'), 'Ini value is incorrect');
+    }
+
+    /**
      * test session cookie path setting
      *
      * @preserveGlobalState disabled
