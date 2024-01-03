@@ -220,8 +220,14 @@ class Session
             'handler' => [],
         ];
 
-        if ($config['timeout']) {
-            $config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
+        if (isset($config['timeout']) && !isset($config['ini']['session.gc_maxlifetime'])) {
+            $maxlifetime = $config['timeout'] * 60;
+            if ($maxlifetime === 0) {
+                // If sessions are set to have no idle timeout, extend the
+                // gc_maxlifetime to 30 days so that sessions don't get reaped immediately
+                $maxlifetime = 60 * 60 * 24 * 30;
+            }
+            $config['ini']['session.gc_maxlifetime'] = $maxlifetime;
         }
 
         if ($config['cookie']) {
