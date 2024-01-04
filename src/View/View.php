@@ -1624,7 +1624,7 @@ class View implements EventDispatcherInterface
      * @param string $name Element name
      * @param array $data Data
      * @param array<string, mixed> $options Element options
-     * @return array Element Cache configuration.
+     * @return array<string, mixed> Element Cache configuration.
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
