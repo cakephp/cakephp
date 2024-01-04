@@ -200,7 +200,8 @@ class Session
      *
      * ### Configuration:
      *
-     * - timeout: The time in minutes the session should be valid for.
+     * - timeout: The time in minutes that a session can be idle and remain valid.
+     *  If set to 0, no server side timeout will be applied.
      * - cookiePath: The url path for which session cookie is set. Maps to the
      *   `session.cookie_path` php.ini config. Defaults to base path of app.
      * - ini: A list of php.ini directives to change before the session start.
@@ -220,14 +221,12 @@ class Session
             'handler' => [],
         ];
 
-        if (isset($config['timeout']) && !isset($config['ini']['session.gc_maxlifetime'])) {
-            $maxlifetime = $config['timeout'] * 60;
-            if ($maxlifetime === 0) {
-                // If sessions are set to have no idle timeout, extend the
-                // gc_maxlifetime to 30 days so that sessions don't get reaped immediately
-                $maxlifetime = 60 * 60 * 24 * 30;
-            }
-            $config['ini']['session.gc_maxlifetime'] = $maxlifetime;
+        $lifetime = 0;
+        if (isset($config['timeout'])) {
+            $lifetime = $config['timeout'] * 60;
+        }
+        if ($lifetime !== 0) {
+            $config['ini']['session.gc_maxlifetime'] = $lifetime;
         }
 
         if ($config['cookie']) {
@@ -247,7 +246,7 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->_lifetime = (int)ini_get('session.gc_maxlifetime');
+        $this->_lifetime = $lifetime;
         $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
