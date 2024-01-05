@@ -325,7 +325,7 @@ class Behavior implements EventListenerInterface
     public function implementedFinders(): array
     {
         $methods = $this->getConfig('implementedFinders');
-        if ($methods !== null) {
+        if (!$methods) {
             return $methods;
         }
 
