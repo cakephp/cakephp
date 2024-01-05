@@ -164,7 +164,7 @@ class FormProtector
      */
     protected function getFieldNameArray(string $name): array
     {
-        if (!$name && $name !== '0') {
+        if ($name === '') {
             return [];
         }
 
