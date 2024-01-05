@@ -18,6 +18,7 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
+use BackedEnum;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -610,6 +611,10 @@ trait CollectionTrait
                         'Cannot index by path that does not exist or contains a null value. ' .
                         'Use a callback to return a default value for that path.'
                     );
+                }
+
+                if ($mapKey instanceof BackedEnum) {
+                    $mapKey = $mapKey->value;
                 }
 
                 $mapReduce->emit($rowVal($value, $key), $mapKey);
