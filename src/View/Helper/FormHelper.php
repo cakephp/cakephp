@@ -2481,7 +2481,7 @@ class FormHelper extends Helper
      */
     protected function _getContext(mixed $data = []): ContextInterface
     {
-        if (isset($this->_context) && empty($data)) {
+        if ($this->_context !== null && !$data) {
             return $this->_context;
         }
         $data += ['entity' => null];

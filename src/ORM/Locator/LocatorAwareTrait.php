@@ -59,7 +59,7 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        if (isset($this->_tableLocator)) {
+        if ($this->_tableLocator !== null) {
             return $this->_tableLocator;
         }
 

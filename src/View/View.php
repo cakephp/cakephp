@@ -1433,7 +1433,7 @@ class View implements EventDispatcherInterface
             $name = $second;
             $plugin = $first;
         }
-        if (isset($this->plugin) && !$plugin && $fallback) {
+        if ($this->plugin !== null && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
 
