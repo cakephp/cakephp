@@ -1020,7 +1020,7 @@ class RouteBuilder
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group
-     * @param array<string> $middlewareNames Names of the middleware
+     * @param list<string> $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup(string $name, array $middlewareNames)

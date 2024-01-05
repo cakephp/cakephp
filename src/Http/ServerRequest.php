@@ -107,7 +107,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $trustedProxies = [];
 
@@ -406,7 +406,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * register trusted proxies
      *
-     * @param array<string> $proxies ips list of trusted proxies
+     * @param list<string> $proxies ips list of trusted proxies
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
@@ -419,7 +419,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getTrustedProxies(): array
     {
@@ -663,7 +663,7 @@ class ServerRequest implements ServerRequestInterface
      * See Request::is() for how to add additional types and the
      * built-in types.
      *
-     * @param array<string> $types The types to check.
+     * @param list<string> $types The types to check.
      * @return bool Success.
      * @see \Cake\Http\ServerRequest::is()
      */

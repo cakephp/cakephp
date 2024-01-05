@@ -1460,7 +1460,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * composite keys when comparing values.
      *
      * @param array<string, mixed> $options the original options passed to a finder
-     * @param array<string> $keys the keys to check in $options to build matchers from
+     * @param list<string> $keys the keys to check in $options to build matchers from
      * the associated value
      * @return array<string, mixed>
      */

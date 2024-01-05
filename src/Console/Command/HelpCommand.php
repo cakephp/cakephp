@@ -170,7 +170,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     }
 
     /**
-     * @param array<string> $names Names
+     * @param list<string> $names Names
      * @return string
      */
     protected function getShortestName(array $names): string

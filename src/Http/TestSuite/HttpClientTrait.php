@@ -39,7 +39,7 @@ trait HttpClientTrait
      * Create a new response.
      *
      * @param int $code The response code to use. Defaults to 200
-     * @param array<string> $headers A list of headers for the response. Example `Content-Type: application/json`
+     * @param list<string> $headers A list of headers for the response. Example `Content-Type: application/json`
      * @param string $body The body for the response.
      * @return \Cake\Http\Client\Response
      */
@@ -118,7 +118,7 @@ trait HttpClientTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Http\TestSuite\HttpClientTrait', 
+    'Cake\Http\TestSuite\HttpClientTrait',
     'Cake\TestSuite\HttpClientTrait'
 );
 // phpcs:enable

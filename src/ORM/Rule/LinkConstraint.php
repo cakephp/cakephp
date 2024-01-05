@@ -118,7 +118,7 @@ class LinkConstraint
     /**
      * Alias fields.
      *
-     * @param array<string> $fields The fields that should be aliased.
+     * @param list<string> $fields The fields that should be aliased.
      * @param \Cake\ORM\Table $source The object to use for aliasing.
      * @return array<string> The aliased fields
      */
