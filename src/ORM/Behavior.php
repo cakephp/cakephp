@@ -325,8 +325,8 @@ class Behavior implements EventListenerInterface
     public function implementedFinders(): array
     {
         $methods = $this->getConfig('implementedFinders');
-        if (!$methods) {
-            return [];
+        if ($methods) {
+            return $methods;
         }
 
         return $this->_reflectionCache()['finders'];
@@ -357,8 +357,8 @@ class Behavior implements EventListenerInterface
     public function implementedMethods(): array
     {
         $methods = $this->getConfig('implementedMethods');
-        if (!$methods) {
-            return [];
+        if ($methods) {
+            return $methods;
         }
 
         return $this->_reflectionCache()['methods'];
