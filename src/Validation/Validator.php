@@ -596,7 +596,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return false;
                 }
                 $check = $validator->validate($row, $context['newRecord']);
-                if (!empty($check)) {
+                if ($check) {
                     $errors[$i] = $check;
                 }
             }

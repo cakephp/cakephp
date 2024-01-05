@@ -130,7 +130,7 @@ abstract class BaseLog extends AbstractLogger
             $message,
             $matches
         );
-        if (empty($matches)) {
+        if (!$matches) {
             return $message;
         }
 

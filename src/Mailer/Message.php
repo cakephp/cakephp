@@ -978,7 +978,7 @@ class Message implements JsonSerializable
 
         $headers = [];
         foreach ($lines as $key => $value) {
-            if (empty($value) && $value !== '0') {
+            if (!$value && $value !== '0') {
                 continue;
             }
 
@@ -1621,7 +1621,7 @@ class Message implements JsonSerializable
         $cut = ($wrapLength === static::LINE_LENGTH_MUST);
 
         foreach ($lines as $line) {
-            if (empty($line) && $line !== '0') {
+            if (!$line && $line !== '0') {
                 $formatted[] = '';
                 continue;
             }
@@ -1703,7 +1703,7 @@ class Message implements JsonSerializable
                     }
                 }
             }
-            if (!empty($tmpLine)) {
+            if ($tmpLine) {
                 $formatted[] = $tmpLine;
             }
         }

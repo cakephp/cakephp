@@ -276,7 +276,7 @@ abstract class Driver
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
         $statement = $this->prepare($sql);
-        if (!empty($params)) {
+        if ($params) {
             $statement->bind($params, $types);
         }
         $this->executeStatement($statement);

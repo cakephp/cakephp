@@ -101,7 +101,7 @@ class Text
         string $leftBound = '(',
         string $rightBound = ')'
     ): array {
-        if (empty($data)) {
+        if (!$data) {
             return [];
         }
 
@@ -158,11 +158,11 @@ class Text
                 $offset = $length + 1;
             }
         }
-        if (empty($results) && !empty($buffer)) {
+        if (!$results && $buffer) {
             $results[] = $buffer;
         }
 
-        if (!empty($results)) {
+        if ($results) {
             return array_map('trim', $results);
         }
 
@@ -199,7 +199,7 @@ class Text
             'before' => ':', 'after' => '', 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
-        if (empty($data)) {
+        if (!$data) {
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
@@ -479,7 +479,7 @@ class Text
      */
     public static function highlight(string $text, array|string $phrase, array $options = []): string
     {
-        if (empty($phrase)) {
+        if (!$phrase) {
             return $text;
         }
 
@@ -855,7 +855,7 @@ class Text
      */
     public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '...'): string
     {
-        if (empty($text) || empty($phrase)) {
+        if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
 
@@ -946,7 +946,7 @@ class Text
             if ($value < 128) {
                 $map[] = $value;
             } else {
-                if (empty($values)) {
+                if (!$values) {
                     $find = $value < 224 ? 2 : 3;
                 }
                 $values[] = $value;
@@ -1095,7 +1095,7 @@ class Text
      */
     public static function transliterate(string $string, Transliterator|string|null $transliterator = null): string
     {
-        if (empty($transliterator)) {
+        if (!$transliterator) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 

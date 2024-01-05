@@ -458,9 +458,9 @@ class Socket
      */
     public function reset(?array $state = null): void
     {
-        if (empty($state)) {
+        if (!$state) {
             static $initialState = [];
-            if (empty($initialState)) {
+            if (!$initialState) {
                 $initialState = get_class_vars(self::class);
             }
             $state = $initialState;

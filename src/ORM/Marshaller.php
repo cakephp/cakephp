@@ -403,7 +403,7 @@ class Marshaller
             }
         }
 
-        if (!empty($conditions)) {
+        if ($conditions) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
             $results = $target->find()
                 ->andWhere(fn (QueryExpression $exp) => $exp->or($conditions))
@@ -460,7 +460,7 @@ class Marshaller
      */
     protected function _loadAssociatedByIds(Association $assoc, array $ids): array
     {
-        if (empty($ids)) {
+        if (!$ids) {
             return [];
         }
 
@@ -694,7 +694,7 @@ class Marshaller
             }, ['OR' => []]);
         $maybeExistentQuery = $this->_table->find()->where($conditions);
 
-        if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
+        if ($indexed && count($maybeExistentQuery->clause('where'))) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $existent */
             $existent = $maybeExistentQuery->all();
             foreach ($existent as $entity) {
@@ -795,7 +795,7 @@ class Marshaller
             return [];
         }
 
-        if (!empty($associated) && !in_array('_joinData', $associated, true) && !isset($associated['_joinData'])) {
+        if ($associated && !in_array('_joinData', $associated, true) && !isset($associated['_joinData'])) {
             return $this->mergeMany($original, $value, $options);
         }
 

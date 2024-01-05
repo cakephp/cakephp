@@ -134,7 +134,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (!$hasConfig) {
             throw new CakeException($msg);
         }
-        if (empty($config)) {
+        if (!$config) {
             return;
         }
         $existingConfig = $existing->getConfig();

@@ -474,7 +474,7 @@ class FormHelper extends Helper
             $append .= $this->_csrfField();
         }
 
-        if (!empty($append)) {
+        if ($append) {
             $append = $templater->format('hiddenBlock', ['content' => $append]);
         }
 
@@ -1653,7 +1653,7 @@ class FormHelper extends Helper
      */
     public function __call(string $method, array $params): string
     {
-        if (empty($params)) {
+        if (!$params) {
             throw new CakeException(sprintf('Missing field name for `FormHelper::%s`.', $method));
         }
         $options = $params[1] ?? [];

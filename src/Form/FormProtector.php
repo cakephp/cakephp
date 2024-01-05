@@ -66,7 +66,7 @@ class FormProtector
         $this->debugMessage = null;
 
         $extractedToken = $this->extractToken($formData);
-        if (empty($extractedToken)) {
+        if (!$extractedToken) {
             return false;
         }
 
@@ -120,7 +120,7 @@ class FormProtector
             $field = $this->getFieldNameArray($field);
         }
 
-        if (empty($field)) {
+        if (!$field) {
             return $this;
         }
 
@@ -164,7 +164,7 @@ class FormProtector
      */
     protected function getFieldNameArray(string $name): array
     {
-        if (empty($name) && $name !== '0') {
+        if (!$name && $name !== '0') {
             return [];
         }
 
@@ -317,7 +317,7 @@ class FormProtector
                 $fieldList[$i] = (string)$key;
             }
         }
-        if (!empty($multi)) {
+        if ($multi) {
             $fieldList += array_unique($multi);
         }
 
@@ -332,7 +332,7 @@ class FormProtector
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
-            if (!empty($unlockedFields)) {
+            if ($unlockedFields) {
                 foreach ($unlockedFields as $off) {
                     $off = explode('.', $off);
                     $field = array_values(array_intersect(explode('.', $key), $off));
@@ -366,7 +366,7 @@ class FormProtector
     protected function sortedUnlockedFields(array $formData): array
     {
         $unlocked = urldecode($formData['_Token']['unlocked']);
-        if (empty($unlocked)) {
+        if (!$unlocked) {
             return [];
         }
 

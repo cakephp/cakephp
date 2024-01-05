@@ -413,7 +413,7 @@ class Cookie implements CookieInterface
             );
         }
 
-        if (empty($name)) {
+        if (!$name) {
             throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
     }

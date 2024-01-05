@@ -71,10 +71,10 @@ class ContentTypeNegotiation
     public function preferredType(RequestInterface $request, array $choices = []): ?string
     {
         $parsed = $this->parseAccept($request);
-        if (empty($parsed)) {
+        if (!$parsed) {
             return null;
         }
-        if (empty($choices)) {
+        if (!$choices) {
             $preferred = array_shift($parsed);
 
             return $preferred[0];

@@ -137,7 +137,7 @@ class BelongsTo extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
@@ -176,7 +176,7 @@ class BelongsTo extends Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $msg = 'The `%s` table does not define a primary key. Please set one.';
                 throw new DatabaseException(sprintf($msg, $this->getTarget()->getTable()));
             }

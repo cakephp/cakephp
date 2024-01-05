@@ -277,7 +277,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             }
         }
 
-        if (!empty($value)) {
+        if ($value) {
             $parts += $binder->generateManyNamed($value, $type);
         }
 

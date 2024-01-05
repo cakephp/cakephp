@@ -164,7 +164,7 @@ class MessagesFileLoader
         $searchPaths = [];
 
         $localePaths = App::path('locales');
-        if (empty($localePaths) && defined('APP')) {
+        if (!$localePaths && defined('APP')) {
             $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
         }
         foreach ($localePaths as $path) {

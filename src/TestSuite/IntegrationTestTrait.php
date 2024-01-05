@@ -574,7 +574,7 @@ trait IntegrationTestTrait
     protected function _handleError(Throwable $exception): void
     {
         $class = Configure::read('Error.exceptionRenderer');
-        if (empty($class) || !class_exists($class)) {
+        if (!$class || !class_exists($class)) {
             $class = WebExceptionRenderer::class;
         }
         /** @var \Cake\Error\Renderer\WebExceptionRenderer $instance */

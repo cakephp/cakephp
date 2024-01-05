@@ -276,7 +276,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $cookiePairs[] = $cookie;
         }
 
-        if (empty($cookiePairs)) {
+        if (!$cookiePairs) {
             return $request;
         }
 

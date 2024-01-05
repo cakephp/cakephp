@@ -97,7 +97,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
-            if (empty($matches)) {
+            if (!$matches) {
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);

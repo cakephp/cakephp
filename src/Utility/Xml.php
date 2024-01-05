@@ -315,7 +315,7 @@ class Xml
         mixed $data,
         string $format
     ): void {
-        if (empty($data) || !is_array($data)) {
+        if (!$data || !is_array($data)) {
             return;
         }
         foreach ($data as $key => $value) {
@@ -410,7 +410,7 @@ class Xml
                 $childNS = $value['xmlns:'];
                 unset($value['xmlns:']);
             }
-        } elseif (!empty($value) || $value === 0 || $value === '0') {
+        } elseif ($value || $value === 0 || $value === '0') {
             $childValue = (string)$value;
         }
 
@@ -468,7 +468,7 @@ class Xml
             $attributes = $xml->attributes($namespace, true);
             /** @var string $key */
             foreach ($attributes as $key => $value) {
-                if (!empty($namespace)) {
+                if ($namespace) {
                     $key = $namespace . ':' . $key;
                 }
                 $data['@' . $key] = (string)$value;
@@ -480,13 +480,13 @@ class Xml
         }
 
         $asString = trim((string)$xml);
-        if (empty($data)) {
+        if (!$data) {
             $data = $asString;
         } elseif ($asString !== '') {
             $data['@'] = $asString;
         }
 
-        if (!empty($ns)) {
+        if ($ns) {
             $ns .= ':';
         }
         $name = $ns . $xml->getName();

@@ -121,7 +121,7 @@ class HasOne extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 

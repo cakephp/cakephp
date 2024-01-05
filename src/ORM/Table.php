@@ -2138,7 +2138,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primary = (array)$this->getPrimaryKey();
-        if (empty($primary)) {
+        if (!$primary) {
             $msg = sprintf(
                 'Cannot insert row in `%s` table, it has no primary key.',
                 $this->getTable()
@@ -2172,7 +2172,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        if (empty($data)) {
+        if (!$data) {
             return false;
         }
 
@@ -2239,7 +2239,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primaryKey = $entity->extract($primaryColumns);
 
         $data = array_diff_key($data, $primaryKey);
-        if (empty($data)) {
+        if (!$data) {
             return $entity;
         }
 
@@ -2748,7 +2748,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $method = Inflector::underscore($method);
         preg_match('/^find_([\w]+)_by_/', $method, $matches);
-        if (empty($matches)) {
+        if (!$matches) {
             // find_by_ is 8 characters.
             $fields = substr($method, 8);
             $findType = 'all';

@@ -314,7 +314,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
 
         $columns = [$row['column_name']];
-        if (!empty($existing)) {
+        if ($existing) {
             $columns = array_merge($existing['columns'], $columns);
         }
 
