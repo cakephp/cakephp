@@ -1124,11 +1124,11 @@ class Validation
     }
 
     /**
-     * Checks if a value is in a given list. Comparison is case sensitive by default.
+     * Checks if a value is in a given list. Comparison is case-sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param array<string> $list List to check against.
-     * @param bool $caseInsensitive Set to true for case insensitive comparison.
+     * @param list<string> $list List to check against.
+     * @param bool $caseInsensitive Set to true for case-insensitive comparison.
      * @return bool Success.
      */
     public static function inList(mixed $check, array $list, bool $caseInsensitive = false): bool
