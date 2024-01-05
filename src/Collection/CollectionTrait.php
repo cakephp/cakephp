@@ -40,6 +40,7 @@ use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
 use Traversable;
+use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_NUMERIC;
@@ -615,6 +616,8 @@ trait CollectionTrait
 
                 if ($mapKey instanceof BackedEnum) {
                     $mapKey = $mapKey->value;
+                } elseif ($mapKey instanceof UnitEnum) {
+                    throw new InvalidArgumentException('Cannot index by path on a non-backed enum.');
                 }
 
                 $mapReduce->emit($rowVal($value, $key), $mapKey);

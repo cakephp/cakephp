@@ -35,6 +35,7 @@ use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
 use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
 use function Cake\Collection\collection;
 
 /**
@@ -1274,6 +1275,16 @@ class CollectionTest extends TestCase
             ['amount' => 2, 'article_status' => ArticleStatus::from('N')],
         ]))->combine('article_status', 'amount');
         $this->assertEquals(['Y' => 10, 'N' => 2], $collection->toArray());
+    }
+
+    public function testCombineWithNonBackedEnum(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot index by path on a non-backed enum.');
+        (new Collection([
+            ['amount' => 10, 'type' => NonBacked::Basic],
+            ['amount' => 2, 'type' => NonBacked::Basic],
+        ]))->combine('type', 'amount');
     }
 
     public function testCombineNullKey(): void
