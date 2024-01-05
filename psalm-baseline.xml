@@ -173,7 +173,7 @@
   </file>
   <file src="src/View/Exception/MissingCellTemplateException.php">
     <ImplementedReturnTypeMismatch>
-      <code><![CDATA[array{name: string, file: string, paths: array<string>}]]></code>
+      <code><![CDATA[array{name: string, file: string, paths: list<string>}]]></code>
     </ImplementedReturnTypeMismatch>
   </file>
   <file src="src/View/HelperRegistry.php">

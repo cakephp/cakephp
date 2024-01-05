@@ -184,7 +184,7 @@ class MessagesFileLoader
     }
 
     /**
-     * @param array<string> $folders Folders
+     * @param list<string> $folders Folders
      * @param string $name File name
      * @param string $ext File extension
      * @return string|null File if found

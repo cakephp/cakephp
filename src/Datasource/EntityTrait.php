@@ -47,7 +47,7 @@ trait EntityTrait
     /**
      * Holds all fields that have been initially set on instantiation, or after marking as clean
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_originalFields = [];
 
@@ -55,7 +55,7 @@ trait EntityTrait
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_hidden = [];
 
@@ -64,7 +64,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/JSON versions of the entity.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_virtual = [];
 
@@ -72,7 +72,7 @@ trait EntityTrait
      * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
-     * @var array<bool>
+     * @var array<string, bool>
      */
     protected array $_dirty = [];
 
@@ -527,7 +527,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param array<string> $fields An array of fields to hide from array exports.
+     * @param list<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -558,7 +558,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array<string> $fields An array of fields to treat as virtual.
+     * @param list<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -739,9 +739,9 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array<string> $fields list of fields to be returned
+     * @param list<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
-     * @return array
+     * @return array<string, mixed>
      */
     public function extract(array $fields, bool $onlyDirty = false): array
     {
@@ -762,8 +762,8 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginal(array $fields): array
     {
@@ -786,8 +786,8 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginalChanged(array $fields): array
     {

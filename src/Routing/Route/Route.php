@@ -83,7 +83,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_extensions = [];
 
@@ -97,7 +97,7 @@ class Route
     /**
      * Valid HTTP methods.
      *
-     * @var array<string>
+     * @var list<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
@@ -146,7 +146,7 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param array<string> $extensions The extensions to set.
+     * @param list<string> $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array $extensions)
@@ -169,7 +169,7 @@ class Route
     /**
      * Set the accepted HTTP methods for this route.
      *
-     * @param array<string> $methods The HTTP methods to accept.
+     * @param list<string> $methods The HTTP methods to accept.
      * @return $this
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
@@ -183,8 +183,8 @@ class Route
     /**
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
-     * @param array<string>|string $methods Methods.
-     * @return array<string>|string
+     * @param list<string>|string $methods Methods.
+     * @return list<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods(array|string $methods): array|string
@@ -209,7 +209,7 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param array<string> $patterns The patterns to apply to routing elements
+     * @param list<string> $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
