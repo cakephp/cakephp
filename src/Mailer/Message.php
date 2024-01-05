@@ -1621,7 +1621,7 @@ class Message implements JsonSerializable
         $cut = ($wrapLength === static::LINE_LENGTH_MUST);
 
         foreach ($lines as $line) {
-            if (!$line && $line !== '0') {
+            if ($line === '') {
                 $formatted[] = '';
                 continue;
             }
