@@ -34,6 +34,7 @@ use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
+use TestApp\Model\Enum\ArticleStatus;
 use function Cake\Collection\collection;
 
 /**
@@ -1267,6 +1268,12 @@ class CollectionTest extends TestCase
 
         $collection = (new Collection($items))->combine('id', 'crazy');
         $this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
+
+        $collection = (new Collection([
+            ['amount' => 10, 'article_status' => ArticleStatus::from('Y')],
+            ['amount' => 2, 'article_status' => ArticleStatus::from('N')],
+        ]))->combine('article_status', 'amount');
+        $this->assertEquals(['Y' => 10, 'N' => 2], $collection->toArray());
     }
 
     public function testCombineNullKey(): void
