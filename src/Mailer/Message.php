@@ -978,7 +978,7 @@ class Message implements JsonSerializable
 
         $headers = [];
         foreach ($lines as $key => $value) {
-            if (!$value && $value !== '0') {
+            if ($value === '') {
                 continue;
             }
 
