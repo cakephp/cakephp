@@ -64,7 +64,7 @@ class ContentTypeNegotiation
      * You can expect null when the request has no Accept header.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to use.
-     * @param array<string> $choices The supported content type choices.
+     * @param list<string> $choices The supported content type choices.
      * @return string|null The prefered type or null if there is no match with choices or if the
      *   request had no Accept header.
      */
