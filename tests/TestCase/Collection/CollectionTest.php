@@ -1280,7 +1280,7 @@ class CollectionTest extends TestCase
     public function testCombineWithNonBackedEnum(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot index by path on a non-backed enum.');
+        $this->expectExceptionMessage('Cannot index by path that is a non-backed enum.');
         (new Collection([
             ['amount' => 10, 'type' => NonBacked::Basic],
             ['amount' => 2, 'type' => NonBacked::Basic],
