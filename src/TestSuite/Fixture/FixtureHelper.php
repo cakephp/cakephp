@@ -37,7 +37,7 @@ class FixtureHelper
     /**
      * Finds fixtures from their TestCase names such as 'core.Articles'.
      *
-     * @param array<string> $fixtureNames Fixture names from test case
+     * @param list<string> $fixtureNames Fixture names from test case
      * @return array<\Cake\Datasource\FixtureInterface>
      */
     public function loadFixtures(array $fixtureNames): array

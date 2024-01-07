@@ -121,7 +121,7 @@ class PaginatorHelper extends Helper
      * Set paginated results.
      *
      * @param \Cake\Datasource\Paging\PaginatedInterface $paginated Instance to use.
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return void
      */
     public function setPaginated(PaginatedInterface $paginated, array $options = []): void

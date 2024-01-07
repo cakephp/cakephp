@@ -62,7 +62,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
-     * @param array<string> $header The array of set-cookie header values.
+     * @param list<string> $header The array of set-cookie header values.
      * @param array<string, mixed> $defaults The defaults attributes.
      * @return static
      */

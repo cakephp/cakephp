@@ -18,6 +18,7 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
+use BackedEnum;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -39,6 +40,7 @@ use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
 use Traversable;
+use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_NUMERIC;
@@ -610,6 +612,12 @@ trait CollectionTrait
                         'Cannot index by path that does not exist or contains a null value. ' .
                         'Use a callback to return a default value for that path.'
                     );
+                }
+
+                if ($mapKey instanceof BackedEnum) {
+                    $mapKey = $mapKey->value;
+                } elseif ($mapKey instanceof UnitEnum) {
+                    throw new InvalidArgumentException('Cannot index by path that is a non-backed enum.');
                 }
 
                 $mapReduce->emit($rowVal($value, $key), $mapKey);

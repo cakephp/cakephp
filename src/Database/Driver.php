@@ -851,7 +851,7 @@ abstract class Driver
      * Constructs new TableSchema.
      *
      * @param string $table The table name.
-     * @param array $columns The list of columns for the schema.
+     * @param array<string, mixed> $columns The list of columns for the schema.
      * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function newTableSchema(string $table, array $columns = []): TableSchemaInterface

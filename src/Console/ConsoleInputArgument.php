@@ -51,7 +51,7 @@ class ConsoleInputArgument
     /**
      * An array of valid choices for this argument.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_choices;
 
@@ -61,7 +61,7 @@ class ConsoleInputArgument
      * @param array<string, mixed>|string $name The long name of the option, or an array with all the properties.
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
-     * @param array<string> $choices Valid choices for this option.
+     * @param list<string> $choices Valid choices for this option.
      */
     public function __construct(array|string $name, string $help = '', bool $required = false, array $choices = [])
     {

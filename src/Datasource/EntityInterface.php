@@ -33,7 +33,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Sets hidden fields.
      *
-     * @param array<string> $fields An array of fields to hide from array exports.
+     * @param list<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -49,7 +49,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array<string> $fields An array of fields to treat as virtual.
+     * @param list<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -189,8 +189,8 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginal(array $fields): array;
 
@@ -198,8 +198,8 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns an array with only the original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginalChanged(array $fields): array;
 
@@ -296,9 +296,9 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array<string> $fields list of fields to be returned
+     * @param list<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
-     * @return array
+     * @return array<string, mixed>
      */
     public function extract(array $fields, bool $onlyDirty = false): array;
 

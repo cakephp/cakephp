@@ -284,7 +284,7 @@ class I18nExtractCommand extends Command
      *
      * @param string $domain The domain
      * @param string $msgid The message string
-     * @param array $details Context and plural form if any, file and line references
+     * @param array<string, mixed> $details Context and plural form if any, file and line references
      * @return void
      */
     protected function _addTranslation(string $domain, string $msgid, array $details = []): void

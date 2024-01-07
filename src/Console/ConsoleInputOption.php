@@ -72,7 +72,7 @@ class ConsoleInputOption
     /**
      * An array of choices for the option.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_choices;
 
@@ -98,7 +98,7 @@ class ConsoleInputOption
      * @param string $help The help text for this option
      * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
-     * @param array<string> $choices Valid choices for this option.
+     * @param list<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
      * @param string|null $prompt The prompt string.

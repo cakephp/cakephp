@@ -324,7 +324,7 @@ class EntityContext implements ContextInterface
      *
      * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
-     * @param array|null $path Each one of the parts in a path for a field name
+     * @param array<string>|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \Cake\Core\Exception\CakeException When properties cannot be read.

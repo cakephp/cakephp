@@ -423,7 +423,7 @@ class FormProtector
      * Generate validation hash.
      *
      * @param array $fields Fields list.
-     * @param array<string> $unlockedFields Unlocked fields.
+     * @param list<string> $unlockedFields Unlocked fields.
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return string

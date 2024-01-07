@@ -1791,7 +1791,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1832,7 +1832,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.

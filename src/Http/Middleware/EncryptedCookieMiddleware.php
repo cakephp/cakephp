@@ -45,7 +45,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     /**
      * The list of cookies to encrypt/decrypt
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $cookieNames;
 
@@ -66,7 +66,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param array<string> $cookieNames The list of cookie names that should have their values encrypted.
+     * @param list<string> $cookieNames The list of cookie names that should have their values encrypted.
      * @param string $key The encryption key to use.
      * @param string $cipherType The cipher type to use. Defaults to 'aes'.
      */

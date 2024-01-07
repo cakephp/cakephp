@@ -100,7 +100,7 @@ class PluginLoadCommand extends Command
      * Modify the plugins config file.
      *
      * @param string $plugin Plugin name.
-     * @param array $options Plugin options.
+     * @param array<string, mixed> $options Plugin options.
      * @return int
      */
     protected function modifyConfigFile(string $plugin, array $options): int

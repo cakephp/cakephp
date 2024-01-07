@@ -129,7 +129,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates read and write drivers.
      *
-     * @param array $config Connection config
+     * @param array<string, mixed> $config Connection config
      * @return array<string, \Cake\Database\Driver>
      * @psalm-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
      */

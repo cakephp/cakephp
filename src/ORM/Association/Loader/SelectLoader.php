@@ -242,7 +242,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
-     * @param array<string> $key The foreign key fields to check
+     * @param list<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -345,7 +345,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param array<string> $keys the fields that should be used for filtering
+     * @param list<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -542,7 +542,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array<string, mixed> $resultMap A keyed arrays containing the target table
-     * @param array<string> $sourceKeys An array with aliased keys to match
+     * @param list<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

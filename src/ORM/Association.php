@@ -787,7 +787,7 @@ abstract class Association
      * Correctly nests a result row associated values into the correct array keys inside the
      * source results.
      *
-     * @param array $row The row to transform
+     * @param array<string, mixed> $row The row to transform
      * @param string $nestKey The array key under which the results for this association
      *   should be found
      * @param bool $joined Whether the row is a result of a direct join

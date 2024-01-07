@@ -74,6 +74,27 @@ abstract class SerializedView extends View
      */
     public function render(?string $template = null, string|false|null $layout = null): string
     {
+        $serialize = $this->serializeKeys();
+        if ($serialize !== false) {
+            try {
+                return $this->_serialize($serialize);
+            } catch (Exception | TypeError $e) {
+                throw new SerializationFailureException(
+                    'Serialization of View data failed.',
+                    null,
+                    $e
+                );
+            }
+        }
+
+        return parent::render($template, false);
+    }
+
+    /**
+     * @return array|string|false
+     */
+    protected function serializeKeys(): array|string|false
+    {
         $serialize = $this->getConfig('serialize', false);
 
         if ($serialize === true) {
@@ -89,18 +110,7 @@ abstract class SerializedView extends View
                 $options
             );
         }
-        if ($serialize !== false) {
-            try {
-                return $this->_serialize($serialize);
-            } catch (Exception | TypeError $e) {
-                throw new SerializationFailureException(
-                    'Serialization of View data failed.',
-                    null,
-                    $e
-                );
-            }
-        }
 
-        return parent::render($template, false);
+        return $serialize;
     }
 }

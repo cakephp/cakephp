@@ -78,4 +78,24 @@ class EventFiredWithTest extends TestCase
 
         $constraint->matches('my.event');
     }
+
+    /**
+     * tests assertions on events with non-scalar data
+     */
+    public function testMatchesArrayData(): void
+    {
+        $manager = EventManager::instance();
+        $manager->setEventList(new EventList());
+        $manager->trackEvents(true);
+
+        $myEvent = new Event('my.event', $this, [
+            'data' => ['one' => 1],
+        ]);
+
+        $manager->getEventList()->add($myEvent);
+
+        $constraint = new EventFiredWith($manager, 'data', ['one' => 1]);
+        $constraint->matches('my.event');
+        $this->assertEquals('was fired with `data` matching `{"one":1}`', $constraint->toString());
+    }
 }

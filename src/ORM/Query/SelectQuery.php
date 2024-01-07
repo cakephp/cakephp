@@ -856,7 +856,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param array<string> $excludedFields The un-aliased column names you do not want selected from $table
+     * @param list<string> $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      */

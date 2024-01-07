@@ -239,7 +239,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $supportedValueSources = ['context', 'data', 'query'];
 
@@ -2576,7 +2576,7 @@ class FormHelper extends Helper
     /**
      * Validate value sources.
      *
-     * @param array<string> $sources A list of strings identifying a source.
+     * @param list<string> $sources A list of strings identifying a source.
      * @return void
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */
