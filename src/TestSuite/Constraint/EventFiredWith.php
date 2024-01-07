@@ -112,6 +112,6 @@ class EventFiredWith extends Constraint
      */
     public function toString(): string
     {
-        return 'was fired with ' . $this->_dataKey . ' matching ' . (string)$this->_dataValue;
+        return "was fired with `{$this->_dataKey}` matching `" . json_encode($this->_dataValue) . '`';
     }
 }
