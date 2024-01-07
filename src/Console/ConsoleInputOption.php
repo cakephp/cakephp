@@ -135,7 +135,7 @@ class ConsoleInputOption
                 sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short)
             );
         }
-        if (isset($this->_default) && $this->prompt) {
+        if ($this->_default !== null && $this->prompt) {
             throw new ConsoleException(
                 'You cannot set both `prompt` and `default` options. ' .
                 'Use either a static `default` or interactive `prompt`'

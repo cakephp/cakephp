@@ -383,7 +383,7 @@ class Router
         $context = static::$_requestContext;
         $context['_base'] ??= '';
 
-        if (empty($url)) {
+        if (!$url) {
             $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
@@ -693,7 +693,7 @@ class Router
         }
         $url = preg_replace('/(?:(\/$))/', '', $url);
 
-        if (empty($url)) {
+        if (!$url) {
             return '/';
         }
 

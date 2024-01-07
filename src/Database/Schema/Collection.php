@@ -149,7 +149,7 @@ class Collection implements CollectionInterface
         $convertMethod = "convert{$stage}Description";
 
         [$sql, $params] = $this->_dialect->{$describeMethod}($name, $config);
-        if (empty($sql)) {
+        if (!$sql) {
             return;
         }
         try {

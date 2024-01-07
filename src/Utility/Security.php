@@ -62,7 +62,7 @@ class Security
      */
     public static function hash(string $string, ?string $algorithm = null, string|bool $salt = false): string
     {
-        if (empty($algorithm)) {
+        if (!$algorithm) {
             $algorithm = static::$hashType;
         }
         $algorithm = strtolower($algorithm);
@@ -240,7 +240,7 @@ class Security
     public static function decrypt(string $cipher, string $key, ?string $hmacSalt = null): ?string
     {
         self::_checkKey($key, 'decrypt()');
-        if (empty($cipher)) {
+        if (!$cipher) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
         $hmacSalt ??= static::getSalt();

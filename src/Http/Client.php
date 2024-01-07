@@ -572,7 +572,7 @@ class Client implements ClientInterface
      */
     public function buildUrl(string $url, array|string $query = [], array $options = []): string
     {
-        if (empty($options) && empty($query)) {
+        if (!$options && !$query) {
             return $url;
         }
         $defaults = [

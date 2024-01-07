@@ -546,7 +546,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
-            if (empty($translations) && $row->get('_translations')) {
+            if (!$translations && $row->get('_translations')) {
                 return $row;
             }
 
@@ -579,7 +579,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         /** @var array<string, \Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->isDirty('_translations')) {
+        if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 

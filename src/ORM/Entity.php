@@ -65,7 +65,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
             $this->setNew($options['markNew']);
         }
 
-        if (!empty($properties)) {
+        if ($properties) {
             //Remember the original field names here.
             $this->setOriginalField(array_keys($properties));
 

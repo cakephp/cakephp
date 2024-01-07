@@ -42,7 +42,7 @@ trait TranslateTrait
         $i18n = $this->get('_translations');
         $created = false;
 
-        if (empty($i18n)) {
+        if (!$i18n) {
             $i18n = [];
             $created = true;
         }

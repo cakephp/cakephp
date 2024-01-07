@@ -1079,7 +1079,7 @@ abstract class Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $table = $this->getTarget()->getTable();
                 if ($this->isOwningSide($this->getSource())) {
                     $table = $this->getSource()->getTable();

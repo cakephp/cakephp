@@ -140,7 +140,7 @@ class ValueBinder
     public function attachTo(StatementInterface $statement): void
     {
         $bindings = $this->bindings();
-        if (empty($bindings)) {
+        if (!$bindings) {
             return;
         }
 

@@ -310,7 +310,7 @@ class ValuesExpression implements ExpressionInterface
 
         $types = $this->_requiresToExpressionCasting($types);
 
-        if (empty($types)) {
+        if (!$types) {
             return;
         }
 

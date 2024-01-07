@@ -121,7 +121,7 @@ class WhenThenExpression implements ExpressionInterface
     public function when(object|array|string|float|int|bool $when, array|string|null $type = null)
     {
         if (is_array($when)) {
-            if (empty($when)) {
+            if (!$when) {
                 throw new InvalidArgumentException('The `$when` argument must be a non-empty array');
             }
 

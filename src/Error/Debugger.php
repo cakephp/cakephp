@@ -95,7 +95,7 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-        if (empty($docRef) && function_exists('ini_set')) {
+        if (!$docRef && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
@@ -480,7 +480,7 @@ class Debugger
             return [];
         }
         $data = file_get_contents($file);
-        if (empty($data)) {
+        if (!$data) {
             return $lines;
         }
         if (str_contains($data, "\n")) {

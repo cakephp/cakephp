@@ -1410,7 +1410,7 @@ class BelongsToMany extends Association
             $result[] = $joint;
         }
 
-        if (empty($missing)) {
+        if (!$missing) {
             return $result;
         }
 

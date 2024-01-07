@@ -60,7 +60,7 @@ class InsertQuery extends Query
      */
     public function insert(array $columns, array $types = [])
     {
-        if (empty($columns)) {
+        if (!$columns) {
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
         $this->_dirty();

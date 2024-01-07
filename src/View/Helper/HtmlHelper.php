@@ -218,7 +218,7 @@ class HtmlHelper extends Helper
      */
     public function charset(?string $charset = null): string
     {
-        if (empty($charset)) {
+        if (!$charset) {
             $charset = strtolower((string)Configure::read('App.encoding'));
         }
 
@@ -890,7 +890,7 @@ class HtmlHelper extends Helper
      */
     public function div(?string $class = null, ?string $text = null, array $options = []): string
     {
-        if (!empty($class)) {
+        if ($class) {
             $options['class'] = $class;
         }
 
@@ -1024,7 +1024,7 @@ class HtmlHelper extends Helper
             $options['text'] = $sourceTags . $options['text'];
             unset($options['fullBase']);
         } else {
-            if (empty($path) && !empty($options['src'])) {
+            if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
             /** @psalm-suppress PossiblyNullArgument */

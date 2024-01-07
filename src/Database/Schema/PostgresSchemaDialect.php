@@ -101,7 +101,7 @@ class PostgresSchemaDialect extends SchemaDialect
     protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
+        if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 

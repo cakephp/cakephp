@@ -129,7 +129,7 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         $this->_isCollection = is_iterable($entity);
 
-        if (empty($table)) {
+        if (!$table) {
             if ($this->_isCollection) {
                 /** @var iterable<\Cake\Datasource\EntityInterface|array> $entity */
                 foreach ($entity as $e) {

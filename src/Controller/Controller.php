@@ -749,7 +749,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function chooseViewClass(): ?string
     {
         $possibleViewClasses = $this->viewClasses();
-        if (empty($possibleViewClasses)) {
+        if (!$possibleViewClasses) {
             return null;
         }
         // Controller or component has already made a view class decision.

@@ -254,7 +254,7 @@ class ConsoleOutput
     protected function _replaceTags(array $matches): string
     {
         $style = $this->getStyle($matches['tag']);
-        if (empty($style)) {
+        if (!$style) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
         }
 

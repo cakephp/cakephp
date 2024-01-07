@@ -495,7 +495,7 @@ class Route
             unset($route['_trailing_']);
         }
 
-        if (!empty($ext)) {
+        if ($ext) {
             $route['_ext'] = $ext;
         }
 
@@ -575,7 +575,7 @@ class Route
         $urldecode = $this->options['_urldecode'] ?? true;
 
         foreach ($args as $param) {
-            if (empty($param) && $param !== '0') {
+            if (!$param && $param !== '0') {
                 continue;
             }
             $pass[] = $urldecode ? rawurldecode($param) : $param;
@@ -844,7 +844,7 @@ class Route
         if (!empty($params['_ext'])) {
             $out .= '.' . $params['_ext'];
         }
-        if (!empty($query)) {
+        if ($query) {
             $out .= rtrim('?' . http_build_query($query), '?');
         }
 

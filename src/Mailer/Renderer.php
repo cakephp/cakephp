@@ -58,7 +58,7 @@ class Renderer
     {
         $rendered = [];
         $template = $this->viewBuilder()->getTemplate();
-        if (empty($template)) {
+        if (!$template) {
             foreach ($types as $type) {
                 $rendered[$type] = $content;
             }

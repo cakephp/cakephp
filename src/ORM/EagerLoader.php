@@ -614,13 +614,13 @@ class EagerLoader
      */
     public function loadExternal(SelectQuery $query, array $results): array
     {
-        if (empty($results)) {
+        if (!$results) {
             return $results;
         }
 
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
-        if (empty($external)) {
+        if (!$external) {
             return $results;
         }
 
@@ -792,7 +792,7 @@ class EagerLoader
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
-        if (empty($collectKeys)) {
+        if (!$collectKeys) {
             return [];
         }
 
