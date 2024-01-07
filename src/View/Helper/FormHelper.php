@@ -382,7 +382,7 @@ class FormHelper extends Helper
                 $options['context'] = [];
             }
             $options['context']['entity'] = $context;
-            $context = $this->_getContext($options['context']);
+            $context = $this->_getContext((array)$options['context']);
             unset($options['context']);
         }
 
@@ -2474,12 +2474,12 @@ class FormHelper extends Helper
      *
      * If no type can be matched a NullContext will be returned.
      *
-     * @param mixed $data The data to get a context provider for.
+     * @param array $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    protected function _getContext(mixed $data = []): ContextInterface
+    protected function _getContext(array $data = []): ContextInterface
     {
         if ($this->_context !== null && !$data) {
             return $this->_context;
