@@ -489,6 +489,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 unset($row['translation']);
 
                 if ($hydrated) {
+                    /** @var \Cake\Datasource\EntityInterface $row */
                     $row->setDirty('_locale', false);
                 }
 
@@ -517,15 +518,18 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                         $row[$field] = $translation[$field];
 
                         if ($hydrated) {
+                            /** @var \Cake\Datasource\EntityInterface $row */
                             $row->setDirty($field, false);
                         }
                     }
                 }
             }
 
+            /** @var array $row */
             unset($row['translation']);
 
             if ($hydrated) {
+                /** @var \Cake\Datasource\EntityInterface $row */
                 $row->setDirty('_locale', false);
             }
 

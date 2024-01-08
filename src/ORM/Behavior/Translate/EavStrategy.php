@@ -380,6 +380,7 @@ class EavStrategy implements TranslateStrategyInterface
                     $row[$field] = $content;
 
                     if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
                         $row->setDirty($field, false);
                     }
                 }
@@ -389,6 +390,7 @@ class EavStrategy implements TranslateStrategyInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
+                /** @var \Cake\Datasource\EntityInterface $row */
                 $row->setDirty('_locale', false);
             }
 
