@@ -139,7 +139,7 @@ class TupleComparison extends ComparisonExpression
 
             $type = $this->types;
             $isMultiOperation = $this->isMulti();
-            if (empty($type)) {
+            if (!$type) {
                 $type = null;
             }
 

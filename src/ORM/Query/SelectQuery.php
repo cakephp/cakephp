@@ -1078,10 +1078,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $association = $table->getAssociation($name);
             $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
-            if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
+            if (!$primary || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
             }
-            if (!empty($nested)) {
+            if ($nested) {
                 $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
             }
         }

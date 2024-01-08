@@ -438,7 +438,7 @@ class ServerRequest implements ServerRequestInterface
         $ref = $this->getEnv('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
-        if (empty($ref) || empty($base)) {
+        if (!$ref || !$base) {
             return null;
         }
 
@@ -1065,7 +1065,7 @@ class ServerRequest implements ServerRequestInterface
     public function domain(int $tldLength = 1): string
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return '';
         }
 
@@ -1085,7 +1085,7 @@ class ServerRequest implements ServerRequestInterface
     public function subdomains(int $tldLength = 1): array
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return [];
         }
 
@@ -1772,7 +1772,7 @@ class ServerRequest implements ServerRequestInterface
             $target .= '?' . $this->uri->getQuery();
         }
 
-        if (empty($target)) {
+        if (!$target) {
             $target = '/';
         }
 

@@ -389,7 +389,7 @@ class RouteBuilder
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
-        if (empty($only)) {
+        if (!$only) {
             $only = array_keys($resourceMap);
         }
 

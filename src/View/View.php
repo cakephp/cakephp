@@ -821,7 +821,7 @@ class View implements EventDispatcherInterface
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
 
-        if (!empty($content)) {
+        if ($content) {
             $this->Blocks->set('content', $content);
         }
 
@@ -1134,7 +1134,7 @@ class View implements EventDispatcherInterface
      */
     protected function _render(string $templateFile, array $data = []): string
     {
-        if (empty($data)) {
+        if (!$data) {
             $data = $this->viewVars;
         }
         $this->_current = $templateFile;
@@ -1347,7 +1347,7 @@ class View implements EventDispatcherInterface
 
         $name ??= $this->template;
 
-        if (empty($name)) {
+        if (!$name) {
             throw new CakeException('Template name not provided');
         }
 
@@ -1433,7 +1433,7 @@ class View implements EventDispatcherInterface
             $name = $second;
             $plugin = $first;
         }
-        if (isset($this->plugin) && !$plugin && $fallback) {
+        if ($this->plugin !== null && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
 
@@ -1579,7 +1579,7 @@ class View implements EventDispatcherInterface
         }
         $templatePaths = App::path(static::NAME_TEMPLATE);
         $pluginPaths = $themePaths = [];
-        if (!empty($plugin)) {
+        if ($plugin) {
             foreach ($templatePaths as $templatePath) {
                 $pluginPaths[] = $templatePath
                     . static::PLUGIN_TEMPLATE_FOLDER

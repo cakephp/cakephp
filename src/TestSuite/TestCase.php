@@ -673,7 +673,7 @@ abstract class TestCase extends BaseTestCase
                     ];
                     continue;
                 }
-                if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
+                if ($tags && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
@@ -700,7 +700,7 @@ abstract class TestCase extends BaseTestCase
                 $explanations = [];
                 $i = 1;
                 foreach ($attributes as $attr => $val) {
-                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', (string)$val, $matches)) {
+                    if (is_numeric($attr) && preg_match('/^preg:\/(.+)\/$/i', (string)$val, $matches)) {
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex `%s` matches', $matches[1]);
                         continue;
@@ -712,7 +712,7 @@ abstract class TestCase extends BaseTestCase
                         $attr = $val;
                         $val = '.+?';
                         $explanations[] = sprintf('Attribute `%s` present', $attr);
-                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                    } elseif ($val && preg_match('/^preg:\/(.+)\/$/i', $val, $matches)) {
                         $val = str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],

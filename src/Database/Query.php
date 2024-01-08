@@ -1736,7 +1736,7 @@ abstract class Query implements ExpressionInterface, Stringable
     ): void {
         /** @var \Cake\Database\Expression\QueryExpression $expression */
         $expression = $this->_parts[$part] ?: $this->newExpr();
-        if (empty($append)) {
+        if (!$append) {
             $this->_parts[$part] = $expression;
 
             return;
@@ -1785,7 +1785,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_valueBinder = clone $this->_valueBinder;
         }
         foreach ($this->_parts as $name => $part) {
-            if (empty($part)) {
+            if (!$part) {
                 continue;
             }
             if (is_array($part)) {

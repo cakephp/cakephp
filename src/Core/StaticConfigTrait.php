@@ -214,7 +214,7 @@ trait StaticConfigTrait
      */
     public static function parseDsn(string $dsn): array
     {
-        if (empty($dsn)) {
+        if (!$dsn) {
             return [];
         }
 

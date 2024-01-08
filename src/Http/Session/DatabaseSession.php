@@ -121,7 +121,7 @@ class DatabaseSession implements SessionHandlerInterface
             ->disableHydration()
             ->first();
 
-        if (empty($result)) {
+        if (!$result) {
             return '';
         }
 

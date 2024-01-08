@@ -139,7 +139,7 @@ class Configure
      */
     public static function check(string $var): bool
     {
-        if (empty($var)) {
+        if (!$var) {
             return false;
         }
 
@@ -390,7 +390,7 @@ class Configure
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys)) {
+        if ($keys) {
             $values = array_intersect_key($values, array_flip($keys));
         }
 

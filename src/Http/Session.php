@@ -483,7 +483,7 @@ class Session
      */
     public function consume(string $name): mixed
     {
-        if (empty($name)) {
+        if (!$name) {
             return null;
         }
         $value = $this->read($name);

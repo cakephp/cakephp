@@ -79,7 +79,7 @@ class Statement implements StatementInterface
      */
     public function bind(array $params, array $types): void
     {
-        if (empty($params)) {
+        if (!$params) {
             return;
         }
 

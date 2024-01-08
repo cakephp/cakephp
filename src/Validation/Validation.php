@@ -147,7 +147,7 @@ class Validation
      */
     public static function notBlank(mixed $check): bool
     {
-        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
+        if (!$check && !is_bool($check) && !is_numeric($check)) {
             return false;
         }
 
@@ -856,7 +856,7 @@ class Validation
             return static::extension(array_shift($check), $extensions);
         }
 
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
 
@@ -1000,7 +1000,7 @@ class Validation
         $check = array_filter((array)$check, function ($value) {
             return $value || is_numeric($value);
         });
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
         if ($options['max'] && count($check) > $options['max']) {

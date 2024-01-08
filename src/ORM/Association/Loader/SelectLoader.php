@@ -253,7 +253,7 @@ class SelectLoader
         }
 
         $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
-        if (empty($select)) {
+        if (!$select) {
             return;
         }
         $missingKey = function ($fieldList, $key) {

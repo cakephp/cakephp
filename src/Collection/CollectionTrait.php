@@ -685,7 +685,7 @@ trait CollectionTrait
                 $isObject = is_object(current($parents));
                 $foundOutType = true;
             }
-            if (empty($key) || !isset($parents[$key])) {
+            if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);

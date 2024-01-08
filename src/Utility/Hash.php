@@ -54,7 +54,7 @@ class Hash
      */
     public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
     {
-        if (empty($data) || $path === null) {
+        if (!$data || $path === null) {
             return $default;
         }
 
@@ -118,7 +118,7 @@ class Hash
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
-        if (empty($path)) {
+        if (!$path) {
             return $data;
         }
 
@@ -238,7 +238,7 @@ class Hash
             $val = $cond['val'] ?? null;
 
             // Presence test.
-            if (empty($op) && empty($val) && !isset($data[$attr])) {
+            if (!$op && !$val && !isset($data[$attr])) {
                 return false;
             }
 
@@ -456,7 +456,7 @@ class Hash
         array|string|null $valuePath = null,
         ?string $groupPath = null
     ): array {
-        if (empty($data)) {
+        if (!$data) {
             return [];
         }
 
@@ -476,15 +476,15 @@ class Hash
         }
 
         $vals = null;
-        if (!empty($valuePath) && is_array($valuePath)) {
+        if ($valuePath && is_array($valuePath)) {
             $format = array_shift($valuePath);
             $vals = static::format($data, $valuePath, $format);
             assert(is_array($vals));
-        } elseif (!empty($valuePath)) {
+        } elseif ($valuePath) {
             $vals = static::extract($data, $valuePath);
             assert(is_array($vals));
         }
-        if (empty($vals)) {
+        if (!$vals) {
             $vals = array_fill(0, $keys === null ? count($data) : count($keys), null);
         }
 
@@ -496,7 +496,7 @@ class Hash
 
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
-            if (!empty($group)) {
+            if ($group) {
                 $c = is_array($keys) ? count($keys) : count($vals);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
@@ -512,7 +512,7 @@ class Hash
                 return $out;
             }
         }
-        if (empty($vals)) {
+        if (!$vals) {
             return [];
         }
 
@@ -581,12 +581,12 @@ class Hash
      */
     public static function contains(array $data, array $needle): bool
     {
-        if (empty($data) || empty($needle)) {
+        if (!$data || !$needle) {
             return false;
         }
         $stack = [];
 
-        while (!empty($needle)) {
+        while ($needle) {
             $key = key($needle);
             $val = $needle[$key];
             unset($needle[$key]);
@@ -595,14 +595,14 @@ class Hash
                 $next = $data[$key];
                 unset($data[$key]);
 
-                if (!empty($val)) {
+                if ($val) {
                     $stack[] = [$val, $next];
                 }
             } elseif (!array_key_exists($key, $data) || $data[$key] != $val) {
                 return false;
             }
 
-            if (empty($needle) && !empty($stack)) {
+            if (!$needle && $stack) {
                 [$needle, $data] = array_pop($stack);
             }
         }
@@ -687,7 +687,7 @@ class Hash
             unset($data[$key]);
 
             if (is_array($element) && !empty($element)) {
-                if (!empty($data)) {
+                if ($data) {
                     $stack[] = [$data, $path];
                 }
                 $data = $element;
@@ -697,7 +697,7 @@ class Hash
                 $result[$path . $key] = $element;
             }
 
-            if (empty($data) && !empty($stack)) {
+            if (!$data && $stack) {
                 [$data, $path] = array_pop($stack);
                 reset($data);
             }
@@ -818,7 +818,7 @@ class Hash
      */
     public static function numeric(array $data): bool
     {
-        if (empty($data)) {
+        if (!$data) {
             return false;
         }
 
@@ -838,7 +838,7 @@ class Hash
      */
     public static function dimensions(array $data): int
     {
-        if (empty($data)) {
+        if (!$data) {
             return 0;
         }
         reset($data);
@@ -866,7 +866,7 @@ class Hash
     public static function maxDimensions(array $data): int
     {
         $depth = [];
-        if (!empty($data)) {
+        if ($data) {
             foreach ($data as $value) {
                 if (is_array($value)) {
                     $depth[] = static::maxDimensions($value) + 1;
@@ -983,7 +983,7 @@ class Hash
         string|int $dir = 'asc',
         array|string $type = 'regular'
     ): array {
-        if (empty($data)) {
+        if (!$data) {
             return [];
         }
         $originalKeys = array_keys($data);
@@ -1101,10 +1101,10 @@ class Hash
      */
     public static function diff(array $data, array $compare): array
     {
-        if (empty($data)) {
+        if (!$data) {
             return $compare;
         }
-        if (empty($compare)) {
+        if (!$compare) {
             return $data;
         }
         $intersection = array_intersect_key($data, $compare);
@@ -1128,10 +1128,10 @@ class Hash
      */
     public static function mergeDiff(array $data, array $compare): array
     {
-        if (empty($data) && !empty($compare)) {
+        if (!$data && !empty($compare)) {
             return $compare;
         }
-        if (empty($compare)) {
+        if (!$compare) {
             return $data;
         }
         foreach ($compare as $key => $value) {

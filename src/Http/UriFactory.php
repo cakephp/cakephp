@@ -87,7 +87,7 @@ class UriFactory implements UriFactoryInterface
         if ($path === '/index.php' && $uri->getQuery()) {
             $path = $uri->getQuery();
         }
-        if (empty($path) || $path === '/' || $path === '//' || $path === '/index.php') {
+        if (!$path || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
         $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';

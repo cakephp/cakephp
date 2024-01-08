@@ -407,7 +407,7 @@ class EavStrategy implements TranslateStrategyInterface
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
-            if (empty($translations) && $row->get('_translations')) {
+            if (!$translations && $row->get('_translations')) {
                 return $row;
             }
             $grouped = new Collection($translations);
@@ -445,7 +445,7 @@ class EavStrategy implements TranslateStrategyInterface
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->isDirty('_translations')) {
+        if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
@@ -467,7 +467,7 @@ class EavStrategy implements TranslateStrategyInterface
             }
         }
 
-        if (empty($find)) {
+        if (!$find) {
             return;
         }
 
