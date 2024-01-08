@@ -1129,4 +1129,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             'Title and body are translated values, but don\'t match'
         );
     }
+
+    /**
+     * Tests that modified entities aren't marked as clean after ShadowTableStrategy::rowMapper
+     */
+    public function testModifiedEntityNotCleanAfterTranslationMapping(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->setLocale('fra');
+
+        $articles = $table->find()->all();
+        $articles->each(function ($article) {
+            $article->published = 'N';
+        });
+
+        $this->assertTrue($articles->first()->isDirty('published'));
+    }
 }
