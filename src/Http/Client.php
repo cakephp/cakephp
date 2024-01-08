@@ -548,10 +548,11 @@ class Client implements ClientInterface
      */
     protected function _sendRequest(RequestInterface $request, array $options): Response
     {
+        $responses = [];
         if (static::$_mockAdapter) {
             $responses = static::$_mockAdapter->send($request, $options);
         }
-        if (empty($responses)) {
+        if (!$responses) {
             $responses = $this->_adapter->send($request, $options);
         }
         foreach ($responses as $response) {
