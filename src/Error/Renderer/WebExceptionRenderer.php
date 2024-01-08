@@ -185,9 +185,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable $e) {
+            $controller = null;
         }
 
-        if (!isset($controller)) {
+        if ($controller === null) {
             return new Controller($request);
         }
 

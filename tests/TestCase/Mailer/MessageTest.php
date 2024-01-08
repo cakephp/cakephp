@@ -1250,10 +1250,10 @@ HTML;
     {
         $message = new Message(['transport' => 'debug']);
 
-        if (!empty($charset)) {
+        if ($charset) {
             $message->setCharset($charset);
         }
-        if (!empty($headerCharset)) {
+        if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
 
@@ -1274,10 +1274,10 @@ HTML;
     {
         $message = new Message();
 
-        if (!empty($charset)) {
+        if ($charset) {
             $message->setCharset($charset);
         }
-        if (!empty($headerCharset)) {
+        if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
 
