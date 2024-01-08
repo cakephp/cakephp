@@ -223,7 +223,7 @@ class Session
 
         $lifetime = 0;
         if (isset($config['timeout'])) {
-            $lifetime = $config['timeout'] * 60;
+            $lifetime = (int)$config['timeout'] * 60;
         }
         if ($lifetime !== 0) {
             $config['ini']['session.gc_maxlifetime'] = $lifetime;
