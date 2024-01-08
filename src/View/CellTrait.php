@@ -98,7 +98,7 @@ trait CellTrait
         if ($plugin) {
             $builder->setPlugin($plugin);
         }
-        if ($this->helpers) {
+        if (!empty($this->helpers)) {
             $builder->addHelpers($this->helpers);
         }
 
