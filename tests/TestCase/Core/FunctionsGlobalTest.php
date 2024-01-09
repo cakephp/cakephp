@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use stdClass;
-use function env;
 
 require_once CAKE . 'Core/functions_global.php';
 
