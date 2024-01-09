@@ -332,7 +332,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
  *
  * This method attempts to convert the given value to a string.
  * If the value is already a string, it returns the value as it is.
- * If the conversion is not possible, it returns NULL.
+ * ``null`` is returned if the conversion is not possible.
  *
  * @param mixed $value The value to be converted.
  * @return ?string Returns the string representation of the value, or null if the value is not a string.
