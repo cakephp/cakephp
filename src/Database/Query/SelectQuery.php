@@ -74,7 +74,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var array<\Closure>
+     * @var list<\Closure>
      */
     protected array $_resultDecorators = [];
 
@@ -111,13 +111,6 @@ class SelectQuery extends Query implements IteratorAggregate
     {
         if ($this->_results === null || $this->_dirty) {
             $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
-            if ($this->_resultDecorators) {
-                foreach ($this->_results as &$row) {
-                    foreach ($this->_resultDecorators as $decorator) {
-                        $row = $decorator($row);
-                    }
-                }
-            }
         }
 
         return $this->_results;
@@ -814,6 +807,16 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Get result decorators.
+     *
+     * @return array
+     */
+    public function getResultDecorators(): array
+    {
+        return $this->_resultDecorators;
     }
 
     /**
