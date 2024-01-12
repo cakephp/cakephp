@@ -255,4 +255,129 @@ PHP;
             ],
         ], PluginConfig::getAppConfig());
     }
+
+    public function testGetVersions(): void
+    {
+        $test = PluginConfig::getVersions(ROOT . DS . 'tests' . DS . 'composer.lock');
+        $expected = [
+            'packages' => [
+                'cakephp/chronos' => '3.0.4',
+                'psr/simple-cache' => '3.0.0',
+            ],
+            'devPackages' => [
+                'cakephp/cakephp-codesniffer' => '5.1.1',
+                'squizlabs/php_codesniffer' => '3.8.1',
+                'theseer/tokenizer' => '1.2.2',
+            ],
+        ];
+        $this->assertEquals($expected, $test);
+    }
+
+    public function testSimpleConfiWithVersions(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'Chronos' => ROOT .  DS . 'vendor' . DS . 'cakephp' . DS . 'chronos',
+        'CodeSniffer' => ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp-codesniffer'
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+return [
+    'Chronos',
+    'CodeSniffer'
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        Configure::delete('plugins');
+        $pathToRootVendor = ROOT . DS . 'vendor' . DS;
+        $result = [
+            'Chronos' => [
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => false,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'chronos',
+                'package' => 'cakephp/chronos',
+                'version' => '3.0.4',
+                'isDevPackage' => false,
+            ],
+            'CodeSniffer' => [
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => false,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'cakephp-codesniffer',
+                'package' => 'cakephp/cakephp-codesniffer',
+                'version' => '5.1.1',
+                'isDevPackage' => true,
+            ],
+        ];
+        $this->assertSame($result, PluginConfig::getAppConfig(ROOT . DS . 'tests' . DS . 'composer.lock'));
+    }
+
+    public function testInvalidComposerLock(): void
+    {
+        $path = ROOT . DS . 'tests' . DS . 'unknown_composer.lock';
+        $this->assertSame([], PluginConfig::getAppConfig($path));
+
+        file_put_contents($path, 'invalid-json');
+        $this->assertSame([], PluginConfig::getAppConfig($path));
+        unlink($path);
+    }
+
+    public function testInvalidComposerJson(): void
+    {
+        $pathToTestPlugin = ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+return [
+    'TestPlugin',
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        file_put_contents($pathToTestPlugin . 'composer.json', 'invalid-json');
+
+        $this->assertSame([
+            'TestPlugin' => [
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => false,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+            ],
+        ], PluginConfig::getAppConfig());
+        unlink($pathToTestPlugin . 'composer.json');
+    }
 }
