@@ -26,6 +26,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -1128,6 +1129,17 @@ class ConnectionTest extends TestCase
             $this->assertInstanceOf(Exception::class, $e);
             $prop->setValue($conn, $oldDriver);
             $conn->rollback();
+        }
+    }
+
+    public function testRunAndStatementIteration(): void
+    {
+        $query = new SelectQuery($this->connection);
+        $query->select($query->newExpr('1'));
+
+        $statement = $this->connection->run($query);
+        foreach ($statement as $row) {
+            $this->assertSame(['(1)' => 1], $row);
         }
     }
 }

@@ -20,11 +20,13 @@ use Cake\Database\Driver;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
+use Generator;
 use InvalidArgumentException;
+use IteratorAggregate;
 use PDO;
 use PDOStatement;
 
-class Statement implements StatementInterface
+class Statement implements StatementInterface, IteratorAggregate
 {
     /**
      * @var array<string, int>
@@ -282,5 +284,25 @@ class Statement implements StatementInterface
     public function queryString(): string
     {
         return $this->statement->queryString;
+    }
+
+    /**
+     * Get the inner iterator
+     *
+     * @return \Generator
+     */
+    public function getIterator(): Generator
+    {
+        $this->statement->setFetchMode(PDO::FETCH_ASSOC);
+
+        foreach ($this->statement as $row) {
+            foreach ($this->resultDecorators as $decorator) {
+                $row = $decorator($row);
+            }
+
+            yield $row;
+        }
+
+        $this->closeCursor();
     }
 }
