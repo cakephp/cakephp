@@ -22,6 +22,7 @@ use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
@@ -32,6 +33,7 @@ use Laminas\Diactoros\Response as LaminasResponse;
 use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
@@ -352,5 +354,24 @@ class ServerTest extends TestCase
 
         $request = new ServerRequest();
         $this->assertInstanceOf(ResponseInterface::class, $server->run($request));
+    }
+
+    public function testTerminate(): void
+    {
+        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
+        $app = $this->createMock(HttpApplicationInterface::class);
+        $server = new Server($app);
+
+        $triggered = false;
+        $server->getEventManager()->on(
+            'Server.terminate',
+            function (EventInterface $event, ServerRequestInterface $request, ResponseInterface $response) use (&$triggered) {
+                $triggered = true;
+            }
+        );
+
+        $server->terminate(new ServerRequest(), new Response());
+
+        $this->assertTrue($triggered);
     }
 }

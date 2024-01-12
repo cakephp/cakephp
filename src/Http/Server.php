@@ -140,6 +140,24 @@ class Server implements EventDispatcherInterface
     }
 
     /**
+     * Trigger the Server.terminate event.
+     *
+     * The event is used to do potentially heavy tasks after the response is sent
+     * to the client. Only the PHP FPM server API is able to send a response to
+     * the client while the server's PHP process still performs some tasks. For
+     * other environments the event will be triggered before the response is flushed
+     * to the client and will have no benefit.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @param \Psr\Http\Message\ResponseInterface $response Response instance.
+     * @return void
+     */
+    public function terminate(ServerRequestInterface $request, ResponseInterface $response): void
+    {
+        $this->dispatchEvent('Server.terminate', compact('request', 'response'));
+    }
+
+    /**
      * Get the current application.
      *
      * @return \Cake\Core\HttpApplicationInterface The application that will be run.
