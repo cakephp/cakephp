@@ -86,6 +86,14 @@ class SelectQuery extends Query implements IteratorAggregate
     protected ?iterable $_results = null;
 
     /**
+     * Boolean for tracking whether buffered results
+     * are enabled.
+     *
+     * @var bool
+     */
+    protected bool $useBufferedResults = true;
+
+    /**
      * The Type map for fields in the select clause
      *
      * @var \Cake\Database\TypeMap|null
@@ -758,13 +766,17 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        /** @var \Traversable|array $results */
-        $results = $this->all();
-        if (is_array($results)) {
-            return new ArrayIterator($results);
+        if ($this->useBufferedResults) {
+            /** @var \Traversable|array $results */
+            $results = $this->all();
+            if (is_array($results)) {
+                return new ArrayIterator($results);
+            }
+
+            return $results;
         }
 
-        return $results;
+        return $this->execute();
     }
 
     /**
@@ -817,6 +829,59 @@ class SelectQuery extends Query implements IteratorAggregate
     public function getResultDecorators(): array
     {
         return $this->_resultDecorators;
+    }
+
+    /**
+     * Enables/Disables buffered results.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function enableBufferedResults()
+    {
+        $this->_dirty();
+        $this->useBufferedResults = true;
+
+        return $this;
+    }
+
+    /**
+     * Disables buffered results.
+     *
+     * Disabling buffering will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function disableBufferedResults()
+    {
+        $this->_dirty();
+        $this->useBufferedResults = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether buffered results are enabled/disabled.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return bool
+     */
+    public function isBufferedResultsEnabled(): bool
+    {
+        return $this->useBufferedResults;
     }
 
     /**
