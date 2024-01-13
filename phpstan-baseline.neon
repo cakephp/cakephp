@@ -11,6 +11,16 @@ parameters:
 			path: src/Auth/Storage/StorageInterface.php
 
 		-
+			message: "#^Method Redis\\:\\:connect\\(\\) invoked with 7 parameters, 1\\-6 required\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Method Redis\\:\\:pconnect\\(\\) invoked with 7 parameters, 1\\-5 required\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/ExtractIterator.php
