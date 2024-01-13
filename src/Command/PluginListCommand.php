@@ -46,10 +46,11 @@ class PluginListCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $loadedPluginsCollection = Plugin::getCollection();
-        $config = PluginConfig::getAppConfig();
+        $path = (string)$args->getOption('composer-path');
+        $config = PluginConfig::getAppConfig($path ?: null);
 
         $table = [
-            ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional'],
+            ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional', 'Version'],
         ];
 
         if (empty($config)) {
@@ -63,12 +64,14 @@ class PluginListCommand extends Command
             $onlyDebug = $options['onlyDebug'] ?? false;
             $onlyCli = $options['onlyCli'] ?? false;
             $optional = $options['optional'] ?? false;
+            $version = $options['version'] ?? '';
             $table[] = [
                 $pluginName,
                 $isLoaded ? 'X' : '',
                 $onlyDebug ? 'X' : '',
                 $onlyCli ? 'X' : '',
                 $optional ? 'X' : '',
+                $version,
             ];
         }
         $io->helper('Table')->output($table);
@@ -85,6 +88,9 @@ class PluginListCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription('Displays all currently available plugins.');
+        $parser->addOption('composer-path', [
+            'help' => 'The absolute path to the composer.lock file to retrieve the versions from',
+        ]);
 
         return $parser;
     }
