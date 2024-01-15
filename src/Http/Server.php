@@ -139,14 +139,12 @@ class Server implements EventDispatcherInterface
         $emitter ??= new ResponseEmitter();
         $emitter->emit($response);
 
-        $container = null;
         $request = null;
-        $app = $this->app;
-        if ($app instanceof ContainerApplicationInterface) {
-            $container = $app->getContainer();
-        }
-        if ($container && $container->has(ServerRequest::class)) {
-            $request = $container->get(ServerRequest::class);
+        if ($this->app instanceof ContainerApplicationInterface) {
+            $container = $this->app->getContainer();
+            if ($container && $container->has(ServerRequest::class)) {
+                $request = $container->get(ServerRequest::class);
+            }        
         }
         if (!$request) {
             $request = Router::getRequest();
