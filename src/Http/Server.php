@@ -23,6 +23,7 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
+use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -137,23 +138,19 @@ class Server implements EventDispatcherInterface
     {
         $emitter ??= new ResponseEmitter();
         $emitter->emit($response);
-    }
 
-    /**
-     * Trigger the Server.terminate event.
-     *
-     * The event is used to do potentially heavy tasks after the response is sent
-     * to the client. Only the PHP FPM server API is able to send a response to
-     * the client while the server's PHP process still performs some tasks. For
-     * other environments the event will be triggered before the response is flushed
-     * to the client and will have no benefit.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
-     * @param \Psr\Http\Message\ResponseInterface $response Response instance.
-     * @return void
-     */
-    public function terminate(ServerRequestInterface $request, ResponseInterface $response): void
-    {
+        $container = null;
+        $request = null;
+        $app = $this->app;
+        if ($app instanceof ContainerApplicationInterface) {
+            $container = $app->getContainer();
+        }
+        if ($container && $container->has(ServerRequest::class)) {
+            $request = $container->get(ServerRequest::class);
+        }
+        if (!$request) {
+            $request = Router::getRequest();
+        }
         $this->dispatchEvent('Server.terminate', compact('request', 'response'));
     }
 
