@@ -432,7 +432,7 @@ class CakeRequest implements ArrayAccess {
 		} else {
 			$ipaddr = env('REMOTE_ADDR');
 		}
-		return trim($ipaddr);
+		return trim($ipaddr ?: '');
 	}
 
 /**
@@ -750,7 +750,7 @@ class CakeRequest implements ArrayAccess {
 	public function here($base = true) {
 		$url = $this->here;
 		if (!empty($this->query)) {
-			$url .= '?' . http_build_query($this->query, null, '&');
+			$url .= '?' . http_build_query($this->query, '', '&');
 		}
 		if (!$base) {
 			$url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);

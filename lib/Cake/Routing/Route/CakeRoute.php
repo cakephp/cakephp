@@ -470,7 +470,7 @@ class CakeRoute {
 		//check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
-				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', ($url[$key] ?: ''))) {
 					return false;
 				}
 			}

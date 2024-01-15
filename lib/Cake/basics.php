@@ -248,7 +248,7 @@ if (!function_exists('pluginSplit')) {
  * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
  */
 	function pluginSplit($name, $dotAppend = false, $plugin = null) {
-		if (strpos($name, '.') !== false) {
+		if (strpos($name ?: '', '.') !== false) {
 			$parts = explode('.', $name, 2);
 			if ($dotAppend) {
 				$parts[0] .= '.';
