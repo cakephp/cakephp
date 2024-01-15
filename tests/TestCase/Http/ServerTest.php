@@ -33,7 +33,6 @@ use Laminas\Diactoros\Response as LaminasResponse;
 use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
