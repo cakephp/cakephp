@@ -150,7 +150,7 @@ class Server implements EventDispatcherInterface
         $request = null;
         if ($this->app instanceof ContainerApplicationInterface) {
             $container = $this->app->getContainer();
-            if ($container && $container->has(ServerRequest::class)) {
+            if ($container->has(ServerRequest::class)) {
                 $request = $container->get(ServerRequest::class);
             }
         }
