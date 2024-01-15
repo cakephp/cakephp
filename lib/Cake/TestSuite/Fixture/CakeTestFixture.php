@@ -22,6 +22,7 @@ App::uses('CakeSchema', 'Model');
  *
  * @package       Cake.TestSuite.Fixture
  */
+#[\AllowDynamicProperties]
 class CakeTestFixture {
 
 /**
