@@ -25,6 +25,7 @@
  * @package       Cake.Utility
  * @since CakePHP(tm) v 2.0
  */
+#[\AllowDynamicProperties]
 abstract class ObjectCollection {
 
 /**
