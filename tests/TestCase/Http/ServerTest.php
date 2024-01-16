@@ -33,7 +33,6 @@ use Laminas\Diactoros\Response as LaminasResponse;
 use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\MiddlewareApplication;
 
 require_once __DIR__ . '/server_mocks.php';
@@ -356,21 +355,29 @@ class ServerTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $server->run($request));
     }
 
-    public function testTerminate(): void
+    public function testTerminateEvent(): void
     {
-        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
-        $app = $this->createMock(HttpApplicationInterface::class);
+        $request = new ServerRequest();
+        $app = new MiddlewareApplication($this->config);
+        $app->getContainer()->add(ServerRequest::class, $request);
         $server = new Server($app);
 
         $triggered = false;
         $server->getEventManager()->on(
             'Server.terminate',
-            function (EventInterface $event, ServerRequestInterface $request, ResponseInterface $response) use (&$triggered) {
+            function ($event, $request, $response) use (&$triggered) {
                 $triggered = true;
+                $this->assertInstanceOf(ServerRequest::class, $request);
+                $this->assertInstanceOf(Response::class, $response);
             }
         );
 
-        $server->terminate(new ServerRequest(), new Response());
+        $emitter = $this->getMockBuilder(ResponseEmitter::class)->getMock();
+        $emitter->expects($this->once())
+            ->method('emit')
+            ->willReturn(true);
+
+        $server->emit(new Response(), $emitter);
 
         $this->assertTrue($triggered);
     }
