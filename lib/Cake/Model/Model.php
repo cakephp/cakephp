@@ -1978,7 +1978,7 @@ class Model extends CakeObject implements CakeEventListener {
 		$this->_clearCache();
 		$this->validationErrors = array();
 		$this->whitelist = $_whitelist;
-		$this->data = false;
+		$this->data = [];
 
 		return $success;
 	}
