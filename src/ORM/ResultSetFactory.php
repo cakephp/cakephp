@@ -37,12 +37,19 @@ class ResultSetFactory
      * @param array $results Results array.
      * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
-    public function createResultSet(SelectQuery $query, array $results): ResultSet
+    public function createResultSet(SelectQuery $query, iterable $results, bool $bufferedResults = true): ResultSet
     {
         $data = $this->collectData($query);
 
-        foreach ($results as $i => $row) {
-            $results[$i] = $this->groupResult($row, $data);
+        if (is_array($results)) {
+            foreach ($results as $i => $row) {
+                $results[$i] = $this->groupResult($row, $data);
+            }
+        } else {
+            $results = (new Collection($results))
+                ->map(function ($row) use ($data) {
+                    return $this->groupResult($row, $data);
+                });
         }
 
         return new ResultSet($results);

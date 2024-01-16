@@ -1952,6 +1952,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($table);
         $query
             ->select()
+            ->disableBufferedResults()
             ->contain([
                 'articles' => function ($q) {
                     return $q->where(['articles.id' => 1]);

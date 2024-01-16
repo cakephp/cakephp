@@ -1584,11 +1584,16 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        $results = parent::all();
-        if (!is_array($results)) {
-            $results = iterator_to_array($results);
+        if ($this->useBufferedResults) {
+            $results = parent::all();
+            if (!is_array($results)) {
+                $results = iterator_to_array($results);
+            }
+            $results = $this->getEagerLoader()->loadExternal($this, $results);
+        } else {
+            $statement = $this->execute();
+            $results = $this->getEagerLoader()->loadExternalUnbuffered($this, $statement);
         }
-        $results = $this->getEagerLoader()->loadExternal($this, $results);
 
         return $this->resultSetFactory()->createResultSet($this, $results);
     }
