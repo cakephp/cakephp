@@ -1,6 +1,10 @@
 includes:
 	- phpstan-baseline.neon
 
+rules:
+    - Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
+    - Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
+
 parameters:
 	level: 8
 	checkMissingIterableValueType: false
