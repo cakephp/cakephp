@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Query;
 
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
@@ -457,5 +460,44 @@ class UpdateQueryTest extends TestCase
         $comment = $result->fetchAll('assoc')[0]['comment'];
         $result->closeCursor();
         $this->assertSame(['a' => 'b', 'c' => true], $comment);
+    }
+
+    /**
+     * Test jsonValue() Expression
+     */
+    public function testJsonValue(): void
+    {
+        $skip = false;
+        $driver = $this->connection->getDriver();
+        $version = $this->connection->getDriver()->version();
+        if ($driver instanceof Postgres && version_compare($version, '12.0.0', '<')) {
+            $skip == true;
+        } elseif ($driver instanceof Mysql && version_compare($version, '8.0.21', '<')) {
+            $skip == true;
+        } elseif ($driver instanceof Sqlserver && version_compare($version, '13', '<')) {
+            $skip == true;
+        } elseif ($driver instanceof Sqlite && version_compare($version, '3.19', '<')) {
+            $skip == true;
+        }
+        $this->skipIf($skip, 'The current database backend does not support JSON value operations');
+
+        $query = new UpdateQuery($this->connection);
+        $query
+            ->update('comments')
+            ->set('comment', ['a' => ['a1' => 'b1'], 'c' => true, 'scores' => [25, 36, 48]], 'json')
+            ->where(['id' => 1]);
+        $query->execute()->closeCursor();
+
+        $query = new SelectQuery($this->connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1])
+            ->getSelectTypeMap()->setTypes(['score' => 'integer']);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc')[0]['score'];
+        $result->closeCursor();
+        $this->assertSame(36, $comment);
     }
 }
