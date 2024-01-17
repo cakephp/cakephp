@@ -746,6 +746,58 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Same test as @see testOneBelongsToManyWithNestedAssociations
+     * just without using dot notation in the marshalling process
+     *
+     * @return void
+     */
+    public function testOneBelongsToManyWithNestedAssociationsWithoutDotNotation(): void
+    {
+        $this->tags->belongsToMany('Articles');
+        $data = [
+            'name' => 'new tag',
+            'articles' => [
+                // This nested article exists, and we want to update it.
+                [
+                    'id' => 1,
+                    'title' => 'New tagged article',
+                    'body' => 'New tagged article',
+                    'user' => [
+                        'id' => 1,
+                        'username' => 'newuser',
+                    ],
+                    'comments' => [
+                        ['comment' => 'New comment', 'user_id' => 1],
+                        ['comment' => 'Second comment', 'user_id' => 1],
+                    ],
+                ],
+            ],
+        ];
+        $marshaller = new Marshaller($this->tags);
+        $tag = $marshaller->one($data, ['associated' => ['Articles' => [ 'associated' => ['Users', 'Comments']]]]);
+
+        $this->assertNotEmpty($tag->articles);
+        $this->assertCount(1, $tag->articles);
+        $this->assertTrue($tag->isDirty('articles'), 'Updated prop should be dirty');
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]);
+        $this->assertSame('New tagged article', $tag->articles[0]->title);
+        $this->assertFalse($tag->articles[0]->isNew());
+
+        $this->assertNotEmpty($tag->articles[0]->user);
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->user);
+        $this->assertTrue($tag->articles[0]->isDirty('user'), 'Updated prop should be dirty');
+        $this->assertSame('newuser', $tag->articles[0]->user->username);
+        $this->assertTrue($tag->articles[0]->user->isNew());
+
+        $this->assertNotEmpty($tag->articles[0]->comments);
+        $this->assertCount(2, $tag->articles[0]->comments);
+        $this->assertTrue($tag->articles[0]->isDirty('comments'), 'Updated prop should be dirty');
+        $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[0]);
+        $this->assertTrue($tag->articles[0]->comments[0]->isNew());
+        $this->assertTrue($tag->articles[0]->comments[1]->isNew());
+    }
+
+    /**
      * Test belongsToMany association with mixed data and _joinData
      */
     public function testBelongsToManyAddingNewExisting(): void
@@ -2046,6 +2098,70 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $article = $this->articles->get(1, ...['associated' => 'Tags']);
         $result = $marshall->merge($article, $data, ['associated' => ['Tags._joinData.Users']]);
+
+        $this->assertTrue($result->isDirty('tags'));
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData->user);
+
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]->_joinData->user);
+        $this->assertFalse($result->tags[0]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertFalse($result->tags[1]->isNew(), 'Should not be new, as id is in db.');
+        $this->assertSame(1, $result->tags[0]->id);
+        $this->assertSame(2, $result->tags[1]->id);
+
+        $this->assertSame(1, $result->tags[0]->_joinData->active);
+        $this->assertSame(0, $result->tags[1]->_joinData->active);
+
+        $this->assertSame(
+            $data['tags'][0]['_joinData']['user']['username'],
+            $result->tags[0]->_joinData->user->username
+        );
+        $this->assertSame(
+            $data['tags'][1]['_joinData']['user']['username'],
+            $result->tags[1]->_joinData->user->username
+        );
+    }
+
+    /**
+     * Same test as @see testMergeBelongsToManyJoinDataAssociatedWithIds
+     * just without using dot notation in the marshalling process
+     */
+    public function testMergeBelongsToManyJoinDataAssociatedWithIdsWithoutDotNotation(): void
+    {
+        $data = [
+            'title' => 'My title',
+            'tags' => [
+                [
+                    'id' => 1,
+                    '_joinData' => [
+                        'active' => 1,
+                        'user' => ['username' => 'MyLux'],
+                    ],
+                ],
+                [
+                    'id' => 2,
+                    '_joinData' => [
+                        'active' => 0,
+                        'user' => ['username' => 'IronFall'],
+                    ],
+                ],
+            ],
+        ];
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
+        $articlesTags->belongsTo('Users');
+
+        $marshall = new Marshaller($this->articles);
+        $article = $this->articles->get(1, ...['associated' => 'Tags']);
+        $result = $marshall->merge($article, $data, ['associated' => [
+            'Tags' => [
+                'associated' => [
+                    '_joinData' => [
+                        'associated' => ['Users'],
+                    ],
+                ],
+            ],
+        ]]);
 
         $this->assertTrue($result->isDirty('tags'));
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
