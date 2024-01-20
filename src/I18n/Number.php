@@ -231,6 +231,8 @@ class Number
      * - `zero` - The text to use for zero values, can be a string or a number. e.g. 0, 'Free!'
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
+     * - `roundingMode` - Rounding mode to use. e.g. NumberFormatter::ROUND_HALF_UP.
+     *   When not set locale default will be used
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether to replace the currency symbol with the international
      *   currency code.
@@ -365,6 +367,8 @@ class Number
      *    numbers representing money or a NumberFormatter constant.
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
+     * - `roundingMode` - Rounding mode to use. e.g. NumberFormatter::ROUND_HALF_UP.
+     *   When not set locale default will be used
      * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether to replace the currency symbol with the international
      *   currency code.
@@ -406,6 +410,7 @@ class Number
             $options = array_intersect_key($options, [
                 'places' => null,
                 'precision' => null,
+                'roundingMode' => null,
                 'pattern' => null,
                 'useIntlCode' => null,
             ]);
@@ -450,6 +455,10 @@ class Number
 
         if (isset($options['precision'])) {
             $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
+        }
+
+        if (isset($options['roundingMode'])) {
+            $formatter->setAttribute(NumberFormatter::ROUNDING_MODE, $options['roundingMode']);
         }
 
         if (!empty($options['pattern'])) {
