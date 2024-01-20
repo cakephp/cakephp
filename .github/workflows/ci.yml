@@ -227,7 +227,7 @@ jobs:
         uses: ramsey/composer-install@v2
 
       - name: Install PHP tools with phive.
-        run: "phive install --trust-gpg-keys '${PHIVE_KEYS}'"
+        run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
       - name: Run phpcs
         if: always()
