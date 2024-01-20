@@ -607,13 +607,6 @@ trait CollectionTrait
 
             if (!$options['groupPath']) {
                 $mapKey = $rowKey($value, $key);
-                if ($mapKey === null) {
-                    throw new InvalidArgumentException(
-                        'Cannot index by path that does not exist or contains a null value. ' .
-                        'Use a callback to return a default value for that path.'
-                    );
-                }
-
                 if ($mapKey instanceof BackedEnum) {
                     $mapKey = $mapKey->value;
                 } elseif ($mapKey instanceof UnitEnum) {
@@ -626,23 +619,8 @@ trait CollectionTrait
             }
 
             $key = $options['groupPath']($value, $key);
-            if ($key === null) {
-                throw new InvalidArgumentException(
-                    'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
-                );
-            }
-
-            $mapKey = $rowKey($value, $key);
-            if ($mapKey === null) {
-                throw new InvalidArgumentException(
-                    'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
-                );
-            }
-
             $mapReduce->emitIntermediate(
-                [$mapKey => $rowVal($value, $key)],
+                [$rowKey($value, $key) => $rowVal($value, $key)],
                 $key
             );
         };

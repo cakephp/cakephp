@@ -1287,6 +1287,7 @@ class CollectionTest extends TestCase
         ]))->combine('type', 'amount');
     }
 
+    /* Existing behavior is not correct, throws exception in 5.1
     public function testCombineNullKey(): void
     {
         $items = [
@@ -1295,10 +1296,14 @@ class CollectionTest extends TestCase
             ['id' => 3, 'name' => 'baz', 'parent' => 'a'],
         ];
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
-        (new Collection($items))->combine('id', 'name');
+        $expected = [
+            1 => 'bar',
+            3 => 'baz',
+        ];
+        $result = (new Collection($items))->combine('id', 'name')->toArray();
+        $this->assertSame($expected, $result);
     }
+    */
 
     public function testCombineNullGroup(): void
     {
@@ -1308,9 +1313,19 @@ class CollectionTest extends TestCase
             ['id' => 3, 'name' => 'baz', 'parent' => null],
         ];
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot group by path that does not exist or contains a null value');
-        (new Collection($items))->combine('id', 'name', 'parent');
+        $expected = [
+            'a' => [
+                1 => 'foo',
+            ],
+            'b' => [
+                2 => 'bar',
+            ],
+            '' => [
+                3 => 'baz',
+            ],
+        ];
+        $result = (new Collection($items))->combine('id', 'name', 'parent')->toArray();
+        $this->assertSame($expected, $result);
     }
 
     public function testCombineGroupNullKey(): void
@@ -1321,9 +1336,17 @@ class CollectionTest extends TestCase
             ['id' => null, 'name' => 'baz', 'parent' => 'a'],
         ];
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
-        (new Collection($items))->combine('id', 'name', 'parent');
+        $expected = [
+            'a' => [
+                1 => 'foo',
+                '' => 'baz',
+            ],
+            'b' => [
+                2 => 'bar',
+            ],
+        ];
+        $result = (new Collection($items))->combine('id', 'name', 'parent')->toArray();
+        $this->assertSame($expected, $result);
     }
 
     /**
