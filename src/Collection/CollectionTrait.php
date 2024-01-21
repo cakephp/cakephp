@@ -33,6 +33,7 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\UniqueIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
+use Generator;
 use InvalidArgumentException;
 use Iterator;
 use LimitIterator;
@@ -83,7 +84,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
+        $callback ??= function ($v): bool {
             return (bool)$v;
         };
 
@@ -95,7 +96,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v, $k, $i) {
+        $callback ??= function ($v, $k, $i): bool {
             return (bool)$v;
         };
 
@@ -466,7 +467,7 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $length) {
+        $generator = function ($iterator, $length): Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -766,7 +767,7 @@ trait CollectionTrait
      */
     public function lazy(): CollectionInterface
     {
-        $generator = function () {
+        $generator = function (): Generator {
             foreach ($this->unwrap() as $k => $v) {
                 yield $k => $v;
             }

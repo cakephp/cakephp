@@ -499,7 +499,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function equalFields(string $leftField, string $rightField)
     {
-        $wrapIdentifier = function ($field) {
+        $wrapIdentifier = function ($field): \Cake\Database\ExpressionInterface {
             if ($field instanceof ExpressionInterface) {
                 return $field;
             }

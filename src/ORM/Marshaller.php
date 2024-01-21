@@ -106,13 +106,13 @@ class Marshaller
                 $nested['forceNew'] = $options['forceNew'];
             }
             if (isset($options['isMerge'])) {
-                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested) {
+                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
                 };
             } else {
-                $callback = function ($value, $entity) use ($assoc, $nested) {
+                $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => []];
 
                     return $this->_marshalAssociation($assoc, $value, $options);
