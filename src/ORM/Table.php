@@ -2337,6 +2337,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        /** @var \Cake\Datasource\EntityInterface|null $failed */
         $failed = null;
         try {
             $this->getConnection()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.15.0@5c774aca4746caf3d239d9c8cadb9f882ca29352">
+<files psalm-version="5.20.0@3f284e96c9d9be6fe6b15c79416e1d1903dcfef4">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
@@ -23,11 +23,6 @@
       <code>int|false</code>
       <code>int|false</code>
     </InvalidReturnType>
-  </file>
-  <file src="src/Database/Query.php">
-    <UnusedPsalmSuppress>
-      <code>InvalidArrayOffset</code>
-    </UnusedPsalmSuppress>
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
     <MoreSpecificImplementedParamType>
@@ -154,6 +149,11 @@
       <code>new AssertionFailedError($message)</code>
     </InternalMethod>
   </file>
+  <file src="src/TestSuite/TestCase.php">
+    <UndefinedVariable>
+      <code>$previousHandler</code>
+    </UndefinedVariable>
+  </file>
   <file src="src/Utility/Filesystem.php">
     <TooManyTemplateParams>
       <code>$iterator</code>
@@ -176,14 +176,9 @@
       <code><![CDATA[array{name: string, file: string, paths: list<string>}]]></code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/View/HelperRegistry.php">
-    <UnusedPsalmSuppress>
-      <code>NoValue</code>
-    </UnusedPsalmSuppress>
-  </file>
-  <file src="src/View/Widget/RadioWidget.php">
-    <UnusedPsalmSuppress>
-      <code>TypeDoesNotContainType</code>
-    </UnusedPsalmSuppress>
+  <file src="src/View/Helper/PaginatorHelper.php">
+    <TypeDoesNotContainType>
+      <code><![CDATA[empty($this->_config['options']['url'])]]></code>
+    </TypeDoesNotContainType>
   </file>
 </files>
