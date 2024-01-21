@@ -106,7 +106,13 @@ class Marshaller
                 $nested['forceNew'] = $options['forceNew'];
             }
             if (isset($options['isMerge'])) {
-                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested): array|EntityInterface|null {
+                $callback = function (
+                    $value,
+                    EntityInterface $entity
+                ) use (
+                    $assoc,
+                    $nested
+                ): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
