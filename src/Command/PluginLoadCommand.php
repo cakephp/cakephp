@@ -77,7 +77,6 @@ class PluginLoadCommand extends Command
         try {
             Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
-            /** @psalm-suppress InvalidArgument */
             if (empty($options['optional'])) {
                 $io->err($e->getMessage());
                 $io->err('Ensure you have the correct spelling and casing.');
