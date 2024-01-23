@@ -168,7 +168,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $cache = $this->_cacheConfig($this->action, $template);
         }
 
-        $render = function () use ($template) {
+        $render = function () use ($template): string {
             try {
                 $this->dispatchEvent('Cell.beforeAction', [$this, $this->action, $this->args]);
                 $reflect = new ReflectionMethod($this, $this->action);
