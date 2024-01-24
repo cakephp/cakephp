@@ -19,6 +19,7 @@ namespace Cake\Core;
 use League\Container\DefinitionContainerInterface;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use LogicException;
 
 /**
  * Container ServiceProvider
@@ -112,6 +113,10 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      */
     public function provides(string $id): bool
     {
+        if (!$this->provides) {
+            throw new LogicException('The property `$provides` should contain a list with service ids for this service provider');
+        }
+
         return in_array($id, $this->provides, true);
     }
 
