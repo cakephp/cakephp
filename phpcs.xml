@@ -6,7 +6,7 @@
     <file>src/</file>
     <file>tests/</file>
 
-    <rule ref="CakePHP" />
+    <rule ref="CakePHP"/>
 
     <arg value="s"/>
     <!-- pretty sure this is a bug in slevomat -->

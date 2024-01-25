@@ -38,5 +38,10 @@
         "psr-4": {
             "Cake\\Database\\": "."
         }
+    },
+    "require-dev": {
+        "cakephp/i18n": "^5.0",
+        "cakephp/log": "^5.0",
+        "phpstan/phpstan": "^1.10"
     }
 }
