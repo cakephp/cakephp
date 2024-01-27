@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosDate;
 use Cake\Database\Type\DateTimeType;
+use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
@@ -200,6 +201,10 @@ class DateTimeTypeTest extends TestCase
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2014-06-04 18:36:35', $result);
+
+        $date = new Date();
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertSame('2024-01-27 00:00:00', $result);
     }
 
     /**
