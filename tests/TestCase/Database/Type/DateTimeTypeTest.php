@@ -202,7 +202,7 @@ class DateTimeTypeTest extends TestCase
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2014-06-04 18:36:35', $result);
 
-        $date = new Date();
+        $date = new Date('2024-01-27');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2024-01-27 00:00:00', $result);
     }
