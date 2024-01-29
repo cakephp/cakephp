@@ -2020,6 +2020,63 @@ class HashTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
+    public function testInsertArrayAccess(): void
+    {
+        $testObject = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+
+        $a = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+
+        $result = Hash::insert($a, 'pages.1.vars.new', 1);
+        $expected = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertSame(['title' => 'page title', 'new' => 1], $testObject->getArrayCopy()['vars']);
+
+        $result = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+        $result = Hash::insert($result, 'vars', 1);
+        $expected = [
+            'name' => 'about',
+            'vars' => 1,
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+
+        $a = new ArrayObject([
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+            ],
+        ]);
+
+        $result = Hash::insert($a, '{n}[name=files]', 'new');
+        $expected = [
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+                0 => 'new',
+            ],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+    }
+
     /**
      * Test remove() method.
      */
@@ -2169,6 +2226,59 @@ class HashTest extends TestCase
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertSame($expected, $result);
+    }
+
+    public function testRemoveArrayAccess(): void
+    {
+        $testObject = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+
+        $a = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+
+        $result = Hash::remove($a, 'pages.1.vars');
+        $expected = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertSame(['name' => 'about'], $testObject->getArrayCopy());
+
+        $result = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+        $result = Hash::remove($result, 'vars.title');
+        $expected = [
+            'name' => 'about',
+            'vars' => [],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+
+        $a = new ArrayObject([
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+            ],
+        ]);
+
+        $result = Hash::remove($a, '{n}[name=files]');
+        $expected = [
+            0 => [
+                'name' => 'pages',
+            ],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
     }
 
     /**
