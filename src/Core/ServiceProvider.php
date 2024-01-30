@@ -114,7 +114,9 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     public function provides(string $id): bool
     {
         if (!$this->provides) {
-            throw new LogicException('The property `$provides` should contain a list with service ids for this service provider');
+            throw new LogicException(
+                'The property `$provides` should contain a list with service ids for this service provider'
+            );
         }
 
         return in_array($id, $this->provides, true);

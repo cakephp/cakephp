@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
-use TestApp\ServiceProvider\PersonServiceProvider;
 use TestApp\ServiceProvider\EmptyServiceProvider;
+use TestApp\ServiceProvider\PersonServiceProvider;
 use LogicException;
 
 /**
