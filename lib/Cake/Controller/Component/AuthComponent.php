@@ -323,7 +323,7 @@ class AuthComponent extends Component {
  * @return bool True if action is accessible without authentication else false
  */
 	protected function _isAllowed(Controller $controller) {
-		$action = strtolower($controller->request->params['action'] ?: '');
+		$action = strtolower($controller->request->params['action'] ?? '');
 		if (in_array($action, array_map('strtolower', $this->allowedActions))) {
 			return true;
 		}

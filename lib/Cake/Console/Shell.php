@@ -591,7 +591,7 @@ class Shell extends CakeObject {
 			$this->_stop(self::CODE_ERROR);
 			return self::CODE_ERROR;
 		}
-		$result = trim($result ?: '');
+		$result = trim($result ?? '');
 
 		if ($default !== null && ($result === '' || $result === null)) {
 			return $default;
