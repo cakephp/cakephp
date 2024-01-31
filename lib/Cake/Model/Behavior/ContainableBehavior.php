@@ -370,18 +370,19 @@ class ContainableBehavior extends ModelBehavior {
  */
 	public function fieldDependencies(Model $Model, $map, $fields = array()) {
 		if ($fields === false) {
+			$alt_fields = [];
 			foreach ($map as $parent => $children) {
 				foreach ($children as $type => $bindings) {
 					foreach ($bindings as $dependency) {
 						if ($type === 'hasAndBelongsToMany') {
-							$fields[$parent][] = '--primaryKey--';
+							$alt_fields[$parent][] = '--primaryKey--';
 						} elseif ($type === 'belongsTo') {
-							$fields[$parent][] = $dependency . '.--primaryKey--';
+							$alt_fields[$parent][] = $dependency . '.--primaryKey--';
 						}
 					}
 				}
 			}
-			return $fields;
+			return $alt_fields;
 		}
 		if (empty($map[$Model->alias])) {
 			return $fields;

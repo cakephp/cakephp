@@ -344,7 +344,7 @@ class Mysql extends DboSource {
 		}
 		$table = $this->fullTableName($model);
 
-		$fields = false;
+		$fields = [];
 		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $table);
 		if (!$cols) {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));

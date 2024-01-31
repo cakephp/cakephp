@@ -21,6 +21,7 @@
  *
  * @package Cake.Event
  */
+#[\AllowDynamicProperties]
 class CakeEvent {
 
 /**
