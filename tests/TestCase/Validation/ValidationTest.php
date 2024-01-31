@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -1527,7 +1528,6 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::time('00:00'));
         $this->assertTrue(Validation::time('23:59'));
-        $this->assertFalse(Validation::time('24:00'));
         $this->assertTrue(Validation::time('12:00'));
         $this->assertTrue(Validation::time('12:01'));
         $this->assertTrue(Validation::time('12:01am'));
@@ -1536,8 +1536,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1 pm'));
         $this->assertTrue(Validation::time('1 PM'));
         $this->assertTrue(Validation::time('01:00'));
-        $this->assertFalse(Validation::time('1:00'));
         $this->assertTrue(Validation::time('1:00pm'));
+        $this->assertTrue(Validation::time(new ChronosTime()));
+
+        $this->assertFalse(Validation::time('1:00'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
         $this->assertFalse(Validation::time('00'));
@@ -1546,6 +1548,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::time('9'));
         $this->assertFalse(Validation::time('10'));
         $this->assertFalse(Validation::time('23'));
+        $this->assertFalse(Validation::time('24:00'));
     }
 
     /**
@@ -1644,6 +1647,8 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime(): void
     {
+        $this->assertTrue(Validation::localizedTime(new ChronosTime()));
+
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
         $this->assertFalse(Validation::localizedTime(1, 'date'));
