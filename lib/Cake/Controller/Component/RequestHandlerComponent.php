@@ -531,7 +531,7 @@ class RequestHandlerComponent extends Component {
 			return false;
 		}
 
-		list($contentType) = explode(';', env('CONTENT_TYPE'));
+		list($contentType) = explode(';', env('CONTENT_TYPE') ?? '');
 		if ($contentType === '') {
 			list($contentType) = explode(';', CakeRequest::header('CONTENT_TYPE'));
 		}

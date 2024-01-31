@@ -552,7 +552,7 @@ class Validation {
  * @return bool Success
  */
 	public static function maxLength($check, $max) {
-		return mb_strlen($check) <= $max;
+		return mb_strlen($check ?? '') <= $max;
 	}
 
 /**

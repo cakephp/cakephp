@@ -234,9 +234,9 @@ class CakeException extends CakeBaseException {
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
-			$message = __d('cake_dev', $this->_messageTemplate, $message);
+			$message = __d('cake_dev', $this->_messageTemplate, $message ?? '');
 		}
-		parent::__construct($message, $code);
+		parent::__construct($message ?? '', $code);
 	}
 
 /**

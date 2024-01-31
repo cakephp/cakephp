@@ -137,7 +137,7 @@ class CakeText {
  * Available $options are:
  *
  * - before: The character or string in front of the name of the variable placeholder (Defaults to `:`)
- * - after: The character or string after the name of the variable placeholder (Defaults to null)
+ * - after: The character or string after the name of the variable placeholder (Defaults to '' (empty string))
  * - escape: The character or string used to escape the before character / string (Defaults to `\`)
  * - format: A regex to use for matching variable placeholders. Default is: `/(?<!\\)\:%s/`
  *   (Overwrites before, after, breaks escape / clean)
@@ -151,7 +151,7 @@ class CakeText {
  */
 	public static function insert($str, $data, $options = array()) {
 		$defaults = array(
-			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+			'before' => ':', 'after' => '', 'escape' => '\\', 'format' => null, 'clean' => false
 		);
 		$options += $defaults;
 		$format = $options['format'];

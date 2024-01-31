@@ -1375,7 +1375,7 @@ class CakeEmail {
  * @return array Wrapped message
  */
 	protected function _wrap($message, $wrapLength = CakeEmail::LINE_LENGTH_MUST) {
-		if (strlen($message) === 0) {
+		if (strlen($message ?? '') === 0) {
 			return array('');
 		}
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
