@@ -512,12 +512,15 @@ class DboSource extends DataSource {
 			}
 			return $query;
 		} catch (PDOException $e) {
+			// PDOException::getCode() returns a string, however, this code is contained in
+			// PDOException::getMessage(), e.g.: SQLSTATE[42S02]: Base table or view not found: ...
+			$cake_pdo_exception = new \CakePDOException($e->getMessage(), 0, $e);
 			if (isset($query->queryString)) {
-				$e->queryString = $query->queryString;
+				$cake_pdo_exception->queryString = $query->queryString;
 			} else {
-				$e->queryString = $sql;
+				$cake_pdo_exception->queryString = $sql;
 			}
-			throw $e;
+			throw $cake_pdo_exception;
 		}
 	}
 
