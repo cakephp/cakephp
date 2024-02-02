@@ -319,6 +319,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue] = $value;
         }
 
