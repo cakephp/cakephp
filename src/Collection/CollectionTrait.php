@@ -623,7 +623,7 @@ trait CollectionTrait
                 if ($mapKey instanceof BackedEnum) {
                     $mapKey = $mapKey->value;
                 } elseif ($mapKey instanceof UnitEnum) {
-                    throw new InvalidArgumentException('Cannot index by path that is a non-backed enum.');
+                    $mapKey = $mapKey->name;
                 }
 
                 $mapReduce->emit($rowVal($value, $key), $mapKey);

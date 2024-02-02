@@ -1328,12 +1328,11 @@ class CollectionTest extends TestCase
 
     public function testCombineWithNonBackedEnum(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot index by path that is a non-backed enum.');
-        (new Collection([
+        $collection = (new Collection([
             ['amount' => 10, 'type' => NonBacked::Basic],
-            ['amount' => 2, 'type' => NonBacked::Basic],
+            ['amount' => 2, 'type' => NonBacked::Advanced],
         ]))->combine('type', 'amount');
+        $this->assertEquals(['Basic' => 10, 'Advanced' => 2], $collection->toArray());
     }
 
     public function testCombineNullKey(): void
