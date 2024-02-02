@@ -17,4 +17,5 @@ namespace TestApp\Model\Enum;
 enum NonBacked
 {
     case Basic;
+    case Advanced;
 }

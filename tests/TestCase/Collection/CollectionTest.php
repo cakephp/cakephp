@@ -709,9 +709,33 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests grouping by a enum key
+     * Tests grouping by an enum key
      */
     public function testGroupByEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+            ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+            ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('thing');
+        $expected = [
+            NonBacked::Basic->name => [
+                ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+                ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
+            ],
+            NonBacked::Advanced->name => [
+                ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+            ],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
+     * Tests grouping by a backed enum key
+     */
+    public function testGroupByBackedEnum(): void
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
