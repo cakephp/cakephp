@@ -36,6 +36,7 @@ use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
+use TestApp\Model\Enum\Priority;
 use function Cake\Collection\collection;
 
 /**
@@ -702,6 +703,30 @@ class CollectionTest extends TestCase
             ],
             11 => [
                 ['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
+            ],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
+     * Tests grouping by a enum key
+     */
+    public function testGroupByEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+            ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+            ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('thing');
+        $expected = [
+            Priority::Medium->value => [
+                ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+                ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
+            ],
+            Priority::High->value => [
+                ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
             ],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));

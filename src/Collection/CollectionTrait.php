@@ -292,6 +292,10 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->value;
+            }
+
             $group[$pathValue][] = $value;
         }
 
