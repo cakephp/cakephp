@@ -132,7 +132,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->select('col')
             ->from('cte');
 
-        $query = $query->with(null);
+        $query = $query->with(null, true);
         $this->assertEqualsSql(
             'SELECT col FROM cte',
             $query->sql(new ValueBinder())
