@@ -171,6 +171,16 @@ class Marshaller
      * ]);
      * ```
      *
+     *  ```
+     *  $result = $marshaller->one($data, [
+     *    'associated' => [
+     *      'Tags' => [
+     *        'associated' => ['DeeperAssoc1', 'DeeperAssoc2']
+     *      ]
+     *    ]
+     *  ]);
+     *  ```
+     *
      * @param array<string, mixed> $data The data to hydrate.
      * @param array<string, mixed> $options List of options
      * @return \Cake\Datasource\EntityInterface
@@ -520,6 +530,16 @@ class Marshaller
      * ```
      * $result = $marshaller->merge($entity, $data, [
      *   'associated' => ['Tags' => ['onlyIds' => true]]
+     * ]);
+     * ```
+     *
+     * ```
+     * $result = $marshaller->merge($entity, $data, [
+     *   'associated' => [
+     *     'Tags' => [
+     *       'associated' => ['DeeperAssoc1', 'DeeperAssoc2']
+     *     ]
+     *   ]
      * ]);
      * ```
      *

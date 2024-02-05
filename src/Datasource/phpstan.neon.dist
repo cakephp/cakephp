@@ -1,0 +1,15 @@
+parameters:
+	level: 8
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	paths:
+		- ./
+	excludePaths:
+		- vendor/
+	ignoreErrors:
+		- "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
+		- '#Class Cake\\Database\\Driver\\.+ not found.#'
+		- '#Class Cake\\Database\\Connection not found.#'

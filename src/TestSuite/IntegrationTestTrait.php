@@ -666,7 +666,7 @@ trait IntegrationTestTrait
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
 
             $keys = array_map(function ($field) {
-                return preg_replace('/(\.\d+)+$/', '', $field);
+                return preg_replace('/(\.\d+)+$/', '', (string)$field);
             }, array_keys(Hash::flatten($fields)));
 
             $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);

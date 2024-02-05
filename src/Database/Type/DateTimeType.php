@@ -136,6 +136,10 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value = new $class('@' . $value);
         }
 
+        if ($value instanceof ChronosDate) {
+            return $value->format($this->_format);
+        }
+
         if (!$value instanceof DateTimeInterface) {
             return null;
         }

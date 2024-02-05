@@ -1,0 +1,17 @@
+parameters:
+	level: 8
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	paths:
+		- ./
+	excludePaths:
+	    - BaseApplication.php
+	    - Runner.php
+	    - Session.php
+	    - vendor/
+	ignoreErrors:
+		- '#Unsafe usage of new static\(\).#'
+		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"

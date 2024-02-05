@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use BackedEnum;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
 use Cake\Utility\Text;
@@ -596,7 +597,7 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -628,7 +629,7 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (!is_string($check)) {
