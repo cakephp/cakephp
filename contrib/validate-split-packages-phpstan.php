@@ -40,7 +40,6 @@ ksort($packages);
 
 $issues = [];
 foreach ($packages as $path => $package) {
-    // For now, demo only
     if (!file_exists($path . 'phpstan.neon.dist')) {
         continue;
     }
@@ -49,8 +48,12 @@ foreach ($packages as $path => $package) {
     exec('cd ' . $path . ' && composer install && vendor/bin/phpstan analyze ./', $output, $exitCode);
     if ($exitCode !== 0) {
         $code = $exitCode;
+
+        $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
     }
     exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
 }
+
+echo implode(PHP_EOL . PHP_EOL, $issues);
 
 exit($code);
