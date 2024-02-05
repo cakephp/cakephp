@@ -15,3 +15,4 @@ parameters:
 	ignoreErrors:
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
+		- '#Call to static method getRequest\(\) on an unknown class Cake\\Routing\\Router.#'
