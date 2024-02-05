@@ -195,13 +195,13 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets or replace a validation rule
      *
-     * @param string $index name of the rule
-     * @param \Cake\Validation\ValidationRule|array $rule Rule to add to $index
+     * @param string $offset name of the rule
+     * @param \Cake\Validation\ValidationRule|array $value Rule to add to $index
      * @return void
      */
-    public function offsetSet(mixed $index, mixed $rule): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->add($index, $rule);
+        $this->add($offset, $value);
     }
 
     /**

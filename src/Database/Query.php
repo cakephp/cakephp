@@ -746,7 +746,6 @@ abstract class Query implements ExpressionInterface, Stringable
 
         /**
          * @var string $alias
-         * @psalm-suppress InvalidArrayOffset
          */
         return [
             $alias => [

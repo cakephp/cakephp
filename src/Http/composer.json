@@ -46,11 +46,20 @@
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
-        "cakephp/orm": "To use database session storage"
+        "cakephp/orm": "To use database session storage",
+        "paragonie/csp-builder": "To use CspMiddleware"
     },
     "autoload": {
         "psr-4": {
             "Cake\\Http\\": "."
         }
+    },
+    "require-dev": {
+        "cakephp/cache": "^5.0",
+        "cakephp/console": "^5.0",
+        "cakephp/orm": "^5.0",
+        "cakephp/i18n": "^5.0",
+        "paragonie/csp-builder": "^2.3",
+        "phpstan/phpstan": "^1.10"
     }
 }

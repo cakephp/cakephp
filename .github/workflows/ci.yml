@@ -79,7 +79,7 @@ jobs:
       run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
     - name: Cache composer dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
@@ -155,7 +155,7 @@ jobs:
         key: ${{ steps.key-date.outputs.date }}
 
     - name: Cache PHP extensions
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
         key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
@@ -181,7 +181,7 @@ jobs:
       run: echo "dir=$(composer config cache-files-dir)" >> $env:GITHUB_OUTPUT
 
     - name: Cache composer dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
@@ -207,6 +207,10 @@ jobs:
     name: Coding Standard & Static Analysis
     runs-on: ubuntu-22.04
 
+    env:
+      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+      PHPSTAN_TESTS: 1
+
     steps:
       - uses: actions/checkout@v4
 
@@ -224,7 +228,7 @@ jobs:
         uses: ramsey/composer-install@v2
 
       - name: Install PHP tools with phive.
-        run: "phive install --trust-gpg-keys '${{ inputs.phive_keys }}'"
+        run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
       - name: Run phpcs
         if: always()
@@ -239,7 +243,7 @@ jobs:
         run: vendor/bin/phpstan analyse --error-format=github
 
       - name: Run phpstan for tests
-        if: ${{ inputs.check_tests }}
+        if: env.PHPSTAN_TESTS
         run: vendor/bin/phpstan analyse -c tests/phpstan.neon --error-format=github
 
       - name: Run class deprecation aliasing validation script

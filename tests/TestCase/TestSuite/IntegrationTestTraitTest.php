@@ -831,6 +831,20 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test posting to a secured form action.
+     */
+    public function testPostSecuredFormNumericField(): void
+    {
+        $this->enableSecurityToken();
+        $data = [
+            '123456789' => 'Some text',
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
      * Test posting to a secured form action with nested data.
      */
     public function testPostSecuredFormNestedData(): void

@@ -40,7 +40,7 @@ class Route
     /**
      * An array of additional parameters for the Route.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     public array $options = [];
 
@@ -209,7 +209,7 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param list<string> $patterns The patterns to apply to routing elements
+     * @param array<string, string> $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
@@ -250,7 +250,7 @@ class Route
     }
 
     /**
-     * Set the names of parameters that will persisted automatically
+     * Set the names of parameters that will be persisted automatically
      *
      * Persistent parameters allow you to define which route parameters should be automatically
      * included when generating new URLs. You can override persistent parameters

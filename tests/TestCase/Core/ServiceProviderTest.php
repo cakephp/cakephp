@@ -18,9 +18,9 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
+use LogicException;
 use TestApp\ServiceProvider\EmptyServiceProvider;
 use TestApp\ServiceProvider\PersonServiceProvider;
-use LogicException;
 
 /**
  * ServiceProviderTest
