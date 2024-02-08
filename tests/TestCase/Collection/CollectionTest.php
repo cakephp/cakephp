@@ -838,16 +838,14 @@ class CollectionTest extends TestCase
         $items = [
             ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
             ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
-            ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
         ];
         $collection = new Collection($items);
         $grouped = $collection->indexBy(function ($element) {
-            return $element['id'];
+            return $element['thing'];
         });
         $expected = [
-            1 => ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
-            3 => ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
-            2 => ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+            NonBacked::Basic->name => ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+            NonBacked::Advanced->name => ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
@@ -860,16 +858,14 @@ class CollectionTest extends TestCase
         $items = [
             ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
             ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
-            ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
         ];
         $collection = new Collection($items);
         $grouped = $collection->indexBy(function ($element) {
-            return $element['id'];
+            return $element['thing'];
         });
         $expected = [
-            1 => ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
-            3 => ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
-            2 => ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+            Priority::Medium->value => ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+            Priority::High->value => ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
