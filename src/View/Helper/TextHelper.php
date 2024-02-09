@@ -162,10 +162,41 @@ class TextHelper extends Helper
             if (!preg_match('#^[a-z]+\://#i', $url)) {
                 $url = 'http://' . $url;
             }
+
+            $linkOptions = $htmlOptions;
+            unset($htmlOptions['maxLength'], $htmlOptions['stripProtocol'], $htmlOptions['ellipsis']);
+            $link = $this->_prepareLinkLabel($link, $linkOptions);
+
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];
         }
 
         return strtr($text, $replace);
+    }
+
+    /**
+     * Prepares the link label.
+     *
+     * ### Options
+     *
+     * - `stripProtocol` Strips http:// and https:// from the beginning of the link. Default off.
+     * - `maxLength` The maximum length of the link label. Default off.
+     * - `ellipsis` The string to append to the end of the link label. Defaults to UTF8 version.
+     *
+     * @param string $name Link label.
+     * @param array $options<string, mixed> $htmlOptions The options for the generated link label.
+     * @return string Modified link label.
+     */
+    protected function _prepareLinkLabel(string $name, array $options): string
+    {
+        if (isset($options['stripProtocol']) || $options['stripProtocol'] === true) {
+            $name = (string)preg_replace('(^https?://)', '', $name);
+        }
+        if (!empty($options['maxLength']) && mb_strlen($name) > $options['maxLength']) {
+            $name = mb_substr($name, 0, $options['maxLength']);
+            $name .= $options['ellipsis'] ?? '…';
+        }
+
+        return $name;
     }
 
     /**
