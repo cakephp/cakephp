@@ -188,7 +188,7 @@ class TextHelper extends Helper
      */
     protected function _prepareLinkLabel(string $name, array $options): string
     {
-        if (isset($options['stripProtocol']) || $options['stripProtocol'] === true) {
+        if (isset($options['stripProtocol']) && $options['stripProtocol'] === true) {
             $name = (string)preg_replace('(^https?://)', '', $name);
         }
         if (!empty($options['maxLength']) && mb_strlen($name) > $options['maxLength']) {
