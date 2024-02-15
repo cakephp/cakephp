@@ -516,7 +516,7 @@ class CakeResponse {
 			if (ini_get('mbstring.func_overload') & 2 && function_exists('mb_strlen')) {
 				$this->length($offset + mb_strlen($this->_body, '8bit'));
 			} else {
-				$this->length($this->_headers['Content-Length'] = $offset + strlen($this->_body));
+				$this->length($this->_headers['Content-Length'] = $offset + strlen((string)$this->_body));
 			}
 		}
 	}
