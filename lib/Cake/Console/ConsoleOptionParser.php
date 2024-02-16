@@ -76,6 +76,7 @@ App::uses('HelpFormatter', 'Console');
  *
  * @package       Cake.Console
  */
+#[AllowDynamicProperties]
 class ConsoleOptionParser {
 
 /**
