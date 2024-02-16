@@ -499,6 +499,9 @@ class Inflector {
  * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
+		if (is_null($lowerCaseAndUnderscoredWord)) {
+			return '';
+		}
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
 			$result = explode(' ', str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
 			foreach ($result as &$word) {
