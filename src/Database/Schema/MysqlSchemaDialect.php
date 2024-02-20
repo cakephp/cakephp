@@ -119,7 +119,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($length === null && $comment && str_starts_with($comment, '[schema]')) {
             $lengthDefinitionString = trim(mb_substr($comment, strpos($comment, '[schema]') + 8));
             if (str_contains($lengthDefinitionString, ';')) {
-                $separatorPos = strpos($lengthDefinitionString, ';');
+                $separatorPos = (int)strpos($lengthDefinitionString, ';');
                 $lengthDefinitionString = trim(mb_substr($lengthDefinitionString, 0, $separatorPos));
             }
 
