@@ -28,6 +28,7 @@ App::uses('CakeText', 'Utility');
  * @package       Cake.Console
  * @since  CakePHP(tm) v 2.0
  */
+#[AllowDynamicProperties]
 class HelpFormatter {
 
 /**
