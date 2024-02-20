@@ -94,10 +94,11 @@ class MysqlSchemaDialect extends SchemaDialect
      * The returned type will be a type that Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
+     * @param string|null $comment The comment with optional length details for Mysql 8+.
      * @return array<string, mixed> Array of column information.
      * @throws \Cake\Database\Exception\DatabaseException When column type cannot be parsed.
      */
-    protected function _convertColumn(string $column): array
+    protected function _convertColumn(string $column, ?string $comment): array
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (!$matches) {
@@ -113,6 +114,19 @@ class MysqlSchemaDialect extends SchemaDialect
             }
             $length = (int)$length;
             $precision = (int)$precision;
+        }
+
+        if ($length === null && $comment && str_starts_with($comment, '[schema]')) {
+            $lengthDefinitionString = trim(mb_substr($comment, strpos($comment, '[schema]') + 8));
+            if (str_contains($lengthDefinitionString, ';')) {
+                $separatorPos = strpos($lengthDefinitionString, ';');
+                $lengthDefinitionString = trim(mb_substr($lengthDefinitionString, 0, $separatorPos));
+            }
+
+            preg_match('/length:\s*(\d+)\b/', $lengthDefinitionString, $matches);
+            if ($matches) {
+                $length = (int)$matches[1];
+            }
         }
 
         $type = $this->_applyTypeSpecificColumnConversion(
@@ -205,7 +219,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
-        $field = $this->_convertColumn($row['Type']);
+        $field = $this->_convertColumn($row['Type'], $row['Comment']);
         $field += [
             'null' => $row['Null'] === 'YES',
             'default' => $row['Default'],
