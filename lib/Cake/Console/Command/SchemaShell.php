@@ -62,7 +62,7 @@ class SchemaShell extends AppShell {
 			$name = $this->params['name'] = $this->args[0];
 		}
 
-		if (strpos($name, '.')) {
+		if (strpos((string)$name, '.')) {
 			list($this->params['plugin'], $splitName) = pluginSplit($name);
 			$name = $this->params['name'] = $splitName;
 		}
