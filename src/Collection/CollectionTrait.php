@@ -293,6 +293,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue][] = $value;
         }
 
@@ -314,6 +320,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue] = $value;
         }
 
@@ -618,7 +630,7 @@ trait CollectionTrait
                 if ($mapKey instanceof BackedEnum) {
                     $mapKey = $mapKey->value;
                 } elseif ($mapKey instanceof UnitEnum) {
-                    throw new InvalidArgumentException('Cannot index by path that is a non-backed enum.');
+                    $mapKey = $mapKey->name;
                 }
 
                 $mapReduce->emit($rowVal($value, $key), $mapKey);
