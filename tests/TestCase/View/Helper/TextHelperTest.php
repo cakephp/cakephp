@@ -340,6 +340,26 @@ class TextHelperTest extends TestCase
         $expected = 'Text with a partial <a href="http://WWW.cakephp.org"\s*>WWW.cakephp.org</a> &copy; URL';
         $result = $this->Text->autoLinkUrls($text, ['escape' => false]);
         $this->assertMatchesRegularExpression('#^' . $expected . '$#', $result);
+
+        $text = 'Text with a url https://www.example.org/foo-bar-baz/eruierieriu-erjekr and more';
+        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-b…</a> and more';
+        $result = $this->Text->autoLinkUrls($text, ['maxLength' => 30]);
+        $this->assertSame($expected, $result);
+
+        $text = 'Text with a url https://www.example.org/foo-bar-baz/eruierieriu-erjekr and more';
+        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-bar-...</a> and more';
+        $result = $this->Text->autoLinkUrls($text, ['maxLength' => 35, 'ellipsis' => '...']);
+        $this->assertSame($expected, $result);
+
+        $text = 'Text with a url http://www.example.org/foo-bar-baz/ and more';
+        $expected = 'Text with a url <a href="http://www.example.org/foo-bar-baz/">www.example.org/foo-bar-baz/</a> and more';
+        $result = $this->Text->autoLinkUrls($text, ['stripProtocol' => true]);
+        $this->assertSame($expected, $result);
+
+        $text = 'Text with a url https://www.example.org/foo-bar-baz/ and more';
+        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/">www.example.org/foo-bar-baz/</a> and more';
+        $result = $this->Text->autoLinkUrls($text, ['stripProtocol' => true]);
+        $this->assertSame($expected, $result);
     }
 
     /**
