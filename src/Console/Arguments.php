@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\ConsoleException;
+
 /**
  * Provides an interface for interacting with
  * a command's options and arguments.
@@ -145,6 +147,13 @@ class Arguments
     public function getOption(string $name): string|bool|null
     {
         $value = $this->options[$name] ?? null;
+        if (is_array($value)) {
+            throw new ConsoleException(sprintf(
+                'Cannot get multiple values for option `%s`, use `getMultipleOption()` instead.',
+                $name
+            ));
+        }
+
         assert($value === null || is_string($value) || is_bool($value));
 
         return $value;
@@ -158,7 +167,12 @@ class Arguments
     public function getBooleanOption(string $name): ?bool
     {
         $value = $this->options[$name] ?? null;
-        assert($value === null || is_bool($value));
+        if ($value !== null && !is_bool($value)) {
+            throw new ConsoleException(sprintf(
+                'Option `%s` is not of type `bool`, use `getOption()` instead.',
+                $name
+            ));
+        }
 
         return $value;
     }
@@ -171,7 +185,12 @@ class Arguments
     public function getMultipleOption(string $name): ?array
     {
         $value = $this->options[$name] ?? null;
-        assert($value === null || is_array($value));
+        if ($value !== null && !is_array($value)) {
+            throw new ConsoleException(sprintf(
+                'Option `%s` is not of type `array`, use `getOption()` instead.',
+                $name
+            ));
+        }
 
         return $value;
     }
