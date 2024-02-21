@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -459,5 +460,20 @@ class DriverTest extends TestCase
         $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[2]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[3]);
+    }
+
+    public function testQueryException(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->execute('SELECT * FROM non_existent_table');
+    }
+
+    public function testQueryExceptionStatementExecute(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->getDriver()
+            ->execute('SELECT * FROM :foo', ['foo' => 'bar']);
     }
 }

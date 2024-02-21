@@ -21,6 +21,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Log\LoggedQuery;
@@ -254,7 +255,14 @@ abstract class Driver
      */
     public function exec(string $sql): int|false
     {
-        return $this->getPdo()->exec($sql);
+        try {
+            return $this->getPdo()->exec($sql);
+        } catch (PDOException $e) {
+            $e = new QueryException($e->getMessage(), (int)$e->getCode(), $e);
+            $e->setQuery($sql);
+
+            throw $e;
+        }
     }
 
     /**
@@ -310,7 +318,11 @@ abstract class Driver
     protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
         if ($this->logger === null) {
-            $statement->execute($params);
+            try {
+                $statement->execute($params);
+            } catch (PDOException $e) {
+                throw $this->createQueryException($e, $statement, $params);
+            }
 
             return;
         }
@@ -338,8 +350,33 @@ abstract class Driver
         $this->log($statement->queryString(), $logContext);
 
         if ($exception) {
-            throw $exception;
+            throw $this->createQueryException($exception, $statement, $params);
         }
+    }
+
+    /**
+     * Create a QueryException from a PDOException
+     *
+     * @param \PDOException $exception
+     * @param \Cake\Database\StatementInterface $statement
+     * @param array|null $params
+     * @return \Cake\Database\Exception\QueryException
+     */
+    protected function createQueryException(
+        PDOException $exception,
+        StatementInterface $statement,
+        ?array $params = null
+    ): QueryException {
+        $e = new QueryException($exception->getMessage(), (int)$exception->getCode(), $exception);
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext([
+            'query' => $statement->queryString(),
+            'driver' => $this,
+            'params' => $params ?? $statement->getBoundParams(),
+        ]);
+        $e->setQuery($loggedQuery);
+
+        return $e;
     }
 
     /**
@@ -350,7 +387,14 @@ abstract class Driver
      */
     public function prepare(Query|string $query): StatementInterface
     {
-        $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
+        try {
+            $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
+        } catch (PDOException $e) {
+            $exception = new QueryException($e->getMessage(), (int)$e->getCode(), $e);
+            $exception->setQuery($query instanceof Query ? $query->sql() : $query);
+
+            throw $exception;
+        }
 
         $typeMap = null;
         if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {

@@ -22,6 +22,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Database\Exception\QueryException;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -37,7 +38,6 @@ use LogicException;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
-use TestApp\Error\Exception\MyPDOException;
 use TestApp\View\Helper\TestBeforeAfterHelper;
 use TestApp\View\Object\TestObjectWithoutToString;
 use TestApp\View\Object\TestObjectWithToString;
@@ -1087,8 +1087,8 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $error = new MyPDOException();
-        $error->queryString = 'this is sql string';
+        $error = new QueryException();
+        $error->setQuery('this is sql string');
         $exceptions = [$error];
         $message = 'it works';
         $trace = $error->getTrace();
