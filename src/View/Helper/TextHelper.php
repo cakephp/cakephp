@@ -27,7 +27,7 @@ use function Cake\Core\h;
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
- * @method string excerpt(string $text, string $phrase, int $radius = 100, string $ending = '...') See Text::excerpt()
+ * @method string excerpt(string $text, string $phrase, int $radius = 100, string $ending = '…') See Text::excerpt()
  * @method string highlight(string $text, array|string $phrase, array $options = []) See Text::highlight()
  * @method string slug(string $string, array|string $options = []) See Text::slug()
  * @method string tail(string $text, int $length = 100, array $options = []) See Text::tail()
