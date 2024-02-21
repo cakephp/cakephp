@@ -540,7 +540,7 @@ class Text
     public static function tail(string $text, int $length = 100, array $options = []): string
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true,
+            'ellipsis' => '…', 'exact' => true,
         ];
         $options += $default;
         $ellipsis = $options['ellipsis'];
@@ -580,7 +580,7 @@ class Text
     public static function truncate(string $text, int $length = 100, array $options = []): string
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
+            'ellipsis' => '…', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
         if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
@@ -853,7 +853,7 @@ class Text
      * @return string Modified string
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#extracting-an-excerpt
      */
-    public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '...'): string
+    public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '…'): string
     {
         if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);

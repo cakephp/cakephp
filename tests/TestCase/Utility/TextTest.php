@@ -545,15 +545,15 @@ TEXT;
         $text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
         $text10 = 'http://example.com/something/foo:bar';
 
-        $this->assertSame('...', $this->Text->truncate('Hello', 3));
-        $this->assertSame('Hel...', $this->Text->truncate('Hello', 3, ['exact' => false]));
-        $this->assertSame('The quick br...', $this->Text->truncate($text1, 15));
-        $this->assertSame('The quick...', $this->Text->truncate($text1, 15, ['exact' => false]));
+        $this->assertSame('H…', $this->Text->truncate('Hello', 2));
+        $this->assertSame('Hel…', $this->Text->truncate('Hello', 3, ['exact' => false]));
+        $this->assertSame('The quick brow…', $this->Text->truncate($text1, 15));
+        $this->assertSame('The quick…', $this->Text->truncate($text1, 15, ['exact' => false]));
         $this->assertSame('The quick brown fox jumps over the lazy dog', $this->Text->truncate($text1, 100));
-        $this->assertSame('Heiz&ou...', $this->Text->truncate($text2, 10));
-        $this->assertSame('Heiz&ouml;...', $this->Text->truncate($text2, 10, ['exact' => false]));
-        $this->assertSame('<b>&copy; 2005-20...', $this->Text->truncate($text3, 20));
-        $this->assertSame('<IMG src="my...', $this->Text->truncate($text4, 15));
+        $this->assertSame('Heiz&ouml…', $this->Text->truncate($text2, 10));
+        $this->assertSame('Heiz&ouml;…', $this->Text->truncate($text2, 10, ['exact' => false]));
+        $this->assertSame('<b>&copy; 2005-2007…', $this->Text->truncate($text3, 20));
+        $this->assertSame('<IMG src="mypi…', $this->Text->truncate($text4, 15));
         $this->assertSame('0<b>1<', $this->Text->truncate($text5, 6, ['ellipsis' => '']));
         $this->assertSame("The quick brow\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['html' => true]));
         $this->assertSame("The quick\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]));
@@ -567,10 +567,10 @@ TEXT;
         $this->assertSame($text5, $this->Text->truncate($text5, 20, ['ellipsis' => '', 'html' => true]));
         $this->assertSame("<p><strong>Extra dates have been announced for this year's\xe2\x80\xa6</strong></p>", $this->Text->truncate($text6, 48, ['exact' => false, 'html' => true]));
         $this->assertSame($text7, $this->Text->truncate($text7, 255));
-        $this->assertSame('El moño está...', $this->Text->truncate($text7, 15));
-        $this->assertSame('Vive la R' . chr(195) . chr(169) . 'pu...', $this->Text->truncate($text8, 15));
-        $this->assertSame('НОПРСТУ...', $this->Text->truncate($text9, 10));
-        $this->assertSame('http://example.com/somethin...', $this->Text->truncate($text10, 30));
+        $this->assertSame('El moño está e…', $this->Text->truncate($text7, 15));
+        $this->assertSame('Vive la R' . chr(195) . chr(169) . 'publ…', $this->Text->truncate($text8, 15));
+        $this->assertSame('НОПРСТУФХ…', $this->Text->truncate($text9, 10));
+        $this->assertSame('http://example.com/something/…', $this->Text->truncate($text10, 30));
         $this->assertSame('1 <b>2...</b>', $this->Text->truncate('1 <b>2 345</b>', 6, ['exact' => false, 'html' => true, 'ellipsis' => '...']));
         $this->assertSame('&amp;', $this->Text->truncate('&amp;', 1, ['html' => true]));
 
@@ -623,14 +623,14 @@ TEXT;
             'html' => true,
             'exact' => false,
         ]);
-        $expected = '<b>&copy; 2005-2007, Cake Software...</b>';
+        $expected = '<b>&copy; 2005-2007, Cake Software…</b>';
         $this->assertSame($expected, $result);
 
         $result = $this->Text->truncate($text, 31, [
             'html' => true,
             'exact' => true,
         ]);
-        $expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
+        $expected = '<b>&copy; 2005-2007, Cake Software F…</b>';
         $this->assertSame($expected, $result);
     }
 
@@ -677,31 +677,31 @@ HTML;
         $text5 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 
         $result = $this->Text->tail($text1, 13);
-        $this->assertSame('...e lazy dog', $result);
+        $this->assertSame('…the lazy dog', $result);
 
         $result = $this->Text->tail($text1, 13, ['exact' => false]);
-        $this->assertSame('...lazy dog', $result);
+        $this->assertSame('…lazy dog', $result);
 
         $result = $this->Text->tail($text1, 100);
         $this->assertSame('The quick brown fox jumps over the lazy dog', $result);
 
         $result = $this->Text->tail($text2, 10);
-        $this->assertSame('...;mpfung', $result);
+        $this->assertSame('…ml;mpfung', $result);
 
         $result = $this->Text->tail($text2, 10, ['exact' => false]);
-        $this->assertSame('...', $result);
+        $this->assertSame('…', $result);
 
         $result = $this->Text->tail($text3, 255);
         $this->assertSame($text3, $result);
 
         $result = $this->Text->tail($text3, 21);
-        $this->assertSame('...á dicho la verdad?', $result);
+        $this->assertSame('…brá dicho la verdad?', $result);
 
         $result = $this->Text->tail($text4, 25);
-        $this->assertSame('...a R' . chr(195) . chr(169) . 'publique de France', $result);
+        $this->assertSame('… la R' . chr(195) . chr(169) . 'publique de France', $result);
 
         $result = $this->Text->tail($text5, 10);
-        $this->assertSame('...цчшщъыь', $result);
+        $this->assertSame('…фхцчшщъыь', $result);
 
         $result = $this->Text->tail($text5, 6, ['ellipsis' => '']);
         $this->assertSame('чшщъыь', $result);
@@ -843,7 +843,7 @@ HTML;
         $text = 'aaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa';
         $phrase = 'bbbbbbbb';
         $result = $this->Text->excerpt($text, $phrase, 10);
-        $expected = '...aaaaaaaaaabbbbbbbbaaaaaaaaaa...';
+        $expected = '…aaaaaaaaaabbbbbbbbaaaaaaaaaa…';
         $this->assertSame($expected, $result);
     }
 
@@ -1815,7 +1815,7 @@ HTML;
      */
     public function testTruncateByWidth(): void
     {
-        $this->assertSame('<p>あ...', Text::truncateByWidth('<p>あいうえお</p>', 8));
+        $this->assertSame('<p>あい…', Text::truncateByWidth('<p>あいうえお</p>', 8));
         $this->assertSame('<p>あい...</p>', Text::truncateByWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
     }
 
