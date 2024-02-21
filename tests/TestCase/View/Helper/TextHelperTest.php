@@ -342,13 +342,13 @@ class TextHelperTest extends TestCase
         $this->assertMatchesRegularExpression('#^' . $expected . '$#', $result);
 
         $text = 'Text with a url https://www.example.org/foo-bar-baz/eruierieriu-erjekr and more';
-        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-ba…</a> and more';
+        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-b…</a> and more';
         $result = $this->Text->autoLinkUrls($text, ['maxLength' => 30]);
         $this->assertSame($expected, $result);
 
         $text = 'Text with a url https://www.example.org/foo-bar-baz/eruierieriu-erjekr and more';
-        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-ba...</a> and more';
-        $result = $this->Text->autoLinkUrls($text, ['maxLength' => 30, 'ellipsis' => '...']);
+        $expected = 'Text with a url <a href="https://www.example.org/foo-bar-baz/eruierieriu-erjekr">https://www.example.org/foo-bar-...</a> and more';
+        $result = $this->Text->autoLinkUrls($text, ['maxLength' => 35, 'ellipsis' => '...']);
         $this->assertSame($expected, $result);
 
         $text = 'Text with a url http://www.example.org/foo-bar-baz/ and more';

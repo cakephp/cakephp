@@ -191,9 +191,13 @@ class TextHelper extends Helper
         if (isset($options['stripProtocol']) && $options['stripProtocol'] === true) {
             $name = (string)preg_replace('(^https?://)', '', $name);
         }
-        if (!empty($options['maxLength']) && mb_strlen($name) > $options['maxLength']) {
-            $name = mb_substr($name, 0, $options['maxLength']);
-            $name .= $options['ellipsis'] ?? '…';
+        if (!empty($options['maxLength'])) {
+            $ellipsis = $options['ellipsis'] ?? '…';
+            $length = $options['maxLength'] - mb_strlen($ellipsis);
+            if (mb_strlen($name) > $length) {
+                $name = mb_substr($name, 0, $length);
+                $name .= $ellipsis;
+            }
         }
 
         return $name;
