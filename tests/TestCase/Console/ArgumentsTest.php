@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Arguments;
+use Cake\Console\Exception\ConsoleException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -152,6 +153,19 @@ class ArgumentsTest extends TestCase
         $this->assertNull($args->getOption('undef'));
     }
 
+    /**
+     * test getOption() checks types
+     */
+    public function testGetOptionInvalidType(): void
+    {
+        $options = [
+            'list' => [1, 2],
+        ];
+        $args = new Arguments([], $options, []);
+        $this->expectException(ConsoleException::class);
+        $args->getOption('list');
+    }
+
     public function testGetBooleanOption(): void
     {
         $options = [
@@ -162,6 +176,19 @@ class ArgumentsTest extends TestCase
         $this->assertNull($args->getBooleanOption('missing'));
     }
 
+    /**
+     * test getOption() checks types
+     */
+    public function testGetOptionBooleanInvalidType(): void
+    {
+        $options = [
+            'list' => [1, 2],
+        ];
+        $args = new Arguments([], $options, []);
+        $this->expectException(ConsoleException::class);
+        $args->getBooleanOption('list');
+    }
+
     public function testGetMultipleOption(): void
     {
         $options = [
@@ -170,5 +197,15 @@ class ArgumentsTest extends TestCase
         $args = new Arguments([], $options, []);
         $this->assertSame(['one', 'two', 'three'], $args->getMultipleOption('types'));
         $this->assertNull($args->getMultipleOption('missing'));
+    }
+
+    public function testGetMultipleOptionInvalidType(): void
+    {
+        $options = [
+            'connection' => 'test',
+        ];
+        $args = new Arguments([], $options, []);
+        $this->expectException(ConsoleException::class);
+        $args->getMultipleOption('connection');
     }
 }
