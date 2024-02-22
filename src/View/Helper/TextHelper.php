@@ -72,6 +72,9 @@ class TextHelper extends Helper
      * ### Options
      *
      * - `escape` Control HTML escaping of input. Defaults to true.
+     * - `stripProtocol` Strips http:// and https:// from the beginning of the link. Default off.
+     * - `maxLength` The maximum length of the link label. Default off.
+     * - `ellipsis` The string to append to the end of the link label. Defaults to UTF8 version.
      *
      * @param string $text Text
      * @param array<string, mixed> $options Array of HTML options, and options listed above.
@@ -175,12 +178,6 @@ class TextHelper extends Helper
 
     /**
      * Prepares the link label.
-     *
-     * ### Options
-     *
-     * - `stripProtocol` Strips http:// and https:// from the beginning of the link. Default off.
-     * - `maxLength` The maximum length of the link label. Default off.
-     * - `ellipsis` The string to append to the end of the link label. Defaults to UTF8 version.
      *
      * @param string $name Link label.
      * @param array $options<string, mixed> $htmlOptions The options for the generated link label.
