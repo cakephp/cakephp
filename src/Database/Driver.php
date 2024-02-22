@@ -258,10 +258,7 @@ abstract class Driver
         try {
             return $this->getPdo()->exec($sql);
         } catch (PDOException $e) {
-            $e = new QueryException($e->getMessage(), (int)$e->getCode(), $e);
-            $e->setQuery($sql);
-
-            throw $e;
+            throw new QueryException($sql, $e);
         }
     }
 
@@ -367,16 +364,14 @@ abstract class Driver
         StatementInterface $statement,
         ?array $params = null
     ): QueryException {
-        $e = new QueryException($exception->getMessage(), (int)$exception->getCode(), $exception);
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext([
             'query' => $statement->queryString(),
             'driver' => $this,
             'params' => $params ?? $statement->getBoundParams(),
         ]);
-        $e->setQuery($loggedQuery);
 
-        return $e;
+        return new QueryException($loggedQuery, $exception);
     }
 
     /**
@@ -390,10 +385,10 @@ abstract class Driver
         try {
             $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
         } catch (PDOException $e) {
-            $exception = new QueryException($e->getMessage(), (int)$e->getCode(), $e);
-            $exception->setQuery($query instanceof Query ? $query->sql() : $query);
-
-            throw $exception;
+            throw new QueryException(
+                $query instanceof Query ? $query->sql() : $query,
+                $e
+            );
         }
 
         $typeMap = null;

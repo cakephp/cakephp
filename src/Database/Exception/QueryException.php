@@ -21,17 +21,15 @@ use PDOException;
 
 class QueryException extends PDOException
 {
-    protected LoggedQuery|string|null $query = null;
-
     /**
-     * Set the query that caused this exception.
+     * Constructor
      *
      * @param \Cake\Database\Log\LoggedQuery|string $query
-     * @return void
+     * @param \PDOException $previous
      */
-    public function setQuery(LoggedQuery|string $query): void
+    public function __construct(protected LoggedQuery|string $query, PDOException $previous)
     {
-        $this->query = $query;
+        parent::__construct($previous->getMessage(), (int)$previous->getCode(), $previous);
     }
 
     /**
@@ -41,10 +39,6 @@ class QueryException extends PDOException
      */
     public function getQueryString(): string
     {
-        if ($this->query === null) {
-            return '';
-        }
-
         if ($this->query instanceof LoggedQuery) {
             return (string)$this->query;
         }

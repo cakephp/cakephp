@@ -35,6 +35,7 @@ use Error;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
+use PDOException;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
@@ -1087,8 +1088,8 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $error = new QueryException();
-        $error->setQuery('this is sql string');
+        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
+        $error = new QueryException('this is sql string', $pdoException);
         $exceptions = [$error];
         $message = 'it works';
         $trace = $error->getTrace();

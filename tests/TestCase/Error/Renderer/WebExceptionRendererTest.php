@@ -46,6 +46,7 @@ use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use OutOfBoundsException;
+use PDOException;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
@@ -950,14 +951,14 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testPDOException(): void
     {
-        $exception = new QueryException();
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext([
             'query' => 'SELECT * from poo_query < 5 and :seven',
             'driver' => $this->getMockBuilder(Driver::class)->getMock(),
             'params' => ['seven' => 7],
         ]);
-        $exception->setQuery($loggedQuery);
+        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
+        $exception = new QueryException($loggedQuery, $pdoException);
 
         $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
