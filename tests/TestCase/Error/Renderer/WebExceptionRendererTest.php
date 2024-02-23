@@ -23,6 +23,9 @@ use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Database\Driver;
+use Cake\Database\Exception\QueryException;
+use Cake\Database\Log\LoggedQuery;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\Renderer\WebExceptionRenderer;
@@ -43,11 +46,11 @@ use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use OutOfBoundsException;
+use PDOException;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
-use TestApp\Error\Exception\MyPDOException;
 use TestApp\Error\Renderer\MyCustomExceptionRenderer;
 use TestApp\Error\Renderer\TestAppsExceptionRenderer;
 use TestPlugin\Controller\ErrorController as PluginErrorController;
@@ -948,17 +951,22 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testPDOException(): void
     {
-        $exception = new MyPDOException('There was an error in the SQL query');
-        $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
-        $exception->params = ['seven' => 7];
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext([
+            'query' => 'SELECT * from poo_query < 5 and :seven',
+            'driver' => $this->getMockBuilder(Driver::class)->getMock(),
+            'params' => ['seven' => 7],
+        ]);
+        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
+        $exception = new QueryException($loggedQuery, $pdoException);
+
         $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
 
         $this->assertSame(500, $response->getStatusCode());
         $result = (string)$response->getBody();
         $this->assertStringContainsString('Database Error', $result);
-        $this->assertStringContainsString('There was an error in the SQL query', $result);
-        $this->assertStringContainsString(h('SELECT * from poo_query < 5 and :seven'), $result);
-        $this->assertStringContainsString("'seven' => (int) 7", $result);
+        $this->assertStringContainsString('SQL Query', $result);
+        $this->assertStringContainsString(h('SELECT * from poo_query < 5 and 7'), $result);
     }
 }
