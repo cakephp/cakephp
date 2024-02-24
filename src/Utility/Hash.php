@@ -322,7 +322,7 @@ class Hash
         foreach ($data as $k => $v) {
             if (
                 static::_matchToken($k, $token) &&
-                (!$conditions || static::_matches($v, $conditions))
+                (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::_matches($v, $conditions)))
             ) {
                 $data[$k] = $nextPath
                     ? static::insert($v, $nextPath, $values)
