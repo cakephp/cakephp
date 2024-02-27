@@ -332,7 +332,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ```
      *
      * @param \Closure $visitor Callback executed for each part
-     * @param array<string> $parts The list of query parts to traverse
+     * @param list<string> $parts The list of query parts to traverse
      * @return $this
      */
     public function traverseParts(Closure $visitor, array $parts)

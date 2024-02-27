@@ -184,7 +184,7 @@ class App
      *
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
-     * @return array<string>
+     * @return array<int|string, string>
      * @link https://book.cakephp.org/5/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
@@ -222,7 +222,7 @@ class App
      *
      * @param string $type Package type.
      * @param string|null $plugin Plugin name.
-     * @return array<string>
+     * @return list<string>
      */
     public static function classPath(string $type, ?string $plugin = null): array
     {
@@ -247,7 +247,7 @@ class App
      * Will return the full path to the cache engines package.
      *
      * @param string $type Package type.
-     * @return array<string> Full path to package
+     * @return list<string> Full path to package
      */
     public static function core(string $type): array
     {

@@ -43,7 +43,7 @@ class Text
     /**
      * Default HTML tags which must not be counted for truncating text.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_defaultHtmlNoCount = [
         'style',
@@ -93,7 +93,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return array<string> Array of tokens in $data.
+     * @return list<string> Array of tokens in $data.
      */
     public static function tokenize(
         string $data,
@@ -472,7 +472,7 @@ class Text
      * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
-     * @param array<string>|string $phrase The phrase or phrases that will be searched.
+     * @param list<string>|string $phrase The phrase or phrases that will be searched.
      * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#highlighting-substrings

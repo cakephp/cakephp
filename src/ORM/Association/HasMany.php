@@ -64,7 +64,7 @@ class HasMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -169,7 +169,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $foreignKeyReference = array_combine(
             $foreignKeys,
@@ -368,7 +368,7 @@ class HasMany extends Association
             'OR' => (new Collection($targetEntities))
                 ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
                     /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
-                    /** @var array<string> $targetPrimaryKey */
+                    /** @var list<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),

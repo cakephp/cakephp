@@ -163,7 +163,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getPrimaryKey(): array
     {
@@ -279,7 +279,7 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param array<string> $parts Each one of the parts in a path for a field name
+     * @param list<string> $parts Each one of the parts in a path for a field name
      * @return mixed
      */
     protected function _schemaDefault(array $parts): mixed
@@ -302,7 +302,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param array<string> $path Each one of the parts in a path for a field name
+     * @param list<string> $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple(mixed $values, array $path): ?array
@@ -324,7 +324,7 @@ class EntityContext implements ContextInterface
      *
      * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
-     * @param array<string>|null $path Each one of the parts in a path for a field name
+     * @param list<string>|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
@@ -553,8 +553,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return array<string> Array of field names in the table/entity.
-     * @psalm-return list<string>
+     * @return list<string> Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {
@@ -615,7 +614,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param \Cake\Datasource\EntityInterface|array<string>|string $parts Each one of the parts in a path for a field name
+     * @param \Cake\Datasource\EntityInterface|list<string>|string $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null
@@ -726,7 +725,7 @@ class EntityContext implements ContextInterface
         try {
             /**
              * @var \Cake\Datasource\EntityInterface|null $entity
-             * @var array<string> $remainingParts
+             * @var list<string> $remainingParts
              */
             [$entity, $remainingParts] = $this->leafEntity($parts);
         } catch (CakeException) {

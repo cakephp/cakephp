@@ -197,7 +197,7 @@ class Message implements JsonSerializable
     /**
      * Available formats to be sent.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
@@ -234,7 +234,7 @@ class Message implements JsonSerializable
     /**
      * Available encoding to be set for transfer.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $transferEncodingAvailable = [
         '7bit',
@@ -277,7 +277,7 @@ class Message implements JsonSerializable
     /**
      * 8Bit character sets
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $charset8bit = ['UTF-8', 'SHIFT_JIS'];
 
@@ -303,7 +303,7 @@ class Message implements JsonSerializable
     /**
      * Properties that could be serialized
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $serializableProperties = [
         'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
@@ -877,8 +877,8 @@ class Message implements JsonSerializable
      * - `bcc`
      * - `subject`
      *
-     * @param array<string> $include List of headers.
-     * @return array<string>
+     * @param array<int|string, string> $include List of headers.
+     * @return array<string, string>
      */
     public function getHeaders(array $include = []): array
     {
@@ -962,7 +962,7 @@ class Message implements JsonSerializable
     /**
      * Get headers as string.
      *
-     * @param array<string> $include List of headers.
+     * @param list<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
      * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
@@ -1299,7 +1299,7 @@ class Message implements JsonSerializable
     /**
      * Generate full message.
      *
-     * @return array<string>
+     * @return list<string>
      */
     protected function generateMessage(): array
     {
@@ -1391,7 +1391,7 @@ class Message implements JsonSerializable
      * Attach non-embedded files by adding file contents inside boundaries.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return array<string> An array of lines to add to the message
+     * @return list<string> An array of lines to add to the message
      */
     protected function attachFiles(?string $boundary = null): array
     {
@@ -1428,7 +1428,7 @@ class Message implements JsonSerializable
      * Attach inline/embedded files to the message.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return array<string> An array of lines to add to the message
+     * @return list<string> An array of lines to add to the message
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {
@@ -1608,7 +1608,7 @@ class Message implements JsonSerializable
      *
      * @param string|null $message Message to wrap
      * @param int $wrapLength The line length
-     * @return array<string> Wrapped message
+     * @return list<string> Wrapped message
      */
     protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {

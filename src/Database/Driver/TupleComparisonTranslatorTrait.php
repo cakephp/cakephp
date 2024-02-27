@@ -71,7 +71,7 @@ trait TupleComparisonTranslatorTrait
         $true = new QueryExpression('1');
 
         if ($value instanceof SelectQuery) {
-            /** @var array<string> $selected */
+            /** @var list<string> $selected */
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
                 $value->andWhere([$field => new IdentifierExpression($selected[$i])]);

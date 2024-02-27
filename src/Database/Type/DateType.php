@@ -35,7 +35,7 @@ class DateType extends BaseType implements BatchCastingInterface
     protected string $_format = 'Y-m-d';
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d',

@@ -45,7 +45,7 @@ class ArrayLog extends BaseLog
     /**
      * Captured messages
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $content = [];
 
@@ -68,7 +68,7 @@ class ArrayLog extends BaseLog
     /**
      * Read the internal storage
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function read(): array
     {

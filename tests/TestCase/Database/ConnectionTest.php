@@ -48,7 +48,7 @@ use function Cake\Core\namespaceSplit;
 class ConnectionTest extends TestCase
 {
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Things'];
 

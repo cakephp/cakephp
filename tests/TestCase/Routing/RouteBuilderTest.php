@@ -1023,7 +1023,7 @@ class RouteBuilderTest extends TestCase
     public function testApplyMiddlewareInvalidName(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
+        $this->expectExceptionMessage('Cannot apply `bad` middleware or middleware group. Use `registerMiddleware()` to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
     }

@@ -45,7 +45,7 @@ class Hash
      *
      * @param \ArrayAccess|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param array<string>|string|int|null $path The path being searched for. Either a dot
+     * @param list<string>|string|int|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException
@@ -338,7 +338,7 @@ class Hash
      *
      * @param string $op The operation to do.
      * @param array $data The data to operate on.
-     * @param array<string> $path The path to work on.
+     * @param list<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
      * @return array data.
      */
@@ -443,8 +443,8 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param array<string>|string|null $keyPath A dot-separated string.
-     * @param array<string>|string|null $valuePath A dot-separated string.
+     * @param list<string>|string|null $keyPath A dot-separated string.
+     * @param list<string>|string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::combine
@@ -532,9 +532,9 @@ class Hash
      * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
      *
      * @param array $data Source array from which to extract the data
-     * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
+     * @param list<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return list<string>|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -1197,12 +1197,11 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array<string, string|null> $options Options.
-     * @return array<array> of results, nested
+     * @return list<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::nest
      * @psalm-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
-     * @psalm-return list<array>
      */
     public static function nest(array $data, array $options = []): array
     {

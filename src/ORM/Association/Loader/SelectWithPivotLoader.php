@@ -146,7 +146,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array<string, mixed> $options the options to use for getting the link field.
-     * @return array<string>|string
+     * @return list<string>|string
      */
     protected function _linkField(array $options): array|string
     {

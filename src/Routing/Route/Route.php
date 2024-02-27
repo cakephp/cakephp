@@ -159,7 +159,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getExtensions(): array
     {
@@ -239,7 +239,7 @@ class Route
     /**
      * Set the names of parameters that will be converted into passed parameters
      *
-     * @param array<string> $names The names of the parameters that should be passed.
+     * @param list<string> $names The names of the parameters that should be passed.
      * @return $this
      */
     public function setPass(array $names)
@@ -566,7 +566,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return array<string> Array of passed args.
+     * @return list<string> Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {

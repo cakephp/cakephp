@@ -155,7 +155,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param array<string> $templates An associative list of named templates.
+     * @param array<string, string> $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -169,7 +169,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param array<string> $templates The template names to compile. If empty all templates will be compiled.
+     * @param list<string> $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = []): void
@@ -284,7 +284,7 @@ class StringTemplate
      * templates to change how attributes are formatted.
      *
      * @param array<string, mixed>|null $options Array of options.
-     * @param array<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
+     * @param list<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
      * @return string Composed attributes.
      */
     public function formatAttributes(?array $options, ?array $exclude = null): string
@@ -347,9 +347,9 @@ class StringTemplate
      * Adds a class and returns a unique list either in array or space separated
      *
      * @param mixed $input The array or string to add the class to
-     * @param array<string>|string|false|null $newClass the new class or classes to add
+     * @param list<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string>|string|null
+     * @return list<string>|string|null
      */
     public function addClass(
         mixed $input,

@@ -54,7 +54,7 @@ class ViewTest extends TestCase
     /**
      * Fixtures used in this test.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Posts', 'core.Users'];
 

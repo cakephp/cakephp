@@ -57,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [];
 
@@ -1035,7 +1035,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the fixtures this test should use.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getFixtures(): array
     {
