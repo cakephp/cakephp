@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 

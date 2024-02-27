@@ -57,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [];
 

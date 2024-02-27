@@ -183,7 +183,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * A list of properties that emulated by the PSR7 attribute methods.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
@@ -841,7 +841,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array<string> An associative array of headers and their values.
+     * @return array<string, string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1080,7 +1080,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return array<string> An array of subdomains.
+     * @return list<string> An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {

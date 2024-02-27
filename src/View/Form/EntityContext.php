@@ -279,7 +279,7 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param array<string> $parts Each one of the parts in a path for a field name
+     * @param list<string> $parts Each one of the parts in a path for a field name
      * @return mixed
      */
     protected function _schemaDefault(array $parts): mixed
@@ -302,7 +302,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param array<string> $path Each one of the parts in a path for a field name
+     * @param list<string> $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple(mixed $values, array $path): ?array
@@ -553,8 +553,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return array<string> Array of field names in the table/entity.
-     * @psalm-return list<string>
+     * @return list<string> Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {
@@ -726,7 +725,7 @@ class EntityContext implements ContextInterface
         try {
             /**
              * @var \Cake\Datasource\EntityInterface|null $entity
-             * @var array<string> $remainingParts
+             * @var list<string> $remainingParts
              */
             [$entity, $remainingParts] = $this->leafEntity($parts);
         } catch (CakeException) {

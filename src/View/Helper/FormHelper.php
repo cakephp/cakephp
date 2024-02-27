@@ -171,7 +171,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array<string, array<string>>
+     * @var array<string, list<string>>
      */
     protected array $_defaultWidgets = [
         'button' => ['Button'],
@@ -247,14 +247,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -2336,7 +2336,7 @@ class FormHelper extends Helper
      * can be passed to a form widget to generate the actual input.
      *
      * @param string $field Name of the field to initialize options for.
-     * @param array<string, mixed>|array<string> $options Array of options to append options into.
+     * @param array<string, mixed> $options Array of options to append options into.
      * @return array<string, mixed> Array of options for the input.
      */
     protected function _initInputField(string $field, array $options = []): array
@@ -2566,7 +2566,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return array<string> List of value sources.
+     * @return list<string> List of value sources.
      */
     public function getValueSources(): array
     {

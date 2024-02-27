@@ -26,7 +26,7 @@ interface PluginInterface
     /**
      * List of valid hooks.
      *
-     * @var array<string>
+     * @var list<string>
      */
     public const VALID_HOOKS = ['bootstrap', 'console', 'middleware', 'routes', 'services'];
 

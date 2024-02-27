@@ -42,7 +42,7 @@ class FormProtector
     /**
      * Unlocked fields.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $unlockedFields = [];
 
@@ -159,7 +159,7 @@ class FormProtector
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return array<string> Array of field name params like ['Model.field'] or
+     * @return list<string> Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function getFieldNameArray(string $name): array
@@ -496,7 +496,7 @@ class FormProtector
      * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return array<string> Messages
+     * @return list<string> Messages
      */
     protected function debugCheckFields(
         array $dataFields,
@@ -523,7 +523,7 @@ class FormProtector
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return array<string> Error messages
+     * @return list<string> Error messages
      */
     protected function matchExistingFields(
         array $dataFields,

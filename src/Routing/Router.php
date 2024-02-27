@@ -718,7 +718,7 @@ class Router
      * @param list<string>|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
-     * @return array<string> Array of extensions Router is configured to parse.
+     * @return list<string> Array of extensions Router is configured to parse.
      */
     public static function extensions(array|string|null $extensions = null, bool $merge = true): array
     {

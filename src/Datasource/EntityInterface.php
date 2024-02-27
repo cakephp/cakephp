@@ -278,7 +278,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Get the list of visible fields.
      *
-     * @return array<string> A list of fields that are 'visible' in all representations.
+     * @return list<string> A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -288,7 +288,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * *Note* hidden fields are not visible, and will not be output
      * by toArray().
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array;
 

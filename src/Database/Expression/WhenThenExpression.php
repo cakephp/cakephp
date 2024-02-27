@@ -37,7 +37,7 @@ class WhenThenExpression implements ExpressionInterface
      * The names of the clauses that are valid for use with the
      * `clause()` method.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $validClauseNames = [
         'when',

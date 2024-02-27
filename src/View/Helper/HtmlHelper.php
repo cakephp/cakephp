@@ -784,7 +784,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return array<string>
+     * @return list<string>
      */
     protected function _renderCells(array $line, bool $useCount = false): array
     {

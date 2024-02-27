@@ -2210,7 +2210,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Note: The ORM will not generate primary key values for composite primary keys.
      * You can overwrite _newId() in your table class.
      *
-     * @param array<string> $primary The primary key columns to get a new ID for.
+     * @param list<string> $primary The primary key columns to get a new ID for.
      * @return string|null Either null or the primary key value or a list of primary key values.
      */
     protected function _newId(array $primary): ?string

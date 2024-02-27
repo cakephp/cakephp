@@ -43,14 +43,14 @@ class I18nExtractCommand extends Command
     /**
      * Paths to use when looking for strings
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_paths = [];
 
     /**
      * Files from where to extract
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_files = [];
 
@@ -99,7 +99,7 @@ class I18nExtractCommand extends Command
     /**
      * An array of directories to exclude.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_exclude = [];
 

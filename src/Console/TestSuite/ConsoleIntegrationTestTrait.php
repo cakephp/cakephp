@@ -267,7 +267,7 @@ trait ConsoleIntegrationTestTrait
      * Creates an $argv array from a command string
      *
      * @param string $command Command string
-     * @return array<string>
+     * @return list<string>
      */
     protected function commandStringToArgs(string $command): array
     {

@@ -55,7 +55,7 @@ class ControllerTest extends TestCase
     /**
      * fixtures property
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.Comments',

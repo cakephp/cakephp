@@ -150,7 +150,7 @@ class MessagesFileLoader
      * Returns the folders where the file should be looked for according to the locale
      * and package name.
      *
-     * @return array<string> The list of folders where the translation file should be looked for
+     * @return list<string> The list of folders where the translation file should be looked for
      */
     public function translationsFolders(): array
     {

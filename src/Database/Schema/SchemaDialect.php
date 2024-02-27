@@ -274,10 +274,10 @@ abstract class SchemaDialect
      * Generate the SQL to create a table.
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
-     * @param array<string> $columns The columns to go inside the table.
-     * @param array<string> $constraints The constraints for the table.
-     * @param array<string> $indexes The indexes for the table.
-     * @return array<string> SQL statements to create a table.
+     * @param list<string> $columns The columns to go inside the table.
+     * @param list<string> $constraints The constraints for the table.
+     * @param list<string> $indexes The indexes for the table.
+     * @return list<string> SQL statements to create a table.
      */
     abstract public function createTableSql(
         TableSchema $schema,

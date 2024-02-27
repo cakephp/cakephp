@@ -592,7 +592,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return array<string> A list of fields that are 'visible' in all
+     * @return list<string> A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -610,7 +610,7 @@ trait EntityTrait
      * This method will recursively transform entities assigned to fields
      * into arrays as well.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -639,7 +639,7 @@ trait EntityTrait
     /**
      * Returns the fields that will be serialized as JSON
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
@@ -896,7 +896,7 @@ trait EntityTrait
     /**
      * Gets the dirty fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getDirty(): array
     {
@@ -1099,7 +1099,7 @@ trait EntityTrait
      * Auxiliary method for getting errors in nested entities
      *
      * @param string $field the field in this entity to check for errors
-     * @return array errors in nested entity if any
+     * @return array Errors in nested entity if any
      */
     protected function _nestedErrors(string $field): array
     {

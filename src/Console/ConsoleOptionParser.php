@@ -519,7 +519,7 @@ class ConsoleOptionParser
     /**
      * Get the list of argument names.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function argumentNames(): array
     {
@@ -782,7 +782,7 @@ class ConsoleOptionParser
      *
      * @param string $argument The argument to append
      * @param array $args The array of parsed args to append to.
-     * @return array<string> Args
+     * @return list<string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseArg(string $argument, array $args): array

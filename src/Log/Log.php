@@ -141,7 +141,7 @@ class Log
     /**
      * Handled log levels
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_levels = [
         'emergency',
@@ -221,7 +221,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return array<string> Active log levels
+     * @return list<string> Active log levels
      */
     public static function levels(): array
     {

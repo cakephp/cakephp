@@ -87,8 +87,7 @@ interface SchemaInterface
     /**
      * Get the column names in the table.
      *
-     * @return array<string>
-     * @psalm-return list<string>
+     * @return list<string>
      */
     public function columns(): array;
 

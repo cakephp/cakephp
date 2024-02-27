@@ -97,7 +97,7 @@ class ContentTypeNegotiation
      * `_` replaced with `-`.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to read headers from.
-     * @return array<string> A list of language codes that are accepted.
+     * @return list<string> A list of language codes that are accepted.
      */
     public function acceptedLanguages(RequestInterface $request): array
     {

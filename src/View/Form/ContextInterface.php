@@ -96,8 +96,7 @@ interface ContextInterface
     /**
      * Get the field names of the top level object in this context.
      *
-     * @return array<string> A list of the field names in the context.
-     * @psalm-return list<string>
+     * @return list<string> A list of the field names in the context.
      */
     public function fieldNames(): array;
 

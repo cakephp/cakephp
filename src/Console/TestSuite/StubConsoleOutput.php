@@ -36,7 +36,7 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Buffered messages.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_out = [];
 
@@ -65,7 +65,7 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Get the buffered output.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function messages(): array
     {

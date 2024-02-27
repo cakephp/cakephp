@@ -29,7 +29,7 @@ class DateTimeFractionalType extends DateTimeType
     /**
      * {@inheritDoc}
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d H:i',

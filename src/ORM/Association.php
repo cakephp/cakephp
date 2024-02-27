@@ -195,7 +195,7 @@ abstract class Association
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,

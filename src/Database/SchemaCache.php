@@ -51,7 +51,7 @@ class SchemaCache
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
-     * @return array<string> Returns a list build table caches
+     * @return list<string> Returns a list build table caches
      */
     public function build(?string $name = null): array
     {
@@ -72,7 +72,7 @@ class SchemaCache
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return array<string> Returns a list of cleared table caches
+     * @return list<string> Returns a list of cleared table caches
      */
     public function clear(?string $name = null): array
     {
