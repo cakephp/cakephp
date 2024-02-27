@@ -241,7 +241,7 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of plugin paths.
      *
-     * @var array<string[]>
+     * @var array<string, list<string>>
      */
     protected array $_pathsForPlugin = [];
 
@@ -1604,6 +1604,7 @@ class View implements EventDispatcherInterface
             $themePaths[] = $themePath;
         }
 
+        /** @var list<string> $paths */
         $paths = array_merge(
             $themePaths,
             $pluginPaths,

@@ -184,7 +184,7 @@ class App
      *
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
-     * @return list<string>
+     * @return array<int|string, string>
      * @link https://book.cakephp.org/5/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
