@@ -877,7 +877,7 @@ class Message implements JsonSerializable
      * - `bcc`
      * - `subject`
      *
-     * @param list<string> $include List of headers.
+     * @param array<int|string, string> $include List of headers.
      * @return array<string, string>
      */
     public function getHeaders(array $include = []): array

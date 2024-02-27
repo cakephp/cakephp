@@ -1577,7 +1577,7 @@ class View implements EventDispatcherInterface
                 return $this->_pathsForPlugin[$plugin];
             }
         }
-        $templatePaths = App::path(static::NAME_TEMPLATE);
+        $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
         $pluginPaths = $themePaths = [];
         if ($plugin) {
             foreach ($templatePaths as $templatePath) {
@@ -1604,7 +1604,6 @@ class View implements EventDispatcherInterface
             $themePaths[] = $themePath;
         }
 
-        /** @var list<string> $paths */
         $paths = array_merge(
             $themePaths,
             $pluginPaths,
