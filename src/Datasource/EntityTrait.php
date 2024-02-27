@@ -548,7 +548,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getHidden(): array
     {
@@ -579,7 +579,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getVirtual(): array
     {
@@ -820,7 +820,7 @@ trait EntityTrait
      * Returns an array of original fields.
      * Original fields are those that the entity was initialized with.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getOriginalFields(): array
     {

@@ -188,7 +188,7 @@ class RouteBuilder
     /**
      * Get the extensions in this route builder's scope.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getExtensions(): array
     {

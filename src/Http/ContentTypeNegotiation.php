@@ -18,7 +18,7 @@ class ContentTypeNegotiation
      * discarded as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, array<string>> A mapping of preference values => content types
+     * @return array<string, list<string>> A mapping of preference values => content types
      */
     public function parseAccept(RequestInterface $request): array
     {
@@ -34,7 +34,7 @@ class ContentTypeNegotiation
      * as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, array<string>> A mapping of preference values => languages
+     * @return array<string, list<string>> A mapping of preference values => languages
      */
     public function parseAcceptLanguage(RequestInterface $request): array
     {
@@ -47,7 +47,7 @@ class ContentTypeNegotiation
      * Parse a header value into preference => value mapping
      *
      * @param string $header The header value to parse
-     * @return array<string, array<string>>
+     * @return array<string, list<string>>
      */
     protected function parseQualifiers(string $header): array
     {

@@ -159,7 +159,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getExtensions(): array
     {

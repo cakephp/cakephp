@@ -1299,7 +1299,7 @@ class Message implements JsonSerializable
     /**
      * Generate full message.
      *
-     * @return array<string>
+     * @return list<string>
      */
     protected function generateMessage(): array
     {

@@ -361,7 +361,7 @@ class FormProtector
      * Get the sorted unlocked string
      *
      * @param array $formData Data array
-     * @return array<string>
+     * @return list<string>
      */
     protected function sortedUnlockedFields(array $formData): array
     {
@@ -380,7 +380,7 @@ class FormProtector
      * Generate the token data.
      *
      * @param string $url Form URL.
-     * @param string $sessionId Session Id.
+     * @param string $sessionId Session ID.
      * @return array<string, string> The token data.
      * @psalm-return array{fields: string, unlocked: string, debug: string}
      */

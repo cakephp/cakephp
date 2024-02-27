@@ -85,7 +85,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var array<string>
+     * @var array<string, string>
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static array $wordAccuracy = [
