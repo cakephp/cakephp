@@ -324,7 +324,7 @@ class EntityContext implements ContextInterface
      *
      * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
-     * @param array<string>|null $path Each one of the parts in a path for a field name
+     * @param list<string>|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
@@ -615,7 +615,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param \Cake\Datasource\EntityInterface|array<string>|string $parts Each one of the parts in a path for a field name
+     * @param \Cake\Datasource\EntityInterface|list<string>|string $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null

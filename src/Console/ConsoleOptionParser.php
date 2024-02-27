@@ -286,7 +286,7 @@ class ConsoleOptionParser
     /**
      * Sets the description text for shell/task.
      *
-     * @param array<string>|string $text The text to set. If an array the
+     * @param list<string>|string $text The text to set. If an array the
      *   text will be imploded with "\n".
      * @return $this
      */
@@ -314,7 +314,7 @@ class ConsoleOptionParser
      * Sets an epilog to the parser. The epilog is added to the end of
      * the options and arguments listing when help is generated.
      *
-     * @param array<string>|string $text The text to set. If an array the text will
+     * @param list<string>|string $text The text to set. If an array the text will
      *   be imploded with "\n".
      * @return $this
      */

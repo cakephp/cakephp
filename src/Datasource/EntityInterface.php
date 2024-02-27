@@ -148,7 +148,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Stores whether a field value can be changed or set in this entity.
      *
-     * @param array<string>|string $field single or list of fields to change its accessibility
+     * @param list<string>|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -262,7 +262,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      *
      * The method will return `true` even when the field is set to `null`.
      *
-     * @param array<string>|string $field The field to check.
+     * @param list<string>|string $field The field to check.
      * @return bool
      */
     public function has(array|string $field): bool;
@@ -270,7 +270,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Removes a field or list of fields from this entity
      *
-     * @param array<string>|string $field The field to unset.
+     * @param list<string>|string $field The field to unset.
      * @return $this
      */
     public function unset(array|string $field);

@@ -54,7 +54,7 @@ class ExistsIn
      * Available option for $options is 'allowNullableNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param array<string>|string $fields The field or fields to check existence as primary key.
+     * @param list<string>|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array<string, mixed> $options The options that modify the rule's behavior.

@@ -38,7 +38,7 @@ class SchemaLoader
     /**
      * Load and apply schema sql file, or an array of files.
      *
-     * @param array<string>|string $paths Schema files to load
+     * @param list<string>|string $paths Schema files to load
      * @param string $connectionName Connection name
      * @param bool $dropTables Drop all tables prior to loading schema files
      * @param bool $truncateTables Truncate all tables after loading schema files

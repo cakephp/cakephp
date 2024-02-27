@@ -488,7 +488,7 @@ class ServerRequest implements ServerRequestInterface
      * defined with {@link \Cake\Http\ServerRequest::addDetector()}. Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param array<string>|string $type The type of request you want to check. If an array
+     * @param list<string>|string $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
@@ -1114,7 +1114,7 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
+     * @return list<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts(?string $type = null): array|bool
@@ -1426,7 +1426,7 @@ class ServerRequest implements ServerRequestInterface
      * If the request would be GET, response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
-     * @param array<string>|string $methods Allowed HTTP request methods.
+     * @param list<string>|string $methods Allowed HTTP request methods.
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */

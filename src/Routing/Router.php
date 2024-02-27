@@ -153,7 +153,7 @@ class Router
     /**
      * Default extensions defined with Router::extensions()
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_defaultExtensions = [];
 
@@ -715,7 +715,7 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array<string>|string|null $extensions List of extensions to be added.
+     * @param list<string>|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array<string> Array of extensions Router is configured to parse.

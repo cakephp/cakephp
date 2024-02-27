@@ -1533,7 +1533,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes.
-     * @return array<string>|string An HTML text input element.
+     * @return array<string, string>|string An HTML text input element.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox(string $fieldName, array $options = []): array|string
@@ -2602,7 +2602,7 @@ class FormHelper extends Helper
      * Order sets priority.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @param array<string>|string $sources A string or a list of strings identifying a source.
+     * @param list<string>|string $sources A string or a list of strings identifying a source.
      * @return $this
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */

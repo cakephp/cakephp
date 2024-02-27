@@ -40,7 +40,7 @@ class HttpException extends CakeException
      * Set a single HTTP response header.
      *
      * @param string $header Header name
-     * @param array<string>|string|null $value Header value
+     * @param list<string>|string|null $value Header value
      * @return void
      */
     public function setHeader(string $header, array|string|null $value = null): void

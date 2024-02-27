@@ -434,7 +434,7 @@ trait EntityTrait
      * When checking multiple fields all fields must have a value (even `null`)
      * present for the method to return `true`.
      *
-     * @param array<string>|string $field The field or fields to check.
+     * @param list<string>|string $field The field or fields to check.
      * @return bool
      */
     public function has(array|string $field): bool
@@ -511,7 +511,7 @@ trait EntityTrait
      * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param array<string>|string $field The field to unset.
+     * @param list<string>|string $field The field to unset.
      * @return $this
      */
     public function unset(array|string $field)
@@ -831,7 +831,7 @@ trait EntityTrait
      * Sets the given field or a list of fields to as original.
      * Normally there is no need to call this method manually.
      *
-     * @param array<string>|string $field the name of a field or a list of fields to set as original
+     * @param list<string>|string $field the name of a field or a list of fields to set as original
      * @param bool $merge
      * @return $this
      */
@@ -1278,7 +1278,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param array<string>|string $field Single or list of fields to change its accessibility
+     * @param list<string>|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this

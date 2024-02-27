@@ -679,7 +679,7 @@ class Response implements ResponseInterface, Stringable
      * This is needed for RequestHandlerComponent and recognition of types.
      *
      * @param string $type Content type.
-     * @param array<string>|string $mimeType Definition of the mime type.
+     * @param list<string>|string $mimeType Definition of the mime type.
      * @return void
      */
     public function setTypeMap(string $type, array|string $mimeType): void
@@ -1021,7 +1021,7 @@ class Response implements ResponseInterface, Stringable
      * separated string. If no parameters are passed, then an
      * array with the current Vary header value is returned
      *
-     * @param array<string>|string $cacheVariances A single Vary string or an array
+     * @param list<string>|string $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
      */

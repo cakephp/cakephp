@@ -232,14 +232,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var array<string>|string|null
+     * @var list<string>|string|null
      */
     protected array|string|null $_primaryKey = null;
 
     /**
      * The name of the field that represents a human-readable representation of a row
      *
-     * @var array<string>|string|null
+     * @var list<string>|string|null
      */
     protected array|string|null $_displayField = null;
 
@@ -637,7 +637,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the primary key field name.
      *
-     * @param array<string>|string $key Sets a new name to be used as primary key
+     * @param list<string>|string $key Sets a new name to be used as primary key
      * @return $this
      */
     public function setPrimaryKey(array|string $key)
@@ -650,7 +650,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the primary key field name.
      *
-     * @return array<string>|string
+     * @return list<string>|string
      */
     public function getPrimaryKey(): array|string
     {
@@ -668,7 +668,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the display field.
      *
-     * @param array<string>|string $field Name to be used as display field.
+     * @param list<string>|string $field Name to be used as display field.
      * @return $this
      */
     public function setDisplayField(array|string $field)
@@ -681,7 +681,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return array<string>|string
+     * @return list<string>|string
      */
     public function getDisplayField(): array|string|null
     {

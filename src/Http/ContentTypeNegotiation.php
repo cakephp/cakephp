@@ -65,7 +65,7 @@ class ContentTypeNegotiation
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to use.
      * @param list<string> $choices The supported content type choices.
-     * @return string|null The prefered type or null if there is no match with choices or if the
+     * @return string|null The preferred type or null if there is no match with choices or if the
      *   request had no Accept header.
      */
     public function preferredType(RequestInterface $request, array $choices = []): ?string

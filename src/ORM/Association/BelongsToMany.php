@@ -111,7 +111,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var array<string>|string|null
+     * @var list<string>|string|null
      */
     protected array|string|null $_targetForeignKey = null;
 
@@ -166,7 +166,7 @@ class BelongsToMany extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param array<string>|string $key the key to be used to link both tables together
+     * @param list<string>|string $key the key to be used to link both tables together
      * @return $this
      */
     public function setTargetForeignKey(array|string $key)
@@ -179,7 +179,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return array<string>|string
+     * @return list<string>|string
      */
     public function getTargetForeignKey(): array|string
     {
@@ -910,9 +910,9 @@ class BelongsToMany extends Association
      *   this association.
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities List of entities persisted in the target table for
      *   this association.
-     * @param array<string>|bool $options List of options to be passed to the internal `delete` call,
+     * @param array<string, mixed>|bool $options List of options to be passed to the internal `delete` call,
      *   or a `boolean` as `cleanProperty` key shortcut.
-     * @throws \InvalidArgumentException If non persisted entities are passed or if
+     * @throws \InvalidArgumentException If non-persisted entities are passed or if
      *   any of them is lacking a primary key value.
      * @return bool Success
      */
