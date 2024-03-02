@@ -53,6 +53,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         'Y-m-d\TH:i',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
+        'Y-m-d H:i:s.P',
     ];
 
     /**
@@ -443,6 +444,11 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     protected function _parseValue(string $value): DateTime|DateTimeImmutable|null
     {
         $class = $this->_className;
+
+        if (strlen($value) === 26 && preg_match('/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d\d\d\d/', $value)) {
+            $value = substr($value, 0, 10) . 'T' . substr($value, 11, 8) . '+' . substr($value, -6);
+        }
+
         foreach ($this->_marshalFormats as $format) {
             try {
                 $dateTime = $class::createFromFormat($format, $value, $this->userTimezone);
