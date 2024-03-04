@@ -414,7 +414,7 @@ class DateTimeTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         // Test with milliseconds
-        $timeMillis = new FrozenTime('2014-07-06T13:09:01.523000+00:00');
+        $timeMillis = new DateTime('2014-07-06T13:09:01.523000+00:00');
         $result = $timeMillis->i18nFormat("yyyy-MM-dd'T'HH':'mm':'ss.SSSxxx", null, 'en-US');
         $expected = '2014-07-06T13:09:01.523+00:00';
         $this->assertSame($expected, $result);
