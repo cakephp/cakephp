@@ -372,5 +372,6 @@ class ConsoleOutput
         if (is_resource($this->_output)) {
             fclose($this->_output);
         }
+        unset($this->_output);
     }
 }
