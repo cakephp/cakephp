@@ -371,7 +371,7 @@ class ConsoleOutput
         /** @psalm-suppress RedundantCondition */
         if (is_resource($this->_output)) {
             fclose($this->_output);
-            unset($this->_output);
         }
+        unset($this->_output);
     }
 }

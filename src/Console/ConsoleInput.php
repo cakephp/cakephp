@@ -68,7 +68,6 @@ class ConsoleInput
         /** @psalm-suppress RedundantCondition */
         if (is_resource($this->_input)) {
             fclose($this->_input);
-            unset($this->_input);
         }
         unset($this->_input);
     }
