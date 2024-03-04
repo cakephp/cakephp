@@ -457,7 +457,10 @@ class Query implements ExpressionInterface, IteratorAggregate
             }
         }
 
-        $this->_parts['with'][] = $cte;
+        if ($cte) {
+            $this->_parts['with'][] = $cte;
+        }
+
         $this->_dirty();
 
         return $this;
