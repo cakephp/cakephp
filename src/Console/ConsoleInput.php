@@ -59,6 +59,21 @@ class ConsoleInput
     }
 
     /**
+     * Destruct and free resources
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        /** @psalm-suppress RedundantCondition */
+        if (is_resource($this->_input)) {
+            fclose($this->_input);
+            unset($this->_input);
+        }
+        unset($this->_input);
+    }
+
+    /**
      * Read a value from the stream
      *
      * @return string|null The value of the stream. Null on EOF.
