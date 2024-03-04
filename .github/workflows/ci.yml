@@ -224,7 +224,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Composer install
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@v3
 
       - name: Install PHP tools with phive.
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
