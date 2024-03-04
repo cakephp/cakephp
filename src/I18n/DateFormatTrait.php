@@ -262,7 +262,7 @@ trait DateFormatTrait
             static::$_formatters[$key] = $formatter;
         }
 
-        return static::$_formatters[$key]->format($date->format('U'));
+        return static::$_formatters[$key]->format($date);
     }
 
     /**
