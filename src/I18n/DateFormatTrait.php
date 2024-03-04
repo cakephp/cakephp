@@ -101,7 +101,7 @@ trait DateFormatTrait
             static::$formatters[$key] = $formatter;
         }
 
-        return (string)static::$formatters[$key]->format($date->format('U'));
+        return (string)static::$formatters[$key]->format($date);
     }
 
     /**
