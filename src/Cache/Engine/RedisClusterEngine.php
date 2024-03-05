@@ -9,9 +9,9 @@ declare(strict_types=1);
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         2.2.0
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @since         4.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -19,56 +19,53 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Log\Log;
-use Redis;
-use RedisException;
+use RedisCluster;
+use RedisClusterException;
 use RuntimeException;
 
 /**
- * Redis storage engine for cache.
+ * Redis cluster storage engine for cache.
  */
-class RedisEngine extends CacheEngine
+class RedisClusterEngine extends CacheEngine
 {
     use RedisEngineTrait;
 
     /**
      * Redis wrapper.
      *
-     * @var \Redis
+     * @var \RedisCluster
      */
     protected $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration
-     *
-     * - `database` database number to use for connection.
+     * - `cluster` Cluster name.
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
      *    handy for deleting a complete group from cache.
-     * - `password` Redis server password.
      * - `persistent` Connect to the Redis server with a persistent connection
-     * - `port` port number to the Redis server.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
+     * - `read_timeout` Read timeout in seconds (float).
      * - `scanCount` Number of keys to ask for each scan (default: 10)
-     * - `server` URL or IP to the Redis server host.
+     * - `seeds` Seed nodes. Used when not using named cluster.
      * - `timeout` timeout in seconds (float).
-     * - `unix_socket` Path to the unix socket file (default: false)
      *
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
-        'database' => 0,
-        'duration' => 3600,
-        'groups' => [],
-        'password' => false,
-        'persistent' => true,
-        'port' => 6379,
-        'prefix' => 'cake_',
-        'host' => null,
-        'server' => '127.0.0.1',
+        'cluster' => null,
+        'seeds' => [],
         'timeout' => 0,
-        'unix_socket' => false,
+        'readTimeout' => 0,
+        'persistent' => true,
+        'auth' => null,
+
+        'duration' => 3600,
         'scanCount' => 10,
+
+        'groups' => [],
+        'prefix' => 'cake_',
     ];
 
     /**
@@ -82,11 +79,7 @@ class RedisEngine extends CacheEngine
     public function init(array $config = []): bool
     {
         if (!extension_loaded('redis')) {
-            throw new RuntimeException('The `redis` extension must be enabled to use RedisEngine.');
-        }
-
-        if (!empty($config['host'])) {
-            $config['server'] = $config['host'];
+            throw new RuntimeException('The `redis` extension must be enabled to use RedisClusterEngine.');
         }
 
         parent::init($config);
@@ -102,44 +95,28 @@ class RedisEngine extends CacheEngine
     protected function _connect(): bool
     {
         try {
-            $this->_Redis = new Redis();
-            if (!empty($this->_config['unix_socket'])) {
-                $return = $this->_Redis->connect($this->_config['unix_socket']);
-            } elseif (empty($this->_config['persistent'])) {
-                $return = $this->_Redis->connect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout']
-                );
-            } else {
-                $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
-                $return = $this->_Redis->pconnect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout'],
-                    $persistentId
-                );
-            }
-        } catch (RedisException $e) {
+            $this->_Redis = new RedisCluster(
+                $this->_config['cluster'],
+                $this->_config['seeds'],
+                $this->_config['timeout'],
+                $this->_config['readTimeout'],
+                $this->_config['persistent'],
+                $this->_config['auth']
+            );
+        } catch (RedisClusterException $e) {
             if (class_exists(Log::class)) {
-                Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
+                Log::error('RedisClusterEngine could not connect. Got error: ' . $e->getMessage());
             }
 
             return false;
         }
-        if ($return && $this->_config['password']) {
-            $return = $this->_Redis->auth($this->_config['password']);
-        }
-        if ($return) {
-            $return = $this->_Redis->select((int)$this->_config['database']);
-        }
 
-        return $return;
+        return true;
     }
 
     protected function setRetryOption(): void
     {
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+        $this->_Redis->setOption(RedisCluster::OPT_SCAN, (string)RedisCluster::SCAN_RETRY);
     }
 
     /**
@@ -155,23 +132,25 @@ class RedisEngine extends CacheEngine
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+        foreach ($this->_Redis->_masters() as $node) {
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
 
-            if ($keys === false) {
-                break;
-            }
+                if ($keys === false) {
+                    break;
+                }
 
-            foreach ($keys as $key) {
-                $isDeleted = ($this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
+                foreach ($keys as $key) {
+                    $isDeleted = ($this->_Redis->del($key) > 0);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
+                }
             }
         }
 
         return $isAllDeleted;
     }
 
-    /**
+       /**
      * Delete all keys from the cache by a blocking operation
      *
      * Faster than clear() using unlink method.
@@ -186,16 +165,18 @@ class RedisEngine extends CacheEngine
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+        foreach ($this->_Redis->_masters() as $node) {
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
 
-            if ($keys === false) {
-                break;
-            }
+                if ($keys === false) {
+                    break;
+                }
 
-            foreach ($keys as $key) {
-                $isDeleted = $this->unlink($key);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
+                foreach ($keys as $key) {
+                    $isDeleted = $this->deleteAsync($key);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
+                }
             }
         }
 
@@ -204,13 +185,14 @@ class RedisEngine extends CacheEngine
 
     /**
      * Unlink a key from the cache. The actual removal will happen later asynchronously.
+     * That what we should do but there is no easy way to do this now. So fallback to normal delete.
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
     protected function unlink(string $key): bool
     {
-        return $this->_Redis->unlink($key) > 0;
+        return $this->_Redis->del($key) > 0;
     }
 
     /**
@@ -218,7 +200,7 @@ class RedisEngine extends CacheEngine
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent']) && $this->_Redis instanceof Redis) {
+        if (empty($this->_config['persistent']) && $this->_Redis instanceof RedisCluster) {
             $this->_Redis->close();
         }
     }
