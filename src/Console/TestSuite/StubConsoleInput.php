@@ -49,6 +49,7 @@ class StubConsoleInput extends ConsoleInput
     {
         parent::__construct();
 
+        unset($this->_input);
         $this->replies = $replies;
     }
 
