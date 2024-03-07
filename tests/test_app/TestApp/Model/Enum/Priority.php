@@ -14,9 +14,20 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Enum;
 
-enum Priority: int
+use Cake\Database\Type\EnumLabelInterface;
+use Cake\Utility\Inflector;
+
+enum Priority: int implements EnumLabelInterface
 {
     case Low = 1;
     case Medium = 2;
     case High = 3;
+
+    /**
+     * @return string
+     */
+    public function label(): string
+    {
+        return 'Is ' . Inflector::humanize(Inflector::underscore($this->name));
+    }
 }
