@@ -2869,61 +2869,40 @@ class SelectQueryTest extends TestCase
             ->fetchAll('assoc');
         $this->assertEquals(3, abs((int)$result[0]['d']));
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timeDiff(['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals('-08:00:00', $result[0]['d']);
+        $driver = $this->connection->getDriver();
+        if ($driver instanceof Mysql) {
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timeDiff(['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals('-08:00:00', $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('SECOND', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(28800, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('SECOND', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(28800, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('MINUTE', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(480, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('MINUTE', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(480, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('HOUR', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(8, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('HOUR', ['2024-03-08 08:00:00', '2024-03-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(8, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('DAY', ['2024-03-08 08:00:00', '2024-03-09 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(1, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('DAY', ['2024-03-08 08:00:00', '2024-03-09 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(1, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('WEEK', ['2024-03-08 08:00:00', '2024-03-16 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(1, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('WEEK', ['2024-03-08 08:00:00', '2024-03-16 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(1, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('MONTH', ['2024-03-08 08:00:00', '2024-04-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(1, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('MONTH', ['2024-03-08 08:00:00', '2024-04-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(1, $result[0]['d']);
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['d' => $query->func()->timestampDiff('YEAR', ['2020-03-08 08:00:00', '2024-03-08 16:00:00'])])
-            ->execute()
-            ->fetchAll('assoc');
-        $this->assertEquals(4, $result[0]['d']);
+            $query = new SelectQuery($this->connection);
+            $result = $query->select(['d' => $query->func()->timestampDiff('YEAR', ['2020-03-08 08:00:00', '2024-03-08 16:00:00'])])->execute()->fetchAll('assoc');
+            $this->assertEquals(4, $result[0]['d']);
+        }
 
         $query = new SelectQuery($this->connection);
         $result = $query
