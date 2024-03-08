@@ -159,6 +159,7 @@ class FunctionsBuilder
 
     /**
      * Returns a FunctionExpression representing the difference in seconds between to dates.
+     * This function only works with MySQL.
      *
      * @param array $args List of expressions to obtain the difference in seconds.
      * @param array $types List of types to bind to the arguments
@@ -171,6 +172,7 @@ class FunctionsBuilder
 
     /**
      * Returns a FunctionExpression representing the difference between two dates in a given format. The result is also rounded to the nearest $format.
+     * This function only works with MySQL.
      *
      * @param string $format The format to use for the difference. e.g. "SECOND", "MINUTE", "HOUR", "DAY", "MONTH", "YEAR"
      * @param array  $args List of expressions to obtain the difference in seconds.
