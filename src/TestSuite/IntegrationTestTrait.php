@@ -643,7 +643,9 @@ trait IntegrationTestTrait
         ) {
             $props['input'] = http_build_query($data);
         } else {
-            $data = $this->_addTokens($tokenUrl, $data);
+            if ($method !== 'GET' || !empty($data)) {
+                $data = $this->_addTokens($tokenUrl, $data);
+            }
             $props['post'] = $this->_castToString($data);
         }
 

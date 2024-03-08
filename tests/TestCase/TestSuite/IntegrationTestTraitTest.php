@@ -233,6 +233,28 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test for issue #17612 - skip adding tokens for GET without data.
+     */
+    public function testAddTokenInGetRequest(): void
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithoutTokens = $this->_buildRequest('tasks/view', 'GET');
+
+        $this->assertArrayNotHasKey('_Token', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('csrfToken', $requestWithoutTokens['cookies']);
+
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithTokens = $this->_buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
+
+        $this->assertArrayHasKey('_Token', $requestWithTokens['post']);
+        $this->assertArrayHasKey('_csrfToken', $requestWithTokens['post']);
+        $this->assertArrayHasKey('csrfToken', $requestWithTokens['cookies']);
+    }
+
+    /**
      * Test building a request, with query parameters
      */
     public function testRequestBuildingQueryParameters(): void
