@@ -283,6 +283,10 @@ class ConsoleOutput
      */
     protected function _write(string $message): int
     {
+        if (!isset($this->_output)) {
+            return 0;
+        }
+
         return (int)fwrite($this->_output, $message);
     }
 
