@@ -35,6 +35,7 @@ use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Log\Log;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -161,6 +162,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
+        $class = "";
         try {
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
@@ -185,6 +187,11 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request);
             $controller->startupProcess();
         } catch (Throwable $e) {
+            Log::warning(
+                "Failed to construct or call startup() on the resolved controller class of `$class`. " .
+                    "Using Fallback Controller instead. Error {$e->getMessage()}",
+                'cake.error'
+            );
             $controller = null;
         }
 
@@ -412,6 +419,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
+            Log::warning(
+                "MissingTemplateException - Failed to render error template `{$template}`. Error: {$e->getMessage()}",
+                'cake.error'
+            );
             $attributes = $e->getAttributes();
             if (
                 $e instanceof MissingLayoutException ||
@@ -422,6 +433,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
+            Log::warning(
+                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}",
+                'cake.error'
+            );
             $attributes = $e->getAttributes();
             if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
                 $this->controller->setPlugin(null);
@@ -429,6 +444,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
             return $this->_outputMessageSafe('error500');
         } catch (Throwable $outer) {
+            Log::warning(
+                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}",
+                'cake.error'
+            );
             try {
                 return $this->_outputMessageSafe('error500');
             } catch (Throwable $inner) {
