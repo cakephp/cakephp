@@ -162,7 +162,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
-        $class = "";
+        $class = '';
         try {
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
