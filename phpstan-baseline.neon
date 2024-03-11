@@ -14,7 +14,10 @@ parameters:
 			message: "#^Property Cake\\\\Console\\\\ConsoleInput\\:\\:\\$_input \\(resource\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: src/Console/ConsoleInput.php
-
+		-
+			message: "#^Property Cake\\\\Console\\\\ConsoleOutput\\:\\:\\$_output \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
+			path: src/Console/ConsoleOutput.php
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2

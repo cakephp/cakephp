@@ -283,6 +283,10 @@ class ConsoleOutput
      */
     protected function _write(string $message): int
     {
+        if (!isset($this->_output)) {
+            return 0;
+        }
+
         return (int)fwrite($this->_output, $message);
     }
 
@@ -369,7 +373,7 @@ class ConsoleOutput
     public function __destruct()
     {
         /** @psalm-suppress RedundantCondition */
-        if (is_resource($this->_output)) {
+        if (isset($this->_output) && is_resource($this->_output)) {
             fclose($this->_output);
         }
         unset($this->_output);
