@@ -105,6 +105,7 @@ interface SchemaInterface
      * @param string $name The column to set the type of.
      * @param string $type The type to set the column to.
      * @return $this
+     * @throws \Cake\Database\Exception\DatabaseException When trying to set on a not (yet) existing column.
      */
     public function setColumnType(string $name, string $type);
 
