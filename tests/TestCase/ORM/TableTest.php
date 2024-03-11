@@ -1903,6 +1903,21 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding a plugin behavior to a table.
+     */
+    public function testAddBehaviorPlugin(): void
+    {
+        $table = new Table([
+            'table' => 'articles',
+        ]);
+        $result = $table->addBehavior('TestPlugin.PersisterOne', ['some' => 'key']);
+
+        $this->assertSame(['PersisterOne'], $result->behaviors()->loaded());
+        $className = $result->behaviors()->get('PersisterOne')->getConfig('className');
+        $this->assertSame('TestPlugin.PersisterOne', $className);
+    }
+
+    /**
      * Test adding a behavior that is a duplicate.
      */
     public function testAddBehaviorDuplicate(): void
