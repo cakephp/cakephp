@@ -158,6 +158,37 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing the difference in seconds between to dates.
+     * This function only works with MySQL.
+     *
+     * @param array $args List of expressions to obtain the difference in seconds.
+     * @param array $types List of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function timeDiff(array $args, array $types = []): FunctionExpression
+    {
+        return new FunctionExpression('TIMEDIFF', $args, $types);
+    }
+
+    /**
+     * Returns a FunctionExpression representing the difference between two dates in a given format. The result is also rounded to the nearest $format.
+     * This function only works with MySQL.
+     *
+     * @param string $format The format to use for the difference. e.g. "SECOND", "MINUTE", "HOUR", "DAY", "MONTH", "YEAR"
+     * @param array  $args List of expressions to obtain the difference in seconds.
+     * @param array  $types List of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function timestampDiff(string $format, array $args, array $types = []): FunctionExpression
+    {
+        $args = array_merge([
+            $format => 'literal',
+        ], $args);
+
+        return new FunctionExpression('TIMESTAMPDIFF', $args, $types, 'float');
+    }
+
+    /**
      * Returns the specified date part from the SQL expression.
      *
      * @param string $part Part of the date to return.
