@@ -42,6 +42,7 @@ use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
 use TestApp\Model\Enum\ArticleStatusLabelInterface;
+use TestApp\Model\Enum\Priority;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -3675,20 +3676,36 @@ class FormHelperTest extends TestCase
             EnumType::from(ArticleStatusLabelInterface::class)
         );
 
-        $article = $articlesTable->newEmptyEntity();
-        $this->Form->create($article);
+        $this->Form->create($articlesTable->newEmptyEntity());
         $result = $this->Form->control('published');
+        $this->assertHtml($expected, $result);
+
+        $articlePriosTable = $this->getTableLocator()->get('ArticlePrios');
+        $articlePriosTable->getSchema()->setColumnType(
+            'priority',
+            EnumType::from(Priority::class)
+        );
+
+        $this->Form->create($articlePriosTable->newEmptyEntity());
+        // Select empty by default
+        $result = $this->Form->control('priority', ['empty' => ['' => ' - please select - '], 'default' => '']);
         $expected = [
             'div' => ['class' => 'input select'],
-            'label' => ['for' => 'published'],
-            'Published',
+            'label' => ['for' => 'priority'],
+            'Priority',
             '/label',
-            'select' => ['name' => 'published', 'id' => 'published'],
-            ['option' => ['value' => 'Y']],
-            'Is Published',
+            'select' => ['name' => 'priority', 'id' => 'priority'],
+            ['option' => ['value' => '', 'selected' => 'selected']],
+            ' - please select - ',
             '/option',
-            ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is Unpublished',
+            ['option' => ['value' => '1']],
+            'Is Low',
+            '/option',
+            ['option' => ['value' => '2']],
+            'Is Medium',
+            '/option',
+            ['option' => ['value' => '3']],
+            'Is High',
             '/option',
             '/select',
             '/div',
