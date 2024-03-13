@@ -140,9 +140,8 @@ class BasePlugin implements PluginInterface
         }
         $parts = explode('\\', static::class);
         array_pop($parts);
-        $this->name = implode('/', $parts);
 
-        return $this->name;
+        return $this->name = implode('/', $parts);
     }
 
     /**
@@ -160,9 +159,8 @@ class BasePlugin implements PluginInterface
         if (str_ends_with($path, 'src')) {
             $path = substr($path, 0, -3);
         }
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        return $this->path;
+        return $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     /**
