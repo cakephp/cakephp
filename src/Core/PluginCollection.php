@@ -172,6 +172,10 @@ class PluginCollection implements Iterator, Countable
     public function add(PluginInterface $plugin)
     {
         $name = $plugin->getName();
+        if (isset($this->plugins[$name])) {
+            throw new CakeException(sprintf('Plugin named `%s` is already loaded', $name));
+        }
+
         $this->plugins[$name] = $plugin;
         $this->names = array_keys($this->plugins);
 

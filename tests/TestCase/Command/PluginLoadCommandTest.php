@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Plugin;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -77,11 +78,13 @@ class PluginLoadCommandTest extends TestCase
     {
         $this->exec('plugin load TestPlugin');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPlugin');
 
         // Needed to not have duplicate named routes
         Router::reload();
         $this->exec('plugin load TestPluginTwo --no-bootstrap --no-console --no-middleware --no-routes --no-services');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPlugin');
 
         // Needed to not have duplicate named routes
         Router::reload();
