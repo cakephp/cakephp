@@ -791,18 +791,24 @@ class Validation
     /**
      * Checks that the value is a valid backed enum instance or value.
      *
+     * Valid Options
+     *
+     *  - only => enum case or array of enum cases that are valid
+     *  - except => enum case or array of enum cases that are not valid
+     *
      * @param mixed $check Value to check
      * @param class-string<\BackedEnum> $enumClassName The valid backed enum class name
+     * @param array<string, mixed> $options
      * @return bool Success
      * @since 5.0.3
      */
-    public static function enum(mixed $check, string $enumClassName): bool
+    public static function enum(mixed $check, string $enumClassName, array $options = []): bool
     {
         if (
             $check instanceof $enumClassName &&
             $check instanceof BackedEnum
         ) {
-            return true;
+            return static::isValidEnum($check, $options);
         }
 
         $backingType = null;
@@ -838,7 +844,55 @@ class Validation
             return false;
         }
 
-        return $enumClassName::tryFrom($check) !== null;
+        $options += [
+            'only' => null,
+            'except' => null,
+        ];
+
+        $enum = $enumClassName::tryFrom($check);
+        if ($enum === null) {
+            return false;
+        }
+
+        return static::isValidEnum($enum, $options);
+    }
+
+    /**
+     * @param \BackedEnum $enum
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function isValidEnum(BackedEnum $enum, array $options): bool
+    {
+        if ($options['only']) {
+            if (!is_array($options['only'])) {
+                $options['only'] = [$options['only']];
+            }
+
+            /** @var \BackedEnum $only */
+            foreach ($options['only'] as $only) {
+                if ($only->value === $enum->value) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($options['except']) {
+            if (!is_array($options['except'])) {
+                $options['except'] = [$options['except']];
+            }
+
+            /** @var \BackedEnum $except */
+            foreach ($options['except'] as $except) {
+                if ($except->value === $enum->value) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
