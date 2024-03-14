@@ -20,10 +20,30 @@ use function Cake\Core\deprecationWarning as cakeDeprecationWarning;
 use function Cake\Core\env as cakeEnv;
 use function Cake\Core\h as cakeH;
 use function Cake\Core\namespaceSplit as cakeNamespaceSplit;
+use function Cake\Core\pathCombine as cakePathCombine;
 use function Cake\Core\pj as cakePj;
 use function Cake\Core\pluginSplit as cakePluginSplit;
 use function Cake\Core\pr as cakePr;
 use function Cake\Core\triggerWarning as cakeTriggerWarning;
+
+if (!function_exists('pathCombine')) {
+    /**
+     * Combines parts with a forward-slash `/`.
+     *
+     * Skips adding a forward-slash if either `/` or `\` already exists.
+     *
+     * @param list<string> $parts
+     * @param bool|null $trailing Determines how trailing slashes are handled
+     *  - If true, ensures a trailing forward-slash is added if one doesn't exist
+     *  - If false, ensures any trailing slash is removed
+     *  - if null, ignores trailing slashes
+     * @return string
+     */
+    function pathCombine(array $parts, ?bool $trailing = null): string
+    {
+        return cakePathCombine($parts, $trailing);
+    }
+}
 
 if (!function_exists('h')) {
     /**

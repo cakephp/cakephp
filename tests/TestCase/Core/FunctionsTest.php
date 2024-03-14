@@ -25,6 +25,7 @@ use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
 use function Cake\Core\h;
 use function Cake\Core\namespaceSplit;
+use function Cake\Core\pathCombine;
 use function Cake\Core\pluginSplit;
 use function Cake\Core\toBool;
 use function Cake\Core\toInt;
@@ -36,6 +37,47 @@ use function Cake\Core\triggerWarning;
  */
 class FunctionsTest extends TestCase
 {
+    public function testPathCombine(): void
+    {
+        $this->assertSame('', pathCombine([]));
+        $this->assertSame('', pathCombine(['']));
+        $this->assertSame('', pathCombine(['', '']));
+        $this->assertSame('/', pathCombine(['/', '/']));
+
+        $this->assertSame('path/to/file', pathCombine(['path', 'to', 'file']));
+        $this->assertSame('path/to/file', pathCombine(['path/', 'to', 'file']));
+        $this->assertSame('path/to/file', pathCombine(['path', 'to/', 'file']));
+        $this->assertSame('path/to/file', pathCombine(['path/', 'to/', 'file']));
+        $this->assertSame('path/to/file', pathCombine(['path/', '/to/', 'file']));
+
+        $this->assertSame('/path/to/file', pathCombine(['/', 'path', 'to', 'file']));
+        $this->assertSame('/path/to/file', pathCombine(['/', '/path', 'to', 'file']));
+
+        $this->assertSame('/path/to/file/', pathCombine(['/path', 'to', 'file/']));
+        $this->assertSame('/path/to/file/', pathCombine(['/path', 'to', 'file', '/']));
+        $this->assertSame('/path/to/file/', pathCombine(['/path', 'to', 'file/', '/']));
+
+        // Test adding trailing slash
+        $this->assertSame('/', pathCombine([], trailing: true));
+        $this->assertSame('/', pathCombine([''], trailing: true));
+        $this->assertSame('/', pathCombine(['/'], trailing: true));
+        $this->assertSame('/path/to/file/', pathCombine(['/path', 'to', 'file/'], trailing: true));
+        $this->assertSame('/path/to/file/', pathCombine(['/path', 'to', 'file/', '/'], trailing: true));
+
+        // Test removing trailing slash
+        $this->assertSame('', pathCombine([''], trailing: false));
+        $this->assertSame('', pathCombine(['/'], trailing: false));
+        $this->assertSame('/path/to/file', pathCombine(['/path', 'to', 'file/'], trailing: false));
+        $this->assertSame('/path/to/file', pathCombine(['/path', 'to', 'file/', '/'], trailing: false));
+
+        // Test Windows-style backslashes
+        $this->assertSame('/path/to\\file', pathCombine(['/', '\\path', 'to', '\\file']));
+        $this->assertSame('/path\\to\\file/', pathCombine(['/', 'path', '\\to\\', 'file'], trailing: true));
+        $this->assertSame('/path\\to\\file\\', pathCombine(['/', 'path', '\\to\\', 'file', '\\'], trailing: true));
+        $this->assertSame('/path\\to\\file', pathCombine(['/', 'path', '\\to\\', 'file'], trailing: false));
+        $this->assertSame('/path\\to\\file', pathCombine(['/', 'path', '\\to\\', 'file', '\\'], trailing: false));
+    }
+
     /**
      * Test cases for env()
      */
