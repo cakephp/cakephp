@@ -40,6 +40,12 @@ use function Cake\Core\deprecationWarning;
  */
 class TestCaseTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->clearPlugins();
+    }
+
     /**
      * tests trying to assertEventFired without configuring an event list
      */

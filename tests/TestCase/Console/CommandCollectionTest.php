@@ -34,6 +34,7 @@ class CommandCollectionTest extends TestCase
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
+        $this->clearPlugins();
     }
 
     /**

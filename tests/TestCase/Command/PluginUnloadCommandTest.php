@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -42,6 +43,8 @@ class PluginUnloadCommandTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        Plugin::getCollection()->clear();
 
         $this->configFile = CONFIG . 'plugins.php';
         $this->originalContent = file_get_contents($this->configFile);

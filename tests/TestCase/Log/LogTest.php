@@ -32,6 +32,7 @@ class LogTest extends TestCase
     {
         parent::setUp();
         Log::reset();
+        $this->clearPlugins();
     }
 
     public function tearDown(): void

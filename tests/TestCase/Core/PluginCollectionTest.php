@@ -49,6 +49,17 @@ class PluginCollectionTest extends TestCase
         $this->assertCount(1, $plugins);
     }
 
+    public function testAddDuplicate(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Plugin named `TestPlugin` is already loaded');
+
+        $plugins = new PluginCollection();
+        $plugins->add(new TestPlugin());
+
+        $plugins->add(new TestPlugin());
+    }
+
     public function testAddFromConfig()
     {
         Configure::write('debug', false);

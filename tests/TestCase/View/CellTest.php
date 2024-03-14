@@ -48,6 +48,7 @@ class CellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
+        $this->clearPlugins();
         $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = new ServerRequest();
         $response = new Response();
@@ -60,7 +61,6 @@ class CellTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->clearPlugins();
         unset($this->View);
     }
 
