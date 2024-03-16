@@ -337,13 +337,17 @@ class Hash
      * Perform a simple insert/remove operation.
      *
      * @param string $op The operation to do.
-     * @param array $data The data to operate on.
+     * @param \ArrayAccess|array $data The data to operate on.
      * @param list<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
-     * @return array data.
+     * @return \ArrayAccess|array data.
      */
-    protected static function _simpleOp(string $op, array $data, array $path, mixed $values = null): array
-    {
+    protected static function _simpleOp(
+        string $op,
+        ArrayAccess|array $data,
+        array $path,
+        mixed $values = null
+    ): ArrayAccess|array {
         $_list = &$data;
 
         $count = count($path);
@@ -357,12 +361,12 @@ class Hash
                 }
                 $_list[$key] ??= [];
                 $_list = &$_list[$key];
-                if (!is_array($_list)) {
+                if (!is_array($_list) && !$_list instanceof ArrayAccess) {
                     $_list = [];
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    if (is_array($_list)) {
+                    if (is_array($_list) || $_list instanceof ArrayAccess) {
                         unset($_list[$key]);
                     }
 
@@ -383,12 +387,12 @@ class Hash
      * You can use `{n}` and `{s}` to remove multiple elements
      * from $data.
      *
-     * @param array $data The data to operate on
+     * @param array \ArrayAccess|$data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return array The modified array.
+     * @return \ArrayAccess|array The modified array.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::remove
      */
-    public static function remove(array $data, string $path): array
+    public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
         $noTokens = !str_contains($path, '[');
         $noExpansion = !str_contains($path, '{');
@@ -413,7 +417,7 @@ class Hash
 
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
-            if ($match && is_array($v)) {
+            if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
                         if ($nextPath !== '') {

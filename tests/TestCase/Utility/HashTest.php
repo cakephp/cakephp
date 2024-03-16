@@ -2171,6 +2171,42 @@ class HashTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
+    public function testRemoveArrayAccess(): void
+    {
+        $testObject = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+
+        $a = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+
+        $result = Hash::remove($a, 'pages.1.vars');
+        $expected = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertSame(['name' => 'about'], $testObject->getArrayCopy());
+
+        $result = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+        $result = Hash::remove($result, 'vars.title');
+        $expected = [
+            'name' => 'about',
+            'vars' => [],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+    }
+
     /**
      * testCheck method
      */
