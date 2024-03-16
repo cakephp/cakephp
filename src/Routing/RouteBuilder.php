@@ -701,11 +701,11 @@ class RouteBuilder
      */
     protected function parseDefaults(array|string $defaults): array
     {
-        if (!is_string($defaults)) {
-            return $defaults;
+        if (is_string($defaults)) {
+            return Router::parseRoutePath($defaults);
         }
 
-        return Router::parseRoutePath($defaults);
+        return $defaults;
     }
 
     /**
