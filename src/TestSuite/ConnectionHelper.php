@@ -52,7 +52,7 @@ class ConnectionHelper
                 ConnectionManager::alias($connection, $original);
             } else {
                 $test = 'test_' . $connection;
-                ConnectionManager::alias($connection, $test);
+                ConnectionManager::alias($test, $connection);
             }
         }
     }
