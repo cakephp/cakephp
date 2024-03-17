@@ -808,7 +808,16 @@ class Validation
         $backingType = null;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $backingType = $reflectionEnum->getBackingType();
+
+            /** @var \ReflectionNamedType|\ReflectionUnionType|null $reflectionBackingType */
+            $reflectionBackingType = $reflectionEnum->getBackingType();
+            if ($reflectionBackingType) {
+                if (method_exists($reflectionBackingType, 'getName')) {
+                    $backingType = $reflectionBackingType->getName();
+                } else {
+                    $backingType = (string)$reflectionBackingType;
+                }
+            }
         } catch (ReflectionException) {
         }
 
@@ -816,6 +825,13 @@ class Validation
             throw new InvalidArgumentException(
                 'The `$enumClassName` argument must be the classname of a valid backed enum.'
             );
+        }
+
+        if ($backingType === 'int') {
+            if (!is_numeric($check)) {
+                return false;
+            }
+            $check = (int)$check;
         }
 
         if (get_debug_type($check) !== (string)$backingType) {
