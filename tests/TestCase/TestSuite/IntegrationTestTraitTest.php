@@ -267,6 +267,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->clearPlugins();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithPluginRoutes', null);
+        Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
 
         $this->get('/test_plugin');
         $this->assertResponseOk();

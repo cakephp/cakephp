@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\FlashMessage;
 use Cake\Http\Server;
@@ -91,6 +92,7 @@ class MiddlewareDispatcher
 
         $out = Router::url($url);
         Router::resetRoutes();
+        Plugin::getCollection()->clear();
 
         return $out;
     }

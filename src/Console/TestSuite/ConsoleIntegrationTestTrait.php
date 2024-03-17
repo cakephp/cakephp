@@ -79,6 +79,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function exec(string $command, array $input = []): void
     {
+        $this->clearPlugins();
         $runner = $this->makeRunner();
 
         $this->_out ??= new StubConsoleOutput();

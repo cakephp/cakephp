@@ -491,6 +491,7 @@ trait IntegrationTestTrait
      */
     protected function _sendRequest(array|string $url, string $method, array|string $data = []): void
     {
+        $this->clearPlugins();
         $dispatcher = $this->_makeDispatcher();
         $url = $dispatcher->resolveUrl($url);
 

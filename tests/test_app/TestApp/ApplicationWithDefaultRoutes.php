@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace TestApp;
 
+use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -37,7 +38,12 @@ class ApplicationWithDefaultRoutes extends BaseApplication
      */
     public function bootstrap(): void
     {
-        // Do nothing.
+        // Only load plugins defined in Configure.
+        if (Configure::check('Plugins.autoload')) {
+            foreach (Configure::read('Plugins.autoload') as $name => $options) {
+                $this->addPlugin($name, $options);
+            }
+        }
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue

@@ -18,9 +18,7 @@ namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\Core\Plugin;
-use Cake\Http\BaseApplication;
-use Cake\Http\MiddlewareQueue;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -37,16 +35,7 @@ class HelpCommandTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        Plugin::getCollection()->clear();
-
-        $app = new class ('') extends BaseApplication
-        {
-            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
-            {
-                return $middlewareQueue;
-            }
-        };
-        $app->addPlugin('TestPlugin');
+        Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
     }
 
     /**
