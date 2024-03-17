@@ -379,9 +379,15 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function setColumnType(string $name, string $type)
     {
         if (!isset($this->_columns[$name])) {
-            throw new DatabaseException(
-                'A column type can only be set if the column already exists; can be checked using `hasColumn()`.'
+            $message = sprintf(
+                'Column `%s` of table `%s`: The column type `%s` can only be set if the column already exists;',
+                $this->_table,
+                $name,
+                $type,
             );
+            $message .= ' can be checked using `hasColumn()`.';
+
+            throw new DatabaseException($message);
         }
 
         $this->_columns[$name]['type'] = $type;
