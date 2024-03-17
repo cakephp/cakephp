@@ -2022,6 +2022,9 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::enum(ArticleStatus::Published, Priority::class));
         $this->assertFalse(Validation::enum('wrong type', Priority::class));
         $this->assertFalse(Validation::enum(123, Priority::class));
+
+        $this->assertTrue(Validation::enum('1', Priority::class));
+        $this->assertFalse(Validation::enum('a1', Priority::class));
     }
 
     public function testEnumNonBacked(): void
