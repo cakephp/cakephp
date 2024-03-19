@@ -26,6 +26,64 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
+if (!function_exists('Cake\Core\pathCombine')) {
+    /**
+     * Combines parts with a forward-slash `/`.
+     *
+     * Skips adding a forward-slash if either `/` or `\` already exists.
+     *
+     * @param list<string> $parts
+     * @param bool|null $trailing Determines how trailing slashes are handled
+     *  - If true, ensures a trailing forward-slash is added if one doesn't exist
+     *  - If false, ensures any trailing slash is removed
+     *  - if null, ignores trailing slashes
+     * @return string
+     */
+    function pathCombine(array $parts, ?bool $trailing = null): string
+    {
+        $numParts = count($parts);
+        if ($numParts === 0) {
+            if ($trailing === true) {
+                return '/';
+            } else {
+                return '';
+            }
+        }
+
+        $path = $parts[0];
+        for ($i = 1; $i < $numParts; ++$i) {
+            $part = $parts[$i];
+            if (strlen($part) === 0) {
+                continue;
+            }
+
+            if ($path[-1] === '/' || $path[-1] === '\\') {
+                if ($part[0] === '/' || $part[0] === '\\') {
+                    $path .= substr($part, 1);
+                } else {
+                    $path .= $part;
+                }
+            } elseif ($part[0] === '/' || $part[0] === '\\') {
+                $path .= $part;
+            } else {
+                $path .= '/' . $part;
+            }
+        }
+
+        if ($trailing === true) {
+            if ($path === '' || ($path[-1] !== '/' && $path[-1] !== '\\')) {
+                $path .= '/';
+            }
+        } elseif ($trailing === false) {
+            if ($path !== '' && ($path[-1] === '/' || $path[-1] === '\\')) {
+                $path = substr($path, 0, -1);
+            }
+        }
+
+        return $path;
+    }
+}
+
 if (!function_exists('Cake\Core\h')) {
     /**
      * Convenience method for htmlspecialchars.
