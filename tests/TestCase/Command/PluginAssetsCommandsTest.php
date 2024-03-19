@@ -76,7 +76,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testSymlink(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
@@ -92,7 +92,7 @@ class PluginAssetsCommandsTest extends TestCase
 
     public function testSymlinkWhenVendorDirectoryExists(): void
     {
-        $this->loadPlugins(['Company/TestPluginThree']);
+        $this->pluginsToLoad(['Company/TestPluginThree']);
 
         mkdir($this->wwwRoot . 'company');
 
@@ -109,7 +109,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testSymlinkWhenTargetAlreadyExits(): void
     {
-        $this->loadPlugins(['TestTheme']);
+        $this->pluginsToLoad(['TestTheme']);
 
         $output = new StubConsoleOutput();
         $io = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
@@ -134,7 +134,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testForPluginWithoutWebroot(): void
     {
-        $this->loadPlugins(['TestPluginTwo']);
+        $this->pluginsToLoad(['TestPluginTwo']);
 
         $this->exec('plugin assets symlink');
         $this->assertFileDoesNotExist($this->wwwRoot . 'test_plugin_two');
@@ -145,7 +145,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testSymlinkingSpecifiedPlugin(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink TestPlugin');
 
@@ -162,7 +162,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testCopy(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets copy');
 
@@ -180,7 +180,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testCopyOverwrite(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false]]);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false]]);
 
         $this->exec('plugin assets copy');
 
@@ -207,7 +207,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testRemoveSymlink(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         mkdir($this->wwwRoot . 'company');
 
@@ -230,7 +230,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testRemoveFolder(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets copy');
 
@@ -250,7 +250,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testOverwrite(): void
     {
-        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+        $this->pluginsToLoad(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $path = $this->wwwRoot . 'test_plugin';
 
