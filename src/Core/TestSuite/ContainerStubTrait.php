@@ -56,7 +56,7 @@ trait ContainerStubTrait
      */
     private array $containerServices = [];
 
-    protected array $pluginsToLoad = [];
+    protected array $appPluginsToLoad = [];
 
     /**
      * Configure the application class to use in integration tests.
@@ -78,9 +78,9 @@ trait ContainerStubTrait
      * @param array $plugins
      * @return void
      */
-    public function pluginsToLoad(array $plugins): void
+    public function setApplicationPlugins(array $plugins): void
     {
-        $this->pluginsToLoad = $plugins;
+        $this->appPluginsToLoad = $plugins;
     }
 
     /**
@@ -108,7 +108,7 @@ trait ContainerStubTrait
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 
-        foreach ($this->pluginsToLoad as $pluginName => $config) {
+        foreach ($this->appPluginsToLoad as $pluginName => $config) {
             if (is_array($config)) {
                 $app->addPlugin($pluginName, $config);
             } else {
