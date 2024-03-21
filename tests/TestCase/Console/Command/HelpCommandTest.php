@@ -34,7 +34,7 @@ class HelpCommandTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->setApplicationPlugins(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
     }
 
     /**

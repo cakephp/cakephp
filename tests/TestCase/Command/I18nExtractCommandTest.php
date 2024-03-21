@@ -273,7 +273,7 @@ class I18nExtractCommandTest extends TestCase
      */
     public function testExtractVendorPrefixedPlugin(): void
     {
-        $this->setApplicationPlugins(['Company/TestPluginThree']);
+        $this->loadPlugins(['Company/TestPluginThree']);
 
         $this->exec(
             'i18n extract ' .

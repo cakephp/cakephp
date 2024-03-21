@@ -20,6 +20,7 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventInterface;
+use Cake\Routing\Router;
 use Closure;
 use League\Container\Exception\NotFoundException;
 use LogicException;
@@ -56,8 +57,6 @@ trait ContainerStubTrait
      */
     private array $containerServices = [];
 
-    protected array $appPluginsToLoad = [];
-
     /**
      * Configure the application class to use in integration tests.
      *
@@ -73,17 +72,6 @@ trait ContainerStubTrait
     }
 
     /**
-     * Plugins to load after the app instance is created.
-     *
-     * @param array $plugins
-     * @return void
-     */
-    public function setApplicationPlugins(array $plugins): void
-    {
-        $this->appPluginsToLoad = $plugins;
-    }
-
-    /**
      * Create an application instance.
      *
      * Uses the configuration set in `configApplication()`.
@@ -92,6 +80,8 @@ trait ContainerStubTrait
      */
     protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
     {
+        Router::resetRoutes();
+
         if ($this->_appClass) {
             $appClass = $this->_appClass;
         } else {
