@@ -216,7 +216,9 @@ class ConsoleInputArgument
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
         }
-        $option->addAttribute('default', $this->_default);
+        if ($this->_default !== null) {
+            $option->addAttribute('default', $this->_default);
+        }
 
         return $parent;
     }
