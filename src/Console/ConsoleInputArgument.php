@@ -58,7 +58,7 @@ class ConsoleInputArgument
     /**
      * Default value for this argument.
      *
-     * @var string|bool|null
+     * @var string|null
      */
     protected ?string $_default = null;
 
@@ -69,10 +69,15 @@ class ConsoleInputArgument
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
      * @param list<string> $choices Valid choices for this option.
-     * @param string|bool|null $default The default value for this argument.
+     * @param string|null $default The default value for this argument.
      */
-    public function __construct(array|string $name, string $help = '', bool $required = false, array $choices = [], ?string $default = null)
-    {
+    public function __construct(
+        array|string $name,
+        string $help = '',
+        bool $required = false,
+        array $choices = [],
+        ?string $default = null
+    ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
