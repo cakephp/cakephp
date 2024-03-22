@@ -56,9 +56,9 @@ class ConsoleInputArgument
     protected $_choices;
 
     /**
-     * Default value for this argument.
+     * Default value for the argument.
      *
-     * @var mixed
+     * @var string|null
      */
     protected $_default;
 
@@ -69,8 +69,9 @@ class ConsoleInputArgument
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
      * @param array<string> $choices Valid choices for this option.
+     * @param string|null $default The default value for this argument.
      */
-    public function __construct($name, $help = '', $required = false, $choices = [])
+    public function __construct($name, $help = '', $required = false, $choices = [], $default = null)
     {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
@@ -82,6 +83,7 @@ class ConsoleInputArgument
             $this->_help = $help;
             $this->_required = $required;
             $this->_choices = $choices;
+            $this->_default = $default;
         }
     }
 
@@ -126,6 +128,9 @@ class ConsoleInputArgument
         if ($this->_choices) {
             $optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+        if ($this->_default !== null) {
+            $optional .= sprintf(' <comment>default: "%s"</comment>', $this->_default);
+        }
 
         return sprintf('%s%s%s', $name, $this->_help, $optional);
     }
@@ -147,6 +152,16 @@ class ConsoleInputArgument
         }
 
         return $name;
+    }
+
+    /**
+     * Get the default value for this argument
+     *
+     * @return string|null
+     */
+    public function defaultValue()
+    {
+        return $this->_default;
     }
 
     /**
@@ -201,6 +216,7 @@ class ConsoleInputArgument
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
         }
+        $option->addAttribute('default', $this->_default);
 
         return $parent;
     }
