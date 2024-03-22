@@ -835,7 +835,7 @@ class Validation
     public static function enumExcept(mixed $check, array $cases): bool
     {
         if ($cases === []) {
-            throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
+            throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
         }
 
         $firstKey = array_key_first($cases);
@@ -920,11 +920,8 @@ class Validation
                 $options['only'] = [$options['only']];
             }
 
-            /** @var \BackedEnum $only */
-            foreach ($options['only'] as $only) {
-                if ($only === $enum) {
-                    return true;
-                }
+            if (in_array($enum, $options['only'], true)) {
+                return true;
             }
 
             return false;
@@ -935,11 +932,8 @@ class Validation
                 $options['except'] = [$options['except']];
             }
 
-            /** @var \BackedEnum $except */
-            foreach ($options['except'] as $except) {
-                if ($except === $enum) {
-                    return false;
-                }
+            if (in_array($enum, $options['except'], true)) {
+                return false;
             }
         }
 
