@@ -580,6 +580,18 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test positional argument with default parsing.
+     */
+    public function testAddArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+        $args = $parser->arguments();
+        $this->assertEquals($parser, $result, 'Should return this');
+        $this->assertEquals('foo', $args[0]->defaultValue());
+    }
+
+    /**
      * Add arguments that were once considered the same
      */
     public function testAddArgumentDuplicate(): void
@@ -713,6 +725,21 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test argument with default value.
+     */
+    public function testPositionalArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+
+        $result = $parser->parse(['bar'], $this->io);
+        $this->assertEquals(['bar'], $result[1], 'Got the correct value.');
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['foo'], $result[1], 'Got the correct default value.');
+    }
+
+    /**
      * Test adding multiple arguments.
      */
     public function testAddArguments(): void
@@ -785,20 +812,26 @@ class ConsoleOptionParserTest extends TestCase
         $parser->setDescription('A command!')
             ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.'])
-            ->addOption('reqd', ['help' => 'A required option.', 'required' => true]);
+            ->addOption('reqd', ['help' => 'A required option.', 'required' => true])
+            ->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
 
         $result = $parser->help();
         $expected = <<<TEXT
 A command!
 
 <info>Usage:</info>
-tool sample [-h] --reqd [--test]
+tool sample [-h] --reqd [--test] [<name>]
 
 <info>Options:</info>
 
 --help, -h  Display this help.
 --reqd      A required option. <comment>(required)</comment>
 --test      A test option.
+
+<info>Arguments:</info>
+
+name  An argument <comment>(optional)</comment> <comment>default:
+      "foo"</comment>
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
