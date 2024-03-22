@@ -581,6 +581,18 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test positional argument parsing.
+     */
+    public function testAddArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+        $args = $parser->arguments();
+        $this->assertEquals($parser, $result, 'Should return this');
+        $this->assertEquals('foo', $args[0]->defaultValue());
+    }
+
+    /**
      * Add arguments that were once considered the same
      */
     public function testAddArgumentDuplicate(): void
@@ -711,6 +723,21 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($expected, $result[1], 'Got the correct value.');
 
         $result = $parser->parse(['jose', 'coder'], $this->io);
+    }
+
+    /**
+     * test argument with default value.
+     */
+    public function testPositionalArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+
+        $result = $parser->parse(['bar'], $this->io);
+        $this->assertEquals(['bar'], $result[1], 'Got the correct value.');
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['foo'], $result[1], 'Got the correct default value.');
     }
 
     /**
