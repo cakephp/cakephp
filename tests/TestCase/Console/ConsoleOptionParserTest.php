@@ -957,7 +957,7 @@ TEXT;
         ])->addOption('connection', [
             'help' => 'Db connection.',
             'short' => 'c',
-        ])->addArgument('name', ['required' => false]);
+        ])->addArgument('name', ['required' => false, 'default' => 'foo']);
 
         $result = $parser->help('build');
         $expected = <<<TEXT
@@ -975,7 +975,7 @@ cake mycommand build [-c] [-h] [-q] [-v] [<name>]
 
 <info>Arguments:</info>
 
-name   <comment>(optional)</comment>
+name   <comment>(optional)</comment> <comment>default: "foo"</comment>
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
