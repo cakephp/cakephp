@@ -607,7 +607,7 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test addOption with an object.
+     * test addArgument with an object.
      */
     public function testAddArgumentObject(): void
     {
@@ -616,6 +616,18 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->arguments();
         $this->assertCount(1, $result);
         $this->assertSame('test', $result[0]->name());
+    }
+
+    /**
+     * test addArgument with default value with an object.
+     */
+    public function testAddArgumentDefaultObject(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument(new ConsoleInputArgument('test', '', false, [], 'foo'));
+        $result = $parser->arguments();
+        $this->assertCount(1, $result);
+        $this->assertSame('foo', $result[0]->defaultValue());
     }
 
     /**
