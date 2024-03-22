@@ -56,6 +56,13 @@ class ConsoleInputArgument
     protected $_choices;
 
     /**
+     * Default value for this argument.
+     *
+     * @var mixed
+     */
+    protected $_default;
+
+    /**
      * Make a new Input Argument
      *
      * @param array<string, mixed>|string $name The long name of the option, or an array with all the properties.
