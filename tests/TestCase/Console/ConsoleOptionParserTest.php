@@ -1218,7 +1218,7 @@ TEXT;
         $spec = [
             'command' => 'test',
             'arguments' => [
-                'name' => ['help' => 'The name'],
+                'name' => ['help' => 'The name', 'default' => 'foo'],
                 'other' => ['help' => 'The other arg'],
             ],
             'options' => [
