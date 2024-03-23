@@ -798,11 +798,68 @@ class Validation
      */
     public static function enum(mixed $check, string $enumClassName): bool
     {
+        return static::checkEnum($check, $enumClassName);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumOnly(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = get_class($firstValue);
+
+        $options = ['only' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are not valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumExcept(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = get_class($firstValue);
+
+        $options = ['except' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * @param mixed $check
+     * @param class-string<\BackedEnum> $enumClassName
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function checkEnum(mixed $check, string $enumClassName, array $options = []): bool
+    {
         if (
             $check instanceof $enumClassName &&
             $check instanceof BackedEnum
         ) {
-            return true;
+            return static::isValidEnum($check, $options);
         }
 
         $backingType = null;
@@ -838,7 +895,49 @@ class Validation
             return false;
         }
 
-        return $enumClassName::tryFrom($check) !== null;
+        $options += [
+            'only' => null,
+            'except' => null,
+        ];
+
+        $enum = $enumClassName::tryFrom($check);
+        if ($enum === null) {
+            return false;
+        }
+
+        return static::isValidEnum($enum, $options);
+    }
+
+    /**
+     * @param \BackedEnum $enum
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function isValidEnum(BackedEnum $enum, array $options): bool
+    {
+        if ($options['only']) {
+            if (!is_array($options['only'])) {
+                $options['only'] = [$options['only']];
+            }
+
+            if (in_array($enum, $options['only'], true)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($options['except']) {
+            if (!is_array($options['except'])) {
+                $options['except'] = [$options['except']];
+            }
+
+            if (in_array($enum, $options['except'], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

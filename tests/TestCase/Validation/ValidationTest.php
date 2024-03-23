@@ -2027,6 +2027,18 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::enum('a1', Priority::class));
     }
 
+    public function testEnumOnly(): void
+    {
+        $this->assertTrue(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertFalse(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+    }
+
+    public function testEnumExcept(): void
+    {
+        $this->assertFalse(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertTrue(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+    }
+
     public function testEnumNonBacked(): void
     {
         $this->expectException(InvalidArgumentException::class);
