@@ -336,7 +336,10 @@ class Hash
 
         foreach ($data as $k => $v) {
             if (static::_matchToken($k, $token)) {
-                if (!$conditions || static::_matches($v, $conditions)) {
+                if (
+                    !$conditions ||
+                    ((is_array($v) || $v instanceof ArrayAccess) && static::_matches($v, $conditions))
+                ) {
                     $data[$k] = $nextPath
                         ? static::insert($v, $nextPath, $values)
                         : array_merge($v, (array)$values);

@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
 
 /**
  * HashTest
@@ -2002,6 +2003,30 @@ class HashTest extends TestCase
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * test insert() with {s} placeholders and conditions.
+     */
+    public function testInsertMultiWord(): void
+    {
+        $data = static::articleData();
+
+        $result = Hash::insert($data, '{n}.{s}.insert', 'value');
+        $this->assertSame('value', $result[0]['Article']['insert']);
+        $this->assertSame('value', $result[1]['Article']['insert']);
+
+        $data = [
+            0 => ['obj' => new stdClass(), 'Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['float' => 1.5, 'Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['int' => 1, 'Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['str' => 'yes', 'Item' => ['id' => 3, 'title' => 'third']],
+            4 => ['bool' => true, 'Item' => ['id' => 4, 'title' => 'fourth']],
+            5 => ['null' => null, 'Item' => ['id' => 5, 'title' => 'fifth']],
+            6 => ['arrayish' => new ArrayObject(['val']), 'Item' => ['id' => 6, 'title' => 'sixth']],
+        ];
+        $result = Hash::insert($data, '{n}.{s}[id=4].new', 'value');
+        $this->assertEquals('value', $result[4]['Item']['new']);
     }
 
     /**
