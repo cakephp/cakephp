@@ -725,10 +725,15 @@ class ConsoleOptionParser
         }
 
         foreach ($this->_args as $i => $arg) {
-            if ($arg->isRequired() && !isset($args[$i])) {
-                throw new ConsoleException(
-                    sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
-                );
+            if (!isset($args[$i])) {
+                if ($arg->isRequired()) {
+                    throw new ConsoleException(
+                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
+                    );
+                }
+                if ($arg->defaultValue() !== null) {
+                    $args[$i] = $arg->defaultValue();
+                }
             }
         }
         foreach ($this->_options as $option) {
