@@ -92,6 +92,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             $config['className'] = $name;
         }
 
+        if (!empty($config['className']) && str_contains($objName, '.')) {
+            throw new \InvalidArgumentException('Dot syntax is not supported for `className` registry usage.');
+        }
+
         $loaded = isset($this->_loaded[$objName]);
         if ($loaded && !empty($config)) {
             $this->_checkDuplicate($objName, $config);
