@@ -55,6 +55,7 @@ class MiddlewareDispatcher
      *
      * @param array|string $url The URL array/string to resolve.
      * @return string
+     * @deprecated 5.1.0 Use IntegrationTestTrait::resolveUrl() instead.
      */
     public function resolveUrl(array|string $url): string
     {
@@ -71,6 +72,7 @@ class MiddlewareDispatcher
      *
      * @param array $url The url to resolve
      * @return string
+     * @deprecated 5.1.0 Use IntegrationTestTrait::resolveRouter() instead.
      */
     protected function resolveRoute(array $url): string
     {

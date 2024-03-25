@@ -107,9 +107,10 @@ abstract class BaseApplication implements
         ?ControllerFactoryInterface $controllerFactory = null
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->plugins = Plugin::getCollection();
+        $this->plugins = new PluginCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
         $this->controllerFactory = $controllerFactory;
+        Plugin::setCollection($this->plugins);
     }
 
     /**

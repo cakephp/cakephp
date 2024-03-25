@@ -74,6 +74,13 @@ abstract class TestCase extends BaseTestCase
     protected array $_configure = [];
 
     /**
+     * Plugins to be loaded after app instance is created ContainerStubTrait::creatApp()
+     *
+     * @var array
+     */
+    protected array $appPluginsToLoad = [];
+
+    /**
      * @var \Cake\Error\PhpError|null
      */
     private ?PhpError $_capturedError = null;
@@ -309,6 +316,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
+        $this->appPluginsToLoad = $plugins;
+
         /**
          * @psalm-suppress MissingTemplateParam
          */
