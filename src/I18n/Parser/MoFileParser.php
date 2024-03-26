@@ -154,7 +154,7 @@ class MoFileParser
     }
 
     /**
-     * Reads an unsigned long from stream respecting endianess.
+     * Reads an unsigned long from stream respecting endianness.
      *
      * @param resource $stream The File being read.
      * @param bool $isBigEndian Whether the current platform is Big Endian
