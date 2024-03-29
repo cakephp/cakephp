@@ -74,6 +74,12 @@ class Application extends BaseApplication
      */
     public function routes(RouteBuilder $routes): void
     {
+        // Additional routes to load
+        if (Configure::check('TestApp.routes')) {
+            $func = Configure::read('TestApp.routes');
+            $func($routes);
+        }
+
         $routes->registerMiddleware('dumb', new DumbMiddleware());
         $routes->registerMiddleware('sample', new SampleMiddleware());
         $routes->scope('/app', function (RouteBuilder $routes): void {

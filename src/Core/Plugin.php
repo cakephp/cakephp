@@ -129,4 +129,15 @@ class Plugin
     {
         return static::$plugins ??= new PluginCollection();
     }
+
+    /**
+     * Set the shared plugin collection.
+     *
+     * @param \Cake\Core\PluginCollection $collection
+     * @return void
+     */
+    public static function setCollection(PluginCollection $collection): void
+    {
+        static::$plugins = $collection;
+    }
 }
