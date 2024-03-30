@@ -178,7 +178,8 @@ class SelectLoader
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->enableHydration($selectQuery->isHydrationEnabled());
+            ->enableHydration($selectQuery->isHydrationEnabled())
+            ->setConnectionRole($selectQuery->getConnectionRole());
         if ($selectQuery->isResultsCastingEnabled()) {
             $fetchQuery->enableResultsCasting();
         } else {
