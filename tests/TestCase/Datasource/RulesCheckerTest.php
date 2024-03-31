@@ -207,4 +207,55 @@ class RulesCheckerTest extends TestCase
         $rules->remove('ruleName');
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
     }
+
+    public function testRemoveCreate(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addCreate(
+            function () {
+                return false;
+            },
+            'ruleName',
+        );
+
+        $entity = new Entity();
+        $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
+
+        $rules->removeCreate('ruleName');
+        $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
+    }
+
+    public function testRemoveUpdate(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addUpdate(
+            function () {
+                return false;
+            },
+            'ruleName',
+        );
+
+        $entity = new Entity();
+        $this->assertFalse($rules->check($entity, RulesChecker::UPDATE));
+
+        $rules->removeUpdate('ruleName');
+        $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
+    }
+
+    public function testRemoveDelete(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addDelete(
+            function () {
+                return false;
+            },
+            'ruleName',
+        );
+
+        $entity = new Entity();
+        $this->assertFalse($rules->check($entity, RulesChecker::DELETE));
+
+        $rules->removeDelete('ruleName');
+        $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
+    }
 }
