@@ -150,6 +150,7 @@ class RulesChecker
      *
      * @param string $name The name of the rule to remove.
      * @return $this
+     * @since 5.1.0
      */
     public function remove(string $name)
     {
@@ -192,6 +193,7 @@ class RulesChecker
      *
      * @param string $name The name of the rule to remove.
      * @return $this
+     * @since 5.1.0
      */
     public function removeCreate(string $name)
     {
@@ -234,6 +236,7 @@ class RulesChecker
      *
      * @param string $name The name of the rule to remove.
      * @return $this
+     * @since 5.1.0
      */
     public function removeUpdate(string $name)
     {
@@ -276,6 +279,7 @@ class RulesChecker
      *
      * @param string $name The name of the rule to remove.
      * @return $this
+     * @since 5.1.0
      */
     public function removeDelete(string $name)
     {
