@@ -146,7 +146,7 @@ class CommandTest extends TestCase
 
         $this->assertSame(
             CommandInterface::CODE_SUCCESS,
-            $command->run(['--help'], $this->getMockIo($output))
+            $command->run(['test-me', '--help'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
         $this->assertStringNotContainsString('Demo', $messages);
@@ -162,7 +162,7 @@ class CommandTest extends TestCase
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
-        $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
+        $this->assertNull($command->run(['test-me', '--verbose'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Verbose!', $messages);
         $this->assertStringContainsString('Demo Command!', $messages);
@@ -179,7 +179,7 @@ class CommandTest extends TestCase
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
-        $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
+        $this->assertNull($command->run(['test-me', '--quiet'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Quiet!', $messages);
         $this->assertStringNotContainsString('Verbose!', $messages);
@@ -242,9 +242,9 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
+        $result = $command->executeCommand(DemoCommand::class, ['test-me'], $this->getMockIo($output));
         $this->assertNull($result);
-        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+        $this->assertEquals(['Quiet!', 'Demo Command!', 'test-me'], $output->messages());
     }
 
     /**
@@ -276,9 +276,9 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
+        $result = $command->executeCommand(new DemoCommand(), ['test-me'], $this->getMockIo($output));
         $this->assertNull($result);
-        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+        $this->assertEquals(['Quiet!', 'Demo Command!', 'test-me'], $output->messages());
     }
 
     /**

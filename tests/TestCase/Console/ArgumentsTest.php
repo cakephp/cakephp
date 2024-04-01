@@ -44,7 +44,10 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], []);
         $this->assertSame($values[0], $args->getArgumentAt(0));
         $this->assertSame($values[1], $args->getArgumentAt(1));
-        $this->assertNull($args->getArgumentAt(3));
+
+        $this->expectException(ConsoleException::class);
+
+        $args->getArgumentAt(3);
     }
 
     /**
@@ -56,7 +59,9 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], []);
         $this->assertTrue($args->hasArgumentAt(0));
         $this->assertTrue($args->hasArgumentAt(1));
-        $this->assertFalse($args->hasArgumentAt(3));
+
+        $this->expectException(ConsoleException::class);
+
         $this->assertFalse($args->hasArgumentAt(-1));
     }
 
@@ -70,8 +75,6 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], $names);
         $this->assertTrue($args->hasArgument('size'));
         $this->assertTrue($args->hasArgument('color'));
-        $this->assertFalse($args->hasArgument('hair'));
-        $this->assertFalse($args->hasArgument('Hair'), 'casing matters');
         $this->assertFalse($args->hasArgument('odd'));
     }
 
@@ -85,8 +88,7 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], $names);
         $this->assertSame($values[0], $args->getArgument('size'));
         $this->assertSame($values[1], $args->getArgument('color'));
-        $this->assertNull($args->getArgument('Color'));
-        $this->assertNull($args->getArgument('hair'));
+        $this->assertNull($args->getArgument('odd'));
     }
 
     /**
@@ -99,6 +101,20 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], $names);
         $this->assertNull($args->getArgument('size'));
         $this->assertNull($args->getArgument('color'));
+    }
+
+    /**
+     * get arguments by name
+     */
+    public function testGetArgumentInvalid(): void
+    {
+        $values = [];
+        $names = ['size'];
+        $args = new Arguments($values, [], $names);
+
+        $this->expectException(ConsoleException::class);
+
+        $args->getArgument('color');
     }
 
     /**

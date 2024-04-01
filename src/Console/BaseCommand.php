@@ -206,7 +206,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io): void
     {
         $format = 'text';
-        if ($args->getArgumentAt(0) === 'xml') {
+        if ($args->getArguments() && $args->getArgumentAt(0) === 'xml') {
             $format = 'xml';
             $io->setOutputAs(ConsoleOutput::RAW);
         }

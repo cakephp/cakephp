@@ -78,6 +78,8 @@ class Arguments
      */
     public function getArgumentAt(int $index): ?string
     {
+        $this->assertArgumentExistsAtPosition($index);
+
         if (!$this->hasArgumentAt($index)) {
             return null;
         }
@@ -93,6 +95,8 @@ class Arguments
      */
     public function hasArgumentAt(int $index): bool
     {
+        $this->assertArgumentExistsAtPosition($index);
+
         return isset($this->args[$index]);
     }
 
@@ -104,6 +108,8 @@ class Arguments
      */
     public function hasArgument(string $name): bool
     {
+        $this->assertArgumentExists($name);
+
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false) {
             return false;
@@ -120,6 +126,10 @@ class Arguments
      */
     public function getArgument(string $name): ?string
     {
+        debug($this->argNames);
+        debug($this->args);
+        $this->assertArgumentExists($name);
+
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false || !isset($this->args[$offset])) {
             return null;
@@ -204,5 +214,40 @@ class Arguments
     public function hasOption(string $name): bool
     {
         return isset($this->options[$name]);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return void
+     */
+    protected function assertArgumentExists(string $name): void
+    {
+        if (in_array($name, $this->argNames, true)) {
+            return;
+        }
+
+        throw new ConsoleException(sprintf(
+            'Argument `%s` is not defined on this Command. Could this be an option maybe?',
+            $name
+        ));
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return void
+     */
+    protected function assertArgumentExistsAtPosition(int $index): void
+    {
+        $count = count($this->args);
+        if ($index >= 0 && $index < $count) {
+            return;
+        }
+
+        throw new ConsoleException(sprintf(
+            'Argument at index `%s` is not defined on this Command. Could this be an option maybe?',
+            $index
+        ));
     }
 }
