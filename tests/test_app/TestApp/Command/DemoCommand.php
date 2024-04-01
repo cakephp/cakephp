@@ -6,7 +6,6 @@ namespace TestApp\Command;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOptionParser;
 
 class DemoCommand extends Command
 {
