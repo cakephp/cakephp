@@ -80,6 +80,21 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * tests exec clears output
+     */
+    public function testExecClearsOutput(): void
+    {
+        $this->exec('sample');
+        $this->assertOutputContains('SampleCommand');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $this->exec('abort');
+        $this->assertOutputNotContains('SampleCommand');
+        $this->assertErrorContains('Command aborted');
+        $this->assertExitCode(127);
+    }
+
+    /**
      * tests a valid core command
      */
     public function testExecCoreCommand(): void

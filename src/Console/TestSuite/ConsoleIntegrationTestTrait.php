@@ -90,6 +90,8 @@ trait ConsoleIntegrationTestTrait
                 'You can use `$input` only if `$_in` property is null and will be reset.'
             );
         }
+        $this->_out->clear();
+        $this->_err->clear();
 
         $args = $this->commandStringToArgs("cake $command");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
