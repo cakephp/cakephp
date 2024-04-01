@@ -136,7 +136,24 @@ class RulesChecker
      */
     public function add(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_rules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->_rules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_rules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     */
+    public function remove(string $name)
+    {
+        unset($this->_rules[$name]);
 
         return $this;
     }
@@ -161,7 +178,24 @@ class RulesChecker
      */
     public function addCreate(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_createRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->_createRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_createRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the create set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     */
+    public function removeCreate(string $name)
+    {
+        unset($this->_createRules[$name]);
 
         return $this;
     }
@@ -186,7 +220,24 @@ class RulesChecker
      */
     public function addUpdate(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_updateRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_updateRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the update set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     */
+    public function removeUpdate(string $name)
+    {
+        unset($this->_updateRules[$name]);
 
         return $this;
     }
@@ -211,7 +262,24 @@ class RulesChecker
      */
     public function addDelete(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the delete set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     */
+    public function removeDelete(string $name)
+    {
+        unset($this->_deleteRules[$name]);
 
         return $this;
     }
@@ -254,7 +322,11 @@ class RulesChecker
      */
     public function checkCreate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_createRules));
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_createRules))
+        );
     }
 
     /**
@@ -267,7 +339,11 @@ class RulesChecker
      */
     public function checkUpdate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_updateRules));
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_updateRules))
+        );
     }
 
     /**
@@ -280,7 +356,11 @@ class RulesChecker
      */
     public function checkDelete(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, $this->_deleteRules);
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_deleteRules))
+        );
     }
 
     /**
