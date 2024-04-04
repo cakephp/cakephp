@@ -73,6 +73,16 @@ class StubConsoleOutput extends ConsoleOutput
     }
 
     /**
+     * Clear buffered output
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $this->_out = [];
+    }
+
+    /**
      * Get the output as a string
      *
      * @return string
