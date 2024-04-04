@@ -1020,6 +1020,9 @@ trait IntegrationTestTrait
     public function assertResponseEquals(mixed $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($content, new BodyEquals($this->_response), $verboseMessage);
     }
 
@@ -1033,6 +1036,9 @@ trait IntegrationTestTrait
     public function assertResponseNotEquals(mixed $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($content, new BodyNotEquals($this->_response), $verboseMessage);
     }
 
@@ -1051,6 +1057,9 @@ trait IntegrationTestTrait
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($content, new BodyContains($this->_response, $ignoreCase), $verboseMessage);
     }
 
@@ -1069,6 +1078,9 @@ trait IntegrationTestTrait
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($content, new BodyNotContains($this->_response, $ignoreCase), $verboseMessage);
     }
 
@@ -1082,6 +1094,9 @@ trait IntegrationTestTrait
     public function assertResponseRegExp(string $pattern, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($pattern, new BodyRegExp($this->_response), $verboseMessage);
     }
 
@@ -1095,6 +1110,9 @@ trait IntegrationTestTrait
     public function assertResponseNotRegExp(string $pattern, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
+        if ($this->isDebug()) {
+            $verboseMessage .= $this->responseBody();
+        }
         $this->assertThat($pattern, new BodyNotRegExp($this->_response), $verboseMessage);
     }
 
@@ -1106,6 +1124,9 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotEmpty(string $message = ''): void
     {
+        if ($this->isDebug()) {
+            $message .= $this->responseBody();
+        }
         $this->assertThat(null, new BodyNotEmpty($this->_response), $message);
     }
 
@@ -1117,6 +1138,9 @@ trait IntegrationTestTrait
      */
     public function assertResponseEmpty(string $message = ''): void
     {
+        if ($this->isDebug()) {
+            $message .= $this->responseBody();
+        }
         $this->assertThat(null, new BodyEmpty($this->_response), $message);
     }
 
@@ -1425,5 +1449,28 @@ trait IntegrationTestTrait
     {
         /** @psalm-suppress InvalidScalarArgument */
         return new TestSession($_SESSION);
+    }
+
+    /**
+     * Checks if debug flag is set.
+     *
+     * Flag is set via `--debug`.
+     * Allows additional stuff like non-mocking when enabling debug. Or displaying of response body.
+     *
+     * @return bool Success
+     */
+    protected function isDebug(): bool
+    {
+        return !empty($_SERVER['argv']) && in_array('--debug', $_SERVER['argv'], true);
+    }
+
+    /**
+     * Debug content of response body.
+     *
+     * @return string
+     */
+    protected function responseBody(): string
+    {
+        return PHP_EOL . '------' . PHP_EOL . (string)$this->_response->getBody() . PHP_EOL . '------' . PHP_EOL;
     }
 }
