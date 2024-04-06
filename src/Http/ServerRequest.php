@@ -934,7 +934,7 @@ class ServerRequest implements ServerRequestInterface
      * There are a few ways to specify a method.
      *
      * - If your client supports it you can use native HTTP methods.
-     * - You can set the HTTP-X-Method-Override header.
+     * - You can set the X-Http-Method-Override header.
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
