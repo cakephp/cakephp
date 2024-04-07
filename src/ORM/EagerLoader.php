@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Collection\Collection;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
 use InvalidArgumentException;
@@ -609,19 +608,25 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
+     * @param iterable $results Results.
      * @return array
      * @throws \RuntimeException
      */
-    public function loadExternal(SelectQuery $query, array $results): array
+    public function loadExternal(SelectQuery $query, iterable $results): array
     {
         if (!$results) {
             return $results;
         }
 
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
+        $external = $this->externalAssociations($query->getRepository());
         if (!$external) {
+            return $results;
+        }
+
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
+        if (!$results) {
             return $results;
         }
 
@@ -665,94 +670,6 @@ class EagerLoader
             );
             $results = array_map($callback, $results);
         }
-
-        return $results;
-    }
-
-    /**
-     * Inject data from associations that cannot be joined directly for unbuffered queries.
-     *
-     * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
-     * associations.
-     * @param iterable $results Results array.
-     * @return iterable
-     * @throws \RuntimeException
-     */
-    public function loadExternalUnbuffered(SelectQuery $query, iterable $results): iterable
-    {
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
-        if (!$external) {
-            return $results;
-        }
-
-        $assocData = [];
-
-        foreach ($external as $meta) {
-            // $contain = $meta->associations();
-            $instance = $meta->instance();
-            $config = $meta->getConfig();
-            $alias = $instance->getSource()->getAlias();
-            $path = $meta->aliasPath();
-
-            if ($instance->requiresKeys($config)) {
-                $source = $instance->getSource();
-                $keys = $instance->type() === Association::MANY_TO_ONE ?
-                    (array)$instance->getForeignKey() :
-                    (array)$instance->getBindingKey();
-
-                $alias = $source->getAlias();
-                $pkFields = [];
-                /** @var string $key */
-                foreach ($keys as $key) {
-                    $pkFields[] = key($query->aliasField($key, $alias));
-                }
-                $assocData[$path] = [
-                    'alias' => $alias,
-                    'pkFields' => $pkFields,
-                ];
-            }
-        }
-
-        $results = (new Collection($results))
-            ->map(function ($row) use ($query, $external, $assocData) {
-                foreach ($external as $meta) {
-                    $path = $meta->aliasPath();
-                    $keys = null;
-                    if (count($assocData[$path]['pkFields']) === 1) {
-                        // Missed joins will have null in the results.
-                        if (array_key_exists($assocData[$path]['pkFields'][0], $row)) {
-                            // Assign empty array to avoid not found association when optional.
-                            if (!isset($row[$assocData[$path]['pkFields'][0]])) {
-                                $keys = [];
-                            } else {
-                                $value = $row[$assocData[$path]['pkFields'][0]];
-                                $keys = [$value => $value];
-                            }
-                        }
-                    } else {
-                        // Handle composite keys.
-                        $collected = [];
-                        foreach ($assocData[$path]['pkFields'] as $key) {
-                            $collected[] = $row[$key];
-                        }
-                        $keys[implode(';', $collected)] = $collected;
-                    }
-
-                    $callback = $meta->instance()->eagerLoader(
-                        $meta->getConfig() + [
-                            'query' => $query,
-                            'contain' => $meta->associations(),
-                            'keys' => $keys,
-                            'nestKey' => $meta->aliasPath(),
-                        ]
-                    );
-
-                    $row = $callback($row);
-                }
-
-                return $row;
-            });
 
         return $results;
     }

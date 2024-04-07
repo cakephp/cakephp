@@ -37,7 +37,7 @@ class ResultSetFactory
      * @param array $results Results array.
      * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
-    public function createResultSet(SelectQuery $query, iterable $results, bool $bufferedResults = true): ResultSet
+    public function createResultSet(SelectQuery $query, iterable $results): ResultSet
     {
         $data = $this->collectData($query);
 
