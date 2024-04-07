@@ -22,11 +22,10 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Generator;
 use InvalidArgumentException;
-use IteratorAggregate;
 use PDO;
 use PDOStatement;
 
-class Statement implements StatementInterface, IteratorAggregate
+class Statement implements StatementInterface
 {
     /**
      * @var array<string, int>

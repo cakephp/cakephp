@@ -34,7 +34,7 @@ class ResultSetFactory
      * Constructor
      *
      * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
-     * @param array $results Results array.
+     * @param iterable $results Results.
      * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
     public function createResultSet(SelectQuery $query, iterable $results): ResultSet
