@@ -205,16 +205,55 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Test providing the same read and write config uses a shared driver.
+     * Tests that unique drivers are created if roles are specified even with same config
      */
-    public function testSameReadWriteDriver(): void
+    public function testSameReadWriteConfig(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
         $connection = new Connection($config);
-        $this->assertSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
-        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Tests that unique drivers are created if roles are specified even with empty config
+     */
+    public function testEmptyReadWriteConfig(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => [], 'write' => []];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Tests that unique drivers are created if roles are specified even with empty config
+     */
+    public function testSingleEmptyReadWriteConfig(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => []];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test role-specific config values override defaults
+     */
+    public function testRoleSpecificOverrides(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['log' => true, 'write' => ['database' => 'read_test.db', 'log' => false]];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotNull($connection->getDriver(Connection::ROLE_READ)->getLogger());
+        $this->assertNull($connection->getDriver(Connection::ROLE_WRITE)->getLogger());
     }
 
     public function testDisabledReadWriteDriver(): void
