@@ -214,13 +214,8 @@ class Sqlserver extends Driver
             ]
         );
 
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
-        }
-
         /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
     }
 
     /**
