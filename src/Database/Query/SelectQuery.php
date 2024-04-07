@@ -91,7 +91,7 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * @var bool
      */
-    protected bool $useBufferedResults = true;
+    protected bool $bufferedResults = true;
 
     /**
      * The Type map for fields in the select clause
@@ -766,7 +766,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        if ($this->useBufferedResults) {
+        if ($this->bufferedResults) {
             /** @var \Traversable|array $results */
             $results = $this->all();
             if (is_array($results)) {
@@ -846,7 +846,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function enableBufferedResults()
     {
         $this->_dirty();
-        $this->useBufferedResults = true;
+        $this->bufferedResults = true;
 
         return $this;
     }
@@ -862,7 +862,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function disableBufferedResults()
     {
         $this->_dirty();
-        $this->useBufferedResults = false;
+        $this->bufferedResults = false;
 
         return $this;
     }
@@ -881,7 +881,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function isBufferedResultsEnabled(): bool
     {
-        return $this->useBufferedResults;
+        return $this->bufferedResults;
     }
 
     /**

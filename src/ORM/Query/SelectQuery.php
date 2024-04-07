@@ -1584,7 +1584,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        if ($this->useBufferedResults) {
+        if ($this->bufferedResults) {
             $results = parent::all();
         } else {
             $results = $this->execute();
