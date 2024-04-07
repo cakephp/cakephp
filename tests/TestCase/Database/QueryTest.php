@@ -71,17 +71,16 @@ class QueryTest extends TestCase
         // Defaults to write role
         $this->assertSame(Connection::ROLE_WRITE, $this->connection->insertQuery()->getConnectionRole());
 
+        // Defaults to read role
         $selectQuery = $this->connection->selectQuery();
-        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->getConnectionRole());
+        $this->assertSame(Connection::ROLE_READ, $this->connection->selectQuery()->getConnectionRole());
 
-        // Can set read role for select queries
+        // Select queries can use both read and write roles
+        $this->assertSame(Connection::ROLE_WRITE, $selectQuery->setConnectionRole(Connection::ROLE_WRITE)->getConnectionRole());
         $this->assertSame(Connection::ROLE_READ, $selectQuery->setConnectionRole(Connection::ROLE_READ)->getConnectionRole());
 
-        // Can set read role for select queries
-        $this->assertSame(Connection::ROLE_READ, $selectQuery->useReadRole()->getConnectionRole());
-
-        // Can set write role for select queries
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
+        $this->assertSame(Connection::ROLE_READ, $selectQuery->useReadRole()->getConnectionRole());
     }
 
     protected function newQuery()

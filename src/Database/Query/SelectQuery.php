@@ -33,6 +33,8 @@ use Traversable;
 /**
  * This class is used to generate SELECT queries for the relational database.
  *
+ * Uses the `read` connection role by default.
+ *
  * @template T of mixed
  * @implements \IteratorAggregate<T>
  */
@@ -98,6 +100,18 @@ class SelectQuery extends Query implements IteratorAggregate
      * @var bool
      */
     protected bool $typeCastEnabled = true;
+
+    /**
+     * Constructor.
+     *
+     * @param \Cake\Database\Connection $connection The connection
+     * object to be used for transforming and executing this query
+     */
+    public function __construct(Connection $connection)
+    {
+        parent::__construct($connection);
+        $this->useReadRole();
+    }
 
     /**
      * Executes query and returns set of decorated results.
