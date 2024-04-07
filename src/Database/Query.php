@@ -1847,6 +1847,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 '(help)' => 'This is a Query object, to get the results execute or iterate it.',
                 'sql' => $sql,
                 'params' => $params,
+                'role' => $this->connectionRole,
                 'defaultTypes' => $this->getDefaultTypes(),
                 'executed' => (bool)$this->_statement,
             ];
