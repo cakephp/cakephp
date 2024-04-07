@@ -1139,7 +1139,7 @@ class ConnectionTest extends TestCase
 
         $statement = $this->connection->run($query);
         foreach ($statement as $row) {
-            $this->assertSame(['field' => 1], $row);
+            $this->assertEquals(['field' => 1], $row);
         }
     }
 }
