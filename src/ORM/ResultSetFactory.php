@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
+use SplFixedArray;
 
 /**
  * Factory class for generation ResulSet instances.
@@ -45,6 +46,8 @@ class ResultSetFactory
             foreach ($results as $i => $row) {
                 $results[$i] = $this->groupResult($row, $data);
             }
+
+            $results = SplFixedArray::fromArray($results);
         } else {
             $results = (new Collection($results))
                 ->map(function ($row) use ($data) {
