@@ -154,18 +154,21 @@ class Connection implements ConnectionInterface
 
         $sharedConfig = array_diff_key($config, array_flip([
             'name',
+            'className',
             'driver',
             'cacheMetaData',
             'cacheKeyPrefix',
+            'read',
+            'write',
         ]));
 
         $writeConfig = $config['write'] ?? [] + $sharedConfig;
         $readConfig = $config['read'] ?? [] + $sharedConfig;
-        if ($readConfig == $writeConfig) {
-            $readDriver = $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
-        } else {
+        if (array_key_exists('write', $config) || array_key_exists('read', $config)) {
             $readDriver = new $driverClass(['_role' => self::ROLE_READ] + $readConfig);
             $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+        } else {
+            $readDriver = $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
         }
 
         if (!$writeDriver->enabled()) {
