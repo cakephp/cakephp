@@ -1292,10 +1292,12 @@ class TableTest extends TestCase
         $article = $articles->find('titled')->first();
         $this->assertNotEmpty($article);
 
-        // Options arrays should work
-        $article = $articles->find('titled', ['title' => 'Second Article'])->first();
-        $this->assertNotEmpty($article);
-        $this->assertEquals('Second Article', $article->title);
+        // Options arrays are deprecated but should work
+        $this->deprecated(function () use ($articles) {
+            $article = $articles->find('titled', ['title' => 'Second Article'])->first();
+            $this->assertNotEmpty($article);
+            $this->assertEquals('Second Article', $article->title);
+        });
 
         // Named parameters should be compatible with options finders
         $article = $articles->find('titled', title: 'Second Article')->first();

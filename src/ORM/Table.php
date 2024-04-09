@@ -2685,6 +2685,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             // with signature `findFoo(SelectQuery $query, array $options)`
             // called as `find('foo')` or `find('foo', [..])`
             if (isset($args[0])) {
+                deprecationWarning(
+                    '5.0.0',
+                    'Calling finders with options arrays is deprecated.'
+                    . ' Update your finder methods to used named arguments instead.'
+                );
                 $args = $args[0];
             }
             $query->applyOptions($args);
