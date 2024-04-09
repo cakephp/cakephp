@@ -218,7 +218,7 @@ Generating conditions:
 // WHERE id = 1
 $query->where(['id' => 1]);
 
-// WHERE id > 2
+// WHERE id > 1
 $query->where(['id >' => 1]);
 ```
 
