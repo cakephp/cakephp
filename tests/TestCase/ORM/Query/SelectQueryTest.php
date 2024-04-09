@@ -2602,6 +2602,7 @@ class SelectQueryTest extends TestCase
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->getValueBinder()->bindings(),
+            'role' => 'write',
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
