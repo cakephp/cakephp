@@ -496,17 +496,15 @@ class AssociationTest extends TestCase
     {
         $this->association->setFinder('withOptions');
 
-        $this->deprecated(function () {
-            $this->assertEquals(
-                ['this' => 'worked'],
-                $this->association->find(null)->getOptions()
-            );
+        $this->assertEquals(
+            ['this' => 'worked'],
+            $this->association->find(null)->getOptions()
+        );
 
-            $this->assertEquals(
-                ['that' => 'custom', 'this' => 'worked'],
-                $this->association->find(null, ['that' => 'custom'])->getOptions()
-            );
-        });
+        $this->assertEquals(
+            ['that' => 'custom', 'this' => 'worked'],
+            $this->association->find(null, ['that' => 'custom'])->getOptions()
+        );
     }
 
     /**
