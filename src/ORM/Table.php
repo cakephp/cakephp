@@ -2669,45 +2669,54 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
         $secondParam = $params[1] ?? null;
-        $secondParamType = null;
 
-        if ($args === [] || isset($args[0])) {
-            $secondParamType = $secondParam?->getType();
-            $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
-            // Backwards compatibility of 4.x style finders with signature `findFoo(SelectQuery $query, array $options)`
+        $secondParamType = $secondParam?->getType();
+        $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
+
+        $secondParamIsOptions = (
+            count($params) === 2 &&
+            $secondParam?->name === 'options' &&
+            !$secondParam->isVariadic() &&
+            ($secondParamType === null || $secondParamTypeName === 'array')
+        );
+
+        if (($args === [] || isset($args[0])) && $secondParamIsOptions) {
+            // Backwards compatibility of 4.x style finders
+            // with signature `findFoo(SelectQuery $query, array $options)`
             // called as `find('foo')` or `find('foo', [..])`
-            if (
-                count($params) === 2 &&
-                $secondParam?->name === 'options' &&
-                !$secondParam->isVariadic() &&
-                ($secondParamType === null || $secondParamTypeName === 'array')
-            ) {
-                if (isset($args[0])) {
-                    deprecationWarning(
-                        '5.0.0',
-                        'Using options array for the `find()` call is deprecated.'
-                        . ' Use named arguments instead.'
-                    );
-
-                    $args = $args[0];
-                }
-
-                $query->applyOptions($args);
-
-                return $callable($query, $query->getOptions());
-            }
-
-            // Backwards compatibility for core finders like `findList()` called in 4.x style
-            // with an array `find('list', ['valueField' => 'foo'])` instead of `find('list', valueField: 'foo')`
-            if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+            if (isset($args[0])) {
                 deprecationWarning(
                     '5.0.0',
-                    "Calling `{$reflected->getName()}` finder with options array is deprecated."
-                     . ' Use named arguments instead.'
+                    'Calling finders with options arrays is deprecated.'
+                    . ' Update your finder methods to used named arguments instead.'
                 );
-
                 $args = $args[0];
             }
+            $query->applyOptions($args);
+
+            return $callable($query, $query->getOptions());
+        }
+
+        // Backwards compatibility for 4.x style finders with signatures like
+        // `findFoo(SelectQuery $query, array $options)` called as
+        // `find('foo', key: $value)`.
+        if (!isset($args[0]) && $secondParamIsOptions) {
+            $query->applyOptions($args);
+
+            return $callable($query, $query->getOptions());
+        }
+
+        // Backwards compatibility for core finders like `findList()` called in 4.x
+        // style with an array `find('list', ['valueField' => 'foo'])` instead of
+        // `find('list', valueField: 'foo')`
+        if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+            deprecationWarning(
+                '5.0.0',
+                "Calling `{$reflected->getName()}` finder with options array is deprecated."
+                 . ' Use named arguments instead.'
+            );
+
+            $args = $args[0];
         }
 
         if ($args) {
