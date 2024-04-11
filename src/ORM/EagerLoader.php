@@ -557,10 +557,9 @@ class EagerLoader
     protected function _correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
-        $currentStrategy = $config['strategy'] ??
-            'join';
+        $currentStrategy = $config['strategy'] ?? Association::STRATEGY_JOIN;
 
-        if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
+        if (!$loadable->canBeJoined() || $currentStrategy !== Association::STRATEGY_JOIN) {
             return;
         }
 
