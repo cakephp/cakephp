@@ -189,7 +189,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         } catch (Throwable $e) {
             Log::warning(
                 "Failed to construct or call startup() on the resolved controller class of `$class`. " .
-                    "Using Fallback Controller instead. Error {$e->getMessage()}",
+                    "Using Fallback Controller instead. Error {$e->getMessage()}\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error'
             );
             $controller = null;
@@ -420,7 +420,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             Log::warning(
-                "MissingTemplateException - Failed to render error template `{$template}`. Error: {$e->getMessage()}",
+                "MissingTemplateException - Failed to render error template `{$template}`. Error: {$e->getMessage()}\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -434,7 +434,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             Log::warning(
-                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}",
+                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -445,7 +445,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessageSafe('error500');
         } catch (Throwable $outer) {
             Log::warning(
-                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}",
+                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}\nStack Trace\n: {$outer->getTraceAsString()}",
                 'cake.error'
             );
             try {
