@@ -66,12 +66,12 @@ class IsUnique
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
-        if (!$entity->extract($this->_fields, true)) {
-            return true;
+        $fields = $entity->extract($this->_fields, !$entity->isNew());
+        if ($this->_options['allowMultipleNulls']) {
+            $fields = array_filter($fields, 'is_null');
         }
 
-        $fields = $entity->extract($this->_fields);
-        if ($this->_options['allowMultipleNulls'] && array_filter($fields, 'is_null')) {
+        if ($fields === []) {
             return true;
         }
 
