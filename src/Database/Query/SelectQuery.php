@@ -832,7 +832,7 @@ class SelectQuery extends Query implements IteratorAggregate
     }
 
     /**
-     * Enables/Disables buffered results.
+     * Enables buffered results.
      *
      * When enabled the results returned by this query will be
      * buffered. This enables you to iterate a result set multiple times, or
