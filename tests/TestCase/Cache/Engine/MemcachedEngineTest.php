@@ -819,6 +819,26 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
+     * test clearing memcached with empty prefix.
+     */
+    public function testClearWithEmptyPrefix(): void
+    {
+        Cache::setConfig('memcached2', [
+            'engine' => 'Memcached',
+            'prefix' => '',
+            'duration' => 3600,
+            'servers' => ['127.0.0.1:' . $this->port],
+        ]);
+
+        Cache::write('some_value', 'cache1', 'memcached2');
+        sleep(1);
+        $this->assertTrue(Cache::clear('memcached2'));
+        $this->assertNull(Cache::read('some_value', 'memcached2'));
+
+        Cache::clear('memcached2');
+    }
+
+    /**
      * test that a 0 duration can successfully write.
      */
     public function testZeroDuration(): void
