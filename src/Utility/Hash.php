@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -288,13 +289,15 @@ class Hash
      * Insert $values into an array with the given $path. You can use
      * `{n}` and `{s}` elements to insert $data multiple times.
      *
-     * @param array $data The data to insert into.
+     * @template T of \ArrayAccess|array
+     * @param T $data The data to insert into.
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
-     * @return array The data with $values inserted.
+     * @return \ArrayAccess|array The data with $values inserted.
+     * @psalm-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
-    public static function insert(array $data, string $path, mixed $values = null): array
+    public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
     {
         $noTokens = !str_contains($path, '[');
         if ($noTokens && !str_contains($path, '.')) {
@@ -311,6 +314,10 @@ class Hash
 
         if ($noTokens && !str_contains($path, '{')) {
             return static::_simpleOp('insert', $data, $tokens, $values);
+        }
+
+        if (!is_iterable($data)) {
+            throw new CakeException('Cannot use path tokens of type `{}` or `[]` for non-iterable objects.');
         }
 
         /** @var string $token */
@@ -337,13 +344,17 @@ class Hash
      * Perform a simple insert/remove operation.
      *
      * @param string $op The operation to do.
-     * @param array $data The data to operate on.
+     * @param \ArrayAccess|array $data The data to operate on.
      * @param list<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
-     * @return array data.
+     * @return \ArrayAccess|array
      */
-    protected static function _simpleOp(string $op, array $data, array $path, mixed $values = null): array
-    {
+    protected static function _simpleOp(
+        string $op,
+        ArrayAccess|array $data,
+        array $path,
+        mixed $values = null
+    ): ArrayAccess|array {
         $_list = &$data;
 
         $count = count($path);
@@ -357,12 +368,12 @@ class Hash
                 }
                 $_list[$key] ??= [];
                 $_list = &$_list[$key];
-                if (!is_array($_list)) {
+                if (!is_array($_list) && !$_list instanceof ArrayAccess) {
                     $_list = [];
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    if (is_array($_list)) {
+                    if (is_array($_list) || $_list instanceof ArrayAccess) {
                         unset($_list[$key]);
                     }
 
@@ -383,12 +394,14 @@ class Hash
      * You can use `{n}` and `{s}` to remove multiple elements
      * from $data.
      *
-     * @param array $data The data to operate on
+     * @template T of \ArrayAccess|array
+     * @param T $data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return array The modified array.
+     * @return \ArrayAccess|array The modified array.
+     * @psalm-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::remove
      */
-    public static function remove(array $data, string $path): array
+    public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
         $noTokens = !str_contains($path, '[');
         $noExpansion = !str_contains($path, '{');
@@ -405,6 +418,10 @@ class Hash
             return static::_simpleOp('remove', $data, $tokens);
         }
 
+        if (!is_iterable($data)) {
+            throw new CakeException('Cannot use path tokens of type `{}` or `[]` for non-iterable objects.');
+        }
+
         /** @var string $token */
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
@@ -413,7 +430,7 @@ class Hash
 
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
-            if ($match && is_array($v)) {
+            if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
                         if ($nextPath !== '') {
