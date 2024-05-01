@@ -437,7 +437,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         foreach ($keys as $key) {
-            if (strpos($key, $this->_config['prefix']) === 0) {
+            if ($this->_config['prefix'] === '' || strpos($key, $this->_config['prefix']) === 0) {
                 $this->_Memcached->delete($key);
             }
         }
