@@ -441,7 +441,7 @@ class AssociationCollectionTest extends TestCase
     public function testExceptionOnDuplicateAlias(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Association alias `Users` is already in use.');
+        $this->expectExceptionMessage('Association alias `Users` is already set.');
 
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);

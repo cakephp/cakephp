@@ -81,7 +81,7 @@ class AssociationCollection implements IteratorAggregate
         [, $alias] = pluginSplit($alias);
 
         if (isset($this->_items[$alias])) {
-            throw new CakeException(sprintf('Association alias `%s` is already in use.', $alias));
+            throw new CakeException(sprintf('Association alias `%s` is already set.', $alias));
         }
 
         return $this->_items[$alias] = $association;
