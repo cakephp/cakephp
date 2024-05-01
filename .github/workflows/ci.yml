@@ -46,9 +46,11 @@ jobs:
           - 11211/tcp
 
     steps:
-    - name: Setup MySQL latest
+    - name: Setup MySQL
       if: matrix.db-type == 'mysql'
-      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql --default-authentication-plugin=mysql_native_password --disable-log-bin
+      run: |
+        sudo service mysql start
+        mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
 
     - name: Setup PostgreSQL latest
       if: matrix.db-type == 'pgsql'
@@ -100,10 +102,6 @@ jobs:
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.1' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-    - name: Wait for MySQL
-      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
-      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
 
     - name: Run PHPUnit
       env:
