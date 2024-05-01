@@ -163,11 +163,11 @@ trait PaginatorTestTrait
     public function testPaginateNestedEagerLoader(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
+        $tags->associations()->remove('Authors');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
+            $query->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
                 });

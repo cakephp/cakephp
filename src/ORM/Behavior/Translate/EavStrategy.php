@@ -131,6 +131,10 @@ class EavStrategy implements TranslateStrategyInterface
                 $conditions[$name . '.content !='] = '';
             }
 
+            if ($this->table->associations()->has($name)) {
+                $this->table->associations()->remove($name);
+            }
+
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
@@ -145,6 +149,9 @@ class EavStrategy implements TranslateStrategyInterface
             $conditions["$targetAlias.content !="] = '';
         }
 
+        if ($this->table->associations()->has($targetAlias)) {
+            $this->table->associations()->remove($targetAlias);
+        }
         $this->table->hasMany($targetAlias, [
             'className' => $table,
             'foreignKey' => 'foreign_key',

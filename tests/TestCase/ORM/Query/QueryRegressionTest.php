@@ -325,6 +325,7 @@ class QueryRegressionTest extends TestCase
             'saveStrategy' => $strategy,
         ]);
         $articles->Highlights->junction()->belongsTo('Authors');
+        $articles->Highlights->associations()->remove('Authors');
         $articles->Highlights->hasOne('Authors', [
             'foreignKey' => 'id',
         ]);
@@ -608,10 +609,7 @@ class QueryRegressionTest extends TestCase
             ->contain('Tags.TagsTranslations')
             ->all();
 
-        $tags->hasMany('TagsTranslations', [
-            'foreignKey' => 'id',
-            'strategy' => 'subquery',
-        ]);
+        $tags->TagsTranslations->setStrategy('subquery');
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])

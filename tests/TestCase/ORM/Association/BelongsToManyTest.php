@@ -399,11 +399,7 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $tags->belongsToMany('Articles', [
-            'sourceTable' => $tags,
-            'targetTable' => $articles,
-            'finder' => 'published',
-        ]);
+        $tags->associations()->get('Articles')->setFinder('published');
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
         $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles, 'only one article should load');
@@ -926,12 +922,9 @@ class BelongsToManyTest extends TestCase
 
         // Update an article to not match the association finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
-        $assoc = $tags->belongsToMany('Articles', [
-            'sourceTable' => $tags,
-            'targetTable' => $articles,
-            'through' => $joint,
-            'finder' => 'published',
-        ]);
+        $assoc = $tags->associations()->get('Articles')
+            ->setFinder('published')
+            ->setThrough($joint);
         $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles);
 
@@ -984,15 +977,11 @@ class BelongsToManyTest extends TestCase
         $this->setAppNamespace('TestApp');
 
         $joint = $this->getTableLocator()->get('ArticlesTags');
-        $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $assoc = $tags->belongsToMany('Articles', [
-            'sourceTable' => $tags,
-            'targetTable' => $articles,
-            'through' => $joint,
-            'finder' => ['published' => ['title' => 'First Article']],
-        ]);
+        $assoc = $tags->associations()->get('Articles')
+            ->setFinder(['published' => ['title' => 'First Article']])
+            ->setThrough($joint);
         $entity = $tags->get(1, ...['contain' => 'Articles']);
         $this->assertCount(1, $entity->articles);
 
@@ -1018,12 +1007,9 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $assoc = $tags->belongsToMany('Articles', [
-            'sourceTable' => $tags,
-            'targetTable' => $articles,
-            'through' => $joint,
-            'finder' => 'withAuthors',
-        ]);
+        $assoc = $tags->associations()->get('Articles')
+            ->setFinder('withAuthors')
+            ->setThrough($joint);
         $tag = $tags->get(1);
         $article = $articles->get(1);
 

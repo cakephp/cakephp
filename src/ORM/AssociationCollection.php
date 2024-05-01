@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
@@ -70,6 +71,7 @@ class AssociationCollection implements IteratorAggregate
      * @param string $alias The association alias
      * @param \Cake\ORM\Association $association The association to add.
      * @return \Cake\ORM\Association The association object being added.
+     * @throws \Cake\Core\Exception\CakeException If the alias is already added.
      * @template T of \Cake\ORM\Association
      * @psalm-param T $association
      * @psalm-return T
@@ -77,6 +79,10 @@ class AssociationCollection implements IteratorAggregate
     public function add(string $alias, Association $association): Association
     {
         [, $alias] = pluginSplit($alias);
+
+        if (isset($this->_items[$alias])) {
+            throw new CakeException(sprintf('Association alias `%s` is already in use.', $alias));
+        }
 
         return $this->_items[$alias] = $association;
     }

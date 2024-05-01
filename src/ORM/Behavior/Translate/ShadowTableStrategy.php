@@ -105,6 +105,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $config = $this->getConfig();
 
         $targetAlias = $this->translationTable->getAlias();
+
+        if ($this->table->associations()->has($targetAlias)) {
+            $this->table->associations()->remove($targetAlias);
+        }
+
         $this->table->hasMany($targetAlias, [
             'className' => $config['translationTable'],
             'foreignKey' => 'id',
@@ -182,6 +187,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             $joinType = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
         } else {
             $joinType = $config['onlyTranslated'] ? 'INNER' : 'LEFT';
+        }
+
+        if ($this->table->associations()->has($config['hasOneAlias'])) {
+            $this->table->associations()->remove($config['hasOneAlias']);
         }
 
         $this->table->hasOne($config['hasOneAlias'], [

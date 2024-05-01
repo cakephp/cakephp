@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\AssociationCollection;
@@ -435,5 +436,15 @@ class AssociationCollectionTest extends TestCase
         $expected = ['Users' => $belongsTo, 'Cart' => $belongsToMany];
         $result = iterator_to_array($this->associations, true);
         $this->assertSame($expected, $result);
+    }
+
+    public function testExceptionOnDuplicateAlias(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Association alias `Users` is already in use.');
+
+        $belongsTo = new BelongsTo('');
+        $this->associations->add('Users', $belongsTo);
+        $this->associations->add('Users', $belongsTo);
     }
 }
