@@ -1799,7 +1799,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyFromIdsWithConditions(): void
     {
-        $this->articles->belongsToMany('Tags', [
+        $this->articles->associations()->get('Tags')->setConditions([
             'conditions' => ['ArticleTags.article_id' => 1],
         ]);
 
@@ -1832,7 +1832,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyFromArrayWithConditions(): void
     {
-        $this->articles->belongsToMany('Tags', [
+        $this->articles->associations()->get('Tags')->setConditions([
             'conditions' => ['ArticleTags.article_id' => 1],
         ]);
 
@@ -2325,7 +2325,6 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyIdsRetainJoinData(): void
     {
-        $this->articles->belongsToMany('Tags');
         $entity = $this->articles->get(1, ...['contain' => ['Tags']]);
         $entity->setAccess('*', true);
         $original = $entity->tags[0]->_joinData;

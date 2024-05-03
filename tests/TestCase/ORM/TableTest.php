@@ -1806,7 +1806,7 @@ class TableTest extends TestCase
         $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['Authors' => ['articles']])->first();
+        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
@@ -2920,11 +2920,11 @@ class TableTest extends TestCase
     public function testSaveManyResultSet(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $table->hasMany('articles', ['sort' => 'articles.id']);
+        $table->Articles->setSort('Articles.id');
 
         $entities = $table->find()
             ->orderBy(['id' => 'ASC'])
-            ->contain(['articles'])
+            ->contain(['Articles'])
             ->all();
         $entities->first()->name = 'admad';
         $entities->first()->articles[0]->title = 'First Article Edited';
@@ -3094,14 +3094,12 @@ class TableTest extends TestCase
     public function testDeleteDependent(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $table->hasOne('articles', [
-            'dependent' => true,
-        ]);
+        $table->Articles->setDependent(true);
 
         $entity = $table->get(1);
         $table->delete($entity);
 
-        $articles = $table->getAssociation('articles')->getTarget();
+        $articles = $table->getAssociation('Articles')->getTarget();
         $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -3112,12 +3110,11 @@ class TableTest extends TestCase
     public function testDeleteDependentHasMany(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $table->hasMany('articles', [
-            'dependent' => true,
-            'cascadeCallbacks' => true,
-        ]);
+        $table->Articles
+            ->setDependent(true)
+            ->setCascadeCallbacks(true);
 
-        $articles = $table->getAssociation('articles')->getTarget();
+        $articles = $table->getAssociation('Articles')->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function ($entity) {
                 if ($entity->author_id === 3) {
@@ -3142,7 +3139,7 @@ class TableTest extends TestCase
         $query = $articles->find('all', conditions: ['author_id' => $entity->id]);
         $this->assertFalse($query->all()->isEmpty(), 'Should find some rows.');
 
-        $table->associations()->get('articles')->setCascadeCallbacks(false);
+        $table->associations()->get('Articles')->setCascadeCallbacks(false);
         $entity = $table->get(2);
         $result = $table->delete($entity);
         $this->assertTrue($result);
@@ -3162,7 +3159,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $table->delete($entity);
 
-        $articles = $table->getAssociation('articles')->getTarget();
+        $articles = $table->getAssociation('Articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
         $this->assertCount(2, $query->all(), 'Should find rows.');
     }
@@ -3343,9 +3340,7 @@ class TableTest extends TestCase
     public function testAfterDeleteCommitTriggeredOnlyForPrimaryTable(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $table->hasOne('articles', [
-            'dependent' => true,
-        ]);
+        $table->Articles->setDependent(true);
 
         $called = false;
         $listener = function ($e, $entity, $options) use (&$called): void {
@@ -3357,7 +3352,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called2): void {
             $called2 = true;
         };
-        $table->articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
+        $table->Articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $entity = $table->get(1);
         $this->assertTrue($table->delete($entity));
@@ -3766,7 +3761,8 @@ class TableTest extends TestCase
         ]);
 
         $table = $this->getTableLocator()->get('authors');
-        $table->hasOne('articles');
+        $table->associations()->remove('Articles');
+        $table->hasOne('Articles');
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->article->isNew());
@@ -3794,7 +3790,7 @@ class TableTest extends TestCase
         ];
 
         $table = $this->getTableLocator()->get('authors');
-        $table->hasOne('articles');
+        // $table->hasOne('articles');
 
         $table->save($entity);
         $this->assertFalse($entity->isNew());
@@ -3821,7 +3817,6 @@ class TableTest extends TestCase
         ];
 
         $table = $this->getTableLocator()->get('authors');
-        $table->hasMany('articles');
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->articles[0]->isNew());
@@ -3838,9 +3833,8 @@ class TableTest extends TestCase
     public function testSaveHasManyOverwrite(): void
     {
         $table = $this->getTableLocator()->get('authors');
-        $table->hasMany('articles');
 
-        $entity = $table->get(3, contain: ['articles']);
+        $entity = $table->get(3, contain: ['Articles']);
         $data = [
             'name' => 'big jose',
             'articles' => [
@@ -3850,10 +3844,10 @@ class TableTest extends TestCase
                 ],
             ],
         ];
-        $entity = $table->patchEntity($entity, $data, ['associated' => 'articles']);
+        $entity = $table->patchEntity($entity, $data, ['associated' => 'Articles']);
         $this->assertSame($entity, $table->save($entity));
 
-        $entity = $table->get(3, contain: ['articles']);
+        $entity = $table->get(3, contain: ['Articles']);
         $this->assertSame('big jose', $entity->name, 'Author did not persist');
         $this->assertSame('New title', $entity->articles[0]->title, 'Article did not persist');
     }
@@ -3878,7 +3872,6 @@ class TableTest extends TestCase
             ]),
         ];
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->tags[0]->isNew());
@@ -3900,7 +3893,6 @@ class TableTest extends TestCase
     {
         $tags = $this->getTableLocator()->get('Tags');
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
 
         $entity = $table->find()->contain('Tags')->first();
         // not associated to the article already.
@@ -3944,16 +3936,10 @@ class TableTest extends TestCase
     public function testPolymorphicBelongsToManySave(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsToMany('Tags', [
-            'through' => 'PolymorphicTagged',
-            'foreignKey' => 'foreign_key',
-            'conditions' => [
-                'PolymorphicTagged.foreign_model' => 'Articles',
-            ],
-            'sort' => ['PolymorphicTagged.position' => 'ASC'],
-        ]);
-
-        $articles->Tags->junction()->belongsTo('Tags');
+        $articles->Tags->setThrough('PolymorphicTagged')
+            ->setForeignKey('foreign_key')
+            ->setConditions(['PolymorphicTagged.foreign_model' => 'Articles'])
+            ->setSort(['PolymorphicTagged.position' => 'ASC']);
 
         $entity = $articles->get(1, contain: ['Tags']);
         $data = [
@@ -4017,9 +4003,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyDeleteAllLinks(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags', [
-            'saveStrategy' => 'replace',
-        ]);
+        $table->Tags->setSaveStrategy('replace');
 
         $entity = $table->get(1, contain: 'Tags');
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
@@ -4041,9 +4025,7 @@ class TableTest extends TestCase
     public function testSaveBelongsToManyDeleteSomeLinks(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags', [
-            'saveStrategy' => 'replace',
-        ]);
+        $table->Tags->setSaveStrategy('replace');
 
         $entity = $table->get(1, contain: 'Tags');
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
@@ -4102,7 +4084,6 @@ class TableTest extends TestCase
     public function testBelongsToManyIntegration(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $tags = $article->tags;
         $this->assertNotEmpty($tags);
@@ -4305,7 +4286,6 @@ class TableTest extends TestCase
     public function testLinkBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $tagsTable = $this->getTableLocator()->get('Tags');
         $source = ['source' => 'Tags'];
         $options = ['markNew' => false];
@@ -4345,8 +4325,6 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles');
-
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
 
@@ -4380,9 +4358,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'saveStrategy' => 'replace',
-        ]);
+        $authors->Articles->setSaveStrategy('replace');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4429,9 +4405,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'saveStrategy' => 'replace',
-        ]);
+        $authors->Articles->setSaveStrategy('replace');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4481,9 +4455,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'saveStrategy' => 'replace',
-        ]);
+        $authors->Articles->setSaveStrategy('replace');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4526,9 +4498,7 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles', [
-            'saveStrategy' => 'replace',
-        ]);
+        $authors->Articles->setSaveStrategy('replace');
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4571,7 +4541,6 @@ class TableTest extends TestCase
     public function testUnlinkHasManyEmpty(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles');
         $author = $authors->get(1);
         $article = $authors->Articles->get(1);
 
@@ -4753,8 +4722,6 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $authors->hasMany('Articles');
-
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
 
@@ -4806,7 +4773,6 @@ class TableTest extends TestCase
     public function testUnlinkBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
 
         $article = $table->find('all')
             ->where(['id' => 1])
@@ -4824,7 +4790,6 @@ class TableTest extends TestCase
     public function testUnlinkBelongsToManyMultiple(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4843,7 +4808,6 @@ class TableTest extends TestCase
     public function testUnlinkBelongsToManyPassingJoint(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4866,7 +4830,6 @@ class TableTest extends TestCase
     public function testReplacelinksBelongsToMany(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4893,7 +4856,6 @@ class TableTest extends TestCase
     public function testReplacelinksBelongsToManyWithEmpty(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4912,7 +4874,6 @@ class TableTest extends TestCase
     public function testReplacelinksBelongsToManyWithJoint(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4940,7 +4901,7 @@ class TableTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $tags = $articles->belongsToMany('Tags');
+        $tags = $articles->Tags;
         $tags->setSaveStrategy(BelongsToMany::SAVE_REPLACE)
             ->setDependent(true)
             ->setCascadeCallbacks(true);
@@ -4977,7 +4938,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyLink(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $tags = $articles->belongsToMany('Tags');
+        $tags = $articles->Tags;
 
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
@@ -5013,7 +4974,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveCallsUsingBelongsToManyUnlink(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $tags = $articles->belongsToMany('Tags');
+        $tags = $articles->Tags;
 
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
@@ -5043,7 +5004,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingBelongsToManyReplaceLinks(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $tags = $articles->belongsToMany('Tags');
+        $tags = $articles->Tags;
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
@@ -5099,7 +5060,7 @@ class TableTest extends TestCase
     {
         $authors = $this->getTableLocator()->get('Authors');
 
-        $articles = $authors->hasMany('Articles');
+        $articles = $authors->Articles;
         $articles->setSaveStrategy(HasMany::SAVE_REPLACE)
             ->setDependent(true)
             ->setCascadeCallbacks(true);
@@ -5137,7 +5098,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyLink(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $articles = $authors->hasMany('Articles');
+        $articles = $authors->Articles;
 
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
@@ -5177,7 +5138,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveCallsUsingHasManyUnlink(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $articles = $authors->hasMany('Articles');
+        $articles = $authors->Articles;
         $articles->setDependent(true);
         $articles->setCascadeCallbacks(true);
 
@@ -5211,7 +5172,7 @@ class TableTest extends TestCase
     public function testOptionsBeingPassedToInternalSaveAndDeleteCallsUsingHasManyReplace(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $articles = $authors->hasMany('Articles');
+        $articles = $authors->Articles;
         $articles->setDependent(true);
         $articles->setCascadeCallbacks(true);
 
@@ -5274,7 +5235,7 @@ class TableTest extends TestCase
     public function testBackwardsCompatibilityForBelongsToManyUnlinkCleanPropertyOption(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $tags = $articles->belongsToMany('Tags');
+        $tags = $articles->Tags;
 
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
@@ -5302,7 +5263,7 @@ class TableTest extends TestCase
     public function testBackwardsCompatibilityForHasManyUnlinkCleanPropertyOption(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $articles = $authors->hasMany('Articles');
+        $articles = $authors->Articles;
         $articles->setDependent(true);
         $articles->setCascadeCallbacks(true);
 
@@ -6232,7 +6193,6 @@ class TableTest extends TestCase
         ];
 
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsToMany('Tags');
         $article = $table->save($table->newEntity($data, ['associated' => ['Tags']]));
 
         $counter = 0;
@@ -6304,8 +6264,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
-        $articles = $table->hasMany('Articles');
-        $articles->belongsToMany('Tags');
 
         $entity = $table->get(1);
         $result = $table->loadInto($entity, ['SiteArticles', 'Articles.Tags']);
@@ -6323,8 +6281,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
-        $articles = $table->hasMany('Articles');
-        $articles->belongsToMany('Tags');
 
         $entity = $table->get(1);
         $options = [
@@ -6348,7 +6304,6 @@ class TableTest extends TestCase
     public function testLoadBelongsTo(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->belongsTo('Authors');
 
         $entity = $table->get(2);
         $result = $table->loadInto($entity, ['Authors']);
@@ -6366,8 +6321,6 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('SiteArticles');
-        $articles = $table->hasMany('Articles');
-        $articles->belongsToMany('Tags');
 
         $entities = $table->find()->toArray();
         $contain = ['SiteArticles', 'Articles.Tags'];

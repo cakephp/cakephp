@@ -964,10 +964,6 @@ class LinkConstraintTest extends TestCase
     public function testImplicitBelongsToManyJunctionDeleteErrors(): void
     {
         $Articles = $this->getTableLocator()->get('Articles');
-        $Articles
-            ->getAssociation('Tags')
-            ->junction()
-            ->belongsTo('Articles');
 
         $rulesChecker = $Articles->getAssociation('Tags')->junction()->rulesChecker();
         $rulesChecker->addDelete(

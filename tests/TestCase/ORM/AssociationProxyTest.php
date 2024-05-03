@@ -100,9 +100,7 @@ class AssociationProxyTest extends TestCase
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 
-        $authors->hasMany('Articles', [
-            'finder' => 'published',
-        ]);
+        $authors->Articles->setFinder('published');
         $authors->Articles->updateAll(['published' => '?'], '1=1');
         $missed = $articles->find()->where(['published' => 'Y'])->count();
         $this->assertSame(0, $missed);
@@ -136,9 +134,7 @@ class AssociationProxyTest extends TestCase
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 
-        $authors->hasMany('Articles', [
-            'finder' => 'published',
-        ]);
+        $authors->Articles->setFinder('published');
         $authors->Articles->deleteAll('1=1');
         $remaining = $articles->find()->all();
         $this->assertCount(1, $remaining);
