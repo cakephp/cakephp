@@ -18,8 +18,11 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\StatementInterface;
 use PDO;
 
 /**
@@ -155,6 +158,28 @@ class Mysql extends Driver
                 $this->pdo->exec($command);
             }
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function run(Query $query): StatementInterface
+    {
+        $statement = $this->prepare($query);
+        $query->getValueBinder()->attachTo($statement);
+
+        if ($query instanceof SelectQuery) {
+            try {
+                $this->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $query->isBufferedResultsEnabled());
+                $this->executeStatement($statement);
+            } finally {
+                $this->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            }
+        } else {
+            $this->executeStatement($statement);
+        }
+
+        return $statement;
     }
 
     /**

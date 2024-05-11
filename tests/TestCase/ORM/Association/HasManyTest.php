@@ -461,9 +461,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $results = new ResultSet([]);
-
-        $results->__unserialize([
+        $results = new ResultSet([
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ]);

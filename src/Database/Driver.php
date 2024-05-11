@@ -35,6 +35,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Statement\Statement;
+use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
@@ -391,13 +392,29 @@ abstract class Driver
             );
         }
 
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
+        /** @var \Cake\Database\StatementInterface */
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
+    }
+
+    /**
+     * Returns the decorators to be applied to the result set incase of a SelectQuery.
+     *
+     * @param \Cake\Database\Query|string $query The query to be decorated.
+     * @return array<\Closure>
+     */
+    protected function getResultSetDecorators(Query|string $query): array
+    {
+        if ($query instanceof SelectQuery) {
+            $decorators = $query->getResultDecorators();
+            if ($query->isResultsCastingEnabled()) {
+                $typeConverter = new FieldTypeConverter($query->getSelectTypeMap(), $this);
+                array_unshift($decorators, Closure::fromCallable($typeConverter));
+            }
+
+            return $decorators;
         }
 
-        /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return [];
     }
 
     /**

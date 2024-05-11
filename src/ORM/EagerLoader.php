@@ -608,19 +608,25 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
-     * @return array
+     * @param iterable $results Results.
+     * @return iterable
      * @throws \RuntimeException
      */
-    public function loadExternal(SelectQuery $query, array $results): array
+    public function loadExternal(SelectQuery $query, iterable $results): iterable
     {
         if (!$results) {
             return $results;
         }
 
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
+        $external = $this->externalAssociations($query->getRepository());
         if (!$external) {
+            return $results;
+        }
+
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
+        if (!$results) {
             return $results;
         }
 

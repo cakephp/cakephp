@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
+use SplFixedArray;
 
 /**
  * Factory class for generation ResulSet instances.
@@ -34,15 +35,24 @@ class ResultSetFactory
      * Constructor
      *
      * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
-     * @param array $results Results array.
+     * @param iterable $results Results.
      * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
-    public function createResultSet(SelectQuery $query, array $results): ResultSet
+    public function createResultSet(SelectQuery $query, iterable $results): ResultSet
     {
         $data = $this->collectData($query);
 
-        foreach ($results as $i => $row) {
-            $results[$i] = $this->groupResult($row, $data);
+        if (is_array($results)) {
+            foreach ($results as $i => $row) {
+                $results[$i] = $this->groupResult($row, $data);
+            }
+
+            $results = SplFixedArray::fromArray($results);
+        } else {
+            $results = (new Collection($results))
+                ->map(function ($row) use ($data) {
+                    return $this->groupResult($row, $data);
+                });
         }
 
         return new ResultSet($results);
