@@ -86,10 +86,10 @@ class BannerHelper extends Helper
         ];
         foreach ($args as $line) {
             $lineLength = mb_strlen($line);
-            $linePadding = (int)max($this->padding, ($bannerLength - $lineLength) / 2);
+            $linePadding = (int)max($this->padding, $bannerLength - $lineLength - $this->padding);
 
             $lines[] = $start .
-                str_repeat(' ', $linePadding) .
+                str_repeat(' ', $this->padding) .
                 $line .
                 str_repeat(' ', $linePadding) .
                 $end;

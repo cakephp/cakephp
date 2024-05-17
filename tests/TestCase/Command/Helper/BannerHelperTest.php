@@ -55,6 +55,15 @@ class BannerHelperTest extends TestCase
     }
 
     /**
+     * Test that the callback is invoked until 100 is reached.
+     */
+    public function testOutputInvalidPadding(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->helper->withPadding(-1);
+    }
+
+    /**
      * Test output with all options
      */
     public function testOutputSuccess(): void
@@ -93,11 +102,23 @@ class BannerHelperTest extends TestCase
     }
 
     /**
-     * Test that the callback is invoked until 100 is reached.
+     * Test that width is respected
      */
-    public function testOutputInvalidPadding(): void
+    public function testOutputLongestLine(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->helper->withPadding(-1);
+        $this->helper
+            ->withPadding(1)
+            ->withStyle('info.bg')
+            ->output(['All done', 'This line is longer', 'tiny']);
+        $expected = [
+            '',
+            '<info.bg>                     </info.bg>',
+            '<info.bg> All done            </info.bg>',
+            '<info.bg> This line is longer </info.bg>',
+            '<info.bg> tiny                </info.bg>',
+            '<info.bg>                     </info.bg>',
+            '',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
     }
 }
