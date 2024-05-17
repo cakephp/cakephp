@@ -20,6 +20,7 @@ use Cake\Command\Helper\TableHelper;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
+use UnexpectedValueException;
 
 /**
  * TableHelper test.
@@ -386,7 +387,7 @@ class TableHelperTest extends TestCase
      */
     public function testTextRightsideTheTextRightTag(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $data = [
             ['Item', 'Price per piece (yen)'],
             ['Apple', '<text-right>some</text-right>text'],
@@ -399,7 +400,7 @@ class TableHelperTest extends TestCase
      */
     public function testTextLeftsideTheTextRightTag(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $data = [
             ['Item', 'Price per piece (yen)'],
             ['Apple', 'text<text-right>some</text-right>'],

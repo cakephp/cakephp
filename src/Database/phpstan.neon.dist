@@ -1,7 +1,5 @@
 parameters:
 	level: 8
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
 		- tests/phpstan-bootstrap.php
@@ -10,4 +8,8 @@ parameters:
 	excludePaths:
 		- vendor/
 	ignoreErrors:
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
