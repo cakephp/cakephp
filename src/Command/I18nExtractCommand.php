@@ -185,10 +185,13 @@ class I18nExtractCommand extends Command
         }
         if ($args->getOption('paths')) {
             $this->_paths = explode(',', (string)$args->getOption('paths'));
-        } elseif ($args->getOption('plugin')) {
+        }
+        if ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
-        } else {
+            if (empty($this->_paths)) {
+                $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
+            }
+        } elseif (!$args->getOption('paths')) {
             $this->_getPaths($io);
         }
 

@@ -147,7 +147,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * $query->select('id', true); // Resets the list: SELECT id
      * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
      * $query->select(function ($query) {
-     *     return ['article_id', 'total' => $query->count('*')];
+     *     return ['article_id', 'total' => $query->func()->count('*')];
      * })
      * ```
      *

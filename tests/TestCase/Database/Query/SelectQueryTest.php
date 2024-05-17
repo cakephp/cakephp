@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Query;
 
 use ArrayIterator;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -3265,6 +3266,7 @@ class SelectQueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => false,
@@ -3279,6 +3281,7 @@ class SelectQueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => true,

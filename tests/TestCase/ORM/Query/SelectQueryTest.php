@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Cache\Engine\FileEngine;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -2603,6 +2604,7 @@ class SelectQueryTest extends TestCase
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->getValueBinder()->bindings(),
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',

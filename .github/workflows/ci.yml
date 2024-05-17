@@ -46,7 +46,7 @@ jobs:
           - 11211/tcp
 
     steps:
-    - name: Setup MySQL
+    - name: Setup MySQL 8.0
       if: matrix.db-type == 'mysql'
       run: |
         sudo service mysql start
