@@ -1580,7 +1580,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function _execute(): iterable
     {
         $this->triggerBeforeFind();
-        if ($this->_results) {
+        if ($this->_results !== null) {
             return $this->_results;
         }
 

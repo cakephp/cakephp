@@ -15,8 +15,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\MissingHelperException;
 use Cake\Console\HelperRegistry;
+use Cake\Console\TestSuite\StubConsoleInput;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
 use TestApp\Command\Helper\SimpleHelper;
@@ -30,7 +33,7 @@ class HelperRegistryTest extends TestCase
     /**
      * @var \Cake\Console\HelperRegistry
      */
-    protected $helpers;
+    protected HelperRegistry $helpers;
 
     /**
      * setUp
@@ -39,9 +42,11 @@ class HelperRegistryTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $io = new ConsoleIo(
+            new StubConsoleOutput(),
+            new StubConsoleOutput(),
+            new StubConsoleInput([]),
+        );
         $this->helpers = new HelperRegistry();
         $this->helpers->setIo($io);
     }

@@ -1,7 +1,5 @@
 parameters:
 	level: 8
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
 		- tests/phpstan-bootstrap.php
@@ -13,6 +11,10 @@ parameters:
 	    - Session.php
 	    - vendor/
 	ignoreErrors:
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 		- '#Call to static method getRequest\(\) on an unknown class Cake\\Routing\\Router.#'
