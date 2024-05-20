@@ -156,7 +156,7 @@ class ConsoleOutput
         'warning' => ['text' => 'yellow'],
         'warning.bg' => ['background' => 'yellow', 'text' => 'black'],
         'info' => ['text' => 'cyan'],
-        'info.bg' => ['background' => 'cyan', 'text' => 'black'],
+        'info.bg' => ['background' => 'white', 'text' => 'cyan'],
         'debug' => ['text' => 'yellow'],
         'success' => ['text' => 'green'],
         'success.bg' => ['background' => 'green', 'text' => 'black'],
