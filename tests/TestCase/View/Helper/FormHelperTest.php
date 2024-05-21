@@ -7828,6 +7828,7 @@ class FormHelperTest extends TestCase
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
+            ->requirePresence('accept_tos')
             ->notBlank('phone');
 
         $table = $this->getTableLocator()->get('Contacts', [
@@ -7892,6 +7893,28 @@ class FormHelperTest extends TestCase
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
             ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('accept_tos', ['type' => 'checkbox']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'accept_tos', 'value' => '0']],
+            'label' => ['for' => 'accept-tos'],
+            [
+                'input' => [
+                    'aria-required' => 'true',
+                    'required' => 'required',
+                    'type' => 'checkbox',
+                    'name' => 'accept_tos',
+                    'id' => 'accept-tos',
+                    'value' => '1',
+                    'data-validity-message' => 'This field cannot be left empty',
+                    'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                    'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.checked) this.setCustomValidity(this.dataset.validityMessage)',
+                ],
+            ],
+            'Accept Tos',
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
