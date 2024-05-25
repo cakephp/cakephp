@@ -504,6 +504,7 @@ SQL;
      */
     public function testDescribeTableConditionalConstraint(): void
     {
+        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
         $table = <<<SQL
@@ -533,6 +534,7 @@ SQL;
 
     public function testDescribeTableFunctionalIndex(): void
     {
+        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS functional_index');
         $table = <<<SQL
