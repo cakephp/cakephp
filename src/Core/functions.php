@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\I18n\DateTime;
-use DateTimeImmutable;
 use DateTimeInterface;
+use Exception;
 use JsonException;
 use Stringable;
 
@@ -493,6 +493,17 @@ function toBool(mixed $value): ?bool
     return null;
 }
 
+/**
+ * Converts a value to a DateTimeInterface.
+ *
+ *  integer  - value is treated as a Unix timestamp
+ *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to DateTimeInterface.
+ * @return \DateTimeInterface|null Returns a DateTimeInterface if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
 function toDateTime(mixed $value): ?DateTimeInterface
 {
     if ($value instanceof DateTimeInterface) {
@@ -502,7 +513,7 @@ function toDateTime(mixed $value): ?DateTimeInterface
     if (is_int($value)) {
         try {
             return DateTime::createFromTimestamp($value);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -510,7 +521,7 @@ function toDateTime(mixed $value): ?DateTimeInterface
     if (is_string($value)) {
         try {
             return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
