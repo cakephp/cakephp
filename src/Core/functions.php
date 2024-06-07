@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\I18n\DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use JsonException;
 use Stringable;
 
@@ -485,6 +488,31 @@ function toBool(mixed $value): ?bool
     }
     if ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
         return false;
+    }
+
+    return null;
+}
+
+function toDateTime(mixed $value): ?DateTimeInterface
+{
+    if ($value instanceof DateTimeInterface) {
+        return $value;
+    }
+
+    if (is_int($value)) {
+        try {
+            return DateTime::createFromTimestamp($value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    if (is_string($value)) {
+        try {
+            return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
+        } catch (\Exception) {
+            return null;
+        }
     }
 
     return null;
