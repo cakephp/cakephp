@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -556,8 +557,12 @@ class ServerRequest implements ServerRequestInterface
      * @return mixed The requested data converted to the specified type.
      * @throws \InvalidArgumentException If no detector has been set for the provided type.
      */
-    protected function asType(string $type, array|object $source, mixed ...$args): mixed
+    public function asType(string $type, array|object $source, mixed ...$args): mixed
     {
+        if (is_object($source)) {
+            assert($source instanceof ArrayAccess);
+        }
+
         $rawValue = Hash::get($source, $args[0], $args[1]);
 
         return match (strtolower($type)) {
