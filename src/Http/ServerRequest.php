@@ -31,6 +31,10 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use function Cake\Core\env;
+use function Cake\Core\toDateTime;
+use function Cake\Core\toString;
+use function Cake\Core\toBool;
+use function Cake\Core\toInt;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -477,7 +481,30 @@ class ServerRequest implements ServerRequestInterface
             array_unshift($params, $type);
 
             return $this->is(...$params);
+        } elseif (str_starts_with($name, 'get')) {
+            // e.g. getCookieAsInt(), getQueryAsDateTime()
+            $parts = explode('As', $name);
+            if (count($parts) !== 2) {
+                return $this->$name(...$params);
+            }
+
+            [$methodName, $userType] = $parts;
+
+            $source = null;
+            match ($methodName) {
+                'getCookie' => $source = $this->cookies,
+                'getQuery' => $source = $this->query,
+                'getParam' => $source = $this->params,
+                'getData' => $source = $this->data ?? [],
+                'getHeader', 'getHeaderLine' =>
+                throw new BadMethodCallException('Type conversion is not supported for request headers.'),
+            };
+
+            if ($source !== null) {
+                return $this->asType($userType, $source, ...$params);
+            }
         }
+
         throw new BadMethodCallException(sprintf('Method `%s()` does not exist.', $name));
     }
 
@@ -515,6 +542,27 @@ class ServerRequest implements ServerRequestInterface
         }
 
         return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
+    }
+
+    /**
+     * @param string $type The desired type to convert the data to. Example: 'Int', 'Bool', 'String'.
+     * @param object|array $source Source from which data should be extracted.
+     * @param mixed ...$args List of arguments
+     * @return mixed The requested data converted to the specified type.
+     * @throws \InvalidArgumentException If no detector has been set for the provided type.
+     */
+    private function asType(string $type, array|object $source, mixed ...$args): mixed
+    {
+        $rawValue = Hash::get($source, $args[0], $args[1]);
+
+        return match (strtolower($type)) {
+            'string' => toString($rawValue),
+            'int', 'integer' => toInt($rawValue),
+            'bool', 'boolean' => toBool($rawValue),
+            // TODO: Add just date? Add just time?
+            'datetime' => toDateTime($rawValue),
+            default => throw new InvalidArgumentException(sprintf('Unable to convert request data to %s.', $type)),
+        };
     }
 
     /**
