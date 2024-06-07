@@ -45,7 +45,7 @@ help:
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
 	@echo ""
 	@echo "components"
-	@echo "  Split each of the public namespaces into separate repos and push the to Github."
+	@echo "  Split each of the public namespaces into separate repos and push them to Github."
 	@echo ""
 	@echo "clean-components CURRENT_BRANCH=xx"
 	@echo "  Delete branch xx from each subsplit. Useful when cleaning up after a security release."
