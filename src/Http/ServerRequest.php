@@ -545,13 +545,18 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
+     * Returns a piece of data from the Request converted to a given data type.
+     *
+     * Example: `asType('Int', $this->params, 'id', 0)` will return
+     * the 'id' parameter from the request converted to an integer.
+     *
      * @param string $type The desired type to convert the data to. Example: 'Int', 'Bool', 'String'.
      * @param object|array $source Source from which data should be extracted.
      * @param mixed ...$args List of arguments
      * @return mixed The requested data converted to the specified type.
      * @throws \InvalidArgumentException If no detector has been set for the provided type.
      */
-    private function asType(string $type, array|object $source, mixed ...$args): mixed
+    protected function asType(string $type, array|object $source, mixed ...$args): mixed
     {
         $rawValue = Hash::get($source, $args[0], $args[1]);
 
