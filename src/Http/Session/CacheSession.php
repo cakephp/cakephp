@@ -117,10 +117,10 @@ class CacheSession implements SessionHandlerInterface
     /**
      * No-op method. Always returns 0 since cache engine don't have garbage collection.
      *
-     * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+     * @param int $max_lifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false
      */
-    public function gc(int $maxlifetime): int|false
+    public function gc(int $max_lifetime): int|false
     {
         return 0;
     }

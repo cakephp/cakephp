@@ -1562,7 +1562,6 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
      * @return mixed
-     * @psalm-suppress MethodSignatureMismatch
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
