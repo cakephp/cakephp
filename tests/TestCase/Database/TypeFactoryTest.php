@@ -21,6 +21,7 @@ use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
 
@@ -57,9 +58,8 @@ class TypeFactoryTest extends TestCase
 
     /**
      * Tests Type class is able to instantiate basic types
-     *
-     * @dataProvider basicTypesProvider
      */
+    #[DataProvider('basicTypesProvider')]
     public function testBuildBasicTypes(string $name): void
     {
         $type = TypeFactory::build($name);

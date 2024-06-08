@@ -19,6 +19,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * PluginUnloadCommandTest class
@@ -75,9 +76,8 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * testUnload
-     *
-     * @dataProvider pluginNameProvider
      */
+    #[DataProvider('pluginNameProvider')]
     public function testUnload($plugin): void
     {
         $this->exec('plugin unload ' . $plugin);

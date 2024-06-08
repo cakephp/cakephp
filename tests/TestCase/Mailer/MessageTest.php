@@ -22,6 +22,7 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use TestApp\Mailer\TestMessage;
 use function Cake\Core\env;
@@ -484,9 +485,9 @@ HTML;
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidEmails
      * @param array|string $value
      */
+    #[DataProvider('invalidEmails')]
     public function testInvalidEmail($value): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -496,9 +497,9 @@ HTML;
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidEmails
      * @param array|string $value
      */
+    #[DataProvider('invalidEmails')]
     public function testInvalidEmailAdd($value): void
     {
         $this->expectException(InvalidArgumentException::class);

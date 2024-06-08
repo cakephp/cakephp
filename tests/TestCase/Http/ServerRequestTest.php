@@ -28,6 +28,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * ServerRequest Test
@@ -1199,9 +1200,9 @@ class ServerRequestTest extends TestCase
     /**
      * Test reading params
      *
-     * @dataProvider paramReadingDataProvider
      * @param mixed $expected
      */
+    #[DataProvider('paramReadingDataProvider')]
     public function testGetParam(string $toRead, $expected): void
     {
         $request = new ServerRequest([
@@ -1824,9 +1825,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that withoutAttribute() cannot remove emulatedAttributes properties.
-     *
-     * @dataProvider emulatedPropertyProvider
      */
+    #[DataProvider('emulatedPropertyProvider')]
     public function testWithoutAttributesDenyEmulatedProperties(string $prop): void
     {
         $this->expectException(InvalidArgumentException::class);

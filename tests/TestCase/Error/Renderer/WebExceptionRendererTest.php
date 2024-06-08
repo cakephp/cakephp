@@ -47,6 +47,7 @@ use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use OutOfBoundsException;
 use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
@@ -656,9 +657,8 @@ class WebExceptionRendererTest extends TestCase
 
     /**
      * Test the various Cake Exception sub classes
-     *
-     * @dataProvider exceptionProvider
      */
+    #[DataProvider('exceptionProvider')]
     public function testCakeExceptionHandling(Exception $exception, array $patterns, int $code): void
     {
         $exceptionRenderer = new WebExceptionRenderer($exception);

@@ -22,8 +22,6 @@ use org\bovigo\vfs\vfsStream;
 
 /**
  * Filesystem class
- *
- * @coversDefaultClass \Cake\Utility\Filesystem
  */
 class FilesystemTest extends TestCase
 {
@@ -45,9 +43,6 @@ class FilesystemTest extends TestCase
         clearstatcache();
     }
 
-    /**
-     * @covers ::mkdir
-     */
     public function testMkdir(): void
     {
         $path = $this->vfsPath . DS . 'tests' . DS . 'first' . DS . 'second' . DS . 'third';
@@ -55,9 +50,6 @@ class FilesystemTest extends TestCase
         $this->assertTrue(is_dir($path));
     }
 
-    /**
-     * @covers ::dumpFile
-     */
     public function testDumpFile(): void
     {
         $path = $this->vfsPath . DS . 'foo.txt';
@@ -70,9 +62,6 @@ class FilesystemTest extends TestCase
         $this->assertSame(file_get_contents($path), '');
     }
 
-    /**
-     * @covers ::copyDir
-     */
     public function testCopyDir(): void
     {
         $return = $this->fs->copyDir(WWW_ROOT, $this->vfsPath . DS . 'dest');
@@ -80,9 +69,6 @@ class FilesystemTest extends TestCase
         $this->assertTrue($return);
     }
 
-    /**
-     * @covers ::deleteDir
-     */
     public function testDeleteDir(): void
     {
         $structure = [

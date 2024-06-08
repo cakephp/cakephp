@@ -41,6 +41,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 
 /**
@@ -208,9 +209,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testContainResultFetchingOneLevel(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
@@ -265,9 +265,8 @@ class SelectQueryTest extends TestCase
      * correctly nested when no hydration is used
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -343,9 +342,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that it is possible to count results containing hasMany associations
      * both hydrating and not hydrating the results.
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingCount(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -373,9 +371,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that it is possible to set fields & order in a hasMany result set
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingFieldsAndOrderNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -424,9 +421,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that deep associations can be eagerly loaded
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -497,9 +493,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that hasMany associations can be loaded even when related to a secondary
      * model in the query
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingFromSecondaryTable(string $strategy): void
     {
         $author = $this->getTableLocator()->get('authors');
@@ -602,9 +597,8 @@ class SelectQueryTest extends TestCase
      * Tests that BelongsToMany associations are correctly eager loaded.
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
-     *
-     * @dataProvider strategiesProviderBelongsToMany
      */
+    #[DataProvider('strategiesProviderBelongsToMany')]
     public function testBelongsToManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('Articles');
@@ -1436,9 +1430,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that belongsTo relations are correctly hydrated
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testHydrateBelongsTo(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles');
@@ -1460,9 +1453,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that deeply nested associations are also hydrated correctly
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testHydrateDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -2731,9 +2723,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that it is possible to use the same association aliases in the association
      * chain for contain
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testRepeatedAssociationAliases(string $strategy): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');

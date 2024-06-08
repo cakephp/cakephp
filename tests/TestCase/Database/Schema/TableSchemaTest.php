@@ -23,6 +23,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\IntType;
 
 /**
@@ -369,9 +370,8 @@ class TableSchemaTest extends TestCase
     /**
      * Test that an exception is raised when constraints
      * are added for fields that do not exist.
-     *
-     * @dataProvider addConstraintErrorProvider
      */
+    #[DataProvider('addConstraintErrorProvider')]
     public function testAddConstraintError(array $props): void
     {
         $this->expectException(DatabaseException::class);
@@ -417,9 +417,8 @@ class TableSchemaTest extends TestCase
     /**
      * Test that an exception is raised when indexes
      * are added for fields that do not exist.
-     *
-     * @dataProvider addIndexErrorProvider
      */
+    #[DataProvider('addIndexErrorProvider')]
     public function testAddIndexError(array $props): void
     {
         $this->expectException(DatabaseException::class);
@@ -607,9 +606,8 @@ class TableSchemaTest extends TestCase
 
     /**
      * Add a foreign key constraint with bad data
-     *
-     * @dataProvider badForeignKeyProvider
      */
+    #[DataProvider('badForeignKeyProvider')]
     public function testAddConstraintForeignKeyBadData(array $data): void
     {
         $this->expectException(DatabaseException::class);

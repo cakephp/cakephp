@@ -33,8 +33,6 @@ use TestPlugin\Plugin as TestPlugin;
 
 /**
  * Base application test.
- *
- * @coversDefaultClass \Cake\Http\BaseApplication
  */
 class BaseApplicationTest extends TestCase
 {
@@ -215,8 +213,6 @@ class BaseApplicationTest extends TestCase
 
     /**
      * Tests that loading a nonexistent plugin through addOptionalPlugin() does not throw an exception
-     *
-     * @covers ::addOptionalPlugin
      */
     public function testAddOptionalPluginLoadingNonExistentPlugin(): void
     {
@@ -230,8 +226,6 @@ class BaseApplicationTest extends TestCase
 
     /**
      * Tests that loading an existing plugin through addOptionalPlugin() works
-     *
-     * @covers ::addOptionalPlugin
      */
     public function testAddOptionalPluginLoadingNonExistentPluginValid(): void
     {

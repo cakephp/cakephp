@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use function Cake\Routing\url;
 use function Cake\Routing\urlArray;
@@ -1678,9 +1679,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parse and reverse symmetry
-     *
-     * @dataProvider parseReverseSymmetryData
      */
+    #[DataProvider('parseReverseSymmetryData')]
     public function testParseReverseSymmetry(string $url): void
     {
         Router::createRouteBuilder('/')->fallbacks();
@@ -2385,9 +2385,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parseRoutePath() with valid strings
-     *
-     * @dataProvider routePathProvider
      */
+    #[DataProvider('routePathProvider')]
     public function testParseRoutePath($path, $expected): void
     {
         $this->assertSame($expected, Router::parseRoutePath($path));
@@ -2427,9 +2426,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parseRoutePath() with invalid strings
-     *
-     * @dataProvider invalidRoutePathProvider
      */
+    #[DataProvider('invalidRoutePathProvider')]
     public function testParseInvalidRoutePath(string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -3468,8 +3466,8 @@ class RouterTest extends TestCase
      * Test url() doesn't let override parts of string route path
      *
      * @param array $params
-     * @dataProvider invalidRoutePathParametersArrayProvider
      */
+    #[DataProvider('invalidRoutePathParametersArrayProvider')]
     public function testUrlGenerationOverridingShortString(array $params): void
     {
         $routes = Router::createRouteBuilder('/');
@@ -3485,8 +3483,8 @@ class RouterTest extends TestCase
      * Test url() doesn't let override parts of string route path from `_path` key
      *
      * @param array $params
-     * @dataProvider invalidRoutePathParametersArrayProvider
      */
+    #[DataProvider('invalidRoutePathParametersArrayProvider')]
     public function testUrlGenerationOverridingPathKey(array $params): void
     {
         $routes = Router::createRouteBuilder('/');

@@ -32,6 +32,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * ResponseTest
@@ -1017,9 +1018,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile and invalid paths
-     *
-     * @dataProvider invalidFileProvider
      */
+    #[DataProvider('invalidFileProvider')]
     public function testWithFileInvalidPath(string $path, string $expectedMessage): void
     {
         $this->expectException(NotFoundException::class);
@@ -1173,9 +1173,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() & the various range offset types.
-     *
-     * @dataProvider rangeProvider
      */
+    #[DataProvider('rangeProvider')]
     public function testWithFileRangeOffsets(string $range, int $length, string $offsetResponse): void
     {
         $_SERVER['HTTP_RANGE'] = $range;
@@ -1239,9 +1238,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() and invalid ranges
-     *
-     * @dataProvider invalidFileRangeProvider
      */
+    #[DataProvider('invalidFileRangeProvider')]
     public function testWithFileInvalidRange(string $range): void
     {
         $_SERVER['HTTP_RANGE'] = $range;

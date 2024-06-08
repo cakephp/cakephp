@@ -18,6 +18,7 @@ namespace Cake\TestSuite;
 
 use Cake\Log\Engine\ArrayLog;
 use Cake\Log\Log;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * Make assertions on logs
@@ -27,9 +28,9 @@ trait LogTestTrait
     /**
      * Reset log configs
      *
-     * @after
      * @return void
      */
+    #[After]
     public function cleanupLog(): void
     {
         Log::reset();

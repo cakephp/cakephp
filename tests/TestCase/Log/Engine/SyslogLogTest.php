@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\SyslogLog;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SyslogLogTest class
@@ -51,9 +52,8 @@ class SyslogLogTest extends TestCase
 
     /**
      * Tests that single lines are written to syslog
-     *
-     * @dataProvider typesProvider
      */
+    #[DataProvider('typesProvider')]
     public function testWriteOneLine(string $type, int $expected): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */

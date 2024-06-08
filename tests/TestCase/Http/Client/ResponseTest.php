@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP response test.
@@ -280,9 +281,8 @@ XML;
 
     /**
      * Test isSuccess()
-     *
-     * @dataProvider isSuccessProvider
      */
+    #[DataProvider('isSuccessProvider')]
     public function testIsSuccess(bool $expected, Response $response): void
     {
         $this->assertEquals($expected, $response->isSuccess());

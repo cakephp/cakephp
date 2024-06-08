@@ -36,6 +36,7 @@ use Cake\Test\test_app\TestApp\Stub\WhenThenExpressionStub;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Database\Type\CustomExpressionType;
 use TestApp\View\Object\TestObjectWithToString;
@@ -230,10 +231,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider valueTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('valueTypeInferenceDataProvider')]
     public function testInferValueType($value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
@@ -272,10 +273,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider whenTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('whenTypeInferenceDataProvider')]
     public function testInferWhenType($value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
@@ -310,10 +311,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider resultTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('resultTypeInferenceDataProvider')]
     public function testInferResultType($value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
@@ -332,10 +333,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider resultTypeInferenceDataProvider
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
+    #[DataProvider('resultTypeInferenceDataProvider')]
     public function testInferElseType($value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
@@ -1348,11 +1349,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validCaseValuesDataProvider
      * @param mixed $value The case value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validCaseValuesDataProvider')]
     public function testValidCaseValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression($value))
@@ -1507,11 +1508,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validWhenValuesSimpleCaseDataProvider
      * @param mixed $value The when value.
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
+    #[DataProvider('validWhenValuesSimpleCaseDataProvider')]
     public function testValidWhenValueSimpleCase($value, ?string $expectedSql, $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
@@ -1629,11 +1630,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validWhenValuesSearchedCaseDataProvider
      * @param mixed $value The when value.
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
+    #[DataProvider('validWhenValuesSearchedCaseDataProvider')]
     public function testValidWhenValueSearchedCase($value, ?string $expectedSql, $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
@@ -1693,11 +1694,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validThenValuesDataProvider
      * @param mixed $value The then value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validThenValuesDataProvider')]
     public function testValidThenValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -1769,11 +1770,11 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider validElseValuesDataProvider
      * @param mixed $value The else value.
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
+    #[DataProvider('validElseValuesDataProvider')]
     public function testValidElseValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
@@ -1855,10 +1856,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidCaseValuesDataProvider
      * @param mixed $value The case value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidCaseValuesDataProvider')]
     public function testInvalidCaseValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1899,10 +1900,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidThenValueDataProvider
      * @param mixed $value The then value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidThenValueDataProvider')]
     public function testInvalidThenValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1934,9 +1935,9 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidThenTypeDataProvider
      * @param mixed $type The then type.
      */
+    #[DataProvider('invalidThenTypeDataProvider')]
     public function testInvalidThenType($type): void
     {
         $this->expectException(TypeError::class);
@@ -1963,10 +1964,10 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidElseValueDataProvider
      * @param mixed $value The else value.
      * @param string $typeName The expected error type name.
      */
+    #[DataProvider('invalidElseValueDataProvider')]
     public function testInvalidElseValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -2000,9 +2001,9 @@ class CaseStatementExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidElseTypeDataProvider
      * @param mixed $type The else type.
      */
+    #[DataProvider('invalidElseTypeDataProvider')]
     public function testInvalidElseType($type): void
     {
         $this->expectException(TypeError::class);

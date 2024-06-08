@@ -21,6 +21,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Digest authentication test
@@ -331,9 +332,9 @@ class DigestTest extends TestCase
     /**
      * testAlgorithms method
      *
-     * @dataProvider algorithmsProvider
      * @return void
      */
+    #[DataProvider('algorithmsProvider')]
     public function testAlgorithms($message, $headers, $method, $data, $expected)
     {
         $response = new Response($headers, '');

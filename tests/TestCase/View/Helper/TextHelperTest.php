@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * TextHelperTest class
@@ -71,9 +72,8 @@ class TextHelperTest extends TestCase
 
     /**
      * Tests calls are proxied to Number class.
-     *
-     * @dataProvider methodProvider
      */
+    #[DataProvider('methodProvider')]
     public function testMethodProxying(string $method, mixed $arg): void
     {
         $helper = new TextHelper($this->View);
@@ -317,9 +317,8 @@ class TextHelperTest extends TestCase
 
     /**
      * testAutoLinkUrls method
-     *
-     * @dataProvider autoLinkProvider
      */
+    #[DataProvider('autoLinkProvider')]
     public function testAutoLinkUrls(string $text, string $expected): void
     {
         $result = $this->Text->autoLinkUrls($text);
@@ -497,8 +496,8 @@ class TextHelperTest extends TestCase
      *
      * @param string $text The text to link
      * @param string $expected The expected results.
-     * @dataProvider autoLinkEmailProvider
      */
+    #[DataProvider('autoLinkEmailProvider')]
     public function testAutoLinkEmails(string $text, string $expected, array $attrs = []): void
     {
         $result = $this->Text->autoLinkEmails($text, $attrs);

@@ -19,6 +19,7 @@ use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use Transliterator;
 
@@ -339,9 +340,8 @@ class TextTest extends TestCase
 
     /**
      * test that wordWrap() works the same as built-in wordwrap function
-     *
-     * @dataProvider wordWrapProvider
      */
+    #[DataProvider('wordWrapProvider')]
     public function testWordWrap(string $text, int $width, string $break = "\n", bool $cut = false): void
     {
         $result = Text::wordWrap($text, $width, $break, $cut);
@@ -1534,9 +1534,9 @@ HTML;
     /**
      * testparseFileSize
      *
-     * @dataProvider filesizes
      * @param mixed $expected
      */
+    #[DataProvider('filesizes')]
     public function testParseFileSize(array $params, $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
@@ -1683,8 +1683,8 @@ HTML;
      * @param string $string String
      * @param \Transliterator|string|null $transliterator Transliterator
      * @param String $expected Expected string
-     * @dataProvider transliterateInputProvider
      */
+    #[DataProvider('transliterateInputProvider')]
     public function testTransliterate($string, $transliterator, $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
@@ -1802,8 +1802,8 @@ HTML;
      * @param string $string String
      * @param array $options Options
      * @param String $expected Expected string
-     * @dataProvider slugInputProvider
      */
+    #[DataProvider('slugInputProvider')]
     public function testSlug($string, $options, $expected): void
     {
         $result = Text::slug($string, $options);

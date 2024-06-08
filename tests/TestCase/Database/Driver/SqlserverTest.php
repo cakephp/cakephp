@@ -27,6 +27,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlserver driver
@@ -96,10 +97,10 @@ class SqlserverTest extends TestCase
     /**
      * Test if all options in dns string are set
      *
-     * @dataProvider dnsStringDataProvider
      * @param array $constructorArgs
      * @param string $dnsString
      */
+    #[DataProvider('dnsStringDataProvider')]
     public function testDnsString($constructorArgs, $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')

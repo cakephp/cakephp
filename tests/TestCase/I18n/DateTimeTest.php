@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeZone;
 use IntlDateFormatter;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * DateTimeTest class
@@ -104,9 +105,8 @@ class DateTimeTest extends TestCase
 
     /**
      * testTimeAgoInWords method
-     *
-     * @dataProvider timeAgoProvider
      */
+    #[DataProvider('timeAgoProvider')]
     public function testTimeAgoInWords(string $input, string $expected): void
     {
         $time = new DateTime($input);
@@ -178,9 +178,8 @@ class DateTimeTest extends TestCase
 
     /**
      * test the end option for timeAgoInWords
-     *
-     * @dataProvider timeAgoEndProvider
      */
+    #[DataProvider('timeAgoEndProvider')]
     public function testTimeAgoInWordsEnd(string $input, string $expected, string $end): void
     {
         $time = new DateTime($input);
@@ -537,9 +536,9 @@ class DateTimeTest extends TestCase
     /**
      * Test that invalid datetime values do not trigger errors.
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testToStringInvalid($value): void
     {
         $time = new DateTime($value);
@@ -550,9 +549,9 @@ class DateTimeTest extends TestCase
     /**
      * Test that invalid datetime values do not trigger errors.
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testToStringInvalidFrozen($value): void
     {
         $time = new DateTime($value);

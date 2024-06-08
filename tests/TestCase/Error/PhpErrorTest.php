@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Error\PhpError;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PhpErrorTest extends TestCase
 {
@@ -45,9 +46,7 @@ class PhpErrorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider errorCodeProvider
-     */
+    #[DataProvider('errorCodeProvider')]
     public function testMappings($phpCode, $label, $logLevel)
     {
         $error = new PhpError($phpCode, 'something bad');

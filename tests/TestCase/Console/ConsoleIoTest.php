@@ -21,6 +21,7 @@ use Cake\Console\Exception\StopException;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * ConsoleIo test.
@@ -98,9 +99,9 @@ class ConsoleIoTest extends TestCase
     /**
      * test ask choices method
      *
-     * @dataProvider choiceProvider
      * @param array|string $choices
      */
+    #[DataProvider('choiceProvider')]
     public function testAskChoices($choices): void
     {
         $this->in->expects($this->once())
@@ -114,9 +115,9 @@ class ConsoleIoTest extends TestCase
     /**
      * test ask choices method
      *
-     * @dataProvider choiceProvider
      * @param array|string $choices
      */
+    #[DataProvider('choiceProvider')]
     public function testAskChoicesInsensitive($choices): void
     {
         $this->in->expects($this->once())
@@ -585,9 +586,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test out helper methods
-     *
-     * @dataProvider outHelperProvider
      */
+    #[DataProvider('outHelperProvider')]
     public function testOutHelpers(string $method): void
     {
         $this->out->expects($this->exactly(2))
@@ -605,9 +605,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test err helper methods
-     *
-     * @dataProvider errHelperProvider
      */
+    #[DataProvider('errHelperProvider')]
     public function testErrHelpers(string $method): void
     {
         $this->err->expects($this->exactly(2))

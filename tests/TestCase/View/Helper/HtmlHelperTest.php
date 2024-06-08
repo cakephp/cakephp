@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Core\h;
 
 /**
@@ -1597,8 +1598,8 @@ class HtmlHelperTest extends TestCase
      * @param string $type
      * @param array $url
      * @param string $expectedUrl
-     * @dataProvider dataMetaLinksProvider
      */
+    #[DataProvider('dataMetaLinksProvider')]
     public function testMetaLinks($type, array $url, $expectedUrl): void
     {
         $result = $this->Html->meta($type, $url);
