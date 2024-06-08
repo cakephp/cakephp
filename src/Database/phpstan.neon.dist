@@ -8,10 +8,6 @@ parameters:
 	excludePaths:
 		- vendor/
 	ignoreErrors:
-		-
-			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
 		-
 			identifier: missingType.iterableValue
