@@ -14,9 +14,9 @@ parameters:
 		- src/
 	ignoreErrors:
 		-
-		  identifier: missingType.iterableValue
+			identifier: missingType.iterableValue
 		-
-		  identifier: missingType.generics
+			identifier: missingType.generics
 
 services:
 	-

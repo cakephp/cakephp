@@ -175,6 +175,15 @@ class EnumType extends BaseType
             return $value;
         }
 
+        if (!is_string($value) && !is_int($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Unable to marshal value `%s` of type `%s` to `%s`',
+                print_r($value, true),
+                get_debug_type($value),
+                $this->enumClassName,
+            ));
+        }
+
         if ($this->backingType === 'int' && is_numeric($value) && is_string($value)) {
             $value = (int)$value;
         }

@@ -6,10 +6,10 @@ parameters:
 	paths:
 		- ./
 	excludePaths:
-	    - BaseApplication.php
-	    - Runner.php
-	    - Session.php
-	    - vendor/
+		- BaseApplication.php
+		- Runner.php
+		- Session.php
+		- vendor/
 	ignoreErrors:
 		-
 			identifier: missingType.iterableValue

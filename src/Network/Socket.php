@@ -396,7 +396,7 @@ class Socket
      */
     public function read(int $length = 1024): ?string
     {
-        if ($length < 0) {
+        if ($length < 1) {
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
