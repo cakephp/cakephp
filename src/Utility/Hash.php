@@ -650,6 +650,7 @@ class Hash
             }
         }
 
+        /** @psalm-suppress InvalidArgument */
         return array_filter($data, $callback ?? [static::class, '_filter']);
     }
 
