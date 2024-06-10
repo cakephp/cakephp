@@ -33,7 +33,6 @@ use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use function Cake\Core\env;
 use function Cake\Core\toBool;
-use function Cake\Core\toDateTime;
 use function Cake\Core\toInt;
 use function Cake\Core\toString;
 
@@ -569,8 +568,6 @@ class ServerRequest implements ServerRequestInterface
             'string' => toString($rawValue),
             'int', 'integer' => toInt($rawValue),
             'bool', 'boolean' => toBool($rawValue),
-            // TODO: Add just date? Add just time?
-            'datetime' => toDateTime($rawValue),
             default => throw new InvalidArgumentException(sprintf('Unable to convert request data to %s.', $type)),
         };
     }
