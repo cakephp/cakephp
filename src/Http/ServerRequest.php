@@ -32,9 +32,10 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use function Cake\Core\env;
-use function Cake\Core\toBool;
-use function Cake\Core\toInt;
-use function Cake\Core\toString;
+// TODO: Unsure if I still need these? PHPStan fails with or without them.
+//use function Cake\Core\toBool;
+//use function Cake\Core\toInt;
+//use function Cake\Core\toString;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
