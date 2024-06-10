@@ -119,7 +119,7 @@ class MoFileParser
 
             fseek($stream, $offsetTranslated + $i * 8);
             $length = $this->_readLong($stream, $isBigEndian);
-            if ($length < 0) {
+            if ($length < 1) {
                 throw new CakeException('Length must be > 0');
             }
 

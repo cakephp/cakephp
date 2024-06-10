@@ -884,6 +884,10 @@ class Validation
             );
         }
 
+        if (!is_string($check) && !is_int($check)) {
+            return false;
+        }
+
         if ($backingType === 'int') {
             if (!is_numeric($check)) {
                 return false;

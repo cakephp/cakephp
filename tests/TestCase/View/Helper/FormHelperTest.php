@@ -7902,7 +7902,6 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'accept-tos'],
             [
                 'input' => [
-                    'aria-required' => 'true',
                     'required' => 'required',
                     'type' => 'checkbox',
                     'name' => 'accept_tos',

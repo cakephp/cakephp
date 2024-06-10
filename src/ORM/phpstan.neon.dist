@@ -12,7 +12,6 @@ parameters:
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics
-
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Method Cake\\\\ORM\\\\Behavior\\\\TreeBehavior\\:\\:_scope\\(\\) should return T of Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery but returns Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery\\.$#"
 		- "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
