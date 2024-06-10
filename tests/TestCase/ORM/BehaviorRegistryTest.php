@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use BadMethodCallException;
-use Cake\Core\Exception\CakeException;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query;
