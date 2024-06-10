@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Http;
 
 use ArrayAccess;
@@ -32,6 +33,7 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use function Cake\Core\env;
+
 // TODO: Unsure if I still need these? PHPStan fails with or without them.
 //use function Cake\Core\toBool;
 //use function Cake\Core\toInt;
@@ -49,11 +51,11 @@ class ServerRequest implements ServerRequestInterface
      * @var array
      */
     protected array $params = [
-        'plugin' => null,
+        'plugin'     => null,
         'controller' => null,
-        'action' => null,
-        '_ext' => null,
-        'pass' => [],
+        'action'     => null,
+        '_ext'       => null,
+        'pass'       => [],
     ];
 
     /**
@@ -125,21 +127,21 @@ class ServerRequest implements ServerRequestInterface
      * @var array<\Closure|array>
      */
     protected static array $_detectors = [
-        'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
-        'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
-        'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
-        'patch' => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
-        'delete' => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
-        'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
+        'get'     => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
+        'post'    => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
+        'put'     => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
+        'patch'   => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
+        'delete'  => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
+        'head'    => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
         'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
-        'https' => ['env' => 'HTTPS', 'options' => [1, 'on']],
-        'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
-        'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
-        'xml' => [
-            'accept' => ['application/xml', 'text/xml'],
+        'https'   => ['env' => 'HTTPS', 'options' => [1, 'on']],
+        'ajax'    => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
+        'json'    => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
+        'xml'     => [
+            'accept'  => ['application/xml', 'text/xml'],
             'exclude' => ['text/html'],
-            'param' => '_ext',
-            'value' => 'xml',
+            'param'   => '_ext',
+            'value'   => 'xml',
         ],
     ];
 
@@ -238,17 +240,17 @@ class ServerRequest implements ServerRequestInterface
     public function __construct(array $config = [])
     {
         $config += [
-            'params' => $this->params,
-            'query' => [],
-            'post' => [],
-            'files' => [],
-            'cookies' => [],
+            'params'      => $this->params,
+            'query'       => [],
+            'post'        => [],
+            'files'       => [],
+            'cookies'     => [],
             'environment' => [],
-            'url' => '',
-            'uri' => null,
-            'base' => '',
-            'webroot' => '',
-            'input' => null,
+            'url'         => '',
+            'uri'         => null,
+            'base'        => '',
+            'webroot'     => '',
+            'input'       => null,
         ];
 
         $this->_setConfig($config);
@@ -498,7 +500,9 @@ class ServerRequest implements ServerRequestInterface
                 'getParam' => $source = $this->params,
                 'getData' => $source = $this->data ?? [],
                 'getHeader', 'getHeaderLine' =>
-                throw new BadMethodCallException('Type conversion is not supported for request headers.'),
+                    throw new BadMethodCallException('Type conversion is not supported for request headers.'),
+                default =>
+                    throw new BadMethodCallException('Type conversion is not supported for given datasource.'),
             };
 
             if ($source !== null) {
@@ -1646,10 +1650,10 @@ class ServerRequest implements ServerRequestInterface
     public function getAttributes(): array
     {
         $emulated = [
-            'params' => $this->params,
+            'params'  => $this->params,
             'webroot' => $this->webroot,
-            'base' => $this->base,
-            'here' => $this->base . $this->uri->getPath(),
+            'base'    => $this->base,
+            'here'    => $this->base . $this->uri->getPath(),
         ];
 
         return $this->attributes + $emulated;
