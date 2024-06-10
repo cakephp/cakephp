@@ -45,11 +45,12 @@ foreach ($packages as $path => $package) {
     }
 
     $exitCode = null;
+    $output = [];
     exec('cd ' . $path . ' && composer install && vendor/bin/phpstan analyze ./', $output, $exitCode);
     if ($exitCode !== 0) {
         $code = $exitCode;
 
-        $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
+        $issues[] = 'Issue(s) detected with ' . $package . ' package: ' . PHP_EOL . implode(PHP_EOL, $output);
     }
     exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
 }
