@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query\SelectQuery;
@@ -258,14 +259,8 @@ class BehaviorRegistryTest extends TestCase
     public function testCall(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = Mockery::mock('Cake\ORM\Behavior')->makePartial();
-        $this->Behaviors->set('Sluggable', $mockedBehavior);
-
-        $mockedBehavior->shouldReceive('slugify')
-            ->with(['some value'])
-            ->andReturn('some-thing');
-        $return = $this->Behaviors->call('slugify', [['some value']]);
-        $this->assertSame('some-thing', $return);
+        $return = $this->Behaviors->call('slugify', ['some value']);
+        $this->assertSame('some-value', $return);
     }
 
     /**
@@ -321,8 +316,11 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
+
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
         $this->Behaviors->unload('Sluggable');
 
+        $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
         $this->Behaviors->call('slugify');
     }
 
@@ -334,9 +332,11 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call finder `noslug`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
+        $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
         $this->Behaviors->unload('Sluggable');
 
         $this->Behaviors->callFinder('noSlug', new SelectQuery($this->Table));
+        $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
     }
 
     /**
@@ -371,8 +371,8 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingBehaviorException::class);
-        $this->expectExceptionMessage('Behavior class `FooBehavior` could not be found.');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unknown object `Foo`');
         $this->Behaviors->unload('Foo');
     }
 
