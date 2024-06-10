@@ -1790,6 +1790,20 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test removing a behavior from a table clears the method map for the behavior
+     */
+    public function testRemoveBehaviorMethodMapCleared(): void
+    {
+        $table = new Table(['table' => 'articles']);
+        $table->addBehavior('Sluggable');
+        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+
+        $table->removeBehavior('Sluggable');
+        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+    }
+
+    /**
      * Test adding multiple behaviors to a table.
      */
     public function testAddBehaviors(): void

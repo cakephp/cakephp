@@ -204,6 +204,31 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     }
 
     /**
+     * Remove an object from the registry.
+     *
+     * If this registry has an event manager, the object will be detached from any events as well.
+     *
+     * @param string $name The name of the object to remove from the registry.
+     * @return $this
+     */
+    public function unload(string $name)
+    {
+        $instance = $this->get($name);
+        $result = parent::unload($name);
+
+        $methods = $instance->implementedMethods();
+        foreach ($methods as $method) {
+            unset($this->_methodMap[$method]);
+        }
+        $finders = $instance->implementedFinders();
+        foreach ($finders as $finder) {
+            unset($this->_finderMap[$finder]);
+        }
+
+        return $result;
+    }
+
+    /**
      * Check if any loaded behavior implements a method.
      *
      * Will return true if any behavior provides a public non-finder method
