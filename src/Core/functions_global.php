@@ -24,13 +24,10 @@ use function Cake\Core\pathCombine as cakePathCombine;
 use function Cake\Core\pj as cakePj;
 use function Cake\Core\pluginSplit as cakePluginSplit;
 use function Cake\Core\pr as cakePr;
-use function Cake\Core\toBool as cakeToBool;
-use function Cake\Core\toInt as cakeToInt;
-use function Cake\Core\toString as cakeToString;
 use function Cake\Core\triggerWarning as cakeTriggerWarning;
 
 if (!function_exists('pathCombine')) {
-    /**G
+    /**
      * Combines parts with a forward-slash `/`.
      *
      * Skips adding a forward-slash if either `/` or `\` already exists.
@@ -190,62 +187,5 @@ if (!function_exists('deprecationWarning')) {
     function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
         cakeDeprecationWarning($version, $message, $stackFrame + 1);
-    }
-}
-
-// FIXME: Well, this is going to be a problem...
-if (!function_exists('toString')) {
-    /**
-     * Converts the given value to a string.
-     *
-     * This method attempts to convert the given value to a string.
-     * If the value is already a string, it returns the value as it is.
-     * ``null`` is returned if the conversion is not possible.
-     *
-     * @param mixed $value The value to be converted.
-     * @return ?string Returns the string representation of the value, or null if the value is not a string.
-     * @since 5.1.0
-     */
-    function toString(mixed $value): ?string
-    {
-        return cakeToString($value);
-    }
-}
-
-if (!function_exists('toInt')) {
-    /**
-     * Converts a value to an integer.
-     *
-     * This method attempts to convert the given value to an integer.
-     * If the conversion is successful, it returns the value as an integer.
-     * If the conversion fails, it returns NULL.
-     *
-     * String values are trimmed using trim().
-     *
-     * @param mixed $value The value to be converted to an integer.
-     * @return int|null Returns the converted integer value or null if the conversion fails.
-     * @since 5.1.0
-     */
-    function toInt(mixed $value): ?int
-    {
-        return cakeToInt($value);
-    }
-}
-
-if (!function_exists('toBool')) {
-    /**
-     * Converts a value to boolean.
-     *
-     *  1 | '1' | 1.0 | true  - values returns as true
-     *  0 | '0' | 0.0 | false - values returns as false
-     *  Other values returns as null.
-     *
-     * @param mixed $value The value to convert to boolean.
-     * @return bool|null Returns true if the value is truthy, false if it's falsy, or NULL otherwise.
-     * @since 5.1.0
-     */
-    function toBool(mixed $value): ?bool
-    {
-        return cakeToBool($value);
     }
 }
