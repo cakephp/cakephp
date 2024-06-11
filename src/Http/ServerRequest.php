@@ -51,11 +51,11 @@ class ServerRequest implements ServerRequestInterface
      * @var array
      */
     protected array $params = [
-        'plugin'     => null,
+        'plugin' => null,
         'controller' => null,
-        'action'     => null,
-        '_ext'       => null,
-        'pass'       => [],
+        'action' => null,
+        '_ext' => null,
+        'pass' => [],
     ];
 
     /**
@@ -127,21 +127,21 @@ class ServerRequest implements ServerRequestInterface
      * @var array<\Closure|array>
      */
     protected static array $_detectors = [
-        'get'     => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
-        'post'    => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
-        'put'     => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
-        'patch'   => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
-        'delete'  => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
-        'head'    => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
+        'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
+        'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
+        'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
+        'patch' => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
+        'delete' => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
+        'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
         'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
-        'https'   => ['env' => 'HTTPS', 'options' => [1, 'on']],
-        'ajax'    => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
-        'json'    => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
-        'xml'     => [
-            'accept'  => ['application/xml', 'text/xml'],
+        'https' => ['env' => 'HTTPS', 'options' => [1, 'on']],
+        'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
+        'json' => ['accept' => ['application/json'], 'param' => '_ext', 'value' => 'json'],
+        'xml' => [
+            'accept' => ['application/xml', 'text/xml'],
             'exclude' => ['text/html'],
-            'param'   => '_ext',
-            'value'   => 'xml',
+            'param' => '_ext',
+            'value' => 'xml',
         ],
     ];
 
@@ -240,17 +240,17 @@ class ServerRequest implements ServerRequestInterface
     public function __construct(array $config = [])
     {
         $config += [
-            'params'      => $this->params,
-            'query'       => [],
-            'post'        => [],
-            'files'       => [],
-            'cookies'     => [],
+            'params' => $this->params,
+            'query' => [],
+            'post' => [],
+            'files' => [],
+            'cookies' => [],
             'environment' => [],
-            'url'         => '',
-            'uri'         => null,
-            'base'        => '',
-            'webroot'     => '',
-            'input'       => null,
+            'url' => '',
+            'uri' => null,
+            'base' => '',
+            'webroot' => '',
+            'input' => null,
         ];
 
         $this->_setConfig($config);
@@ -485,29 +485,21 @@ class ServerRequest implements ServerRequestInterface
 
             return $this->is(...$params);
         } elseif (str_starts_with($name, 'get')) {
-            // e.g. getCookieAsInt(), getQueryAsDateTime()
+            // e.g. getCookieAsInt(), getQueryAsBool()
             $parts = explode('As', $name);
             if (count($parts) !== 2) {
                 return $this->$name(...$params);
             }
 
-            [$methodName, $userType] = $parts;
+            [$methodName, $type] = $parts;
 
-            $source = null;
-            match ($methodName) {
-                'getCookie' => $source = $this->cookies,
-                'getQuery' => $source = $this->query,
-                'getParam' => $source = $this->params,
-                'getData' => $source = $this->data ?? [],
-                'getHeader', 'getHeaderLine' =>
-                    throw new BadMethodCallException('Type conversion is not supported for request headers.'),
-                default =>
-                    throw new BadMethodCallException('Type conversion is not supported for given datasource.'),
+            return match ($methodName) {
+                'getCookie' => $this->asType($type, $this->cookies, ...$params),
+                'getQuery' => $this->asType($type, $this->query, ...$params),
+                'getParam' => $this->asType($type, $this->params, ...$params),
+                'getData' => $this->asType($type, $this->data ?? [], ...$params),
+                default => throw new BadMethodCallException(sprintf('Unable to convert request data to %s.', $type)),
             };
-
-            if ($source !== null) {
-                return $this->asType($userType, $source, ...$params);
-            }
         }
 
         throw new BadMethodCallException(sprintf('Method `%s()` does not exist.', $name));
@@ -1650,10 +1642,10 @@ class ServerRequest implements ServerRequestInterface
     public function getAttributes(): array
     {
         $emulated = [
-            'params'  => $this->params,
+            'params' => $this->params,
             'webroot' => $this->webroot,
-            'base'    => $this->base,
-            'here'    => $this->base . $this->uri->getPath(),
+            'base' => $this->base,
+            'here' => $this->base . $this->uri->getPath(),
         ];
 
         return $this->attributes + $emulated;
