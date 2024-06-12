@@ -124,7 +124,7 @@ class Security
      * @param bool $inclSpecialChars If include special characters. Default false.
      * @return string
      */
-    public static function randomString(int $length = 64, bool $inclSpecialChars = false): string
+    public static function randomString(int $length = 64, bool $includeSpecialChars = false): string
     {
         $string = '';
 
