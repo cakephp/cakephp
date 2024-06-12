@@ -449,7 +449,7 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * test the simple uses of is()
+     * Test the simple uses of is()
      */
     public function testIsHttpMethods(): void
     {
@@ -473,7 +473,7 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('delete'));
     }
 
-    public function testExceptionForInvalidType()
+    public function testIsThrowsExceptionForInvalidType()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No detector set for type `nonexistent`');
@@ -531,6 +531,135 @@ class ServerRequestTest extends TestCase
         $this->assertTrue($request->isAll(['ajax', 'get']));
         $this->assertFalse($request->isAll(['post', 'get']));
         $this->assertFalse($request->isAll(['ajax', 'post']));
+    }
+
+    /**
+     * Test the simple uses of asType()
+     */
+    public function testAsTypeThrowsExceptionForInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to convert request data to Elephants.');
+
+        $request = new ServerRequest();
+
+        $this->assertFalse($request->asType('Elephants', []));
+    }
+
+    /**
+     * Test the magic methods on cookie data
+     */
+    public function testGetCookieAsDifferentTypes(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withCookieParams([
+           'myint' => '123',
+           'mystring' => 'mushroom',
+           'mybool' => '1',
+        ]);
+
+        $this->assertSame(123, $request->getCookieAsInt('myint'));
+        $this->assertSame('mushroom', $request->getCookieAsString('mystring'));
+        $this->assertSame(true, $request->getCookieAsBool('mybool'));
+    }
+
+    /**
+     * Test the magic methods on query parameters
+     */
+    public function testGetQueryAsDifferentTypes(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withQueryParams([
+            'myint' => '123',
+            'mystring' => 'mushroom',
+            'mybool' => '1',
+        ]);
+
+        $this->assertSame(123, $request->getQueryAsInt('myint'));
+        $this->assertSame('mushroom', $request->getQueryAsString('mystring'));
+        $this->assertSame(true, $request->getQueryAsBool('mybool'));
+    }
+
+    /**
+     * Test the magic methods on query parameters
+     */
+    public function testGetParamAsDifferentTypes(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withParam('myint', '123');
+        $request = $request->withParam('mystring', 'mushroom');
+        $request = $request->withParam('mybool', '1');
+
+        $this->assertSame(123, $request->getParamAsInt('myint'));
+        $this->assertSame('mushroom', $request->getParamAsString('mystring'));
+        $this->assertSame(true, $request->getParamAsBool('mybool'));
+    }
+
+    /**
+     * Test the magic methods on query parameters
+     */
+    public function testGetDataAsDifferentTypes(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withData('myint', '123');
+        $request = $request->withData('mystring', 'mushroom');
+        $request = $request->withData('mybool', '1');
+
+
+        $this->assertSame(123, $request->getDataAsInt('myint'));
+        $this->assertSame('mushroom', $request->getDataAsString('mystring'));
+        $this->assertSame(true, $request->getDataAsBool('mybool'));
+    }
+
+    public function testGetRequestDataAsTypeString(): void
+    {
+        $request = new ServerRequest();
+
+        $request = $request->withCookieParams(['mycookie' => 'correct']);
+        $request = $request->withQueryParams(['myquery' => 'horse']);
+        $request = $request->withParam('myparam', 'battery');
+        $request = $request->withData('mydata', 'staple');
+
+        $this->assertSame('correct', $request->asType('string', $request->getCookieParams(), 'mycookie'));
+        $this->assertSame('horse', $request->asType('string', $request->getQueryParams(), 'myquery'));
+        $this->assertSame('battery', $request->asType('string', $request->getAttribute('params'), 'myparam'));
+        $this->assertSame('staple', $request->asType('string', $request->getData(), 'mydata'));
+    }
+
+    /**
+     * Test asType() for integer datapoints
+     */
+    public function testGetRequestDataAsTypeInt(): void
+    {
+        $request = new ServerRequest();
+
+        $request = $request->withCookieParams(['mycookie' => '123']);
+        $request = $request->withQueryParams(['myquery' => 456]);
+        $request = $request->withParam('myparam', '789');
+        $request = $request->withData('mydata', 30 / 3);
+
+        $this->assertSame(123, $request->asType('int', $request->getCookieParams(), 'mycookie'));
+        $this->assertSame(456, $request->asType('int', $request->getQueryParams(), 'myquery'));
+        $this->assertSame(789, $request->asType('int', $request->getAttribute('params'), 'myparam'));
+        $this->assertSame(10, $request->asType('integer', $request->getData(), 'mydata'));
+    }
+
+    /**
+     * Test asType() for boolean datapoints
+     */
+    public function testGetRequestDataAsTypeBool(): void
+    {
+        $request = new ServerRequest();
+
+        $request = $request->withCookieParams(['mycookie' => true]);
+        $request = $request->withQueryParams(['myquery' => false]);
+        $request = $request->withParam('myparam', 1);
+        $request = $request->withData('mydata', '0');
+
+        $this->assertSame(true, $request->asType('bool', $request->getCookieParams(), 'mycookie'));
+        $this->assertSame(false, $request->asType('bool', $request->getQueryParams(), 'myquery'));
+        $this->assertSame(true, $request->asType('bool', $request->getAttribute('params'), 'myparam'));
+        $this->assertSame(false, $request->asType('boolean', $request->getData(), 'mydata'));
     }
 
     /**
