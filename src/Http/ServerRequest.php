@@ -33,11 +33,9 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 use function Cake\Core\env;
-
-// TODO: Unsure if I still need these? PHPStan fails with or without them.
-//use function Cake\Core\toBool;
-//use function Cake\Core\toInt;
-//use function Cake\Core\toString;
+use function Cake\Core\toBool;
+use function Cake\Core\toInt;
+use function Cake\Core\toString;
 
 /**
  * A class that helps wrap Request information and particulars about a single request.
@@ -473,10 +471,10 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The method called
      * @param array $params Array of parameters for the method call
-     * @return bool
+     * @return mixed
      * @throws \BadMethodCallException when an invalid method is called.
      */
-    public function __call(string $name, array $params): bool
+    public function __call(string $name, array $params): mixed
     {
         if (str_starts_with($name, 'is')) {
             $type = strtolower(substr($name, 2));
