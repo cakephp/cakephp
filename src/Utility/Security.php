@@ -121,7 +121,7 @@ class Security
      * Creates a secure random string.
      *
      * @param int $length String length. Default 64.
-     * @param bool $inclSpecialChars If include special characters. Default false.
+     * @param bool $includeSpecialChars If to include special characters. Default false.
      * @return string
      */
     public static function randomString(int $length = 64, bool $includeSpecialChars = false): string
@@ -132,11 +132,11 @@ class Security
             return $string;
         }
 
-        if ($inclSpecialChars) {
+        if ($includeSpecialChars) {
             $special_charset = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
 
             for ($i = 0; $i < rand(1, $length); $i++) {
-                $string .= $special_charset[rand(0, strlen($special_charset))];
+                $string .= $special_charset[random_int(0, strlen($special_charset))];
             }
         }
 
