@@ -121,16 +121,34 @@ class Security
      * Creates a secure random string.
      *
      * @param int $length String length. Default 64.
+     * @param bool $with_special_chars If include special characters. Default false.
      * @return string
      */
-    public static function randomString(int $length = 64): string
+    public static function randomString(int $length = 64, bool $with_special_chars = false): string
     {
-        return substr(
-            bin2hex(Security::randomBytes((int)ceil($length / 2))),
+        $string = '';
+
+        if ($length === 0) {
+            return $string;
+        }
+
+        if ($with_special_chars) {
+            $special_charset = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
+
+            for ($i = 0; $i < rand(1, $length); $i++) {
+                $string .= $special_charset[rand(0, strlen($special_charset))];
+            }
+        }
+
+        $string .= substr(
+            bin2hex(Security::randomBytes((int)ceil(($length - strlen($string)) / 2))),
             0,
-            $length
+            ($length - strlen($string))
         );
+
+        return str_shuffle($string);
     }
+
 
     /**
      * Like randomBytes() above, but not cryptographically secure.
