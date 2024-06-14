@@ -26,6 +26,14 @@ use InvalidArgumentException;
 class Security
 {
     /**
+     * Default character sets for generating random string.
+     */
+    const LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
+    const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const NUMBERS = '0123456789';
+    const SPECIAL = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
+
+    /**
      * Default hash method. If `$type` param for `Security::hash()` is not specified
      * this value is used. Defaults to 'sha1'.
      *
@@ -121,10 +129,11 @@ class Security
      * Creates a secure random string.
      *
      * @param int $length String length. Default 64.
-     * @param bool $includeSpecialChars If to include special characters. Default false.
+     * @param string $includes character sets to be included in the random string,
+     *                          each set will be represented by at least one character
      * @return string
      */
-    public static function randomString(int $length = 64, bool $includeSpecialChars = false): string
+    public static function randomString(int $length = 64, string ...$includes): string
     {
         $string = '';
 
@@ -132,23 +141,31 @@ class Security
             return $string;
         }
 
-        if ($includeSpecialChars) {
-            $special_charset = '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~';
+        if ($length < count($includes)) {
+            throw new InvalidArgumentException('Length must not be lower than number of character sets.');
+        }
 
-            for ($i = 0; $i < rand(1, $length); $i++) {
-                $string .= $special_charset[random_int(0, strlen($special_charset))];
+        $remaining = count($includes);
+        foreach ($includes as $set) {
+            $remaining--;
+
+            $characters = random_int(1, ($length - strlen($string) - $remaining));
+
+            for ($i=0; $i<$characters; $i++) {
+                $string .= $set[random_int(0, strlen($set) - 1)];
             }
         }
 
-        $string .= substr(
-            bin2hex(Security::randomBytes((int)ceil(($length - strlen($string)) / 2))),
-            0,
-            ($length - strlen($string))
-        );
+        if ($length > strlen($string)) {
+            $string .= substr(
+                bin2hex(Security::randomBytes((int)ceil(($length - strlen($string)) / 2))),
+                0,
+                ($length - strlen($string))
+            );
+        }
 
         return str_shuffle($string);
     }
-
 
     /**
      * Like randomBytes() above, but not cryptographically secure.
