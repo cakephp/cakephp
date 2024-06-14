@@ -115,9 +115,9 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '8.1' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-incomplete --display-skipped --coverage-clover=coverage.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-incomplete --display-skipped --testsuite=database
-          vendor/bin/phpunit --display-incomplete --display-skipped --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+          vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --display-skipped --coverage-clover=coverage.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --display-skipped --testsuite=database
+          vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --display-skipped --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         else
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database

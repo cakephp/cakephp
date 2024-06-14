@@ -109,9 +109,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
