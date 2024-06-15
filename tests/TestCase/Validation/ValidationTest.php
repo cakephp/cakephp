@@ -30,6 +30,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -2721,9 +2722,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploadedFile with a PSR7 object.
-     *
-     * @dataProvider uploadedFileProvider
      */
+    #[DataProvider('uploadedFileProvider')]
     public function testUploadedFile(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';

@@ -28,6 +28,7 @@ use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * A bundle of methods that makes testing commands
@@ -112,10 +113,10 @@ trait ConsoleIntegrationTestTrait
     /**
      * Cleans state to get ready for the next test
      *
-     * @after
      * @return void
      * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
+    #[After]
     public function cleanupConsoleTrait(): void
     {
         $this->_exitCode = null;

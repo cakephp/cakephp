@@ -33,6 +33,7 @@ use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\I18n\__;
 
 /**
@@ -943,9 +944,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `append` strategy does not
      * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -968,9 +969,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `append` strategy does not
      * affect the associated records for already persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -998,9 +999,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `replace` strategy does not
      * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -1023,9 +1024,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `replace` strategy does remove
      * the associated records for already persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');

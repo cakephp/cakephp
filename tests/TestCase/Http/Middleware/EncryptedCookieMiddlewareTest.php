@@ -23,6 +23,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\CookieCryptTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -85,9 +86,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
     /**
      * Test decoding malformed cookies
      *
-     * @dataProvider malformedCookies
      * @param string $cookie
      */
+    #[DataProvider('malformedCookies')]
     public function testDecodeMalformedCookies($cookie): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);

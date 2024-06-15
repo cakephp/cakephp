@@ -26,6 +26,7 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\Exception\CacheWriteException;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
 use TestApp\Cache\Engine\TestAppCacheEngine;
@@ -369,9 +370,9 @@ class CacheTest extends TestCase
     /**
      * testConfig method
      *
-     * @dataProvider configProvider
      * @param \Cake\Cache\CacheEngine|array $config
      */
+    #[DataProvider('configProvider')]
     public function testConfigVariants($config): void
     {
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');

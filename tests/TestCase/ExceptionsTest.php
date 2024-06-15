@@ -27,16 +27,17 @@ use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ExceptionsTest extends TestCase
 {
     /**
      * Tests simple exceptions work.
      *
-     * @dataProvider exceptionProvider
      * @param string $class The exception class name
      * @param int $defaultCode The default exception code
      */
+    #[DataProvider('exceptionProvider')]
     public function testSimpleException($class, $defaultCode): void
     {
         $previous = new Exception();

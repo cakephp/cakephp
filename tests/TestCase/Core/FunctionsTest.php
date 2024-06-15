@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
@@ -181,10 +182,10 @@ class FunctionsTest extends TestCase
     /**
      * Test cases for h()
      *
-     * @dataProvider hInputProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('hInputProvider')]
     public function testH($value, $expected): void
     {
         $result = h($value);
@@ -393,9 +394,7 @@ class FunctionsTest extends TestCase
         });
     }
 
-    /**
-     * @dataProvider toStringProvider
-     */
+    #[DataProvider('toStringProvider')]
     public function testToString(mixed $rawValue, ?string $expected): void
     {
         $this->assertSame($expected, toString($rawValue));
@@ -450,9 +449,7 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider toIntProvider
-     */
+    #[DataProvider('toIntProvider')]
     public function testToInt(mixed $rawValue, null|int $expected): void
     {
         $this->assertSame($expected, toInt($rawValue));
@@ -545,9 +542,7 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider toBoolProvider
-     */
+    #[DataProvider('toBoolProvider')]
     public function testToBool(mixed $rawValue, ?bool $expected): void
     {
         $this->assertSame($expected, toBool($rawValue));

@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingViewException;
 use Cake\View\View;
 use Cake\View\ViewBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * View builder test case.
@@ -119,9 +120,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test string property accessor/mutator methods.
-     *
-     * @dataProvider stringPropertyProvider
      */
+    #[DataProvider('stringPropertyProvider')]
     public function testStringProperties(string $property, string $value): void
     {
         $get = 'get' . ucfirst($property);
@@ -135,9 +135,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test string property accessor/mutator methods.
-     *
-     * @dataProvider boolPropertyProvider
      */
+    #[DataProvider('boolPropertyProvider')]
     public function testBoolProperties(string $property, bool $default, bool $value): void
     {
         $set = 'enable' . ucfirst($property);
@@ -151,9 +150,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test array property accessor/mutator methods.
-     *
-     * @dataProvider arrayPropertyProvider
      */
+    #[DataProvider('arrayPropertyProvider')]
     public function testArrayProperties(string $property, array $value): void
     {
         $get = 'get' . ucfirst($property);
@@ -167,9 +165,8 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Test array property accessor/mutator methods.
-     *
-     * @dataProvider arrayPropertyProvider
      */
+    #[DataProvider('arrayPropertyProvider')]
     public function testArrayPropertyMerge(string $property, array $value): void
     {
         $get = 'get' . ucfirst($property);

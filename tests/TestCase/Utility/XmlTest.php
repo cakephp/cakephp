@@ -26,6 +26,7 @@ use Cake\Utility\Xml;
 use DateTime;
 use DOMDocument;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
 use TypeError;
 
@@ -180,9 +181,9 @@ class XmlTest extends TestCase
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testBuildInvalidData($value): void
     {
         $this->expectException(CakeException::class);
@@ -602,9 +603,9 @@ XML;
     /**
      * testFromArrayFail method
      *
-     * @dataProvider invalidArrayDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidArrayDataProvider')]
     public function testFromArrayFail($value): void
     {
         $this->expectException(Exception::class);

@@ -27,6 +27,7 @@ use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
@@ -388,9 +389,8 @@ class RoutingMiddlewareTest extends TestCase
      *
      * Re-opening a scope should not inherit middleware declared
      * in the first context.
-     *
-     * @dataProvider scopedMiddlewareUrlProvider
      */
+    #[DataProvider('scopedMiddlewareUrlProvider')]
     public function testInvokeScopedMiddlewareIsolatedScopes(string $url, array $expected): void
     {
         $this->builder->registerMiddleware('first', function ($request, $handler) {

@@ -57,6 +57,7 @@ use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
 use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\ProtectedEntity;
@@ -2108,8 +2109,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to insert a new row using the save method
-     *
-     * @group save
      */
     public function testSaveNewEntity(): void
     {
@@ -2129,8 +2128,6 @@ class TableTest extends TestCase
 
     /**
      * Test that saving a new empty entity does nothing.
-     *
-     * @group save
      */
     public function testSaveNewEmptyEntity(): void
     {
@@ -2141,8 +2138,6 @@ class TableTest extends TestCase
 
     /**
      * Test that saving a new empty entity does not call exists.
-     *
-     * @group save
      */
     public function testSaveNewEntityNoExists(): void
     {
@@ -2165,8 +2160,6 @@ class TableTest extends TestCase
 
     /**
      * Test that saving a new entity with a Primary Key set does call exists.
-     *
-     * @group save
      */
     public function testSavePrimaryKeyEntityExists(): void
     {
@@ -2189,8 +2182,6 @@ class TableTest extends TestCase
 
     /**
      * Test that saving a new entity with a Primary Key set does not call exists when checkExisting is false.
-     *
-     * @group save
      */
     public function testSavePrimaryKeyEntityNoExists(): void
     {
@@ -2214,8 +2205,6 @@ class TableTest extends TestCase
     /**
      * Tests that saving an entity will filter out properties that
      * are not present in the table schema when saving
-     *
-     * @group save
      */
     public function testSaveEntityOnlySchemaFields(): void
     {
@@ -2237,8 +2226,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to modify data from the beforeSave callback
-     *
-     * @group save
      */
     public function testBeforeSaveModifyData(): void
     {
@@ -2261,8 +2248,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that it is possible to modify the options array in beforeSave
-     *
-     * @group save
      */
     public function testBeforeSaveModifyOptions(): void
     {
@@ -2291,8 +2276,6 @@ class TableTest extends TestCase
     /**
      * Tests that it is possible to stop the saving altogether, without implying
      * the save operation failed
-     *
-     * @group save
      */
     public function testBeforeSaveStopEvent(): void
     {
@@ -2317,8 +2300,6 @@ class TableTest extends TestCase
     /**
      * Tests that if beforeSave event is stopped and callback doesn't return any
      * value then save() returns false.
-     *
-     * @group save
      */
     public function testBeforeSaveStopEventWithNoResult(): void
     {
@@ -2335,9 +2316,6 @@ class TableTest extends TestCase
         $this->assertFalse($table->save($data));
     }
 
-    /**
-     * @group save
-     */
     public function testBeforeSaveException(): void
     {
         $this->expectException(AssertionError::class);
@@ -2360,8 +2338,6 @@ class TableTest extends TestCase
 
     /**
      * Asserts that afterSave callback is called on successful save
-     *
-     * @group save
      */
     public function testAfterSave(): void
     {
@@ -2473,8 +2449,6 @@ class TableTest extends TestCase
 
     /**
      * Asserts that afterSave callback not is called on unsuccessful save
-     *
-     * @group save
      */
     public function testAfterSaveNotCalled(): void
     {
@@ -2522,8 +2496,6 @@ class TableTest extends TestCase
 
     /**
      * Asserts that afterSaveCommit callback is triggered only for primary table
-     *
-     * @group save
      */
     public function testAfterSaveCommitTriggeredOnlyForPrimaryTable(): void
     {
@@ -2559,8 +2531,6 @@ class TableTest extends TestCase
 
     /**
      * Test that you cannot save rows without a primary key.
-     *
-     * @group save
      */
     public function testSaveNewErrorOnNoPrimaryKey(): void
     {
@@ -2578,8 +2548,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that save is wrapped around a transaction
-     *
-     * @group save
      */
     public function testAtomicSave(): void
     {
@@ -2605,8 +2573,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that save will rollback the transaction in the case of an exception
-     *
-     * @group save
      */
     public function testAtomicSaveRollback(): void
     {
@@ -2647,8 +2613,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that save will rollback the transaction in the case of an exception
-     *
-     * @group save
      */
     public function testAtomicSaveRollbackOnFailure(): void
     {
@@ -2695,8 +2659,6 @@ class TableTest extends TestCase
     /**
      * Tests that only the properties marked as dirty are actually saved
      * to the database
-     *
-     * @group save
      */
     public function testSaveOnlyDirtyProperties(): void
     {
@@ -2722,8 +2684,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that a recently saved entity is marked as clean
-     *
-     * @group save
      */
     public function testASavedEntityIsClean(): void
     {
@@ -2743,8 +2703,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that a recently saved entity is marked as not new
-     *
-     * @group save
      */
     public function testASavedEntityIsNotNew(): void
     {
@@ -2762,8 +2720,6 @@ class TableTest extends TestCase
     /**
      * Tests that save can detect automatically if it needs to insert
      * or update a row
-     *
-     * @group save
      */
     public function testSaveUpdateAuto(): void
     {
@@ -2808,8 +2764,6 @@ class TableTest extends TestCase
     /**
      * Tests that marking an entity as already persisted will prevent the save
      * method from trying to infer the entity's actual status.
-     *
-     * @group save
      */
     public function testSaveUpdateWithHint(): void
     {
@@ -2830,8 +2784,6 @@ class TableTest extends TestCase
     /**
      * Tests that when updating the primary key is not passed to the list of
      * attributes to change
-     *
-     * @group save
      */
     public function testSaveUpdatePrimaryKeyNotModified(): void
     {
@@ -2861,8 +2813,6 @@ class TableTest extends TestCase
     /**
      * Tests that passing only the primary key to save will not execute any queries
      * but still return success
-     *
-     * @group save
      */
     public function testUpdateNoChange(): void
     {
@@ -2881,9 +2831,6 @@ class TableTest extends TestCase
     /**
      * Tests that passing only the primary key to save will not execute any queries
      * but still return success
-     *
-     * @group save
-     * @group integration
      */
     public function testUpdateDirtyNoActualChanges(): void
     {
@@ -2897,8 +2844,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that failing to pass a primary key to save will result in exception
-     *
-     * @group save
      */
     public function testUpdateNoPrimaryButOtherKeys(): void
     {
@@ -3754,8 +3699,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving belongsTo association
-     *
-     * @group save
      */
     public function testSaveBelongsTo(): void
     {
@@ -3778,8 +3721,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving hasOne association
-     *
-     * @group save
      */
     public function testSaveHasOne(): void
     {
@@ -3805,8 +3746,6 @@ class TableTest extends TestCase
     /**
      * Tests saving associations only saves associations
      * if they are entities.
-     *
-     * @group save
      */
     public function testSaveOnlySaveAssociatedEntities(): void
     {
@@ -3885,8 +3824,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving belongsToMany records
-     *
-     * @group save
      */
     public function testSaveBelongsToMany(): void
     {
@@ -3917,8 +3854,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving belongsToMany records when record exists.
-     *
-     * @group save
      */
     public function testSaveBelongsToManyJoinDataOnExistingRecord(): void
     {
@@ -4028,8 +3963,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving belongsToMany records can delete all links.
-     *
-     * @group save
      */
     public function testSaveBelongsToManyDeleteAllLinks(): void
     {
@@ -4050,8 +3983,6 @@ class TableTest extends TestCase
 
     /**
      * Tests saving belongsToMany records can delete some links.
-     *
-     * @group save
      */
     public function testSaveBelongsToManyDeleteSomeLinks(): void
     {
@@ -4091,8 +4022,6 @@ class TableTest extends TestCase
 
     /**
      * Tests that saving a persisted and clean entity will is a no-op
-     *
-     * @group save
      */
     public function testSaveCleanEntity(): void
     {
@@ -4109,8 +4038,6 @@ class TableTest extends TestCase
 
     /**
      * Integration test to show how to append a new tag to an article
-     *
-     * @group save
      */
     public function testBelongsToManyIntegration(): void
     {
@@ -4132,8 +4059,6 @@ class TableTest extends TestCase
     /**
      * Tests that it is possible to do a deep save and control what associations get saved,
      * while having control of the options passed to each level of the save
-     *
-     * @group save
      */
     public function testSaveDeepAssociationOptions(): void
     {
@@ -5349,9 +5274,9 @@ class TableTest extends TestCase
      * Test that get() will use the primary key for searching and return the first
      * entity found
      *
-     * @dataProvider providerForTestGet
      * @param array $options
      */
+    #[DataProvider('providerForTestGet')]
     public function testGet($options): void
     {
         $table = $this->getMockBuilder(Table::class)
@@ -5413,12 +5338,12 @@ class TableTest extends TestCase
     /**
      * Test that get() will use the cache.
      *
-     * @dataProvider providerForTestGetWithCache
      * @param array $options
      * @param string $cacheKey
      * @param string $cacheConfig
      * @param mixed $primaryKey
      */
+    #[DataProvider('providerForTestGetWithCache')]
     public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
@@ -6133,8 +6058,6 @@ class TableTest extends TestCase
     /**
      * Tests that passing a coned entity that was marked as new to save() will
      * actually save it as a new entity
-     *
-     * @group save
      */
     public function testSaveWithClonedEntity(): void
     {
@@ -6245,8 +6168,6 @@ class TableTest extends TestCase
     /**
      * Tests that after saving then entity contains the right primary
      * key casted to the right type
-     *
-     * @group save
      */
     public function testSaveCorrectPrimaryKeyType(): void
     {

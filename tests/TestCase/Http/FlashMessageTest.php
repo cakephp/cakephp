@@ -20,6 +20,7 @@ use Cake\Http\FlashMessage;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * FlashMessageTest class
@@ -282,9 +283,7 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @dataProvider convenienceMethods
-     */
+    #[DataProvider('convenienceMethods')]
     public function testConvenienceMethods(string $type): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));

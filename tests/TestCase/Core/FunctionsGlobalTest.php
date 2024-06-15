@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 require_once CAKE . 'Core/functions_global.php';
@@ -123,10 +124,10 @@ class FunctionsGlobalTest extends TestCase
     /**
      * Test cases for h()
      *
-     * @dataProvider hInputProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('hInputProvider')]
     public function testH($value, $expected): void
     {
         $result = h($value);

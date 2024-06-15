@@ -33,6 +33,7 @@ use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
 
@@ -101,9 +102,9 @@ class DriverTest extends TestCase
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *
-     * @dataProvider schemaValueProvider
      * @param mixed $input
      */
+    #[DataProvider('schemaValueProvider')]
     public function testSchemaValue($input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);

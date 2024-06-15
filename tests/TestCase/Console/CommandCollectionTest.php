@@ -22,6 +22,7 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
 
@@ -119,9 +120,8 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test adding a command instance.
-     *
-     * @dataProvider invalidNameProvider
      */
+    #[DataProvider('invalidNameProvider')]
     public function testAddCommandInvalidName(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);

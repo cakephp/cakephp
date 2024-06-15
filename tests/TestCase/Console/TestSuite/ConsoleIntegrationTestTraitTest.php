@@ -20,6 +20,7 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\MissingConsoleInputException;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 class ConsoleIntegrationTestTraitTest extends TestCase
@@ -223,8 +224,8 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param string $message Expected failure message
      * @param string $command Command to test
      * @param mixed ...$rest
-     * @dataProvider assertionFailureMessagesProvider
      */
+    #[DataProvider('assertionFailureMessagesProvider')]
     public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);

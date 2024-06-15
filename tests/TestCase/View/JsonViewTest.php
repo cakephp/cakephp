@@ -25,6 +25,7 @@ use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\SerializationFailureException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * JsonViewTest
@@ -224,8 +225,8 @@ class JsonViewTest extends TestCase
      * @param string|null $serialize
      * @param int|false|null $jsonOptions
      * @param string $expected
-     * @dataProvider renderWithoutViewProvider
      */
+    #[DataProvider('renderWithoutViewProvider')]
     public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected): void
     {
         $Request = new ServerRequest();
