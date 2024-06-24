@@ -372,7 +372,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
         }
 
         static $errors = [];
-        $checksum = md5($message);
+        $checksum = hash('xxh128', $message);
         $duplicate = (bool)Configure::read('Error.allowDuplicateDeprecations', false);
         if (isset($errors[$checksum]) && !$duplicate) {
             return;
