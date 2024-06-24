@@ -644,7 +644,7 @@ trait IntegrationTestTrait
             $props['input'] = http_build_query($data);
         } else {
             if ($method !== 'GET' || !empty($data)) {
-                $data = $this->_addTokens($tokenUrl, $data);
+                $data = $this->_addTokens($tokenUrl, $data, $method);
             }
             $props['post'] = $this->_castToString($data);
         }
@@ -660,9 +660,10 @@ trait IntegrationTestTrait
      *
      * @param string $url The URL the form is being submitted on.
      * @param array $data The request body data.
+     * @param string $method The request method.
      * @return array The request body with tokens added.
      */
-    protected function _addTokens(string $url, array $data): array
+    protected function _addTokens(string $url, array $data, string $method): array
     {
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
@@ -697,7 +698,7 @@ trait IntegrationTestTrait
             // the inverse.
             $this->_session[$this->_csrfKeyName] = $token;
             $this->_cookie[$this->_csrfKeyName] = $token;
-            if (!isset($data['_csrfToken'])) {
+            if (!isset($data['_csrfToken']) && !in_array($method, ['GET', 'OPTIONS'])) {
                 $data['_csrfToken'] = $token;
             }
         }
