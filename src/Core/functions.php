@@ -468,6 +468,43 @@ function toInt(mixed $value): ?int
 }
 
 /**
+ * Converts a value to a float.
+ *
+ * This method attempts to convert the given value to a float.
+ * If the conversion is successful, it returns the value as an float.
+ * If the conversion fails, it returns NULL.
+ *
+ * String values are trimmed using trim().
+ *
+ * @param mixed $value The value to be converted to a float.
+ * @return float|null Returns the converted float value or null if the conversion fails.
+ * @since 5.1.0
+ */
+function toFloat(mixed $value): ?float
+{
+    if (is_string($value)) {
+        $value = filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+
+        return $value === PHP_FLOAT_MIN ? null : $value;
+    }
+    if (is_float($value)) {
+        if (is_nan($value) || is_infinite($value)) {
+            return null;
+        }
+
+        return (float)$value;
+    }
+    if (is_int($value)) {
+        return (float)$value;
+    }
+    if (is_bool($value)) {
+        return (float)$value;
+    }
+
+    return null;
+}
+
+/**
  * Converts a value to boolean.
  *
  *  1 | '1' | 1.0 | true  - values returns as true
