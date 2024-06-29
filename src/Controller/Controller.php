@@ -18,6 +18,7 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatedInterface;
@@ -202,6 +203,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ServerRequest $request,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
+        ?ContainerInterface $container = null,
     ) {
         if ($name !== null) {
             $this->name = $name;
@@ -222,6 +224,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
+        }
+        if ($container !== null) {
+            $this->_components = new ComponentRegistry($this, $container);
         }
 
         if ($this->defaultTable === null) {

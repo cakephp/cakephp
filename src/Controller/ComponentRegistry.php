@@ -18,9 +18,11 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
+use Cake\Core\ContainerInterface;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use RuntimeException;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -41,19 +43,42 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * The controller that this collection is associated with.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
-    protected Controller $_Controller;
+    protected ?Controller $_Controller;
+
+    /**
+     * @var \Cake\Core\ContainerInterface
+     */
+    protected ?ContainerInterface $container;
 
     /**
      * Constructor.
      *
-     * @param \Cake\Controller\Controller $controller Controller instance.
+     * @param \Cake\Controller\Controller|null $controller Controller instance.
+     * @param \Cake\Core\ContainerInterface|null $containter Container instance.
      */
-    public function __construct(Controller $controller)
+    public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
+    {
+        $this->_Controller = null;
+        if ($controller !== null) {
+            $this->setController($controller);
+        }
+        $this->container = $container;
+    }
+
+    /**
+     * Set the controller associated with the collection.
+     *
+     * @param \Cake\Controller\Controller Controller instance.
+     * @return $this
+     */
+    public function setController(Controller $controller)
     {
         $this->_Controller = $controller;
         $this->setEventManager($controller->getEventManager());
+
+        return $this;
     }
 
     /**
@@ -63,6 +88,10 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     public function getController(): Controller
     {
+        if ($this->_Controller === null) {
+            throw new RuntimeException('Cannot getController() it has not been set yet.');
+        }
+
         return $this->_Controller;
     }
 
@@ -115,8 +144,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         if (is_object($class)) {
             return $class;
         }
+        if ($this->container && $this->container->has($class)) {
+            $instance = $this->container->get($class)->setConfig($config);
+        } else {
+            $instance = new $class($this, $config);
+        }
 
-        $instance = new $class($this, $config);
         if ($config['enabled'] ?? true) {
             $this->getEventManager()->on($instance);
         }

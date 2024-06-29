@@ -84,7 +84,18 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         if ($this->container->has($className)) {
             $controller = $this->container->get($className);
         } else {
-            $controller = $reflection->newInstance($request);
+            $constructor = $reflection->getConstructor();
+            $hasContainer = false;
+            foreach ($constructor->getParameters() as $parameter) {
+                if ($parameter->getName() === 'container') {
+                    $hasContainer = true;
+                }
+            }
+            if ($hasContainer) {
+                $controller = $reflection->newInstance($request, container: $this->container);
+            } else {
+                $controller = $reflection->newInstance($request);
+            }
         }
 
         return $controller;
