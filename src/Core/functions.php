@@ -492,7 +492,7 @@ function toFloat(mixed $value): ?float
             return null;
         }
 
-        return (float)$value;
+        return $value;
     }
     if (is_int($value)) {
         return (float)$value;
