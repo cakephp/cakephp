@@ -485,19 +485,17 @@ class ServerRequest implements ServerRequestInterface
         } elseif (str_starts_with($name, 'get')) {
             // e.g. getCookieAsInt(), getQueryAsBool()
             $parts = explode('As', $name);
-            if (count($parts) !== 2) {
-                return $this->$name(...$params);
+
+            if (count($parts) === 2) {
+                [$methodName, $type] = $parts;
+                return match ($methodName) {
+                    'getCookie' => $this->asType($type, $this->cookies, ...$params),
+                    'getQuery' => $this->asType($type, $this->query, ...$params),
+                    'getParam' => $this->asType($type, $this->params, ...$params),
+                    'getData' => $this->asType($type, $this->data ?? [], ...$params),
+                    default => throw new BadMethodCallException(sprintf('Unable to convert request data to %s.', $type)),
+                };
             }
-
-            [$methodName, $type] = $parts;
-
-            return match ($methodName) {
-                'getCookie' => $this->asType($type, $this->cookies, ...$params),
-                'getQuery' => $this->asType($type, $this->query, ...$params),
-                'getParam' => $this->asType($type, $this->params, ...$params),
-                'getData' => $this->asType($type, $this->data ?? [], ...$params),
-                default => throw new BadMethodCallException(sprintf('Unable to convert request data to %s.', $type)),
-            };
         }
 
         throw new BadMethodCallException(sprintf('Method `%s()` does not exist.', $name));
