@@ -28,10 +28,7 @@ use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
- * Provides features for building routes inside scopes.
- *
- * Gives an easy to use way to build routes and append them
- * into a route collection.
+ * Provides features for building routes and parsing/matching URLs to routes.
  */
 class RouteBuilder
 {
