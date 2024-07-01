@@ -21,6 +21,7 @@ use Cake\I18n\DateTime;
 use Cake\I18n\FrozenDate;
 use DateTimeInterface;
 use Exception;
+use IntlDateFormatter;
 use JsonException;
 use Stringable;
 
@@ -530,10 +531,10 @@ function toDateTime(mixed $value): ?DateTime
 }
 
 /**
- * Converts a value to a DateInterface.
+ * Converts a value to a native Date object.
  *
  *  integer  - value is treated as a Unix timestamp
- *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
+ *  string - value is treated as a I18N short formatted date
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateInterface.
@@ -544,9 +545,9 @@ function toDate(mixed $value): ?Date
 {
     if ($value instanceof Date) {
         return $value;
-    }
-
-    if (is_int($value)) {
+    } else if ($value instanceof DateTimeInterface) {
+        return Date::parse($value);
+    } else if (is_int($value)) {
         try {
             $ts = DateTime::createFromTimestamp($value);
             return Date::createFromArray([
@@ -557,11 +558,9 @@ function toDate(mixed $value): ?Date
         } catch (Exception) {
             return null;
         }
-    }
-
-    if (is_string($value)) {
+    } else if (is_string($value)) {
         try {
-            return Date::createFromFormat(DateTimeInterface::ATOM, $value);
+            return Date::parseDate($value, \IntlDateFormatter::SHORT);
         } catch (Exception) {
             return null;
         }

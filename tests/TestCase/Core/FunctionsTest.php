@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
+use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
@@ -613,16 +614,16 @@ class FunctionsTest extends TestCase
      */
     public static function toDateTimeProvider(): array
     {
-        $now = '2024-07-01T14:30:00Z';
-        // TODO: Not sure if necessary
-        DateTime::setTestNow(new DateTime($now));
+        $date = new DateTime('2024-07-01T14:30:00Z');
+        $now = $date->toAtomString();
+        DateTime::setTestNow($now);
 
         return [
             // datetime input types
-            '(datetime) datetime interface' => [new \DateTime($now), new DateTime($now)],
-            '(datetime) frozentime interface' => [new FrozenTime($now), new DateTime($now)],
+            '(datetime) datetime interface' => [new \DateTime($now), $date],
+            '(datetime) frozentime interface' => [new FrozenTime($now), $date],
             // string input types
-            '(string) datetime string' => [$now, new DateTime($now)],
+            '(string) datetime string' => [$now, $date],
             '(string) empty string' => ['', null],
             '(string) space' => [' ', null],
             '(string) some word' => ['abc', null],
@@ -632,7 +633,7 @@ class FunctionsTest extends TestCase
             '(string) double 1' => ['11', null],
             '(string) true-string' => ['true', null],
             // int input types
-            '(int) timestamp' => [1719844200, new DateTime($now)],
+            '(int) timestamp' => [1719844200, $date],
             '(int) negative number' => [-1000, DateTime::createFromTimestamp(-1000)],
             // float input types
             '(float) positive' => [5.5, null],
@@ -654,7 +655,7 @@ class FunctionsTest extends TestCase
      */
     public function testToDate(mixed $rawValue, ?Date $expected): void
     {
-        $this->assertSame($expected, toDate($rawValue));
+        $this->assertEquals($expected, toDate($rawValue));
     }
 
     /**
@@ -662,40 +663,33 @@ class FunctionsTest extends TestCase
      */
     public static function toDateProvider(): array
     {
+        $epoch = Date::createFromArray(['year' => 1970, 'month' => 01, 'day' => 01]);
+        $date = Date::createFromArray(['year' => 2024, 'month' => 07, 'day' => 01]);
+        $now = $date->toAtomString();
+        DateTime::setTestNow($now);
+
         return [
-            // ai-generated
-            'timestamp' => [1622548800, new Date('2021-06-01')],
-            'datetime_interface' => [new \DateTime('2021-06-01'), new Date('2021-06-01')],
-            'valid_date_string' => ['2021-06-01', new Date('2021-06-01')],
-            'invalid_date_string' => ['invalid-date', null],
-            'null_value' => [null, null],
+            // datetime input types
+            '(datetime) datetime interface' => [new \DateTime($now), $date],
+            '(datetime frozendate object' => [new FrozenDate($now), $date],
             // string input types
+            '(string) date string' => [$date->i18nFormat(\IntlDateFormatter::SHORT), $date],
             '(string) empty string' => ['', null],
             '(string) space' => [' ', null],
             '(string) some word' => ['abc', null],
             '(string) double 0' => ['00', null],
-            '(string) single 0' => ['0', false],
             '(string) false' => ['false', null],
             '(string) double 1' => ['11', null],
-            '(string) single 1' => ['1', true],
             '(string) true-string' => ['true', null],
             // int input types
-            '(int) 0' => [0, false],
-            '(int) 1' => [1, true],
-            '(int) -1' => [-1, null],
-            '(int) 55' => [55, null],
-            '(int) negative number' => [-5, null],
+            '(int) timestamp' => [1_719_844_200, $date],
+            '(int) negative number' => [-2_592_000, $epoch->subDays(30)],
             // float input types
             '(float) positive' => [5.5, null],
             '(float) round' => [5.0, null],
-            '(float) 0.0' => [0.0, false],
-            '(float) 1.0' => [1.0, true],
             '(float) NaN' => [acos(8), null],
             '(float) INF' => [INF, null],
             '(float) -INF' => [-INF, null],
-            // boolean input types
-            '(bool) true' => [true, true],
-            '(bool) false' => [false, false],
             // other input types
             '(other) null' => [null, null],
             '(other) empty-array' => [[], null],
