@@ -56,7 +56,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Constructor.
      *
      * @param \Cake\Controller\Controller|null $controller Controller instance.
-     * @param \Cake\Core\ContainerInterface|null $containter Container instance.
+     * @param \Cake\Core\ContainerInterface|null $container Container instance.
      */
     public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
     {
@@ -65,15 +65,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             $this->setController($controller);
         }
         $this->container = $container;
-        if ($this->container) {
-            $this->container->add(self::class, $this);
-        }
     }
 
     /**
      * Set the controller associated with the collection.
      *
-     * @param \Cake\Controller\Controller Controller instance.
+     * @param \Cake\Controller\Controller $controller Controller instance.
      * @return $this
      */
     public function setController(Controller $controller)
@@ -148,7 +145,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container && $this->container->has($class)) {
-            $instance = $this->container->get($class)->setConfig($config);
+            $instance = $this->container->get($class);
+            $instance->setConfig($config);
         } else {
             $instance = new $class($this, $config);
         }

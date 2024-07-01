@@ -227,6 +227,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         if ($container !== null) {
             $this->_components = new ComponentRegistry($this, $container);
+            $container->addShared(ComponentRegistry::class, $this->_components);
         }
 
         if ($this->defaultTable === null) {

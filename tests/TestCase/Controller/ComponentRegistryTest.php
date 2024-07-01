@@ -83,6 +83,7 @@ class ComponentRegistryTest extends TestCase
         $components = new ComponentRegistry($controller, $container);
         $this->assertEquals([], $components->loaded());
 
+        $container->add(ComponentRegistry::class, $components);
         $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
             $this->created = true;
 
