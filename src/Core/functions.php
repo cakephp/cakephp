@@ -510,17 +510,15 @@ function toDateTime(mixed $value): ?DateTime
 {
     if ($value instanceof DateTime) {
         return $value;
-    }
-
-    if (is_int($value)) {
+    } else if ($value instanceof DateTimeInterface) {
+        return DateTime::parse($value);
+    } else if (is_int($value)) {
         try {
             return DateTime::createFromTimestamp($value);
         } catch (Exception) {
             return null;
         }
-    }
-
-    if (is_string($value)) {
+    } else if (is_string($value)) {
         try {
             return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
         } catch (Exception) {

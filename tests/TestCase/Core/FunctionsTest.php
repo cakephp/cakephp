@@ -18,6 +18,9 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use stdClass;
@@ -28,6 +31,8 @@ use function Cake\Core\namespaceSplit;
 use function Cake\Core\pathCombine;
 use function Cake\Core\pluginSplit;
 use function Cake\Core\toBool;
+use function Cake\Core\toDate;
+use function Cake\Core\toDateTime;
 use function Cake\Core\toInt;
 use function Cake\Core\toString;
 use function Cake\Core\triggerWarning;
@@ -559,6 +564,111 @@ class FunctionsTest extends TestCase
     public static function toBoolProvider(): array
     {
         return [
+            // string input types
+            '(string) empty string' => ['', null],
+            '(string) space' => [' ', null],
+            '(string) some word' => ['abc', null],
+            '(string) double 0' => ['00', null],
+            '(string) single 0' => ['0', false],
+            '(string) false' => ['false', null],
+            '(string) double 1' => ['11', null],
+            '(string) single 1' => ['1', true],
+            '(string) true-string' => ['true', null],
+            // int input types
+            '(int) 0' => [0, false],
+            '(int) 1' => [1, true],
+            '(int) -1' => [-1, null],
+            '(int) 55' => [55, null],
+            '(int) negative number' => [-5, null],
+            // float input types
+            '(float) positive' => [5.5, null],
+            '(float) round' => [5.0, null],
+            '(float) 0.0' => [0.0, false],
+            '(float) 1.0' => [1.0, true],
+            '(float) NaN' => [acos(8), null],
+            '(float) INF' => [INF, null],
+            '(float) -INF' => [-INF, null],
+            // boolean input types
+            '(bool) true' => [true, true],
+            '(bool) false' => [false, false],
+            // other input types
+            '(other) null' => [null, null],
+            '(other) empty-array' => [[], null],
+            '(other) int-array' => [[5], null],
+            '(other) string-array' => [['5'], null],
+            '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    /**
+     * @dataProvider toDateTimeProvider
+     */
+    public function testToDateTime(mixed $rawValue, ?DateTime $expected): void
+    {
+        $this->assertEquals($expected, toDateTime($rawValue));
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateTimeProvider(): array
+    {
+        $now = '2024-07-01T14:30:00Z';
+        // TODO: Not sure if necessary
+        DateTime::setTestNow(new DateTime($now));
+
+        return [
+            // datetime input types
+            '(datetime) datetime interface' => [new \DateTime($now), new DateTime($now)],
+            '(datetime) frozentime interface' => [new FrozenTime($now), new DateTime($now)],
+            // string input types
+            '(string) datetime string' => [$now, new DateTime($now)],
+            '(string) empty string' => ['', null],
+            '(string) space' => [' ', null],
+            '(string) some word' => ['abc', null],
+            '(string) double 0' => ['00', null],
+            '(string) single 0' => ['0', null],
+            '(string) false' => ['false', null],
+            '(string) double 1' => ['11', null],
+            '(string) true-string' => ['true', null],
+            // int input types
+            '(int) timestamp' => [1719844200, new DateTime($now)],
+            '(int) negative number' => [-1000, DateTime::createFromTimestamp(-1000)],
+            // float input types
+            '(float) positive' => [5.5, null],
+            '(float) round' => [5.0, null],
+            '(float) NaN' => [acos(8), null],
+            '(float) INF' => [INF, null],
+            '(float) -INF' => [-INF, null],
+            // other input types
+            '(other) null' => [null, null],
+            '(other) empty-array' => [[], null],
+            '(other) int-array' => [[5], null],
+            '(other) string-array' => [['5'], null],
+            '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    /**
+     * @dataProvider toDateProvider
+     */
+    public function testToDate(mixed $rawValue, ?Date $expected): void
+    {
+        $this->assertSame($expected, toDate($rawValue));
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateProvider(): array
+    {
+        return [
+            // ai-generated
+            'timestamp' => [1622548800, new Date('2021-06-01')],
+            'datetime_interface' => [new \DateTime('2021-06-01'), new Date('2021-06-01')],
+            'valid_date_string' => ['2021-06-01', new Date('2021-06-01')],
+            'invalid_date_string' => ['invalid-date', null],
+            'null_value' => [null, null],
             // string input types
             '(string) empty string' => ['', null],
             '(string) space' => [' ', null],
