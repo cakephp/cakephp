@@ -145,6 +145,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container && $this->container->has($class)) {
+            /** @var \Cake\Controller\Component $instance */
             $instance = $this->container->get($class);
             $instance->setConfig($config);
         } else {

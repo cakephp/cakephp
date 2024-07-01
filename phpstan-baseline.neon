@@ -26,6 +26,11 @@ parameters:
 			path: src/Console/ConsoleOutput.php
 
 		-
+			message: "#^Unknown parameter \\$container in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
