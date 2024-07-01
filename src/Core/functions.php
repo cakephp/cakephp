@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\I18n\Date;
 use Cake\I18n\DateTime;
+use Cake\I18n\FrozenDate;
 use DateTimeInterface;
 use Exception;
 use JsonException;
@@ -501,12 +503,12 @@ function toBool(mixed $value): ?bool
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateTimeInterface.
- * @return \DateTimeInterface|null Returns a DateTimeInterface if parsing is successful, or NULL otherwise.
+ * @return \DateTime|null Returns a DateTimeInterface if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
-function toDateTime(mixed $value): ?DateTimeInterface
+function toDateTime(mixed $value): ?DateTime
 {
-    if ($value instanceof DateTimeInterface) {
+    if ($value instanceof DateTime) {
         return $value;
     }
 
@@ -521,6 +523,47 @@ function toDateTime(mixed $value): ?DateTimeInterface
     if (is_string($value)) {
         try {
             return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
+        } catch (Exception) {
+            return null;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to a DateInterface.
+ *
+ *  integer  - value is treated as a Unix timestamp
+ *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to DateInterface.
+ * @return FrozenDate|null Returns a FrozenDate if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toDate(mixed $value): ?Date
+{
+    if ($value instanceof Date) {
+        return $value;
+    }
+
+    if (is_int($value)) {
+        try {
+            $ts = DateTime::createFromTimestamp($value);
+            return Date::createFromArray([
+                'year' => $ts->format('Y'),
+                'month' => $ts->format('m'),
+                'day' => $ts->format('d'),
+            ]);
+        } catch (Exception) {
+            return null;
+        }
+    }
+
+    if (is_string($value)) {
+        try {
+            return Date::createFromFormat(DateTimeInterface::ATOM, $value);
         } catch (Exception) {
             return null;
         }
