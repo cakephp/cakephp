@@ -21,6 +21,7 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Core\Container;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -34,6 +35,7 @@ class ComponentRegistryTest extends TestCase
      * @var \Cake\Controller\ComponentRegistry
      */
     protected $Components;
+    private bool $created = false;
 
     /**
      * setUp
@@ -69,6 +71,34 @@ class ComponentRegistryTest extends TestCase
 
         $result = $this->Components->load('Flash');
         $this->assertSame($result, $this->Components->Flash);
+    }
+
+    /**
+     * test load() with the container set
+     */
+    public function testLoadWithContainer(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new Container();
+        $components = new ComponentRegistry($controller, $container);
+        $this->assertEquals([], $components->loaded());
+
+        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+            $this->created = true;
+
+            return new FlashComponent($registry, $config);
+        })
+        ->addArgument(ComponentRegistry::class)
+        ->addArgument(['key' => 'customFlash']);
+
+        $flash = $components->load('Flash');
+
+        // Container was modified for the current registry and our factory was called
+        $this->assertTrue($container->has(ComponentRegistry::class));
+        $this->assertTrue($this->created);
+
+        $this->assertInstanceOf(FlashComponent::class, $flash);
+        $this->assertSame('customFlash', $flash->getConfig('key'));
     }
 
     /**

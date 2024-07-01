@@ -65,6 +65,9 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             $this->setController($controller);
         }
         $this->container = $container;
+        if ($this->container) {
+            $this->container->add(self::class, $this);
+        }
     }
 
     /**

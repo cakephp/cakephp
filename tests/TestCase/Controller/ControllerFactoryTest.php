@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\Container;
@@ -897,6 +899,34 @@ class ControllerFactoryTest extends TestCase
         $data = json_decode((string)$result->getBody(), true);
 
         $this->assertSame(['one' => '1'], $data);
+    }
+
+    /**
+     * Test that default values work for typed parameters
+     */
+    public function testInvokeComponentFromContainer(): void
+    {
+        $this->container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+            return new FlashComponent($registry, $config);
+        })
+        ->addArgument(ComponentRegistry::class)
+        ->addArgument(['key' => 'customFlash']);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/component-test/flash',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'ComponentTest',
+                'action' => 'flash',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['flashKey' => 'customFlash'], $data);
     }
 
     public function testMiddleware(): void
