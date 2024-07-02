@@ -36,6 +36,7 @@ use Exception;
 use InvalidArgumentException;
 use LogicException;
 use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
@@ -1362,8 +1363,8 @@ class ViewTest extends TestCase
      * Test appending to a block with append.
      *
      * @param mixed $value Value
-     * @dataProvider blockValueProvider
      */
+    #[DataProvider('blockValueProvider')]
     public function testBlockAppend($value): void
     {
         $this->View->assign('testBlock', 'Block');
@@ -1391,8 +1392,8 @@ class ViewTest extends TestCase
      * Test prepending to a block with prepend.
      *
      * @param mixed $value Value
-     * @dataProvider blockValueProvider
      */
+    #[DataProvider('blockValueProvider')]
     public function testBlockPrepend($value): void
     {
         $this->View->assign('test', 'Block');

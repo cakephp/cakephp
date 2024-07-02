@@ -25,6 +25,7 @@ use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Constraint\LogicalNot;
 
 /**
@@ -196,8 +197,8 @@ class EmailTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $expectedMessage Expected failure message
      * @param array $params Assertion params
-     * @dataProvider failureMessageDataProvider
      */
+    #[DataProvider('failureMessageDataProvider')]
     public function testFailureMessages($assertion, $expectedMessage, $params): void
     {
         $this->expectException(AssertionFailedError::class);

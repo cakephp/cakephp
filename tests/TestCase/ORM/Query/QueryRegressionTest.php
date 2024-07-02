@@ -28,6 +28,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Collection\collection;
 
 /**
@@ -312,9 +313,9 @@ class QueryRegressionTest extends TestCase
      * Checks that only relevant associations are passed when saving _joinData
      * Tests that _joinData can also save deeper associations
      *
-     * @dataProvider strategyProvider
      * @param string $strategy
      */
+    #[DataProvider('strategyProvider')]
     public function testBelongsToManyDeepSave($strategy): void
     {
         $articles = $this->getTableLocator()->get('Articles');

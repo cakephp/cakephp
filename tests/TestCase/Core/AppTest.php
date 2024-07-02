@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Core\TestApp;
 
 /**
@@ -46,8 +47,8 @@ class AppTest extends TestCase
      * @param string $suffix Class suffix
      * @param bool $existsInBase Whether class exists in base.
      * @param mixed $expected Expected value.
-     * @dataProvider classNameProvider
      */
+    #[DataProvider('classNameProvider')]
     public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false): void
     {
         static::setAppNamespace();
@@ -91,8 +92,8 @@ class AppTest extends TestCase
      * @param string $type Class type
      * @param string $suffix Class suffix
      * @param mixed $expected Expected value.
-     * @dataProvider shortNameProvider
      */
+    #[DataProvider('shortNameProvider')]
     public function testShortName($class, $type, $suffix = '', $expected = false): void
     {
         static::setAppNamespace();

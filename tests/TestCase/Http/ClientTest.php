@@ -27,6 +27,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP client test.
@@ -203,9 +204,7 @@ class ClientTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider urlProvider
-     */
+    #[DataProvider('urlProvider')]
     public function testBuildUrl(string $expected, string $url, array $query, ?array $opts): void
     {
         $http = new Client();
@@ -466,9 +465,8 @@ class ClientTest extends TestCase
 
     /**
      * test simple POST request.
-     *
-     * @dataProvider methodProvider
      */
+    #[DataProvider('methodProvider')]
     public function testMethodsSimple(string $method): void
     {
         $response = new Response();
@@ -512,9 +510,8 @@ class ClientTest extends TestCase
 
     /**
      * Test that using the 'type' option sets the correct headers
-     *
-     * @dataProvider typeProvider
      */
+    #[DataProvider('typeProvider')]
     public function testPostWithTypeKey(string $type, string $mime): void
     {
         $response = new Response();

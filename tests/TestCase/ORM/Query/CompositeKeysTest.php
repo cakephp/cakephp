@@ -26,6 +26,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
@@ -102,8 +103,6 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Test that you cannot save rows with composite keys if some columns are missing.
-     *
-     * @group save
      */
     public function testSaveNewErrorCompositeKeyNoIncrement(): void
     {
@@ -118,8 +117,6 @@ class CompositeKeysTest extends TestCase
      * Test that saving into composite primary keys where one column is missing & autoIncrement works.
      *
      * SQLite is skipped because it doesn't support autoincrement composite keys.
-     *
-     * @group save
      */
     public function testSaveNewCompositeKeyIncrement(): void
     {
@@ -134,9 +131,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that HasMany associations are correctly eager loaded and results
      * correctly nested when multiple foreignKeys are used
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
@@ -209,9 +205,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that BelongsToMany associations are correctly eager loaded when multiple
      * foreignKeys are used
-     *
-     * @dataProvider strategiesProviderBelongsToMany
      */
+    #[DataProvider('strategiesProviderBelongsToMany')]
     public function testBelongsToManyEager(string $strategy): void
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
@@ -295,9 +290,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests loading belongsTo with composite keys
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testBelongsToEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteArticles');
@@ -343,9 +337,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests loading hasOne with composite keys
-     *
-     * @dataProvider strategiesProviderHasOne
      */
+    #[DataProvider('strategiesProviderHasOne')]
     public function testHasOneEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
@@ -393,8 +386,6 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that it is possible to insert a new row using the save method
      * if the entity has composite primary key
-     *
-     * @group save
      */
     public function testSaveNewEntity(): void
     {
@@ -416,8 +407,6 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that it is possible to insert a new row using the save method
      * if the entity has composite primary key
-     *
-     * @group save
      */
     public function testSaveNewEntityMissingKey(): void
     {

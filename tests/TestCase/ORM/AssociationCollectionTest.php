@@ -24,6 +24,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * AssociationCollection test case.
@@ -184,8 +185,8 @@ class AssociationCollectionTest extends TestCase
      *
      * @param string $belongsToStr
      * @param string $belongsToManyStr
-     * @dataProvider associationCollectionType
      */
+    #[DataProvider('associationCollectionType')]
     public function testGetByType($belongsToStr, $belongsToManyStr): void
     {
         $belongsTo = new BelongsTo('');

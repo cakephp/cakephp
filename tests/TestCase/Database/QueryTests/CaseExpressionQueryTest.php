@@ -28,6 +28,7 @@ use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -276,10 +277,10 @@ class CaseExpressionQueryTest extends TestCase
     }
 
     /**
-     * @dataProvider bindingValueDataProvider
      * @param string $when The `WHEN` value.
      * @param int $result The result value.
      */
+    #[DataProvider('bindingValueDataProvider')]
     public function testBindValues(string $when, int $result): void
     {
         $value = '1';

@@ -19,6 +19,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Datasource\FakeConnection;
 
 /**
@@ -58,9 +59,9 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test the various valid config() calls.
      *
-     * @dataProvider configProvider
      * @param \Cake\Datasource\ConnectionInterface|array $settings
      */
+    #[DataProvider('configProvider')]
     public function testConfigVariants($settings): void
     {
         $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
@@ -380,9 +381,8 @@ class ConnectionManagerTest extends TestCase
 
     /**
      * Test parseDsn method.
-     *
-     * @dataProvider dsnProvider
      */
+    #[DataProvider('dsnProvider')]
     public function testParseDsn(string $dsn, array $expected): void
     {
         $result = ConnectionManager::parseDsn($dsn);

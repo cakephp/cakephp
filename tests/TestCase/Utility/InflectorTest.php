@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Short description for class.
@@ -86,9 +87,8 @@ class InflectorTest extends TestCase
 
     /**
      * testInflectingSingulars method
-     *
-     * @dataProvider singularizeProvider
      */
+    #[DataProvider('singularizeProvider')]
     public function testInflectingSingulars(string $singular, string $plural): void
     {
         $this->assertSame($singular, Inflector::singularize($plural));
@@ -221,9 +221,8 @@ class InflectorTest extends TestCase
 
     /**
      * testInflectingPlurals method
-     *
-     * @dataProvider pluralizeProvider
      */
+    #[DataProvider('pluralizeProvider')]
     public function testInflectingPlurals(string $plural, string $singular): void
     {
         $this->assertSame($plural, Inflector::pluralize($singular));

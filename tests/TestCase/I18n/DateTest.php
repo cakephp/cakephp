@@ -23,6 +23,7 @@ use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
 use IntlDateFormatter;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * DateTest class
@@ -207,9 +208,8 @@ class DateTest extends TestCase
 
     /**
      * testTimeAgoInWords method
-     *
-     * @dataProvider timeAgoProvider
      */
+    #[DataProvider('timeAgoProvider')]
     public function testTimeAgoInWords(string $input, string $expected): void
     {
         $date = new Date($input);
@@ -281,9 +281,8 @@ class DateTest extends TestCase
 
     /**
      * test the end option for timeAgoInWords
-     *
-     * @dataProvider timeAgoEndProvider
      */
+    #[DataProvider('timeAgoEndProvider')]
     public function testTimeAgoInWordsEnd(string $input, string $expected, string $end): void
     {
         $time = new Date($input);

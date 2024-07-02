@@ -66,6 +66,7 @@ use Cake\Utility\Security;
 use Exception;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Exception as PHPUnitException;
+use PHPUnit\Framework\Attributes\After;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -199,10 +200,10 @@ trait IntegrationTestTrait
     /**
      * Clears the state used for requests.
      *
-     * @after
      * @return void
      * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
+    #[After]
     public function cleanup(): void
     {
         $this->_request = [];

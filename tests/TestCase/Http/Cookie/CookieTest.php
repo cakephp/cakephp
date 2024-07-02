@@ -21,6 +21,7 @@ use Cake\Http\Cookie\SameSiteEnum;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ValueError;
 
 /**
@@ -47,9 +48,8 @@ class CookieTest extends TestCase
 
     /**
      * Test invalid cookie name
-     *
-     * @dataProvider invalidNameProvider
      */
+    #[DataProvider('invalidNameProvider')]
     public function testValidateNameInvalidChars(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);

@@ -37,6 +37,7 @@ use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
@@ -357,9 +358,9 @@ class FormHelperTest extends TestCase
     /**
      * Test default context selection in create()
      *
-     * @dataProvider contextSelectionProvider
      * @param mixed $data
      */
+    #[DataProvider('contextSelectionProvider')]
     public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
         $this->Form->create($data);
@@ -596,9 +597,8 @@ class FormHelperTest extends TestCase
 
     /**
      * test the create() method
-     *
-     * @dataProvider requestTypeProvider
      */
+    #[DataProvider('requestTypeProvider')]
     public function testCreateTypeOptions(string $type, string $method, string $override): void
     {
         $encoding = strtolower(Configure::read('App.encoding'));
@@ -7446,9 +7446,8 @@ class FormHelperTest extends TestCase
      * testDateTimeWithFractional method
      *
      * Test that datetime() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testDateTimeWithFractional(string $type): void
     {
         $this->Form->create([
@@ -7475,9 +7474,8 @@ class FormHelperTest extends TestCase
      * testControlWithFractional method
      *
      * Test that control() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testControlWithFractional(string $type): void
     {
         $this->Form->create([

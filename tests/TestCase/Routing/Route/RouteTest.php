@@ -23,6 +23,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -292,8 +293,8 @@ class RouteTest extends TestCase
      * @param string $url
      * @param array $expected
      * @param array $ext
-     * @dataProvider provideMatchParseExtension
      */
+    #[DataProvider('provideMatchParseExtension')]
     public function testMatchParseExtension($url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
@@ -321,8 +322,8 @@ class RouteTest extends TestCase
      *
      * @param string $url
      * @param array $ext
-     * @dataProvider provideNoMatchParseExtension
      */
+    #[DataProvider('provideNoMatchParseExtension')]
     public function testNoMatchParseExtension($url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);

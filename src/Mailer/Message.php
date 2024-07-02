@@ -1292,7 +1292,7 @@ class Message implements JsonSerializable
                 $this->emailFormat === static::MESSAGE_BOTH
             )
         ) {
-            $this->boundary = md5(Security::randomBytes(16));
+            $this->boundary = hash('xxh128', Security::randomBytes(16));
         }
     }
 

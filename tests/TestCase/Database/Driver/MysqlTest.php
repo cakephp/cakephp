@@ -21,6 +21,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests MySQL driver
@@ -166,10 +167,10 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * @dataProvider versionStringProvider
      * @param string $dbVersion
      * @param string $expectedVersion
      */
+    #[DataProvider('versionStringProvider')]
     public function testVersion($dbVersion, $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */

@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RouteCollectionTest extends TestCase
 {
@@ -412,9 +413,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parseRequest() checks host conditions
-     *
-     * @dataProvider hostProvider
      */
+    #[DataProvider('hostProvider')]
     public function testParseRequestCheckHostConditionFail(string $host): void
     {
         $this->expectException(MissingRouteException::class);

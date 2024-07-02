@@ -29,6 +29,9 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use RuntimeException;
 use Throwable;
 
@@ -189,10 +192,9 @@ class ExceptionTrapTest extends TestCase
      * Test integration with HTML exception rendering
      *
      * Run in a separate process because HTML output writes headers.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testHandleExceptionHtmlRendering()
     {
         $trap = new ExceptionTrap([
@@ -237,10 +239,8 @@ class ExceptionTrapTest extends TestCase
         $this->assertEmpty($logs);
     }
 
-    /**
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
-     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testSkipLogException(): void
     {
         Log::setConfig('test_error', [
@@ -370,10 +370,9 @@ class ExceptionTrapTest extends TestCase
      * Test integration with HTML rendering for fatal errors
      *
      * Run in a separate process because HTML output writes headers.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testHandleFatalErrorHtmlRendering()
     {
         $trap = new ExceptionTrap([
@@ -401,9 +400,7 @@ class ExceptionTrapTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider initialMemoryProvider
-     */
+    #[DataProvider('initialMemoryProvider')]
     public function testIncreaseMemoryLimit($initial)
     {
         ini_set('memory_limit', $initial);

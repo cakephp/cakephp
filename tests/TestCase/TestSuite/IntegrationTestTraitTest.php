@@ -36,6 +36,8 @@ use Laminas\Diactoros\UploadedFile;
 use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use stdClass;
 use TestApp\ReflectionDependency;
 
@@ -1405,9 +1407,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test if the EventManager is reset between tests.
-     *
-     * @depends testEventManagerReset1
      */
+    #[Depends('testEventManagerReset1')]
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
         $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
@@ -1484,9 +1485,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * tests getting a secure action while passing a query string
-     *
-     * @dataProvider methodsProvider
      */
+    #[DataProvider('methodsProvider')]
     public function testSecureWithQueryString(string $method): void
     {
         $this->enableSecurityToken();
@@ -1543,8 +1543,8 @@ class IntegrationTestTraitTest extends TestCase
      * @param string $message Expected failure message
      * @param string $url URL to test
      * @param mixed ...$rest
-     * @dataProvider assertionFailureMessagesProvider
      */
+    #[DataProvider('assertionFailureMessagesProvider')]
     public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
@@ -1714,9 +1714,9 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test the assertion generates a verbose message for session related checks.
      *
-     * @dataProvider assertionFailureSessionVerboseProvider
      * @param mixed ...$rest
      */
+    #[DataProvider('assertionFailureSessionVerboseProvider')]
     public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);

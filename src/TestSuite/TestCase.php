@@ -956,8 +956,15 @@ abstract class TestCase extends BaseTestCase
         }
 
         if ($nonExistingMethods) {
-            trigger_error('Adding non existent methods to your model ' .
-                'via testing will not work in future PHPUnit versions.', E_USER_DEPRECATED);
+            trigger_error(
+                sprintf(
+                    'Adding non-existent methods (%s) to model `%s` ' .
+                    'when mocking will not work in future PHPUnit versions.',
+                    join(',', $nonExistingMethods),
+                    $alias
+                ),
+                E_USER_DEPRECATED
+            );
             $builder->addMethods($nonExistingMethods);
         }
 
