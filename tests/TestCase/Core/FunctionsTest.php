@@ -29,6 +29,7 @@ use function Cake\Core\namespaceSplit;
 use function Cake\Core\pathCombine;
 use function Cake\Core\pluginSplit;
 use function Cake\Core\toBool;
+use function Cake\Core\toFloat;
 use function Cake\Core\toInt;
 use function Cake\Core\toString;
 use function Cake\Core\triggerWarning;
@@ -533,6 +534,99 @@ class FunctionsTest extends TestCase
             // boolean input types
             '(bool) true' => [true, 1],
             '(bool) false' => [false, 0],
+            // other input types
+            '(other) null' => [null, null],
+            '(other) empty-array' => [[], null],
+            '(other) int-array' => [[5], null],
+            '(other) string-array' => [['5'], null],
+            '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    #[DataProvider('toFloatProvider')]
+    public function testToFloat(mixed $rawValue, null|float $expected): void
+    {
+        $this->assertSame($expected, toFloat($rawValue));
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toFloatProvider(): array
+    {
+        return [
+            // string input types
+            '(string) empty' => ['', null],
+            '(string) space' => [' ', null],
+            '(string) null' => ['null', null],
+            '(string) dash' => ['-', null],
+            '(string) ctz' => ['čťž', null],
+            '(string) hex' => ['0x539', null],
+            '(string) binary' => ['0b10100111001', null],
+            '(string) scientific e' => ['1.2e+2', 120.0],
+            '(string) scientific E' => ['1.2E+2', 120.],
+            '(string) octal old' => ['0123', 123.0],
+            '(string) octal new' => ['0o123', null],
+            '(string) decimal php74' => ['1_234_567', null],
+            '(string) zero' => ['0', 0.0],
+            '(string) number' => ['55', 55.0],
+            '(string) number_space_before' => [' 55', 55.0],
+            '(string) number_space_after' => ['55 ', 55.0],
+            '(string) negative number' => ['-5', -5.0],
+            '(string) float round' => ['5.0', 5.0],
+            '(string) float round negative' => ['-5.0', -5.0],
+            '(string) float real' => ['5.1', 5.1],
+            '(string) float round slovak' => ['5,0', null],
+            '(string) money' => ['5 €', null],
+            '(string) PHP_INT_MAX + 1' => ['9223372036854775808', PHP_INT_MAX],
+            '(string) PHP_INT_MAX + 0' => ['9223372036854775807', 9223372036854775807],
+            '(string) PHP_INT_MAX - 1' => ['9223372036854775806', 9223372036854775806],
+            '(string) PHP_INT_MIN + 1' => ['-9223372036854775807', -9223372036854775807],
+            '(string) PHP_INT_MIN + 0' => ['-9223372036854775808', -9223372036854775807],
+            '(string) PHP_INT_MIN - 1' => ['-9223372036854775809', -9223372036854775807],
+            '(string) string' => ['f', null],
+            '(string) partially1 number' => ['5 5', null],
+            '(string) partially2 number' => ['5x', null],
+            '(string) partially3 number' => ['x4', null],
+            '(string) double dot' => ['5.1.0', null],
+            // int input types
+            '(int) number' => [55, 55.0],
+            '(int) negative number' => [-5, -5.0],
+            '(int) PHP_INT_MAX + 1' => [9223372036854775808, 9223372036854775807 - 1],
+            '(int) PHP_INT_MAX + 0' => [9223372036854775807, 9223372036854775807],
+            '(int) PHP_INT_MAX - 1' => [9223372036854775806, 9223372036854775806],
+            '(int) PHP_INT_MIN + 1' => [-9223372036854775807, -9223372036854775807],
+            // PHP_INT_MIN is float -> PHP inconsistency https://bugs.php.net/bug.php?id=53934
+            '(int) PHP_INT_MIN + 0' => [-9223372036854775808, -9223372036854775807 - 1], // ¯\_(ツ)_/¯,
+            '(int) PHP_INT_MIN - 1' => [-9223372036854775809, -9223372036854775807 - 1], // ¯\_(ツ)_/¯,
+            // float input types
+            '(float) zero' => [0.0, 0.0],
+            '(float) positive' => [5.5, 5.5],
+            '(float) round' => [5.0, 5.0],
+            '(float) negative' => [-5.5, -5.5],
+            '(float) round negative' => [-5.0, -5.0],
+            '(float) PHP_INT_MAX + 1' => [9223372036854775808.0, 9223372036854775807 - 1],
+            '(float) PHP_INT_MAX + 0' => [9223372036854775807.0, 9223372036854775807 - 1],
+            '(float) PHP_INT_MAX - 1' => [9223372036854775806.0, 9223372036854775807 - 1],
+            '(float) PHP_INT_MIN + 1' => [-9223372036854775807.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(float) PHP_INT_MIN + 0' => [-9223372036854775808.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(float) PHP_INT_MIN - 1' => [-9223372036854775809.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(float) 2^53 + 2' => [9007199254740994.0, 9007199254740994],
+            '(float) 2^53 + 1' => [9007199254740993.0, 9007199254740992], // see IEEE 754
+            '(float) 2^53 + 0' => [9007199254740992.0, 9007199254740992],
+            '(float) 2^53 - 1' => [9007199254740991.0, 9007199254740991],
+            '(float) 2^53 - 2' => [9007199254740990.0, 9007199254740990],
+            '(float) -(2^53) + 2' => [-9007199254740990.0, -9007199254740990],
+            '(float) -(2^53) + 1' => [-9007199254740991.0, -9007199254740991],
+            '(float) -(2^53) + 0' => [-9007199254740992.0, -9007199254740992],
+            '(float) -(2^53) - 1' => [-9007199254740993.0, -9007199254740992], // see IEEE 754
+            '(float) -(2^53) - 2' => [-9007199254740994.0, -9007199254740994],
+            '(float) NaN' => [acos(8), null],
+            '(float) INF' => [INF, null],
+            '(float) -INF' => [-INF, null],
+            // boolean input types
+            '(bool) true' => [true, 1.0],
+            '(bool) false' => [false, 0.0],
             // other input types
             '(other) null' => [null, null],
             '(other) empty-array' => [[], null],
