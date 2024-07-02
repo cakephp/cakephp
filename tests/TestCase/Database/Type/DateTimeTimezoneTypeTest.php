@@ -20,6 +20,7 @@ use Cake\Database\Type\DateTimeTimezoneType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the DateTimeTimezone type.
@@ -316,10 +317,10 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * test marshalling data.
      *
-     * @dataProvider marshalProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProvider')]
     public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
@@ -422,10 +423,10 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * test marshalling data.
      *
-     * @dataProvider marshalProviderWithoutMicroseconds
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProviderWithoutMicroseconds')]
     public function testMarshalWithoutMicroseconds($value, $expected): void
     {
         $result = $this->type->marshal($value);

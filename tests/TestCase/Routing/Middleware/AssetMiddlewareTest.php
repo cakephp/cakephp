@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -112,9 +113,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test assets in a plugin.
-     *
-     * @dataProvider assetProvider
      */
+    #[DataProvider('assetProvider')]
     public function testPluginAsset(string $url, string $expectedFile): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => $url]);

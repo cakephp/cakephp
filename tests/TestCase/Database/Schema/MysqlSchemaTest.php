@@ -26,6 +26,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
@@ -224,9 +225,8 @@ class MysqlSchemaTest extends TestCase
 
     /**
      * Test parsing MySQL column types from field description.
-     *
-     * @dataProvider convertColumnProvider
      */
+    #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, array $expected): void
     {
         $field = [
@@ -903,9 +903,8 @@ SQL;
 
     /**
      * Test generating column definitions
-     *
-     * @dataProvider columnSqlProvider
      */
+    #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -977,9 +976,8 @@ SQL;
 
     /**
      * Test the constraintSql method.
-     *
-     * @dataProvider constraintSqlProvider
      */
+    #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1018,9 +1016,8 @@ SQL;
 
     /**
      * Test the indexSql method.
-     *
-     * @dataProvider indexSqlProvider
      */
+    #[DataProvider('indexSqlProvider')]
     public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();

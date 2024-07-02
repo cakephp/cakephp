@@ -212,7 +212,10 @@ class Text
         );
 
         $dataKeys = array_keys($data);
-        $hashKeys = array_map('md5', $dataKeys);
+        $hashKeys = array_map(
+            fn ($str) => hash('xxh128', $str),
+            $dataKeys
+        );
         /** @var array<string, string> $tempData */
         $tempData = array_combine($dataKeys, $hashKeys);
         krsort($tempData);

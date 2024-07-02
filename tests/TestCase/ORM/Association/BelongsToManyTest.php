@@ -38,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\ArticlesTag;
 use function Cake\Collection\collection;
 
@@ -1187,9 +1188,9 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that saving an empty set on create works.
      *
-     * @dataProvider emptyProvider
      * @param mixed $value
      */
+    #[DataProvider('emptyProvider')]
     public function testSaveAssociatedEmptySetSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
@@ -1217,9 +1218,9 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that saving an empty set on update works.
      *
-     * @dataProvider emptyProvider
      * @param mixed $value
      */
+    #[DataProvider('emptyProvider')]
     public function testSaveAssociatedEmptySetUpdateSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */

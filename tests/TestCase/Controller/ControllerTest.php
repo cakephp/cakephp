@@ -32,6 +32,7 @@ use Cake\View\View;
 use Cake\View\XmlView;
 use InvalidArgumentException;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionFunction;
 use RuntimeException;
 use TestApp\Controller\Admin\PostsController as AdminPostsController;
@@ -478,9 +479,8 @@ class ControllerTest extends TestCase
 
     /**
      * testRedirect method
-     *
-     * @dataProvider statusCodeProvider
      */
+    #[DataProvider('statusCodeProvider')]
     public function testRedirectByCode(int $code, string $msg): void
     {
         $Controller = new Controller(new ServerRequest());

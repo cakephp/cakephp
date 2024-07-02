@@ -24,6 +24,7 @@ use Cake\ORM\Marshaller;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
@@ -1322,9 +1323,9 @@ class MarshallerTest extends TestCase
     /**
      * Test merging empty values into an entity.
      *
-     * @dataProvider emptyProvider
      * @param mixed $value
      */
+    #[DataProvider('emptyProvider')]
     public function testMergeFalseyValues($value): void
     {
         $marshall = new Marshaller($this->articles);

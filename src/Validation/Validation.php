@@ -919,6 +919,8 @@ class Validation
      */
     protected static function isValidEnum(BackedEnum $enum, array $options): bool
     {
+        $options += ['only' => null, 'except' => null];
+
         if ($options['only']) {
             if (!is_array($options['only'])) {
                 $options['only'] = [$options['only']];

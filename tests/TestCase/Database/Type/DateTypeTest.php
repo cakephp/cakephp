@@ -23,6 +23,7 @@ use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the Date type.
@@ -216,10 +217,10 @@ class DateTypeTest extends TestCase
     /**
      * test marshaling data.
      *
-     * @dataProvider marshalProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProvider')]
     public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);

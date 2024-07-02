@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 /**
@@ -904,9 +905,9 @@ class HashTest extends TestCase
     /**
      * Test the extraction of a single value filtered by another field.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractSingleValueWithFilteringByAnotherField($data): void
     {
         $result = Hash::extract($data, '{*}.Article[id=1].title');
@@ -919,9 +920,9 @@ class HashTest extends TestCase
     /**
      * Test simple paths.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractBasic($data): void
     {
         $result = Hash::extract($data, '');
@@ -940,9 +941,9 @@ class HashTest extends TestCase
     /**
      * Test the {n} selector
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractNumericKey($data): void
     {
         $result = Hash::extract($data, '{n}.Article.title');
@@ -1073,9 +1074,9 @@ class HashTest extends TestCase
     /**
      * Test the {s} selector.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractStringKey($data): void
     {
         $result = Hash::extract($data, '{n}.{s}.user');
@@ -1139,9 +1140,9 @@ class HashTest extends TestCase
     /**
      * Test the attribute presence selector.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributePresence($data): void
     {
         $result = Hash::extract($data, '{n}.Article[published]');
@@ -1156,9 +1157,9 @@ class HashTest extends TestCase
     /**
      * Test = and != operators.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeEquality($data): void
     {
         $result = Hash::extract($data, '{n}.Article[id=3]');
@@ -1269,9 +1270,9 @@ class HashTest extends TestCase
     /**
      * Test comparison operators.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeComparison($data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
@@ -1298,9 +1299,9 @@ class HashTest extends TestCase
     /**
      * Test multiple attributes with conditions.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeMultiple($data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
@@ -1315,9 +1316,9 @@ class HashTest extends TestCase
     /**
      * Test attribute pattern matching.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributePattern($data): void
     {
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');

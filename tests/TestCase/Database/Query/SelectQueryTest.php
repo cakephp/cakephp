@@ -2839,8 +2839,6 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that functions are correctly transformed and their parameters are bound
-     *
-     * @group FunctionExpression
      */
     public function testSQLFunctions(): void
     {

@@ -20,6 +20,7 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SocketTest class
@@ -139,9 +140,8 @@ class SocketTest extends TestCase
 
     /**
      * testInvalidConnection method
-     *
-     * @dataProvider invalidConnections
      */
+    #[DataProvider('invalidConnections')]
     public function testInvalidConnection(array $data): void
     {
         $this->expectException(SocketException::class);
