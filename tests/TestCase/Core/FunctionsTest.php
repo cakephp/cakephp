@@ -616,7 +616,6 @@ class FunctionsTest extends TestCase
     {
         $date = new DateTime('2024-07-01T14:30:00Z');
         $now = $date->toAtomString();
-        DateTime::setTestNow($now);
 
         return [
             // datetime input types
@@ -666,7 +665,6 @@ class FunctionsTest extends TestCase
         $epoch = Date::createFromArray(['year' => 1970, 'month' => 01, 'day' => 01]);
         $date = Date::createFromArray(['year' => 2024, 'month' => 07, 'day' => 01]);
         $now = $date->toAtomString();
-        DateTime::setTestNow($now);
 
         return [
             // datetime input types
