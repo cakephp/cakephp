@@ -104,8 +104,6 @@ class Arguments
      */
     public function hasArgument(string $name): bool
     {
-        $this->assertArgumentExists($name);
-
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false) {
             return false;
