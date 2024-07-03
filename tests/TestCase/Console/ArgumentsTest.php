@@ -71,6 +71,7 @@ class ArgumentsTest extends TestCase
         $this->assertTrue($args->hasArgument('size'));
         $this->assertTrue($args->hasArgument('color'));
         $this->assertFalse($args->hasArgument('odd'));
+        $this->assertFalse($args->hasArgument('undefined'));
     }
 
     /**
