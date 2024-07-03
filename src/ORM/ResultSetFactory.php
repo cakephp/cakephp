@@ -18,11 +18,12 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Query\SelectQuery;
 use SplFixedArray;
 
 /**
- * Factory class for generation ResulSet instances.
+ * Factory class for generating ResulSet instances.
  *
  * It is responsible for correctly nesting result keys reported from the query
  * and hydrating entities.
@@ -32,27 +33,29 @@ use SplFixedArray;
 class ResultSetFactory
 {
     /**
-     * Constructor
+     * Create a resultset instance.
      *
-     * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
      * @param iterable $results Results.
+     * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
      * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
      */
-    public function createResultSet(SelectQuery $query, iterable $results): ResultSet
+    public function createResultSet(iterable $results, ?SelectQuery $query = null): ResultSet
     {
-        $data = $this->collectData($query);
+        if ($query) {
+            $data = $this->collectData($query);
 
-        if (is_array($results)) {
-            foreach ($results as $i => $row) {
-                $results[$i] = $this->groupResult($row, $data);
+            if (is_array($results)) {
+                foreach ($results as $i => $row) {
+                    $results[$i] = $this->groupResult($row, $data);
+                }
+
+                $results = SplFixedArray::fromArray($results);
+            } else {
+                $results = (new Collection($results))
+                    ->map(function ($row) use ($data) {
+                        return $this->groupResult($row, $data);
+                    });
             }
-
-            $results = SplFixedArray::fromArray($results);
-        } else {
-            $results = (new Collection($results))
-                ->map(function ($row) use ($data) {
-                    return $this->groupResult($row, $data);
-                });
         }
 
         return new ResultSet($results);
@@ -229,5 +232,15 @@ class ResultSetFactory
         }
 
         return $results;
+    }
+
+    /**
+     * Returns the name of the class to be used for decorating results
+     *
+     * @return class-string<\Cake\Datasource\ResultSetInterface>
+     */
+    public function decoratorClass(): string
+    {
+        return ResultSetDecorator::class;
     }
 }
