@@ -78,22 +78,30 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         if ($reflection->isAbstract()) {
             throw $this->missingController($request);
         }
+        $this->container->addShared(
+            ComponentRegistry::class,
+            new ComponentRegistry(null, $this->container)
+        );
 
         // Get the controller from the container if defined.
         // The request is in the container by default.
         if ($this->container->has($className)) {
             $controller = $this->container->get($className);
         } else {
+            $components = $this->container->get(ComponentRegistry::class);
             $constructor = $reflection->getConstructor();
             assert($constructor !== null);
-            $hasContainer = false;
+            $hasComponents = false;
             foreach ($constructor->getParameters() as $parameter) {
-                if ($parameter->getName() === 'container') {
-                    $hasContainer = true;
+                $paramType = $parameter->getType();
+                // TODO: In a future minor release it would be good to start requiring the components parameter
+                if ($parameter->getName() === 'components' && $paramType !== null && $paramType->getName() == ComponentRegistry::class) {
+                    $hasComponents = true;
+                    break;
                 }
             }
-            if ($hasContainer) {
-                $controller = $reflection->newInstance($request, container: $this->container);
+            if ($hasComponents) {
+                $controller = $reflection->newInstance(request: $request, components: $components);
             } else {
                 $controller = $reflection->newInstance($request);
             }

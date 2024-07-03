@@ -18,7 +18,6 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
-use Cake\Core\ContainerInterface;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatedInterface;
@@ -198,12 +197,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   but expect that features that use the request parameters will not work.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
+     * @param \Cake\Controller\ComponentRegistry|null $components ComponentRegistry to use. Defaults to a new instance.
      */
     public function __construct(
         ServerRequest $request,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?ContainerInterface $container = null,
+        ?ComponentRegistry $components = null,
     ) {
         if ($name !== null) {
             $this->name = $name;
@@ -225,11 +225,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
-        if ($container !== null) {
-            $this->_components = new ComponentRegistry($this, $container);
-            $container->addShared(ComponentRegistry::class, $this->_components);
+        if ($components !== null) {
+            $this->_components = $components;
+            $components->setController($this);
         }
-
         if ($this->defaultTable === null) {
             $plugin = $this->request->getParam('plugin');
             $tableAlias = ($plugin ? $plugin . '.' : '') . $this->name;
