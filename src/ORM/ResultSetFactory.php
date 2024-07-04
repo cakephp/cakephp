@@ -18,8 +18,9 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Query\SelectQuery;
+use InvalidArgumentException;
 use SplFixedArray;
 
 /**
@@ -33,13 +34,18 @@ use SplFixedArray;
 class ResultSetFactory
 {
     /**
+     * @var class-string<\Cake\Datasource\ResultSetInterface>
+     */
+    protected string $resultSetClass = ResultSet::class;
+
+    /**
      * Create a resultset instance.
      *
      * @param iterable $results Results.
      * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
-     * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    public function createResultSet(iterable $results, ?SelectQuery $query = null): ResultSet
+    public function createResultSet(iterable $results, ?SelectQuery $query = null): ResultSetInterface
     {
         if ($query) {
             $data = $this->collectData($query);
@@ -58,7 +64,7 @@ class ResultSetFactory
             }
         }
 
-        return new ResultSet($results);
+        return new $this->resultSetClass($results);
     }
 
     /**
@@ -235,12 +241,33 @@ class ResultSetFactory
     }
 
     /**
-     * Returns the name of the class to be used for decorating results
+     * Set the ResultSet class to use.
+     *
+     * @param class-string<\Cake\Datasource\ResultSetInterface> $resultSetClass Class name.
+     * @return $this
+     */
+    public function setResultSetClass(string $resultSetClass)
+    {
+        if (!is_a($resultSetClass, ResultSetInterface::class, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid ResultSet class `%s`. It must implement `%s`',
+                $resultSetClass,
+                ResultSetInterface::class
+            ));
+        }
+
+        $this->resultSetClass = $resultSetClass;
+
+        return $this;
+    }
+
+    /**
+     * Get the ResultSet class to use.
      *
      * @return class-string<\Cake\Datasource\ResultSetInterface>
      */
-    public function decoratorClass(): string
+    public function getResultSetClass(): string
     {
-        return ResultSetDecorator::class;
+        return $this->resultSetClass;
     }
 }

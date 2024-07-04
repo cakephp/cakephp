@@ -32,7 +32,6 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
@@ -899,7 +898,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($results, $query->all());
 
         $query->setResult([]);
-        $this->assertInstanceOf(ResultSetDecorator::class, $query->all());
+        $this->assertInstanceOf(ResultSet::class, $query->all());
     }
 
     /**
