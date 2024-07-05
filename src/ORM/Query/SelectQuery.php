@@ -733,17 +733,17 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function _decorateResults(iterable $result): ResultSetInterface
     {
-        $decorator = $this->resultSetFactory()->decoratorClass();
+        $resultSetClass = $this->resultSetFactory()->getResultSetClass();
 
         if ($this->_mapReduce) {
             foreach ($this->_mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
-            $result = new $decorator($result);
+            $result = new $resultSetClass($result);
         }
 
         if (!($result instanceof ResultSetInterface)) {
-            $result = new $decorator($result);
+            $result = new $resultSetClass($result);
         }
 
         if ($this->_formatters) {
@@ -752,7 +752,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
 
             if (!($result instanceof ResultSetInterface)) {
-                $result = new $decorator($result);
+                $result = new $resultSetClass($result);
             }
         }
 

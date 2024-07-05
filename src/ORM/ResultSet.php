@@ -25,7 +25,7 @@ use Cake\Datasource\ResultSetInterface;
  * the query, casting each field to the correct type and executing the extra
  * queries required for eager loading external associations.
  *
- * @template T of \Cake\Datasource\EntityInterface|array
+ * @template T
  * @implements \Cake\Datasource\ResultSetInterface<T>
  */
 class ResultSet extends Collection implements ResultSetInterface

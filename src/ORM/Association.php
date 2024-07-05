@@ -995,11 +995,11 @@ abstract class Association
                     $extracted[] = $result;
                 }
                 $extracted = $query->resultSetFactory()->createResultSet($extracted);
-                $decoratorClass = $query->resultSetFactory()->decoratorClass();
+                $resultSetClass = $query->resultSetFactory()->getResultSetClass();
                 foreach ($formatters as $callable) {
                     $extracted = $callable($extracted, $query);
                     if (!$extracted instanceof ResultSetInterface) {
-                        $extracted = new $decoratorClass($extracted);
+                        $extracted = new $resultSetClass($extracted);
                     }
                 }
 
