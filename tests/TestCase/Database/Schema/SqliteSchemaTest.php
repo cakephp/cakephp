@@ -294,6 +294,7 @@ published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
+location POINT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -470,6 +471,15 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'collate' => null,
+            ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
             ],
         ];
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);

@@ -302,6 +302,7 @@ SQL;
                 unique_id INT NOT NULL,
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
+                location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 KEY `author_idx` (`author_id`),
@@ -415,6 +416,15 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+            ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
             ],
             'created' => [
                 'type' => 'datetime',
