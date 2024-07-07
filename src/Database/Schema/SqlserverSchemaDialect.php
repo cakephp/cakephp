@@ -203,6 +203,14 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($col === 'uniqueidentifier') {
             return ['type' => TableSchemaInterface::TYPE_UUID];
         }
+        if ($col === 'geometry') {
+            return ['type' => TableSchemaInterface::TYPE_GEOMETRY];
+        }
+        if ($col === 'geography') {
+            // SQLserver only has one generic geometry type that
+            // we map to point.
+            return ['type' => TableSchemaInterface::TYPE_POINT];
+        }
 
         return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => null];
     }
@@ -430,6 +438,10 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' DATETIME2',
             TableSchemaInterface::TYPE_UUID => ' UNIQUEIDENTIFIER',
             TableSchemaInterface::TYPE_JSON => ' NVARCHAR(MAX)',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY',
+            TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY',
+            TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY',
+            TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY',
         ];
 
         if (isset($typeMap[$data['type']])) {
