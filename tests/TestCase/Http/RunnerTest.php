@@ -62,10 +62,10 @@ class RunnerTest extends TestCase
         $this->queue = new MiddlewareQueue();
 
         $this->ok = function ($request, $handler) {
-            return $handler->handle($request);
+            return $handler->handle($request->withAttribute('ok', true));
         };
         $this->pass = function ($request, $handler) {
-            return $handler->handle($request);
+            return $handler->handle($request->withAttribute('pass', true));
         };
         $this->fail = function ($request, $handler): void {
             throw new RuntimeException('A bad thing');
@@ -133,15 +133,28 @@ class RunnerTest extends TestCase
 
     public function testRunSetRouterContext(): void
     {
+        $attributes = [];
+
+        $this->queue
+            ->add(function ($request, $handler) use (&$attributes) {
+                try {
+                    return $handler->handle($request);
+                } catch (Throwable) {
+                    $request = Router::getRequest();
+
+                    $attributes['pass'] = $request->getAttribute('pass');
+                    $attributes['ok'] = $request->getAttribute('ok');
+                }
+
+                return new Response();
+            })
+            ->add($this->ok)
+            ->add($this->pass)
+            ->add($this->fail);
         $runner = new Runner();
-        $request = new ServerRequest();
         $app = new Application(CONFIG);
 
-        try {
-            $runner->run($this->queue, $request, $app);
-        } catch (Throwable $e) {
-        }
-
-        $this->assertSame($request, Router::getRequest());
+        $runner->run($this->queue, new ServerRequest(), $app);
+        $this->assertSame(['pass' => true, 'ok' => true], $attributes);
     }
 }
