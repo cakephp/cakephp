@@ -175,6 +175,22 @@ class SqliteSchemaTest extends TestCase
                 'UUID_BLOB',
                 ['type' => 'binaryuuid', 'length' => null],
             ],
+            [
+                'GEOMETRY',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON',
+                ['type' => 'polygon', 'length' => null],
+            ],
         ];
     }
 
@@ -869,6 +885,47 @@ SQL;
                 'created',
                 ['type' => 'timestamp', 'null' => true],
                 '"created" TIMESTAMP DEFAULT NULL',
+            ],
+            // Geospatial types
+            [
+                'g',
+                ['type' => 'geometry'],
+                '"g" GEOMETRY',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '"g" GEOMETRY NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '"p" POINT',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '"p" POINT NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '"l" LINESTRING',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '"l" LINESTRING NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '"p" POLYGON',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '"p" POLYGON NOT NULL',
             ],
         ];
     }
