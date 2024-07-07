@@ -78,7 +78,7 @@ class RunnerTest extends TestCase
     public function testRunSingle(): void
     {
         $this->queue->add($this->ok);
-        $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
+        $req = new ServerRequest();
 
         $runner = new Runner();
         $result = $runner->run($this->queue, $req);
@@ -109,7 +109,7 @@ class RunnerTest extends TestCase
         $this->queue->add($one)->add($two)->add($three);
         $runner = new Runner();
 
-        $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
+        $req = new ServerRequest();
         $result = $runner->run($this->queue, $req);
         $this->assertInstanceof(Response::class, $result);
 
@@ -125,7 +125,7 @@ class RunnerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');
         $this->queue->add($this->ok)->add($this->fail);
-        $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
+        $req = new ServerRequest();
 
         $runner = new Runner();
         $runner->run($this->queue, $req);
