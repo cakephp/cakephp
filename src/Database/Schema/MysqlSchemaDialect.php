@@ -523,6 +523,9 @@ class MysqlSchemaDialect extends SchemaDialect
             $out .= ' NULL';
             unset($data['default']);
         }
+        if (isset($data['srid']) && in_array($data['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $out .= " SRID {$data['srid']}";
+        }
 
         $dateTimeTypes = [
             TableSchemaInterface::TYPE_DATETIME,
@@ -531,9 +534,6 @@ class MysqlSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
-        if (isset($data['srid']) && in_array($data['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
-            $out .= " SRID {$data['srid']}";
-        }
         if (
             isset($data['default']) &&
             in_array($data['type'], $dateTimeTypes) &&
