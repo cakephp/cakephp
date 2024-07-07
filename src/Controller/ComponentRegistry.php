@@ -45,12 +45,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      *
      * @var \Cake\Controller\Controller|null
      */
-    protected ?Controller $_Controller;
+    protected ?Controller $_Controller = null;
 
     /**
-     * @var \Cake\Core\ContainerInterface
+     * @var \Cake\Core\ContainerInterface|null
      */
-    protected ?ContainerInterface $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * Constructor.
@@ -60,7 +60,6 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
     {
-        $this->_Controller = null;
         if ($controller !== null) {
             $this->setController($controller);
         }
@@ -89,7 +88,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     public function getController(): Controller
     {
         if ($this->_Controller === null) {
-            throw new RuntimeException('Cannot getController() it has not been set yet.');
+            throw new RuntimeException('Controller must be set first.');
         }
 
         return $this->_Controller;
@@ -144,7 +143,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         if (is_object($class)) {
             return $class;
         }
-        if ($this->container && $this->container->has($class)) {
+        if ($this->container?->has($class)) {
             /** @var \Cake\Controller\Component $instance */
             $instance = $this->container->get($class);
             $instance->setConfig($config);
