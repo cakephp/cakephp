@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -109,7 +108,6 @@ class Application extends BaseApplication
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
         $container->add(DependencyCommand::class)
             ->addArgument(stdClass::class);
-        $container->add(ComponentRegistry::class);
         $container->delegate(new ReflectionContainer());
     }
 }
