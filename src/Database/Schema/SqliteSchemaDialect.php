@@ -489,10 +489,10 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
             TableSchemaInterface::TYPE_JSON => ' TEXT',
-            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY',
-            TableSchemaInterface::TYPE_POINT => ' POINT',
-            TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING',
-            TableSchemaInterface::TYPE_POLYGON => ' POLYGON',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY_TEXT',
+            TableSchemaInterface::TYPE_POINT => ' POINT_TEXT',
+            TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING_TEXT',
+            TableSchemaInterface::TYPE_POLYGON => ' POLYGON_TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);

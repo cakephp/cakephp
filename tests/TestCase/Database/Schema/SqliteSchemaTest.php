@@ -176,19 +176,19 @@ class SqliteSchemaTest extends TestCase
                 ['type' => 'binaryuuid', 'length' => null],
             ],
             [
-                'GEOMETRY',
+                'GEOMETRY_TEXT',
                 ['type' => 'geometry', 'length' => null],
             ],
             [
-                'POINT',
+                'POINT_TEXT',
                 ['type' => 'point', 'length' => null],
             ],
             [
-                'LINESTRING',
+                'LINESTRING_TEXT',
                 ['type' => 'linestring', 'length' => null],
             ],
             [
-                'POLYGON',
+                'POLYGON_TEXT',
                 ['type' => 'polygon', 'length' => null],
             ],
         ];
@@ -294,7 +294,7 @@ published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
-location POINT,
+location POINT_TEXT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -900,42 +900,42 @@ SQL;
             [
                 'g',
                 ['type' => 'geometry'],
-                '"g" GEOMETRY',
+                '"g" GEOMETRY_TEXT',
             ],
             [
                 'g',
                 ['type' => 'geometry', 'null' => false, 'srid' => 4326],
-                '"g" GEOMETRY NOT NULL',
+                '"g" GEOMETRY_TEXT NOT NULL',
             ],
             [
                 'p',
                 ['type' => 'point'],
-                '"p" POINT',
+                '"p" POINT_TEXT',
             ],
             [
                 'p',
                 ['type' => 'point', 'null' => false, 'srid' => 4326],
-                '"p" POINT NOT NULL',
+                '"p" POINT_TEXT NOT NULL',
             ],
             [
                 'l',
                 ['type' => 'linestring'],
-                '"l" LINESTRING',
+                '"l" LINESTRING_TEXT',
             ],
             [
                 'l',
                 ['type' => 'linestring', 'null' => false, 'srid' => 4326],
-                '"l" LINESTRING NOT NULL',
+                '"l" LINESTRING_TEXT NOT NULL',
             ],
             [
                 'p',
                 ['type' => 'polygon'],
-                '"p" POLYGON',
+                '"p" POLYGON_TEXT',
             ],
             [
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
-                '"p" POLYGON NOT NULL',
+                '"p" POLYGON_TEXT NOT NULL',
             ],
         ];
     }
