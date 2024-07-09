@@ -2279,6 +2279,22 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * testUnlockFieldWithFormTokenData method
+     *
+     * Test that unlockField() becomes a no-op and does not throw an exception
+     * when called without `formTokenData` being present in the request.
+     *
+     * @return void
+     */
+    public function testUnlockFieldWithFormTokenData(): void
+    {
+        $this->Form->create();
+        $result = $this->Form->unlockField('foo');
+
+        $this->assertSame($this->Form, $result);
+    }
+
+    /**
      * testSecuredFormUrlIgnoresHost method
      *
      * Test that only the path + query elements of a form's URL show up in their hash.

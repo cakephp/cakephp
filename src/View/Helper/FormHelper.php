@@ -658,13 +658,18 @@ class FormHelper extends Helper
      * Add to the list of fields that are currently unlocked.
      *
      * Unlocked fields are not included in the form protection field hash.
+     * It will be no-op if the FormProtectionComponent is not loaded in the controller.
      *
      * @param string $name The dot separated name for the field.
      * @return $this
      */
     public function unlockField(string $name)
     {
-        $this->getFormProtector()->unlockField($name);
+        try {
+            $this->getFormProtector()->unlockField($name);
+        } catch (CakeException) {
+            // Ignore exception when the FormProtector is not created (FormProtectionComponent is not loaded).
+        }
 
         return $this;
     }
