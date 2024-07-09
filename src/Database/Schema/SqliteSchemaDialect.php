@@ -86,7 +86,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'tinyint') {
             return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (str_contains($col, 'int')) {
+        if (str_contains($col, 'int') && $col !== 'point') {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (str_contains($col, 'decimal')) {
@@ -138,6 +138,14 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
+        }
+        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            // TODO how can srid be preserved? It doesn't come back
+            // in the output of show full columns from ...
+            return [
+                'type' => $col,
+                'length' => null,
+            ];
         }
 
         return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
@@ -481,6 +489,10 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
             TableSchemaInterface::TYPE_JSON => ' TEXT',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY_TEXT',
+            TableSchemaInterface::TYPE_POINT => ' POINT_TEXT',
+            TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING_TEXT',
+            TableSchemaInterface::TYPE_POLYGON => ' POLYGON_TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);

@@ -300,6 +300,21 @@ SQL;
                 null,
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
             ],
+            // Geospatial types
+            [
+                'GEOMETRY',
+                null,
+                null,
+                null,
+                ['type' => 'geometry', 'null' => true],
+            ],
+            [
+                'GEOGRAPHY',
+                null,
+                null,
+                null,
+                ['type' => 'point', 'null' => true],
+            ],
         ];
     }
 
@@ -826,6 +841,47 @@ SQL;
                 'created',
                 ['type' => 'timestamp', 'null' => true],
                 '[created] DATETIME2 DEFAULT NULL',
+            ],
+            // Geospatial
+            [
+                'g',
+                ['type' => 'geometry'],
+                '[g] GEOMETRY',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '[g] GEOMETRY NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '[p] GEOGRAPHY',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '[p] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '[l] GEOGRAPHY',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '[l] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '[p] GEOGRAPHY',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '[p] GEOGRAPHY NOT NULL',
             ],
         ];
     }

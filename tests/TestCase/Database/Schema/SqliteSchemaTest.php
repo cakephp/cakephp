@@ -175,6 +175,22 @@ class SqliteSchemaTest extends TestCase
                 'UUID_BLOB',
                 ['type' => 'binaryuuid', 'length' => null],
             ],
+            [
+                'GEOMETRY_TEXT',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT_TEXT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING_TEXT',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON_TEXT',
+                ['type' => 'polygon', 'length' => null],
+            ],
         ];
     }
 
@@ -278,6 +294,7 @@ published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
+location POINT_TEXT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -454,6 +471,15 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'collate' => null,
+            ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
             ],
         ];
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
@@ -869,6 +895,47 @@ SQL;
                 'created',
                 ['type' => 'timestamp', 'null' => true],
                 '"created" TIMESTAMP DEFAULT NULL',
+            ],
+            // Geospatial types
+            [
+                'g',
+                ['type' => 'geometry'],
+                '"g" GEOMETRY_TEXT',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '"g" GEOMETRY_TEXT NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '"p" POINT_TEXT',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '"p" POINT_TEXT NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '"l" LINESTRING_TEXT',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '"l" LINESTRING_TEXT NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '"p" POLYGON_TEXT',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '"p" POLYGON_TEXT NOT NULL',
             ],
         ];
     }

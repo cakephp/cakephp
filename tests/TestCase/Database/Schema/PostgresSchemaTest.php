@@ -249,6 +249,23 @@ SQL;
                 ['type' => 'JSONB'],
                 ['type' => 'json', 'length' => null],
             ],
+            // Geospatial
+            [
+                ['type' => 'GEOGRAPHY(GEOMETRY, 4326)'],
+                ['type' => 'geometry', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(POINT, 4326)'],
+                ['type' => 'point', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(LINESTRING, 4326)'],
+                ['type' => 'linestring', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
+                ['type' => 'polygon', 'length' => null, 'srid' => 4326],
+            ],
         ];
     }
 
@@ -948,6 +965,47 @@ SQL;
                 'current_timestamp_fractional',
                 ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
                 '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
+            // Geospatial
+            [
+                'g',
+                ['type' => 'geometry'],
+                '"g" GEOGRAPHY(GEOMETRY, 4326)',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '"g" GEOGRAPHY(GEOMETRY, 4326) NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '"p" GEOGRAPHY(POINT, 4326)',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '"p" GEOGRAPHY(POINT, 4326) NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '"l" GEOGRAPHY(LINESTRING, 4326)',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '"l" GEOGRAPHY(LINESTRING, 4326) NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '"p" GEOGRAPHY(POLYGON, 4326)',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '"p" GEOGRAPHY(POLYGON, 4326) NOT NULL',
             ],
         ];
     }

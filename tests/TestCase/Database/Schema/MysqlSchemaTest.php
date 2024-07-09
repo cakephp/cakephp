@@ -220,6 +220,22 @@ class MysqlSchemaTest extends TestCase
                 'JSON',
                 ['type' => 'json', 'length' => null],
             ],
+            [
+                'GEOMETRY',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON',
+                ['type' => 'polygon', 'length' => null],
+            ],
         ];
     }
 
@@ -286,6 +302,7 @@ SQL;
                 unique_id INT NOT NULL,
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
+                location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 KEY `author_idx` (`author_id`),
@@ -399,6 +416,15 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+            ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
             ],
             'created' => [
                 'type' => 'datetime',
@@ -897,6 +923,47 @@ SQL;
                 'created_with_precision',
                 ['type' => 'timestampfractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
                 '`created_with_precision` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
+            ],
+            // Geospatial types
+            [
+                'g',
+                ['type' => 'geometry'],
+                '`g` GEOMETRY',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '`g` GEOMETRY NOT NULL SRID 4326',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '`p` POINT',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '`p` POINT NOT NULL SRID 4326',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '`l` LINESTRING',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '`l` LINESTRING NOT NULL SRID 4326',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '`p` POLYGON',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '`p` POLYGON NOT NULL SRID 4326',
             ],
         ];
     }
