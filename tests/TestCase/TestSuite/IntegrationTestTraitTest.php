@@ -250,8 +250,8 @@ class IntegrationTestTraitTest extends TestCase
         $requestWithTokens = $this->_buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
 
         $this->assertArrayHasKey('_Token', $requestWithTokens['post']);
-        $this->assertArrayHasKey('_csrfToken', $requestWithTokens['post']);
         $this->assertArrayHasKey('csrfToken', $requestWithTokens['cookies']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithTokens['post']);
     }
 
     /**
