@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Map;
 
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
 use function Cake\Core\toBool;
 use function Cake\Core\toDate;
 use function Cake\Core\toDateTime;
@@ -40,7 +38,7 @@ trait TypeAwareMapTrait
      */
     public function getString(string $key): string
     {
-        return (string) $this->get($key);
+        return (string)$this->get($key);
     }
 
     /**
@@ -80,7 +78,7 @@ trait TypeAwareMapTrait
      * Returns the value of the key as a Date object.
      *
      * @param string $key
-     * @return FrozenDate|null
+     * @return \Cake\I18n\FrozenDate|null
      */
     public function getDate(string $key): ?bool
     {
@@ -91,7 +89,7 @@ trait TypeAwareMapTrait
      * Returns the value of the key as a DateTime object.
      *
      * @param string $key
-     * @return FrozenTime|null
+     * @return \Cake\I18n\FrozenTime|null
      */
     public function getDateTime(string $key): ?bool
     {

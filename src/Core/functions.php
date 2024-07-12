@@ -18,9 +18,9 @@ namespace Cake\Core;
 
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
-use Cake\I18n\FrozenDate;
 use DateTimeInterface;
 use Exception;
+use IntlDateFormatter;
 use JsonException;
 use Stringable;
 
@@ -552,13 +552,13 @@ function toDateTime(mixed $value): ?DateTime
     } else if (is_int($value)) {
         try {
             return DateTime::createFromTimestamp($value);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     } else if (is_string($value)) {
         try {
             return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -574,7 +574,7 @@ function toDateTime(mixed $value): ?DateTime
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateInterface.
- * @return FrozenDate|null Returns a FrozenDate if parsing is successful, or NULL otherwise.
+ * @return \Cake\I18n\FrozenDate|null Returns a FrozenDate if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
 function toDate(mixed $value): ?Date
@@ -596,7 +596,7 @@ function toDate(mixed $value): ?Date
         }
     } else if (is_string($value)) {
         try {
-            return Date::parseDate($value, \IntlDateFormatter::SHORT);
+            return Date::parseDate($value, IntlDateFormatter::SHORT);
         } catch (Exception) {
             return null;
         }
