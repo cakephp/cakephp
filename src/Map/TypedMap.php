@@ -28,25 +28,25 @@ use OutOfBoundsException;
 class TypedMap implements MapInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $map = [];
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected array $types = [];
 
     /**
-     * TODO: Consider expanding this list and having children override it to narrow acceptable types
-     *
-     * @var array|string[]
+     * @var array<string>
      */
     protected array $supportedTypes = [
-        'string',
         'int',
         'float',
+        'string',
         'bool',
+        'array',
+        'object',
         'DateTime',
         'Date',
     ];
@@ -63,7 +63,7 @@ class TypedMap implements MapInterface
         $type = $this->detectType($value);
         if (!$this->isValidType($type)) {
             throw new InvalidArgumentException("Cannot store unsupported type `${type}` in Map object. " .
-                "Supported types are: " . implode(', ', $this->supportedTypes));
+                'Supported types are: ' . implode(', ', $this->supportedTypes));
         }
 
         $this->map[$key] = $value;
@@ -110,19 +110,25 @@ class TypedMap implements MapInterface
      */
     protected function detectType(mixed $value): string
     {
-        return match (true) {
-            is_int($value) => 'int',
-            is_float($value) => 'float',
-            is_string($value) => 'string',
-            is_bool($value) => 'bool',
-            is_array($value) => 'array',
-            is_object($value) => 'object',
-            is_callable($value) => 'callable',
-            is_iterable($value) => 'iterable',
-            get_class($value) === DateTime::class => 'DateTime',
-            get_class($value) === Date::class => 'Date',
-            default => 'mixed',
-        };
+        if (is_object($value)) {
+            return match (true) {
+                get_class($value) === DateTime::class => 'DateTime',
+                get_class($value) === Date::class => 'Date',
+                default => 'object',
+            };
+        } else {
+            return match (true) {
+                is_int($value) => 'int',
+                is_float($value) => 'float',
+                is_string($value) => 'string',
+                is_bool($value) => 'bool',
+                is_array($value) => 'array',
+                // TODO: Unsure if these should be included. They don't make sense for a Map, right?
+                //is_callable($value) => 'callable',
+                //is_iterable($value) => 'iterable',
+                default => 'mixed',
+            };
+        }
     }
 
     /**
