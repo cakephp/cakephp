@@ -24,7 +24,7 @@ use OutOfBoundsException;
  */
 class CookieMap extends TypedMap
 {
-    use TypeAwareMapTrait;
+    use TypedMapTrait;
 
     /**
      * @var array<string, mixed>

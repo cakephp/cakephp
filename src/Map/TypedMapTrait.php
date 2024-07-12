@@ -28,7 +28,7 @@ use function Cake\Core\toInt;
  * This trait expects that the implementing class define a get() method for
  * obtaining raw values.
  */
-trait TypeAwareMapTrait
+trait TypedMapTrait
 {
     /**
      * Returns the string value of the key.
