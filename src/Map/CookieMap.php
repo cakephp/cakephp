@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Map;
 
-use Cake\I18n\Date;
-use Cake\I18n\DateTime;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
@@ -26,6 +24,8 @@ use OutOfBoundsException;
  */
 class CookieMap extends TypedMap
 {
+    use TypeAwareMapTrait;
+
     /**
      * @var array<string, mixed>
      */
