@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
@@ -33,6 +34,8 @@ use function Cake\Core\namespaceSplit;
 use function Cake\Core\pathCombine;
 use function Cake\Core\pluginSplit;
 use function Cake\Core\toBool;
+use function Cake\Core\toDate;
+use function Cake\Core\toDateTime;
 use function Cake\Core\toFloat;
 use function Cake\Core\toInt;
 use function Cake\Core\toString;
