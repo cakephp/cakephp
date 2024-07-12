@@ -540,14 +540,14 @@ function toBool(mixed $value): ?bool
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateTimeInterface.
- * @return \DateTime|null Returns a DateTimeInterface if parsing is successful, or NULL otherwise.
+ * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
 function toDateTime(mixed $value): ?DateTime
 {
     if ($value instanceof DateTime) {
         return $value;
-    } else if ($value instanceof DateTimeInterface) {
+    } elseif ($value instanceof DateTimeInterface) {
         return DateTime::parse($value);
     } else if (is_int($value)) {
         try {
@@ -574,14 +574,14 @@ function toDateTime(mixed $value): ?DateTime
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateInterface.
- * @return \Cake\I18n\FrozenDate|null Returns a FrozenDate if parsing is successful, or NULL otherwise.
+ * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
 function toDate(mixed $value): ?Date
 {
     if ($value instanceof Date) {
         return $value;
-    } else if ($value instanceof DateTimeInterface) {
+    } elseif ($value instanceof DateTimeInterface) {
         return Date::parse($value);
     } else if (is_int($value)) {
         try {
