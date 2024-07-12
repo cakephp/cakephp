@@ -16,6 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
+use Cake\I18n\FrozenDate;
+use DateTimeInterface;
+use Exception;
 use JsonException;
 use Stringable;
 
@@ -522,6 +527,79 @@ function toBool(mixed $value): ?bool
     }
     if ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
         return false;
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to a DateTimeInterface.
+ *
+ *  integer  - value is treated as a Unix timestamp
+ *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to DateTimeInterface.
+ * @return \DateTime|null Returns a DateTimeInterface if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toDateTime(mixed $value): ?DateTime
+{
+    if ($value instanceof DateTime) {
+        return $value;
+    } else if ($value instanceof DateTimeInterface) {
+        return DateTime::parse($value);
+    } else if (is_int($value)) {
+        try {
+            return DateTime::createFromTimestamp($value);
+        } catch (\Exception) {
+            return null;
+        }
+    } else if (is_string($value)) {
+        try {
+            return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to a native Date object.
+ *
+ *  integer  - value is treated as a Unix timestamp
+ *  string - value is treated as a I18N short formatted date
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to DateInterface.
+ * @return FrozenDate|null Returns a FrozenDate if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toDate(mixed $value): ?Date
+{
+    if ($value instanceof Date) {
+        return $value;
+    } else if ($value instanceof DateTimeInterface) {
+        return Date::parse($value);
+    } else if (is_int($value)) {
+        try {
+            $ts = DateTime::createFromTimestamp($value);
+            return Date::createFromArray([
+                'year' => $ts->format('Y'),
+                'month' => $ts->format('m'),
+                'day' => $ts->format('d'),
+            ]);
+        } catch (Exception) {
+            return null;
+        }
+    } else if (is_string($value)) {
+        try {
+            return Date::parseDate($value, \IntlDateFormatter::SHORT);
+        } catch (Exception) {
+            return null;
+        }
     }
 
     return null;
