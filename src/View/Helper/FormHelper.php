@@ -665,11 +665,7 @@ class FormHelper extends Helper
      */
     public function unlockField(string $name)
     {
-        try {
-            $this->getFormProtector()->unlockField($name);
-        } catch (CakeException) {
-            // Ignore exception when the FormProtector is not created (FormProtectionComponent is not loaded).
-        }
+        $this->getFormProtector()?->unlockField($name);
 
         return $this;
     }
@@ -693,18 +689,10 @@ class FormHelper extends Helper
     /**
      * Get form protector instance.
      *
-     * @return \Cake\Form\FormProtector
-     * @throws \Cake\Core\Exception\CakeException
+     * @return \Cake\Form\FormProtector|null
      */
-    public function getFormProtector(): FormProtector
+    public function getFormProtector(): ?FormProtector
     {
-        if ($this->formProtector === null) {
-            throw new CakeException(
-                '`FormProtector` instance has not been created. Ensure you have loaded the `FormProtectionComponent`'
-                . ' in your controller and called `FormHelper::create()` before calling `FormHelper::unlockField()`.'
-            );
-        }
-
         return $this->formProtector;
     }
 
