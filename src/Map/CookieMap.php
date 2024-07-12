@@ -44,6 +44,18 @@ class CookieMap extends TypedMap
     ];
 
     /**
+     * Class constructor.
+     *
+     * @param array<string, mixed> $cookies
+     */
+    public function __construct(array $cookies)
+    {
+        foreach ($cookies as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
+    /**
      * Sets a value in the map with the given key and type.
      *
      * @param string $key
