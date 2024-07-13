@@ -40,6 +40,7 @@ class RedisEngineTest extends TestCase
     {
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
+        $this->skipIf(PHP_VERSION_ID >= 80400, 'redis.io currrently generates an error on PHP 8.4');
 
         $this->port = env('REDIS_PORT', $this->port);
 
