@@ -122,8 +122,8 @@ jobs:
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --display-skipped --testsuite=database
           vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --display-skipped --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         else
-          vendor/bin/phpunit
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
+          vendor/bin/phpunit --display-deprecations --display-warnings
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --testsuite=database
         fi
 
     - name: Submit code coverage
