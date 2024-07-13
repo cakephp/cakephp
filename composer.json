@@ -33,7 +33,7 @@
         "league/container": "^4.2",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
-        "psr/http-factory": "^1.0.2",
+        "psr/http-factory": "^1.1",
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",

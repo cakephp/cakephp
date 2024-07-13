@@ -34,6 +34,8 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.3'
             db-type: 'mysql'
+          - php-version: '8.4'
+            db-type: 'mysql'
 
     services:
       redis:
@@ -95,6 +97,8 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
+        elif ${{ matrix.php-version == '8.4' }}; then
+          composer update --ignore-platform-req=php
         else
           composer update
         fi
