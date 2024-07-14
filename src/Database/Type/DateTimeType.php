@@ -134,7 +134,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         if ($value === null || is_string($value)) {
             return $value;
         }
-        if (is_int($value)) {
+        if (is_int($value) || is_float($value)) {
             $class = $this->_className;
             $value = new $class('@' . $value);
         }
@@ -212,7 +212,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
 
         $class = $this->_className;
-        if (is_int($value)) {
+        if (is_numeric($value)) {
             $instance = new $class('@' . $value);
         } elseif (str_starts_with($value, '0000-00-00')) {
             return null;
