@@ -533,13 +533,13 @@ function toBool(mixed $value): ?bool
 }
 
 /**
- * Converts a value to a DateTimeInterface.
+ * Converts a value to a native DateTime object.
  *
- *  integer  - value is treated as a Unix timestamp
+ *  integer - value is treated as a Unix timestamp
  *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
  *  Other values returns as null.
  *
- * @param mixed $value The value to convert to DateTimeInterface.
+ * @param mixed $value The value to convert to DateTime.
  * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
@@ -575,11 +575,11 @@ function toDateTime(mixed $value): ?DateTime
 /**
  * Converts a value to a native Date object.
  *
- *  integer  - value is treated as a Unix timestamp
+ *  integer - value is treated as a Unix timestamp
  *  string - value is treated as a I18N short formatted date
  *  Other values returns as null.
  *
- * @param mixed $value The value to convert to DateInterface.
+ * @param mixed $value The value to convert to Date.
  * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
@@ -587,9 +587,13 @@ function toDate(mixed $value): ?Date
 {
     if ($value instanceof Date) {
         return $value;
-    } elseif ($value instanceof DateTimeInterface) {
+    }
+
+    if ($value instanceof DateTimeInterface) {
         return Date::parse($value);
-    } else if (is_int($value)) {
+    }
+
+    if (is_int($value)) {
         try {
             $ts = DateTime::createFromTimestamp($value);
             return Date::createFromArray([
@@ -600,7 +604,9 @@ function toDate(mixed $value): ?Date
         } catch (Exception) {
             return null;
         }
-    } else if (is_string($value)) {
+    }
+
+    if (is_string($value)) {
         try {
             return Date::parseDate($value, IntlDateFormatter::SHORT);
         } catch (Exception) {
