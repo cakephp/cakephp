@@ -18,8 +18,13 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use IntlDateFormatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use function Cake\Core\deprecationWarning;
@@ -29,6 +34,8 @@ use function Cake\Core\namespaceSplit;
 use function Cake\Core\pathCombine;
 use function Cake\Core\pluginSplit;
 use function Cake\Core\toBool;
+use function Cake\Core\toDate;
+use function Cake\Core\toDateTime;
 use function Cake\Core\toFloat;
 use function Cake\Core\toInt;
 use function Cake\Core\toString;
@@ -675,6 +682,102 @@ class FunctionsTest extends TestCase
             // boolean input types
             '(bool) true' => [true, true],
             '(bool) false' => [false, false],
+            // other input types
+            '(other) null' => [null, null],
+            '(other) empty-array' => [[], null],
+            '(other) int-array' => [[5], null],
+            '(other) string-array' => [['5'], null],
+            '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    /**
+     * @dataProvider toDateTimeProvider
+     */
+    public function testToDateTime(mixed $rawValue, ?DateTime $expected): void
+    {
+        $this->assertEquals($expected, toDateTime($rawValue));
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateTimeProvider(): array
+    {
+        $date = new DateTime('2024-07-01T14:30:00Z');
+        $now = $date->toAtomString();
+
+        return [
+            // datetime input types
+            '(datetime) datetime interface' => [new DateTime($now), $date],
+            '(datetime) frozentime interface' => [new FrozenTime($now), $date],
+            // string input types
+            '(string) datetime string' => [$now, $date],
+            '(string) empty string' => ['', null],
+            '(string) space' => [' ', null],
+            '(string) some word' => ['abc', null],
+            '(string) double 0' => ['00', null],
+            '(string) single 0' => ['0', null],
+            '(string) false' => ['false', null],
+            '(string) double 1' => ['11', null],
+            '(string) true-string' => ['true', null],
+            // int input types
+            '(int) timestamp' => [1719844200, $date],
+            '(int) negative number' => [-1000, DateTime::createFromTimestamp(-1000)],
+            // float input types
+            '(float) positive' => [5.5, null],
+            '(float) round' => [5.0, null],
+            '(float) NaN' => [acos(8), null],
+            '(float) INF' => [INF, null],
+            '(float) -INF' => [-INF, null],
+            // other input types
+            '(other) null' => [null, null],
+            '(other) empty-array' => [[], null],
+            '(other) int-array' => [[5], null],
+            '(other) string-array' => [['5'], null],
+            '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    /**
+     * @dataProvider toDateProvider
+     */
+    public function testToDate(mixed $rawValue, ?Date $expected): void
+    {
+        $this->assertEquals($expected, toDate($rawValue));
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateProvider(): array
+    {
+        $epoch = Date::createFromArray(['year' => 1970, 'month' => 01, 'day' => 01]);
+        $date = Date::createFromArray(['year' => 2024, 'month' => 07, 'day' => 01]);
+        $now = $date->toAtomString();
+
+        return [
+            // datetime input types
+            '(datetime) datetime interface' => [new DateTime($now), $date],
+            '(datetime frozendate object' => [new FrozenDate($now), $date],
+            // string input types
+            '(string) date string' => [$date->i18nFormat(IntlDateFormatter::SHORT), $date],
+            '(string) empty string' => ['', null],
+            '(string) space' => [' ', null],
+            '(string) some word' => ['abc', null],
+            '(string) double 0' => ['00', null],
+            '(string) false' => ['false', null],
+            '(string) double 1' => ['11', null],
+            '(string) true-string' => ['true', null],
+            // int input types
+            '(int) timestamp' => [1_719_844_200, $date],
+            '(int) negative number' => [-2_592_000, $epoch->subDays(30)],
+            // float input types
+            '(float) positive' => [5.5, null],
+            '(float) round' => [5.0, null],
+            '(float) NaN' => [acos(8), null],
+            '(float) INF' => [INF, null],
+            '(float) -INF' => [-INF, null],
             // other input types
             '(other) null' => [null, null],
             '(other) empty-array' => [[], null],
