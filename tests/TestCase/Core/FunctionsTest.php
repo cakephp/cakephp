@@ -20,8 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use IntlDateFormatter;
@@ -710,7 +708,6 @@ class FunctionsTest extends TestCase
         return [
             // datetime input types
             '(datetime) datetime interface' => [new DateTime($now), $date],
-            '(datetime) frozentime interface' => [new FrozenTime($now), $date],
             // string input types
             '(string) datetime string' => [$now, $date],
             '(string) empty string' => ['', null],
@@ -759,7 +756,6 @@ class FunctionsTest extends TestCase
         return [
             // datetime input types
             '(datetime) datetime interface' => [new DateTime($now), $date],
-            '(datetime frozendate object' => [new FrozenDate($now), $date],
             // string input types
             '(string) date string' => [$date->i18nFormat(IntlDateFormatter::SHORT), $date],
             '(string) empty string' => ['', null],
