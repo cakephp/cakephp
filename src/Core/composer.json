@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/utility": "^5.0",
+        "cakephp/utility": "^5.1",
         "league/container": "^4.2",
         "psr/container": "^1.1 || ^2.0"
     },
