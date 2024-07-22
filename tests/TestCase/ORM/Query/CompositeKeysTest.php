@@ -525,10 +525,10 @@ class CompositeKeysTest extends TestCase
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
-            '1;1' => 'mark;1',
-            '2;2' => 'juan;2',
-            '3;2' => 'jose;2',
-            '4;1' => 'andy;1',
+            '1;1' => 'mark 1',
+            '2;2' => 'juan 2',
+            '3;2' => 'jose 2',
+            '4;1' => 'andy 1',
         ];
         $this->assertEquals($expected, $query->toArray());
 
@@ -536,13 +536,13 @@ class CompositeKeysTest extends TestCase
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
-            '1;1' => [
-                '1;1' => 'mark;1',
-                '4;1' => 'andy;1',
+            '1 1' => [
+                '1;1' => 'mark 1',
+                '4;1' => 'andy 1',
             ],
-            '2;2' => [
-                '2;2' => 'juan;2',
-                '3;2' => 'jose;2',
+            '2 2' => [
+                '2;2' => 'juan 2',
+                '3;2' => 'jose 2',
             ],
         ];
         $this->assertEquals($expected, $query->toArray());
