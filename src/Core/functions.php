@@ -559,7 +559,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
 
     if (is_numeric($value)) {
         try {
-            return DateTime::createFromTimestamp($value);
+            return DateTime::createFromTimestamp((float)$value);
         } catch (Exception) {
             return null;
         }
@@ -601,7 +601,7 @@ function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
 
     if (is_numeric($value)) {
         try {
-            $ts = DateTime::createFromTimestamp($value);
+            $ts = DateTime::createFromTimestamp((float)$value);
             return Date::create($ts->year, $ts->month, $ts->day);
         } catch (Exception) {
             return null;
