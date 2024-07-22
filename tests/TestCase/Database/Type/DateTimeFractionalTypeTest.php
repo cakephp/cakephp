@@ -77,6 +77,16 @@ class DateTimeFractionalTypeTest extends TestCase
         $this->assertInstanceOf(DateTime::class, $result);
         $this->assertSame('123456', $result->format('u'));
 
+        $result = $this->type->toPHP('1401906995.123456', $this->driver);
+        $this->assertInstanceOf(DateTime::class, $result);
+        $this->assertSame('2014', $result->format('Y'));
+        $this->assertSame('06', $result->format('m'));
+        $this->assertSame('04', $result->format('d'));
+        $this->assertSame('18', $result->format('H'));
+        $this->assertSame('36', $result->format('i'));
+        $this->assertSame('35', $result->format('s'));
+        $this->assertSame('123456', $result->format('u'));
+
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00.123456', $this->driver);
         $this->assertInstanceOf(DateTime::class, $result);
@@ -170,6 +180,10 @@ class DateTimeFractionalTypeTest extends TestCase
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2013-08-12 20:46:17.123456', $result);
         $this->type->setDatabaseTimezone(null);
+
+        $date = 1401906995.123;
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertSame('2014-06-04 18:36:35.123000', $result);
     }
 
     /**

@@ -1576,9 +1576,9 @@ class TableTest extends TestCase
         $this->assertSame($expected, $query->clause('select'));
 
         $expected = [
-            1 => '1;First Article',
-            2 => '3;Second Article',
-            3 => '1;Third Article',
+            1 => '1 First Article',
+            2 => '3 Second Article',
+            3 => '1 Third Article',
         ];
         $this->assertSame($expected, $query->toArray());
 

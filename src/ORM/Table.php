@@ -1380,7 +1380,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         Closure|array|string|null $keyField = null,
         Closure|array|string|null $valueField = null,
         Closure|array|string|null $groupField = null,
-        string $valueSeparator = ';'
+        string $valueSeparator = ' '
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
         $valueField ??= $this->getDisplayField();
