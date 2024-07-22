@@ -18,6 +18,7 @@ namespace Cake\Core;
 
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
 use IntlDateFormatter;
@@ -542,7 +543,7 @@ function toBool(mixed $value): ?bool
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateTime.
- * @param string $format The datetime format to use. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
+ * @param string $format The datetime format the value is in. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
  * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
@@ -584,7 +585,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to Date.
- * @param string $format The date format to use. Defaults to Short (ex: 1970-01-01) format.
+ * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
  * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
@@ -601,7 +602,7 @@ function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
     if (is_numeric($value)) {
         try {
             $ts = DateTime::createFromTimestamp($value);
-            return Date::createFromFormat($format, $ts->format($format));
+            return Date::create($ts->year, $ts->month, $ts->day);
         } catch (Exception) {
             return null;
         }
