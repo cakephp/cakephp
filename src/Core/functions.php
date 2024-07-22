@@ -537,6 +537,7 @@ function toBool(mixed $value): ?bool
  * Converts a value to a native DateTime object.
  *
  *  integer - value is treated as a Unix timestamp
+ *  float - value is treated as a Unix timestamp with microseconds
  *  string - value is treated as an Atom-formatted timestamp, unless otherwise specified
  *  Other values returns as null.
  *
@@ -555,7 +556,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
         return DateTime::parse($value);
     }
 
-    if (is_int($value)) {
+    if (is_numeric($value)) {
         try {
             return DateTime::createFromTimestamp($value);
         } catch (Exception) {
@@ -578,6 +579,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
  * Converts a value to a native Date object.
  *
  *  integer - value is treated as a Unix timestamp
+ *  float - value is treated as a Unix timestamp with microseconds
  *  string - value is treated as a I18N short formatted date, unless otherwise specified
  *  Other values returns as null.
  *
@@ -596,7 +598,7 @@ function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
         return Date::parse($value);
     }
 
-    if (is_int($value)) {
+    if (is_numeric($value)) {
         try {
             $ts = DateTime::createFromTimestamp($value);
             return Date::createFromFormat($format, $ts->format($format));
