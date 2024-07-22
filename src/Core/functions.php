@@ -22,6 +22,7 @@ use DateTimeInterface;
 use Exception;
 use IntlDateFormatter;
 use JsonException;
+use Opis\JsonSchema\Formats\DateTimeFormats;
 use Stringable;
 
 if (!defined('DS')) {
@@ -536,14 +537,15 @@ function toBool(mixed $value): ?bool
  * Converts a value to a native DateTime object.
  *
  *  integer - value is treated as a Unix timestamp
- *  string - value is treated as a ISO-8601 (Atom) formatted timestamp
+ *  string - value is treated as an Atom-formatted timestamp, unless otherwise specified
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to DateTime.
+ * @param string $format The datetime format to use. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
  * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
-function toDateTime(mixed $value): ?DateTime
+function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?DateTime
 {
     if ($value instanceof DateTime) {
         return $value;
@@ -563,7 +565,7 @@ function toDateTime(mixed $value): ?DateTime
 
     if (is_string($value)) {
         try {
-            return DateTime::createFromFormat(DateTimeInterface::ATOM, $value);
+            return DateTime::createFromFormat($format, $value);
         } catch (Exception) {
             return null;
         }
@@ -576,14 +578,15 @@ function toDateTime(mixed $value): ?DateTime
  * Converts a value to a native Date object.
  *
  *  integer - value is treated as a Unix timestamp
- *  string - value is treated as a I18N short formatted date
+ *  string - value is treated as a I18N short formatted date, unless otherwise specified
  *  Other values returns as null.
  *
  * @param mixed $value The value to convert to Date.
+ * @param string $format The date format to use. Defaults to Short (ex: 1970-01-01) format.
  * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
  */
-function toDate(mixed $value): ?Date
+function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
 {
     if ($value instanceof Date) {
         return $value;
@@ -596,11 +599,7 @@ function toDate(mixed $value): ?Date
     if (is_int($value)) {
         try {
             $ts = DateTime::createFromTimestamp($value);
-            return Date::createFromArray([
-                'year' => $ts->format('Y'),
-                'month' => $ts->format('m'),
-                'day' => $ts->format('d'),
-            ]);
+            return Date::createFromFormat($format, $ts->format($format));
         } catch (Exception) {
             return null;
         }
@@ -608,7 +607,7 @@ function toDate(mixed $value): ?Date
 
     if (is_string($value)) {
         try {
-            return Date::parseDate($value, IntlDateFormatter::SHORT);
+            return Date::parseDate($value, $format);
         } catch (Exception) {
             return null;
         }
