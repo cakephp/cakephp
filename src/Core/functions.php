@@ -18,12 +18,9 @@ namespace Cake\Core;
 
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use IntlDateFormatter;
 use JsonException;
-use Opis\JsonSchema\Formats\DateTimeFormats;
 use Stringable;
 
 if (!defined('DS')) {
