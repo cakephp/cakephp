@@ -137,6 +137,7 @@ class HtmlHelper extends Helper
     {
         if (!is_array($type)) {
             $types = [
+                'csrfToken' => ['name' => 'csrf-token'],
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
                 'atom' => ['type' => 'application/atom+xml', 'title' => $type, 'link' => $content],
                 'icon' => ['type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content],
@@ -153,6 +154,10 @@ class HtmlHelper extends Helper
 
             if ($type === 'icon' && $content === null) {
                 $types['icon']['link'] = 'favicon.ico';
+            }
+
+            if ($type === 'csrfToken') {
+                $types['csrfToken']['content'] = $this->_View->getRequest()->getAttribute('csrfToken');
             }
 
             if (isset($types[$type])) {
