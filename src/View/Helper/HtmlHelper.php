@@ -130,12 +130,12 @@ class HtmlHelper extends Helper
      * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array<string, mixed> $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
-     * @return string|null A completed `<link>` element, or null if the element was sent to a block.
+     * @return string|null A completed `<link>` or `<meta>` element, or null if the element was sent to a block.
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta(array|string $type, array|string|null $content = null, array $options = []): ?string
     {
-        if (!is_array($type)) {
+        if (is_string($type)) {
             $types = [
                 'csrfToken' => ['name' => 'csrf-token'],
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
