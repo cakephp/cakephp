@@ -51,6 +51,11 @@ parameters:
 			path: src/Datasource/QueryInterface.php
 
 		-
+			message: "#^Method Cake\\\\Error\\\\ErrorLogger\\:\\:log\\(\\) has parameter \\$level with no type specified\\.$#"
+			count: 1
+			path: src/Error/ErrorLogger.php
+
+		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
