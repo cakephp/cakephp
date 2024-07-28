@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -25,7 +24,7 @@ use Throwable;
  *
  * Used by the ErrorHandlerMiddleware and global error handlers to log exceptions and errors.
  */
-interface ErrorLoggerInterface extends LoggerInterface
+interface ErrorLoggerInterface
 {
     /**
      * Log an error for an exception with optional request context.
