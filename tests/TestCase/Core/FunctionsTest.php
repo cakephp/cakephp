@@ -760,56 +760,79 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * @return array The array of test cases.
-     */
-    public static function toDateTimeProviderOld(): array
-    {
-        $date = new DateTime('2024-07-01T14:30:00Z');
-        $now = $date->toAtomString();
-
-        return [
-            // datetime input types
-            '(datetime) datetime interface' => [new DateTime($now), $date],
-            // string input types
-            '(string) datetime string' => [$now, $date],
-            '(string) empty string' => ['', null],
-            '(string) space' => [' ', null],
-            '(string) some word' => ['abc', null],
-            '(string) double 0' => ['00', null],
-            '(string) single 0' => ['0', null],
-            '(string) false' => ['false', null],
-            '(string) double 1' => ['11', null],
-            '(string) true-string' => ['true', null],
-            // int input types
-            '(int) timestamp' => [1719844200, $date],
-            '(int) negative number' => [-1000, DateTime::createFromTimestamp(-1000)],
-            // float input types
-            '(float) positive' => [5.5, null],
-            '(float) round' => [5.0, null],
-            '(float) NaN' => [acos(8), null],
-            '(float) INF' => [INF, null],
-            '(float) -INF' => [-INF, null],
-            // other input types
-            '(other) null' => [null, null],
-            '(other) empty-array' => [[], null],
-            '(other) int-array' => [[5], null],
-            '(other) string-array' => [['5'], null],
-            '(other) simple object' => [new stdClass(), null],
-        ];
-    }
-
-    /**
      * @dataProvider toDateProvider
      */
-    public function testToDate(mixed $rawValue, ?Date $expected): void
+    public function testToDate(mixed $rawValue, string $format, ?Date $expected): void
     {
-        $this->assertEquals($expected, toDate($rawValue));
+        $this->assertEquals($expected, toDate($rawValue, $format));
     }
 
     /**
      * @return array The array of test cases.
      */
     public static function toDateProvider(): array
+    {
+        $date = Date::parse('2024-07-01');
+        $dateTime = new DateTime('2024-07-01T00:00:00Z');
+        $timestamp = $dateTime->getTimestamp();
+
+        return [
+            // Date input types
+            '(date) Date object' => [Date::create(2024, 7, 1), 'Y-m-d', $date],
+
+            // DateTime input types
+            '(datetime) DateTime object' => [new DateTime('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
+            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
+
+            // string input types
+            '(string) valid date string' => ['2024-07-01', 'Y-m-d', $date],                                                                 // FAILING: 2024-07-01 != 2024-01-01
+            '(string) valid date string with custom format' => ['01-07-2024', 'd-m-Y', Date::create(2024, 7, 1)],           // FAILING: 2024-07-01 != 2023-12-24
+            '(string) empty string' => ['', 'Y-m-d', null],
+            '(string) space' => [' ', 'Y-m-d', null],
+            '(string) non-date string' => ['abc', 'Y-m-d', null],
+            '(string) false' => ['false', 'Y-m-d', null],
+            '(string) true' => ['true', 'Y-m-d', null],
+            '(string) partially valid date' => ['2024-07-01', 'Y-m-d', Date::create(2024, 7, 1)],                           // FAILING: 2024-07-01 != 2024-01-01
+            '(string) date with time' => ['2024-07-01T14:30:00', 'Y-m-d\TH:i:s', Date::create(2024, 7, 1)],                 // FAILING: 2024-07-01 != 2024-01-01
+
+            // int input types
+            '(int) valid timestamp' => [$timestamp, 'Y-m-d', Date::create(2024, 7, 1)],
+            '(int) negative timestamp' => [-1000, 'Y-m-d', Date::create(1969, 12, 31)],
+            '(int) large timestamp' => [2147483647, 'Y-m-d', Date::create(2038, 1, 19)],
+            '(int) zero' => [0, 'Y-m-d', Date::create(1970, 1, 1)],
+
+            // float input types
+            '(float) positive' => [5.5, 'Y-m-d', Date::create(1970, 1, 1)],
+            '(float) round' => [5.0, 'Y-m-d', Date::create(1970, 1, 1)],
+            '(float) NaN' => [NAN, 'Y-m-d', null],
+            '(float) INF' => [INF, 'Y-m-d', null],
+            '(float) -INF' => [-INF, 'Y-m-d', null],
+            '(float) timestamp' => [$timestamp + 0.0, 'Y-m-d', Date::create(2024, 7, 1)],
+
+            // other input types
+            '(other) null' => [null, 'Y-m-d', null],
+            '(other) empty array' => [[], 'Y-m-d', null],
+            '(other) int array' => [[5], 'Y-m-d', null],
+            '(other) string array' => [['5'], 'Y-m-d', null],
+            '(other) simple object' => [new stdClass(), 'Y-m-d', null],
+
+            // mixed valid cases
+            '(mixed) DateTime string input' => ['2024-07-01T00:00:00Z', 'Y-m-d\TH:i:s\Z', Date::create(2024, 7, 1)],         // FAILING: 2024-07-01 != 2024-01-01
+            '(mixed) integer string input' => ['1719844200', 'U', Date::create(2024, 7, 1)],
+
+            // Custom format cases
+            '(custom format) valid date' => ['01-07-2024', 'd-m-Y', Date::create(2024, 7, 1)],                              // FAILING: 2024-07-01 != 2023-12-24
+            '(custom format) valid datetime' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', Date::create(2024, 7, 1)],           // FAILING: 2024-07-01 != 2023-12-24
+            '(custom format) invalid date' => ['31-02-2024', 'd-m-Y', Date::create(2024, 02, 31)],                          // FAILING: 2024-02-31 != 2023-12-24
+            '(custom format) partially valid datetime' => ['01-07-2024 14:30', 'd-m-Y H:i', Date::create(2024, 7, 1)],      // FAILING: 2024-07-01 != 2023-12-24
+            '(custom format) valid month/year' => ['07-2024', 'm-Y', Date::create(2024, 7, 1)],                             // FAILING: 2024-07-01 != 2023-12-24
+        ];
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateProviderOld(): array
     {
         $epoch = Date::createFromArray(['year' => 1970, 'month' => 01, 'day' => 01]);
         $date = Date::createFromArray(['year' => 2024, 'month' => 07, 'day' => 01]);
