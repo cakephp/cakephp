@@ -72,6 +72,7 @@ class HtmlHelperTest extends TestCase
         $request = new ServerRequest([
             'webroot' => '',
         ]);
+        $request = $request->withAttribute('csrfToken', 'test');
         Router::reload();
         Router::setRequest($request);
 
@@ -1574,6 +1575,12 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->meta(['link' => 'http://example.com/manifest', 'rel' => 'manifest']);
         $expected = [
             'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->meta('csrfToken');
+        $expected = [
+            'meta' => ['name' => 'csrf-token', 'content' => 'test'],
         ];
         $this->assertHtml($expected, $result);
     }
