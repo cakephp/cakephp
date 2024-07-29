@@ -22,6 +22,8 @@ use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
+use DateTimeInterface;
 use IntlDateFormatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
@@ -692,15 +694,75 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider toDateTimeProvider
      */
-    public function testToDateTime(mixed $rawValue, ?DateTime $expected): void
+    public function testToDateTime(mixed $rawValue, string $format, ?DateTime $expected): void
     {
-        $this->assertEquals($expected, toDateTime($rawValue));
+        $this->assertEquals($expected, toDateTime($rawValue, $format));
     }
 
     /**
      * @return array The array of test cases.
      */
     public static function toDateTimeProvider(): array
+    {
+        $date = new DateTime('2024-07-01T14:30:00Z');
+        $now = $date->format(DateTimeInterface::ATOM);
+        $timestamp = $date->getTimestamp();
+
+        return [
+            // DateTime input types
+            '(datetime) DateTime object' => [new DateTime($now), DateTimeInterface::ATOM, $date],
+            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable($now), DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, $now)],
+
+            // string input types
+            '(string) valid datetime string' => [$now, DateTimeInterface::ATOM, $date],
+            '(string) valid datetime string with custom format' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00')],
+            '(string) empty string' => ['', DateTimeInterface::ATOM, null],
+            '(string) space' => [' ', DateTimeInterface::ATOM, null],
+            '(string) non-date string' => ['abc', DateTimeInterface::ATOM, null],
+            '(string) double 0' => ['00', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
+            '(string) single 0' => ['0', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
+            '(string) false' => ['false', DateTimeInterface::ATOM, null],
+            '(string) true' => ['true', DateTimeInterface::ATOM, null],
+            '(string) partially valid date' => ['2024-07-01T14:30:00', 'Y-m-d\TH:i:s', DateTime::createFromFormat('Y-m-d\TH:i:s', '2024-07-01T14:30:00')],
+
+            // int input types
+            '(int) valid timestamp' => [$timestamp, DateTimeInterface::ATOM, $date],
+            '(int) negative timestamp' => [-1000, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '-1000')],
+            '(int) large timestamp' => [2147483647, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '2147483647')],
+            '(int) zero' => [0, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
+
+            // float input types
+            '(float) positive' => [5.5, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '5')->microsecond(500000)],
+            '(float) round' => [5.0, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '5')],
+            '(float) NaN' => [NAN, DateTimeInterface::ATOM, null],
+            '(float) INF' => [INF, DateTimeInterface::ATOM, null],
+            '(float) -INF' => [-INF, DateTimeInterface::ATOM, null],
+            '(float) timestamp' => [$timestamp + 0.0, DateTimeInterface::ATOM, $date],
+
+            // other input types
+            '(other) null' => [null, DateTimeInterface::ATOM, null],
+            '(other) empty array' => [[], DateTimeInterface::ATOM, null],
+            '(other) int array' => [[5], DateTimeInterface::ATOM, null],
+            '(other) string array' => [['5'], DateTimeInterface::ATOM, null],
+            '(other) simple object' => [new stdClass(), DateTimeInterface::ATOM, null],
+
+            // mixed valid cases
+            '(mixed) DateTimeImmutable string input' => ['2024-07-01T14:30:00Z', DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, '2024-07-01T14:30:00Z')],
+            '(mixed) integer string input' => ['1719844200', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '1719844200')],
+
+            // Custom format cases
+            '(custom format) valid date' => ['01-07-2024', 'd-m-Y', DateTime::createFromFormat('d-m-Y', '01-07-2024')],
+            '(custom format) valid datetime' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00')],
+            '(custom format) invalid date' => ['31-02-2024', 'd-m-Y', DateTime::createFromFormat('d-m-Y', '02-03-2024')],
+            '(custom format) partially valid datetime' => ['01-07-2024 14:30', 'd-m-Y H:i', DateTime::createFromFormat('d-m-Y H:i', '01-07-2024 14:30')],
+            '(custom format) valid month/year' => ['07-2024', 'm-Y', DateTime::createFromFormat('m-Y', '07-2024')],
+        ];
+    }
+
+    /**
+     * @return array The array of test cases.
+     */
+    public static function toDateTimeProviderOld(): array
     {
         $date = new DateTime('2024-07-01T14:30:00Z');
         $now = $date->toAtomString();
