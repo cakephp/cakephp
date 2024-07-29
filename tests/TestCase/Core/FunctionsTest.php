@@ -24,7 +24,6 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use DateTimeInterface;
-use IntlDateFormatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use function Cake\Core\deprecationWarning;
