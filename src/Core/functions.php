@@ -585,8 +585,10 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
  * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
  * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
+ *
+ * @see https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details
  */
-function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
+function toDate(mixed $value, string $format = 'YYYY-mm-dd'): ?Date
 {
     if ($value instanceof Date) {
         return $value;
