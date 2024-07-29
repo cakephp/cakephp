@@ -335,7 +335,7 @@ class Xml
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, (string)$value);
                         continue;
                     }
-                    if ($key[0] !== '@' && $format === 'tags') {
+                    if (!str_starts_with($key, '@') && $format === 'tags') {
                         if (!is_numeric($value)) {
                             // Escape special characters
                             // https://www.w3.org/TR/REC-xml/#syntax
@@ -347,7 +347,7 @@ class Xml
                         }
                         $node->appendChild($child);
                     } else {
-                        if ($key[0] === '@') {
+                        if (str_starts_with($key, '@')) {
                             $key = substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
@@ -355,7 +355,7 @@ class Xml
                         $node->appendChild($attribute);
                     }
                 } else {
-                    if ($key[0] === '@') {
+                    if (str_starts_with($key, '@')) {
                         throw new XmlException('Invalid array');
                     }
                     if (is_numeric(implode('', array_keys($value)))) {

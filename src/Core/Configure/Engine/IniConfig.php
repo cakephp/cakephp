@@ -160,8 +160,7 @@ class IniConfig implements ConfigEngineInterface
         $result = [];
         foreach ($data as $k => $value) {
             $isSection = false;
-            /** @psalm-suppress InvalidArrayAccess */
-            if ($k[0] !== '[') {
+            if (!str_starts_with($k, '[')) {
                 $result[] = "[$k]";
                 $isSection = true;
             }

@@ -1053,7 +1053,7 @@ class View implements EventDispatcherInterface
      */
     public function extend(string $name)
     {
-        $type = $name[0] === '/' ? static::TYPE_TEMPLATE : $this->_currentType;
+        $type = str_starts_with($name, '/') ? static::TYPE_TEMPLATE : $this->_currentType;
         switch ($type) {
             case static::TYPE_ELEMENT:
                 $parent = $this->_getElementFileName($name);
@@ -1357,7 +1357,7 @@ class View implements EventDispatcherInterface
         if (!str_contains($name, DIRECTORY_SEPARATOR) && $name !== '' && !str_starts_with($name, '.')) {
             $name = $templatePath . $subDir . $this->_inflectTemplateFileName($name);
         } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
-            if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
+            if (str_starts_with($name, DIRECTORY_SEPARATOR) || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
