@@ -19,9 +19,9 @@ namespace Cake\Core;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use DateTimeInterface;
-use Exception;
 use JsonException;
 use Stringable;
+use Throwable;
 
 if (!defined('DS')) {
     /**
@@ -557,7 +557,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
     if (is_numeric($value)) {
         try {
             return DateTime::createFromTimestamp((float)$value);
-        } catch (Exception) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -565,7 +565,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
     if (is_string($value)) {
         try {
             return DateTime::createFromFormat($format, $value);
-        } catch (Exception) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -602,7 +602,7 @@ function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
         try {
             $datetime = DateTime::createFromTimestamp((float)$value);
             return Date::create($datetime->year, $datetime->month, $datetime->day);
-        } catch (Exception) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -611,7 +611,7 @@ function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
         try {
             $datetime = DateTime::createFromFormat($format, $value);
             return Date::parse($datetime);
-        } catch (Exception) {
+        } catch (Throwable) {
             return null;
         }
     }
