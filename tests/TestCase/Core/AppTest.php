@@ -51,7 +51,7 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider classNameProvider
      */
-    public function testClassName(string $class, string $type, string $suffix = '', bool $existsInBase = false, ?string $expected = false): void
+    public function testClassName(string $class, string $type, string $suffix = '', bool $existsInBase = false, string|false $expected = false): void
     {
         static::setAppNamespace();
         $i = 0;
@@ -97,7 +97,7 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider shortNameProvider
      */
-    public function testShortName(string $class, string $type, string $suffix = '', ?string $expected = false): void
+    public function testShortName(string $class, string $type, string $suffix = '', string|false $expected = false): void
     {
         static::setAppNamespace();
 
