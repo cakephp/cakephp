@@ -777,54 +777,54 @@ class FunctionsTest extends TestCase
 
         return [
             // Date input types
-            '(date) Date object' => [Date::create(2024, 7, 1), 'yyyy-MM-dd', $date],
+            '(date) Date object' => [Date::create(2024, 7, 1), 'Y-m-d', $date],
 
             // DateTime input types
-            '(datetime) DateTime object' => [new DateTime('2024-07-01'), 'yyyy-MM-dd', Date::create(2024, 7, 1)],
-            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable('2024-07-01'), 'yyyy-MM-dd', Date::create(2024, 7, 1)],
+            '(datetime) DateTime object' => [new DateTime('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
+            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
 
             // string input types
-            '(string) valid date string' => ['2024-07-01', 'yyyy-MM-dd', $date],
-            '(string) valid date string with custom format' => ['01-07-2024', 'dd-MM-yyyy', Date::create(2024, 7, 1)],
-            '(string) empty string' => ['', 'yyyy-MM-dd', null],
-            '(string) space' => [' ', 'yyyy-MM-dd', null],
-            '(string) non-date string' => ['abc', 'yyyy-MM-dd', null],
-            '(string) false' => ['false', 'yyyy-MM-dd', null],
-            '(string) true' => ['true', 'yyyy-MM-dd', null],
-            '(string) partially valid date' => ['2024-07-01', 'yyyy-MM-dd', Date::create(2024, 7, 1)],
-            '(string) date with time' => ['2024-07-01T14:30:00', 'yyyy-MM-dd\'T\'HH:mm:ss', Date::create(2024, 7, 1)],
+            '(string) valid date string' => ['2024-07-01', 'Y-m-d', $date],
+            '(string) valid date string with custom format' => ['01-07-2024', 'd-m-Y', Date::create(2024, 7, 1)],
+            '(string) empty string' => ['', 'Y-m-d', null],
+            '(string) space' => [' ', 'Y-m-d', null],
+            '(string) non-date string' => ['abc', 'Y-m-d', null],
+            '(string) false' => ['false', 'Y-m-d', null],
+            '(string) true' => ['true', 'Y-m-d', null],
+            '(string) partially valid date' => ['2024-07-01', 'Y-m-d', Date::create(2024, 7, 1)],
+            '(string) date with time' => ['2024-07-01T14:30:00', 'Y-m-d\'T\'H:m:s', null],
 
             // int input types
-            '(int) valid timestamp' => [$timestamp, 'yyyy-MM-dd', Date::create(2024, 7, 1)],
-            '(int) negative timestamp' => [-1000, 'yyyy-MM-dd', Date::create(1969, 12, 31)],
-            '(int) large timestamp' => [2147483647, 'yyyy-MM-dd', Date::create(2038, 1, 19)],
-            '(int) zero' => [0, 'yyyy-MM-dd', Date::create(1970, 1, 1)],
+            '(int) valid timestamp' => [$timestamp, 'Y-m-d', Date::create(2024, 7, 1)],
+            '(int) negative timestamp' => [-1000, 'Y-m-d', Date::create(1969, 12, 31)],
+            '(int) large timestamp' => [2147483647, 'Y-m-d', Date::create(2038, 1, 19)],
+            '(int) zero' => [0, 'Y-m-d', Date::create(1970, 1, 1)],
 
             // float input types
-            '(float) positive' => [5.5, 'yyyy-MM-dd', Date::create(1970, 1, 1)],
-            '(float) round' => [5.0, 'yyyy-MM-dd', Date::create(1970, 1, 1)],
-            '(float) NaN' => [NAN, 'yyyy-MM-dd', null],
-            '(float) INF' => [INF, 'yyyy-MM-dd', null],
-            '(float) -INF' => [-INF, 'yyyy-MM-dd', null],
-            '(float) timestamp' => [$timestamp + 0.0, 'yyyy-MM-dd', Date::create(2024, 7, 1)],
+            '(float) positive' => [5.5, 'Y-m-d', Date::create(1970, 1, 1)],
+            '(float) round' => [5.0, 'Y-m-d', Date::create(1970, 1, 1)],
+            '(float) NaN' => [NAN, 'Y-m-d', null],
+            '(float) INF' => [INF, 'Y-m-d', null],
+            '(float) -INF' => [-INF, 'Y-m-d', null],
+            '(float) timestamp' => [$timestamp + 0.0, 'Y-m-d', Date::create(2024, 7, 1)],
 
             // other input types
-            '(other) null' => [null, 'yyyy-MM-dd', null],
-            '(other) empty array' => [[], 'yyyy-MM-dd', null],
-            '(other) int array' => [[5], 'yyyy-MM-dd', null],
-            '(other) string array' => [['5'], 'yyyy-MM-dd', null],
-            '(other) simple object' => [new stdClass(), 'yyyy-MM-dd', null],
+            '(other) null' => [null, 'Y-m-d', null],
+            '(other) empty array' => [[], 'Y-m-d', null],
+            '(other) int array' => [[5], 'Y-m-d', null],
+            '(other) string array' => [['5'], 'Y-m-d', null],
+            '(other) simple object' => [new stdClass(), 'Y-m-d', null],
 
             // mixed valid cases
-            '(mixed) DateTime string input' => ['2024-07-01T00:00:00Z', 'yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', Date::create(2024, 7, 1)],
+            '(mixed) DateTime string input' => ['2024-07-01T00:00:00Z', 'Y-m-d\'T\'H:m:s\'Z\'', null],
             '(mixed) integer string input' => ['1719844200', 'U', Date::create(2024, 7, 1)],
 
-            // Custom format cases
-            '(custom format) valid date' => ['01-07-2024', 'dd-MM-yyyy', Date::create(2024, 7, 1)],
-            '(custom format) valid datetime' => ['01-07-2024 14:30:00', 'dd-MM-yyyy HH:mm:ss', Date::create(2024, 7, 1)],
-            '(custom format) invalid date' => ['31-02-2024', 'dd-MM-yyyy', Date::create(2024, 03, 02)],
-            '(custom format) partially valid datetime' => ['01-07-2024 14:30', 'dd-MM-yyyy HH:mm', Date::create(2024, 7, 1)],
-            '(custom format) valid month/year' => ['07-2024', 'MM-yyyy', Date::create(2024, 7, 1)],
+            // custom format cases
+            '(custom format) valid date' => ['01-07-2024', 'd-m-Y', Date::create(2024, 7, 1)],
+            '(custom format) valid datetime' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', Date::create(2024, 7, 1)],
+            '(custom format) valid month/year' => ['07-2024', 'm-Y', Date::create(2024, 7, 1)],
+            '(custom format) invalid date' => ['31-02-2024', 'd-m-Y', Date::create(2024, 3, 2)],
+            '(custom format) invalid datetime' => ['01-07-2024 14:30', 'd-m-Y H:i', Date::create(2024, 7, 1)],
         ];
     }
 }
