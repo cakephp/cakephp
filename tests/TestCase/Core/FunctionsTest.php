@@ -690,9 +690,7 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider toDateTimeProvider
-     */
+    #[DataProvider('toDateTimeProvider')]
     public function testToDateTime(mixed $rawValue, string $format, ?DateTime $expected): void
     {
         $this->assertEquals($expected, toDateTime($rawValue, $format));
@@ -758,9 +756,7 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider toDateProvider
-     */
+    #[DataProvider('toDateProvider')]
     public function testToDate(mixed $rawValue, string $format, ?Date $expected): void
     {
         $this->assertEquals($expected, toDate($rawValue, $format));
