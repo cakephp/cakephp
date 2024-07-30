@@ -588,7 +588,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
  *
  * @see https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details
  */
-function toDate(mixed $value, string $format = 'YYYY-mm-dd'): ?Date
+function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
 {
     if ($value instanceof Date) {
         return $value;
@@ -600,8 +600,8 @@ function toDate(mixed $value, string $format = 'YYYY-mm-dd'): ?Date
 
     if (is_numeric($value)) {
         try {
-            $ts = DateTime::createFromTimestamp((float)$value);
-            return Date::create($ts->year, $ts->month, $ts->day);
+            $datetime = DateTime::createFromTimestamp((float)$value);
+            return Date::create($datetime->year, $datetime->month, $datetime->day);
         } catch (Exception) {
             return null;
         }
@@ -609,7 +609,8 @@ function toDate(mixed $value, string $format = 'YYYY-mm-dd'): ?Date
 
     if (is_string($value)) {
         try {
-            return Date::parseDate($value, $format);
+            $datetime = DateTime::createFromFormat($format, $value);
+            return Date::parse($datetime);
         } catch (Exception) {
             return null;
         }
