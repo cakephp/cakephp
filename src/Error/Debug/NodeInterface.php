@@ -32,8 +32,6 @@ interface NodeInterface
 
     /**
      * Get the contained value.
-     *
-     * @return mixed
      */
     public function getValue(): mixed;
 }

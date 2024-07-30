@@ -30,11 +30,11 @@ class MysqlTest extends TestCase
     /**
      * setup
      */
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains((string) $config['driver'], 'Mysql'), 'Not using Mysql for test config');
     }
 
     /**
@@ -42,7 +42,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -93,7 +93,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -167,10 +167,8 @@ class MysqlTest extends TestCase
 
     /**
      * @dataProvider versionStringProvider
-     * @param string $dbVersion
-     * @param string $expectedVersion
      */
-    public function testVersion($dbVersion, $expectedVersion): void
+    public function testVersion(string $dbVersion, string $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
         $connection = $this->getMockBuilder(PDO::class)
@@ -195,14 +193,12 @@ class MysqlTest extends TestCase
         $this->assertSame($expectedVersion, $result);
     }
 
-    public static function versionStringProvider(): array
+    public static function versionStringProvider(): \Iterator
     {
-        return [
-            ['10.2.23-MariaDB', '10.2.23-MariaDB'],
-            ['5.5.5-10.2.23-MariaDB', '10.2.23-MariaDB'],
-            ['5.5.5-10.4.13-MariaDB-1:10.4.13+maria~focal', '10.4.13-MariaDB-1'],
-            ['8.0.0', '8.0.0'],
-        ];
+        yield ['10.2.23-MariaDB', '10.2.23-MariaDB'];
+        yield ['5.5.5-10.2.23-MariaDB', '10.2.23-MariaDB'];
+        yield ['5.5.5-10.4.13-MariaDB-1:10.4.13+maria~focal', '10.4.13-MariaDB-1'];
+        yield ['8.0.0', '8.0.0'];
     }
 
     /**
@@ -248,98 +244,98 @@ class MysqlTest extends TestCase
 
         $result = $driver->quoteIdentifier('name');
         $expected = '`name`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Model.*');
         $expected = '`Model`.*';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Items.No_ 2');
         $expected = '`Items`.`No_ 2`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Items.No_ 2 thing');
         $expected = '`Items`.`No_ 2 thing`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Items.No_ 2 thing AS thing');
         $expected = '`Items`.`No_ 2 thing` AS `thing`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Items.Item Category Code = :c1');
         $expected = '`Items`.`Item Category Code` = :c1';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('MTD()');
         $expected = 'MTD()';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('(sm)');
         $expected = '(sm)';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('name AS x');
         $expected = '`name` AS `x`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Model.name AS x');
         $expected = '`Model`.`name` AS `x`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Function(Something.foo)');
         $expected = 'Function(`Something`.`foo`)';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Function(SubFunction(Something.foo))');
         $expected = 'Function(SubFunction(`Something`.`foo`))';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Function(Something.foo) AS x');
         $expected = 'Function(`Something`.`foo`) AS `x`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('name-with-minus');
         $expected = '`name-with-minus`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('my-name');
         $expected = '`my-name`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Foo-Model.*');
         $expected = '`Foo-Model`.*';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Team.P%');
         $expected = '`Team`.`P%`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Team.G/G');
         $expected = '`Team`.`G/G`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Model.name as y');
         $expected = '`Model`.`name` AS `y`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('nämé');
         $expected = '`nämé`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('aßa.nämé');
         $expected = '`aßa`.`nämé`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('aßa.*');
         $expected = '`aßa`.*';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Modeß.nämé as y');
         $expected = '`Modeß`.`nämé` AS `y`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $driver->quoteIdentifier('Model.näme Datum as y');
         $expected = '`Model`.`näme Datum` AS `y`';
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

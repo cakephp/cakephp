@@ -30,8 +30,6 @@ class AjaxView extends View
 
     /**
      * Get content type for this view.
-     *
-     * @return string
      */
     public static function contentType(): string
     {

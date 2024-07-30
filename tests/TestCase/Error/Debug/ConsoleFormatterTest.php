@@ -42,6 +42,7 @@ class ConsoleFormatterTest extends TestCase
         $node->addProperty(new PropertyNode('floatProp', 'protected', new ScalarNode('float', 1.1)));
         $node->addProperty(new PropertyNode('boolProp', 'protected', new ScalarNode('bool', true)));
         $node->addProperty(new PropertyNode('nullProp', 'private', new ScalarNode('null', null)));
+
         $arrayNode = new ArrayNode([
             new ArrayItemNode(new ScalarNode('string', ''), new SpecialNode('too much')),
             new ArrayItemNode(new ScalarNode('int', 1), new ReferenceNode('MyObject', 1)),

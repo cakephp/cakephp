@@ -37,7 +37,7 @@ class DecimalTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * @var string
@@ -47,7 +47,7 @@ class DecimalTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DecimalType();
@@ -58,7 +58,7 @@ class DecimalTypeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -117,13 +117,13 @@ class DecimalTypeTest extends TestCase
         $this->assertSame(2, $result);
 
         $result = $this->type->toDatabase(2.99, $this->driver);
-        $this->assertSame(2.99, $result);
+        $this->assertEqualsWithDelta(2.99, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toDatabase('2.51', $this->driver);
         $this->assertSame('2.51', $result);
 
         $result = $this->type->toDatabase(0.123456789, $this->driver);
-        $this->assertSame(0.123456789, $result);
+        $this->assertEqualsWithDelta(0.123456789, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toDatabase('1234567890123456789.2', $this->driver);
         $this->assertSame('1234567890123456789.2', $result);

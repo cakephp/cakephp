@@ -46,7 +46,6 @@ abstract class MiddlewareApplication implements HttpApplicationInterface
      * Generate a 404 response as no middleware handled the request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(
         ServerRequestInterface $request

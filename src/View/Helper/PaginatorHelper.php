@@ -44,8 +44,6 @@ class PaginatorHelper extends Helper
 
     /**
      * List of helpers used by this helper
-     *
-     * @var array
      */
     protected array $helpers = ['Url', 'Number', 'Html', 'Form'];
 
@@ -94,8 +92,6 @@ class PaginatorHelper extends Helper
 
     /**
      * Paginated results
-     *
-     * @var \Cake\Datasource\Paging\PaginatedInterface
      */
     protected PaginatedInterface $paginated;
 
@@ -122,7 +118,6 @@ class PaginatorHelper extends Helper
      *
      * @param \Cake\Datasource\Paging\PaginatedInterface $paginated Instance to use.
      * @param array<string, mixed> $options Options array.
-     * @return void
      */
     public function setPaginated(PaginatedInterface $paginated, array $options = []): void
     {
@@ -132,8 +127,6 @@ class PaginatorHelper extends Helper
 
     /**
      * Get pagination instance.
-     *
-     * @return \Cake\Datasource\Paging\PaginatedInterface
      */
     protected function paginated(): PaginatedInterface
     {
@@ -179,7 +172,6 @@ class PaginatorHelper extends Helper
      *
      * @param array<string, mixed> $options Default options for pagination links.
      *   See PaginatorHelper::$options for list of keys.
-     * @return void
      */
     public function options(array $options = []): void
     {
@@ -252,6 +244,7 @@ class PaginatorHelper extends Helper
         if (!$enabled && $text === false) {
             return '';
         }
+
         $text = $options['escape'] ? h($text) : $text;
 
         $templater = $this->templater();
@@ -400,7 +393,7 @@ class PaginatorHelper extends Helper
             $title = __(Inflector::humanize((string)preg_replace('/_id$/', '', $title)));
         }
 
-        $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
+        $defaultDir = isset($options['direction']) ? strtolower((string) $options['direction']) : 'asc';
         unset($options['direction']);
 
         $locked = $options['lock'] ?? false;
@@ -413,6 +406,7 @@ class PaginatorHelper extends Helper
             $field = $table;
             $table = $alias;
         }
+
         $isSorted = (
             $sortKey === $table . '.' . $field ||
             $sortKey === $alias . '.' . $key ||
@@ -429,6 +423,7 @@ class PaginatorHelper extends Helper
                 $template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
             }
         }
+
         if (is_array($title) && array_key_exists($dir, $title)) {
             $title = $title[$dir];
         }
@@ -489,14 +484,15 @@ class PaginatorHelper extends Helper
         if (
             !empty($paging['sort'])
             && !empty($options['sort'])
-            && !str_contains($options['sort'], '.')
+            && !str_contains((string) $options['sort'], '.')
         ) {
             $paging['sort'] = $this->_removeAlias($paging['sort']);
         }
+
         if (
             !empty($paging['sortDefault'])
             && !empty($options['sort'])
-            && !str_contains($options['sort'], '.')
+            && !str_contains((string) $options['sort'], '.')
         ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $this->param('alias'));
         }
@@ -513,10 +509,11 @@ class PaginatorHelper extends Helper
         if (
             isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction'])
             && $options['sort'] === $paging['sortDefault']
-            && strtolower($options['direction']) === strtolower($paging['directionDefault'])
+            && strtolower((string) $options['direction']) === strtolower((string) $paging['directionDefault'])
         ) {
             $options['sort'] = $options['direction'] = null;
         }
+
         $baseUrl = $this->_config['options']['url'] ?? [];
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
@@ -524,6 +521,7 @@ class PaginatorHelper extends Helper
                 $options += $baseUrl['?'][$scope];
                 unset($baseUrl['?'][$scope]);
             }
+
             $options = [$scope => $options];
         }
 
@@ -632,7 +630,8 @@ class PaginatorHelper extends Helper
                 $template = 'counterCustom';
                 $this->templater()->add([$template => $format]);
         }
-        $map = array_map([$this->Number, 'format'], [
+
+        $map = array_map($this->Number->format(...), [
             'page' => (int)$paging['currentPage'],
             'pages' => (int)$paging['pageCount'],
             'current' => (int)$paging['count'],
@@ -763,7 +762,6 @@ class PaginatorHelper extends Helper
      *
      * @param \Cake\View\StringTemplate $templater StringTemplate instance.
      * @param array<string, mixed> $options Options from the numbers() method.
-     * @return string
      */
     protected function _formatNumber(StringTemplate $templater, array $options): string
     {
@@ -826,9 +824,8 @@ class PaginatorHelper extends Helper
         }
 
         $out .= $options['after'];
-        $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
 
-        return $out;
+        return $out . $this->_lastNumber($ellipsis, $params, $end, $options);
     }
 
     /**
@@ -873,6 +870,7 @@ class PaginatorHelper extends Helper
             if ($offset <= $options['last'] && $params['pageCount'] - $end > $last) {
                 $out .= $ellipsis;
             }
+
             $out .= $this->last($offset, $options);
         }
 
@@ -906,9 +904,9 @@ class PaginatorHelper extends Helper
                 $out .= $templater->format('number', $vars);
             }
         }
-        $out .= $options['after'];
 
-        return $out;
+
+        return $out . $options['after'];
     }
 
     /**
@@ -1108,7 +1106,7 @@ class PaginatorHelper extends Helper
             );
         }
 
-        $out = implode($links);
+        $out = implode('', $links);
 
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
@@ -1165,8 +1163,7 @@ class PaginatorHelper extends Helper
             'options' => $limits,
             'onChange' => 'this.form.submit()',
         ]);
-        $out .= $this->Form->end();
 
-        return $out;
+        return $out . $this->Form->end();
     }
 }

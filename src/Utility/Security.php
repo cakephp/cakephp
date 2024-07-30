@@ -28,22 +28,16 @@ class Security
     /**
      * Default hash method. If `$type` param for `Security::hash()` is not specified
      * this value is used. Defaults to 'sha1'.
-     *
-     * @var string
      */
     public static string $hashType = 'sha1';
 
     /**
      * The HMAC salt to use for encryption and decryption routines
-     *
-     * @var string|null
      */
     protected static ?string $_salt = null;
 
     /**
      * The crypto implementation to use.
-     *
-     * @var object|null
      */
     protected static ?object $_instance = null;
 
@@ -65,6 +59,7 @@ class Security
         if (!$algorithm) {
             $algorithm = static::$hashType;
         }
+
         $algorithm = strtolower($algorithm);
 
         $availableAlgorithms = hash_algos();
@@ -80,6 +75,7 @@ class Security
             if (!is_string($salt)) {
                 $salt = static::getSalt();
             }
+
             $string = $salt . $string;
         }
 
@@ -91,7 +87,6 @@ class Security
      * using Security::hash().
      *
      * @param string $hash Method to use (sha1/sha256/md5 etc.)
-     * @return void
      * @see \Cake\Utility\Security::hash()
      */
     public static function setHash(string $hash): void
@@ -121,7 +116,6 @@ class Security
      * Creates a secure random string.
      *
      * @param int $length String length. Default 64.
-     * @return string
      */
     public static function randomString(int $length = 64): string
     {
@@ -149,6 +143,7 @@ class Security
             $bytes .= static::hash(Text::uuid() . uniqid((string)mt_rand(), true), 'sha512', true);
             $byteLength = strlen($bytes);
         }
+
         $bytes = substr($bytes, 0, $length);
 
         return pack('H*', $bytes);
@@ -165,16 +160,19 @@ class Security
      */
     public static function engine(?object $instance = null): object
     {
-        if ($instance) {
+        if ($instance !== null) {
             return static::$_instance = $instance;
         }
+
         if (isset(static::$_instance)) {
             /** @var \Cake\Utility\Crypto\OpenSsl */
             return static::$_instance;
         }
+
         if (extension_loaded('openssl')) {
             return static::$_instance = new OpenSsl();
         }
+
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
             'Load the openssl extension.'
@@ -215,7 +213,6 @@ class Security
      *
      * @param string $key Key to check.
      * @param string $method The method the key is being checked for.
-     * @return void
      * @throws \InvalidArgumentException When key length is not 256 bit/32 bytes
      */
     protected static function _checkKey(string $key, string $method): void
@@ -243,6 +240,7 @@ class Security
         if (!$cipher) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
+
         $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
@@ -268,7 +266,6 @@ class Security
      *
      * @param mixed $original The original value.
      * @param mixed $compare The comparison value.
-     * @return bool
      * @since 3.6.2
      */
     public static function constantEquals(mixed $original, mixed $compare): bool
@@ -298,7 +295,6 @@ class Security
      * routines.
      *
      * @param string $salt The salt to use for encryption routines.
-     * @return void
      */
     public static function setSalt(string $salt): void
     {

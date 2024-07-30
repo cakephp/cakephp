@@ -32,8 +32,6 @@ class MailContainsText extends MailContains
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

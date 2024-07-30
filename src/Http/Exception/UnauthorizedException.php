@@ -38,6 +38,7 @@ class UnauthorizedException extends HttpException
         if (!$message) {
             $message = 'Unauthorized';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

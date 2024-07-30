@@ -60,21 +60,13 @@ abstract class TestCase extends BaseTestCase
      */
     protected array $fixtures = [];
 
-    /**
-     * @var \Cake\TestSuite\Fixture\FixtureStrategyInterface|null
-     */
     protected ?FixtureStrategyInterface $fixtureStrategy = null;
 
     /**
      * Configure values to restore at end of test.
-     *
-     * @var array
      */
     protected array $_configure = [];
 
-    /**
-     * @var \Cake\Error\PhpError|null
-     */
     private ?PhpError $_capturedError = null;
 
     /**
@@ -82,7 +74,6 @@ abstract class TestCase extends BaseTestCase
      *
      * @param bool $shouldSkip Whether the test should be skipped.
      * @param string $message The message to display.
-     * @return bool
      */
     public function skipIf(bool $shouldSkip, string $message = ''): bool
     {
@@ -98,7 +89,6 @@ abstract class TestCase extends BaseTestCase
      *
      * @param int $errorLevel value of error_reporting() that needs to use
      * @param callable $callable callable function that will receive asserts
-     * @return void
      */
     public function withErrorReporting(int $errorLevel, callable $callable): void
     {
@@ -127,7 +117,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->_capturedError = null;
         set_error_handler(
-            function (int $code, string $description, string $file, int $line) {
+            function (int $code, string $description, string $file, int $line): bool {
                 $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
                 assert(is_array($trace));
                 $this->_capturedError = new PhpError($code, $description, $file, $line, $trace);
@@ -143,9 +133,11 @@ abstract class TestCase extends BaseTestCase
             restore_error_handler();
             error_reporting($default);
         }
+
         if ($this->_capturedError === null) {
             $this->fail('No error was captured');
         }
+
         /** @var \Cake\Error\PhpError $this->_capturedError */
         return $this->_capturedError;
     }
@@ -154,7 +146,6 @@ abstract class TestCase extends BaseTestCase
      * Helper method for check deprecation methods
      *
      * @param \Closure $callable callable function that will receive asserts
-     * @return void
      */
     public function deprecated(Closure $callable): void
     {
@@ -170,7 +161,8 @@ abstract class TestCase extends BaseTestCase
 
                     return true;
                 }
-                if ($previousHandler) {
+
+                if ($previousHandler !== null) {
                     return $previousHandler($code, $message, $file, $line, $context);
                 }
 
@@ -185,6 +177,7 @@ abstract class TestCase extends BaseTestCase
                 Configure::write('Error.allowDuplicateDeprecations', $duplicate);
             }
         }
+
         $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
     }
 
@@ -192,8 +185,6 @@ abstract class TestCase extends BaseTestCase
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -203,6 +194,7 @@ abstract class TestCase extends BaseTestCase
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
+
         if (class_exists(Router::class, false)) {
             Router::reload();
         }
@@ -212,8 +204,6 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * teardown any static object changes and restore them.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {
@@ -224,6 +214,7 @@ abstract class TestCase extends BaseTestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
+
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
@@ -234,8 +225,6 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Initialized and loads any use fixtures.
-     *
-     * @return void
      */
     protected function setupFixtures(): void
     {
@@ -247,12 +236,10 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Unloads any use fixtures.
-     *
-     * @return void
      */
     protected function teardownFixtures(): void
     {
-        if ($this->fixtureStrategy) {
+        if ($this->fixtureStrategy instanceof \Cake\TestSuite\Fixture\FixtureStrategyInterface) {
             $this->fixtureStrategy->teardownTest();
             $this->fixtureStrategy = null;
         }
@@ -260,8 +247,6 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Returns fixture strategy used by these tests.
-     *
-     * @return \Cake\TestSuite\Fixture\FixtureStrategyInterface
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
@@ -277,7 +262,6 @@ abstract class TestCase extends BaseTestCase
      * and plugins being loaded.
      *
      * @param array|null $appArgs Constructor parameters for the application class.
-     * @return void
      * @since 4.0.1
      */
     public function loadRoutes(?array $appArgs = null): void
@@ -289,9 +273,10 @@ abstract class TestCase extends BaseTestCase
             $reflect = new ReflectionClass($className);
             $app = $reflect->newInstanceArgs($appArgs);
             assert($app instanceof RoutingApplicationInterface);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf('Cannot load `%s` to load routes from.', $className), 0, $e);
+        } catch (ReflectionException $reflectionException) {
+            throw new LogicException(sprintf('Cannot load `%s` to load routes from.', $className), 0, $reflectionException);
         }
+
         $builder = Router::createRouteBuilder('/');
         $app->routes($builder);
     }
@@ -303,7 +288,6 @@ abstract class TestCase extends BaseTestCase
      * elements in CakePHP or applications.
      *
      * @param array<string, mixed> $plugins List of Plugins to load.
-     * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
@@ -312,10 +296,6 @@ abstract class TestCase extends BaseTestCase
          */
         $app = new class ('') extends BaseApplication
         {
-            /**
-             * @param \Cake\Http\MiddlewareQueue $middlewareQueue
-             * @return \Cake\Http\MiddlewareQueue
-             */
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -329,6 +309,7 @@ abstract class TestCase extends BaseTestCase
                 $app->addPlugin($config);
             }
         }
+
         $app->pluginBootstrap();
         $builder = Router::createRouteBuilder('/');
         $app->pluginRoutes($builder);
@@ -342,7 +323,6 @@ abstract class TestCase extends BaseTestCase
      * Useful in test case teardown methods.
      *
      * @param list<string> $names A list of plugins you want to remove.
-     * @return void
      */
     public function removePlugins(array $names = []): void
     {
@@ -356,8 +336,6 @@ abstract class TestCase extends BaseTestCase
      * Clear all plugins from the global plugin collection.
      *
      * Useful in test case teardown methods.
-     *
-     * @return void
      */
     public function clearPlugins(): void
     {
@@ -370,13 +348,13 @@ abstract class TestCase extends BaseTestCase
      * @param string $name Event name
      * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
-     * @return void
      */
     public function assertEventFired(string $name, ?EventManager $eventManager = null, string $message = ''): void
     {
-        if (!$eventManager) {
+        if (!$eventManager instanceof \Cake\Event\EventManager) {
             $eventManager = EventManager::instance();
         }
+
         $this->assertThat($name, new EventFired($eventManager), $message);
     }
 
@@ -390,7 +368,6 @@ abstract class TestCase extends BaseTestCase
      * @param mixed $dataValue Data value
      * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
-     * @return void
      */
     public function assertEventFiredWith(
         string $name,
@@ -399,9 +376,10 @@ abstract class TestCase extends BaseTestCase
         ?EventManager $eventManager = null,
         string $message = ''
     ): void {
-        if (!$eventManager) {
+        if (!$eventManager instanceof \Cake\Event\EventManager) {
             $eventManager = EventManager::instance();
         }
+
         $this->assertThat($name, new EventFiredWith($eventManager, $dataKey, $dataValue), $message);
     }
 
@@ -412,13 +390,12 @@ abstract class TestCase extends BaseTestCase
      * @param string $expected The expected value.
      * @param string $result The actual value.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextNotEquals(string $expected, string $result, string $message = ''): void
     {
         $expected = str_replace(["\r\n", "\r"], "\n", $expected);
         $result = str_replace(["\r\n", "\r"], "\n", $result);
-        $this->assertNotEquals($expected, $result, $message);
+        $this->assertNotSame($expected, $result, $message);
     }
 
     /**
@@ -428,13 +405,12 @@ abstract class TestCase extends BaseTestCase
      * @param string $expected The expected value.
      * @param string $result The actual value.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextEquals(string $expected, string $result, string $message = ''): void
     {
         $expected = str_replace(["\r\n", "\r"], "\n", $expected);
         $result = str_replace(["\r\n", "\r"], "\n", $result);
-        $this->assertEquals($expected, $result, $message);
+        $this->assertSame($expected, $result, $message);
     }
 
     /**
@@ -444,7 +420,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $prefix The prefix to check for.
      * @param string $string The string to search in.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextStartsWith(string $prefix, string $string, string $message = ''): void
     {
@@ -461,7 +436,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $prefix The prefix to not find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextStartsNotWith(string $prefix, string $string, string $message = ''): void
     {
@@ -478,7 +452,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $suffix The suffix to find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextEndsWith(string $suffix, string $string, string $message = ''): void
     {
@@ -495,7 +468,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $suffix The suffix to not find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
-     * @return void
      */
     public function assertTextEndsNotWith(string $suffix, string $string, string $message = ''): void
     {
@@ -513,7 +485,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
      * @param bool $ignoreCase Whether the search should be case-sensitive.
-     * @return void
      */
     public function assertTextContains(
         string $needle,
@@ -539,7 +510,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $haystack The string to search through.
      * @param string $message The message to display on failure.
      * @param bool $ignoreCase Whether the search should be case-sensitive.
-     * @return void
      */
     public function assertTextNotContains(
         string $needle,
@@ -563,14 +533,13 @@ abstract class TestCase extends BaseTestCase
      * @param string $expected The expected sql
      * @param string $actual The sql to compare
      * @param string $message The message to display on failure
-     * @return void
      */
     public function assertEqualsSql(
         string $expected,
         string $actual,
         string $message = ''
     ): void {
-        $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
+        $this->assertSame($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
     }
 
     /**
@@ -582,7 +551,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $pattern The expected sql pattern
      * @param string $actual The sql to compare
      * @param bool $optional Whether quote characters (marked with <>) are optional
-     * @return void
      */
     public function assertRegExpSql(string $pattern, string $actual, bool $optional = false): void
     {
@@ -634,24 +602,21 @@ abstract class TestCase extends BaseTestCase
      * @param array $expected An array, see above
      * @param string $string An HTML/XHTML/XML string
      * @param bool $fullDebug Whether more verbose output should be used.
-     * @return bool
      */
     public function assertHtml(array $expected, string $string, bool $fullDebug = false): bool
     {
         $regex = [];
         $normalized = [];
         foreach ($expected as $key => $val) {
-            if (!is_numeric($key)) {
-                $normalized[] = [$key => $val];
-            } else {
-                $normalized[] = $val;
-            }
+            $normalized[] = is_numeric($key) ? $val : [$key => $val];
         }
+
         $i = 0;
         foreach ($normalized as $tags) {
             if (!is_array($tags)) {
                 $tags = (string)$tags;
             }
+
             $i++;
             if (is_string($tags) && $tags[0] === '<') {
                 $tags = [substr($tags, 1) => []];
@@ -664,6 +629,7 @@ abstract class TestCase extends BaseTestCase
                     if ($match[0] === '*/') {
                         $prefix = ['Anything, ', '.*?'];
                     }
+
                     $regex[] = [
                         sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
                         sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
@@ -671,6 +637,7 @@ abstract class TestCase extends BaseTestCase
                     ];
                     continue;
                 }
+
                 if ($tags && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
                     $tags = $matches[1];
                     $type = 'Regex matches';
@@ -678,6 +645,7 @@ abstract class TestCase extends BaseTestCase
                     $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
+
                 $regex[] = [
                     sprintf('%s `%s`', $type, $tags),
                     $tags,
@@ -685,6 +653,7 @@ abstract class TestCase extends BaseTestCase
                 ];
                 continue;
             }
+
             foreach ($tags as $tag => $attributes) {
                 $regex[] = [
                     sprintf('Open %s tag', $tag),
@@ -694,6 +663,7 @@ abstract class TestCase extends BaseTestCase
                 if ($attributes === true) {
                     $attributes = [];
                 }
+
                 $attrs = [];
                 $explanations = [];
                 $i = 1;
@@ -703,6 +673,7 @@ abstract class TestCase extends BaseTestCase
                         $explanations[] = sprintf('Regex `%s` matches', $matches[1]);
                         continue;
                     }
+
                     $val = (string)$val;
 
                     $quotes = '["\']';
@@ -723,15 +694,18 @@ abstract class TestCase extends BaseTestCase
                         $explanations[] = sprintf('Attribute `%s` == `%s`', $attr, $val);
                         $val = preg_quote($val, '/');
                     }
-                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
+
+                    $attrs[] = '[\s]+' . preg_quote((string) $attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
+
                 if ($attrs) {
                     $regex[] = [
                         'explains' => $explanations,
                         'attrs' => $attrs,
                     ];
                 }
+
                 $regex[] = [
                     sprintf('End %s tag', $tag),
                     '[\s]*\/?[\s]*>[\n\r]*',
@@ -748,10 +722,11 @@ abstract class TestCase extends BaseTestCase
                  * @var string $string
                  */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
-                if ($fullDebug === true && $string === false) {
+                if ($fullDebug && $string === false) {
                     debug($string, true);
                     debug($regex, true);
                 }
+
                 continue;
             }
 
@@ -769,11 +744,13 @@ abstract class TestCase extends BaseTestCase
                     break;
                 }
             }
+
             if (!$matches) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
+
                 $this->assertMatchesRegularExpression(
                     $expression,
                     (string)$string,
@@ -818,13 +795,16 @@ abstract class TestCase extends BaseTestCase
                     break;
                 }
             }
+
             if ($matches === false) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
+
                 $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
             }
+
             $len = count($asserts);
         } while ($len > 0);
 
@@ -853,7 +833,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertWithinRange($expected, $result, $margin, $message = '')
+    protected static function assertWithinRange($expected, $result, $margin, string $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
@@ -869,7 +849,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertNotWithinRange($expected, $result, $margin, $message = '')
+    protected static function assertNotWithinRange($expected, $result, $margin, string $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
@@ -884,11 +864,11 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertPathEquals($expected, $result, $message = '')
+    protected static function assertPathEquals($expected, $result, string $message = '')
     {
         $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
         $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
-        static::assertEquals($expected, $result, $message);
+        static::assertSame($expected, $result, $message);
     }
 
     /**
@@ -898,7 +878,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message Message for skip
      * @return bool
      */
-    protected function skipUnless($condition, $message = '')
+    protected function skipUnless($condition, string $message = '')
     {
         if (!$condition) {
             $this->markTestSkipped($message);
@@ -908,7 +888,6 @@ abstract class TestCase extends BaseTestCase
     }
 
 // phpcs:enable
-
     /**
      * Mock a model, maintain fixtures and table association
      *
@@ -916,7 +895,6 @@ abstract class TestCase extends BaseTestCase
      * @param list<string> $methods The list of methods to mock
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getMockForModel(string $alias, array $methods = [], array $options = []): Table|MockObject
     {
@@ -930,9 +908,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(function ($method) {
-            return $method->name;
-        }, $reflection->getMethods());
+        $classMethods = array_map(fn($method) => $method->name, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
         $nonExistingMethods = array_diff($methods, $existingMethods);
@@ -989,6 +965,7 @@ abstract class TestCase extends BaseTestCase
             if (!$className) {
                 throw new MissingTableClassException([$alias]);
             }
+
             $options['className'] = $className;
         }
 
@@ -1043,7 +1020,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param string $regex A regex to match against the warning message
      * @param \Closure $callable Callable which should trigger the warning
-     * @return void
      * @throws \Exception
      */
     public function expectNoticeMessageMatches(string $regex, Closure $callable): void
@@ -1054,7 +1030,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param string $regex A regex to match against the deprecation message
      * @param \Closure $callable Callable which should trigger the warning
-     * @return void
      * @throws \Exception
      */
     public function expectDeprecationMessageMatches(string $regex, Closure $callable): void
@@ -1065,7 +1040,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param string $regex A regex to match against the warning message
      * @param \Closure $callable Callable which should trigger the warning
-     * @return void
      * @throws \Exception
      */
     public function expectWarningMessageMatches(string $regex, Closure $callable): void
@@ -1076,7 +1050,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param string $regex A regex to match against the error message
      * @param \Closure $callable Callable which should trigger the warning
-     * @return void
      * @throws \Exception
      */
     public function expectErrorMessageMatches(string $regex, Closure $callable): void
@@ -1088,7 +1061,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $regex A regex to match against the warning message
      * @param \Closure $callable Callable which should trigger the warning
      * @param int $errorLevel The error level to listen to
-     * @return void
      * @throws \Exception
      */
     protected function expectErrorHandlerMessageMatches(string $regex, Closure $callable, int $errorLevel): void

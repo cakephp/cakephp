@@ -29,13 +29,6 @@ use Cake\View\StringTemplate;
 class BasicWidget implements WidgetInterface
 {
     /**
-     * StringTemplate instance.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $_templates;
-
-    /**
      * Data defaults.
      *
      * @var array<string, mixed>
@@ -51,11 +44,15 @@ class BasicWidget implements WidgetInterface
     /**
      * Constructor.
      *
-     * @param \Cake\View\StringTemplate $templates Templates list.
+     * @param \Cake\View\StringTemplate $_templates Templates list.
      */
-    public function __construct(StringTemplate $templates)
+    public function __construct(
+        /**
+         * StringTemplate instance.
+         */
+        protected StringTemplate $_templates
+    )
     {
-        $this->_templates = $templates;
     }
 
     /**
@@ -71,7 +68,6 @@ class BasicWidget implements WidgetInterface
      *
      * @param array<string, mixed> $data The data to build an input with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return string
      */
     public function render(array $data, ContextInterface $context): string
     {
@@ -122,7 +118,7 @@ class BasicWidget implements WidgetInterface
         $data += $this->defaults;
 
         if (isset($data['fieldName']) && !array_key_exists('required', $data)) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
+            return $this->setRequired($data, $context, $data['fieldName']);
         }
 
         return $data;
@@ -187,7 +183,7 @@ class BasicWidget implements WidgetInterface
 
         if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
             $decimalPlaces = $fieldDef['precision'];
-            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', 10 ** (-1 * $decimalPlaces));
         } elseif ($dbType === 'float') {
             $data['step'] = 'any';
         }

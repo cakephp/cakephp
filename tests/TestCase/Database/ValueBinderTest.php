@@ -94,7 +94,7 @@ class ValueBinderTest extends TestCase
             ':c1',
         ];
         $placeholders = $valueBinder->generateManyNamed($values);
-        $this->assertEquals($expected, $placeholders);
+        $this->assertSame($expected, $placeholders);
     }
 
     /**
@@ -129,6 +129,7 @@ class ValueBinderTest extends TestCase
         // Ensure the placeholder generation IS affected by resetCount
         $valueBinder->placeholder('param');
         $valueBinder->placeholder('param');
+
         $result = $valueBinder->placeholder('param');
         $this->assertSame(':param2', $result);
 

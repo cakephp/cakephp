@@ -39,14 +39,6 @@ use ReflectionNamedType;
  */
 class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInterface
 {
-    /**
-     * @var \Cake\Core\ContainerInterface
-     */
-    protected ContainerInterface $container;
-
-    /**
-     * @var \Cake\Controller\Controller
-     */
     protected Controller $controller;
 
     /**
@@ -54,16 +46,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
      * Create a controller for a given request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
-     * @return \Cake\Controller\Controller
      * @throws \Cake\Http\Exception\MissingControllerException
      */
     public function create(ServerRequestInterface $request): Controller
@@ -82,12 +72,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // Get the controller from the container if defined.
         // The request is in the container by default.
         if ($this->container->has($className)) {
-            $controller = $this->container->get($className);
-        } else {
-            $controller = $reflection->newInstance($request);
+            return $this->container->get($className);
         }
 
-        return $controller;
+        return $reflection->newInstance($request);
     }
 
     /**
@@ -118,7 +106,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Invoke the action.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -127,7 +114,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();
-        if ($result !== null) {
+        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
             return $result;
         }
 
@@ -139,7 +126,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
-        if ($result !== null) {
+        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
             return $result;
         }
 
@@ -151,7 +138,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param \Closure $action Controller action.
      * @param array $passedParams Params passed by the router.
-     * @return array
      */
     protected function getActionArgs(Closure $action, array $passedParams): array
     {
@@ -211,6 +197,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                             'plugin' => $this->controller->getRequest()->getParam('plugin'),
                         ]);
                     }
+
                     $argument = $typedArgument;
                 }
 
@@ -247,7 +234,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param string $argument Argument to coerce
      * @param \ReflectionNamedType $type Parameter type
-     * @return array|string|float|int|bool|null
      */
     protected function coerceStringToType(string $argument, ReflectionNamedType $type): array|string|float|int|bool|null
     {
@@ -275,19 +261,21 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         if ($request->getParam('plugin')) {
             $pluginPath = $request->getParam('plugin') . '.';
         }
+
         if ($request->getParam('prefix')) {
             $prefix = $request->getParam('prefix');
             $namespace .= '/' . $prefix;
         }
-        $firstChar = substr($controller, 0, 1);
+
+        $firstChar = substr((string) $controller, 0, 1);
 
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
         if (
-            str_contains($controller, '\\') ||
-            str_contains($controller, '/') ||
-            str_contains($controller, '.') ||
+            str_contains((string) $controller, '\\') ||
+            str_contains((string) $controller, '/') ||
+            str_contains((string) $controller, '.') ||
             $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);
@@ -301,7 +289,6 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Throws an exception when a controller is missing.
      *
      * @param \Cake\Http\ServerRequest $request The request.
-     * @return \Cake\Http\Exception\MissingControllerException
      */
     protected function missingController(ServerRequest $request): MissingControllerException
     {
@@ -316,7 +303,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
 // phpcs:disable
 class_alias(
-    'Cake\Controller\ControllerFactory',
+    \Cake\Controller\ControllerFactory::class,
     'Cake\Http\ControllerFactory'
 );
 // phpcs:enable

@@ -37,14 +37,14 @@ class TextTest extends TestCase
      */
     protected $encoding;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->encoding = mb_internal_encoding();
         $this->Text = new Text();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->encoding);
@@ -354,21 +354,19 @@ class TextTest extends TestCase
      *
      * @return array
      */
-    public static function wordWrapProvider(): array
+    public static function wordWrapProvider(): \Iterator
     {
-        return [
-            [
-                'The quick brown fox jumped over the lazy dog.',
-                33,
-            ],
-            [
-                'A very long woooooooooooord.',
-                8,
-            ],
-            [
-                'A very long woooooooooooord. Right.',
-                8,
-            ],
+        yield [
+            'The quick brown fox jumped over the lazy dog.',
+            33,
+        ];
+        yield [
+            'A very long woooooooooooord.',
+            8,
+        ];
+        yield [
+            'A very long woooooooooooord. Right.',
+            8,
         ];
     }
 
@@ -539,7 +537,7 @@ TEXT;
         $text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
         $text4 = '<IMG src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
         $text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
-        $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
+        $text6 = "<p><strong>Extra dates have been announced for this year's tour.</strong></p><p>Tickets for the new shows in</p>";
         $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
         $text8 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
         $text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
@@ -583,8 +581,8 @@ TEXT;
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertSame($expected, $result);
 
-        $text = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The quick brown fox jumps over the lazy dog</p>';
-        $expected = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The qu...</p>';
+        $text = "<style>text-align: center;</style><script>console.log('test');</script><p>The quick brown fox jumps over the lazy dog</p>";
+        $expected = "<style>text-align: center;</style><script>console.log('test');</script><p>The qu...</p>";
         $result = $this->Text->truncate($text, 9, ['html' => true, 'ellipsis' => '...']);
         $this->assertSame($expected, $result);
     }
@@ -656,11 +654,11 @@ TEXT;
         $this->assertSame('<p>はしこい<font color="brown">茶色</font>の狐はのろまな犬を...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => false, 'html' => true]));
         $this->assertSame('<p>はしこい<font color="brown">茶色</font>の...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => true, 'html' => true]));
 
-        $text = <<<HTML
+        $text = <<<HTML_WRAP
 <IMG src="mypic.jpg">このimageタグはXHTMLに準拠していない！<br>
 <hr/><b>でも次のimageタグは準拠しているはず <img src="mypic.jpg" alt="私の、私自身そして私" /></b><br />
 素晴らしい、でしょ?
-HTML;
+HTML_WRAP;
         $this->assertSame("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠していない！<br>\n<hr/><b>でも次の…</b>", Text::truncate($text, 30, ['html' => true]));
         $this->assertSame('<IMG src="mypic.jpg">このimageタグはXHTMLに準拠し…', Text::truncate($text, 30, ['html' => true, 'trimWidth' => true]));
     }
@@ -1537,7 +1535,7 @@ HTML;
      * @dataProvider filesizes
      * @param mixed $expected
      */
-    public function testParseFileSize(array $params, $expected): void
+    public function testParseFileSize(array $params, int|string $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
         $this->assertSame($expected, $result);
@@ -1557,27 +1555,25 @@ HTML;
      *
      * @return array
      */
-    public static function filesizes(): array
+    public static function filesizes(): \Iterator
     {
-        return [
-            [['size' => '512B', 'default' => false], 512],
-            [['size' => '1KB', 'default' => false], 1024],
-            [['size' => '1.5KB', 'default' => false], 1536],
-            [['size' => '1MB', 'default' => false], 1048576],
-            [['size' => '1mb', 'default' => false], 1048576],
-            [['size' => '1.5MB', 'default' => false], 1572864],
-            [['size' => '1GB', 'default' => false], 1073741824],
-            [['size' => '1.5GB', 'default' => false], 1610612736],
-            [['size' => '1K', 'default' => false], 1024],
-            [['size' => '1.5K', 'default' => false], 1536],
-            [['size' => '1M', 'default' => false], 1048576],
-            [['size' => '1m', 'default' => false], 1048576],
-            [['size' => '1.5M', 'default' => false], 1572864],
-            [['size' => '1G', 'default' => false], 1073741824],
-            [['size' => '1.5G', 'default' => false], 1610612736],
-            [['size' => '512', 'default' => 'Unknown type'], 512],
-            [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type'],
-        ];
+        yield [['size' => '512B', 'default' => false], 512];
+        yield [['size' => '1KB', 'default' => false], 1024];
+        yield [['size' => '1.5KB', 'default' => false], 1536];
+        yield [['size' => '1MB', 'default' => false], 1048576];
+        yield [['size' => '1mb', 'default' => false], 1048576];
+        yield [['size' => '1.5MB', 'default' => false], 1572864];
+        yield [['size' => '1GB', 'default' => false], 1073741824];
+        yield [['size' => '1.5GB', 'default' => false], 1610612736];
+        yield [['size' => '1K', 'default' => false], 1024];
+        yield [['size' => '1.5K', 'default' => false], 1536];
+        yield [['size' => '1M', 'default' => false], 1048576];
+        yield [['size' => '1m', 'default' => false], 1048576];
+        yield [['size' => '1.5M', 'default' => false], 1572864];
+        yield [['size' => '1G', 'default' => false], 1073741824];
+        yield [['size' => '1.5G', 'default' => false], 1610612736];
+        yield [['size' => '512', 'default' => 'Unknown type'], 512];
+        yield [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type'];
     }
 
     /**
@@ -1620,20 +1616,19 @@ HTML;
      *
      * @return array
      */
-    public static function transliterateInputProvider(): array
+    public static function transliterateInputProvider(): \Iterator
     {
-        return [
-            [
-                'Foo Bar: Not just for breakfast any-more', null,
-                'Foo Bar: Not just for breakfast any-more',
-            ],
-            [
-                'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
-                'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi ',
-            ],
-            [
-                'Äpfel Über Öl grün ärgert groß öko',
-                transliterator_create_from_rules('
+        yield [
+            'Foo Bar: Not just for breakfast any-more', null,
+            'Foo Bar: Not just for breakfast any-more',
+        ];
+        yield [
+            'A æ Übérmensch på høyeste nivå! И я люблю PHP! ест. ﬁ ¦', null,
+            'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi ',
+        ];
+        yield [
+            'Äpfel Über Öl grün ärgert groß öko',
+            transliterator_create_from_rules('
                     $AE = [Ä {A \u0308}];
                     $OE = [Ö {O \u0308}];
                     $UE = [Ü {U \u0308}];
@@ -1648,32 +1643,31 @@ HTML;
                     $UE → UE;
                     ::Latin-ASCII;
                 '),
-                'Aepfel Ueber Oel gruen aergert gross oeko',
-            ],
-            [
-                'La langue française est un attribut de souveraineté en France', null,
-                'La langue francaise est un attribut de souverainete en France',
-            ],
-            [
-                '!@$#exciting stuff! - what !@-# was that?', null,
-                '!@$#exciting stuff! - what !@-# was that?',
-            ],
-            [
-                'controller/action/りんご/1', null,
-                'controller/action/ringo/1',
-            ],
-            [
-                'の話が出たので大丈夫かなあと', null,
-                'no huaga chutanode da zhang fukanaato',
-            ],
-            [
-                'posts/view/한국어/page:1/sort:asc', null,
-                'posts/view/hangug-eo/page:1/sort:asc',
-            ],
-            [
-                "non\xc2\xa0breaking\xc2\xa0space", null,
-                'non breaking space',
-            ],
+            'Aepfel Ueber Oel gruen aergert gross oeko',
+        ];
+        yield [
+            'La langue française est un attribut de souveraineté en France', null,
+            'La langue francaise est un attribut de souverainete en France',
+        ];
+        yield [
+            '!@$#exciting stuff! - what !@-# was that?', null,
+            '!@$#exciting stuff! - what !@-# was that?',
+        ];
+        yield [
+            'controller/action/りんご/1', null,
+            'controller/action/ringo/1',
+        ];
+        yield [
+            'の話が出たので大丈夫かなあと', null,
+            'no huaga chutanode da zhang fukanaato',
+        ];
+        yield [
+            'posts/view/한국어/page:1/sort:asc', null,
+            'posts/view/hangug-eo/page:1/sort:asc',
+        ];
+        yield [
+            "non\xc2\xa0breaking\xc2\xa0space", null,
+            'non breaking space',
         ];
     }
 
@@ -1685,7 +1679,7 @@ HTML;
      * @param String $expected Expected string
      * @dataProvider transliterateInputProvider
      */
-    public function testTransliterate($string, $transliterator, $expected): void
+    public function testTransliterate(string $string, ?\Transliterator $transliterator, string $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
         $this->assertSame($expected, $result);
@@ -1694,105 +1688,103 @@ HTML;
     /**
      * @return array
      */
-    public static function slugInputProvider(): array
+    public static function slugInputProvider(): \Iterator
     {
-        return [
-            [
-                'Foo Bar: Not just for breakfast any-more', [],
-                'Foo-Bar-Not-just-for-breakfast-any-more',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
-                'Foo_Bar_Not_just_for_breakfast_any_more',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
-                'Foo+Bar+Not+just+for+breakfast+any+more',
-            ],
-            [
-                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
-                'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi',
-            ],
-            [
-                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
-                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi',
-            ],
-            [
-                'Äpfel Über Öl grün ärgert groß öko', [],
-                'Apfel-Uber-Ol-grun-argert-gross-oko',
-            ],
-            [
-                'The truth - and- more- news', [],
-                'The-truth-and-more-news',
-            ],
-            [
-                'The truth: and more news', [],
-                'The-truth-and-more-news',
-            ],
-            [
-                'La langue française est un attribut de souveraineté en France', [],
-                'La-langue-francaise-est-un-attribut-de-souverainete-en-France',
-            ],
-            [
-                '!@$#exciting stuff! - what !@-# was that?', [],
-                'exciting-stuff-what-was-that',
-            ],
-            [
-                '20% of profits went to me!', [],
-                '20-of-profits-went-to-me',
-            ],
-            [
-                '#this melts your face1#2#3', [],
-                'this-melts-your-face1-2-3',
-            ],
-            [
-                'controller/action/りんご/1', ['transliteratorId' => false],
-                'controller-action-りんご-1',
-            ],
-            [
-                'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
-                'の話が出たので大丈夫かなあと',
-            ],
-            [
-                'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
-                'posts-view-한국어-page-1-sort-asc',
-            ],
-            [
-                "non\xc2\xa0breaking\xc2\xa0space", [],
-                'non-breaking-space',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
-                'FooBarNotjustforbreakfastanymore',
-            ],
-            [
-                'clean!_me.tar.gz', ['preserve' => '.'],
-                'clean-me.tar.gz',
-            ],
-            [
-                'cl#ean(me', [],
-                'cl-ean-me',
-            ],
-            [
-                'cl#e|an(me.jpg', ['preserve' => '.'],
-                'cl-e-an-me.jpg',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['preserve' => ' '],
-                'Foo Bar- Not just for breakfast any-more',
-            ],
-            [
-                'Foo Bar: Not just for (breakfast) any-more', ['preserve' => ' ()'],
-                'Foo Bar- Not just for (breakfast) any-more',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => null],
-                'FooBarNotjustforbreakfastanymore',
-            ],
-            [
-                'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
-                'FooBarNotjustforbreakfastanymore',
-            ],
+        yield [
+            'Foo Bar: Not just for breakfast any-more', [],
+            'Foo-Bar-Not-just-for-breakfast-any-more',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['replacement' => '_'],
+            'Foo_Bar_Not_just_for_breakfast_any_more',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['replacement' => '+'],
+            'Foo+Bar+Not+just+for+breakfast+any+more',
+        ];
+        yield [
+            'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', [],
+            'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi',
+        ];
+        yield [
+            'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
+            'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi',
+        ];
+        yield [
+            'Äpfel Über Öl grün ärgert groß öko', [],
+            'Apfel-Uber-Ol-grun-argert-gross-oko',
+        ];
+        yield [
+            'The truth - and- more- news', [],
+            'The-truth-and-more-news',
+        ];
+        yield [
+            'The truth: and more news', [],
+            'The-truth-and-more-news',
+        ];
+        yield [
+            'La langue française est un attribut de souveraineté en France', [],
+            'La-langue-francaise-est-un-attribut-de-souverainete-en-France',
+        ];
+        yield [
+            '!@$#exciting stuff! - what !@-# was that?', [],
+            'exciting-stuff-what-was-that',
+        ];
+        yield [
+            '20% of profits went to me!', [],
+            '20-of-profits-went-to-me',
+        ];
+        yield [
+            '#this melts your face1#2#3', [],
+            'this-melts-your-face1-2-3',
+        ];
+        yield [
+            'controller/action/りんご/1', ['transliteratorId' => false],
+            'controller-action-りんご-1',
+        ];
+        yield [
+            'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
+            'の話が出たので大丈夫かなあと',
+        ];
+        yield [
+            'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
+            'posts-view-한국어-page-1-sort-asc',
+        ];
+        yield [
+            "non\xc2\xa0breaking\xc2\xa0space", [],
+            'non-breaking-space',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['replacement' => ''],
+            'FooBarNotjustforbreakfastanymore',
+        ];
+        yield [
+            'clean!_me.tar.gz', ['preserve' => '.'],
+            'clean-me.tar.gz',
+        ];
+        yield [
+            'cl#ean(me', [],
+            'cl-ean-me',
+        ];
+        yield [
+            'cl#e|an(me.jpg', ['preserve' => '.'],
+            'cl-e-an-me.jpg',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['preserve' => ' '],
+            'Foo Bar- Not just for breakfast any-more',
+        ];
+        yield [
+            'Foo Bar: Not just for (breakfast) any-more', ['preserve' => ' ()'],
+            'Foo Bar- Not just for (breakfast) any-more',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['replacement' => null],
+            'FooBarNotjustforbreakfastanymore',
+        ];
+        yield [
+            'Foo Bar: Not just for breakfast any-more', ['replacement' => false],
+            'FooBarNotjustforbreakfastanymore',
         ];
     }
 
@@ -1804,7 +1796,7 @@ HTML;
      * @param String $expected Expected string
      * @dataProvider slugInputProvider
      */
-    public function testSlug($string, $options, $expected): void
+    public function testSlug(string $string, array $options, string $expected): void
     {
         $result = Text::slug($string, $options);
         $this->assertSame($expected, $result);
@@ -1824,10 +1816,8 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
-        $strlen = function () use ($method) {
-            return $method->invokeArgs(null, func_get_args());
-        };
+        $method = new ReflectionMethod(\Cake\Utility\Text::class, '_strlen');
+        $strlen = fn(): mixed => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame(20, $strlen($text, []));
@@ -1847,10 +1837,8 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
-        $substr = function () use ($method) {
-            return $method->invokeArgs(null, func_get_args());
-        };
+        $method = new ReflectionMethod(\Cake\Utility\Text::class, '_substr');
+        $substr = fn(): mixed => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame('アクセス', $substr($text, 6, 4, []));

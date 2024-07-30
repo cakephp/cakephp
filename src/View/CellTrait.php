@@ -60,11 +60,7 @@ trait CellTrait
     {
         $parts = explode('::', $cell);
 
-        if (count($parts) === 2) {
-            [$pluginAndCell, $action] = [$parts[0], $parts[1]];
-        } else {
-            [$pluginAndCell, $action] = [$parts[0], 'display'];
-        }
+        [$pluginAndCell, $action] = count($parts) === 2 ? [$parts[0], $parts[1]] : [$parts[0], 'display'];
 
         [$plugin] = pluginSplit($pluginAndCell);
         $className = App::className($pluginAndCell, 'View/Cell', 'Cell');
@@ -85,7 +81,6 @@ trait CellTrait
      * @param string $action The action name.
      * @param string|null $plugin The plugin name.
      * @param array<string, mixed> $options The constructor options for the cell.
-     * @return \Cake\View\Cell
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
@@ -98,6 +93,7 @@ trait CellTrait
         if ($plugin) {
             $builder->setPlugin($plugin);
         }
+
         if (!empty($this->helpers)) {
             $builder->addHelpers($this->helpers);
         }

@@ -41,7 +41,6 @@ class HttpException extends CakeException
      *
      * @param string $header Header name
      * @param array<string>|string|null $value Header value
-     * @return void
      */
     public function setHeader(string $header, array|string|null $value = null): void
     {
@@ -52,7 +51,6 @@ class HttpException extends CakeException
      * Sets HTTP response headers.
      *
      * @param array<string, mixed> $headers Array of header name and value pairs.
-     * @return void
      */
     public function setHeaders(array $headers): void
     {

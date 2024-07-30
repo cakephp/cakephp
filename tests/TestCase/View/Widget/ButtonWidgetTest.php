@@ -36,13 +36,14 @@ class ButtonWidgetTest extends TestCase
      */
     protected $templates;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
             'button' => '<button{{attrs}}>{{text}}</button>',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
     }
 

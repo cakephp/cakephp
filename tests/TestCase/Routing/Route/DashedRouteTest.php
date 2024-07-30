@@ -142,6 +142,7 @@ class DashedRouteTest extends TestCase
     {
         $route = new DashedRoute('/{controller}/{action}/{id}', [], ['id' => Router::ID]);
         $route->compile();
+
         $result = $route->parse('/my-posts/my-view/1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('myView', $result['action']);
@@ -149,6 +150,7 @@ class DashedRouteTest extends TestCase
 
         $route = new DashedRoute('/{controller}/{action}-{id}');
         $route->compile();
+
         $result = $route->parse('/my-posts/my-view-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('myView', $result['action']);
@@ -156,6 +158,7 @@ class DashedRouteTest extends TestCase
 
         $route = new DashedRoute('/{controller}/{action}/{slug}-{id}', [], ['id' => Router::ID]);
         $route->compile();
+
         $result = $route->parse('/my-posts/my-view/the-slug-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('myView', $result['action']);
@@ -167,6 +170,7 @@ class DashedRouteTest extends TestCase
             ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
+
         $result = $route->parse('/admin/', 'GET');
         $this->assertNull($result);
 
@@ -181,12 +185,12 @@ class DashedRouteTest extends TestCase
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('searchIt', $result['action']);
-        $this->assertEquals([], $result['pass']);
+        $this->assertSame([], $result['pass']);
 
         $result = $route->parse('/media/search/tv_shows', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('searchIt', $result['action']);
-        $this->assertEquals(['tv_shows'], $result['pass']);
+        $this->assertSame(['tv_shows'], $result['pass']);
     }
 
     public function testMatchThenParse(): void
@@ -207,7 +211,7 @@ class DashedRouteTest extends TestCase
         $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 
-    public function testMatchDoesNotCorruptDefaults()
+    public function testMatchDoesNotCorruptDefaults(): void
     {
         $route = new DashedRoute('/user-permissions/edit', [
             'controller' => 'UserPermissions',

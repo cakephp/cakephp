@@ -66,7 +66,6 @@ class EntityRoute extends Route
      *
      * @throws \RuntimeException
      * @param mixed $entity Entity value from the URL options
-     * @return void
      */
     protected function _checkEntity(mixed $entity): void
     {

@@ -22,8 +22,5 @@ use Cake\Core\Exception\CakeException;
  */
 class MissingResponseException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Unable to find a mocked response for `%s` to `%s`.';
 }

@@ -43,12 +43,12 @@ class DriverTest extends TestCase
     /**
      * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -62,7 +62,7 @@ class DriverTest extends TestCase
             ->getMock();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('queries');
@@ -76,10 +76,10 @@ class DriverTest extends TestCase
     {
         try {
             new StubDriver(['login' => 'Bear']);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
-                $e->getMessage()
+                $exception->getMessage()
             );
         }
     }
@@ -103,7 +103,7 @@ class DriverTest extends TestCase
      * @dataProvider schemaValueProvider
      * @param mixed $input
      */
-    public function testSchemaValue($input, string $expected): void
+    public function testSchemaValue(bool|int|string|null $input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
         $this->assertSame($expected, $result);
@@ -128,7 +128,7 @@ class DriverTest extends TestCase
             ->with($value, PDO::PARAM_STR)
             ->willReturn('string');
 
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('createPdo')
             ->willReturn($connection);
 
@@ -150,7 +150,7 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('createPdo')
             ->willReturn($connection);
 
@@ -174,7 +174,7 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(new PDOStatement());
 
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('createPdo')
             ->willReturn($connection);
 
@@ -283,16 +283,14 @@ class DriverTest extends TestCase
      *
      * @return array
      */
-    public static function schemaValueProvider(): array
+    public static function schemaValueProvider(): \Iterator
     {
-        return [
-            [null, 'NULL'],
-            [false, 'FALSE'],
-            [true, 'TRUE'],
-            [1, '1'],
-            ['0', '0'],
-            ['42', '42'],
-        ];
+        yield [null, 'NULL'];
+        yield [false, 'FALSE'];
+        yield [true, 'TRUE'];
+        yield [1, '1'];
+        yield ['0', '0'];
+        yield ['42', '42'];
     }
 
     /**
@@ -306,11 +304,11 @@ class DriverTest extends TestCase
             ->setConstructorArgs([$inner, $this->driver])
             ->onlyMethods(['queryString','rowCount','execute'])
             ->getMock();
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
         $statement->method('rowCount')->willReturn(3);
         $statement->method('execute')->willReturn(true);
 
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('prepare')
             ->willReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
@@ -335,10 +333,10 @@ class DriverTest extends TestCase
             ->getMock();
         $statement->method('rowCount')->willReturn(3);
         $statement->method('execute')->willReturn(true);
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('prepare')
             ->willReturn($statement);
 
@@ -367,18 +365,18 @@ class DriverTest extends TestCase
             ->setConstructorArgs([$inner, $this->driver])
             ->onlyMethods(['queryString','rowCount','execute'])
             ->getMock();
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
         $statement->method('rowCount')->willReturn(0);
-        $statement->method('execute')->will($this->throwException(new PDOException()));
+        $statement->method('execute')->willThrowException(new PDOException());
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->expects($this->any())
+        $this->driver
             ->method('prepare')
             ->willReturn($statement);
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
-        } catch (PDOException $e) {
+        } catch (PDOException) {
         }
 
         $messages = Log::engine('queries')->read();
@@ -416,15 +414,12 @@ class DriverTest extends TestCase
             ->onlyMethods(['beginTransaction', 'commit', 'rollback', 'inTransaction'])
             ->getMock();
         $pdo
-            ->expects($this->any())
             ->method('beginTransaction')
             ->willReturn(true);
         $pdo
-            ->expects($this->any())
             ->method('commit')
             ->willReturn(true);
         $pdo
-            ->expects($this->any())
             ->method('rollBack')
             ->willReturn(true);
         $pdo->expects($this->exactly(5))
@@ -442,7 +437,7 @@ class DriverTest extends TestCase
             ->onlyMethods(['getPdo'])
             ->getMock();
 
-        $driver->expects($this->any())
+        $driver
             ->method('getPdo')
             ->willReturn($pdo);
 

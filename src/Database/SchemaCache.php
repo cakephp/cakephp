@@ -32,8 +32,6 @@ class SchemaCache
 {
     /**
      * Schema
-     *
-     * @var \Cake\Database\Schema\CachedCollection
      */
     protected CachedCollection $_schema;
 
@@ -55,11 +53,7 @@ class SchemaCache
      */
     public function build(?string $name = null): array
     {
-        if ($name) {
-            $tables = [$name];
-        } else {
-            $tables = $this->_schema->listTables();
-        }
+        $tables = $name ? [$name] : $this->_schema->listTables();
 
         foreach ($tables as $table) {
             $this->_schema->describe($table, ['forceRefresh' => true]);
@@ -76,11 +70,7 @@ class SchemaCache
      */
     public function clear(?string $name = null): array
     {
-        if ($name) {
-            $tables = [$name];
-        } else {
-            $tables = $this->_schema->listTables();
-        }
+        $tables = $name ? [$name] : $this->_schema->listTables();
 
         $cacher = $this->_schema->getCacher();
 
@@ -96,7 +86,6 @@ class SchemaCache
      * Helper method to get the schema collection.
      *
      * @param \Cake\Database\Connection $connection Connection object
-     * @return \Cake\Database\Schema\CachedCollection
      * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
     public function getSchema(Connection $connection): CachedCollection

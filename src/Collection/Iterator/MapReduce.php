@@ -33,31 +33,18 @@ class MapReduce implements IteratorAggregate
     /**
      * Holds the shuffled results that were emitted from the map
      * phase
-     *
-     * @var array
      */
     protected array $_intermediate = [];
 
     /**
      * Holds the results as emitted during the reduce phase
-     *
-     * @var array
      */
     protected array $_result = [];
 
     /**
      * Whether the Map-Reduce routine has been executed already on the data
-     *
-     * @var bool
      */
     protected bool $_executed = false;
-
-    /**
-     * Holds the original data that needs to be processed
-     *
-     * @var iterable
-     */
-    protected iterable $_data;
 
     /**
      * A callable that will be executed for each record in the original data
@@ -76,8 +63,6 @@ class MapReduce implements IteratorAggregate
 
     /**
      * Count of elements emitted during the Reduce phase
-     *
-     * @var int
      */
     protected int $_counter = 0;
 
@@ -107,7 +92,7 @@ class MapReduce implements IteratorAggregate
      *  ['odd' => [1, 3, 5], 'even' => [2, 4]]
      * ```
      *
-     * @param iterable $data The original data to be processed.
+     * @param iterable $_data The original data to be processed.
      * @param callable $mapper the mapper callback. This function will receive 3 arguments.
      * The first one is the current value, second the current results key and third is
      * this class instance so you can call the result emitters.
@@ -116,9 +101,11 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(iterable $data, callable $mapper, ?callable $reducer = null)
+    public function __construct(/**
+     * Holds the original data that needs to be processed
+     */
+    protected iterable $_data, callable $mapper, ?callable $reducer = null)
     {
-        $this->_data = $data;
         $this->_mapper = $mapper;
         $this->_reducer = $reducer;
     }
@@ -126,8 +113,6 @@ class MapReduce implements IteratorAggregate
     /**
      * Returns an iterator with the end result of running the Map and Reduce
      * phases on the original data
-     *
-     * @return \Traversable
      */
     public function getIterator(): Traversable
     {
@@ -144,7 +129,6 @@ class MapReduce implements IteratorAggregate
      *
      * @param mixed $val The record itself to store in the bucket
      * @param mixed $bucket the name of the bucket where to put the record
-     * @return void
      */
     public function emitIntermediate(mixed $val, mixed $bucket): void
     {
@@ -157,7 +141,6 @@ class MapReduce implements IteratorAggregate
      *
      * @param mixed $val The value to be appended to the final list of results
      * @param mixed $key and optional key to assign to the value
-     * @return void
      */
     public function emit(mixed $val, mixed $key = null): void
     {
@@ -170,7 +153,6 @@ class MapReduce implements IteratorAggregate
      * and call the mapper function for each , then for each intermediate
      * bucket created during the Map phase call the reduce function.
      *
-     * @return void
      * @throws \LogicException if emitIntermediate was called but no reducer function
      * was provided
      */
@@ -191,6 +173,7 @@ class MapReduce implements IteratorAggregate
                 $reducer($list, $key, $this);
             }
         }
+
         $this->_intermediate = [];
         $this->_executed = true;
     }

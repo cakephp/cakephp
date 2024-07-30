@@ -24,10 +24,11 @@ $namespace = Configure::read('App.namespace');
 if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
+
 $prefixNs = '';
-$prefix = $prefix ?? '';
+$prefix ??= '';
 if ($prefix) {
-    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map(\Cake\Utility\Inflector::class . '::camelize', explode('/', (string) $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefix = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }

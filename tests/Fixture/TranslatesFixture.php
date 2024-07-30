@@ -23,15 +23,11 @@ class TranslatesFixture extends TestFixture
 {
     /**
      * table property
-     *
-     * @var string
      */
     public string $table = 'i18n';
 
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['locale' => 'eng', 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Title #1'],

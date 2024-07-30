@@ -68,12 +68,14 @@ class BodyParserMiddleware implements MiddlewareInterface
                 $this->decodeJson(...)
             );
         }
+
         if ($options['xml']) {
             $this->addParser(
                 ['application/xml', 'text/xml'],
                 $this->decodeXml(...)
             );
         }
+
         if ($options['methods']) {
             $this->setMethods($options['methods']);
         }
@@ -85,7 +87,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * @param list<string> $methods The methods to parse data on.
      * @return $this
      */
-    public function setMethods(array $methods)
+    public function setMethods(array $methods): static
     {
         $this->methods = $methods;
 
@@ -122,7 +124,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, Closure $parser)
+    public function addParser(array $types, Closure $parser): static
     {
         foreach ($types as $type) {
             $type = strtolower($type);
@@ -156,6 +158,7 @@ class BodyParserMiddleware implements MiddlewareInterface
         if (!in_array($request->getMethod(), $this->methods, true)) {
             return $handler->handle($request);
         }
+
         [$type] = explode(';', $request->getHeaderLine('Content-Type'));
         $type = strtolower($type);
         if (!isset($this->parsers[$type])) {
@@ -167,6 +170,7 @@ class BodyParserMiddleware implements MiddlewareInterface
         if (!is_array($result)) {
             throw new BadRequestException();
         }
+
         $request = $request->withParsedBody($result);
 
         return $handler->handle($request);
@@ -176,13 +180,13 @@ class BodyParserMiddleware implements MiddlewareInterface
      * Decode JSON into an array.
      *
      * @param string $body The request body to decode
-     * @return array|null
      */
     protected function decodeJson(string $body): ?array
     {
         if ($body === '') {
             return [];
         }
+
         $decoded = json_decode($body, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             return null;
@@ -195,7 +199,6 @@ class BodyParserMiddleware implements MiddlewareInterface
      * Decode XML into an array.
      *
      * @param string $body The request body to decode
-     * @return array
      */
     protected function decodeXml(string $body): array
     {

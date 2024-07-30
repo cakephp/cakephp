@@ -43,8 +43,6 @@ class SmtpTestTransport extends SmtpTransport
     /**
      * Returns the authentication type detected and used to connect to the SMTP server.
      * If no authentication was detected, null is returned.
-     *
-     * @return string|null
      */
     public function getAuthType(): ?string
     {

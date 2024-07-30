@@ -43,7 +43,6 @@ trait DateFormatTrait
      * @param \DateTimeInterface $date Date.
      * @param array<int>|string $format Format.
      * @param string|null $locale The locale name in which the date should be displayed.
-     * @return string
      */
     protected function _formatObject(
         DateTimeInterface $date,
@@ -55,7 +54,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 
@@ -73,7 +73,7 @@ trait DateFormatTrait
         }
 
         $timezone = $date->getTimezone()->getName();
-        $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
+        $key = sprintf('%s.%d.%d.%s.%s.%s', $locale, $dateFormat, $timeFormat, $timezone, $calendar, $pattern);
 
         if (!isset(static::$formatters[$key])) {
             if ($timezone === '+00:00' || $timezone === 'Z') {
@@ -91,10 +91,10 @@ trait DateFormatTrait
                 $pattern
             );
 
-            if (!$formatter) {
+            if (!$formatter instanceof \IntlDateFormatter) {
                 throw new CakeException(
                     'Your version of icu does not support creating a date formatter for ' .
-                    "`$key`. You should try to upgrade libicu and the intl extension."
+                    sprintf('`%s`. You should try to upgrade libicu and the intl extension.', $key)
                 );
             }
 
@@ -127,7 +127,6 @@ trait DateFormatTrait
      * @param string $time The time string to parse.
      * @param array<int>|string $format Any format accepted by IntlDateFormatter.
      * @param \DateTimeZone|string|null $tz The timezone for the instance
-     * @return static|null
      */
     protected static function _parseDateTime(
         string $time,
@@ -139,7 +138,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 
@@ -152,9 +152,10 @@ trait DateFormatTrait
             null,
             $pattern
         );
-        if (!$formatter) {
+        if (!$formatter instanceof \IntlDateFormatter) {
             throw new CakeException('Unable to create IntlDateFormatter instance');
         }
+
         $formatter->setLenient(DateTime::lenientParsingEnabled());
 
         $time = $formatter->parse($time);
@@ -167,6 +168,7 @@ trait DateFormatTrait
         if (!($tz instanceof DateTimeZone)) {
             $tz = new DateTimeZone($tz ?? date_default_timezone_get());
         }
+
         $dateTime = $dateTime->setTimezone($tz);
 
         return new static($dateTime);

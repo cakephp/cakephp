@@ -14,106 +14,75 @@ use TestApp\ReflectionDependency;
  */
 class DependenciesController extends Controller
 {
-    public ?stdClass $inject;
-
     public function __construct(
         ?ServerRequest $request = null,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?stdClass $inject = null
+        public ?stdClass $inject = null
     ) {
         parent::__construct($request, $name, $eventManager);
-        $this->inject = $inject;
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function requiredString(string $str)
+    public function requiredString(string $str): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('str')));
+        return $this->response->withStringBody(json_encode(['str' => $str]));
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function optionalString(string $str = 'default val')
+    public function optionalString(string $str = 'default val'): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('str')));
+        return $this->response->withStringBody(json_encode(['str' => $str]));
     }
 
-    public function requiredTyped(float $one, int $two, bool $three, array $four)
+    public function requiredTyped(float $one, int $two, bool $three, array $four): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode(
-            compact('one', 'two', 'three', 'four'),
+            ['one' => $one, 'two' => $two, 'three' => $three, 'four' => $four],
             JSON_PRESERVE_ZERO_FRACTION
         ));
     }
 
-    public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
+    public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+        return $this->response->withStringBody(json_encode(['one' => $one, 'two' => $two, 'three' => $three], JSON_PRESERVE_ZERO_FRACTION));
     }
 
-    public function unsupportedTyped(iterable $one)
+    public function unsupportedTyped(iterable $one): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 
-    public function typedUnion(string|int $one)
+    public function typedUnion(string|int $one): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 
-    /**
-     * @param mixed $any
-     * @return \Cake\Http\Response
-     */
-    public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
+    public function optionalDep(mixed $any = null, ?string $str = null, ?stdClass $dep = null): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep, 'any' => $any, 'str' => $str]));
     }
 
-    /**
-     * @param \TestApp\ReflectionDependency $dep
-     * @return \Cake\Http\Response
-     */
-    public function reflectionDep(ReflectionDependency $dep)
+    public function reflectionDep(ReflectionDependency $dep): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('dep')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep]));
     }
 
-    /**
-     * @param mixed $any
-     * @return \Cake\Http\Response
-     */
-    public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
+    public function requiredDep(stdClass $dep, mixed $any = null, ?string $str = null): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep, 'any' => $any, 'str' => $str]));
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function variadic()
+    public function variadic(): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode(['args' => func_get_args()]));
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function spread(string ...$args)
+    public function spread(string ...$args): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode(['args' => $args]));
     }
 
-    /**
-     * @param mixed $one
-     * @return \Cake\Http\Response
-     */
-    public function requiredParam($one)
+    public function requiredParam(mixed $one): \Cake\Http\Response
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 }

@@ -30,7 +30,7 @@ use TestApp\Command\SampleCommand;
  */
 class CommandCollectionTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
@@ -102,18 +102,16 @@ class CommandCollectionTest extends TestCase
      *
      * @return array
      */
-    public static function invalidNameProvider(): array
+    public static function invalidNameProvider(): \Iterator
     {
-        return [
-            // Empty
-            [''],
-            // Leading spaces
-            [' spaced'],
-            // Trailing spaces
-            ['spaced '],
-            // Too many words
-            ['one two three four'],
-        ];
+        // Empty
+        yield [''];
+        // Leading spaces
+        yield [' spaced'];
+        // Trailing spaces
+        yield ['spaced '];
+        // Too many words
+        yield ['one two three four'];
     }
 
     /**
@@ -124,7 +122,7 @@ class CommandCollectionTest extends TestCase
     public function testAddCommandInvalidName(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("The command name `$name` is invalid.");
+        $this->expectExceptionMessage(sprintf('The command name `%s` is invalid.', $name));
         $collection = new CommandCollection();
         $collection->add($name, DemoCommand::class);
     }
@@ -164,7 +162,8 @@ class CommandCollectionTest extends TestCase
         foreach ($collection as $key => $value) {
             $out[$key] = $value;
         }
-        $this->assertEquals($in, $out);
+
+        $this->assertSame($in, $out);
     }
 
     /**
@@ -178,8 +177,8 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('sample'));
 
-        $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
-        $this->assertSame('TestApp\Command\SampleCommand', $collection->get('sample'));
+        $this->assertSame(\TestApp\Command\DemoCommand::class, $collection->get('demo'));
+        $this->assertSame(\TestApp\Command\SampleCommand::class, $collection->get('sample'));
     }
 
     /**
@@ -243,9 +242,9 @@ class CommandCollectionTest extends TestCase
             $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertSame('TestPlugin\Command\ExampleCommand', $result['example']);
+        $this->assertSame(\TestPlugin\Command\ExampleCommand::class, $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
-        $this->assertSame('TestPlugin\Command\SampleCommand', $result['test_plugin.sample']);
+        $this->assertSame(\TestPlugin\Command\SampleCommand::class, $result['test_plugin.sample']);
 
         $result = $collection->discoverPlugin('Company/TestPluginThree');
         $this->assertArrayHasKey(

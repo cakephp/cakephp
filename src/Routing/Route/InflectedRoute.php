@@ -29,8 +29,6 @@ class InflectedRoute extends Route
      *
      * Default values need to be inflected so that they match the inflections that match()
      * will create.
-     *
-     * @var array|null
      */
     protected ?array $_inflectedDefaults = null;
 
@@ -48,14 +46,16 @@ class InflectedRoute extends Route
         if (!$params) {
             return null;
         }
+
         if (!empty($params['controller'])) {
             $params['controller'] = Inflector::camelize($params['controller']);
         }
+
         if (!empty($params['plugin'])) {
-            if (!str_contains($params['plugin'], '/')) {
+            if (!str_contains((string) $params['plugin'], '/')) {
                 $params['plugin'] = Inflector::camelize($params['plugin']);
             } else {
-                [$vendor, $plugin] = explode('/', $params['plugin'], 2);
+                [$vendor, $plugin] = explode('/', (string) $params['plugin'], 2);
                 $params['plugin'] = Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
             }
         }
@@ -80,6 +80,7 @@ class InflectedRoute extends Route
             $this->compile();
             $this->_inflectedDefaults = $this->_underscore($this->defaults);
         }
+
         $restore = $this->defaults;
         try {
             $this->defaults = $this->_inflectedDefaults;
@@ -94,13 +95,13 @@ class InflectedRoute extends Route
      * Helper method for underscoring keys in a URL array.
      *
      * @param array $url An array of URL keys.
-     * @return array
      */
     protected function _underscore(array $url): array
     {
         if (!empty($url['controller'])) {
             $url['controller'] = Inflector::underscore($url['controller']);
         }
+
         if (!empty($url['plugin'])) {
             $url['plugin'] = Inflector::underscore($url['plugin']);
         }

@@ -73,7 +73,7 @@ class TypeMap
      * are the correspondent type.
      * @return $this
      */
-    public function setDefaults(array $defaults)
+    public function setDefaults(array $defaults): static
     {
         $this->_defaults = $defaults;
 
@@ -96,7 +96,6 @@ class TypeMap
      * If a key already exists it will not be overwritten.
      *
      * @param array<int|string, string> $types The additional types to add.
-     * @return void
      */
     public function addDefaults(array $types): void
     {
@@ -118,7 +117,7 @@ class TypeMap
      * are the correspondent type.
      * @return $this
      */
-    public function setTypes(array $types)
+    public function setTypes(array $types): static
     {
         $this->_types = $types;
 
@@ -141,7 +140,6 @@ class TypeMap
      * null will be returned.
      *
      * @param string|int $column The type for a given column
-     * @return string|null
      */
     public function type(string|int $column): ?string
     {

@@ -53,14 +53,14 @@ class UpdateQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -189,6 +189,7 @@ class UpdateQueryTest extends TestCase
         foreach ($result->fetchAll('assoc') as $row) {
             $this->assertSame($row['created'], $row['updated']);
         }
+
         $result->closeCursor();
     }
 
@@ -228,11 +229,9 @@ class UpdateQueryTest extends TestCase
         $query = new UpdateQuery($this->connection);
         $date = new DateTime();
         $query->update('comments')
-            ->set(function ($exp) use ($date) {
-                return $exp
-                    ->eq('comment', 'mark')
-                    ->eq('created', $date, 'date');
-            })
+            ->set(fn($exp) => $exp
+                ->eq('comment', 'mark')
+                ->eq('created', $date, 'date'))
             ->where(['id' => 1]);
         $result = $query->sql();
 
@@ -358,7 +357,7 @@ class UpdateQueryTest extends TestCase
             ->where(['id' => 1])
             ->rowCountAndClose();
 
-        $this->assertEquals(500, $rowCount);
+        $this->assertSame(500, $rowCount);
     }
 
     public function testCloneUpdateExpression(): void

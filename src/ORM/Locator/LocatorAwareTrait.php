@@ -27,15 +27,11 @@ trait LocatorAwareTrait
 {
     /**
      * This object's default table alias.
-     *
-     * @var string|null
      */
     protected ?string $defaultTable = null;
 
     /**
      * Table locator instance
-     *
-     * @var \Cake\ORM\Locator\LocatorInterface|null
      */
     protected ?LocatorInterface $_tableLocator = null;
 
@@ -54,8 +50,6 @@ trait LocatorAwareTrait
 
     /**
      * Gets the table locator.
-     *
-     * @return \Cake\ORM\Locator\LocatorInterface
      */
     public function getTableLocator(): LocatorInterface
     {
@@ -79,7 +73,6 @@ trait LocatorAwareTrait
      *  If `null` then the value of $defaultTable property is used.
      * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the registry options will be ignored.
-     * @return \Cake\ORM\Table
      * @throws \Cake\Core\Exception\CakeException If `$alias` argument and `$defaultTable` property both are `null`.
      * @see \Cake\ORM\TableLocator::get()
      * @since 4.3.0

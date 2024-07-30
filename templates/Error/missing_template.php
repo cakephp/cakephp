@@ -50,6 +50,7 @@ $this->start('subheading');
         if (str_contains($path, CORE_PATH)) {
             continue;
         }
+
         echo sprintf('<li>%s%s</li>', h($path), h($file));
     endforeach;
 ?>

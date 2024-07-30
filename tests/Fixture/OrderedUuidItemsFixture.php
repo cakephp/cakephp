@@ -23,8 +23,6 @@ class OrderedUuidItemsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
     ];

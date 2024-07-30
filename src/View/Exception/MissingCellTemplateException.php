@@ -21,14 +21,6 @@ use Throwable;
  */
 class MissingCellTemplateException extends MissingTemplateException
 {
-    /**
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * @var string
-     */
     protected string $type = 'Cell template';
 
     /**
@@ -41,14 +33,12 @@ class MissingCellTemplateException extends MissingTemplateException
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
-        string $name,
+        protected string $name,
         string $file,
         array $paths = [],
         ?int $code = null,
         ?Throwable $previous = null
     ) {
-        $this->name = $name;
-
         parent::__construct($file, $paths, $code, $previous);
     }
 

@@ -26,17 +26,14 @@ class ContentsNotContain extends ContentsBase
      * Checks if contents contain expected
      *
      * @param mixed $other Expected
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
-        return mb_strpos($this->contents, $other) === false;
+        return mb_strpos($this->contents, (string) $other) === false;
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -46,7 +43,7 @@ class ContentsNotContain extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsNotContain',
+    \Cake\Console\TestSuite\Constraint\ContentsNotContain::class,
     'Cake\TestSuite\Constraint\Console\ContentsNotContain'
 );
 // phpcs:enable

@@ -22,33 +22,6 @@ namespace Cake\Error;
 class PhpError
 {
     /**
-     * @var int
-     */
-    private int $code;
-
-    /**
-     * @var string
-     */
-    private string $message;
-
-    /**
-     * @var string|null
-     */
-    private ?string $file;
-
-    /**
-     * @var int|null
-     */
-    private ?int $line;
-
-    /**
-     * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
-     *
-     * @var array<array<string, int>>
-     */
-    private array $trace;
-
-    /**
      * @var array<int, string>
      */
     private array $levelMap = [
@@ -89,23 +62,20 @@ class PhpError
      * @param array $trace The backtrace for the error.
      */
     public function __construct(
-        int $code,
-        string $message,
-        ?string $file = null,
-        ?int $line = null,
-        array $trace = []
-    ) {
-        $this->code = $code;
-        $this->message = $message;
-        $this->file = $file;
-        $this->line = $line;
-        $this->trace = $trace;
+        private readonly int $code,
+        private readonly string $message,
+        private readonly ?string $file = null,
+        private readonly ?int $line = null,
+        /**
+         * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
+         */
+        private readonly array $trace = []
+    )
+    {
     }
 
     /**
      * Get the PHP error constant.
-     *
-     * @return int
      */
     public function getCode(): int
     {
@@ -114,8 +84,6 @@ class PhpError
 
     /**
      * Get the mapped LOG_ constant.
-     *
-     * @return int
      */
     public function getLogLevel(): int
     {
@@ -126,8 +94,6 @@ class PhpError
 
     /**
      * Get the error code label
-     *
-     * @return string
      */
     public function getLabel(): string
     {
@@ -136,8 +102,6 @@ class PhpError
 
     /**
      * Get the error message.
-     *
-     * @return string
      */
     public function getMessage(): string
     {
@@ -146,8 +110,6 @@ class PhpError
 
     /**
      * Get the error file
-     *
-     * @return string|null
      */
     public function getFile(): ?string
     {
@@ -156,8 +118,6 @@ class PhpError
 
     /**
      * Get the error line number.
-     *
-     * @return int|null
      */
     public function getLine(): ?int
     {
@@ -166,8 +126,6 @@ class PhpError
 
     /**
      * Get the stacktrace as an array.
-     *
-     * @return array
      */
     public function getTrace(): array
     {
@@ -176,18 +134,12 @@ class PhpError
 
     /**
      * Get the stacktrace as a string.
-     *
-     * @return string
      */
     public function getTraceAsString(): string
     {
         $out = [];
         foreach ($this->trace as $frame) {
-            if (!empty($frame['line'])) {
-                $out[] = "{$frame['reference']} {$frame['file']}, line {$frame['line']}";
-            } else {
-                $out[] = $frame['reference'];
-            }
+            $out[] = empty($frame['line']) ? $frame['reference'] : sprintf('%d %d, line %s', $frame['reference'], $frame['file'], $frame['line']);
         }
 
         return implode("\n", $out);

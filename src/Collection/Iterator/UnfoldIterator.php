@@ -41,8 +41,6 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
 
     /**
      * A reference to the internal iterator this object is wrapping.
-     *
-     * @var \Traversable
      */
     protected Traversable $_innerIterator;
 
@@ -65,8 +63,6 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
     /**
      * Returns true as each of the elements in the array represent a
      * list of items
-     *
-     * @return bool
      */
     public function hasChildren(): bool
     {

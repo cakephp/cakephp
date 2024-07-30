@@ -35,7 +35,7 @@ class RouteCollectionTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->collection = new RouteCollection();
@@ -53,7 +53,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
         $result = $this->collection->parseRequest(new ServerRequest(['url' => '/']));
-        $this->assertEquals([], $result, 'Should not match, missing /b');
+        $this->assertSame([], $result, 'Should not match, missing /b');
     }
 
     /**
@@ -79,7 +79,7 @@ class RouteCollectionTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ],
         ]));
-        $this->assertEquals([], $result, 'Should not match with missing method');
+        $this->assertSame([], $result, 'Should not match with missing method');
     }
 
     /**
@@ -303,7 +303,7 @@ class RouteCollectionTest extends TestCase
 
         $request = new ServerRequest(['url' => '/']);
         $result = $this->collection->parseRequest($request);
-        $this->assertEquals([], $result, 'Should not match, missing /b');
+        $this->assertSame([], $result, 'Should not match, missing /b');
     }
 
     /**
@@ -391,8 +391,8 @@ class RouteCollectionTest extends TestCase
         try {
             $this->collection->parseRequest($request);
             $this->fail('No exception raised');
-        } catch (MissingRouteException $e) {
-            $this->assertStringContainsString('/fallback', $e->getMessage());
+        } catch (MissingRouteException $missingRouteException) {
+            $this->assertStringContainsString('/fallback', $missingRouteException->getMessage());
         }
     }
 
@@ -401,13 +401,11 @@ class RouteCollectionTest extends TestCase
      *
      * @return array
      */
-    public static function hostProvider(): array
+    public static function hostProvider(): \Iterator
     {
-        return [
-            ['wrong.example'],
-            ['example.com'],
-            ['aexample.com'],
-        ];
+        yield ['wrong.example'];
+        yield ['example.com'];
+        yield ['aexample.com'];
     }
 
     /**
@@ -718,7 +716,7 @@ class RouteCollectionTest extends TestCase
 
         $all = $this->collection->named();
         $this->assertCount(1, $all);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
+        $this->assertInstanceOf(\Cake\Routing\Route\Route::class, $all['cntrl']);
         $this->assertSame('/l/{controller}', $all['cntrl']->template);
     }
 
@@ -755,16 +753,16 @@ class RouteCollectionTest extends TestCase
      */
     public function testSetExtensions(): void
     {
-        $this->assertEquals([], $this->collection->getExtensions());
+        $this->assertSame([], $this->collection->getExtensions());
 
         $this->collection->setExtensions(['json']);
-        $this->assertEquals(['json'], $this->collection->getExtensions());
+        $this->assertSame(['json'], $this->collection->getExtensions());
 
         $this->collection->setExtensions(['rss', 'xml']);
-        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->getExtensions());
+        $this->assertSame(['json', 'rss', 'xml'], $this->collection->getExtensions());
 
         $this->collection->setExtensions(['csv'], false);
-        $this->assertEquals(['csv'], $this->collection->getExtensions());
+        $this->assertSame(['csv'], $this->collection->getExtensions());
     }
 
     /**
@@ -776,7 +774,7 @@ class RouteCollectionTest extends TestCase
         });
         $this->assertSame($result, $this->collection);
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
@@ -795,7 +793,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('closure', function (): void {
         });
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $this->collection->registerMiddleware('callable', $callable);
 
@@ -825,7 +823,7 @@ class RouteCollectionTest extends TestCase
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->expectExceptionMessage("Cannot add 'bad' middleware to group 'group'. It has not been registered.");
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

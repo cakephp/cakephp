@@ -45,11 +45,12 @@ class Oauth
         if (!isset($credentials['consumerKey'])) {
             return $request;
         }
+
         if (empty($credentials['method'])) {
             $credentials['method'] = 'hmac-sha1';
         }
 
-        $credentials['method'] = strtoupper($credentials['method']);
+        $credentials['method'] = strtoupper((string) $credentials['method']);
 
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
@@ -61,6 +62,7 @@ class Oauth
                 if (!$hasKeys) {
                     return $request;
                 }
+
                 $value = $this->_hmacSha1($request, $credentials);
                 break;
 
@@ -68,6 +70,7 @@ class Oauth
                 if (!isset($credentials['privateKey'])) {
                     return $request;
                 }
+
                 $value = $this->_rsaSha1($request, $credentials);
                 break;
 
@@ -80,6 +83,7 @@ class Oauth
                 if (!$hasKeys) {
                     return $request;
                 }
+
                 $value = $this->_plaintext($request, $credentials);
                 break;
 
@@ -114,6 +118,7 @@ class Oauth
         if (isset($credentials['realm'])) {
             $values['oauth_realm'] = $credentials['realm'];
         }
+
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
         $key = implode('&', $key);
         $values['oauth_signature'] = $key;
@@ -128,7 +133,6 @@ class Oauth
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return string
      */
     protected function _hmacSha1(Request $request, array $credentials): string
     {
@@ -151,6 +155,7 @@ class Oauth
         if (isset($credentials['realm'])) {
             $values['oauth_realm'] = $credentials['realm'];
         }
+
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
         $key = array_map($this->_encode(...), $key);
         $key = implode('&', $key);
@@ -169,7 +174,6 @@ class Oauth
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
-     * @return string
      */
     protected function _rsaSha1(Request $request, array $credentials): string
     {
@@ -189,12 +193,15 @@ class Oauth
         if (isset($credentials['consumerSecret'])) {
             $values['oauth_consumer_secret'] = $credentials['consumerSecret'];
         }
+
         if (isset($credentials['token'])) {
             $values['oauth_token'] = $credentials['token'];
         }
+
         if (isset($credentials['tokenSecret'])) {
             $values['oauth_token_secret'] = $credentials['tokenSecret'];
         }
+
         $baseString = $this->baseString($request, $values);
 
         if (isset($credentials['realm'])) {
@@ -217,6 +224,7 @@ class Oauth
             rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
+
         /** @var \OpenSSLAsymmetricKey|\OpenSSLCertificate|array|string $privateKey */
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $this->checkSslError();
@@ -225,7 +233,7 @@ class Oauth
         openssl_sign($baseString, $signature, $privateKey);
         $this->checkSslError();
 
-        $values['oauth_signature'] = base64_encode($signature);
+        $values['oauth_signature'] = base64_encode((string) $signature);
 
         return $this->_buildAuth($values);
     }
@@ -241,7 +249,6 @@ class Oauth
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $oauthValues Oauth values.
-     * @return string
      */
     public function baseString(Request $request, array $oauthValues): string
     {
@@ -267,9 +274,8 @@ class Oauth
     {
         $out = $uri->getScheme() . '://';
         $out .= strtolower($uri->getHost());
-        $out .= $uri->getPath();
 
-        return $out;
+        return $out . $uri->getPath();
     }
 
     /**
@@ -294,12 +300,14 @@ class Oauth
         if ($contentType === '' || $contentType === 'application/x-www-form-urlencoded') {
             parse_str((string)$request->getBody(), $post);
         }
+
         $args = array_merge($queryArgs, $oauthValues, $post);
         $pairs = $this->_normalizeData($args);
         $data = [];
         foreach ($pairs as $pair) {
             $data[] = implode('=', $pair);
         }
+
         sort($data, SORT_STRING);
 
         return implode('&', $data);
@@ -311,7 +319,6 @@ class Oauth
      * @param array $args The arguments to normalize.
      * @param string $path The current path being converted.
      * @see https://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
-     * @return array
      */
     protected function _normalizeData(array $args, string $path = ''): array
     {
@@ -321,12 +328,9 @@ class Oauth
                 // Fold string keys with [].
                 // Numeric keys result in a=b&a=c. While this isn't
                 // standard behavior in PHP, it is common in other platforms.
-                if (!is_numeric($key)) {
-                    $key = "{$path}[{$key}]";
-                } else {
-                    $key = $path;
-                }
+                $key = is_numeric($key) ? $path : sprintf('%s[%s]', $path, $key);
             }
+
             if (is_array($value)) {
                 uksort($value, 'strcmp');
                 $data = array_merge($data, $this->_normalizeData($value, $key));
@@ -342,7 +346,6 @@ class Oauth
      * Builds the Oauth Authorization header value.
      *
      * @param array $data The oauth_* values to build
-     * @return string
      */
     protected function _buildAuth(array $data): string
     {
@@ -351,16 +354,15 @@ class Oauth
         foreach ($data as $key => $value) {
             $params[] = $key . '="' . $this->_encode((string)$value) . '"';
         }
-        $out .= implode(',', $params);
 
-        return $out;
+
+        return $out . implode(',', $params);
     }
 
     /**
      * URL Encodes a value based on rules of rfc3986
      *
      * @param string $value Value to encode.
-     * @return string
      */
     protected function _encode(string $value): string
     {
@@ -370,7 +372,6 @@ class Oauth
     /**
      * Check for SSL errors and throw an exception if found.
      *
-     * @return void
      * @throws \Cake\Core\Exception\CakeException When an error is found
      */
     protected function checkSslError(): void

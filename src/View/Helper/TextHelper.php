@@ -40,8 +40,6 @@ class TextHelper extends Helper
 {
     /**
      * helpers
-     *
-     * @var array
      */
     protected array $helpers = ['Html'];
 
@@ -134,10 +132,12 @@ class TextHelper extends Helper
             $match = $matches['url'];
             $envelope = [$matches['left'], $matches['right']];
         }
+
         if (isset($matches['url_bare'])) {
             $match = $matches['url_bare'];
         }
-        $key = hash_hmac('sha1', $match, Security::getSalt());
+
+        $key = hash_hmac('sha1', (string) $match, Security::getSalt());
         $this->_placeholders[$key] = [
             'content' => $match,
             'envelope' => $envelope,
@@ -157,11 +157,13 @@ class TextHelper extends Helper
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
-            $link = $url = $content['content'];
+            $link = $content['content'];
+            $url = $content['content'];
             $envelope = $content['envelope'];
-            if (!preg_match('#^[a-z]+\://#i', $url)) {
+            if (!preg_match('#^[a-z]+\://#i', (string) $url)) {
                 $url = 'http://' . $url;
             }
+
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];
         }
 
@@ -173,7 +175,6 @@ class TextHelper extends Helper
      *
      * @param string $text The text to operate on
      * @param array<string, mixed> $options An array of options to use for the HTML.
-     * @return string
      * @see \Cake\View\Helper\TextHelper::autoLinkEmails()
      */
     protected function _linkEmails(string $text, array $options): string
@@ -257,6 +258,7 @@ class TextHelper extends Helper
             foreach ($texts as $txt) {
                 $text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
             }
+
             $text = (string)preg_replace('|<p>\s*</p>|', '', $text);
         }
 

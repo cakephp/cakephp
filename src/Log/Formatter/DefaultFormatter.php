@@ -49,8 +49,9 @@ class DefaultFormatter extends AbstractFormatter
         } else {
             $message = sprintf('%s: %s', $level, $message);
         }
+
         if ($this->_config['includeTags']) {
-            $message = sprintf('<%s>%s</%s>', $level, $message, $level);
+            return sprintf('<%s>%s</%s>', $level, $message, $level);
         }
 
         return $message;

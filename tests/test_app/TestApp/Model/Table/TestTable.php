@@ -12,12 +12,11 @@ use Cake\ORM\Table;
 class TestTable extends Table
 {
     public mixed $first;
+
     public array $variadic;
+
     public array $variadicOptions;
 
-    /**
-     * @param array $config
-     */
     public function initialize(array $config): void
     {
         $this->setSchema(['id' => ['type' => 'integer']]);
@@ -33,14 +32,14 @@ class TestTable extends Table
         return $query->applyOptions(['this' => 'worked']);
     }
 
-    public function findVariadicOptions(SelectQuery $query, ...$options)
+    public function findVariadicOptions(SelectQuery $query, ...$options): SelectQuery
     {
         $this->variadicOptions = $options;
 
         return $query;
     }
 
-    public function findVariadic(SelectQuery $query, mixed $first = null, mixed ...$variadic)
+    public function findVariadic(SelectQuery $query, mixed $first = null, mixed ...$variadic): SelectQuery
     {
         $this->first = $first;
         $this->variadic = $variadic;

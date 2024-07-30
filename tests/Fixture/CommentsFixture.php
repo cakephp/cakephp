@@ -23,8 +23,6 @@ class CommentsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['article_id' => 1, 'user_id' => 2, 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'],

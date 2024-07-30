@@ -63,8 +63,6 @@ class ConnectionManager
 
     /**
      * The ConnectionRegistry used by the manager.
-     *
-     * @var \Cake\Datasource\ConnectionRegistry
      */
     protected static ConnectionRegistry $_registry;
 
@@ -75,7 +73,6 @@ class ConnectionManager
      *
      * @param array<string, mixed>|string $key The name of the connection config, or an array of multiple configs.
      * @param \Cake\Datasource\ConnectionInterface|\Closure|array<string, mixed>|null $config An array of name => config data for adapter.
-     * @return void
      * @throws \Cake\Core\Exception\CakeException When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
@@ -118,7 +115,7 @@ class ConnectionManager
         $config = static::_parseDsn($dsn);
 
         if (isset($config['path']) && empty($config['database'])) {
-            $config['database'] = substr($config['path'], 1);
+            $config['database'] = substr((string) $config['path'], 1);
         }
 
         if (empty($config['driver'])) {
@@ -153,7 +150,6 @@ class ConnectionManager
      *
      * @param string $source The existing connection to alias.
      * @param string $alias The alias name that resolves to `$source`.
-     * @return void
      */
     public static function alias(string $source, string $alias): void
     {
@@ -167,7 +163,6 @@ class ConnectionManager
      * connection may fail if there is no other connection with that name.
      *
      * @param string $alias The connection alias to drop
-     * @return void
      */
     public static function dropAlias(string $alias): void
     {
@@ -194,7 +189,6 @@ class ConnectionManager
      *
      * @param string $name The connection name.
      * @param bool $useAliases Whether connection aliases are used
-     * @return \Cake\Datasource\ConnectionInterface
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */
@@ -207,6 +201,7 @@ class ConnectionManager
         if (!isset(static::$_config[$name])) {
             throw new MissingDatasourceConfigException(['name' => $name]);
         }
+
         static::$_registry ??= new ConnectionRegistry();
 
         return static::$_registry->{$name} ?? static::$_registry->load($name, static::$_config[$name]);

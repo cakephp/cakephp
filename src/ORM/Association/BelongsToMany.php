@@ -59,52 +59,38 @@ class BelongsToMany extends Association
 
     /**
      * The type of join to be used when adding the association to a query
-     *
-     * @var string
      */
     protected string $_joinType = SelectQuery::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
-     *
-     * @var string
      */
     protected string $_strategy = self::STRATEGY_SELECT;
 
     /**
      * Junction table instance
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $_junctionTable;
 
     /**
      * Junction table name
-     *
-     * @var string
      */
     protected string $_junctionTableName;
 
     /**
      * The name of the hasMany association from the target table
      * to the junction table
-     *
-     * @var string
      */
     protected string $_junctionAssociationName;
 
     /**
      * The name of the property to be set containing data from the junction table
      * once a record from the target table is hydrated
-     *
-     * @var string
      */
     protected string $_junctionProperty = '_joinData';
 
     /**
      * Saving strategy to be used by this association
-     *
-     * @var string
      */
     protected string $_saveStrategy = self::SAVE_REPLACE;
 
@@ -117,8 +103,6 @@ class BelongsToMany extends Association
 
     /**
      * The table instance for the junction relation.
-     *
-     * @var \Cake\ORM\Table|string|null
      */
     protected Table|string|null $_through = null;
 
@@ -137,22 +121,16 @@ class BelongsToMany extends Association
      * on the source table is deleted.
      *
      * Defaults to true for backwards compatibility.
-     *
-     * @var bool
      */
     protected bool $_dependent = true;
 
     /**
      * Filtered conditions that reference the target table.
-     *
-     * @var array|null
      */
     protected ?array $_targetConditions = null;
 
     /**
      * Filtered conditions that reference the junction table.
-     *
-     * @var array|null
      */
     protected ?array $_junctionConditions = null;
 
@@ -169,7 +147,7 @@ class BelongsToMany extends Association
      * @param array<string>|string $key the key to be used to link both tables together
      * @return $this
      */
-    public function setTargetForeignKey(array|string $key)
+    public function setTargetForeignKey(array|string $key): static
     {
         $this->_targetForeignKey = $key;
 
@@ -216,7 +194,7 @@ class BelongsToMany extends Association
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort(ExpressionInterface|Closure|array|string $sort)
+    public function setSort(ExpressionInterface|Closure|array|string $sort): static
     {
         $this->_sort = $sort;
 
@@ -251,7 +229,6 @@ class BelongsToMany extends Association
      * are passed, the current configured table instance is returned
      *
      * @param \Cake\ORM\Table|string|null $table Name or instance for the join table
-     * @return \Cake\ORM\Table
      * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     public function junction(Table|string|null $table = null): Table
@@ -276,6 +253,7 @@ class BelongsToMany extends Association
                     $config['connection'] = $this->getSource()->getConnection();
                 }
             }
+
             $table = $tableLocator->get($tableAlias, $config);
         }
 
@@ -314,7 +292,6 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $junction The junction table.
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
-     * @return void
      */
     protected function _generateTargetAssociations(Table $junction, Table $source, Table $target): void
     {
@@ -335,6 +312,7 @@ class BelongsToMany extends Association
                 'strategy' => $this->_strategy,
             ]);
         }
+
         if (!$target->hasAssociation($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
@@ -360,7 +338,6 @@ class BelongsToMany extends Association
      *
      * @param \Cake\ORM\Table $junction The junction table.
      * @param \Cake\ORM\Table $source The source table.
-     * @return void
      */
     protected function _generateSourceAssociations(Table $junction, Table $source): void
     {
@@ -396,7 +373,6 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $junction The junction table.
      * @param \Cake\ORM\Table $source The source table.
      * @param \Cake\ORM\Table $target The target table.
-     * @return void
      * @throws \InvalidArgumentException If the expected associations are incompatible with existing associations.
      */
     protected function _generateJunctionAssociations(Table $junction, Table $source, Table $target): void
@@ -416,8 +392,8 @@ class BelongsToMany extends Association
                 $target !== $belongsTo->getTarget()
             ) {
                 throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                    sprintf('The existing `%s` association on `%s` ', $tAlias, $junction->getAlias()) .
+                    sprintf('is incompatible with the `%s` association on `%s`', $this->getName(), $source->getAlias())
                 );
             }
         }
@@ -446,7 +422,6 @@ class BelongsToMany extends Association
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
-     * @return void
      */
     public function attachTo(SelectQuery $query, array $options = []): void
     {
@@ -491,6 +466,7 @@ class BelongsToMany extends Association
         if (empty($options['negateMatch'])) {
             return;
         }
+
         $options['conditions'] ??= [];
         $junction = $this->junction();
         $belongsTo = $junction->getAssociation($this->getSource()->getAlias());
@@ -507,26 +483,25 @@ class BelongsToMany extends Association
         $subquery = $this->_appendJunctionJoin($subquery);
 
         $query
-            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds) {
+            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds): \Cake\Database\Expression\QueryExpression {
                 $identifiers = [];
                 foreach (array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
                 }
+
                 $identifiers = $subquery->newExpr()->add($identifiers)->setConjunction(',');
                 $nullExp = clone $exp;
 
                 return $exp
                     ->or([
                         $exp->notIn($identifiers, $subquery),
-                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                        $nullExp->and(array_map($nullExp->isNull(...), array_keys($conds))),
                     ]);
             });
     }
 
     /**
      * Get the relationship type.
-     *
-     * @return string
      */
     public function type(): string
     {
@@ -537,7 +512,6 @@ class BelongsToMany extends Association
      * Return false as join conditions are defined in the junction table
      *
      * @param array<string, mixed> $options list of options passed to attachTo method
-     * @return array
      */
     protected function _joinCondition(array $options): array
     {
@@ -563,9 +537,7 @@ class BelongsToMany extends Association
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
-            'finder' => function () {
-                return $this->_appendJunctionJoin($this->find(), []);
-            },
+            'finder' => fn(): \Cake\ORM\Query\SelectQuery => $this->_appendJunctionJoin($this->find(), []),
         ]);
 
         return $loader->buildEagerLoader($options);
@@ -623,7 +595,6 @@ class BelongsToMany extends Association
      * of the association via the joint table.
      *
      * @param \Cake\ORM\Table $side The potential Table with ownership
-     * @return bool
      */
     public function isOwningSide(Table $side): bool
     {
@@ -637,7 +608,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return $this
      */
-    public function setSaveStrategy(string $strategy)
+    public function setSaveStrategy(string $strategy): static
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy `%s`', $strategy);
@@ -692,6 +663,7 @@ class BelongsToMany extends Association
         if ($isEmpty && $entity->isNew()) {
             return $entity;
         }
+
         if ($isEmpty) {
             $targetEntity = [];
         }
@@ -731,6 +703,7 @@ class BelongsToMany extends Association
             if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
                 $joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
             }
+
             unset($options['associated'][$this->_junctionProperty]);
         }
 
@@ -808,6 +781,7 @@ class BelongsToMany extends Association
             if (!$joint || !($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
+
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
@@ -823,6 +797,7 @@ class BelongsToMany extends Association
                 $joint->unset($junction->getPrimaryKey())
                     ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }
+
             $saved = $junction->save($joint, $options);
 
             if (!$saved && !empty($options['atomic'])) {
@@ -871,12 +846,11 @@ class BelongsToMany extends Association
         $property = $this->getProperty();
         $links = $sourceEntity->get($property) ?: [];
         $links = array_merge($links, $targetEntities);
+
         $sourceEntity->set($property, $links);
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options) {
-                return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            }
+            fn(): bool => $this->_saveLinks($sourceEntity, $targetEntities, $options)
         );
     }
 
@@ -965,10 +939,11 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    public function setConditions(Closure|array $conditions)
+    public function setConditions(Closure|array $conditions): static
     {
         parent::setConditions($conditions);
-        $this->_targetConditions = $this->_junctionConditions = null;
+        $this->_targetConditions = null;
+        $this->_junctionConditions = null;
 
         return $this;
     }
@@ -979,7 +954,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table|string $through Name of the Table instance or the instance itself
      * @return $this
      */
-    public function setThrough(Table|string $through)
+    public function setThrough(Table|string $through): static
     {
         $this->_through = $through;
 
@@ -989,8 +964,6 @@ class BelongsToMany extends Association
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
      * Returns null if not defined.
-     *
-     * @return \Cake\ORM\Table|string|null
      */
     public function getThrough(): Table|string|null
     {
@@ -1012,10 +985,12 @@ class BelongsToMany extends Association
         if ($this->_targetConditions !== null) {
             return $this->_targetConditions;
         }
+
         $conditions = $this->getConditions();
         if (!is_array($conditions)) {
             return $conditions;
         }
+
         $matching = [];
         $alias = $this->getAlias() . '.';
         foreach ($conditions as $field => $value) {
@@ -1032,25 +1007,26 @@ class BelongsToMany extends Association
     /**
      * Returns filtered conditions that specifically reference
      * the junction table.
-     *
-     * @return array
      */
     protected function junctionConditions(): array
     {
         if ($this->_junctionConditions !== null) {
             return $this->_junctionConditions;
         }
+
         $matching = [];
         $conditions = $this->getConditions();
         if (!is_array($conditions)) {
             return $matching;
         }
+
         $alias = $this->_junctionAssociationName() . '.';
         foreach ($conditions as $field => $value) {
             $isString = is_string($field);
             if ($isString && str_starts_with($field, $alias)) {
                 $matching[$field] = $value;
             }
+
             // Assume that operators contain junction conditions.
             // Trying to manage complex conditions could result in incorrect queries.
             if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'], true)) {
@@ -1073,7 +1049,6 @@ class BelongsToMany extends Association
      *   it will be interpreted as the `$options` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query\SelectQuery
      */
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
@@ -1190,19 +1165,19 @@ class BelongsToMany extends Association
         }
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+            function () use ($sourceEntity, $targetEntities, $primaryValue, $options): bool {
                 $junction = $this->junction();
                 $target = $this->getTarget();
 
                 /** @var array<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
-                $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
+                $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
 
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
                 $junctionQueryAlias = $junction->getAlias() . '__matches';
-
-                $keys = $matchesConditions = [];
+                $keys = [];
+                $matchesConditions = [];
                 /** @var string $key */
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
                     $aliased = $junction->aliasField($key);
@@ -1237,7 +1212,7 @@ class BelongsToMany extends Association
 
                 $property = $this->getProperty();
 
-                if (count($inserts)) {
+                if ($inserts !== []) {
                     /** @psalm-suppress RedundantConditionGivenDocblockType */
                     $inserted = array_combine(
                         array_keys($inserts),
@@ -1282,7 +1257,9 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         $keys = array_merge($foreignKey, $assocForeignKey);
-        $deletes = $unmatchedEntityKeys = $present = [];
+        $deletes = [];
+        $unmatchedEntityKeys = [];
+        $present = [];
 
         foreach ($jointEntities as $i => $entity) {
             $unmatchedEntityKeys[$i] = $entity->extract($keys);
@@ -1299,16 +1276,18 @@ class BelongsToMany extends Association
                     if (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
                         // If both sides are an object then use == so that value objects
                         // are seen as equivalent.
-                        $matched = $existingKeys[$key] == $unmatchedKeys[$key];
+                        $matched = $existingKeys[$key] === $unmatchedKeys[$key];
                     } else {
                         // Use strict equality for all other values.
                         $matched = $existingKeys[$key] === $unmatchedKeys[$key];
                     }
+
                     // Stop checks on first failure.
                     if (!$matched) {
                         break;
                     }
                 }
+
                 if ($matched) {
                     // Remove the unmatched entity so we don't look at it again.
                     unset($unmatchedEntityKeys[$i]);
@@ -1328,6 +1307,7 @@ class BelongsToMany extends Association
             if (!($entity instanceof EntityInterface)) {
                 continue;
             }
+
             $key = array_values($entity->extract($primary));
             foreach ($present as $i => $data) {
                 if ($key === $data && !$entity->get($jointProperty)) {
@@ -1353,7 +1333,6 @@ class BelongsToMany extends Association
      *   of this association
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
-     * @return bool
      * @throws \InvalidArgumentException
      */
     protected function _checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities): bool
@@ -1400,6 +1379,7 @@ class BelongsToMany extends Association
             if (!($entity instanceof EntityInterface)) {
                 continue;
             }
+
             $joint = $entity->get($jointProperty);
 
             if (!$joint || !($joint instanceof EntityInterface)) {
@@ -1418,13 +1398,11 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function ($key) {
-            return $key . ' IS';
-        }, $foreignKey);
+        $foreignKey = array_map(fn($key): string => $key . ' IS', $foreignKey);
+
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function ($key) {
-            return $key . ' IS';
-        }, $assocForeignKey);
+        $assocForeignKey = array_map(fn($key): string => $key . ' IS', $assocForeignKey);
+
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
         $unions = [];
@@ -1446,8 +1424,6 @@ class BelongsToMany extends Association
      * Returns the name of the association from the target table to the junction table,
      * this name is used to generate alias in the query and to later on retrieve the
      * results.
-     *
-     * @return string
      */
     protected function _junctionAssociationName(): string
     {
@@ -1466,13 +1442,12 @@ class BelongsToMany extends Association
      * name based of the associated tables will be generated if none found.
      *
      * @param string|null $name The name of the junction table.
-     * @return string
      */
     protected function _junctionTableName(?string $name = null): string
     {
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
-                $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
+                $tablesNames = array_map(\Cake\Utility\Inflector::class . '::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable(),
                 ]);
@@ -1490,22 +1465,25 @@ class BelongsToMany extends Association
      * Parse extra options passed in the constructor.
      *
      * @param array<string, mixed> $options original list of options passed in constructor
-     * @return void
      */
     protected function _options(array $options): void
     {
         if (!empty($options['targetForeignKey'])) {
             $this->setTargetForeignKey($options['targetForeignKey']);
         }
+
         if (!empty($options['joinTable'])) {
             $this->_junctionTableName($options['joinTable']);
         }
+
         if (!empty($options['through'])) {
             $this->setThrough($options['through']);
         }
+
         if (!empty($options['saveStrategy'])) {
             $this->setSaveStrategy($options['saveStrategy']);
         }
+
         if (isset($options['sort'])) {
             $this->setSort($options['sort']);
         }

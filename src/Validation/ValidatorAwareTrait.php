@@ -42,8 +42,6 @@ trait ValidatorAwareTrait
 {
     /**
      * Validator class.
-     *
-     * @var string
      */
     protected string $_validatorClass = Validator::class;
 
@@ -86,7 +84,6 @@ trait ValidatorAwareTrait
      * class constant.
      *
      * @param string|null $name The name of the validation set to return.
-     * @return \Cake\Validation\Validator
      */
     public function getValidator(?string $name = null): Validator
     {
@@ -106,7 +103,6 @@ trait ValidatorAwareTrait
      * use getValidator() method instead.
      *
      * @param string $name The name of the validation set to create.
-     * @return \Cake\Validation\Validator
      * @throws \InvalidArgumentException
      */
     protected function createValidator(string $name): Validator
@@ -123,7 +119,7 @@ trait ValidatorAwareTrait
             $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
                 ? static::BUILD_VALIDATOR_EVENT
                 : 'Model.buildValidator';
-            $this->dispatchEvent($event, compact('validator', 'name'));
+            $this->dispatchEvent($event, ['validator' => $validator, 'name' => $name]);
         }
 
         assert(
@@ -169,7 +165,6 @@ trait ValidatorAwareTrait
      * Checks whether a validator has been set.
      *
      * @param string $name The name of a validator.
-     * @return bool
      */
     public function hasValidator(string $name): bool
     {
@@ -185,7 +180,6 @@ trait ValidatorAwareTrait
      * Checks if validation method exists.
      *
      * @param string $name Validation method name.
-     * @return bool
      */
     protected function validationMethodExists(string $name): bool
     {
@@ -198,7 +192,6 @@ trait ValidatorAwareTrait
      *
      * @param \Cake\Validation\Validator $validator The validator that can be modified to
      * add some rules to it.
-     * @return \Cake\Validation\Validator
      */
     public function validationDefault(Validator $validator): Validator
     {

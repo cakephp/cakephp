@@ -34,7 +34,7 @@ class BreadcrumbsHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $view = new View();
@@ -71,7 +71,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -154,7 +154,7 @@ class BreadcrumbsHelperTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -192,7 +192,7 @@ class BreadcrumbsHelperTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -204,7 +204,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs->add('Products', '/products');
 
         $crumbs = $this->breadcrumbs->getCrumbs();
-        $this->assertSame(count($crumbs), 2);
+        $this->assertCount(2, $crumbs);
 
         $this->breadcrumbs->reset();
         $actual = $this->breadcrumbs->getCrumbs();
@@ -256,7 +256,7 @@ class BreadcrumbsHelperTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -378,7 +378,7 @@ class BreadcrumbsHelperTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

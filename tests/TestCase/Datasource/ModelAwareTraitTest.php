@@ -29,7 +29,7 @@ use UnexpectedValueException;
  */
 class ModelAwareTraitTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -55,11 +55,11 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel();
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(\Cake\ORM\Table::class, $result);
         $this->assertNull($stub->Articles);
 
         $result = $stub->fetchModel('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(\Cake\ORM\Table::class, $result);
         $this->assertNull($stub->Comments);
 
         $result = $stub->fetchModel(PaginatorPostsTable::class);
@@ -108,7 +108,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel('TestPlugin.Comments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf(\TestPlugin\Model\Table\CommentsTable::class, $result);
         $this->assertNull($stub->Comments);
     }
 
@@ -121,12 +121,13 @@ class ModelAwareTraitTest extends TestCase
         $stub->setProps('Articles');
 
         $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock->expects($this->any())
+        $mock
             ->method('getAlias')
             ->willReturn('Magic');
 
         $locator = new StubFactory();
         $locator->set('Magic', $mock);
+
         $stub->modelFactory('Table', $locator);
 
         $result = $stub->fetchModel('Magic', 'Table');
@@ -135,7 +136,7 @@ class ModelAwareTraitTest extends TestCase
 
         $locator = new StubFactory();
         $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock2->expects($this->any())
+        $mock2
             ->method('getAlias')
             ->willReturn('Foo');
         $locator->set('Foo', $mock2);

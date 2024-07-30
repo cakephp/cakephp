@@ -30,7 +30,7 @@ class AppTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -48,14 +48,15 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider classNameProvider
      */
-    public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false): void
+    public function testClassName(string $class, string $type, string $suffix = '', bool $existsInBase = false, string $expected = false): void
     {
         static::setAppNamespace();
         $i = 0;
-        TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
+        TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i): bool {
             if ($i++ === 0) {
                 return $existsInBase;
             }
+
             $checkCake = (!$existsInBase || strpos('.', $class));
             if ($checkCake) {
                 return (bool)$expected;
@@ -93,7 +94,7 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider shortNameProvider
      */
-    public function testShortName($class, $type, $suffix = '', $expected = false): void
+    public function testShortName(string $class, string $type, string $suffix = '', string $expected = false): void
     {
         static::setAppNamespace();
 
@@ -141,48 +142,40 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public static function classNameProvider(): array
+    public static function classNameProvider(): \Iterator
     {
-        return [
-            ['Does', 'Not', 'Exist'],
-
-            ['Exists', 'In', 'App', true, 'TestApp\In\ExistsApp'],
-            ['Also/Exists', 'In', 'App', true, 'TestApp\In\Also\ExistsApp'],
-            ['Also', 'Exists/In', 'App', true, 'TestApp\Exists\In\AlsoApp'],
-            ['Also', 'Exists/In/Subfolder', 'App', true, 'TestApp\Exists\In\Subfolder\AlsoApp'],
-            ['No', 'Suffix', '', true, 'TestApp\Suffix\No'],
-
-            ['MyPlugin.Exists', 'In', 'Suffix', true, 'MyPlugin\In\ExistsSuffix'],
-            ['MyPlugin.Also/Exists', 'In', 'Suffix', true, 'MyPlugin\In\Also\ExistsSuffix'],
-            ['MyPlugin.Also', 'Exists/In', 'Suffix', true, 'MyPlugin\Exists\In\AlsoSuffix'],
-            ['MyPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'MyPlugin\Exists\In\Subfolder\AlsoSuffix'],
-            ['MyPlugin.No', 'Suffix', '', true, 'MyPlugin\Suffix\No'],
-
-            ['Vend/MPlugin.Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\ExistsSuffix'],
-            ['Vend/MPlugin.Also/Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\Also\ExistsSuffix'],
-            ['Vend/MPlugin.Also', 'Exists/In', 'Suffix', true, 'Vend\MPlugin\Exists\In\AlsoSuffix'],
-            ['Vend/MPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix'],
-            ['Vend/MPlugin.No', 'Suffix', '', true, 'Vend\MPlugin\Suffix\No'],
-
-            ['Exists', 'In', 'Cake', false, 'Cake\In\ExistsCake'],
-            ['Also/Exists', 'In', 'Cake', false, 'Cake\In\Also\ExistsCake'],
-            ['Also', 'Exists/In', 'Cake', false, 'Cake\Exists\In\AlsoCake'],
-            ['Also', 'Exists/In/Subfolder', 'Cake', false, 'Cake\Exists\In\Subfolder\AlsoCake'],
-            ['No', 'Suffix', '', false, 'Cake\Suffix\No'],
-
-            // Realistic examples returning nothing
-            ['App', 'Core', 'Suffix'],
-            ['Auth', 'Controller/Component'],
-            ['Unknown', 'Controller', 'Controller'],
-
-            // Real examples returning class names
-            ['App', 'Core', '', false, 'Cake\Core\App'],
-            ['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'],
-            ['File', 'Cache/Engine', 'Engine', false, 'Cake\Cache\Engine\FileEngine'],
-            ['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'],
-            ['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'],
-            ['Pages', 'Controller', 'Controller', true, 'TestApp\Controller\PagesController'],
-        ];
+        yield ['Does', 'Not', 'Exist'];
+        yield ['Exists', 'In', 'App', true, 'TestApp\In\ExistsApp'];
+        yield ['Also/Exists', 'In', 'App', true, 'TestApp\In\Also\ExistsApp'];
+        yield ['Also', 'Exists/In', 'App', true, 'TestApp\Exists\In\AlsoApp'];
+        yield ['Also', 'Exists/In/Subfolder', 'App', true, 'TestApp\Exists\In\Subfolder\AlsoApp'];
+        yield ['No', 'Suffix', '', true, 'TestApp\Suffix\No'];
+        yield ['MyPlugin.Exists', 'In', 'Suffix', true, 'MyPlugin\In\ExistsSuffix'];
+        yield ['MyPlugin.Also/Exists', 'In', 'Suffix', true, 'MyPlugin\In\Also\ExistsSuffix'];
+        yield ['MyPlugin.Also', 'Exists/In', 'Suffix', true, 'MyPlugin\Exists\In\AlsoSuffix'];
+        yield ['MyPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'MyPlugin\Exists\In\Subfolder\AlsoSuffix'];
+        yield ['MyPlugin.No', 'Suffix', '', true, 'MyPlugin\Suffix\No'];
+        yield ['Vend/MPlugin.Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\ExistsSuffix'];
+        yield ['Vend/MPlugin.Also/Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\Also\ExistsSuffix'];
+        yield ['Vend/MPlugin.Also', 'Exists/In', 'Suffix', true, 'Vend\MPlugin\Exists\In\AlsoSuffix'];
+        yield ['Vend/MPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix'];
+        yield ['Vend/MPlugin.No', 'Suffix', '', true, 'Vend\MPlugin\Suffix\No'];
+        yield ['Exists', 'In', 'Cake', false, 'Cake\In\ExistsCake'];
+        yield ['Also/Exists', 'In', 'Cake', false, 'Cake\In\Also\ExistsCake'];
+        yield ['Also', 'Exists/In', 'Cake', false, 'Cake\Exists\In\AlsoCake'];
+        yield ['Also', 'Exists/In/Subfolder', 'Cake', false, 'Cake\Exists\In\Subfolder\AlsoCake'];
+        yield ['No', 'Suffix', '', false, 'Cake\Suffix\No'];
+        // Realistic examples returning nothing
+        yield ['App', 'Core', 'Suffix'];
+        yield ['Auth', 'Controller/Component'];
+        yield ['Unknown', 'Controller', 'Controller'];
+        // Real examples returning class names
+        yield ['App', 'Core', '', false, \Cake\Core\App::class];
+        yield ['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'];
+        yield ['File', 'Cache/Engine', 'Engine', false, \Cake\Cache\Engine\FileEngine::class];
+        yield ['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'];
+        yield ['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'];
+        yield ['Pages', 'Controller', 'Controller', true, \TestApp\Controller\PagesController::class];
     }
 
     /**
@@ -196,43 +189,36 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public static function shortNameProvider(): array
+    public static function shortNameProvider(): \Iterator
     {
-        return [
-            ['TestApp\In\ExistsApp', 'In', 'App', 'Exists'],
-            ['TestApp\In\Also\ExistsApp', 'In', 'App', 'Also/Exists'],
-            ['TestApp\Exists\In\AlsoApp', 'Exists/In', 'App', 'Also'],
-            ['TestApp\Exists\In\Subfolder\AlsoApp', 'Exists/In/Subfolder', 'App', 'Also'],
-            ['TestApp\Suffix\No', 'Suffix', '', 'No'],
-
-            ['MyPlugin\In\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Exists'],
-            ['MyPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Also/Exists'],
-            ['MyPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'MyPlugin.Also'],
-            ['MyPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'MyPlugin.Also'],
-            ['MyPlugin\Suffix\No', 'Suffix', '', 'MyPlugin.No'],
-
-            ['Vend\MPlugin\In\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Exists'],
-            ['Vend\MPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Also/Exists'],
-            ['Vend\MPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'Vend/MPlugin.Also'],
-            ['Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'Vend/MPlugin.Also'],
-            ['Vend\MPlugin\Suffix\No', 'Suffix', '', 'Vend/MPlugin.No'],
-
-            ['Cake\In\ExistsCake', 'In', 'Cake', 'Exists'],
-            ['Cake\In\Also\ExistsCake', 'In', 'Cake', 'Also/Exists'],
-            ['Cake\Exists\In\AlsoCake', 'Exists/In', 'Cake', 'Also'],
-            ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'],
-            ['Cake\Suffix\No', 'Suffix', '', 'No'],
-
-            ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
-
-            // Real examples returning class names
-            ['Cake\Core\App', 'Core', '', 'App'],
-            ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'],
-            ['Cake\Cache\Engine\FileEngine', 'Cache/Engine', 'Engine', 'File'],
-            ['Cake\Shell\Task\CommandTask', 'Shell/Task', 'Task', 'Command'],
-            ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'],
-            ['TestApp\Controller\PagesController', 'Controller', 'Controller', 'Pages'],
-        ];
+        yield ['TestApp\In\ExistsApp', 'In', 'App', 'Exists'];
+        yield ['TestApp\In\Also\ExistsApp', 'In', 'App', 'Also/Exists'];
+        yield ['TestApp\Exists\In\AlsoApp', 'Exists/In', 'App', 'Also'];
+        yield ['TestApp\Exists\In\Subfolder\AlsoApp', 'Exists/In/Subfolder', 'App', 'Also'];
+        yield ['TestApp\Suffix\No', 'Suffix', '', 'No'];
+        yield ['MyPlugin\In\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Exists'];
+        yield ['MyPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'MyPlugin.Also/Exists'];
+        yield ['MyPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'MyPlugin.Also'];
+        yield ['MyPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'MyPlugin.Also'];
+        yield ['MyPlugin\Suffix\No', 'Suffix', '', 'MyPlugin.No'];
+        yield ['Vend\MPlugin\In\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Exists'];
+        yield ['Vend\MPlugin\In\Also\ExistsSuffix', 'In', 'Suffix', 'Vend/MPlugin.Also/Exists'];
+        yield ['Vend\MPlugin\Exists\In\AlsoSuffix', 'Exists/In', 'Suffix', 'Vend/MPlugin.Also'];
+        yield ['Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix', 'Exists/In/Subfolder', 'Suffix', 'Vend/MPlugin.Also'];
+        yield ['Vend\MPlugin\Suffix\No', 'Suffix', '', 'Vend/MPlugin.No'];
+        yield ['Cake\In\ExistsCake', 'In', 'Cake', 'Exists'];
+        yield ['Cake\In\Also\ExistsCake', 'In', 'Cake', 'Also/Exists'];
+        yield ['Cake\Exists\In\AlsoCake', 'Exists/In', 'Cake', 'Also'];
+        yield ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'];
+        yield ['Cake\Suffix\No', 'Suffix', '', 'No'];
+        yield ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'];
+        // Real examples returning class names
+        yield [\Cake\Core\App::class, 'Core', '', 'App'];
+        yield ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'];
+        yield [\Cake\Cache\Engine\FileEngine::class, 'Cache/Engine', 'Engine', 'File'];
+        yield ['Cake\Shell\Task\CommandTask', 'Shell/Task', 'Task', 'Command'];
+        yield ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'];
+        yield [\TestApp\Controller\PagesController::class, 'Controller', 'Controller', 'Pages'];
     }
 
     /**

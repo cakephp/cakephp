@@ -32,12 +32,12 @@ class DateTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         Cache::clear('_cake_core_');
-        I18n::setTranslator('cake', function () {
+        I18n::setTranslator('cake', function (): \Cake\I18n\Package {
             $package = new Package();
             $package->setMessages([
                 '{0} ago' => '{0} ago (translated)',
@@ -50,7 +50,7 @@ class DateTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);
@@ -85,6 +85,7 @@ class DateTest extends TestCase
         DateTime::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
+
         $expected = 'jeudi 14 janvier 2010';
         $this->assertStringStartsWith($expected, $result);
 
@@ -145,9 +146,7 @@ class DateTest extends TestCase
     {
         $date = new Date('2015-11-06 11:32:45');
 
-        Date::setJsonEncodeFormat(static function ($d) {
-            return $d->format(DATE_ATOM);
-        });
+        Date::setJsonEncodeFormat(static fn($d) => $d->format(DATE_ATOM));
         $this->assertSame('"2015-11-06T00:00:00+00:00"', json_encode($date));
 
         Date::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
@@ -176,7 +175,7 @@ class DateTest extends TestCase
 
         DateTime::disableLenientParsing();
         $date = Date::parseDate('04/21/2013');
-        $this->assertSame(null, $date);
+        $this->assertNull($date);
 
         DateTime::enableLenientParsing();
         $date = Date::parseDate('04/21/2013');
@@ -188,21 +187,19 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider(): array
+    public static function timeAgoProvider(): \Iterator
     {
-        return [
-            ['-1 day', '1 day ago'],
-            ['-2 days', '2 days ago'],
-            ['-1 week', '1 week ago'],
-            ['-2 weeks -2 days', '2 weeks, 2 days ago'],
-            ['+1 second', 'today'],
-            ['+1 minute, +10 seconds', 'today'],
-            ['+1 week', '1 week'],
-            ['+1 week 1 day', '1 week, 1 day'],
-            ['+2 weeks 2 day', '2 weeks, 2 days'],
-            ['2007-9-24', 'on 9/24/07'],
-            ['now', 'today'],
-        ];
+        yield ['-1 day', '1 day ago'];
+        yield ['-2 days', '2 days ago'];
+        yield ['-1 week', '1 week ago'];
+        yield ['-2 weeks -2 days', '2 weeks, 2 days ago'];
+        yield ['+1 second', 'today'];
+        yield ['+1 minute, +10 seconds', 'today'];
+        yield ['+1 week', '1 week'];
+        yield ['+1 week 1 day', '1 week, 1 day'];
+        yield ['+2 weeks 2 day', '2 weeks, 2 days'];
+        yield ['2007-9-24', 'on 9/24/07'];
+        yield ['now', 'today'];
     }
 
     /**
@@ -214,7 +211,7 @@ class DateTest extends TestCase
     {
         $date = new Date($input);
         $result = $date->timeAgoInWords();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -238,44 +235,42 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoEndProvider(): array
+    public static function timeAgoEndProvider(): \Iterator
     {
-        return [
-            [
-                '+4 months +2 weeks +3 days',
-                '4 months, 2 weeks, 3 days',
-                '8 years',
-            ],
-            [
-                '+4 months +2 weeks +1 day',
-                '4 months, 2 weeks, 1 day',
-                '8 years',
-            ],
-            [
-                '+3 months +2 weeks',
-                '3 months, 2 weeks',
-                '8 years',
-            ],
-            [
-                '+3 months +2 weeks +1 day',
-                '3 months, 2 weeks, 1 day',
-                '8 years',
-            ],
-            [
-                '+1 months +1 week +1 day',
-                '1 month, 1 week, 1 day',
-                '8 years',
-            ],
-            [
-                '+2 months +2 days',
-                '2 months, 2 days',
-                '+2 months +2 days',
-            ],
-            [
-                '+2 months +12 days',
-                '2 months, 1 week, 5 days',
-                '3 months',
-            ],
+        yield [
+            '+4 months +2 weeks +3 days',
+            '4 months, 2 weeks, 3 days',
+            '8 years',
+        ];
+        yield [
+            '+4 months +2 weeks +1 day',
+            '4 months, 2 weeks, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+3 months +2 weeks',
+            '3 months, 2 weeks',
+            '8 years',
+        ];
+        yield [
+            '+3 months +2 weeks +1 day',
+            '3 months, 2 weeks, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+1 months +1 week +1 day',
+            '1 month, 1 week, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+2 months +2 days',
+            '2 months, 2 days',
+            '+2 months +2 days',
+        ];
+        yield [
+            '+2 months +12 days',
+            '2 months, 1 week, 5 days',
+            '3 months',
         ];
     }
 
@@ -288,7 +283,7 @@ class DateTest extends TestCase
     {
         $time = new Date($input);
         $result = $time->timeAgoInWords(['end' => $end]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

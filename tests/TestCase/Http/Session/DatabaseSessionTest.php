@@ -28,9 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class DatabaseSessionTest extends TestCase
 {
-    /**
-     * @var array
-     */
     protected array $fixtures = ['core.Sessions'];
 
     /**
@@ -41,7 +38,7 @@ class DatabaseSessionTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -51,7 +48,7 @@ class DatabaseSessionTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->storage);
         parent::tearDown();
@@ -66,7 +63,7 @@ class DatabaseSessionTest extends TestCase
         new DatabaseSession();
 
         $session = $this->getTableLocator()->get('Sessions');
-        $this->assertInstanceOf('Cake\ORM\Table', $session);
+        $this->assertInstanceOf(\Cake\ORM\Table::class, $session);
         $this->assertSame('Sessions', $session->getAlias());
         $this->assertEquals(ConnectionManager::get('test'), $session->getConnection());
         $this->assertSame('sessions', $session->getTable());

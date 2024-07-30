@@ -31,7 +31,7 @@ class ValidationBehavior extends Behavior
     /**
      * @return $this
      */
-    public function validationBehavior(Validator $validator)
+    public function validationBehavior(Validator $validator): \Cake\Validation\Validator
     {
         return $validator->add('name', 'behaviorRule');
     }

@@ -37,7 +37,7 @@ class CurlTest extends TestCase
      */
     protected $caFile;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
@@ -57,9 +57,10 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (NetworkException $e) {
+        } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
+
         $this->assertCount(1, $responses);
 
         /** @var \Cake\Http\Response $response */
@@ -78,9 +79,10 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (NetworkException $e) {
+        } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
+
         $this->assertCount(1, $responses);
 
         /** @var \Cake\Http\Response $response */

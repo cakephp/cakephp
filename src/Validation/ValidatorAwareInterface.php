@@ -29,7 +29,6 @@ interface ValidatorAwareInterface
      * class constant.
      *
      * @param string|null $name The name of the validation set to return.
-     * @return \Cake\Validation\Validator
      */
     public function getValidator(?string $name = null): Validator;
 
@@ -46,7 +45,6 @@ interface ValidatorAwareInterface
      * Checks whether a validator has been set.
      *
      * @param string $name The name of a validator.
-     * @return bool
      */
     public function hasValidator(string $name): bool;
 }

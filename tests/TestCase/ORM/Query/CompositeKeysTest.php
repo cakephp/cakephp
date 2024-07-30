@@ -54,7 +54,7 @@ class CompositeKeysTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -65,9 +65,10 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderHasOne(): array
+    public static function strategiesProviderHasOne(): \Iterator
     {
-        return [['join'], ['select']];
+        yield ['join'];
+        yield ['select'];
     }
 
     /**
@@ -75,9 +76,10 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderHasMany(): array
+    public static function strategiesProviderHasMany(): \Iterator
     {
-        return [['subquery'], ['select']];
+        yield ['subquery'];
+        yield ['select'];
     }
 
     /**
@@ -85,9 +87,10 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsTo(): array
+    public static function strategiesProviderBelongsTo(): \Iterator
     {
-        return [['join'], ['select']];
+        yield ['join'];
+        yield ['select'];
     }
 
     /**
@@ -95,9 +98,10 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsToMany(): array
+    public static function strategiesProviderBelongsToMany(): \Iterator
     {
-        return [['subquery'], ['select']];
+        yield ['subquery'];
+        yield ['select'];
     }
 
     /**
@@ -194,7 +198,7 @@ class CompositeKeysTest extends TestCase
                 'articles' => [],
             ],
         ];
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
 
         $results = $query->setRepository($table)
             ->select()
@@ -202,7 +206,7 @@ class CompositeKeysTest extends TestCase
             ->enableHydration(false)
             ->toArray();
         $expected[0]['articles'] = [];
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
         $this->assertSame($table->getAssociation('SiteArticles')->getStrategy(), $strategy);
     }
 
@@ -289,7 +293,7 @@ class CompositeKeysTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
         $this->assertSame($articles->getAssociation('SiteTags')->getStrategy(), $strategy);
     }
 
@@ -338,7 +342,7 @@ class CompositeKeysTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
     }
 
     /**
@@ -387,7 +391,7 @@ class CompositeKeysTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
     }
 
     /**
@@ -440,6 +444,7 @@ class CompositeKeysTest extends TestCase
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->save(new Entity(['id' => 1, 'site_id' => 2]));
+
         $entity = $table->get([1, 1]);
         $result = $table->delete($entity);
         $this->assertTrue($result);
@@ -478,6 +483,7 @@ class CompositeKeysTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
         $articles->setEntityClass(OpenArticleEntity::class);
+
         $tags = $this->getTableLocator()->get('SiteTags');
         $articles->belongsToMany('SiteTags', [
             'targetTable' => $tags,
@@ -496,9 +502,9 @@ class CompositeKeysTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[0]);
+        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[1]);
+        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[2]);
 
         $data = [
             'title' => 'Haz tags',
@@ -520,6 +526,7 @@ class CompositeKeysTest extends TestCase
             'connection' => $this->connection,
         ]);
         $table->setDisplayField('name');
+
         $query = $table->find('list')
             ->enableHydration(false)
             ->orderBy('id');
@@ -529,7 +536,7 @@ class CompositeKeysTest extends TestCase
             '3;2' => 'jose',
             '4;1' => 'andy',
         ];
-        $this->assertEquals($expected, $query->toArray());
+        $this->assertSame($expected, $query->toArray());
 
         $table->setDisplayField(['name', 'site_id']);
         $query = $table->find('list')
@@ -541,7 +548,7 @@ class CompositeKeysTest extends TestCase
             '3;2' => 'jose;2',
             '4;1' => 'andy;1',
         ];
-        $this->assertEquals($expected, $query->toArray());
+        $this->assertSame($expected, $query->toArray());
 
         $query = $table->find('list', groupField: ['site_id', 'site_id'])
             ->enableHydration(false)
@@ -556,7 +563,7 @@ class CompositeKeysTest extends TestCase
                 '3;2' => 'jose;2',
             ],
         ];
-        $this->assertEquals($expected, $query->toArray());
+        $this->assertSame($expected, $query->toArray());
     }
 
     /**
@@ -723,7 +730,7 @@ class CompositeKeysTest extends TestCase
         } elseif ($driver instanceof Sqlite) {
             $serverVersion = $driver->version();
             if (version_compare($serverVersion, '3.15.0', '<')) {
-                $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
+                $this->markTestSkipped(sprintf('Sqlite (%s) does not support the requirements of this test.', $serverVersion));
             }
         }
 
@@ -749,7 +756,7 @@ class CompositeKeysTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $results);
+        $this->assertSame($expected, $results);
     }
 
     /**

@@ -36,7 +36,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->locale = Locale::getDefault();
@@ -45,7 +45,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
     /**
      * Resets the default locale
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Locale::setDefault($this->locale);

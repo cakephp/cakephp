@@ -28,14 +28,8 @@ use Closure;
  */
 class AggregateExpression extends FunctionExpression implements WindowInterface
 {
-    /**
-     * @var \Cake\Database\Expression\QueryExpression|null
-     */
     protected ?QueryExpression $filter = null;
 
-    /**
-     * @var \Cake\Database\Expression\WindowExpression|null
-     */
     protected ?WindowExpression $window = null;
 
     /**
@@ -47,7 +41,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      * @return $this
      * @see \Cake\Database\Query::where()
      */
-    public function filter(ExpressionInterface|Closure|array|string $conditions, array $types = [])
+    public function filter(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
         $this->filter ??= new QueryExpression();
 
@@ -66,7 +60,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      * @param string|null $name Window name
      * @return $this
      */
-    public function over(?string $name = null)
+    public function over(?string $name = null): static
     {
         $window = $this->getWindow();
         if ($name) {
@@ -80,7 +74,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function partition(ExpressionInterface|Closure|array|string $partitions)
+    public function partition(ExpressionInterface|Closure|array|string $partitions): static
     {
         $this->getWindow()->partition($partitions);
 
@@ -90,7 +84,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function order(ExpressionInterface|Closure|array|string $fields)
+    public function order(ExpressionInterface|Closure|array|string $fields): static
     {
         return $this->orderBy($fields);
     }
@@ -98,7 +92,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function orderBy(ExpressionInterface|Closure|array|string $fields)
+    public function orderBy(ExpressionInterface|Closure|array|string $fields): static
     {
         $this->getWindow()->orderBy($fields);
 
@@ -108,7 +102,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0)
+    public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0): static
     {
         $this->getWindow()->range($start, $end);
 
@@ -118,7 +112,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function rows(?int $start, ?int $end = 0)
+    public function rows(?int $start, ?int $end = 0): static
     {
         $this->getWindow()->rows($start, $end);
 
@@ -128,7 +122,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function groups(?int $start, ?int $end = 0)
+    public function groups(?int $start, ?int $end = 0): static
     {
         $this->getWindow()->groups($start, $end);
 
@@ -144,7 +138,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
         string $endDirection
-    ) {
+    ): static {
         $this->getWindow()->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
 
         return $this;
@@ -153,7 +147,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function excludeCurrent()
+    public function excludeCurrent(): static
     {
         $this->getWindow()->excludeCurrent();
 
@@ -163,7 +157,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function excludeGroup()
+    public function excludeGroup(): static
     {
         $this->getWindow()->excludeGroup();
 
@@ -173,7 +167,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function excludeTies()
+    public function excludeTies(): static
     {
         $this->getWindow()->excludeTies();
 
@@ -182,8 +176,6 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
 
     /**
      * Returns or creates WindowExpression for function.
-     *
-     * @return \Cake\Database\Expression\WindowExpression
      */
     protected function getWindow(): WindowExpression
     {
@@ -196,10 +188,11 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function sql(ValueBinder $binder): string
     {
         $sql = parent::sql($binder);
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $sql .= ' FILTER (WHERE ' . $this->filter->sql($binder) . ')';
         }
-        if ($this->window !== null) {
+
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             if ($this->window->isNamedOnly()) {
                 $sql .= ' OVER ' . $this->window->sql($binder);
             } else {
@@ -213,14 +206,15 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         parent::traverse($callback);
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $callback($this->filter);
             $this->filter->traverse($callback);
         }
-        if ($this->window !== null) {
+
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             $callback($this->window);
             $this->window->traverse($callback);
         }
@@ -234,8 +228,8 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function count(): int
     {
         $count = parent::count();
-        if ($this->window !== null) {
-            $count = $count + 1;
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
+            return $count + 1;
         }
 
         return $count;
@@ -249,10 +243,11 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function __clone()
     {
         parent::__clone();
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $this->filter = clone $this->filter;
         }
-        if ($this->window !== null) {
+
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             $this->window = clone $this->window;
         }
     }

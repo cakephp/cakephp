@@ -36,8 +36,6 @@ trait CookieCryptTrait
 
     /**
      * Returns the encryption key to be used.
-     *
-     * @return string
      */
     abstract protected function _getCookieEncryptionKey(): string;
 
@@ -55,9 +53,11 @@ trait CookieCryptTrait
         if (is_array($value)) {
             $value = $this->_implode($value);
         }
+
         if ($encrypt === false) {
             return $value;
         }
+
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $cipher = '';
@@ -73,7 +73,6 @@ trait CookieCryptTrait
      * Helper method for validating encryption cipher names.
      *
      * @param string $encrypt The cipher name.
-     * @return void
      * @throws \RuntimeException When an invalid cipher is provided.
      */
     protected function _checkCipher(string $encrypt): void
@@ -122,6 +121,7 @@ trait CookieCryptTrait
         if (!$encrypt) {
             return $this->_explode($value);
         }
+
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $prefixLength = strlen($prefix);
@@ -172,12 +172,14 @@ trait CookieCryptTrait
         if ($first === '{' || $first === '[') {
             return json_decode($string, true) ?? $string;
         }
+
         $array = [];
         foreach (explode(',', $string) as $pair) {
             $key = explode('|', $pair);
             if (!isset($key[1])) {
                 return $key[0];
             }
+
             $array[$key[0]] = $key[1];
         }
 

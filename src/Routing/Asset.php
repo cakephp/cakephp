@@ -28,8 +28,6 @@ class Asset
 {
     /**
      * Inflection type.
-     *
-     * @var string
      */
     protected static string $inflectionType = 'underscore';
 
@@ -38,7 +36,6 @@ class Asset
      *
      * @param string $inflectionType Inflection type. Value should be a valid
      *  method name of `Inflector` class like `'dasherize'` or `'underscore`'`.
-     * @return void
      */
     public static function setInflectionType(string $inflectionType): void
     {
@@ -66,7 +63,7 @@ class Asset
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
-        return static::url($path, $options + compact('pathPrefix'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix]);
     }
 
     /**
@@ -92,7 +89,7 @@ class Asset
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
 
-        return static::url($path, $options + compact('pathPrefix', 'ext'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix, 'ext' => $ext]);
     }
 
     /**
@@ -118,7 +115,7 @@ class Asset
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
 
-        return static::url($path, $options + compact('pathPrefix', 'ext'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix, 'ext' => $ext]);
     }
 
     /**
@@ -158,6 +155,7 @@ class Asset
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             [$plugin, $path] = static::pluginSplit($path);
         }
+
         if (!empty($options['pathPrefix']) && $path[0] !== '/') {
             $pathPrefix = $options['pathPrefix'];
             $placeHolderVal = '';
@@ -169,10 +167,11 @@ class Asset
 
             $path = str_replace('{plugin}', $placeHolderVal, $pathPrefix) . $path;
         }
+
         if (
             !empty($options['ext']) &&
             !str_contains($path, '?') &&
-            !str_ends_with($path, $options['ext'])
+            !str_ends_with($path, (string) $options['ext'])
         ) {
             $path .= $options['ext'];
         }
@@ -190,6 +189,7 @@ class Asset
         if (array_key_exists('timestamp', $options)) {
             $optionTimestamp = $options['timestamp'];
         }
+
         $webPath = static::assetTimestamp(
             static::webroot($path, $options),
             $optionTimestamp
@@ -211,7 +211,6 @@ class Asset
      * Encodes URL parts using rawurlencode().
      *
      * @param string $url The URL to encode.
-     * @return string
      */
     protected static function encodeUrl(string $url): string
     {
@@ -222,6 +221,7 @@ class Asset
 
         $parts = array_map('rawurldecode', explode('/', $path));
         $parts = array_map('rawurlencode', $parts);
+
         $encoded = implode('/', $parts);
 
         return str_replace($path, $encoded, $url);
@@ -254,6 +254,7 @@ class Asset
             if (is_file($webrootPath)) {
                 return $path . '?' . filemtime($webrootPath);
             }
+
             // Check for plugins and org prefixed plugins.
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
@@ -261,6 +262,7 @@ class Asset
                 $plugin = implode('/', [$plugin, Inflector::camelize($segments[1])]);
                 unset($segments[1]);
             }
+
             if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin)
@@ -316,6 +318,7 @@ class Asset
                 }
             }
         }
+
         if (str_contains($webPath, '//')) {
             return str_replace('//', '/', $webPath . $asset[1]);
         }
@@ -336,13 +339,11 @@ class Asset
 
     /**
      * Get webroot from request.
-     *
-     * @return string
      */
     protected static function requestWebroot(): string
     {
         $request = Router::getRequest();
-        if ($request === null) {
+        if (!$request instanceof \Cake\Http\ServerRequest) {
             return '/';
         }
 

@@ -38,8 +38,6 @@ class AssetMiddleware implements MiddlewareInterface
 {
     /**
      * The amount of time to cache the asset.
-     *
-     * @var string
      */
     protected string $cacheTime = '+1 day';
 
@@ -98,7 +96,6 @@ class AssetMiddleware implements MiddlewareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to check.
      * @param \SplFileInfo $file The file object to compare.
-     * @return bool
      */
     protected function isNotModified(ServerRequestInterface $request, SplFileInfo $file): bool
     {
@@ -124,6 +121,7 @@ class AssetMiddleware implements MiddlewareInterface
             if (!isset($parts[$i])) {
                 break;
             }
+
             $pluginPart[] = Inflector::camelize($parts[$i]);
             $plugin = implode('/', $pluginPart);
             if (Plugin::isLoaded($plugin)) {
@@ -151,6 +149,7 @@ class AssetMiddleware implements MiddlewareInterface
         if ($resource === false) {
             throw new CakeException(sprintf('Cannot open resource `%s`', $file->getPathname()));
         }
+
         $stream = new Stream($resource);
 
         $response = new Response(['stream' => $stream]);
@@ -161,6 +160,7 @@ class AssetMiddleware implements MiddlewareInterface
         if ($expire === false) {
             throw new CakeException(sprintf('Invalid cache time value `%s`', $this->cacheTime));
         }
+
         $maxAge = $expire - time();
 
         return $response

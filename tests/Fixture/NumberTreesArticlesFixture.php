@@ -23,8 +23,6 @@ class NumberTreesArticlesFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['number_tree_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],

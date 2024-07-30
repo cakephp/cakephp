@@ -65,7 +65,6 @@ class ViewBlock
      * Should the currently captured content be discarded on ViewBlock::end()
      *
      * @see \Cake\View\ViewBlock::end()
-     * @var bool
      */
     protected bool $_discardActiveBufferOnEnd = false;
 
@@ -83,13 +82,13 @@ class ViewBlock
      *   If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @throws \Cake\Core\Exception\CakeException When starting a block twice
-     * @return void
      */
     public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
     {
         if (array_key_exists($name, $this->_active)) {
             throw new CakeException(sprintf('A view block with the name `%s` is already/still open.', $name));
         }
+
         $this->_active[$name] = $mode;
         ob_start();
     }
@@ -97,7 +96,6 @@ class ViewBlock
     /**
      * End a capturing block. The compliment to ViewBlock::start()
      *
-     * @return void
      * @see \Cake\View\ViewBlock::start()
      */
     public function end(): void
@@ -121,6 +119,7 @@ class ViewBlock
         } else {
             $this->concat($active, $content, $mode);
         }
+
         array_pop($this->_active);
     }
 
@@ -137,7 +136,6 @@ class ViewBlock
      *   to string.
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
-     * @return void
      */
     public function concat(string $name, mixed $value = null, string $mode = ViewBlock::APPEND): void
     {
@@ -150,6 +148,7 @@ class ViewBlock
         if (!isset($this->_blocks[$name])) {
             $this->_blocks[$name] = '';
         }
+
         if ($mode === ViewBlock::PREPEND) {
             $this->_blocks[$name] = $value . $this->_blocks[$name];
         } else {
@@ -164,7 +163,6 @@ class ViewBlock
      * @param string $name Name of the block
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
-     * @return void
      */
     public function set(string $name, mixed $value): void
     {
@@ -187,7 +185,6 @@ class ViewBlock
      * Check if a block exists
      *
      * @param string $name Name of the block
-     * @return bool
      */
     public function exists(string $name): bool
     {
@@ -211,10 +208,8 @@ class ViewBlock
      */
     public function active(): ?string
     {
-        end($this->_active);
-
         /** @var string|null */
-        return key($this->_active);
+        return array_key_last($this->_active);
     }
 
     /**

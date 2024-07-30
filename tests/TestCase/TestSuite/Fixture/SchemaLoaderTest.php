@@ -29,7 +29,7 @@ class SchemaLoaderTest extends TestCase
     /**
      * @var bool|null
      */
-    protected $restore = null;
+    protected $restore;
 
     /**
      * @var \Cake\TestSuite\Fixture\SchemaLoader
@@ -38,7 +38,7 @@ class SchemaLoaderTest extends TestCase
 
     protected $truncateDbFile = TMP . 'schema_loader_test.sqlite';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -50,7 +50,7 @@ class SchemaLoaderTest extends TestCase
         $this->loader = new SchemaLoader();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -110,13 +110,13 @@ class SchemaLoaderTest extends TestCase
         $connection = ConnectionManager::get('test_schema_loader');
 
         $result = $connection->getSchemaCollection()->listTables();
-        $this->assertEquals(['schema_loader_first'], $result);
+        $this->assertSame(['schema_loader_first'], $result);
 
         $schemaFile = $this->createSchemaFile('schema_loader_second');
         $this->loader->loadSqlFiles($schemaFile, 'test_schema_loader', true, true);
 
         $result = $connection->getSchemaCollection()->listTables();
-        $this->assertEquals(['schema_loader_second'], $result);
+        $this->assertSame(['schema_loader_second'], $result);
 
         $statement = $connection->execute('SELECT * FROM schema_loader_second');
         $result = $statement->fetchAll();

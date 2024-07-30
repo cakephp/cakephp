@@ -40,25 +40,13 @@ class Server implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * @var \Cake\Core\HttpApplicationInterface
-     */
-    protected HttpApplicationInterface $app;
-
-    /**
-     * @var \Cake\Http\Runner
-     */
-    protected Runner $runner;
-
-    /**
      * Constructor
      *
      * @param \Cake\Core\HttpApplicationInterface $app The application to use.
-     * @param \Cake\Http\Runner|null $runner Application runner.
+     * @param \Cake\Http\Runner $runner Application runner.
      */
-    public function __construct(HttpApplicationInterface $app, ?Runner $runner = null)
+    public function __construct(protected HttpApplicationInterface $app, protected Runner $runner = new Runner())
     {
-        $this->app = $app;
-        $this->runner = $runner ?? new Runner();
     }
 
     /**
@@ -74,7 +62,6 @@ class Server implements EventDispatcherInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request to use or null.
      * @param \Cake\Http\MiddlewareQueue|null $middlewareQueue MiddlewareQueue or null.
-     * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
     public function run(
@@ -85,7 +72,7 @@ class Server implements EventDispatcherInterface
 
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
-        if ($middlewareQueue === null) {
+        if (!$middlewareQueue instanceof \Cake\Http\MiddlewareQueue) {
             if ($this->app instanceof ContainerApplicationInterface) {
                 $middlewareQueue = new MiddlewareQueue([], $this->app->getContainer());
             } else {
@@ -114,8 +101,6 @@ class Server implements EventDispatcherInterface
      *
      * Calls the application's `bootstrap()` hook. After the application the
      * plugins are bootstrapped.
-     *
-     * @return void
      */
     protected function bootstrap(): void
     {
@@ -131,7 +116,6 @@ class Server implements EventDispatcherInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @param \Cake\Http\ResponseEmitter|null $emitter The emitter to use.
      *   When null, a SAPI Stream Emitter will be used.
-     * @return void
      */
     public function emit(ResponseInterface $response, ?ResponseEmitter $emitter = null): void
     {
@@ -151,8 +135,6 @@ class Server implements EventDispatcherInterface
 
     /**
      * Get the application's event manager or the global one.
-     *
-     * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager(): EventManagerInterface
     {
@@ -172,7 +154,7 @@ class Server implements EventDispatcherInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager): static
     {
         if ($this->app instanceof EventDispatcherInterface) {
             $this->app->setEventManager($eventManager);

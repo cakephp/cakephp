@@ -97,8 +97,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * Don't create a hasOne association here as the join conditions are modified
      * in before find - so create/modify it there.
-     *
-     * @return void
      */
     protected function setupAssociations(): void
     {
@@ -122,7 +120,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query\SelectQuery $query Query.
      * @param \ArrayObject<string, mixed> $options The options for the query.
-     * @return void
      */
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
@@ -149,7 +146,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $query->contain([$config['hasOneAlias']]);
 
         $query->formatResults(
-            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
+            fn (CollectionInterface $results): \Cake\Collection\CollectionInterface => $this->rowMapper($results, $locale),
             $query::PREPEND
         );
     }
@@ -159,7 +156,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * @param string $locale Locale
      * @param \ArrayObject<string, mixed> $options Find options
-     * @return void
      */
     protected function setupHasOneAssociation(string $locale, ArrayObject $options): void
     {
@@ -214,9 +210,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return true;
         }
 
-        $select = array_filter($query->clause('select'), function ($field) {
-            return is_string($field);
-        });
+        $select = array_filter($query->clause('select'), fn($field): bool => is_string($field));
 
         if (!$select) {
             return true;
@@ -225,7 +219,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $alias = $config['mainTableAlias'];
         $joinRequired = false;
         foreach ($this->translatedFields() as $field) {
-            if (array_intersect($select, [$field, "$alias.$field"])) {
+            if (array_intersect($select, [$field, sprintf('%s.%s', $alias, $field)])) {
                 $joinRequired = true;
                 $query->select($query->aliasField($field, $config['hasOneAlias']));
             }
@@ -254,7 +248,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $clause = $query->clause($name);
         assert($clause === null || $clause instanceof QueryExpression);
-        if (!$clause || !$clause->count()) {
+        if (!$clause instanceof \Cake\Database\Expression\QueryExpression || !$clause->count()) {
             return false;
         }
 
@@ -272,9 +266,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $field = "$alias.$field";
+                    $field = sprintf('%s.%s', $alias, $field);
                 } elseif (in_array($field, $mainTableFields, true)) {
-                    $field = "$mainTableAlias.$field";
+                    $field = sprintf('%s.%s', $mainTableAlias, $field);
                 }
 
                 return $c;
@@ -315,6 +309,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if (!($expression instanceof FieldInterface)) {
                     return;
                 }
+
                 $field = $expression->getField();
                 if (!is_string($field) || str_contains($field, '.')) {
                     return;
@@ -322,13 +317,13 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $expression->setField("$alias.$field");
+                    $expression->setField(sprintf('%s.%s', $alias, $field));
 
                     return;
                 }
 
                 if (in_array($field, $mainTableFields, true)) {
-                    $expression->setField("$mainTableAlias.$field");
+                    $expression->setField(sprintf('%s.%s', $mainTableAlias, $field));
                 }
             }
         );
@@ -343,7 +338,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @param \ArrayObject<string, mixed> $options the options passed to the save method.
-     * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -448,7 +442,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * field name is returned for all other fields.
      *
      * @param string $field Field name to be aliased.
-     * @return string
      */
     public function translationField(string $field): string
     {
@@ -470,7 +463,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      *
      * @param \Cake\Collection\CollectionInterface $results Results to map.
      * @param string $locale Locale string
-     * @return \Cake\Collection\CollectionInterface
      */
     protected function rowMapper(CollectionInterface $results, string $locale): CollectionInterface
     {
@@ -513,14 +505,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     continue;
                 }
 
-                if ($translation[$field] !== null) {
-                    if ($allowEmpty || $translation[$field] !== '') {
-                        $row[$field] = $translation[$field];
-
-                        if ($hydrated) {
-                            /** @var \Cake\Datasource\EntityInterface $row */
-                            $row->setDirty($field, false);
-                        }
+                if ($translation[$field] !== null && ($allowEmpty || $translation[$field] !== '')) {
+                    $row[$field] = $translation[$field];
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
                     }
                 }
             }
@@ -542,7 +531,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * records into each entity under the `_translations` key.
      *
      * @param \Cake\Collection\CollectionInterface $results Results to modify.
-     * @return \Cake\Collection\CollectionInterface
      */
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
@@ -550,6 +538,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             if (!($row instanceof EntityInterface)) {
                 return $row;
             }
+
             $translations = (array)$row->get('_i18n');
             if (!$translations && $row->get('_translations')) {
                 return $row;
@@ -563,9 +552,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
             $row['_translations'] = $result;
             unset($row['_i18n']);
-            if ($row instanceof EntityInterface) {
-                $row->setDirty('_translations', false);
-            }
+            $row->setDirty('_translations', false);
 
             return $row;
         });
@@ -577,7 +564,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * entity. The result will be put into its `_i18n` property.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     * @return void
      */
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {

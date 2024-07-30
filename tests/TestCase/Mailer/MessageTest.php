@@ -36,7 +36,7 @@ class MessageTest extends TestCase
      */
     protected $message;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -150,7 +150,9 @@ class MessageTest extends TestCase
         $this->message->setBodyText($message);
 
         $result = $transort->send($this->message);
-        $expected = "{$message}\r\n\r\n";
+        $expected = $message . '
+
+';
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
@@ -159,7 +161,9 @@ class MessageTest extends TestCase
         $this->message->setBodyText($message);
 
         $result = $transort->send($this->message);
-        $expected = "{$message}\r\n\r\n";
+        $expected = $message . '
+
+';
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
@@ -195,7 +199,11 @@ HTML;
 
         $message = str_replace("\r\n", "\n", substr($message, 0, -9));
         $message = str_replace("\n", "\r\n", $message);
-        $expected = "{$message}\r\nxxxxxxxxx\r\n\r\n";
+
+        $expected = $message . '
+xxxxxxxxx
+
+';
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -216,7 +224,10 @@ HTML;
 
         $result = (new DebugTransport())->send($this->message);
         $message = substr($message, 0, -1);
-        $expected = "{$message}\r\nx\r\n\r\n";
+        $expected = $message . '
+x
+
+';
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -238,7 +249,9 @@ HTML;
         $this->message->setBodyText($message);
 
         $result = (new DebugTransport())->send($this->message);
-        $expected = "{$message}\r\n\r\n";
+        $expected = $message . '
+
+';
         $this->assertSame($expected, $result['message']);
     }
 
@@ -249,6 +262,7 @@ HTML;
     {
         $this->message->setMessageId(false);
         $this->message->setHeaders(['X-Something' => 'nice']);
+
         $expected = [
             'X-Something' => 'nice',
             'Date' => date(DATE_RFC2822),
@@ -318,8 +332,9 @@ HTML;
 
         $this->message->setHeaders(['o:tag' => ['foo']]);
         $this->message->addHeaders(['o:tag' => ['bar']]);
+
         $result = $this->message->getHeaders();
-        $this->assertEquals(['foo', 'bar'], $result['o:tag']);
+        $this->assertSame(['foo', 'bar'], $result['o:tag']);
     }
 
     /**
@@ -329,6 +344,7 @@ HTML;
     {
         $this->message->setMessageId(false);
         $this->message->setHeaders(['X-Something' => 'nice']);
+
         $expected = [
             'X-Something: nice',
             'Date: ' . date(DATE_RFC2822),
@@ -374,7 +390,7 @@ HTML;
             'info@example.com' => '70:20:00 " Forum',
         ];
         $this->message->setFrom($address);
-        $this->assertEquals($address, $this->message->getFrom());
+        $this->assertSame($address, $this->message->getFrom());
 
         $result = $this->message->getHeadersString(['from']);
         $this->assertStringContainsString('From: "70:20:00 \" Forum" <info@example.com>', $result);
@@ -438,6 +454,7 @@ HTML;
         $this->message->addTo('jrbasso@cakephp.org');
         $this->message->addTo('mark_story@cakephp.org', 'Mark Story');
         $this->message->addTo('foobar@ætdcadsl.dk');
+
         $result = $this->message->addTo(['phpnut@cakephp.org' => 'PhpNut', 'jose_zap@cakephp.org']);
         $expected = [
             'root@localhost' => 'root',
@@ -471,23 +488,20 @@ HTML;
      *
      * @return array
      */
-    public static function invalidEmails(): array
+    public static function invalidEmails(): \Iterator
     {
-        return [
-            [''],
-            ['string'],
-            ['<tag>'],
-            [['ok@cakephp.org', '1.0', '', 'string']],
-        ];
+        yield [''];
+        yield ['string'];
+        yield ['<tag>'];
+        yield [['ok@cakephp.org', '1.0', '', 'string']];
     }
 
     /**
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
-     * @param array|string $value
      */
-    public function testInvalidEmail($value): void
+    public function testInvalidEmail(string|array $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->message->setTo($value);
@@ -497,9 +511,8 @@ HTML;
      * testBuildInvalidData
      *
      * @dataProvider invalidEmails
-     * @param array|string $value
      */
-    public function testInvalidEmailAdd($value): void
+    public function testInvalidEmailAdd(string|array $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->message->addTo($value);
@@ -796,7 +809,7 @@ HTML;
     public function testDomain(): void
     {
         $result = $this->message->getDomain();
-        $expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+        $expected = env('HTTP_HOST') ?: php_uname('n');
         $this->assertSame($expected, $result);
 
         $this->message->setDomain('example.org');
@@ -853,6 +866,7 @@ HTML;
 
         $this->message->setHeaderCharset('ISO-2022-JP');
         $this->message->setSubject('日本語のSubjectにも対応するよ');
+
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsJE4bKEJTdWJqZWN0GyRCJEskYkJQMX4kOSRrJGgbKEI=?=';
         $this->assertSame($expected, $this->message->getSubject());
 
@@ -1067,6 +1081,7 @@ HTML;
             'transport' => 'debug',
         ]);
         $message->setSubject('あれ？もしかしての前と');
+
         $headers = $message->getHeaders(['subject']);
         $expected = '?ISO-2022-JP?B?GyRCJCIkbCEpJGIkNyQrJDckRiROQTAkSBsoQg==?=';
         $this->assertStringContainsString($expected, $headers['Subject']);
@@ -1242,17 +1257,14 @@ HTML;
         $this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
     }
 
-    /**
-     * @param mixed $charset
-     * @param mixed $headerCharset
-     */
-    protected function _getEmailByOldStyleCharset($charset, $headerCharset): Message
+    protected function _getEmailByOldStyleCharset(mixed $charset, mixed $headerCharset): Message
     {
         $message = new Message(['transport' => 'debug']);
 
         if ($charset) {
             $message->setCharset($charset);
         }
+
         if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
@@ -1266,17 +1278,14 @@ HTML;
         return $message;
     }
 
-    /**
-     * @param mixed $charset
-     * @param mixed $headerCharset
-     */
-    protected function _getEmailByNewStyleCharset($charset, $headerCharset): Message
+    protected function _getEmailByNewStyleCharset(mixed $charset, mixed $headerCharset): Message
     {
         $message = new Message();
 
         if ($charset) {
             $message->setCharset($charset);
         }
+
         if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
@@ -1297,8 +1306,9 @@ HTML;
     {
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
-            $this->assertTrue(
-                strlen($line) <= Message::LINE_LENGTH_MUST,
+            $this->assertLessThanOrEqual(
+                Message::LINE_LENGTH_MUST,
+                strlen($line),
                 'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
             );
         }
@@ -1310,6 +1320,7 @@ HTML;
         $reflection = new ReflectionClass($message);
         $property = $reflection->getProperty('serializableProperties');
         $property->setAccessible(true);
+
         $serializableProperties = $property->getValue($message);
 
         $message

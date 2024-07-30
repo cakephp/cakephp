@@ -65,7 +65,7 @@ class ControllerTest extends TestCase
     /**
      * reset environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -76,7 +76,7 @@ class ControllerTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -91,7 +91,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, 'Articles');
 
         $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
+            \TestApp\Model\Table\ArticlesTable::class,
             $Controller->Articles
         );
     }
@@ -101,7 +101,7 @@ class ControllerTest extends TestCase
      */
     public function testUndefinedPropertyError(): void
     {
-        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function () {
+        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function (): void {
             $controller = new Controller(new ServerRequest());
             $controller->Foo->baz();
         });
@@ -115,16 +115,16 @@ class ControllerTest extends TestCase
         $request = new ServerRequest(['url' => 'controller/posts/index']);
         $Controller = new Controller($request);
 
-        $this->assertFalse(isset($Controller->Articles));
+        $this->assertFalse(property_exists($Controller, 'Articles') && $Controller->Articles !== null);
 
         $result = $Controller->fetchTable('Articles');
         $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
+            \TestApp\Model\Table\ArticlesTable::class,
             $result
         );
     }
 
-    public function testAutoLoadModelUsingDefaultTable()
+    public function testAutoLoadModelUsingDefaultTable(): void
     {
         Configure::write('App.namespace', 'TestApp');
         $Controller = new WithDefaultTableController(new ServerRequest());
@@ -154,11 +154,11 @@ class ControllerTest extends TestCase
         $Controller = new TestPluginController(new ServerRequest());
         $Controller->setPlugin('TestPlugin');
 
-        $this->assertFalse(isset($Controller->TestPluginComments));
+        $this->assertFalse(property_exists($Controller, 'TestPluginComments') && $Controller->TestPluginComments !== null);
 
         $result = $Controller->fetchTable('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
+            \TestPlugin\Model\Table\TestPluginCommentsTable::class,
             $result
         );
     }
@@ -179,7 +179,7 @@ class ControllerTest extends TestCase
 
         $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new CommentsController($request);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->fetchTable());
+        $this->assertInstanceOf(\TestPlugin\Model\Table\CommentsTable::class, $controller->fetchTable());
     }
 
     /**
@@ -192,7 +192,7 @@ class ControllerTest extends TestCase
         $Controller = new TestPluginController(new ServerRequest());
         $Controller->loadComponent('TestPlugin.Other');
 
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
+        $this->assertInstanceOf(\TestPlugin\Controller\Component\OtherComponent::class, $Controller->Other);
     }
 
     /**
@@ -223,7 +223,7 @@ class ControllerTest extends TestCase
         $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
     }
 
-    public function testAddViewClasses()
+    public function testAddViewClasses(): void
     {
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
@@ -242,7 +242,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassesContentNegotiationMatch()
+    public function testRenderViewClassesContentNegotiationMatch(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -250,6 +250,7 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->all();
+
         $response = $controller->render();
         $this->assertSame('application/json', $response->getHeaderLine('Content-Type'), 'Has correct header');
         $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
@@ -259,7 +260,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassContentNegotiationMatchLast()
+    public function testRenderViewClassContentNegotiationMatchLast(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -267,6 +268,7 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->all();
+
         $response = $controller->render();
         $this->assertSame(
             'application/xml; charset=UTF-8',
@@ -276,7 +278,7 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('<?xml', $response->getBody() . '');
     }
 
-    public function testRenderViewClassesContentNegotiationNoMatch()
+    public function testRenderViewClassesContentNegotiationNoMatch(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -285,6 +287,7 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->all();
+
         $response = $controller->render();
         $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('hello world', $response->getBody() . '');
@@ -293,7 +296,7 @@ class ControllerTest extends TestCase
     /**
      * Test that render() will skip content-negotiation when a view class is set.
      */
-    public function testRenderViewClassContentNegotiationSkipWithViewClass()
+    public function testRenderViewClassContentNegotiationSkipWithViewClass(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -316,7 +319,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassesContentNegotiationMatchAllType()
+    public function testRenderViewClassesContentNegotiationMatchAllType(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -324,13 +327,14 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->matchAll();
+
         $response = $controller->render();
         $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'), 'Default response type');
         $this->assertEmpty($response->getBody() . '', 'Body should be empty');
         $this->assertSame(406, $response->getStatusCode(), 'status code is wrong');
     }
 
-    public function testRenderViewClassesSetContentTypeHeader()
+    public function testRenderViewClassesSetContentTypeHeader(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -339,12 +343,13 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->plain();
+
         $response = $controller->render();
         $this->assertSame('text/plain; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
-    public function testRenderViewClassesUsesSingleMimeExt()
+    public function testRenderViewClassesUsesSingleMimeExt(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -353,12 +358,13 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->all();
+
         $response = $controller->render();
         $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
     }
 
-    public function testRenderViewClassesUsesMultiMimeExt()
+    public function testRenderViewClassesUsesMultiMimeExt(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -367,12 +373,13 @@ class ControllerTest extends TestCase
         ]);
         $controller = new ContentTypesController($request);
         $controller->all();
+
         $response = $controller->render();
         $this->assertSame('application/xml; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertTextStartsWith('<?xml', $response->getBody() . '', 'Body should be xml');
     }
 
-    public function testRenderViewClassesMineExtMissingView()
+    public function testRenderViewClassesMineExtMissingView(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -437,12 +444,10 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
-            return false;
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn(EventInterface $event): bool => false);
 
         $result = $Controller->render('index');
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(\Cake\Http\Response::class, $result);
     }
 
     public function testControllerRedirect(): void
@@ -463,17 +468,15 @@ class ControllerTest extends TestCase
      *
      * @return array
      */
-    public static function statusCodeProvider(): array
+    public static function statusCodeProvider(): \Iterator
     {
-        return [
-            [300, 'Multiple Choices'],
-            [301, 'Moved Permanently'],
-            [302, 'Found'],
-            [303, 'See Other'],
-            [304, 'Not Modified'],
-            [305, 'Use Proxy'],
-            [307, 'Temporary Redirect'],
-        ];
+        yield [300, 'Multiple Choices'];
+        yield [301, 'Moved Permanently'];
+        yield [302, 'Found'];
+        yield [303, 'See Other'];
+        yield [304, 'Not Modified'];
+        yield [305, 'Use Proxy'];
+        yield [307, 'Temporary Redirect'];
     }
 
     /**
@@ -485,9 +488,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $response = $Controller->redirect('http://cakephp.org', (int)$code);
+        $response = $Controller->redirect('http://cakephp.org', $code);
         $this->assertSame($response, $Controller->getResponse());
-        $this->assertEquals($code, $response->getStatusCode());
+        $this->assertSame($code, $response->getStatusCode());
         $this->assertSame('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertFalse($Controller->isAutoRenderEnabled());
     }
@@ -532,9 +535,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
-            return $newResponse;
-        });
+        $Controller->getEventManager()->on('Controller.beforeRedirect', fn(EventInterface $event, $url, Response $response): \Cake\Http\Response => $newResponse);
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
@@ -568,7 +569,7 @@ class ControllerTest extends TestCase
         $result = $Controller->referer(['controller' => 'Posts', 'action' => 'index'], true);
         $this->assertSame('/posts/index', $result);
 
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
+        $request = $this->getMockBuilder(\Cake\Http\ServerRequest::class)
             ->onlyMethods(['referer'])
             ->getMock();
 
@@ -609,7 +610,7 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
+        $eventManager = $this->getMockBuilder(\Cake\Event\EventManagerInterface::class)->getMock();
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
         $eventManager
@@ -617,12 +618,8 @@ class ControllerTest extends TestCase
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.initialize';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.startup';
-                    })]
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'Controller.initialize')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'Controller.startup')]
                 )
             )
             ->willReturn(new Event('stub'));
@@ -635,14 +632,12 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
+        $eventManager = $this->getMockBuilder(\Cake\Event\EventManagerInterface::class)->getMock();
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
         $eventManager->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.shutdown';
-            }))
+            ->with($this->callback(fn(EventInterface $event): bool => $event->getName() === 'Controller.shutdown'))
             ->willReturn(new Event('stub'));
 
         $controller->shutdownProcess();
@@ -699,7 +694,7 @@ class ControllerTest extends TestCase
         );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
 
-        $this->assertNull($results->pageCount(), 'SimplePaginator doesn\'t have a page count');
+        $this->assertNull($results->pageCount(), "SimplePaginator doesn't have a page count");
     }
 
     /**
@@ -717,7 +712,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf(PaginatedInterface::class, $results);
     }
 
-    public function testPaginateException()
+    public function testPaginateException(): void
     {
         $this->expectException(NotFoundException::class);
 
@@ -864,7 +859,7 @@ class ControllerTest extends TestCase
         $controller->disableAutoRender();
         $controller->invokeAction($controller->getAction(), array_values($controller->getRequest()->getParam('pass')));
 
-        $this->assertEquals(
+        $this->assertSame(
             ['testId' => '1', 'test2Id' => '2'],
             $controller->getRequest()->getData()
         );
@@ -904,17 +899,13 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn(EventInterface $e) => $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn(EventInterface $e) => $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
@@ -925,9 +916,7 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn(EventInterface $e) => $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());
     }
@@ -940,7 +929,7 @@ class ControllerTest extends TestCase
         $request = new ServerRequest(['url' => '/']);
 
         $controller = new TestController($request);
-        $this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
+        $this->assertInstanceOf(\Cake\Controller\ComponentRegistry::class, $controller->components());
 
         $result = $controller->components();
         $this->assertSame($result, $controller->components());
@@ -955,11 +944,11 @@ class ControllerTest extends TestCase
 
         $controller = new TestController($request);
         $result = $controller->loadComponent('FormProtection');
-        $this->assertInstanceOf('Cake\Controller\Component\FormProtectionComponent', $result);
+        $this->assertInstanceOf(\Cake\Controller\Component\FormProtectionComponent::class, $result);
         $this->assertSame($result, $controller->FormProtection);
 
         $registry = $controller->components();
-        $this->assertTrue(isset($registry->FormProtection));
+        $this->assertTrue(property_exists($registry, 'FormProtection') && $registry->FormProtection !== null);
     }
 
     /**
@@ -975,8 +964,8 @@ class ControllerTest extends TestCase
         try {
             $controller->loadComponent('FormProtection', ['bad' => 'settings']);
             $this->fail('No exception');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The `FormProtection` alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertStringContainsString('The `FormProtection` alias has already been loaded', $runtimeException->getMessage());
         }
     }
 
@@ -1083,7 +1072,7 @@ class ControllerTest extends TestCase
         $this->assertSame($request, $controller->getRequest());
 
         $this->assertSame('Posts', $controller->getRequest()->getParam('plugin'));
-        $this->assertEquals(['foo', 'bar'], $controller->getRequest()->getParam('pass'));
+        $this->assertSame(['foo', 'bar'], $controller->getRequest()->getParam('pass'));
     }
 
     /**

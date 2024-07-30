@@ -74,7 +74,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name The name/class of the object to load.
      * @param array<string, mixed> $config Additional settings to use when loading the object.
-     * @return object
      * @psalm-return TObject
      * @throws \Exception If the class cannot be found.
      */
@@ -96,6 +95,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if ($loaded && !empty($config)) {
             $this->_checkDuplicate($objName, $config);
         }
+
         if ($loaded) {
             return $this->_loaded[$objName];
         }
@@ -128,7 +128,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name The name of the alias in the registry.
      * @param array<string, mixed> $config The config data for the new instance.
-     * @return void
      * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      */
     protected function _checkDuplicate(string $name, array $config): void
@@ -139,18 +138,21 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (!$hasConfig) {
             throw new CakeException($msg);
         }
+
         if (!$config) {
             return;
         }
+
         $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 
         $failure = null;
         foreach ($config as $key => $value) {
             if (!array_key_exists($key, $existingConfig)) {
-                $failure = " The `{$key}` was not defined in the previous configuration data.";
+                $failure = sprintf(' The `%s` was not defined in the previous configuration data.', $key);
                 break;
             }
+
             if (isset($existingConfig[$key]) && $existingConfig[$key] !== $value) {
                 $failure = sprintf(
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
@@ -161,6 +163,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                 break;
             }
         }
+
         if ($failure) {
             throw new CakeException($msg . $failure);
         }
@@ -180,7 +183,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $class The class that is missing.
      * @param string|null $plugin The plugin $class is missing from.
-     * @return void
      * @throws \Exception
      */
     abstract protected function _throwMissingClassError(string $class, ?string $plugin): void;
@@ -194,7 +196,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object|string $class The class to build.
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config The Configuration settings for construction
-     * @return object
      * @psalm-param TObject|class-string<TObject> $class
      * @psalm-return TObject
      */
@@ -242,7 +243,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return object|null
      * @psalm-return TObject|null
      */
     public function __get(string $name): ?object
@@ -254,7 +254,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Provide isset access to _loaded
      *
      * @param string $name Name of object being checked.
-     * @return bool
      */
     public function __isset(string $name): bool
     {
@@ -267,7 +266,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of a property to set.
      * @param object $object Object to set.
      * @psalm-param TObject $object
-     * @return void
      */
     public function __set(string $name, object $object): void
     {
@@ -278,7 +276,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Unsets an object.
      *
      * @param string $name Name of a property to unset.
-     * @return void
      */
     public function __unset(string $name): void
     {
@@ -347,9 +344,11 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (array_key_exists($name, $this->_loaded)) {
             $this->unload($name);
         }
+
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->getEventManager()->on($object);
         }
+
         $this->_loaded[$objName] = $object;
 
         return $this;
@@ -374,6 +373,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->getEventManager()->off($object);
         }
+
         unset($this->_loaded[$name]);
 
         return $this;
@@ -382,7 +382,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Returns an array iterator.
      *
-     * @return \Traversable
      * @psalm-return \Traversable<string, TObject>
      */
     public function getIterator(): Traversable
@@ -392,8 +391,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
     /**
      * Returns the number of loaded objects.
-     *
-     * @return int
      */
     public function count(): int
     {

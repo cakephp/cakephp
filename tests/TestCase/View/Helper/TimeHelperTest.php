@@ -43,7 +43,7 @@ class TimeHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -53,7 +53,7 @@ class TimeHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);
@@ -146,7 +146,7 @@ class TimeHelperTest extends TestCase
     public function testToQuarter(): void
     {
         $this->assertSame(4, $this->Time->toQuarter('2007-12-25'));
-        $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        $this->assertSame(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
     }
 
     /**
@@ -218,7 +218,7 @@ class TimeHelperTest extends TestCase
             $yourTimezone = new DateTimeZone($timezone);
             $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
-            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), 'Failed on ' . $timezone);
         }
     }
 
@@ -309,6 +309,7 @@ class TimeHelperTest extends TestCase
         for ($day = $days[0] + 1; $day < $days[1]; $day++) {
             $this->assertTrue($this->Time->isThisWeek(($day > 0 ? '+' : '') . $day . ' days'));
         }
+
         $this->assertFalse($this->Time->isThisWeek($days[0] . ' days'));
         $this->assertFalse($this->Time->isThisWeek('+' . $days[1] . ' days'));
     }

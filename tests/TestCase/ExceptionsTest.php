@@ -37,7 +37,7 @@ class ExceptionsTest extends TestCase
      * @param string $class The exception class name
      * @param int $defaultCode The default exception code
      */
-    public function testSimpleException($class, $defaultCode): void
+    public function testSimpleException(string $class, int $defaultCode): void
     {
         $previous = new Exception();
 
@@ -127,57 +127,55 @@ class ExceptionsTest extends TestCase
      *
      * @return array
      */
-    public static function exceptionProvider(): array
+    public static function exceptionProvider(): \Iterator
     {
-        return [
-            ['Cake\Console\Exception\ConsoleException', 1],
-            ['Cake\Console\Exception\MissingHelperException', 1],
-            ['Cake\Console\Exception\StopException', 1],
-            ['Cake\Controller\Exception\AuthSecurityException', 400],
-            ['Cake\Controller\Exception\MissingActionException', 0],
-            ['Cake\Controller\Exception\MissingComponentException', 0],
-            ['Cake\Controller\Exception\SecurityException', 400],
-            ['Cake\Core\Exception\CakeException', 0],
-            ['Cake\Core\Exception\MissingPluginException', 0],
-            ['Cake\Database\Exception\DatabaseException', 0],
-            ['Cake\Database\Exception\MissingConnectionException', 0],
-            ['Cake\Database\Exception\MissingDriverException', 0],
-            ['Cake\Database\Exception\MissingExtensionException', 0],
-            ['Cake\Database\Exception\NestedTransactionRollbackException', 0],
-            ['Cake\Datasource\Exception\InvalidPrimaryKeyException', 0],
-            ['Cake\Datasource\Exception\MissingDatasourceConfigException', 0],
-            ['Cake\Datasource\Exception\MissingDatasourceException', 0],
-            ['Cake\Datasource\Exception\MissingModelException', 0],
-            ['Cake\Datasource\Exception\RecordNotFoundException', 0],
-            ['Cake\Datasource\Paging\Exception\PageOutOfBoundsException', 0],
-            ['Cake\Mailer\Exception\MissingActionException', 0],
-            ['Cake\Mailer\Exception\MissingMailerException', 0],
-            ['Cake\Http\Exception\BadRequestException', 400],
-            ['Cake\Http\Exception\ConflictException', 409],
-            ['Cake\Http\Exception\ForbiddenException', 403],
-            ['Cake\Http\Exception\GoneException', 410],
-            ['Cake\Http\Exception\HttpException', 500],
-            ['Cake\Http\Exception\InternalErrorException', 500],
-            ['Cake\Http\Exception\InvalidCsrfTokenException', 403],
-            ['Cake\Http\Exception\MethodNotAllowedException', 405],
-            ['Cake\Http\Exception\MissingControllerException', 404],
-            ['Cake\Http\Exception\NotAcceptableException', 406],
-            ['Cake\Http\Exception\NotFoundException', 404],
-            ['Cake\Http\Exception\NotImplementedException', 501],
-            ['Cake\Http\Exception\ServiceUnavailableException', 503],
-            ['Cake\Http\Exception\UnauthorizedException', 401],
-            ['Cake\Http\Exception\UnavailableForLegalReasonsException', 451],
-            ['Cake\Network\Exception\SocketException', 0],
-            ['Cake\ORM\Exception\MissingBehaviorException', 0],
-            ['Cake\ORM\Exception\MissingEntityException', 0],
-            ['Cake\ORM\Exception\MissingTableClassException', 0],
-            ['Cake\ORM\Exception\RolledbackTransactionException', 0],
-            ['Cake\Routing\Exception\DuplicateNamedRouteException', 0],
-            ['Cake\Routing\Exception\MissingRouteException', 0],
-            ['Cake\Utility\Exception\XmlException', 0],
-            ['Cake\View\Exception\MissingCellException', 0],
-            ['Cake\View\Exception\MissingHelperException', 0],
-            ['Cake\View\Exception\MissingViewException', 0],
-        ];
+        yield [\Cake\Console\Exception\ConsoleException::class, 1];
+        yield [\Cake\Console\Exception\MissingHelperException::class, 1];
+        yield [\Cake\Console\Exception\StopException::class, 1];
+        yield [\Cake\Controller\Exception\AuthSecurityException::class, 400];
+        yield [\Cake\Controller\Exception\MissingActionException::class, 0];
+        yield [\Cake\Controller\Exception\MissingComponentException::class, 0];
+        yield [\Cake\Controller\Exception\SecurityException::class, 400];
+        yield [\Cake\Core\Exception\CakeException::class, 0];
+        yield [\Cake\Core\Exception\MissingPluginException::class, 0];
+        yield [\Cake\Database\Exception\DatabaseException::class, 0];
+        yield [\Cake\Database\Exception\MissingConnectionException::class, 0];
+        yield [\Cake\Database\Exception\MissingDriverException::class, 0];
+        yield [\Cake\Database\Exception\MissingExtensionException::class, 0];
+        yield [\Cake\Database\Exception\NestedTransactionRollbackException::class, 0];
+        yield [\Cake\Datasource\Exception\InvalidPrimaryKeyException::class, 0];
+        yield [\Cake\Datasource\Exception\MissingDatasourceConfigException::class, 0];
+        yield [\Cake\Datasource\Exception\MissingDatasourceException::class, 0];
+        yield [\Cake\Datasource\Exception\MissingModelException::class, 0];
+        yield [\Cake\Datasource\Exception\RecordNotFoundException::class, 0];
+        yield [\Cake\Datasource\Paging\Exception\PageOutOfBoundsException::class, 0];
+        yield [\Cake\Mailer\Exception\MissingActionException::class, 0];
+        yield [\Cake\Mailer\Exception\MissingMailerException::class, 0];
+        yield [\Cake\Http\Exception\BadRequestException::class, 400];
+        yield [\Cake\Http\Exception\ConflictException::class, 409];
+        yield [\Cake\Http\Exception\ForbiddenException::class, 403];
+        yield [\Cake\Http\Exception\GoneException::class, 410];
+        yield [\Cake\Http\Exception\HttpException::class, 500];
+        yield [\Cake\Http\Exception\InternalErrorException::class, 500];
+        yield [\Cake\Http\Exception\InvalidCsrfTokenException::class, 403];
+        yield [\Cake\Http\Exception\MethodNotAllowedException::class, 405];
+        yield [\Cake\Http\Exception\MissingControllerException::class, 404];
+        yield [\Cake\Http\Exception\NotAcceptableException::class, 406];
+        yield [\Cake\Http\Exception\NotFoundException::class, 404];
+        yield [\Cake\Http\Exception\NotImplementedException::class, 501];
+        yield [\Cake\Http\Exception\ServiceUnavailableException::class, 503];
+        yield [\Cake\Http\Exception\UnauthorizedException::class, 401];
+        yield [\Cake\Http\Exception\UnavailableForLegalReasonsException::class, 451];
+        yield [\Cake\Network\Exception\SocketException::class, 0];
+        yield [\Cake\ORM\Exception\MissingBehaviorException::class, 0];
+        yield [\Cake\ORM\Exception\MissingEntityException::class, 0];
+        yield [\Cake\ORM\Exception\MissingTableClassException::class, 0];
+        yield [\Cake\ORM\Exception\RolledbackTransactionException::class, 0];
+        yield [\Cake\Routing\Exception\DuplicateNamedRouteException::class, 0];
+        yield [\Cake\Routing\Exception\MissingRouteException::class, 0];
+        yield [\Cake\Utility\Exception\XmlException::class, 0];
+        yield [\Cake\View\Exception\MissingCellException::class, 0];
+        yield [\Cake\View\Exception\MissingHelperException::class, 0];
+        yield [\Cake\View\Exception\MissingViewException::class, 0];
     }
 }

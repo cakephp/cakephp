@@ -39,9 +39,10 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderJoinable(): array
+    public static function strategiesProviderJoinable(): \Iterator
     {
-        return [['join'], ['select']];
+        yield ['join'];
+        yield ['select'];
     }
 
     /**
@@ -49,9 +50,10 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderExternal(): array
+    public static function strategiesProviderExternal(): \Iterator
     {
-        return [['subquery'], ['select']];
+        yield ['subquery'];
+        yield ['select'];
     }
 
     /**
@@ -73,13 +75,13 @@ class BindingKeyTest extends TestCase
 
         $expected = ['mariano', 'nate', 'larry', 'garrett'];
         $expected = array_combine($expected, $expected);
-        $this->assertEquals(
+        $this->assertSame(
             $expected,
             $result->all()->combine('username', 'auth_user.username')->toArray()
         );
 
         $expected = [1 => 1, 2 => 5, 3 => 2, 4 => 4];
-        $this->assertEquals(
+        $this->assertSame(
             $expected,
             $result->all()->combine('id', 'auth_user.id')->toArray()
         );
@@ -100,6 +102,7 @@ class BindingKeyTest extends TestCase
         ]);
 
         $users->updateAll(['username' => 'jose'], ['username' => 'garrett']);
+
         $result = $users->find()
             ->contain(['SiteAuthors'])
             ->where(['username' => 'jose'])
@@ -123,12 +126,13 @@ class BindingKeyTest extends TestCase
         ]);
 
         $authors->updateAll(['name' => 'garrett'], ['id >' => 2]);
+
         $result = $users->find()
             ->contain(['SiteAuthors'])
             ->where(['username' => 'garrett']);
 
         $expected = [3, 4];
         $result = $result->all()->extract('site_authors.{*}.id')->toArray();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

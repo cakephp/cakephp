@@ -23,8 +23,6 @@ class UniqueAuthorsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['first_author_id' => null, 'second_author_id' => 1],

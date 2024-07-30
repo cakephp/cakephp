@@ -30,8 +30,6 @@ class DashedRoute extends Route
      *
      * Default values need to be inflected so that they match the inflections that
      * match() will create.
-     *
-     * @var array|null
      */
     protected ?array $_inflectedDefaults = null;
 
@@ -39,7 +37,6 @@ class DashedRoute extends Route
      * Camelizes the previously dashed plugin route taking into account plugin vendors
      *
      * @param string $plugin Plugin name
-     * @return string
      */
     protected function _camelizePlugin(string $plugin): string
     {
@@ -47,6 +44,7 @@ class DashedRoute extends Route
         if (!str_contains($plugin, '/')) {
             return Inflector::camelize($plugin);
         }
+
         [$vendor, $plugin] = explode('/', $plugin, 2);
 
         return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
@@ -67,12 +65,15 @@ class DashedRoute extends Route
         if (!$params) {
             return null;
         }
+
         if (!empty($params['controller'])) {
             $params['controller'] = Inflector::camelize($params['controller'], '-');
         }
+
         if (!empty($params['plugin'])) {
             $params['plugin'] = $this->_camelizePlugin($params['plugin']);
         }
+
         if (!empty($params['action'])) {
             $params['action'] = Inflector::variable(str_replace(
                 '-',
@@ -101,6 +102,7 @@ class DashedRoute extends Route
             $this->compile();
             $this->_inflectedDefaults = $this->_dasherize($this->defaults);
         }
+
         $restore = $this->defaults;
         try {
             $this->defaults = $this->_inflectedDefaults;
@@ -115,7 +117,6 @@ class DashedRoute extends Route
      * Helper method for dasherizing keys in a URL array.
      *
      * @param array $url An array of URL keys.
-     * @return array
      */
     protected function _dasherize(array $url): array
     {

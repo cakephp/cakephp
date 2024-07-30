@@ -27,7 +27,6 @@ interface ExpressionInterface
      * Converts the Node into a SQL string fragment.
      *
      * @param \Cake\Database\ValueBinder $binder Parameter binder
-     * @return string
      */
     public function sql(ValueBinder $binder): string;
 

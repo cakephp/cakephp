@@ -157,8 +157,6 @@ interface QueryInterface
 
     /**
      * Returns the total amount of results for the query.
-     *
-     * @return int
      */
     public function count(): int;
 
@@ -322,8 +320,6 @@ interface QueryInterface
 
     /**
      * Returns an array representation of the results after executing the query.
-     *
-     * @return array
      */
     public function toArray(): array;
 

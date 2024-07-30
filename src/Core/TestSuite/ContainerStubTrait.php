@@ -38,21 +38,16 @@ trait ContainerStubTrait
      * The customized application class name.
      *
      * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
-     * @var string|null
      */
     protected ?string $_appClass = null;
 
     /**
      * The customized application constructor arguments.
-     *
-     * @var array|null
      */
     protected ?array $_appArgs = null;
 
     /**
      * The collection of container services.
-     *
-     * @var array
      */
     private array $containerServices = [];
 
@@ -61,7 +56,6 @@ trait ContainerStubTrait
      *
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
-     * @return void
      * @psalm-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
@@ -74,20 +68,15 @@ trait ContainerStubTrait
      * Create an application instance.
      *
      * Uses the configuration set in `configApplication()`.
-     *
-     * @return \Cake\Core\HttpApplicationInterface|\Cake\Core\ConsoleApplicationInterface
      */
     protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
     {
-        if ($this->_appClass) {
-            $appClass = $this->_appClass;
-        } else {
-            /** @var class-string<\Cake\Http\BaseApplication> $appClass */
-            $appClass = Configure::read('App.namespace') . '\Application';
-        }
+        $appClass = $this->_appClass ?: Configure::read('App.namespace') . '\Application';
+
         if (!class_exists($appClass)) {
             throw new LogicException(sprintf('Cannot load `%s` for use in integration testing.', $appClass));
         }
+
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
@@ -138,18 +127,18 @@ trait ContainerStubTrait
      *
      * @param \Cake\Event\EventInterface $event The event
      * @param \Cake\Core\ContainerInterface $container The container to wrap.
-     * @return void
      */
     public function modifyContainer(EventInterface $event, ContainerInterface $container): void
     {
         if (!$this->containerServices) {
             return;
         }
+
         foreach ($this->containerServices as $key => $factory) {
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException) {
                     $container->add($key, $factory);
                 }
             } else {
@@ -163,10 +152,8 @@ trait ContainerStubTrait
     /**
      * Clears any mocks that were defined and cleans
      * up application class configuration.
-     *
-     * @after
-     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\After]
     public function cleanupContainer(): void
     {
         $this->_appArgs = null;
@@ -177,7 +164,7 @@ trait ContainerStubTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Core\TestSuite\ContainerStubTrait',
+    \Cake\Core\TestSuite\ContainerStubTrait::class,
     'Cake\TestSuite\ContainerStubTrait'
 );
 // phpcs:enable

@@ -10,20 +10,8 @@ use PHPStan\Type\Type;
 
 class TableFindByPropertyMethodReflection implements MethodReflection
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var \PHPStan\Reflection\ClassReflection
-     */
-    private $declaringClass;
-
-    public function __construct(string $name, ClassReflection $declaringClass)
+    public function __construct(private readonly string $name, private readonly ClassReflection $declaringClass)
     {
-        $this->name = $name;
-        $this->declaringClass = $declaringClass;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -71,6 +59,6 @@ class TableFindByPropertyMethodReflection implements MethodReflection
 
     public function getReturnType(): Type
     {
-        return new ObjectType('Cake\ORM\Query\SelectQuery');
+        return new ObjectType(\Cake\ORM\Query\SelectQuery::class);
     }
 }

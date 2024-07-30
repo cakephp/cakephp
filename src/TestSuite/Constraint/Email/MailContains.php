@@ -25,8 +25,6 @@ class MailContains extends MailConstraintBase
 {
     /**
      * Mail type to check contents of
-     *
-     * @var string|null
      */
     protected ?string $type = null;
 
@@ -34,17 +32,16 @@ class MailContains extends MailConstraintBase
      * Checks constraint
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
-        $other = preg_quote($other, '/');
+        $other = preg_quote((string) $other, '/');
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             $method = $this->getTypeMethod();
             $message = $message->$method();
 
-            if (preg_match("/$other/", $message) > 0) {
+            if (preg_match(sprintf('/%s/', $other), (string) $message) > 0) {
                 return true;
             }
         }
@@ -52,9 +49,6 @@ class MailContains extends MailConstraintBase
         return false;
     }
 
-    /**
-     * @return string
-     */
     protected function getTypeMethod(): string
     {
         return 'getBody' . ($this->type ? ucfirst($this->type) : 'String');
@@ -63,8 +57,6 @@ class MailContains extends MailConstraintBase
     /**
      * Returns the type-dependent strings of all messages
      * respects $this->at
-     *
-     * @return string
      */
     protected function getAssertedMessages(): string
     {
@@ -74,9 +66,11 @@ class MailContains extends MailConstraintBase
             $method = $this->getTypeMethod();
             $messageMembers[] = $message->$method();
         }
+
         if ($this->at && isset($messageMembers[$this->at - 1])) {
             $messageMembers = [$messageMembers[$this->at - 1]];
         }
+
         $result = implode(PHP_EOL, $messageMembers);
 
         return PHP_EOL . 'was: ' . mb_substr($result, 0, 1000);
@@ -84,8 +78,6 @@ class MailContains extends MailConstraintBase
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -30,7 +30,6 @@ interface ExpressionTypeInterface
      * be used in queries.
      *
      * @param mixed $value The value to be converted to an expression
-     * @return \Cake\Database\ExpressionInterface
      */
     public function toExpression(mixed $value): ExpressionInterface;
 }

@@ -9,8 +9,6 @@ class TestHelper extends Helper
 {
     /**
      * Settings for this helper.
-     *
-     * @var array
      */
     protected array $_defaultConfig = [
         'key1' => 'val1',
@@ -19,8 +17,6 @@ class TestHelper extends Helper
 
     /**
      * Helpers for this helper.
-     *
-     * @var array
      */
     public array $helpers = ['Html', 'TestPlugin.OtherHelper'];
 }

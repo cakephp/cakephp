@@ -47,7 +47,7 @@ class RoutesGenerateCommand extends Command
         try {
             $args = $this->_splitArgs($args->getArguments());
             $url = Router::url($args);
-            $io->out("> $url");
+            $io->out('> ' . $url);
             $io->out();
         } catch (MissingRouteException) {
             $io->err('<warning>The provided parameters do not match any routes.</warning>');
@@ -74,6 +74,7 @@ class RoutesGenerateCommand extends Command
                 if (in_array($value, ['true', 'false'], true)) {
                     $value = $value === 'true';
                 }
+
                 $out[$key] = $value;
             } else {
                 $out[] = $arg;
@@ -87,9 +88,8 @@ class RoutesGenerateCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
             'Check a routing array against the routes. ' .

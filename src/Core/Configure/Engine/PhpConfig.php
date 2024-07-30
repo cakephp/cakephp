@@ -50,8 +50,6 @@ class PhpConfig implements ConfigEngineInterface
 
     /**
      * File extension.
-     *
-     * @var string
      */
     protected string $_extension = '.php';
 

@@ -44,8 +44,6 @@ class ConsoleLog extends BaseLog
 
     /**
      * Output stream
-     *
-     * @var \Cake\Console\ConsoleOutput
      */
     protected ConsoleOutput $_output;
 

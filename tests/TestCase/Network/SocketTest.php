@@ -34,7 +34,7 @@ class SocketTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Socket = new Socket(['timeout' => 1]);
@@ -43,7 +43,7 @@ class SocketTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Socket);
@@ -119,7 +119,7 @@ class SocketTest extends TestCase
             $this->Socket = new Socket($config);
             $this->Socket->connect();
             $this->assertTrue($this->Socket->isConnected());
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -129,12 +129,10 @@ class SocketTest extends TestCase
      *
      * @return array
      */
-    public static function invalidConnections(): array
+    public static function invalidConnections(): \Iterator
     {
-        return [
-            [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]],
-            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]],
-        ];
+        yield [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]];
+        yield [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]];
     }
 
     /**
@@ -168,7 +166,7 @@ class SocketTest extends TestCase
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
             $this->assertNull($this->Socket->lastError());
             $this->assertContains('127.0.0.1', $this->Socket->addresses());
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -181,7 +179,7 @@ class SocketTest extends TestCase
         try {
             $request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
             $this->assertTrue((bool)$this->Socket->write($request));
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -201,7 +199,7 @@ class SocketTest extends TestCase
             $this->assertTrue($this->Socket->connect());
             $this->assertNull($this->Socket->read(26));
             $this->assertSame('2: ' . 'Connection timed out', $this->Socket->lastError());
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -219,7 +217,7 @@ class SocketTest extends TestCase
             $this->Socket = new Socket($config);
             $this->assertNull($this->Socket->read(1024 * 1024));
             $this->assertSame('2: ' . 'Connection timed out', $this->Socket->lastError());
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -276,14 +274,14 @@ class SocketTest extends TestCase
 
         try {
             $this->Socket->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
 
         $e = null;
         try {
             $this->Socket->enableCrypto('tlsv10', 'client');
-        } catch (SocketException $e) {
+        } catch (SocketException) {
         }
 
         $this->assertNotNull($e);
@@ -301,14 +299,14 @@ class SocketTest extends TestCase
 
         try {
             $this->Socket->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
 
         $e = null;
         try {
             $this->Socket->enableCrypto('tls', 'client');
-        } catch (SocketException $e) {
+        } catch (SocketException) {
         }
 
         $this->assertNotNull($e);
@@ -326,7 +324,7 @@ class SocketTest extends TestCase
             $socket->connect();
             $this->assertSame('smtp.gmail.com', $socket->getConfig('host'));
             $this->assertSame('ssl', $socket->getConfig('protocol'));
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -341,7 +339,7 @@ class SocketTest extends TestCase
         $this->Socket = new Socket($configSslTls);
         try {
             $this->Socket->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
     }
@@ -430,9 +428,10 @@ class SocketTest extends TestCase
         try {
             $this->Socket = new Socket($config);
             $this->Socket->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException) {
             $this->markTestSkipped('No network, skipping test.');
         }
+
         $result = $this->Socket->context();
         $this->assertTrue($result['ssl']['capture_peer']);
     }
@@ -456,6 +455,7 @@ class SocketTest extends TestCase
         $socket = new Socket($config);
 
         $socket->connect();
+
         $result = $socket->context();
 
         $this->assertTrue($result['ssl']['verify_peer']);

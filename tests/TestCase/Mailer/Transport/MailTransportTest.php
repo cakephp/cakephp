@@ -30,15 +30,15 @@ class MailTransportTest extends TestCase
     /**
      * @var \Cake\Mailer\Transport\MailTransport|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $MailTransport;
+    protected \PHPUnit\Framework\MockObject\MockObject $MailTransport;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
+        $this->MailTransport = $this->getMockBuilder(\Cake\Mailer\Transport\MailTransport::class)
             ->onlyMethods(['_mail'])
             ->getMock();
         $this->MailTransport->setConfig(['additionalParameters' => '-f']);
@@ -71,6 +71,7 @@ class MailTransportTest extends TestCase
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
         $message->setBcc('phpnut@cakephp.org');
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+
         $longNonAscii = 'Foø Bår Béz Foø Bår Béz Foø Bår Béz Foø Bår Béz';
         $message->setSubject($longNonAscii);
         $date = date(DATE_RFC2822);
@@ -84,17 +85,17 @@ class MailTransportTest extends TestCase
         $encoded = '=?UTF-8?B?Rm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXog?=';
         $encoded .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
 
-        $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
-        $data .= "Reply-To: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>{$eol}";
-        $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>{$eol}";
-        $data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>{$eol}";
-        $data .= "Bcc: phpnut@cakephp.org{$eol}";
-        $data .= "X-Mailer: CakePHP Email{$eol}";
+        $data = 'From: CakePHP Test <noreply@cakephp.org>' . $eol;
+        $data .= 'Reply-To: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . $eol;
+        $data .= 'Return-Path: CakePHP Return <pleasereply@cakephp.org>' . $eol;
+        $data .= 'Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . $eol;
+        $data .= 'Bcc: phpnut@cakephp.org' . $eol;
+        $data .= 'X-Mailer: CakePHP Email' . $eol;
         $data .= 'Date: ' . $date . $eol;
         $data .= 'X-add: ' . $encoded . $eol;
-        $data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>{$eol}";
-        $data .= "MIME-Version: 1.0{$eol}";
-        $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
+        $data .= 'Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>' . $eol;
+        $data .= 'MIME-Version: 1.0' . $eol;
+        $data .= 'Content-Type: text/plain; charset=UTF-8' . $eol;
         $data .= 'Content-Transfer-Encoding: 8bit';
 
         $this->MailTransport->expects($this->once())->method('_mail')

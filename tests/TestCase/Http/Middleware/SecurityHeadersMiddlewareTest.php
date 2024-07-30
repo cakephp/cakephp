@@ -36,9 +36,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($req): \Laminas\Diactoros\Response => new Response());
 
         $middleware = new SecurityHeadersMiddleware();
         $middleware
@@ -59,7 +57,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
         ];
 
         $result = $middleware->process($request, $handler);
-        $this->assertEquals($expected, $result->getHeaders());
+        $this->assertSame($expected, $result->getHeaders());
     }
 
     /**

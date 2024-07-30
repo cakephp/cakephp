@@ -9,8 +9,6 @@ class PaginatorTestController extends Controller
 {
     /**
      * components property
-     *
-     * @var array
      */
     protected array $components = ['Paginator'];
 }

@@ -33,8 +33,6 @@ trait RulesAwareTrait
 {
     /**
      * The domain rules to be applied to entities saved by this table
-     *
-     * @var \Cake\Datasource\RulesChecker|null
      */
     protected ?RulesChecker $_rulesChecker = null;
 
@@ -45,7 +43,6 @@ trait RulesAwareTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
      * @param \ArrayObject<string, mixed>|array|null $options The options To be passed to the rules.
-     * @return bool
      */
     public function checkRules(
         EntityInterface $entity,
@@ -55,12 +52,13 @@ trait RulesAwareTrait
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();
         $options = is_array($options) ? new ArrayObject($options) : $options;
+
         $hasEvents = ($this instanceof EventDispatcherInterface);
 
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.beforeRules',
-                compact('entity', 'options', 'operation')
+                ['entity' => $entity, 'options' => $options, 'operation' => $operation]
             );
             if ($event->isStopped()) {
                 return $event->getResult();
@@ -72,7 +70,7 @@ trait RulesAwareTrait
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.afterRules',
-                compact('entity', 'options', 'result', 'operation')
+                ['entity' => $entity, 'options' => $options, 'result' => $result, 'operation' => $operation]
             );
 
             if ($event->isStopped()) {
@@ -91,13 +89,13 @@ trait RulesAwareTrait
      * needs to be fetched from relevant datasources.
      *
      * @see \Cake\Datasource\RulesChecker
-     * @return \Cake\Datasource\RulesChecker
      */
     public function rulesChecker(): RulesChecker
     {
         if ($this->_rulesChecker !== null) {
             return $this->_rulesChecker;
         }
+
         /** @var class-string<\Cake\Datasource\RulesChecker> $class */
         $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : RulesChecker::class;
         /**
@@ -117,7 +115,6 @@ trait RulesAwareTrait
      * entities saved by this instance.
      *
      * @param \Cake\Datasource\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\Datasource\RulesChecker
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {

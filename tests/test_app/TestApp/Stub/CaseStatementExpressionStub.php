@@ -9,8 +9,6 @@ class CaseStatementExpressionStub extends CaseStatementExpression
 {
     /**
      * Returns the case value type.
-     *
-     * @return string|null
      */
     public function getValueType(): ?string
     {

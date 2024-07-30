@@ -96,6 +96,6 @@ class EventFiredWithTest extends TestCase
 
         $constraint = new EventFiredWith($manager, 'data', ['one' => 1]);
         $constraint->matches('my.event');
-        $this->assertEquals('was fired with `data` matching `{"one":1}`', $constraint->toString());
+        $this->assertSame('was fired with `data` matching `{"one":1}`', $constraint->toString());
     }
 }

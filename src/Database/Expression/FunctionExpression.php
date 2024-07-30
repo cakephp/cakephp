@@ -35,13 +35,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     use TypedResultTrait;
 
     /**
-     * The name of the function to be constructed when generating the SQL string
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
      * Constructor. Takes a name for the function to be invoked and a list of params
      * to be passed into the function. Optionally you can pass a list of types to
      * be used for each bound param.
@@ -59,16 +52,18 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * Will produce `CONCAT(name, ' rules')`
      *
-     * @param string $name the name of the function to be constructed
+     * @param string $_name the name of the function to be constructed
      * @param array $params list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
      * @param array<string, string>|array<string|null> $types Associative array of types to be associated with the
      * passed arguments
      * @param string $returnType The return type of this expression
      */
-    public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
+    public function __construct(/**
+     * The name of the function to be constructed when generating the SQL string
+     */
+    protected string $_name, array $params = [], array $types = [], string $returnType = 'string')
     {
-        $this->_name = $name;
         $this->_returnType = $returnType;
         parent::__construct($params, $types, ',');
     }
@@ -79,7 +74,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param string $name The name of the function
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->_name = $name;
 
@@ -88,8 +83,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
 
     /**
      * Gets the name of the SQL function to be invoke in this expression.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -108,7 +101,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false)
+    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false): static
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);
@@ -157,6 +150,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
                 $binder->bind($p, $condition['value'], $condition['type']);
                 $condition = $p;
             }
+
             $parts[] = $condition;
         }
 
@@ -169,8 +163,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     /**
      * The name of the function is in itself an expression to generate, thus
      * always adding 1 to the amount of expressions stored in this object.
-     *
-     * @return int
      */
     public function count(): int
     {

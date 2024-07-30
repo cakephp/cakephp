@@ -46,7 +46,7 @@ abstract class SerializedView extends View
      *
      * @return $this
      */
-    public function loadHelpers()
+    public function loadHelpers(): static
     {
         if (!$this->getConfig('serialize')) {
             parent::loadHelpers();
@@ -99,9 +99,7 @@ abstract class SerializedView extends View
 
         if ($serialize === true) {
             $options = array_map(
-                function ($v) {
-                    return '_' . $v;
-                },
+                fn($v): string => '_' . $v,
                 array_keys($this->_defaultConfig)
             );
 

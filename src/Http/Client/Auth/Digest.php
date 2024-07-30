@@ -33,16 +33,22 @@ class Digest
      * Algorithms
      */
     public const ALGO_MD5 = 'MD5';
+
     public const ALGO_SHA_256 = 'SHA-256';
+
     public const ALGO_SHA_512_256 = 'SHA-512-256';
+
     public const ALGO_MD5_SESS = 'MD5-sess';
+
     public const ALGO_SHA_256_SESS = 'SHA-256-sess';
+
     public const ALGO_SHA_512_256_SESS = 'SHA-512-256-sess';
 
     /**
      * QOP
      */
     public const QOP_AUTH = 'auth';
+
     public const QOP_AUTH_INT = 'auth-int';
 
     /**
@@ -56,50 +62,42 @@ class Digest
         self::ALGO_SHA_256_SESS => 'sha256',
         self::ALGO_SHA_512_256_SESS => 'sha512/256',
     ];
-    /**
-     * Instance of Cake\Http\Client
-     *
-     * @var \Cake\Http\Client
-     */
-    protected Client $_client;
 
     /**
      * Algorithm
-     *
-     * @var string
      */
     protected string $algorithm;
 
     /**
      * Hash type
-     *
-     * @var string
      */
     protected string $hashType;
 
     /**
      * Is Sess algorithm
-     *
-     * @var bool
      */
     protected bool $isSessAlgorithm = false;
 
     /**
      * Constructor
      *
-     * @param \Cake\Http\Client $client Http client object.
+     * @param \Cake\Http\Client $_client Http client object.
      * @param array|null $options Options list.
      */
-    public function __construct(Client $client, ?array $options = null)
+    public function __construct(
+        /**
+         * Instance of Cake\Http\Client
+         */
+        protected Client $_client,
+        ?array $options = null
+    )
     {
-        $this->_client = $client;
     }
 
     /**
      * Set algorithm based on credentials
      *
      * @param array $credentials authentication params
-     * @return void
      */
     protected function setAlgorithm(array $credentials): void
     {
@@ -108,8 +106,9 @@ class Digest
             throw new InvalidArgumentException('Invalid Algorithm. Valid ones are: ' .
                 implode(',', array_keys(self::HASH_ALGORITHMS)));
         }
+
         $this->algorithm = $algorithm;
-        $this->isSessAlgorithm = strpos($this->algorithm, '-sess') !== false;
+        $this->isSessAlgorithm = str_contains((string) $this->algorithm, '-sess');
         $this->hashType = Hash::get(self::HASH_ALGORITHMS, $this->algorithm);
     }
 
@@ -126,9 +125,11 @@ class Digest
         if (!isset($credentials['username'], $credentials['password'])) {
             return $request;
         }
+
         if (!isset($credentials['realm'])) {
             $credentials = $this->_getServerInfo($request, $credentials);
         }
+
         if (!isset($credentials['realm'])) {
             return $request;
         }
@@ -162,6 +163,7 @@ class Digest
         if (!$header) {
             return [];
         }
+
         $matches = HeaderUtility::parseWwwAuthenticate($header[0]);
         $credentials = array_merge($credentials, $matches);
 
@@ -172,9 +174,6 @@ class Digest
         return $credentials;
     }
 
-    /**
-     * @return string
-     */
     protected function generateCnonce(): string
     {
         return uniqid();
@@ -185,7 +184,6 @@ class Digest
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array<string, mixed> $credentials Authentication credentials.
-     * @return string
      */
     protected function _generateHeader(Request $request, array $credentials): string
     {
@@ -199,6 +197,7 @@ class Digest
         } else {
             $a1 = $credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password'];
         }
+
         $ha1 = hash($this->hashType, $a1);
         $a2 = $request->getMethod() . ':' . $path;
         $nc = sprintf('%08x', $credentials['nc'] ?? 1);
@@ -211,12 +210,15 @@ class Digest
                 throw new InvalidArgumentException('Invalid QOP parameter. Valid types are: ' .
                     implode(',', [self::QOP_AUTH, self::QOP_AUTH_INT]));
             }
+
             if ($credentials['qop'] === self::QOP_AUTH_INT) {
                 $a2 = $request->getMethod() . ':' . $path . ':' . hash($this->hashType, (string)$request->getBody());
             }
+
             if (empty($credentials['cnonce'])) {
                 $credentials['cnonce'] = $this->generateCnonce();
             }
+
             $ha2 = hash($this->hashType, $a2);
             $response = hash(
                 $this->hashType,
@@ -235,9 +237,11 @@ class Digest
         if (!empty($credentials['qop'])) {
             $authHeader .= ', qop=' . $credentials['qop'];
         }
+
         if ($this->isSessAlgorithm || !empty($credentials['qop'])) {
             $authHeader .= ', nc=' . $nc . ', cnonce="' . $credentials['cnonce'] . '"';
         }
+
         $authHeader .= ', response="' . $response . '"';
 
         if (!empty($credentials['opaque'])) {

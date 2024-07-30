@@ -10,9 +10,9 @@ class CakeStreamWrapper implements ArrayAccess
 {
     private $_stream;
 
-    private $_query = [];
+    private array $_query = [];
 
-    private $_data = [
+    private array $_data = [
         'headers' => [
             'HTTP/1.1 200 OK',
         ],

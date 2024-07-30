@@ -78,11 +78,13 @@ class BufferedIteratorTest extends TestCase
                 break;
             }
         }
+
         $result = [];
         foreach ($iterator as $value) {
             $result[] = $value;
         }
-        $this->assertEquals([1, 2, 3], $result);
+
+        $this->assertSame([1, 2, 3], $result);
     }
 
     /**

@@ -41,8 +41,6 @@ class StoppableIterator extends Collection
 
     /**
      * A reference to the internal iterator this object is wrapping.
-     *
-     * @var \Traversable
      */
     protected Traversable $_innerIterator;
 
@@ -68,8 +66,6 @@ class StoppableIterator extends Collection
     /**
      * Evaluates the condition and returns its result, this controls
      * whether more results will be yielded.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -109,6 +105,7 @@ class StoppableIterator extends Collection
             if ($callback($v, $k, $iterator)) {
                 break;
             }
+
             $res[$k] = $v;
         }
 

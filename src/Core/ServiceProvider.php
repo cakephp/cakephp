@@ -64,8 +64,6 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      *
      * This method wraps the league/container function so users
      * only need to use the CakePHP bootstrap() interface.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -81,7 +79,6 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * container.
      *
      * @param \Cake\Core\ContainerInterface $container The container to add services to.
-     * @return void
      */
     public function bootstrap(ContainerInterface $container): void
     {
@@ -92,8 +89,6 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      *
      * This method primarily exists as a shim between the interface
      * that league/container has and the one we want to offer in CakePHP.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -108,7 +103,6 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * alias added to this array or it will be ignored.
      *
      * @param string $id Identifier.
-     * @return bool
      */
     public function provides(string $id): bool
     {
@@ -122,7 +116,6 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * property so that services can be located.
      *
      * @param \Cake\Core\ContainerInterface $container The container to add services to.
-     * @return void
      */
     abstract public function services(ContainerInterface $container): void;
 }

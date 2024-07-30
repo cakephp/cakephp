@@ -56,7 +56,7 @@ class HasOneTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = $this->getTableLocator()->get('Users');
@@ -180,7 +180,7 @@ class HasOneTest extends TestCase
         $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
             ->onlyMethods(['join'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -207,7 +207,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
             ->onlyMethods(['join', 'select'])
             ->setConstructorArgs([$this->user])
             ->getMock();
@@ -226,7 +226,7 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(\Cake\ORM\Table::class)
             ->shouldAllowMockingMethod('saveAssociated')
             ->makePartial();
         $config = [
@@ -285,8 +285,8 @@ class HasOneTest extends TestCase
         $this->listenerCalled = false;
         $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, bool $primary): void {
             $this->listenerCalled = true;
-            $this->assertInstanceOf('Cake\Event\Event', $event);
-            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $this->assertInstanceOf(\Cake\Event\Event::class, $event);
+            $this->assertInstanceOf(\Cake\ORM\Query::class, $query);
             $this->assertInstanceOf('ArrayObject', $options);
             $this->assertFalse($primary);
         });
@@ -311,17 +311,15 @@ class HasOneTest extends TestCase
             'Model.beforeFind',
             function ($event, $query, $options, bool $primary) use ($opts): void {
                 $this->listenerCalled = true;
-                $this->assertInstanceOf('Cake\Event\Event', $event);
-                $this->assertInstanceOf('Cake\ORM\Query', $query);
+                $this->assertInstanceOf(\Cake\Event\Event::class, $event);
+                $this->assertInstanceOf(\Cake\ORM\Query::class, $query);
                 $this->assertEquals($options, $opts);
                 $this->assertFalse($primary);
             }
         );
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();
-        $association->attachTo($query, ['queryBuilder' => function ($q) {
-            return $q->applyOptions(['something' => 'more']);
-        }]);
+        $association->attachTo($query, ['queryBuilder' => fn($q) => $q->applyOptions(['something' => 'more'])]);
         $this->assertTrue($this->listenerCalled, 'Event not fired');
     }
 
@@ -432,9 +430,7 @@ class HasOneTest extends TestCase
         $association = new HasOne('Profiles', $config);
         $profiles = $association->getTarget();
         $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
-                return false;
-            });
+            $rules->addDelete(fn(): bool => false);
         });
 
         $user = new Entity(['id' => 1]);

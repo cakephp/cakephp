@@ -38,7 +38,7 @@ class ComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -152,7 +152,7 @@ class ComponentTest extends TestCase
             '_config' => [],
         ];
         $result = $Component->__debugInfo();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -173,8 +173,8 @@ class ComponentTest extends TestCase
             new ComponentRegistry(new Controller(new ServerRequest())),
             ['chicken' => 'soup']
         );
-        $this->assertEquals(['chicken' => 'soup'], $Component->configCopy);
-        $this->assertEquals(['chicken' => 'soup'], $Component->getConfig());
+        $this->assertSame(['chicken' => 'soup'], $Component->configCopy);
+        $this->assertSame(['chicken' => 'soup'], $Component->getConfig());
     }
 
     /**

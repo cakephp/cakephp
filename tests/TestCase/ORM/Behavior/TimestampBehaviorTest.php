@@ -56,7 +56,7 @@ class TimestampBehaviorTest extends TestCase
         $expected = [
             'Model.beforeSave' => 'handleEvent',
         ];
-        $this->assertEquals($expected, $this->Behavior->implementedEvents());
+        $this->assertSame($expected, $this->Behavior->implementedEvents());
     }
 
     /**
@@ -73,7 +73,7 @@ class TimestampBehaviorTest extends TestCase
         $expected = [
             'Something.special' => 'handleEvent',
         ];
-        $this->assertEquals($expected, $this->Behavior->implementedEvents());
+        $this->assertSame($expected, $this->Behavior->implementedEvents());
     }
 
     /**

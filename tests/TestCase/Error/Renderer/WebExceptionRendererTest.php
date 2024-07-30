@@ -68,7 +68,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * setup create a request object to get out of router later.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -82,7 +82,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -112,8 +112,6 @@ class WebExceptionRendererTest extends TestCase
     /**
      * Test that prefixed controllers in plugins use the plugin
      * error controller if it exists.
-     *
-     * @return void
      */
     public function testControllerInstanceForPluginPrefixedRequest(): void
     {
@@ -147,6 +145,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
+
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
         $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
@@ -157,6 +156,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
+
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
         $this->assertSame('missingAction', $controller->viewBuilder()->getTemplate());
         $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
@@ -165,6 +165,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
+
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
         $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertSame(
@@ -237,7 +238,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
+            \Cake\Controller\ErrorController::class,
             $ExceptionRenderer->__debugInfo()['controller']
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
@@ -253,7 +254,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
+            \Cake\Controller\ErrorController::class,
             $ExceptionRenderer->__debugInfo()['controller']
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
@@ -448,6 +449,7 @@ class WebExceptionRendererTest extends TestCase
     {
         $exception = new MethodNotAllowedException('Only allowing POST and DELETE');
         $exception->setHeader('Allow', ['POST', 'DELETE']);
+
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
@@ -509,145 +511,143 @@ class WebExceptionRendererTest extends TestCase
      *
      * @return array
      */
-    public static function exceptionProvider(): array
+    public static function exceptionProvider(): \Iterator
     {
-        return [
+        yield [
+            new MissingActionException([
+                'controller' => 'PostsController',
+                'action' => 'index',
+                'prefix' => '',
+                'plugin' => '',
+            ]),
             [
-                new MissingActionException([
-                    'controller' => 'PostsController',
-                    'action' => 'index',
-                    'prefix' => '',
-                    'plugin' => '',
-                ]),
-                [
-                    '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/',
-                ],
-                404,
+                '/Missing Method in PostsController/',
+                '/<em>PostsController::index\(\)<\/em>/',
             ],
+            404,
+        ];
+        yield [
+            new InvalidParameterException([
+                'template' => 'failed_coercion',
+                'passed' => 'test',
+                'type' => 'float',
+                'parameter' => 'age',
+                'controller' => 'TestController',
+                'action' => 'checkAge',
+                'prefix' => null,
+                'plugin' => null,
+            ]),
+            ['/The passed parameter or parameter type is invalid in <em>TestController::checkAge\(\)/'],
+            404,
+        ];
+        yield [
+            new MissingActionException([
+                'controller' => 'PostsController',
+                'action' => 'index',
+                'prefix' => '',
+                'plugin' => '',
+            ]),
             [
-                new InvalidParameterException([
-                    'template' => 'failed_coercion',
-                    'passed' => 'test',
-                    'type' => 'float',
-                    'parameter' => 'age',
-                    'controller' => 'TestController',
-                    'action' => 'checkAge',
-                    'prefix' => null,
-                    'plugin' => null,
-                ]),
-                ['/The passed parameter or parameter type is invalid in <em>TestController::checkAge\(\)/'],
-                404,
+                '/Missing Method in PostsController/',
+                '/<em>PostsController::index\(\)<\/em>/',
             ],
+            404,
+        ];
+        yield [
+            new MissingTemplateException(['file' => '/posts/about.ctp']),
             [
-                new MissingActionException([
-                    'controller' => 'PostsController',
-                    'action' => 'index',
-                    'prefix' => '',
-                    'plugin' => '',
-                ]),
-                [
-                    '/Missing Method in PostsController/',
-                    '/<em>PostsController::index\(\)<\/em>/',
-                ],
-                404,
+                "/posts\/about.ctp/",
             ],
+            500,
+        ];
+        yield [
+            new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
             [
-                new MissingTemplateException(['file' => '/posts/about.ctp']),
-                [
-                    "/posts\/about.ctp/",
-                ],
-                500,
+                '/Missing Layout/',
+                "/layouts\/my_layout.ctp/",
             ],
+            500,
+        ];
+        yield [
+            new MissingHelperException(['class' => 'MyCustomHelper']),
             [
-                new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
-                [
-                    '/Missing Layout/',
-                    "/layouts\/my_layout.ctp/",
-                ],
-                500,
+                '/Missing Helper/',
+                '/<em>MyCustomHelper<\/em> could not be found./',
+                '/Create the class <em>MyCustomHelper<\/em> below in file:/',
+                '/(\/|\\\)MyCustomHelper.php/',
             ],
+            500,
+        ];
+        yield [
+            new MissingBehaviorException(['class' => 'MyCustomBehavior']),
             [
-                new MissingHelperException(['class' => 'MyCustomHelper']),
-                [
-                    '/Missing Helper/',
-                    '/<em>MyCustomHelper<\/em> could not be found./',
-                    '/Create the class <em>MyCustomHelper<\/em> below in file:/',
-                    '/(\/|\\\)MyCustomHelper.php/',
-                ],
-                500,
+                '/Missing Behavior/',
+                '/Create the class <em>MyCustomBehavior<\/em> below in file:/',
+                '/(\/|\\\)MyCustomBehavior.php/',
             ],
+            500,
+        ];
+        yield [
+            new MissingComponentException(['class' => 'SideboxComponent']),
             [
-                new MissingBehaviorException(['class' => 'MyCustomBehavior']),
-                [
-                    '/Missing Behavior/',
-                    '/Create the class <em>MyCustomBehavior<\/em> below in file:/',
-                    '/(\/|\\\)MyCustomBehavior.php/',
-                ],
-                500,
+                '/Missing Component/',
+                '/Create the class <em>SideboxComponent<\/em> below in file:/',
+                '/(\/|\\\)SideboxComponent.php/',
             ],
+            500,
+        ];
+        yield [
+            new MissingDatasourceConfigException(['name' => 'MyDatasourceConfig']),
             [
-                new MissingComponentException(['class' => 'SideboxComponent']),
-                [
-                    '/Missing Component/',
-                    '/Create the class <em>SideboxComponent<\/em> below in file:/',
-                    '/(\/|\\\)SideboxComponent.php/',
-                ],
-                500,
+                '/Missing Datasource Configuration/',
+                '/<em>MyDatasourceConfig<\/em> was not found/',
             ],
+            500,
+        ];
+        yield [
+            new MissingDatasourceException(['class' => 'MyDatasource', 'plugin' => 'MyPlugin']),
             [
-                new MissingDatasourceConfigException(['name' => 'MyDatasourceConfig']),
-                [
-                    '/Missing Datasource Configuration/',
-                    '/<em>MyDatasourceConfig<\/em> was not found/',
-                ],
-                500,
+                '/Missing Datasource/',
+                '/<em>MyPlugin.MyDatasource<\/em> could not be found./',
             ],
+            500,
+        ];
+        yield [
+            new MissingMailerActionException([
+                'mailer' => 'UserMailer',
+                'action' => 'welcome',
+                'prefix' => '',
+                'plugin' => '',
+            ]),
             [
-                new MissingDatasourceException(['class' => 'MyDatasource', 'plugin' => 'MyPlugin']),
-                [
-                    '/Missing Datasource/',
-                    '/<em>MyPlugin.MyDatasource<\/em> could not be found./',
-                ],
-                500,
+                '/Missing Method in UserMailer/',
+                '/<em>UserMailer::welcome\(\)<\/em>/',
             ],
+            500,
+        ];
+        yield [
+            new Exception('boom'),
             [
-                new MissingMailerActionException([
-                    'mailer' => 'UserMailer',
-                    'action' => 'welcome',
-                    'prefix' => '',
-                    'plugin' => '',
-                ]),
-                [
-                    '/Missing Method in UserMailer/',
-                    '/<em>UserMailer::welcome\(\)<\/em>/',
-                ],
-                500,
+                '/Internal Error/',
             ],
+            500,
+        ];
+        yield [
+            new RuntimeException('another boom'),
             [
-                new Exception('boom'),
-                [
-                    '/Internal Error/',
-                ],
-                500,
+                '/Internal Error/',
             ],
-            [
-                new RuntimeException('another boom'),
-                [
-                    '/Internal Error/',
-                ],
-                500,
-            ],
-            [
-                new CakeException('base class'),
-                ['/Internal Error/'],
-                500,
-            ],
-            [
-                new HttpException('Network Authentication Required', 511),
-                ['/Network Authentication Required/'],
-                511,
-            ],
+            500,
+        ];
+        yield [
+            new CakeException('base class'),
+            ['/Internal Error/'],
+            500,
+        ];
+        yield [
+            new HttpException('Network Authentication Required', 511),
+            ['/Network Authentication Required/'],
+            511,
         ];
     }
 
@@ -661,7 +661,7 @@ class WebExceptionRendererTest extends TestCase
         $exceptionRenderer = new WebExceptionRenderer($exception);
         $response = $exceptionRenderer->render();
 
-        $this->assertEquals($code, $response->getStatusCode());
+        $this->assertSame($code, $response->getStatusCode());
         $body = (string)$response->getBody();
         foreach ($patterns as $pattern) {
             $this->assertMatchesRegularExpression($pattern, $body);
@@ -695,7 +695,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(\Cake\Controller\Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -704,14 +704,14 @@ class WebExceptionRendererTest extends TestCase
         $controller->expects($this->once())
             ->method('render')
             ->with('missingHelper')
-            ->will($this->throwException($exception));
+            ->willThrowException($exception);
 
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
         $helpers = $controller->viewBuilder()->getHelpers();
         sort($helpers);
-        $this->assertEquals([], $helpers);
+        $this->assertSame([], $helpers);
         $this->assertStringContainsString('Helper class `Fail`', (string)$response->getBody());
     }
 
@@ -724,14 +724,14 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(\Cake\Controller\Controller::class)
             ->onlyMethods(['beforeRender'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
         $controller->setRequest(new ServerRequest());
-        $controller->expects($this->any())
+        $controller
             ->method('beforeRender')
-            ->will($this->throwException($exception));
+            ->willThrowException($exception);
 
         $ExceptionRenderer->setController($controller);
 
@@ -806,7 +806,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(\Cake\Controller\Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -817,7 +817,7 @@ class WebExceptionRendererTest extends TestCase
         $controller->expects($this->once())
             ->method('render')
             ->with('error400')
-            ->will($this->throwException($exception));
+            ->willThrowException($exception);
 
         $ExceptionRenderer->setController($controller);
 
@@ -837,7 +837,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(\Cake\Controller\Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -847,7 +847,7 @@ class WebExceptionRendererTest extends TestCase
         $controller->expects($this->once())
             ->method('render')
             ->with('error400')
-            ->will($this->throwException($exception));
+            ->willThrowException($exception);
 
         $ExceptionRenderer->setController($controller);
 
@@ -894,6 +894,7 @@ class WebExceptionRendererTest extends TestCase
 
         $exceptionRenderer = new WebExceptionRenderer(new Exception('Terrible'), new ServerRequest());
         $exceptionRenderer->render();
+
         $properties = $exceptionRenderer->__debugInfo();
 
         /** @var \Cake\Http\ServerRequest $request */
@@ -920,7 +921,7 @@ class WebExceptionRendererTest extends TestCase
         $renderer->render();
 
         $expected = ['Controller.shutdown'];
-        $this->assertEquals($expected, $fired);
+        $this->assertSame($expected, $fired);
     }
 
     /**
@@ -940,7 +941,7 @@ class WebExceptionRendererTest extends TestCase
         $renderer->render();
 
         $expected = ['Controller.shutdown'];
-        $this->assertEquals($expected, $fired);
+        $this->assertSame($expected, $fired);
     }
 
     /**

@@ -162,14 +162,11 @@ trait PaginatorTestTrait
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
+
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
-                return $q->matching('Authors', function ($q) {
-                    return $q->where(['Authors.name' => 'larry']);
-                });
-            });
+            $query ->matching('Tags', fn($q) => $q->matching('Authors', fn($q) => $q->where(['Authors.name' => 'larry'])));
         });
         $results = $this->Paginator->paginate($articles);
         $result = $results->first();
@@ -771,13 +768,13 @@ trait PaginatorTestTrait
         try {
             $this->Paginator->paginate($table, $params);
             $this->fail('No exception raised');
-        } catch (PageOutOfBoundsException $exception) {
+        } catch (PageOutOfBoundsException $pageOutOfBoundsException) {
             $this->assertEquals(
                 'Page number `3000` could not be found.',
-                $exception->getMessage()
+                $pageOutOfBoundsException->getMessage()
             );
 
-            $attributes = $exception->getAttributes();
+            $attributes = $pageOutOfBoundsException->getAttributes();
             $this->assertSame(3000, $attributes['requestedPage']);
             $this->assertArrayHasKey('pagingParams', $attributes);
         }
@@ -912,10 +909,8 @@ trait PaginatorTestTrait
      */
     protected function getMockRepository()
     {
-        $model = $this->getMockBuilder(RepositoryInterface::class)
+        return $this->getMockBuilder(RepositoryInterface::class)
             ->getMock();
-
-        return $model;
     }
 
     /**
@@ -1066,9 +1061,6 @@ trait PaginatorTestTrait
         $this->assertEquals([], $result['order']);
     }
 
-    /**
-     * @return array
-     */
     public static function checkLimitProvider(): array
     {
         return [
@@ -1206,7 +1198,7 @@ trait PaginatorTestTrait
     public function testPaginateQueryWithBindValue(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(str_contains($config['driver'], 'Sqlserver'), 'Test temporarily broken in SQLServer');
+        $this->skipIf(str_contains((string) $config['driver'], 'Sqlserver'), 'Test temporarily broken in SQLServer');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
@@ -1257,7 +1249,7 @@ trait PaginatorTestTrait
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+        return $this->getMockBuilder(\TestApp\Model\Table\PaginatorPostsTable::class)
             ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
@@ -1288,7 +1280,7 @@ trait PaginatorTestTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+        $results = $this->getMockBuilder(\Cake\ORM\ResultSet::class)
             ->disableOriginalConstructor()
             ->getMock();
 

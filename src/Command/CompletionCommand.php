@@ -29,16 +29,12 @@ use ReflectionClass;
  */
 class CompletionCommand extends Command implements CommandCollectionAwareInterface
 {
-    /**
-     * @var \Cake\Console\CommandCollection
-     */
     protected CommandCollection $commands;
 
     /**
      * Set the command collection used to get completion data on.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection
-     * @return void
      */
     public function setCommandCollection(CommandCollection $commands): void
     {
@@ -49,9 +45,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Gets the option parser instance and configures it.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $modes = [
             'commands' => 'Output a list of available commands',
@@ -60,7 +55,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         ];
         $modeHelp = '';
         foreach ($modes as $key => $help) {
-            $modeHelp .= "- <info>{$key}</info> {$help}\n";
+            $modeHelp .= sprintf('- <info>%s</info> %s%s', $key, $help, PHP_EOL);
         }
 
         $parser->setDescription(
@@ -93,7 +88,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -110,7 +104,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int
      */
     protected function getCommands(Arguments $args, ConsoleIo $io): int
     {
@@ -119,6 +112,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             $parts = explode(' ', $key);
             $options[] = $parts[0];
         }
+
         $options = array_unique($options);
         $io->out(implode(' ', $options));
 
@@ -130,7 +124,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int
      */
     protected function getSubcommands(Arguments $args, ConsoleIo $io): int
     {
@@ -152,6 +145,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 $options[] = implode(' ', array_slice($parts, 1));
             }
         }
+
         $options = array_unique($options);
         $io->out(implode(' ', $options));
 
@@ -163,7 +157,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null
      */
     protected function getOptions(Arguments $args, ConsoleIo $io): ?int
     {
@@ -176,9 +169,11 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             if ($parts[0] !== $name) {
                 continue;
             }
+
             if ($subcommand && !isset($parts[1])) {
                 continue;
             }
+
             if ($subcommand && isset($parts[1]) && $parts[1] !== $subcommand) {
                 continue;
             }
@@ -195,14 +190,15 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 $parser = $value->getOptionParser();
 
                 foreach ($parser->options() as $name => $option) {
-                    $options[] = "--$name";
+                    $options[] = '--' . $name;
                     $short = $option->short();
                     if ($short) {
-                        $options[] = "-$short";
+                        $options[] = '-' . $short;
                     }
                 }
             }
         }
+
         $options = array_unique($options);
         $io->out(implode(' ', $options));
 

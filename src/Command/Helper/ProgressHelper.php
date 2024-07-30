@@ -48,22 +48,16 @@ class ProgressHelper extends Helper
 
     /**
      * The current progress.
-     *
-     * @var float|int
      */
     protected float|int $_progress = 0;
 
     /**
      * The total number of 'items' to progress through.
-     *
-     * @var int
      */
     protected int $_total = self::DEFAULT_TOTAL;
 
     /**
      * The width of the bar.
-     *
-     * @var int
      */
     protected int $_width = self::DEFAULT_WIDTH;
 
@@ -78,7 +72,6 @@ class ProgressHelper extends Helper
      * - `callback` The callback that will be called in a loop to advance the progress bar.
      *
      * @param array $args The arguments/options to use when outputting the progress bar.
-     * @return void
      */
     public function output(array $args): void
     {
@@ -86,9 +79,11 @@ class ProgressHelper extends Helper
         if (isset($args[0])) {
             $args['callback'] = $args[0];
         }
+
         if (!$args['callback'] || !is_callable($args['callback'])) {
             throw new InvalidArgumentException('Callback option must be a callable.');
         }
+
         $this->init($args);
 
         $callback = $args['callback'];
@@ -98,6 +93,7 @@ class ProgressHelper extends Helper
             $callback($this);
             $this->draw();
         }
+
         $this->_io->out('');
     }
 
@@ -111,7 +107,7 @@ class ProgressHelper extends Helper
      * @param array<string, mixed> $args The initialization data.
      * @return $this
      */
-    public function init(array $args = [])
+    public function init(array $args = []): static
     {
         $args += ['total' => self::DEFAULT_TOTAL, 'width' => self::DEFAULT_WIDTH];
         $this->_progress = 0;
@@ -127,7 +123,7 @@ class ProgressHelper extends Helper
      * @param float|int $num The amount of progress to advance by.
      * @return $this
      */
-    public function increment(float|int $num = 1)
+    public function increment(float|int $num = 1): static
     {
         $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
 
@@ -139,7 +135,7 @@ class ProgressHelper extends Helper
      *
      * @return $this
      */
-    public function draw()
+    public function draw(): static
     {
         $numberLen = strlen(' 100%');
         $complete = round($this->_progress / $this->_total, 2);
@@ -153,6 +149,7 @@ class ProgressHelper extends Helper
         if ($pad > 0) {
             $bar .= str_repeat(' ', (int)$pad);
         }
+
         $percent = ($complete * 100) . '%';
         $bar .= str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);
 

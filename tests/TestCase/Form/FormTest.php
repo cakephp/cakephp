@@ -36,7 +36,7 @@ class FormTest extends TestCase
         $form = new Form();
         $schema = $form->getSchema();
 
-        $this->assertInstanceOf('Cake\Form\Schema', $schema);
+        $this->assertInstanceOf(\Cake\Form\Schema::class, $schema);
         $this->assertSame($schema, $form->getSchema(), 'Same instance each time');
 
         $schema = new Schema();
@@ -164,7 +164,7 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid(): void
     {
-        $form = $this->getMockBuilder('Cake\Form\Form')
+        $form = $this->getMockBuilder(\Cake\Form\Form::class)
             ->onlyMethods(['_execute'])
             ->getMock();
         $form->getValidator()
@@ -216,7 +216,7 @@ class FormTest extends TestCase
         $form = new Form();
         $data = ['test' => 'val', 'foo' => 'bar'];
         $form->set($data);
-        $this->assertEquals($data, $form->getData());
+        $this->assertSame($data, $form->getData());
 
         $update = ['test' => 'updated'];
         $form->set($update);
@@ -230,7 +230,7 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $form->set('testing', 'value');
-        $this->assertEquals(['testing' => 'value'], $form->getData());
+        $this->assertSame(['testing' => 'value'], $form->getData());
     }
 
     /**
@@ -242,7 +242,7 @@ class FormTest extends TestCase
         $result = $form->set('testing', 'value')
             ->set('foo', 'bar');
         $this->assertSame($form, $result);
-        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $form->getData());
+        $this->assertSame(['testing' => 'value', 'foo' => 'bar'], $form->getData());
     }
 
     /**

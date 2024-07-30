@@ -31,7 +31,7 @@ class CommandRetryTest extends TestCase
     public function testRetry(): void
     {
         $count = 0;
-        $action = function () use (&$count) {
+        $action = function () use (&$count): int {
             if ($count < 2) {
                 ++$count;
                 throw new Exception('this is failing');
@@ -51,7 +51,7 @@ class CommandRetryTest extends TestCase
     public function testExceedAttempts(): void
     {
         $count = 0;
-        $action = function () use (&$count) {
+        $action = function () use (&$count): int {
             if ($count < 2) {
                 ++$count;
                 throw new Exception('this is failing');

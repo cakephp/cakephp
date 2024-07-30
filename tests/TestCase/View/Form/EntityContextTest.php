@@ -55,7 +55,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**
@@ -79,7 +79,7 @@ class EntityContextTest extends TestCase
         $context = new EntityContext([
             'entity' => $row,
         ]);
-        $this->assertEquals(['id'], $context->getPrimaryKey());
+        $this->assertSame(['id'], $context->getPrimaryKey());
     }
 
     /**
@@ -129,7 +129,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testIsCreateCollection($collection): void
+    public function testIsCreateCollection(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -169,11 +169,12 @@ class EntityContextTest extends TestCase
     {
         $entity = new Entity();
         $entity->setSource('Articles');
+
         $context = new EntityContext([
             'entity' => $entity,
         ]);
         $expected = ['id', 'author_id', 'title', 'body', 'published'];
-        $this->assertEquals($expected, $context->fieldNames());
+        $this->assertSame($expected, $context->fieldNames());
     }
 
     /**
@@ -189,7 +190,7 @@ class EntityContextTest extends TestCase
         $this->assertNull($context->isRequired('title'));
         $this->assertFalse($context->hasError('title'));
         $this->assertSame('string', $context->type('title'));
-        $this->assertEquals([], $context->error('title'));
+        $this->assertSame([], $context->error('title'));
 
         $attrs = $context->attributes('title');
         $this->assertArrayHasKey('length', $attrs);
@@ -225,7 +226,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testCollectionOperationsNoTableArg($collection): void
+    public function testCollectionOperationsNoTableArg(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -235,7 +236,7 @@ class EntityContextTest extends TestCase
         $this->assertSame('First post', $result);
 
         $result = $context->error('1.body');
-        $this->assertEquals(['Not long enough'], $result);
+        $this->assertSame(['Not long enough'], $result);
 
         $this->assertNull($context->val('0'));
     }
@@ -245,7 +246,7 @@ class EntityContextTest extends TestCase
      *
      * @return array
      */
-    public static function collectionProvider(): array
+    public static function collectionProvider(): \Iterator
     {
         $one = new Article([
             'title' => 'First post',
@@ -260,13 +261,10 @@ class EntityContextTest extends TestCase
             'user' => new Entity(['username' => 'jose']),
         ]);
         $two->setError('body', 'Not long enough');
-
-        return [
-            'array' => [[$one, $two]],
-            'basic iterator' => [new ArrayObject([$one, $two])],
-            'array iterator' => [new ArrayIterator([$one, $two])],
-            'collection' => [new Collection([$one, $two])],
-        ];
+        yield 'array' => [[$one, $two]];
+        yield 'basic iterator' => [new ArrayObject([$one, $two])];
+        yield 'array iterator' => [new ArrayIterator([$one, $two])];
+        yield 'collection' => [new Collection([$one, $two])];
     }
 
     /**
@@ -275,7 +273,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValOnCollections($collection): void
+    public function testValOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -305,7 +303,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValOnCollectionsWithRootName($collection): void
+    public function testValOnCollectionsWithRootName(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -333,7 +331,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testErrorsOnCollections($collection): void
+    public function testErrorsOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -341,11 +339,11 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertTrue($context->hasError('0.title'));
-        $this->assertEquals(['Required field'], $context->error('0.title'));
+        $this->assertSame(['Required field'], $context->error('0.title'));
         $this->assertFalse($context->hasError('0.body'));
 
         $this->assertFalse($context->hasError('1.title'));
-        $this->assertEquals(['Not long enough'], $context->error('1.body'));
+        $this->assertSame(['Not long enough'], $context->error('1.body'));
         $this->assertTrue($context->hasError('1.body'));
 
         $this->assertFalse($context->hasError('nope'));
@@ -358,7 +356,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testSchemaOnCollections($collection): void
+    public function testSchemaOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $this->_setupTables();
         $context = new EntityContext([
@@ -386,7 +384,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValidatorsOnCollections($collection): void
+    public function testValidatorsOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
     {
         $this->_setupTables();
 
@@ -606,7 +604,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $result = $context->val('user.sections._ids');
-        $this->assertEquals([1, 2], $result);
+        $this->assertSame([1, 2], $result);
     }
 
     /**
@@ -636,7 +634,7 @@ class EntityContextTest extends TestCase
         $this->getTableLocator()->get('Sections')->setPrimaryKey('thing');
 
         $result = $context->val('user.sections._ids');
-        $this->assertEquals([1, 4], $result);
+        $this->assertSame([1, 4], $result);
     }
 
     /**
@@ -816,9 +814,8 @@ class EntityContextTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
-        $validator->notEmptyString('title', 'nope', function ($context) {
-            return $context['providers']['entity']->isRequired();
-        });
+        $validator->notEmptyString('title', 'nope', fn($context) => $context['providers']['entity']->isRequired());
+
         $articles->setValidator('default', $validator);
 
         $row = new Entity([
@@ -842,9 +839,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
-        $validator->allowEmptyString('comment', null, function ($context) {
-            return $context['providers']['entity']->isNew();
-        });
+        $validator->allowEmptyString('comment', null, fn($context) => $context['providers']['entity']->isNew());
 
         $row = new Article([
             'title' => 'My title',
@@ -1085,6 +1080,7 @@ class EntityContextTest extends TestCase
         $row->setError('title', []);
         $row->setError('body', 'Gotta have one');
         $row->setError('user_id', ['Required field']);
+
         $context = new EntityContext([
             'entity' => $row,
             'table' => 'Articles',
@@ -1109,6 +1105,7 @@ class EntityContextTest extends TestCase
         ]);
         $row->setError('title', []);
         $row->setError('body', 'Gotta have one');
+
         $row->user->setError('username', ['Required']);
         $context = new EntityContext([
             'entity' => $row,
@@ -1142,13 +1139,13 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals([], $context->error('title'));
+        $this->assertSame([], $context->error('title'));
 
         $expected = ['Gotta have one'];
-        $this->assertEquals($expected, $context->error('body'));
+        $this->assertSame($expected, $context->error('body'));
 
         $expected = ['Required'];
-        $this->assertEquals($expected, $context->error('user.username'));
+        $this->assertSame($expected, $context->error('user.username'));
     }
 
     /**
@@ -1174,14 +1171,14 @@ class EntityContextTest extends TestCase
             'validator' => 'default',
         ]);
 
-        $this->assertEquals([], $context->error('title'));
-        $this->assertEquals([], $context->error('comments.0.user_id'));
-        $this->assertEquals([], $context->error('comments.0'));
-        $this->assertEquals(['Is required'], $context->error('comments.0.comment'));
-        $this->assertEquals(['Is required'], $context->error('comments.0.article_id'));
-        $this->assertEquals([], $context->error('comments.1'));
-        $this->assertEquals([], $context->error('comments.1.comment'));
-        $this->assertEquals([], $context->error('comments.1.article_id'));
+        $this->assertSame([], $context->error('title'));
+        $this->assertSame([], $context->error('comments.0.user_id'));
+        $this->assertSame([], $context->error('comments.0'));
+        $this->assertSame(['Is required'], $context->error('comments.0.comment'));
+        $this->assertSame(['Is required'], $context->error('comments.0.article_id'));
+        $this->assertSame([], $context->error('comments.1'));
+        $this->assertSame([], $context->error('comments.1.comment'));
+        $this->assertSame([], $context->error('comments.1.article_id'));
     }
 
     /**
@@ -1207,8 +1204,8 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals([], $context->error('tags.0._joinData.article_id'));
-        $this->assertEquals(['Is required'], $context->error('tags.0._joinData.tag_id'));
+        $this->assertSame([], $context->error('tags.0._joinData.article_id'));
+        $this->assertSame(['Is required'], $context->error('tags.0._joinData.tag_id'));
     }
 
     /**
@@ -1229,7 +1226,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $expected = ['_empty' => 'required value'];
-        $this->assertEquals($expected, $context->error('options.subpages'));
+        $this->assertSame($expected, $context->error('options.subpages'));
     }
 
     /**
@@ -1260,7 +1257,7 @@ class EntityContextTest extends TestCase
         $expected = ['_empty' => 'required value'];
         $this->assertSame([], $context->error('tags.0.notthere'));
         $this->assertSame([], $context->error('tags.1.notthere'));
-        $this->assertEquals($expected, $context->error('tags.0.metadata.description'));
+        $this->assertSame($expected, $context->error('tags.0.metadata.description'));
     }
 
     /**
@@ -1299,7 +1296,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])
@@ -1323,6 +1320,7 @@ class EntityContextTest extends TestCase
         $validator = new Validator();
         $validator->requirePresence('article_id', 'create');
         $validator->requirePresence('tag_id', 'create');
+
         $articlesTags->setValidator('default', $validator);
     }
 
@@ -1353,6 +1351,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $context->isRequired('title');
+
         $articles = $this->getTableLocator()->get('Articles');
         $this->assertSame($row, $articles->getValidator()->getProvider('entity'));
 

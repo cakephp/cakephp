@@ -4,6 +4,7 @@ echo $this->Rss->header();
 if (!isset($channel)) {
     $channel = [];
 }
+
 if (!isset($channel['title'])) {
     $channel['title'] = $this->fetch('title');
 }

@@ -26,8 +26,6 @@ class ConsoleException extends CakeException
 {
     /**
      * Default exception code
-     *
-     * @var int
      */
     protected int $_defaultCode = CommandInterface::CODE_ERROR;
 }

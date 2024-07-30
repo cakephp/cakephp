@@ -114,7 +114,6 @@ interface EventManagerInterface
      * Returns a list of all listeners for an eventKey in the order they should be called
      *
      * @param string $eventKey Event key.
-     * @return array
      */
     public function listeners(string $eventKey): array;
 }

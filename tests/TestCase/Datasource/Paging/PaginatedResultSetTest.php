@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 
 class PaginatedResultSetTest extends TestCase
 {
-    public function testItems()
+    public function testItems(): void
     {
         $paginatedResults = new PaginatedResultSet(
             $this->getMockBuilder(ResultSetInterface::class)->getMock(),
@@ -33,13 +33,13 @@ class PaginatedResultSetTest extends TestCase
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
-    public function testJsonEncode()
+    public function testJsonEncode(): void
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
             []
         );
 
-        $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
+        $this->assertSame('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
     }
 }

@@ -32,7 +32,6 @@ class IntegerType extends BaseType implements BatchCastingInterface
      *
      * @throws \InvalidArgumentException
      * @param mixed $value Value to check
-     * @return void
      */
     protected function checkNumeric(mixed $value): void
     {
@@ -50,7 +49,6 @@ class IntegerType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return int|null
      */
     public function toDatabase(mixed $value, Driver $driver): ?int
     {
@@ -68,7 +66,6 @@ class IntegerType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return int|null
      */
     public function toPHP(mixed $value, Driver $driver): ?int
     {

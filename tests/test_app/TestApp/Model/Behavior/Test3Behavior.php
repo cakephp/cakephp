@@ -66,8 +66,6 @@ class Test3Behavior extends Behavior
      * Expose protected method for testing
      *
      * Since this is public - it'll show up as callable which is a side-effect
-     *
-     * @return array
      */
     public function testReflectionCache(): array
     {

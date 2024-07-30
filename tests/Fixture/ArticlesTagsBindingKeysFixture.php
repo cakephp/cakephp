@@ -23,8 +23,6 @@ class ArticlesTagsBindingKeysFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['article_id' => 1, 'tagname' => 'tag1'],

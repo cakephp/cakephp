@@ -37,7 +37,7 @@ class AssociationCollectionTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->associations = new AssociationCollection();
@@ -125,9 +125,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testGetByProperty(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->getMock();
         $table->setSchema([]);
+
         $belongsTo = new BelongsTo('Users', [
             'sourceTable' => $table,
         ]);
@@ -160,32 +161,28 @@ class AssociationCollectionTest extends TestCase
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
         $this->associations->add('Categories', $belongsTo);
-        $this->assertEquals(['Users', 'Categories'], $this->associations->keys());
+        $this->assertSame(['Users', 'Categories'], $this->associations->keys());
 
         $this->associations->remove('Categories');
-        $this->assertEquals(['Users'], $this->associations->keys());
+        $this->assertSame(['Users'], $this->associations->keys());
     }
 
     /**
      *  Data provider for AssociationCollection::getByType
      */
-    public static function associationCollectionType(): array
+    public static function associationCollectionType(): \Iterator
     {
-        return [
-            ['BelongsTo', 'BelongsToMany'],
-            ['belongsTo', 'belongsToMany'],
-            ['belongsto', 'belongstomany'],
-        ];
+        yield ['BelongsTo', 'BelongsToMany'];
+        yield ['belongsTo', 'belongsToMany'];
+        yield ['belongsto', 'belongstomany'];
     }
 
     /**
      * Test getting association names by getByType.
      *
-     * @param string $belongsToStr
-     * @param string $belongsToManyStr
      * @dataProvider associationCollectionType
      */
-    public function testGetByType($belongsToStr, $belongsToManyStr): void
+    public function testGetByType(string $belongsToStr, string $belongsToManyStr): void
     {
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
@@ -213,10 +210,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockOne = $this->getMockBuilder(\Cake\ORM\Association\BelongsTo::class)
             ->setConstructorArgs([''])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $mockTwo = $this->getMockBuilder(\Cake\ORM\Association\HasMany::class)
             ->setConstructorArgs([''])
             ->getMock();
 
@@ -244,16 +241,17 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParents(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+
+        $mockOne = $this->getMockBuilder(\Cake\ORM\Association\BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parent', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $mockTwo = $this->getMockBuilder(\Cake\ORM\Association\HasMany::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Child', [
                 'sourceTable' => $table,
@@ -291,16 +289,17 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParentsFiltered(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+
+        $mockOne = $this->getMockBuilder(\Cake\ORM\Association\BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parents', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockTwo = $this->getMockBuilder(\Cake\ORM\Association\BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Categories', [
                 'sourceTable' => $table,
@@ -338,16 +337,17 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveChildrenFiltered(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+
+        $mockOne = $this->getMockBuilder(\Cake\ORM\Association\HasMany::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Comments', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasOne')
+        $mockTwo = $this->getMockBuilder(\Cake\ORM\Association\HasOne::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Profiles', [
                 'sourceTable' => $table,
@@ -387,7 +387,7 @@ class AssociationCollectionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot save `Profiles`, it is not associated to `Users`');
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->onlyMethods(['save'])
             ->setConstructorArgs([['alias' => 'Users']])
             ->getMock();
@@ -418,6 +418,7 @@ class AssociationCollectionTest extends TestCase
         $belongsTo = new BelongsTo('');
         $this->associations->add('users', $belongsTo);
         $this->associations->add('categories', $belongsTo);
+
         $expected = ['users' => [], 'categories' => []];
         $this->assertSame($expected, $this->associations->normalizeKeys(true));
     }

@@ -23,6 +23,7 @@ foreach ($options as $file) {
         break;
     }
 }
+
 require COMPOSER_INSTALL;
 
 $path = dirname(__DIR__) . DS . 'src' . DS;
@@ -36,13 +37,11 @@ $code = 0;
 foreach ($iterator as $file) {
     $filePath = $file->getPath();
     $package = substr($filePath, strrpos($filePath, '/') + 1);
-    if ($package === 'ORM') {
-        $fullName = 'cakephp/orm';
-    } else {
-        $fullName = 'cakephp/' . Inflector::dasherize($package);
-    }
+    $fullName = $package === 'ORM' ? 'cakephp/orm' : 'cakephp/' . Inflector::dasherize($package);
+
     $packages[$fullName] = $package;
 }
+
 ksort($packages);
 
 $mainJsonContent = file_get_contents(dirname(__FILE__, 2) . DS . 'composer.json');
@@ -58,10 +57,12 @@ foreach ($packages as $fullPackageName => $package) {
 
     $missing[] = $package;
 }
+
 if ($mainReplace) {
     echo "\033[31m" . ' * Missing "replace" statement in ROOT composer.json for package `' . $package . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
 }
+
 if ($missing) {
     echo "\033[31m" . ' * Extra "replace" statement in ROOT composer.json for non-existent package(s) `' . implode(', ', $missing)  . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
@@ -70,7 +71,7 @@ if ($missing) {
 $mainRequire = $mainJson['require'];
 
 $issues = [];
-foreach ($packages as $fullPackageName => $package) {
+foreach ($packages as $package) {
     $content = file_get_contents($path . $package . DS . 'composer.json');
     $json = json_decode($content, true);
     $require = $json['require'] ?? [];
@@ -92,13 +93,11 @@ foreach ($packages as $fullPackageName => $package) {
     }
 }
 
-if ($issues) {
-    foreach ($issues as $packageName => $packageIssues) {
-        echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
-        foreach ($packageIssues as $issue) {
-            echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
-            $code = 1;
-        }
+foreach ($issues as $packageName => $packageIssues) {
+    echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
+    foreach ($packageIssues as $issue) {
+        echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
+        $code = 1;
     }
 }
 

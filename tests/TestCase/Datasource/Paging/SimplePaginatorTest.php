@@ -23,7 +23,7 @@ use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends NumericPaginatorTest
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -57,7 +57,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
      */
     public function testPaginateCustomFind(): void
     {
-        $titleExtractor = function ($result) {
+        $titleExtractor = function ($result): array {
             $ids = [];
             foreach ($result as $record) {
                 $ids[] = $record->title;
@@ -73,7 +73,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
 
         $result = $this->Paginator->paginate($table);
         $this->assertCount(4, $result, '4 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(1, $pagingParams['currentPage']);
@@ -82,7 +82,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(3, $result, '3 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(1, $pagingParams['currentPage']);
@@ -91,7 +91,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(1, $result, '1 rows should come back');
-        $this->assertEquals(['Third Post'], $titleExtractor($result));
+        $this->assertSame(['Third Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(2, $pagingParams['currentPage']);
@@ -101,7 +101,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
         $settings = ['finder' => 'published', 'limit' => 2];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(2, $result, '2 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(1, $pagingParams['currentPage']);
@@ -134,7 +134,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
 
         $this->assertSame(1, $pagingParams['start']);
         $this->assertSame(2, $pagingParams['end']);
-        $this->assertSame(2, count($result));
+        $this->assertCount(2, $result);
         $this->assertSame(2, $pagingParams['count']);
         $this->assertFalse($pagingParams['hasNextPage']);
     }

@@ -38,7 +38,7 @@ class SmtpTransportTest extends TestCase
     /**
      * @var \Cake\Network\Socket&\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $socket;
+    protected \PHPUnit\Framework\MockObject\MockObject $socket;
 
     /**
      * @var array<string, string>
@@ -56,7 +56,7 @@ class SmtpTransportTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->socket = $this->getMockBuilder(Socket::class)
@@ -75,8 +75,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectEhlo(): void
     {
-        $this->socket->expects($this->any())->method('connect')->willReturn(true);
-        $this->socket->expects($this->any())
+        $this->socket->method('connect')->willReturn(true);
+        $this->socket
             ->method('read')
             ->willReturn("220 Welcome message\r\n", "250 Accepted\r\n");
         $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
@@ -120,7 +120,7 @@ class SmtpTransportTest extends TestCase
     public function testConnectEhloTlsOnNonTlsServer(): void
     {
         $this->SmtpTransport->setConfig(['tls' => true]);
-        $this->socket->expects($this->any())->method('connect')->willReturn(true);
+        $this->socket->method('connect')->willReturn(true);
 
         $this->socket->expects($this->exactly(3))
             ->method('read')
@@ -141,13 +141,13 @@ class SmtpTransportTest extends TestCase
         $e = null;
         try {
             $this->SmtpTransport->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException $socketException) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
+        $this->assertNotNull($socketException);
+        $this->assertSame('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $socketException->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertStringContainsString('500 5.3.3 Unrecognized command', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('500 5.3.3 Unrecognized command', $socketException->getPrevious()->getMessage());
     }
 
     /**
@@ -211,7 +211,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->expects($this->once())->method('connect')->willReturn(true);
 
-        $this->socket->expects($this->any())
+        $this->socket
             ->method('read')
             ->willReturn(
                 "220 Welcome message\r\n",
@@ -286,20 +286,18 @@ class SmtpTransportTest extends TestCase
         $e = null;
         try {
             $this->SmtpTransport->connect();
-        } catch (SocketException $e) {
+        } catch (SocketException $socketException) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('SMTP server did not accept the connection.', $e->getMessage());
+        $this->assertNotNull($socketException);
+        $this->assertSame('SMTP server did not accept the connection.', $socketException->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertStringContainsString('200 Not Accepted', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('200 Not Accepted', $socketException->getPrevious()->getMessage());
     }
 
     /**
      * Test that when "authType" is specified that's that one used instead of the
      * 1st one supported by the server
-     *
-     * @return void
      */
     public function testAuthTypeSet(): void
     {
@@ -565,13 +563,13 @@ class SmtpTransportTest extends TestCase
         $e = null;
         try {
             $this->SmtpTransport->auth();
-        } catch (SocketException $e) {
+        } catch (SocketException $socketException) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('SMTP server did not accept the username.', $e->getMessage());
+        $this->assertNotNull($socketException);
+        $this->assertSame('SMTP server did not accept the username.', $socketException->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('535 5.7.8 Authentication failed', $socketException->getPrevious()->getMessage());
     }
 
     /**
@@ -603,13 +601,13 @@ class SmtpTransportTest extends TestCase
         $e = null;
         try {
             $this->SmtpTransport->auth();
-        } catch (SocketException $e) {
+        } catch (SocketException $socketException) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('SMTP server did not accept the password.', $e->getMessage());
+        $this->assertNotNull($socketException);
+        $this->assertSame('SMTP server did not accept the password.', $socketException->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('535 5.7.8 Authentication failed', $socketException->getPrevious()->getMessage());
     }
 
     /**
@@ -623,7 +621,7 @@ class SmtpTransportTest extends TestCase
         $message->setBcc('phpnut@cakephp.org');
         $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
 
-        $this->socket->expects($this->any())->method('read')->willReturn("250 OK\r\n");
+        $this->socket->method('read')->willReturn("250 OK\r\n");
 
         $this->socket->expects($this->exactly(5))
             ->method('write')
@@ -677,6 +675,7 @@ class SmtpTransportTest extends TestCase
         $message->setBcc('phpnut@cakephp.org');
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
         $message->setSubject('Testing SMTP');
+
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date]);
         $message->setBody(['text' => "First Line\nSecond Line\n.Third Line"]);
@@ -734,8 +733,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testEmptyClientName(): void
     {
-        $this->socket->expects($this->any())->method('connect')->willReturn(true);
-        $this->socket->expects($this->any())
+        $this->socket->method('connect')->willReturn(true);
+        $this->socket
            ->method('read')
            ->willReturn("220 Welcome message\r\n", "250 Accepted\r\n");
 
@@ -753,8 +752,8 @@ class SmtpTransportTest extends TestCase
     {
         $this->assertEmpty($this->SmtpTransport->getLastResponse());
 
-        $this->socket->expects($this->any())->method('connect')->willReturn(true);
-        $this->socket->expects($this->any())
+        $this->socket->method('connect')->willReturn(true);
+        $this->socket
             ->method('read')
             ->willReturn(
                 "220 Welcome message\r\n",
@@ -785,7 +784,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -815,7 +814,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'OK'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -900,9 +899,9 @@ class SmtpTransportTest extends TestCase
     public function testExplicitDisconnectNotConnected(): void
     {
         $callback = function ($arg): void {
-            $this->assertNotEquals("QUIT\r\n", $arg);
+            $this->assertNotSame("QUIT\r\n", $arg);
         };
-        $this->socket->expects($this->any())->method('write')->willReturnCallback($callback);
+        $this->socket->method('write')->willReturnCallback($callback);
         $this->socket->expects($this->never())->method('disconnect');
         $this->SmtpTransport->disconnect();
     }
@@ -922,12 +921,12 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->exactly(2))->method('getBody')->willReturn(['First Line']);
 
-        $callback = function ($arg) {
-            $this->assertNotEquals("QUIT\r\n", $arg);
+        $callback = function ($arg): int {
+            $this->assertNotSame("QUIT\r\n", $arg);
 
             return 1;
         };
-        $this->socket->expects($this->any())->method('write')->willReturnCallback($callback);
+        $this->socket->method('write')->willReturnCallback($callback);
         $this->socket->expects($this->never())->method('disconnect');
 
         $this->socket->expects($this->exactly(11))

@@ -59,7 +59,6 @@ trait CollectionTrait
      * type of returned collection interface
      *
      * @param mixed ...$args Constructor arguments.
-     * @return \Cake\Collection\CollectionInterface
      */
     protected function newCollection(mixed ...$args): CollectionInterface
     {
@@ -83,9 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
-            return (bool)$v;
-        };
+        $callback ??= fn($v): bool => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -95,11 +92,9 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v, $k, $i) {
-            return (bool)$v;
-        };
+        $callback ??= fn($v, $k, $i): bool => (bool)$v;
 
-        return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
+        return new FilterIterator($this->unwrap(), fn ($value, $key, $items): bool => !$callback($value, $key, $items));
     }
 
     /**
@@ -107,9 +102,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
-            return $v;
-        };
+        $callback ??= fn($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -181,6 +174,7 @@ trait CollectionTrait
                 $isFirst = false;
                 continue;
             }
+
             $result = $callback($result, $value, $k);
         }
 
@@ -194,10 +188,8 @@ trait CollectionTrait
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
-            $extractor = $extractor
-                ->filter(function ($data) {
-                    return $data !== null && ($data instanceof Traversable || is_array($data));
-                })
+            return $extractor
+                ->filter(fn($data): bool => $data !== null && (is_iterable($data)))
                 ->unfold();
         }
 
@@ -229,8 +221,9 @@ trait CollectionTrait
         if ($path !== null) {
             $result = $result->extract($path);
         }
+
         $result = $result
-            ->reduce(function ($acc, $current) {
+            ->reduce(function ($acc, $current): array {
                 [$count, $sum] = $acc;
 
                 return [$count + 1, $sum + $current];
@@ -252,6 +245,7 @@ trait CollectionTrait
         if ($path !== null) {
             $items = $items->extract($path);
         }
+
         $values = $items->toList();
         sort($values);
         $count = count($values);
@@ -292,6 +286,7 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+
             if ($pathValue instanceof BackedEnum) {
                 $pathValue = $pathValue->value;
             } elseif ($pathValue instanceof UnitEnum) {
@@ -319,6 +314,7 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+
             if ($pathValue instanceof BackedEnum) {
                 $pathValue = $pathValue->value;
             } elseif ($pathValue instanceof UnitEnum) {
@@ -441,6 +437,7 @@ trait CollectionTrait
             if ($count === 0) {
                 return null;
             }
+
             $iterator = new LimitIterator($iterator, $count - 1, 1);
         }
 
@@ -535,7 +532,7 @@ trait CollectionTrait
                 $offset++;
             }
 
-            $offset = $offset % $length;
+            $offset %= $length;
             $head = array_slice($result, $offset);
             $tail = array_slice($result, 0, $offset);
 
@@ -568,11 +565,7 @@ trait CollectionTrait
      */
     public function appendItem(mixed $item, mixed $key = null): CollectionInterface
     {
-        if ($key !== null) {
-            $data = [$key => $item];
-        } else {
-            $data = [$item];
-        }
+        $data = $key !== null ? [$key => $item] : [$item];
 
         return $this->append($data);
     }
@@ -590,11 +583,7 @@ trait CollectionTrait
      */
     public function prependItem(mixed $item, mixed $key = null): CollectionInterface
     {
-        if ($key !== null) {
-            $data = [$key => $item];
-        } else {
-            $data = [$item];
-        }
+        $data = $key !== null ? [$key => $item] : [$item];
 
         return $this->prepend($data);
     }
@@ -664,6 +653,7 @@ trait CollectionTrait
             foreach ($values as $value) {
                 $result += $value;
             }
+
             $mapReduce->emit($result, $key);
         };
 
@@ -683,7 +673,7 @@ trait CollectionTrait
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
+        $mapper = function (array $row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
@@ -697,10 +687,16 @@ trait CollectionTrait
                 $isObject = is_object(current($parents));
                 $foundOutType = true;
             }
+
             if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     /** @psalm-suppress PossiblyInvalidArgument */
-                    $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
+                    $parentValue = isset($parents[$id]) ? $parents[$id] : [];
+                    if (!is_array($parentValue)) {
+                        $parentValue = (array)$parentValue;
+                    }
+
+                    $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parentValue, 1);
                     $mapReduce->emit($parents[$id]);
                 }
 
@@ -711,6 +707,7 @@ trait CollectionTrait
             foreach ($values as $id) {
                 $children[] = &$parents[$id];
             }
+
             $parents[$key][$nestingKey] = $children;
         };
 
@@ -740,6 +737,7 @@ trait CollectionTrait
 
             return $keepKeys ? $items : array_values($items);
         }
+
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
         if ($keepKeys && $iterator::class === RecursiveIteratorIterator::class) {
@@ -812,10 +810,11 @@ trait CollectionTrait
 
             if (!isset($modes[$order])) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid direction `%s` provided. Must be one of: \'desc\', \'asc\', \'leaves\'.',
+                    "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'.",
                     $order
                 ));
             }
+
             $order = $modes[$order];
         }
 
@@ -842,9 +841,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($item) {
-            return $item;
-        };
+        $callback ??= fn($item) => $item;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
@@ -900,6 +897,7 @@ trait CollectionTrait
                 if (!$iterator->valid()) {
                     break;
                 }
+
                 $values[] = $iterator->current();
             }
 
@@ -917,12 +915,14 @@ trait CollectionTrait
             if ($keepKeys) {
                 $key = $k;
             }
+
             $values = [$key => $v];
             for ($i = 1; $i < $chunkSize; $i++) {
                 $iterator->next();
                 if (!$iterator->valid()) {
                     break;
                 }
+
                 if ($keepKeys) {
                     $values[$iterator->key()] = $iterator->current();
                 } else {
@@ -961,7 +961,7 @@ trait CollectionTrait
         }
 
         if ($iterator !== $this && $iterator instanceof CollectionInterface) {
-            $iterator = $iterator->unwrap();
+            return $iterator->unwrap();
         }
 
         return $iterator;
@@ -973,7 +973,6 @@ trait CollectionTrait
      * @param callable|null $operation A callable that allows you to customize the product result.
      * @param callable|null $filter A filtering callback that must return true for a result to be part
      *   of the final results.
-     * @return \Cake\Collection\CollectionInterface
      * @throws \LogicException
      */
     public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface
@@ -1005,10 +1004,9 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = array_map(fn($value, $keys, $index) =>
                 /** @psalm-suppress InvalidArrayOffset */
-                return $value[$keys[$index]];
-            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
+                $value[$keys[$index]], $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
             if ($filter === null || $filter($currentCombination)) {
                 $result[] = $operation === null ? $currentCombination : $operation($currentCombination);
@@ -1033,7 +1031,6 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
      * @throws \LogicException
      */
     public function transpose(): CollectionInterface
@@ -1079,15 +1076,13 @@ trait CollectionTrait
     /**
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
-     *
-     * @return \Iterator|array
      */
     protected function optimizeUnwrap(): Iterator|array
     {
         $iterator = $this->unwrap();
 
         if ($iterator::class === ArrayIterator::class) {
-            $iterator = $iterator->getArrayCopy();
+            return $iterator->getArrayCopy();
         }
 
         return $iterator;

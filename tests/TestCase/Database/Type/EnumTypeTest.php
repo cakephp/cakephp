@@ -74,7 +74,7 @@ class EnumTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->driver = ConnectionManager::get('test')->getDriver();
@@ -93,7 +93,7 @@ class EnumTypeTest extends TestCase
     /**
      * Restores Type class state
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

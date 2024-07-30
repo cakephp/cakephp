@@ -28,8 +28,6 @@ class ProductsFixture extends TestFixture
 
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['id' => 1, 'category' => 1, 'name' => 'First product', 'price' => 10],

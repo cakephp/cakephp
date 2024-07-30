@@ -34,7 +34,7 @@ class LoggedQueryTest extends TestCase
 
     protected $false = 'FALSE';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->driver = ConnectionManager::get('test')->getDriver();
 
@@ -66,7 +66,7 @@ class LoggedQueryTest extends TestCase
             'params' => ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0],
         ]);
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
+        $expected = sprintf("SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = %s AND e = %s AND f = 0", $this->true, $this->false);
         $this->assertSame($expected, (string)$query);
     }
 
@@ -82,7 +82,7 @@ class LoggedQueryTest extends TestCase
             'params' => ['string', '3', null, true, false, 0],
         ]);
 
-        $expected = "SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = $this->true AND e = $this->false AND f = 0";
+        $expected = sprintf("SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = %s AND e = %s AND f = 0", $this->true, $this->false);
         $this->assertSame($expected, (string)$query);
     }
 
@@ -143,7 +143,7 @@ class LoggedQueryTest extends TestCase
             'params' => ['p1' => hex2bin($uuid)],
         ]);
 
-        $expected = "SELECT a FROM b where a = '{$uuid}'";
+        $expected = sprintf("SELECT a FROM b where a = '%s'", $uuid);
         $this->assertSame($expected, (string)$query);
     }
 

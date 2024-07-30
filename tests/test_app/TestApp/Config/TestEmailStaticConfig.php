@@ -14,8 +14,8 @@ class TestEmailStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
+        'debug' => \Cake\Mailer\Transport\DebugTransport::class,
+        'mail' => \Cake\Mailer\Transport\MailTransport::class,
+        'smtp' => \Cake\Mailer\Transport\SmtpTransport::class,
     ];
 }

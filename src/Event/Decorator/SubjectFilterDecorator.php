@@ -33,9 +33,8 @@ class SubjectFilterDecorator extends AbstractDecorator
     /**
      * @inheritDoc
      */
-    public function __invoke(): mixed
+    public function __invoke(mixed ...$args): mixed
     {
-        $args = func_get_args();
         if (!$this->canTrigger($args[0])) {
             return null;
         }
@@ -48,13 +47,13 @@ class SubjectFilterDecorator extends AbstractDecorator
      *
      * @template TSubject of object
      * @param \Cake\Event\EventInterface<TSubject> $event Event object.
-     * @return bool
      */
     public function canTrigger(EventInterface $event): bool
     {
         if (!isset($this->_options['allowedSubject'])) {
             throw new CakeException(self::class . ' Missing subject filter options!');
         }
+
         if (is_string($this->_options['allowedSubject'])) {
             $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
         }

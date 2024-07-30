@@ -51,6 +51,7 @@ class I18nInitCommand extends Command
         if (!$language) {
             $language = $io->ask('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
+
         if (strlen($language) < 2) {
             $io->err('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
 
@@ -76,6 +77,7 @@ class I18nInitCommand extends Command
             if (!$fileInfo->isFile()) {
                 continue;
             }
+
             $filename = $fileInfo->getFilename();
             $newFilename = $fileInfo->getBasename('.pot');
             $newFilename .= '.po';
@@ -84,6 +86,7 @@ class I18nInitCommand extends Command
             if ($content === false) {
                 throw new CakeException(sprintf('Cannot read file content of `%s`', $sourceFolder . $filename));
             }
+
             $io->createFile($targetFolder . $newFilename, $content);
             $count++;
         }
@@ -97,9 +100,8 @@ class I18nInitCommand extends Command
      * Gets the option parser instance and configures it.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription('Initialize a language PO file from the POT file')
            ->addOption('plugin', [

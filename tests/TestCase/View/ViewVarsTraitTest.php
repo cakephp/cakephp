@@ -34,7 +34,7 @@ class ViewVarsTraitTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class ViewVarsTraitTest extends TestCase
     {
         $data = ['test' => 'val', 'foo' => 'bar'];
         $this->subject->set($data);
-        $this->assertEquals($data, $this->subject->viewBuilder()->getVars());
+        $this->assertSame($data, $this->subject->viewBuilder()->getVars());
 
         $update = ['test' => 'updated'];
         $this->subject->set($update);
@@ -61,7 +61,7 @@ class ViewVarsTraitTest extends TestCase
     public function testSetTwoParam(): void
     {
         $this->subject->set('testing', 'value');
-        $this->assertEquals(['testing' => 'value'], $this->subject->viewBuilder()->getVars());
+        $this->assertSame(['testing' => 'value'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -72,7 +72,7 @@ class ViewVarsTraitTest extends TestCase
         $result = $this->subject->set('testing', 'value')
             ->set('foo', 'bar');
         $this->assertSame($this->subject, $result);
-        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewBuilder()->getVars());
+        $this->assertSame(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -85,7 +85,7 @@ class ViewVarsTraitTest extends TestCase
         $this->subject->set($keys, $vals);
 
         $expected = ['one' => 'two', 'key' => 'val'];
-        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
+        $this->assertSame($expected, $this->subject->viewBuilder()->getVars());
     }
 
     /**

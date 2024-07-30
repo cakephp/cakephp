@@ -19,8 +19,5 @@ namespace Cake\View\Exception;
  */
 class MissingLayoutException extends MissingTemplateException
 {
-    /**
-     * @var string
-     */
     protected string $type = 'Layout';
 }

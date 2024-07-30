@@ -36,10 +36,12 @@ $this->start('subheading');
         <strong>SQL Query: </strong>
     </p>
     <pre><?= h($error->queryString); ?></pre>
-<?php endif; ?>
+<?php endif;
+ ?>
 <?php if (!empty($error->params)) : ?>
         <strong>SQL Query Params: </strong>
         <pre><?php Debugger::dump($error->params); ?></pre>
-<?php endif; ?>
+<?php endif;
+ ?>
 <?= $this->element('auto_table_warning'); ?>
 <?php $this->end() ?>

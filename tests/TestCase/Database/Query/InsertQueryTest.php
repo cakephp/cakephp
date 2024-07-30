@@ -48,14 +48,14 @@ class InsertQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -286,7 +286,7 @@ class InsertQueryTest extends TestCase
             !$this->autoQuote
         );
         $this->assertQuotedQuery(
-            'SELECT <name>, \'some text\', 99 FROM <authors>',
+            "SELECT <name>, 'some text', 99 FROM <authors>",
             $result,
             !$this->autoQuote
         );
@@ -311,7 +311,7 @@ class InsertQueryTest extends TestCase
             'author_id' => 99,
             'published' => 'N',
         ];
-        $this->assertEquals($expected, $rows[0]);
+        $this->assertSame($expected, $rows[0]);
     }
 
     /**
@@ -387,6 +387,7 @@ class InsertQueryTest extends TestCase
         if (!$this->connection->getDriver() instanceof Sqlserver) {
             $this->assertSame(1, $result->rowCount());
         }
+
         $result->closeCursor();
 
         $result = (new SelectQuery($this->connection))->select('*')

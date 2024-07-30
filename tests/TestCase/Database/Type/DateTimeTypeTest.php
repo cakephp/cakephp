@@ -38,7 +38,7 @@ class DateTimeTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Original type map
@@ -55,19 +55,17 @@ class DateTimeTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
 
         $this->originalTimeZone = date_default_timezone_get();
     }
 
     /**
      * Reset timezone to its initial value
-     *
-     * @return void
      */
     protected function tearDown(): void
     {
@@ -212,95 +210,89 @@ class DateTimeTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): array
+    public static function marshalProvider(): \Iterator
     {
-        return [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['2013-nope!', null],
-
-            // valid string types
-            ['1392387900', new DateTime('@1392387900')],
-            [1392387900, new DateTime('@1392387900')],
-            ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')],
-            ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')],
-            ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')],
-            ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')],
-            ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')],
-            ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
-            ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
-            ['2024-03-02 15:46:00.000000', new DateTime('2024-03-02T15:46:00+00:00')],
-
-            [new DateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
-            [new NativeDateTime('2017-04-05T17:18:00+00:00'), new NativeDateTime('2017-04-05T17:18:00+00:00')],
-            [new DateTimeImmutable('2017-04-05T17:18:00+00:00'), new DateTimeImmutable('2017-04-05T17:18:00+00:00')],
-
-            // valid array types
+        // invalid types.
+        yield [null, null];
+        yield [false, null];
+        yield [true, null];
+        yield ['', null];
+        yield ['derpy', null];
+        yield ['2013-nope!', null];
+        // valid string types
+        yield ['1392387900', new DateTime('@1392387900')];
+        yield [1392387900, new DateTime('@1392387900')];
+        yield ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')];
+        yield ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')];
+        yield ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')];
+        yield ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')];
+        yield ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')];
+        yield ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')];
+        yield ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')];
+        yield ['2024-03-02 15:46:00.000000', new DateTime('2024-03-02T15:46:00+00:00')];
+        yield [new DateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')];
+        yield [new NativeDateTime('2017-04-05T17:18:00+00:00'), new NativeDateTime('2017-04-05T17:18:00+00:00')];
+        yield [new DateTimeImmutable('2017-04-05T17:18:00+00:00'), new DateTimeImmutable('2017-04-05T17:18:00+00:00')];
+        // valid array types
+        yield [
+            ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''],
+            null,
+        ];
+        yield [
+            ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+            new DateTime('2014-02-14 13:14:15'),
+        ];
+        yield [
             [
-                ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''],
-                null,
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'am',
             ],
+            new DateTime('2014-02-14 01:14:15'),
+        ];
+        yield [
             [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new DateTime('2014-02-14 13:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 12, 'minute' => 04, 'second' => 15,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 12:04:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new DateTime('2014-02-14 01:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 13:14:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 12, 'minute' => 04, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 12:04:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
             ],
+            new DateTime('2014-02-14 00:00:00'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 13:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
             ],
+            new DateTime('2014-02-14 11:30:00', 'UTC'),
+        ];
+        // Invalid array types
+        yield [
+            ['year' => 'farts', 'month' => 'derp'],
+            null,
+        ];
+        yield [
+            ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+            null,
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                ],
-                new DateTime('2014-02-14 00:00:00'),
+                'year' => '2014', 'month' => '02', 'day' => '14',
+                'hour' => 'farts', 'minute' => 'farts',
             ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
-                ],
-                new DateTime('2014-02-14 11:30:00', 'UTC'),
-            ],
-
-            // Invalid array types
-            [
-                ['year' => 'farts', 'month' => 'derp'],
-                null,
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                null,
-            ],
-            [
-                [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts',
-                ],
-                null,
-            ],
+            null,
         ];
     }
 
@@ -311,7 +303,7 @@ class DateTimeTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|int|NativeDateTime|\DateTimeImmutable|array|null $value, NativeDateTime|\DateTimeImmutable|null $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -341,9 +333,9 @@ class DateTimeTypeTest extends TestCase
         $expected = new DateTime('2020-05-01 23:28:00', 'Europe/Paris');
 
         $result = $this->type->marshal($expected);
-        $this->assertEquals('UTC', $result->getTimezone()->getName());
-        $this->assertEquals($expected->toDateTimeString(), $result->addHours(2)->toDateTimeString());
-        $this->assertEquals('Europe/Paris', $expected->getTimezone()->getName());
+        $this->assertSame('UTC', $result->getTimezone()->getName());
+        $this->assertSame($expected->toDateTimeString(), $result->addHours(2)->toDateTimeString());
+        $this->assertSame('Europe/Paris', $expected->getTimezone()->getName());
     }
 
     public function testMarshalWithUserTimezone(): void
@@ -354,7 +346,7 @@ class DateTimeTypeTest extends TestCase
         $expected = new DateTime($value);
 
         $result = $this->type->marshal($value);
-        $this->assertEquals('UTC', $result->getTimezone()->getName());
+        $this->assertSame('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result->addHours(2));
 
         $expected = new DateTime('2020-05-01 21:28:00', 'UTC');
@@ -362,7 +354,7 @@ class DateTimeTypeTest extends TestCase
             'year' => 2020, 'month' => 5, 'day' => 1,
             'hour' => 23, 'minute' => 28, 'second' => 0,
         ]);
-        $this->assertEquals('UTC', $result->getTimezone()->getName());
+        $this->assertSame('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result);
 
         $this->type->setUserTimezone(null);
@@ -398,7 +390,7 @@ class DateTimeTypeTest extends TestCase
 
         $this->type->setUserTimezone('+0200');
         $result = $this->type->marshal('10/13/2013 11:28pm');
-        $this->assertEquals('UTC', $result->getTimezone()->getName());
+        $this->assertSame('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result->addHours(2));
         $this->type->setUserTimezone(null);
 
@@ -426,7 +418,7 @@ class DateTimeTypeTest extends TestCase
         $value = new ChronosDate('2023-04-26');
 
         $result = $this->type->marshal($value);
-        $this->assertEquals($value->format('Y-m-d'), $result->format('Y-m-d'));
-        $this->assertEquals('Europe/Vienna', $result->getTimezone()->getName());
+        $this->assertSame($value->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertSame('Europe/Vienna', $result->getTimezone()->getName());
     }
 }

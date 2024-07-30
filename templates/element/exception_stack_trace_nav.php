@@ -24,13 +24,14 @@ use function Cake\Core\h;
 <?php foreach ($exceptions as $level => $exc): ?>
     <?php if ($level > 0): ?>
         <li class="stack-previous">
-            <span class="stack-function">Caused by</span> <?= h(get_class($exc)) ?>
+            <span class="stack-function">Caused by</span> <?= h($exc::class) ?>
         </li>
-    <?php endif; ?>
+    <?php endif;
+ ?>
     <?php $stackTrace = Debugger::formatTrace($exc->getTrace(), ['format' => 'array']); ?>
     <?php foreach ($stackTrace as $i => $stack): ?>
         <?php
-        $class = isset($stack['file']) && str_contains($stack['file'], APP) ? 'vendor-frame' : 'app-frame';
+        $class = isset($stack['file']) && str_contains((string) $stack['file'], APP) ? 'vendor-frame' : 'app-frame';
         $class .= $i == 0 ? ' active' : '';
         ?>
         <li class="stack-frame <?= $class ?>">
@@ -39,7 +40,8 @@ use function Cake\Core\h;
                     <span class="stack-function"><?= h($stack['class'] . $stack['type'] . $stack['function']) ?></span>
                 <?php elseif (isset($stack['function'])): ?>
                     <span class="stack-function"><?= h($stack['function']) ?></span>
-                <?php endif; ?>
+                <?php endif;
+         ?>
                 <span class="stack-file">
                 <?php if (isset($stack['file'], $stack['line'])): ?>
                     <?= h(Debugger::trimPath($stack['file'])) ?>:<?= $stack['line'] ?>
@@ -49,6 +51,7 @@ use function Cake\Core\h;
                 </span>
             </a>
         </li>
-    <?php endforeach; ?>
 <?php endforeach; ?>
+<?php endforeach;
+ ?>
 </ul>

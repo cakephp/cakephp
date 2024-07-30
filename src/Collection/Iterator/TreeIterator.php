@@ -33,8 +33,6 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
 
     /**
      * The iteration mode
-     *
-     * @var int
      */
     protected int $_mode;
 
@@ -90,16 +88,15 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * callable returning the key value.
      * @param string $spacer The string to use for prefixing the values according to
      * their depth in the tree
-     * @return \Cake\Collection\Iterator\TreePrinter
      */
     public function printer(
         callable|string $valuePath,
         callable|string|null $keyPath = null,
         string $spacer = '__'
     ): TreePrinter {
-        if (!$keyPath) {
+        if ($keyPath === null) {
             $counter = 0;
-            $keyPath = function () use (&$counter) {
+            $keyPath = function () use (&$counter): int {
                 return $counter++;
             };
         }

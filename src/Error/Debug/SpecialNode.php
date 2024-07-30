@@ -22,24 +22,16 @@ namespace Cake\Error\Debug;
 class SpecialNode implements NodeInterface
 {
     /**
-     * @var string
-     */
-    private string $value;
-
-    /**
      * Constructor
      *
      * @param string $value The message/value to include in dump results.
      */
-    public function __construct(string $value)
+    public function __construct(private readonly string $value)
     {
-        $this->value = $value;
     }
 
     /**
      * Get the message/value
-     *
-     * @return string
      */
     public function getValue(): string
     {

@@ -117,7 +117,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            ['length' => $length, 'precision' => $precision, 'scale' => $scale]
         );
         if ($type !== null) {
             return $type;
@@ -131,6 +131,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             // datetime cannot parse more than 3 digits of precision and isn't accurate
             return ['type' => TableSchemaInterface::TYPE_DATETIME, 'length' => null];
         }
+
         if (str_contains($col, 'datetime')) {
             $typeName = TableSchemaInterface::TYPE_DATETIME;
             if ($scale > 0) {
@@ -147,18 +148,23 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($col === 'tinyint') {
             return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $precision ?: 3];
         }
+
         if ($col === 'smallint') {
             return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => $precision ?: 5];
         }
+
         if ($col === 'int' || $col === 'integer') {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $precision ?: 10];
         }
+
         if ($col === 'bigint') {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => $precision ?: 20];
         }
+
         if ($col === 'bit') {
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
+
         if (
             str_contains($col, 'numeric') ||
             str_contains($col, 'money') ||
@@ -170,11 +176,13 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($col === 'real' || $col === 'float') {
             return ['type' => TableSchemaInterface::TYPE_FLOAT, 'length' => null];
         }
+
         // SqlServer schema reflection returns double length for unicode
         // columns because internally it uses UTF16/UCS2
         if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
             $length /= 2;
         }
+
         if (str_contains($col, 'varchar') && $length < 0) {
             return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
         }
@@ -239,7 +247,6 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param string $type The schema type
      * @param string|null $default The default value.
-     * @return string|int|null
      */
     protected function _defaultValue(string $type, ?string $default): string|int|null
     {
@@ -301,8 +308,10 @@ class SqlserverSchemaDialect extends SchemaDialect
         $type = TableSchema::INDEX_INDEX;
         $name = $row['index_name'];
         if ($row['is_primary_key']) {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
         }
+
         if (($row['is_unique'] || $row['is_unique_constraint']) && $type === TableSchema::INDEX_INDEX) {
             $type = TableSchema::CONSTRAINT_UNIQUE;
         }
@@ -326,6 +335,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
             return;
         }
+
         $schema->addIndex($name, [
             'type' => $type,
             'columns' => $columns,
@@ -540,9 +550,9 @@ class SqlserverSchemaDialect extends SchemaDialect
         if (
             isset($data['default']) &&
             in_array($data['type'], $dateTimeTypes, true) &&
-            in_array(strtolower($data['default']), $dateTimeDefaults, true)
+            in_array(strtolower((string) $data['default']), $dateTimeDefaults, true)
         ) {
-            $out .= ' DEFAULT ' . strtoupper($data['default']);
+            $out .= ' DEFAULT ' . strtoupper((string) $data['default']);
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default'])
                 ? (int)$data['default']
@@ -604,7 +614,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -627,6 +637,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
         }
+
         if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
@@ -639,12 +650,11 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param string $prefix The key prefix
      * @param array $data Key data.
-     * @return string
      */
     protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
@@ -668,6 +678,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
+
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $out = [];
         $out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);

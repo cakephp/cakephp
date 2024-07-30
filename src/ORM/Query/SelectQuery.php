@@ -75,60 +75,44 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Whether the user select any fields before being executed, this is used
      * to determined if any fields should be automatically be selected.
-     *
-     * @var bool|null
      */
     protected ?bool $_hasFields = null;
 
     /**
      * Tracks whether the original query should include
      * fields from the top level table.
-     *
-     * @var bool|null
      */
     protected ?bool $_autoFields = null;
 
     /**
      * Whether to hydrate results into entity objects
-     *
-     * @var bool
      */
     protected bool $_hydrate = true;
 
     /**
      * Whether aliases are generated for fields.
-     *
-     * @var bool
      */
     protected bool $aliasingEnabled = true;
 
     /**
      * A callback used to calculate the total amount of
      * records this query will match when not using `limit`
-     *
-     * @var \Closure|null
      */
     protected ?Closure $_counter = null;
 
     /**
      * Instance of a class responsible for storing association containments and
      * for eager loading them when this query is executed
-     *
-     * @var \Cake\ORM\EagerLoader|null
      */
     protected ?EagerLoader $_eagerLoader = null;
 
     /**
      * Whether the query is standalone or the product of an eager load operation.
-     *
-     * @var bool
      */
     protected bool $_eagerLoaded = false;
 
     /**
      * True if the beforeFind event has already been triggered for this query
-     *
-     * @var bool
      */
     protected bool $_beforeFindFired = false;
 
@@ -136,8 +120,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * The COUNT(*) for the query.
      *
      * When set, count query execution will be bypassed.
-     *
-     * @var int|null
      */
     protected ?int $_resultsCount = null;
 
@@ -153,7 +135,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * When set, SelectQuery execution will be bypassed.
      *
-     * @var iterable|null
      * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected ?iterable $_results = null;
@@ -161,8 +142,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * List of map-reduce routines that should be applied over the query
      * result
-     *
-     * @var array
      */
     protected array $_mapReduce = [];
 
@@ -176,16 +155,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * A query cacher instance if this query has caching enabled.
-     *
-     * @var \Cake\Datasource\QueryCacher|null
      */
     protected ?QueryCacher $_cache = null;
 
     /**
      * Holds any custom options passed using applyOptions that could not be processed
      * by any method in this class.
-     *
-     * @var array
      */
     protected array $_options = [];
 
@@ -214,7 +189,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param iterable $results The results this query should return.
      * @return $this
      */
-    public function setResult(iterable $results)
+    public function setResult(iterable $results): static
     {
         $this->_results = $results;
 
@@ -270,7 +245,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *   a cache engine instance.
      * @return $this
      */
-    public function cache(Closure|string|false $key, CacheInterface|string $config = 'default')
+    public function cache(Closure|string|false $key, CacheInterface|string $config = 'default'): static
     {
         if ($key === false) {
             $this->_cache = null;
@@ -285,8 +260,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Returns the current configured query `_eagerLoaded` value
-     *
-     * @return bool
      */
     public function isEagerLoaded(): bool
     {
@@ -300,7 +273,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param bool $value Whether to eager load.
      * @return $this
      */
-    public function eagerLoaded(bool $value)
+    public function eagerLoaded(bool $value): static
     {
         $this->_eagerLoaded = $value;
 
@@ -350,6 +323,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 $aliased += $this->aliasField($field, $defaultAlias);
                 continue;
             }
+
             $aliased[$alias] = $field;
         }
 
@@ -378,15 +352,17 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         $results = null;
-        if ($this->_cache) {
+        if ($this->_cache instanceof \Cake\Datasource\QueryCacher) {
             $results = $this->_cache->fetch($this);
         }
+
         if ($results === null) {
             $results = $this->_decorateResults($this->_execute());
-            if ($this->_cache) {
+            if ($this->_cache instanceof \Cake\Datasource\QueryCacher) {
                 $this->_cache->store($this, $results);
             }
         }
+
         $this->_results = $results;
 
         return $this->_results;
@@ -394,8 +370,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Returns an array representation of the results after executing the query.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -417,27 +391,27 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
-    public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false)
+    public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false): static
     {
         if ($overwrite) {
             $this->_mapReduce = [];
         }
-        if ($mapper === null) {
+
+        if (!$mapper instanceof \Closure) {
             if (!$overwrite) {
                 throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
             }
 
             return $this;
         }
-        $this->_mapReduce[] = compact('mapper', 'reducer');
+
+        $this->_mapReduce[] = ['mapper' => $mapper, 'reducer' => $reducer];
 
         return $this;
     }
 
     /**
      * Returns the list of previously registered map reduce routines.
-     *
-     * @return array
      */
     public function getMapReducers(): array
     {
@@ -536,12 +510,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND)
+    public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND): static
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
         }
-        if ($formatter === null) {
+
+        if (!$formatter instanceof \Closure) {
             if ($mode !== self::OVERWRITE) {
                 throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
             }
@@ -624,7 +599,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
-     * @return array
      * @see applyOptions()
      */
     public function getOptions(): array
@@ -695,7 +669,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      * @see getOptions()
      */
-    public function applyOptions(array $options)
+    public function applyOptions(array $options): static
     {
         $valid = [
             'select' => 'select',
@@ -740,6 +714,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             foreach ($this->_mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
+
             $result = new $decorator($result);
         }
 
@@ -813,7 +788,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function select(
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
         bool $overwrite = false
-    ) {
+    ): static {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
         }
@@ -841,7 +816,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function selectAlso(
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields
-    ) {
+    ): static {
         $this->select($fields);
         $this->_autoFields = true;
 
@@ -860,7 +835,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      */
-    public function selectAllExcept(Table|Association $table, array $excludedFields, bool $overwrite = false)
+    public function selectAllExcept(Table|Association $table, array $excludedFields, bool $overwrite = false): static
     {
         if ($table instanceof Association) {
             $table = $table->getTarget();
@@ -881,7 +856,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param \Cake\ORM\EagerLoader $instance The eager loader to use.
      * @return $this
      */
-    public function setEagerLoader(EagerLoader $instance)
+    public function setEagerLoader(EagerLoader $instance): static
     {
         $this->_eagerLoader = $instance;
 
@@ -890,8 +865,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Returns the currently configured instance.
-     *
-     * @return \Cake\ORM\EagerLoader
      */
     public function getEagerLoader(): EagerLoader
     {
@@ -1014,7 +987,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * defaults to merging previous list with the new one.
      * @return $this
      */
-    public function contain(array|string $associations, Closure|bool $override = false)
+    public function contain(array|string $associations, Closure|bool $override = false): static
     {
         $loader = $this->getEagerLoader();
         if ($override === true) {
@@ -1029,6 +1002,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if ($associations) {
             $loader->contain($associations, $queryBuilder);
         }
+
         $this->_addAssociationsToTypeMap(
             $this->getRepository(),
             $this->getTypeMap(),
@@ -1038,9 +1012,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getContain(): array
     {
         return $this->getEagerLoader()->getContain();
@@ -1051,7 +1022,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return $this
      */
-    public function clearContain()
+    public function clearContain(): static
     {
         $this->getEagerLoader()->clearContain();
         $this->_dirty();
@@ -1067,7 +1038,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
      *   This typemap is indirectly mutated via {@link \Cake\ORM\Query\SelectQuery::addDefaultTypes()}
      * @param array<string, array> $associations The nested tree of associations to walk.
-     * @return void
      */
     protected function _addAssociationsToTypeMap(Table $table, TypeMap $typeMap, array $associations): void
     {
@@ -1075,12 +1045,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             if (!$table->hasAssociation($name)) {
                 continue;
             }
+
             $association = $table->getAssociation($name);
             $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
             if (!$primary || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
             }
+
             if ($nested) {
                 $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
             }
@@ -1137,7 +1109,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function matching(string $assoc, ?Closure $builder = null)
+    public function matching(string $assoc, ?Closure $builder = null): static
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -1209,7 +1181,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function leftJoinWith(string $assoc, ?Closure $builder = null)
+    public function leftJoinWith(string $assoc, ?Closure $builder = null): static
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -1258,7 +1230,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      * @see \Cake\ORM\Query\SeletQuery::matching()
      */
-    public function innerJoinWith(string $assoc, ?Closure $builder = null)
+    public function innerJoinWith(string $assoc, ?Closure $builder = null): static
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -1322,7 +1294,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function notMatching(string $assoc, ?Closure $builder = null)
+    public function notMatching(string $assoc, ?Closure $builder = null): static
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
@@ -1351,8 +1323,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * - containments
      *
      * This method creates query clones that are useful when working with subqueries.
-     *
-     * @return static
      */
     public function cleanCopy(): static
     {
@@ -1376,7 +1346,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return $this
      */
-    public function clearResult()
+    public function clearResult(): static
     {
         $this->_dirty();
 
@@ -1391,7 +1361,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function __clone()
     {
         parent::__clone();
-        if ($this->_eagerLoader !== null) {
+        if ($this->_eagerLoader instanceof \Cake\ORM\EagerLoader) {
             $this->_eagerLoader = clone $this->_eagerLoader;
         }
     }
@@ -1402,8 +1372,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Returns the COUNT(*) for the query. If the query has not been
      * modified, and the count has already been performed the cached
      * value is returned
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -1412,14 +1380,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Performs and returns the COUNT(*) for the query.
-     *
-     * @return int
      */
     protected function _performCount(): int
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
-        if ($counter !== null) {
+        if ($counter instanceof \Closure) {
             $query->counter(null);
 
             return (int)$counter($query);
@@ -1442,10 +1408,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
         }
 
-        if (!$complex && $this->_valueBinder !== null) {
+        if (!$complex && $this->_valueBinder instanceof \Cake\Database\ValueBinder) {
             $order = $this->clause('order');
             assert($order === null || $order instanceof QueryExpression);
-            $complex = $order === null ? false : $order->hasNestedExpression();
+            $complex = $order instanceof \Cake\Database\Expression\QueryExpression && $order->hasNestedExpression();
         }
 
         $count = ['count' => $query->func()->count('*')];
@@ -1490,7 +1456,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param \Closure|null $counter The counter value
      * @return $this
      */
-    public function counter(?Closure $counter)
+    public function counter(?Closure $counter): static
     {
         $this->_counter = $counter;
 
@@ -1505,7 +1471,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param bool $enable Use a boolean to set the hydration mode.
      * @return $this
      */
-    public function enableHydration(bool $enable = true)
+    public function enableHydration(bool $enable = true): static
     {
         $this->_dirty();
         $this->_hydrate = $enable;
@@ -1521,7 +1487,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return $this
      */
-    public function disableHydration()
+    public function disableHydration(): static
     {
         $this->_dirty();
         $this->_hydrate = false;
@@ -1531,8 +1497,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Returns the current hydration mode.
-     *
-     * @return bool
      */
     public function isHydrationEnabled(): bool
     {
@@ -1543,8 +1507,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Trigger the beforeFind event on the query's repository object.
      *
      * Will not trigger more than once, and only for select queries.
-     *
-     * @return void
      */
     public function triggerBeforeFind(): void
     {
@@ -1574,8 +1536,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Executes this query and returns an iterable containing the results.
-     *
-     * @return iterable
      */
     protected function _execute(): iterable
     {
@@ -1588,6 +1548,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if (!is_array($results)) {
             $results = iterator_to_array($results);
         }
+
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
         return $this->resultSetFactory()->createResultSet($this, $results);
@@ -1595,8 +1556,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
     /**
      * Get resultset factory.
-     *
-     * @return \Cake\ORM\ResultSetFactory
      */
     protected function resultSetFactory(): ResultSetFactory
     {
@@ -1613,7 +1572,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * It also sets the default types for the columns in the select clause
      *
      * @see \Cake\Database\Query::execute()
-     * @return void
      */
     protected function _transformQuery(): void
     {
@@ -1626,6 +1584,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if (empty($this->_parts['from'])) {
             $this->from([$repository->getAlias() => $repository->getTable()]);
         }
+
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
         $this->_addDefaultSelectTypes();
@@ -1634,8 +1593,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Inspects if there are any set fields for selecting, otherwise adds all
      * the fields for the default table.
-     *
-     * @return void
      */
     protected function _addDefaultFields(): void
     {
@@ -1653,13 +1610,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if ($this->aliasingEnabled) {
             $select = $this->aliasFields($select, $repository->getAlias());
         }
+
         $this->select($select, true);
     }
 
     /**
      * Sets the default types for converting the fields in the select clause
-     *
-     * @return void
      */
     protected function _addDefaultSelectTypes(): void
     {
@@ -1672,14 +1628,17 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 $types[$alias] = $value->getReturnType();
                 continue;
             }
+
             if (isset($typeMap[$alias])) {
                 $types[$alias] = $typeMap[$alias];
                 continue;
             }
+
             if (is_string($value) && isset($typeMap[$value])) {
                 $types[$alias] = $typeMap[$value];
             }
         }
+
         $this->getSelectTypeMap()->addDefaults($types);
     }
 
@@ -1704,7 +1663,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return $this
      */
-    public function disableAutoAliasing()
+    public function disableAutoAliasing(): static
     {
         $this->aliasingEnabled = false;
 
@@ -1714,8 +1673,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Marks a query as dirty, removing any preprocessed information
      * from in memory caching such as previous results
-     *
-     * @return void
      */
     protected function _dirty(): void
     {
@@ -1763,7 +1720,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param bool $value Set true to enable, false to disable.
      * @return $this
      */
-    public function enableAutoFields(bool $value = true)
+    public function enableAutoFields(bool $value = true): static
     {
         $this->_autoFields = $value;
 
@@ -1775,7 +1732,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return $this
      */
-    public function disableAutoFields()
+    public function disableAutoFields(): static
     {
         $this->_autoFields = false;
 
@@ -1797,5 +1754,5 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 }
 
 // phpcs:disable
-class_exists('Cake\ORM\Query');
+class_exists(\Cake\ORM\Query::class);
 // phpcs:enable

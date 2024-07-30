@@ -27,9 +27,8 @@ class MailContainsAttachment extends MailContains
      * Checks constraint
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         [$expectedFilename, $expectedFileInfo] = $other;
 
@@ -39,6 +38,7 @@ class MailContainsAttachment extends MailContains
                 if ($filename === $expectedFilename && !$expectedFileInfo) {
                     return true;
                 }
+
                 if ($expectedFileInfo && array_intersect($expectedFileInfo, $fileInfo) === $expectedFileInfo) {
                     return true;
                 }
@@ -50,8 +50,6 @@ class MailContainsAttachment extends MailContains
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -66,12 +64,11 @@ class MailContainsAttachment extends MailContains
      * Overwrites the descriptions so we can remove the automatic "expected" message
      *
      * @param mixed $other Value
-     * @return string
      */
     protected function failureDescription(mixed $other): string
     {
         [$expectedFilename] = $other;
 
-        return '\'' . $expectedFilename . '\' ' . $this->toString();
+        return "'" . $expectedFilename . "' " . $this->toString();
     }
 }

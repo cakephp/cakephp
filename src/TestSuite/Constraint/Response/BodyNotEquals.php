@@ -26,18 +26,15 @@ class BodyNotEquals extends BodyEquals
      * Checks assertion
      *
      * @param mixed $other Expected type
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         return parent::matches($other) === false;
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -78,7 +78,7 @@ class InflectorTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Inflector::reset();
@@ -103,100 +103,98 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public static function singularizeProvider(): array
+    public static function singularizeProvider(): \Iterator
     {
-        return [
-            ['categoria', 'categorias'],
-            ['menu', 'menus'],
-            ['news', 'news'],
-            ['food_menu', 'food_menus'],
-            ['Menu', 'Menus'],
-            ['FoodMenu', 'FoodMenus'],
-            ['house', 'houses'],
-            ['powerhouse', 'powerhouses'],
-            ['quiz', 'quizzes'],
-            ['Bus', 'Buses'],
-            ['bus', 'buses'],
-            ['matrix_row', 'matrix_rows'],
-            ['matrix', 'matrices'],
-            ['vertex', 'vertices'],
-            ['index', 'indices'],
-            ['index', 'indexes'],
-            ['Alias', 'Aliases'],
-            ['Alias', 'Alias'],
-            ['Media', 'Media'],
-            ['NodeMedia', 'NodeMedia'],
-            ['alumnus', 'alumni'],
-            ['bacillus', 'bacilli'],
-            ['cactus', 'cacti'],
-            ['focus', 'foci'],
-            ['fungus', 'fungi'],
-            ['nucleus', 'nuclei'],
-            ['octopus', 'octopuses'],
-            ['radius', 'radii'],
-            ['stimulus', 'stimuli'],
-            ['syllabus', 'syllabi'],
-            ['terminus', 'termini'],
-            ['virus', 'viruses'],
-            ['person', 'people'],
-            ['glove', 'gloves'],
-            ['dove', 'doves'],
-            ['life', 'lives'],
-            ['knife', 'knives'],
-            ['wolf', 'wolves'],
-            ['slave', 'slaves'],
-            ['shelf', 'shelves'],
-            ['taxi', 'taxis'],
-            ['tax', 'taxes'],
-            ['Tax', 'Taxes'],
-            ['AwesomeTax', 'AwesomeTaxes'],
-            ['fax', 'faxes'],
-            ['wax', 'waxes'],
-            ['niche', 'niches'],
-            ['cave', 'caves'],
-            ['grave', 'graves'],
-            ['wave', 'waves'],
-            ['bureau', 'bureaus'],
-            ['genetic_analysis', 'genetic_analyses'],
-            ['doctor_diagnosis', 'doctor_diagnoses'],
-            ['paranthesis', 'parantheses'],
-            ['Cause', 'Causes'],
-            ['colossus', 'colossuses'],
-            ['diagnosis', 'diagnoses'],
-            ['basis', 'bases'],
-            ['analysis', 'analyses'],
-            ['curve', 'curves'],
-            ['cafe', 'cafes'],
-            ['roof', 'roofs'],
-            ['foe', 'foes'],
-            ['database', 'databases'],
-            ['cookie', 'cookies'],
-            ['thief', 'thieves'],
-            ['potato', 'potatoes'],
-            ['hero', 'heroes'],
-            ['buffalo', 'buffaloes'],
-            ['baby', 'babies'],
-            ['tooth', 'teeth'],
-            ['goose', 'geese'],
-            ['foot', 'feet'],
-            ['objective', 'objectives'],
-            ['archive', 'archives'],
-            ['brief', 'briefs'],
-            ['quota', 'quotas'],
-            ['curve', 'curves'],
-            ['body_curve', 'body_curves'],
-            ['metadata', 'metadata'],
-            ['files_metadata', 'files_metadata'],
-            ['address', 'addresses'],
-            ['sieve', 'sieves'],
-            ['blue_octopus', 'blue_octopuses'],
-            ['chef', 'chefs'],
-            ['', ''],
-            ['cache', 'caches'],
-            ['lens', 'lenses'],
-            ['species', 'species'],
-            ['animal_species', 'animal_species'],
-        ];
+        yield ['categoria', 'categorias'];
+        yield ['menu', 'menus'];
+        yield ['news', 'news'];
+        yield ['food_menu', 'food_menus'];
+        yield ['Menu', 'Menus'];
+        yield ['FoodMenu', 'FoodMenus'];
+        yield ['house', 'houses'];
+        yield ['powerhouse', 'powerhouses'];
+        yield ['quiz', 'quizzes'];
+        yield ['Bus', 'Buses'];
+        yield ['bus', 'buses'];
+        yield ['matrix_row', 'matrix_rows'];
+        yield ['matrix', 'matrices'];
+        yield ['vertex', 'vertices'];
+        yield ['index', 'indices'];
+        yield ['index', 'indexes'];
+        yield ['Alias', 'Aliases'];
+        yield ['Alias', 'Alias'];
+        yield ['Media', 'Media'];
+        yield ['NodeMedia', 'NodeMedia'];
+        yield ['alumnus', 'alumni'];
+        yield ['bacillus', 'bacilli'];
+        yield ['cactus', 'cacti'];
+        yield ['focus', 'foci'];
+        yield ['fungus', 'fungi'];
+        yield ['nucleus', 'nuclei'];
+        yield ['octopus', 'octopuses'];
+        yield ['radius', 'radii'];
+        yield ['stimulus', 'stimuli'];
+        yield ['syllabus', 'syllabi'];
+        yield ['terminus', 'termini'];
+        yield ['virus', 'viruses'];
+        yield ['person', 'people'];
+        yield ['glove', 'gloves'];
+        yield ['dove', 'doves'];
+        yield ['life', 'lives'];
+        yield ['knife', 'knives'];
+        yield ['wolf', 'wolves'];
+        yield ['slave', 'slaves'];
+        yield ['shelf', 'shelves'];
+        yield ['taxi', 'taxis'];
+        yield ['tax', 'taxes'];
+        yield ['Tax', 'Taxes'];
+        yield ['AwesomeTax', 'AwesomeTaxes'];
+        yield ['fax', 'faxes'];
+        yield ['wax', 'waxes'];
+        yield ['niche', 'niches'];
+        yield ['cave', 'caves'];
+        yield ['grave', 'graves'];
+        yield ['wave', 'waves'];
+        yield ['bureau', 'bureaus'];
+        yield ['genetic_analysis', 'genetic_analyses'];
+        yield ['doctor_diagnosis', 'doctor_diagnoses'];
+        yield ['paranthesis', 'parantheses'];
+        yield ['Cause', 'Causes'];
+        yield ['colossus', 'colossuses'];
+        yield ['diagnosis', 'diagnoses'];
+        yield ['basis', 'bases'];
+        yield ['analysis', 'analyses'];
+        yield ['curve', 'curves'];
+        yield ['cafe', 'cafes'];
+        yield ['roof', 'roofs'];
+        yield ['foe', 'foes'];
+        yield ['database', 'databases'];
+        yield ['cookie', 'cookies'];
+        yield ['thief', 'thieves'];
+        yield ['potato', 'potatoes'];
+        yield ['hero', 'heroes'];
+        yield ['buffalo', 'buffaloes'];
+        yield ['baby', 'babies'];
+        yield ['tooth', 'teeth'];
+        yield ['goose', 'geese'];
+        yield ['foot', 'feet'];
+        yield ['objective', 'objectives'];
+        yield ['archive', 'archives'];
+        yield ['brief', 'briefs'];
+        yield ['quota', 'quotas'];
+        yield ['curve', 'curves'];
+        yield ['body_curve', 'body_curves'];
+        yield ['metadata', 'metadata'];
+        yield ['files_metadata', 'files_metadata'];
+        yield ['address', 'addresses'];
+        yield ['sieve', 'sieves'];
+        yield ['blue_octopus', 'blue_octopuses'];
+        yield ['chef', 'chefs'];
+        yield ['', ''];
+        yield ['cache', 'caches'];
+        yield ['lens', 'lenses'];
+        yield ['species', 'species'];
+        yield ['animal_species', 'animal_species'];
     }
 
     /**
@@ -238,82 +236,80 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public static function pluralizeProvider(): array
+    public static function pluralizeProvider(): \Iterator
     {
-        return [
-            ['axmen', 'axman'],
-            ['men', 'man'],
-            ['women', 'woman'],
-            ['humans', 'human'],
-            ['axmen', 'axman'],
-            ['men', 'man'],
-            ['women', 'woman'],
-            ['humans', 'human'],
-            ['categorias', 'categoria'],
-            ['houses', 'house'],
-            ['powerhouses', 'powerhouse'],
-            ['Buses', 'Bus'],
-            ['buses', 'bus'],
-            ['menus', 'menu'],
-            ['news', 'news'],
-            ['food_menus', 'food_menu'],
-            ['Menus', 'Menu'],
-            ['FoodMenus', 'FoodMenu'],
-            ['quizzes', 'quiz'],
-            ['matrix_rows', 'matrix_row'],
-            ['matrices', 'matrix'],
-            ['vertices', 'vertex'],
-            ['indexes', 'index'],
-            ['Aliases', 'Alias'],
-            ['Aliases', 'Aliases'],
-            ['Media', 'Media'],
-            ['NodeMedia', 'NodeMedia'],
-            ['alumni', 'alumnus'],
-            ['bacilli', 'bacillus'],
-            ['cacti', 'cactus'],
-            ['foci', 'focus'],
-            ['fungi', 'fungus'],
-            ['nuclei', 'nucleus'],
-            ['octopuses', 'octopus'],
-            ['radii', 'radius'],
-            ['stimuli', 'stimulus'],
-            ['syllabi', 'syllabus'],
-            ['termini', 'terminus'],
-            ['viruses', 'virus'],
-            ['people', 'person'],
-            ['people', 'people'],
-            ['gloves', 'glove'],
-            ['crises', 'crisis'],
-            ['taxes', 'tax'],
-            ['waves', 'wave'],
-            ['bureaus', 'bureau'],
-            ['cafes', 'cafe'],
-            ['roofs', 'roof'],
-            ['foes', 'foe'],
-            ['cookies', 'cookie'],
-            ['wolves', 'wolf'],
-            ['thieves', 'thief'],
-            ['potatoes', 'potato'],
-            ['heroes', 'hero'],
-            ['buffaloes', 'buffalo'],
-            ['teeth', 'tooth'],
-            ['geese', 'goose'],
-            ['feet', 'foot'],
-            ['objectives', 'objective'],
-            ['briefs', 'brief'],
-            ['quotas', 'quota'],
-            ['curves', 'curve'],
-            ['body_curves', 'body_curve'],
-            ['metadata', 'metadata'],
-            ['files_metadata', 'files_metadata'],
-            ['stadia', 'stadia'],
-            ['Addresses', 'Address'],
-            ['sieves', 'sieve'],
-            ['blue_octopuses', 'blue_octopus'],
-            ['chefs', 'chef'],
-            ['', ''],
-            ['pokemon', 'pokemon'],
-        ];
+        yield ['axmen', 'axman'];
+        yield ['men', 'man'];
+        yield ['women', 'woman'];
+        yield ['humans', 'human'];
+        yield ['axmen', 'axman'];
+        yield ['men', 'man'];
+        yield ['women', 'woman'];
+        yield ['humans', 'human'];
+        yield ['categorias', 'categoria'];
+        yield ['houses', 'house'];
+        yield ['powerhouses', 'powerhouse'];
+        yield ['Buses', 'Bus'];
+        yield ['buses', 'bus'];
+        yield ['menus', 'menu'];
+        yield ['news', 'news'];
+        yield ['food_menus', 'food_menu'];
+        yield ['Menus', 'Menu'];
+        yield ['FoodMenus', 'FoodMenu'];
+        yield ['quizzes', 'quiz'];
+        yield ['matrix_rows', 'matrix_row'];
+        yield ['matrices', 'matrix'];
+        yield ['vertices', 'vertex'];
+        yield ['indexes', 'index'];
+        yield ['Aliases', 'Alias'];
+        yield ['Aliases', 'Aliases'];
+        yield ['Media', 'Media'];
+        yield ['NodeMedia', 'NodeMedia'];
+        yield ['alumni', 'alumnus'];
+        yield ['bacilli', 'bacillus'];
+        yield ['cacti', 'cactus'];
+        yield ['foci', 'focus'];
+        yield ['fungi', 'fungus'];
+        yield ['nuclei', 'nucleus'];
+        yield ['octopuses', 'octopus'];
+        yield ['radii', 'radius'];
+        yield ['stimuli', 'stimulus'];
+        yield ['syllabi', 'syllabus'];
+        yield ['termini', 'terminus'];
+        yield ['viruses', 'virus'];
+        yield ['people', 'person'];
+        yield ['people', 'people'];
+        yield ['gloves', 'glove'];
+        yield ['crises', 'crisis'];
+        yield ['taxes', 'tax'];
+        yield ['waves', 'wave'];
+        yield ['bureaus', 'bureau'];
+        yield ['cafes', 'cafe'];
+        yield ['roofs', 'roof'];
+        yield ['foes', 'foe'];
+        yield ['cookies', 'cookie'];
+        yield ['wolves', 'wolf'];
+        yield ['thieves', 'thief'];
+        yield ['potatoes', 'potato'];
+        yield ['heroes', 'hero'];
+        yield ['buffaloes', 'buffalo'];
+        yield ['teeth', 'tooth'];
+        yield ['geese', 'goose'];
+        yield ['feet', 'foot'];
+        yield ['objectives', 'objective'];
+        yield ['briefs', 'brief'];
+        yield ['quotas', 'quota'];
+        yield ['curves', 'curve'];
+        yield ['body_curves', 'body_curve'];
+        yield ['metadata', 'metadata'];
+        yield ['files_metadata', 'files_metadata'];
+        yield ['stadia', 'stadia'];
+        yield ['Addresses', 'Address'];
+        yield ['sieves', 'sieve'];
+        yield ['blue_octopuses', 'blue_octopus'];
+        yield ['chefs', 'chef'];
+        yield ['', ''];
+        yield ['pokemon', 'pokemon'];
     }
 
     /**

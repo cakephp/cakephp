@@ -68,6 +68,7 @@ class CookieCollectionTest extends TestCase
         foreach ($collection as $cookie) {
             $names[] = $cookie->getName();
         }
+
         $this->assertSame(['remember_me', 'gtm', 'three'], $names);
     }
 
@@ -99,7 +100,7 @@ class CookieCollectionTest extends TestCase
     {
         $remember = new Cookie('remember_me', 'yes');
         $rememberNo = new Cookie('remember_me', 'no', null, '/path2');
-        $this->assertNotEquals($remember->getId(), $rememberNo->getId(), 'Cookies should have different ids');
+        $this->assertNotSame($remember->getId(), $rememberNo->getId(), 'Cookies should have different ids');
 
         $collection = new CookieCollection([]);
         $new = $collection->add($remember)->add($rememberNo);
@@ -137,12 +138,12 @@ class CookieCollectionTest extends TestCase
 
         $collection = new CookieCollection($cookies);
 
-        $this->assertFalse(isset($collection->nope));
-        $this->assertTrue(isset($collection->remember_me));
+        $this->assertFalse(property_exists($collection, 'nope') && $collection->nope !== null);
+        $this->assertTrue(property_exists($collection, 'remember_me') && $collection->remember_me !== null);
         $this->assertTrue(isset($collection->REMEMBER_me));
 
-        $this->assertEquals('a', $collection->remember_me->getValue());
-        $this->assertEquals('b', $collection->GTM->getValue());
+        $this->assertSame('a', $collection->remember_me->getValue());
+        $this->assertSame('b', $collection->GTM->getValue());
         $this->assertNull($collection->nope);
     }
 
@@ -406,7 +407,7 @@ class CookieCollectionTest extends TestCase
      */
     public function testCookieSizeWarning(): void
     {
-        $this->expectWarningMessageMatches('/The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.*/', function () {
+        $this->expectWarningMessageMatches('/The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.*/', function (): void {
             $string = Security::insecureRandomBytes(9000);
             $collection = new CookieCollection();
             $collection = $collection

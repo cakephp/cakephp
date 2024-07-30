@@ -68,40 +68,19 @@ use function Cake\I18n\__d;
 class WebExceptionRenderer implements ExceptionRendererInterface
 {
     /**
-     * The exception being handled.
-     *
-     * @var \Throwable
-     */
-    protected Throwable $error;
-
-    /**
      * Controller instance.
-     *
-     * @var \Cake\Controller\Controller
      */
     protected Controller $controller;
 
     /**
      * Template to render for {@link \Cake\Core\Exception\CakeException}
-     *
-     * @var string
      */
     protected string $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
-     *
-     * @var string
      */
     protected string $method = '';
-
-    /**
-     * If set, this will be request used to create the controller that will render
-     * the error.
-     *
-     * @var \Cake\Http\ServerRequest|null
-     */
-    protected ?ServerRequest $request;
 
     /**
      * Map of exceptions to http status codes.
@@ -128,14 +107,19 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     /**
      * Creates the controller to perform rendering on the error response.
      *
-     * @param \Throwable $exception Exception.
+     * @param \Throwable $error Exception.
      * @param \Cake\Http\ServerRequest|null $request The request if this is set it will be used
      *   instead of creating a new one.
      */
-    public function __construct(Throwable $exception, ?ServerRequest $request = null)
+    public function __construct(/**
+     * The exception being handled.
+     */
+    protected Throwable $error, /**
+     * If set, this will be request used to create the controller that will render
+     * the error.
+     */
+    protected ?ServerRequest $request = null)
     {
-        $this->error = $exception;
-        $this->request = $request;
         $this->controller = $this->_getController();
     }
 
@@ -145,7 +129,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * This method returns the built in `ErrorController` normally, or if an error is repeated
      * a bare controller will be used.
      *
-     * @return \Cake\Controller\Controller
      * @triggers Controller.startup $controller
      */
     protected function _getController(): Controller
@@ -158,7 +141,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         // If the current request doesn't have routing data, but we
         // found a request in the router context copy the params over
-        if ($request->getParam('controller') === null && $routerRequest !== null) {
+        if ($request->getParam('controller') === null && $routerRequest instanceof \Cake\Http\ServerRequest) {
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
@@ -186,17 +169,19 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             assert(is_subclass_of($class, Controller::class));
             $controller = new $class($request);
             $controller->startupProcess();
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             Log::warning(
-                "Failed to construct or call startup() on the resolved controller class of `$class`. " .
-                    "Using Fallback Controller instead. Error {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                sprintf('Failed to construct or call startup() on the resolved controller class of `%s`. ', $class) .
+                    ('Using Fallback Controller instead. Error ' . $throwable->getMessage()) .
+                    ('
+Stack Trace
+: ' . $throwable->getTraceAsString()),
                 'cake.error'
             );
             $controller = null;
         }
 
-        if ($controller === null) {
+        if (!$controller instanceof \Cake\Controller\Controller) {
             return new Controller($request);
         }
 
@@ -205,14 +190,13 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
     /**
      * Clear output buffers so error pages display properly.
-     *
-     * @return void
      */
     protected function clearOutput(): void
     {
         if (in_array(PHP_SAPI, ['cli', 'phpdbg'])) {
             return;
         }
+
         while (ob_get_level()) {
             ob_end_clean();
         }
@@ -244,6 +228,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                 $response = $response->withHeader($name, $value);
             }
         }
+
         $response = $response->withStatus($code);
 
         $exceptions = [$exception];
@@ -279,12 +264,14 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $serialize[] = 'file';
             $serialize[] = 'line';
         }
+
         $this->controller->set($viewVars);
         $this->controller->viewBuilder()->setOption('serialize', $serialize);
 
         if ($exception instanceof CakeException && $isDebug) {
             $this->controller->set($exception->getAttributes());
         }
+
         $this->controller->setResponse($response);
 
         return $this->_outputMessage($template);
@@ -294,7 +281,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * Emit the response content
      *
      * @param \Psr\Http\Message\ResponseInterface|string $output The response to output.
-     * @return void
      */
     public function write(ResponseInterface|string $output): void
     {
@@ -320,7 +306,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         $result = $this->{$method}($exception);
         $this->_shutdown();
         if (is_string($result)) {
-            $result = $this->controller->getResponse()->withStringBody($result);
+            return $this->controller->getResponse()->withStringBody($result);
         }
 
         return $result;
@@ -330,7 +316,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * Get method name
      *
      * @param \Throwable $exception Exception instance.
-     * @return string
      */
     protected function _method(Throwable $exception): string
     {
@@ -355,20 +340,12 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _message(Throwable $exception, int $code): string
     {
-        $message = $exception->getMessage();
-
-        if (
-            !Configure::read('debug') &&
-            !($exception instanceof HttpException)
-        ) {
-            if ($code < 500) {
-                $message = __d('cake', 'Not Found');
-            } else {
-                $message = __d('cake', 'An Internal Error Has Occurred.');
-            }
+        if (!Configure::read('debug') &&
+        !($exception instanceof HttpException)) {
+            return $code < 500 ? __d('cake', 'Not Found') : __d('cake', 'An Internal Error Has Occurred.');
         }
 
-        return $message;
+        return $exception->getMessage();
     }
 
     /**
@@ -421,8 +398,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             Log::warning(
-                "MissingTemplateException - Failed to render error template `{$template}` . Error: {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                sprintf('MissingTemplateException - Failed to render error template `%s` . Error: %s', $template, $e->getMessage()) .
+                    ('
+Stack Trace
+: ' . $e->getTraceAsString()),
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -436,8 +415,10 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             Log::warning(
-                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                sprintf('MissingPluginException - Failed to render error template `%s`. Error: %s', $template, $e->getMessage()) .
+                    ('
+Stack Trace
+: ' . $e->getTraceAsString()),
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -448,13 +429,15 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessageSafe('error500');
         } catch (Throwable $outer) {
             Log::warning(
-                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}" .
-                    "\nStack Trace\n: {$outer->getTraceAsString()}",
+                sprintf('Throwable - Failed to render error template `%s`. Error: %s', $template, $outer->getMessage()) .
+                    ('
+Stack Trace
+: ' . $outer->getTraceAsString()),
                 'cake.error'
             );
             try {
                 return $this->_outputMessageSafe('error500');
-            } catch (Throwable $inner) {
+            } catch (Throwable) {
                 throw $outer;
             }
         }

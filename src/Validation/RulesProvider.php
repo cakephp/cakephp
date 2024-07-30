@@ -27,13 +27,6 @@ use ReflectionClass;
 class RulesProvider
 {
     /**
-     * The class/object to proxy.
-     *
-     * @var object|string
-     */
-    protected object|string $_class;
-
-    /**
      * The proxied class' reflection
      *
      * @var \ReflectionClass<object>
@@ -43,14 +36,16 @@ class RulesProvider
     /**
      * Constructor, sets the default class to use for calling methods
      *
-     * @param object|string $class the default class to proxy
+     * @param object|string $_class the default class to proxy
      * @throws \ReflectionException
-     * @psalm-param object|class-string $class
+     * @psalm-param object|class-string $_class
      */
-    public function __construct(object|string $class = Validation::class)
+    public function __construct(/**
+     * The class/object to proxy.
+     */
+    protected object|string $_class = Validation::class)
     {
-        $this->_class = $class;
-        $this->_reflection = new ReflectionClass($class);
+        $this->_reflection = new ReflectionClass($this->_class);
     }
 
     /**
@@ -74,6 +69,7 @@ class RulesProvider
         if ($argument->getName() !== 'context') {
             $arguments = array_slice($arguments, 0, -1);
         }
+
         $object = is_string($this->_class) ? null : $this->_class;
 
         return $method->invokeArgs($object, $arguments);

@@ -124,6 +124,7 @@ class Text
                     $tmpOffset = $offsets[$i];
                 }
             }
+
             if ($tmpOffset !== -1) {
                 $buffer .= mb_substr($data, $offset, $tmpOffset - $offset);
                 $char = mb_substr($data, $tmpOffset, 1);
@@ -133,24 +134,25 @@ class Text
                 } else {
                     $buffer .= $char;
                 }
+
                 if ($leftBound !== $rightBound) {
                     if ($char === $leftBound) {
                         $depth++;
                     }
+
                     if ($char === $rightBound) {
                         $depth--;
                     }
-                } else {
-                    if ($char === $leftBound) {
-                        if (!$open) {
-                            $depth++;
-                            $open = true;
-                        } else {
-                            $depth--;
-                            $open = false;
-                        }
+                } elseif ($char === $leftBound) {
+                    if (!$open) {
+                        $depth++;
+                        $open = true;
+                    } else {
+                        $depth--;
+                        $open = false;
                     }
                 }
+
                 $tmpOffset += 1;
                 $offset = $tmpOffset;
             } else {
@@ -158,6 +160,7 @@ class Text
                 $offset = $length + 1;
             }
         }
+
         if (!$results && $buffer) {
             $results[] = $buffer;
         }
@@ -191,7 +194,6 @@ class Text
      * @param array $data A key => val array where each key stands for a placeholder variable name
      *     to be replaced with val
      * @param array<string, mixed> $options An array of options, see description above
-     * @return string
      */
     public static function insert(string $str, array $data, array $options = []): string
     {
@@ -206,9 +208,9 @@ class Text
         $format = $options['format'];
         $format ??= sprintf(
             '/(?<!%s)%s%%s%s/',
-            preg_quote($options['escape'], '/'),
-            str_replace('%', '%%', preg_quote($options['before'], '/')),
-            str_replace('%', '%%', preg_quote($options['after'], '/'))
+            preg_quote((string) $options['escape'], '/'),
+            str_replace('%', '%%', preg_quote((string) $options['before'], '/')),
+            str_replace('%', '%%', preg_quote((string) $options['after'], '/'))
         );
 
         $dataKeys = array_keys($data);
@@ -221,6 +223,7 @@ class Text
             $key = sprintf($format, preg_quote($key, '/'));
             $str = (string)preg_replace($key, $hashVal, $str);
         }
+
         /** @var array<string, mixed> $dataReplacements */
         $dataReplacements = array_combine($hashKeys, array_values($data));
         foreach ($dataReplacements as $tmpHash => $tmpValue) {
@@ -243,7 +246,6 @@ class Text
      *
      * @param string $str String to clean.
      * @param array<string, mixed> $options Options list.
-     * @return string
      * @see \Cake\Utility\Text::insert()
      */
     public static function cleanInsert(string $str, array $options): string
@@ -252,12 +254,15 @@ class Text
         if (!$clean) {
             return $str;
         }
+
         if ($clean === true) {
             $clean = ['method' => 'text'];
         }
+
         if (!is_array($clean)) {
             $clean = ['method' => $options['clean']];
         }
+
         switch ($clean['method']) {
             case 'html':
                 $clean += [
@@ -267,15 +272,16 @@ class Text
                 ];
                 $kleenex = sprintf(
                     '/[\s]*[a-z]+=(")(%s%s%s[\s]*)+\\1/i',
-                    preg_quote($options['before'], '/'),
+                    preg_quote((string) $options['before'], '/'),
                     $clean['word'],
-                    preg_quote($options['after'], '/')
+                    preg_quote((string) $options['after'], '/')
                 );
                 $str = (string)preg_replace($kleenex, $clean['replacement'], $str);
                 if ($clean['andText']) {
                     $options['clean'] = ['method' => 'text'];
                     $str = static::cleanInsert($str, $options);
                 }
+
                 break;
             case 'text':
                 $clean += [
@@ -286,14 +292,14 @@ class Text
 
                 $kleenex = sprintf(
                     '/(%s%s%s%s|%s%s%s%s)/',
-                    preg_quote($options['before'], '/'),
+                    preg_quote((string) $options['before'], '/'),
                     $clean['word'],
-                    preg_quote($options['after'], '/'),
+                    preg_quote((string) $options['after'], '/'),
                     $clean['gap'],
                     $clean['gap'],
-                    preg_quote($options['before'], '/'),
+                    preg_quote((string) $options['before'], '/'),
                     $clean['word'],
-                    preg_quote($options['after'], '/')
+                    preg_quote((string) $options['after'], '/')
                 );
                 $str = (string)preg_replace($kleenex, $clean['replacement'], $str);
                 break;
@@ -321,6 +327,7 @@ class Text
         if (is_numeric($options)) {
             $options = ['width' => $options];
         }
+
         $options += ['width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0];
         if ($options['wordWrap']) {
             $wrapped = self::wordWrap($text, $options['width'], "\n");
@@ -329,13 +336,16 @@ class Text
             if ($length < 1) {
                 throw new InvalidArgumentException('Length must be `int<1, max>`.');
             }
+
             $wrapped = trim(chunk_split($text, $length, "\n"));
         }
+
         if (!empty($options['indent'])) {
             $chunks = explode("\n", $wrapped);
             for ($i = $options['indentAt'], $len = count($chunks); $i < $len; $i++) {
                 $chunks[$i] = $options['indent'] . $chunks[$i];
             }
+
             $wrapped = implode("\n", $chunks);
         }
 
@@ -362,22 +372,25 @@ class Text
         if (is_numeric($options)) {
             $options = ['width' => $options];
         }
+
         $options += ['width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0];
 
         $wrapped = self::wrap($text, $options);
 
         if (!empty($options['indent'])) {
-            $indentationLength = mb_strlen($options['indent']);
+            $indentationLength = mb_strlen((string) $options['indent']);
             $chunks = explode("\n", $wrapped);
             $count = count($chunks);
             if ($count < 2) {
                 return $wrapped;
             }
+
             $toRewrap = '';
             for ($i = $options['indentAt']; $i < $count; $i++) {
                 $toRewrap .= mb_substr($chunks[$i], $indentationLength) . ' ';
                 unset($chunks[$i]);
             }
+
             $options['width'] -= $indentationLength;
             $options['indentAt'] = 0;
             $rewrapped = self::wrap($toRewrap, $options);
@@ -445,10 +458,12 @@ class Text
                 if ($breakAt === false) {
                     $breakAt = mb_strpos($text, ' ', $width);
                 }
+
                 if ($breakAt === false) {
                     $parts[] = trim($text);
                     break;
                 }
+
                 $part = mb_substr($text, 0, $breakAt);
             }
 
@@ -498,7 +513,7 @@ class Text
             foreach ($phrase as $key => $segment) {
                 $segment = '(' . preg_quote($segment, '|') . ')';
                 if ($options['html']) {
-                    $segment = "(?![^<]+>)$segment(?![^<]+>)";
+                    $segment = sprintf('(?![^<]+>)%s(?![^<]+>)', $segment);
                 }
 
                 $with[] = is_array($options['format']) ? $options['format'][$key] : $options['format'];
@@ -510,7 +525,7 @@ class Text
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
         if ($options['html']) {
-            $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+            $phrase = sprintf('(?![^<]+>)%s(?![^<]+>)', $phrase);
         }
 
         return (string)preg_replace(
@@ -549,7 +564,7 @@ class Text
             return $text;
         }
 
-        $truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
+        $truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen((string) $ellipsis));
         if (!$options['exact']) {
             $spacepos = mb_strpos($truncate, ' ');
             $truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
@@ -585,13 +600,14 @@ class Text
         if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
         }
+
         $options += $default;
 
         $prefix = '';
         $suffix = $options['ellipsis'];
 
         if ($options['html']) {
-            $ellipsisLength = self::_strlen(strip_tags($options['ellipsis']), $options);
+            $ellipsisLength = self::_strlen(strip_tags((string) $options['ellipsis']), $options);
 
             $truncateLength = 0;
             $totalLength = 0;
@@ -652,6 +668,7 @@ class Text
             if (self::_strlen($text, $options) <= $length) {
                 return $text;
             }
+
             $ellipsisLength = self::_strlen($options['ellipsis'], $options);
         }
 
@@ -695,15 +712,10 @@ class Text
      *
      * @param string $text The string being checked for length
      * @param array<string, mixed> $options An array of options.
-     * @return int
      */
     protected static function _strlen(string $text, array $options): int
     {
-        if (empty($options['trimWidth'])) {
-            $strlen = 'mb_strlen';
-        } else {
-            $strlen = 'mb_strwidth';
-        }
+        $strlen = empty($options['trimWidth']) ? 'mb_strlen' : 'mb_strwidth';
 
         if (empty($options['html'])) {
             return $strlen($text);
@@ -712,7 +724,7 @@ class Text
         $pattern = '/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i';
         $replace = (string)preg_replace_callback(
             $pattern,
-            function ($match) use ($strlen) {
+            function (array $match) use ($strlen): string {
                 $utf8 = html_entity_decode($match[0], ENT_HTML5 | ENT_QUOTES, 'UTF-8');
 
                 return str_repeat(' ', $strlen($utf8, 'UTF-8'));
@@ -735,15 +747,10 @@ class Text
      * @param int $start The position to begin extracting.
      * @param int|null $length The desired length.
      * @param array<string, mixed> $options An array of options.
-     * @return string
      */
     protected static function _substr(string $text, int $start, ?int $length, array $options): string
     {
-        if (empty($options['trimWidth'])) {
-            $substr = 'mb_substr';
-        } else {
-            $substr = 'mb_strimwidth';
-        }
+        $substr = empty($options['trimWidth']) ? 'mb_substr' : 'mb_strimwidth';
 
         $maxPosition = self::_strlen($text, ['trimWidth' => false] + $options);
         if ($start < 0) {
@@ -752,6 +759,7 @@ class Text
                 $start = 0;
             }
         }
+
         if ($start >= $maxPosition) {
             return '';
         }
@@ -769,7 +777,7 @@ class Text
         }
 
         if (empty($options['html'])) {
-            return (string)$substr($text, $start, $length);
+            return $substr($text, $start, $length);
         }
 
         $totalOffset = 0;
@@ -821,7 +829,6 @@ class Text
      * Removes the last word from the input text.
      *
      * @param string $text The input text
-     * @return string
      */
     protected static function _removeLastWord(string $text): string
     {
@@ -833,7 +840,7 @@ class Text
             // Some languages are written without word separation.
             // We recognize a string as a word if it doesn't contain any full-width characters.
             if (mb_strwidth($lastWord) === mb_strlen($lastWord)) {
-                $text = mb_substr($text, 0, $spacepos);
+                return mb_substr($text, 0, $spacepos);
             }
 
             return $text;
@@ -859,7 +866,8 @@ class Text
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
 
-        $append = $prepend = $ellipsis;
+        $append = $ellipsis;
+        $prepend = $ellipsis;
 
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);
@@ -909,7 +917,6 @@ class Text
      * Check if the string contain multibyte characters
      *
      * @param string $string value to test
-     * @return bool
      */
     public static function isMultibyte(string $string): bool
     {
@@ -949,6 +956,7 @@ class Text
                 if (!$values) {
                     $find = $value < 224 ? 2 : 3;
                 }
+
                 $values[] = $value;
 
                 if (count($values) === $find) {
@@ -957,6 +965,7 @@ class Text
                     } else {
                         $map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
                     }
+
                     $values = [];
                     $find = 1;
                 }
@@ -971,7 +980,6 @@ class Text
      * to a string
      *
      * @param array<int> $array Array
-     * @return string
      */
     public static function ascii(array $array): string
     {
@@ -1007,6 +1015,7 @@ class Text
         if (ctype_digit($size)) {
             return (int)$size;
         }
+
         $size = strtoupper($size);
 
         $l = -2;
@@ -1015,10 +1024,11 @@ class Text
             $l = -1;
             $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P'], true);
         }
+
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);
 
-            return (int)($size * pow(1024, $i + 1));
+            return (int)($size * 1024 ** ($i + 1));
         }
 
         if (str_ends_with($size, 'B') && ctype_digit(substr($size, 0, -1))) {
@@ -1030,6 +1040,7 @@ class Text
         if ($default !== false) {
             return $default;
         }
+
         throw new InvalidArgumentException('No unit type.');
     }
 
@@ -1048,7 +1059,6 @@ class Text
      * Set the default transliterator.
      *
      * @param \Transliterator $transliterator A `Transliterator` instance.
-     * @return void
      */
     public static function setTransliterator(Transliterator $transliterator): void
     {
@@ -1069,12 +1079,11 @@ class Text
      * Set default transliterator identifier string.
      *
      * @param string $transliteratorId Transliterator identifier.
-     * @return void
      */
     public static function setTransliteratorId(string $transliteratorId): void
     {
         $transliterator = transliterator_create($transliteratorId);
-        if ($transliterator === null) {
+        if (!$transliterator instanceof \Transliterator) {
             throw new CakeException(sprintf('Unable to create transliterator for id: %s.', $transliteratorId));
         }
 
@@ -1090,12 +1099,11 @@ class Text
      *   instance, or a transliterator identifier string. If `null`, the default
      *   transliterator (identifier) set via `setTransliteratorId()` or
      *   `setTransliterator()` will be used.
-     * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
     public static function transliterate(string $string, Transliterator|string|null $transliterator = null): string
     {
-        if (!$transliterator) {
+        if ($transliterator === null) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 
@@ -1124,7 +1132,6 @@ class Text
      * @param string $string the string you want to slug
      * @param array<string, mixed>|string $options If string it will be use as replacement character
      *   or an array of options.
-     * @return string
      * @see setTransliterator()
      * @see setTransliteratorId()
      */
@@ -1133,6 +1140,7 @@ class Text
         if (is_string($options)) {
             $options = ['replacement' => $options];
         }
+
         $options += [
             'replacement' => '-',
             'transliteratorId' => null,
@@ -1145,8 +1153,9 @@ class Text
 
         $regex = '^\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
         if ($options['preserve']) {
-            $regex .= preg_quote($options['preserve'], '/');
+            $regex .= preg_quote((string) $options['preserve'], '/');
         }
+
         $quotedReplacement = preg_quote((string)$options['replacement'], '/');
         $map = [
             '/[' . $regex . ']/mu' => $options['replacement'],

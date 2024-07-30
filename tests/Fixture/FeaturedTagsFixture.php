@@ -23,8 +23,6 @@ class FeaturedTagsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['tag_id' => 1, 'priority' => 1],

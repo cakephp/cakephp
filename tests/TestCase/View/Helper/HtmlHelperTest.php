@@ -59,12 +59,12 @@ class HtmlHelperTest extends TestCase
      *
      * @var \Cake\View\View|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $View;
+    protected \PHPUnit\Framework\MockObject\MockObject $View;
 
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -91,7 +91,7 @@ class HtmlHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -298,7 +298,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => 'http://www.example.org?param1=value1&amp;param2=value2'], 'http://www.example.org?param1=value1&amp;param2=value2', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+        $result = $this->Html->link('alert', "javascript:alert('cakephp');");
         $expected = ['a' => ['href' => 'javascript:alert(&#039;cakephp&#039;);'], 'alert', '/a'];
         $this->assertHtml($expected, $result);
 
@@ -629,7 +629,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
         $this->assertHtml($expected, $result);
 
-        $result = explode("\n", trim($this->Html->css(['cake', 'vendor.generic'])));
+        $result = explode("\n", trim((string) $this->Html->css(['cake', 'vendor.generic'])));
         $expected['link']['href'] = 'preg:/.*css\/cake\.css/';
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
@@ -737,7 +737,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
         $this->assertHtml($expected, $result);
 
-        $result = explode("\n", trim($this->Html->css(
+        $result = explode("\n", trim((string) $this->Html->css(
             ['TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'],
             ['once' => false]
         )));
@@ -1580,26 +1580,21 @@ class HtmlHelperTest extends TestCase
     /**
      * @return array
      */
-    public static function dataMetaLinksProvider(): array
+    public static function dataMetaLinksProvider(): \Iterator
     {
-        return [
-            ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'],
-            ['first', ['controller' => 'Posts', 'action' => 'index'], '/posts'],
-            ['last', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'],
-            ['prev', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'],
-            ['next', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6'],
-        ];
+        yield ['canonical', ['controller' => 'Posts', 'action' => 'show'], '/posts/show'];
+        yield ['first', ['controller' => 'Posts', 'action' => 'index'], '/posts'];
+        yield ['last', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 10]], '/posts?page=10'];
+        yield ['prev', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 4]], '/posts?page=4'];
+        yield ['next', ['controller' => 'Posts', 'action' => 'index', '?' => ['page' => 6]], '/posts?page=6'];
     }
 
     /**
      * test canonical and pagination meta links
      *
-     * @param string $type
-     * @param array $url
-     * @param string $expectedUrl
      * @dataProvider dataMetaLinksProvider
      */
-    public function testMetaLinks($type, array $url, $expectedUrl): void
+    public function testMetaLinks(string $type, array $url, string $expectedUrl): void
     {
         $result = $this->Html->meta($type, $url);
         $expected = ['link' => ['href' => $expectedUrl, 'rel' => $type]];

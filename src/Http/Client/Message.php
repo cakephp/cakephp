@@ -151,15 +151,11 @@ class Message
 
     /**
      * The array of cookies in the response.
-     *
-     * @var array
      */
     protected array $_cookies = [];
 
     /**
      * Get all cookies
-     *
-     * @return array
      */
     public function cookies(): array
     {

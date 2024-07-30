@@ -39,20 +39,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ClosureDecoratorMiddleware implements MiddlewareInterface
 {
     /**
-     * A Closure.
-     *
-     * @var \Closure
-     */
-    protected Closure $callable;
-
-    /**
      * Constructor
      *
      * @param \Closure $callable A closure.
      */
-    public function __construct(Closure $callable)
+    public function __construct(
+        /**
+         * A Closure.
+         */
+        protected Closure $callable
+    )
     {
-        $this->callable = $callable;
     }
 
     /**
@@ -60,7 +57,6 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler Request handler instance.
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -72,7 +68,6 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
 
     /**
      * @internal
-     * @return \Closure
      */
     public function getCallable(): Closure
     {

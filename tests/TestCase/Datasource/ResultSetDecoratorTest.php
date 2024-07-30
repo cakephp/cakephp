@@ -33,7 +33,7 @@ class ResultSetDecoratorTest extends TestCase
     {
         $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
-        $this->assertEquals([1, 2, 3], iterator_to_array($decorator));
+        $this->assertSame([1, 2, 3], iterator_to_array($decorator));
     }
 
     /**
@@ -43,7 +43,7 @@ class ResultSetDecoratorTest extends TestCase
     {
         $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
-        $this->assertEquals([1, 2, 3], $decorator->toArray());
+        $this->assertSame([1, 2, 3], $decorator->toArray());
     }
 
     /**
@@ -64,7 +64,7 @@ class ResultSetDecoratorTest extends TestCase
         $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
         $serialized = serialize($decorator);
-        $this->assertEquals([1, 2, 3], unserialize($serialized)->toArray());
+        $this->assertSame([1, 2, 3], unserialize($serialized)->toArray());
     }
 
     /**
@@ -99,7 +99,7 @@ class ResultSetDecoratorTest extends TestCase
         Configure::write('App.ResultSetDebugLimit', 2);
         $data = new ArrayIterator([1, 2, 3]);
         $decorator = new ResultSetDecorator($data);
-        $this->assertEquals([
+        $this->assertSame([
             'count' => 3,
             'items' => [1, 2],
         ], $decorator->__debugInfo());

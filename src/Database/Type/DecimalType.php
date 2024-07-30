@@ -32,16 +32,12 @@ class DecimalType extends BaseType implements BatchCastingInterface
 {
     /**
      * The class to use for representing number objects
-     *
-     * @var string
      */
     public static string $numberClass = Number::class;
 
     /**
      * Whether numbers should be parsed using a locale aware parser
      * when marshalling string inputs.
-     *
-     * @var bool
      */
     protected bool $_useLocaleParser = false;
 
@@ -50,7 +46,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|float|int|null
      * @throws \InvalidArgumentException
      */
     public function toDatabase(mixed $value, Driver $driver): string|float|int|null
@@ -83,7 +78,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|null
      */
     public function toPHP(mixed $value, Driver $driver): ?string
     {
@@ -129,12 +123,15 @@ class DecimalType extends BaseType implements BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
+
         if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
+
         if (is_numeric($value)) {
             return (string)$value;
         }
+
         if (is_string($value) && preg_match('/^[0-9,. ]+$/', $value)) {
             return $value;
         }
@@ -150,13 +147,14 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
      */
-    public function useLocaleParser(bool $enable = true)
+    public function useLocaleParser(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
 
             return $this;
         }
+
         if (
             static::$numberClass === Number::class ||
             is_subclass_of(static::$numberClass, Number::class)
@@ -165,6 +163,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
+
         throw new DatabaseException(
             sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
@@ -175,7 +174,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * the locale aware parser.
      *
      * @param string $value The value to parse and convert to an float.
-     * @return string
      */
     protected function _parseValue(string $value): string
     {

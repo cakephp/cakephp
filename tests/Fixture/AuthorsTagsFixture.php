@@ -22,8 +22,6 @@ class AuthorsTagsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['author_id' => 3, 'tag_id' => 1],

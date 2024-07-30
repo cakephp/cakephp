@@ -30,7 +30,7 @@ class ConsoleLogTest extends TestCase
      */
     public function testConsoleOutputlogs(): void
     {
-        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
+        $output = $this->getMockBuilder(\Cake\Console\ConsoleOutput::class)->getMock();
 
         $message = ' Error: oh noes</error>';
         $output->expects($this->once())
@@ -53,10 +53,11 @@ class ConsoleLogTest extends TestCase
             'stream' => $filename,
         ]);
         $log->log('error', 'oh noes');
+
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
         $this->assertStringContainsString('error: oh noes', $line);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ error: oh noes/', $line);
+        $this->assertMatchesRegularExpression('/2\d{3}-\d+-\d+ \d+:\d+:\d+ error: oh noes/', $line);
     }
 
     /**
@@ -88,9 +89,10 @@ class ConsoleLogTest extends TestCase
             'formatter.dateFormat' => 'c',
         ]);
         $log->log('error', 'oh noes');
+
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+        $this->assertMatchesRegularExpression('/2\d{3}-\d+-\d+T\d+:\d+:\d+\+\d{2}:\d{2} error: oh noes/', $line);
     }
 
     /**
@@ -106,6 +108,7 @@ class ConsoleLogTest extends TestCase
             ],
         ]);
         $log->log('error', 'test with newline');
+
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
         $this->assertSame(strlen($line) - 1, strpos($line, "\n"));
@@ -130,6 +133,7 @@ class ConsoleLogTest extends TestCase
             ],
         ]);
         $log->log('error', 'oh "{p1}"', ['p1' => 'noes']);
+
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
         $this->assertStringContainsString('\u0022noes\u0022', $line);

@@ -38,7 +38,7 @@ class WindowQueryTest extends TestCase
     /**
      * @var \Cake\Database\Connection
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @var bool
@@ -50,7 +50,7 @@ class WindowQueryTest extends TestCase
      */
     protected $skipTests = false;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -67,7 +67,7 @@ class WindowQueryTest extends TestCase
         }
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
     }
@@ -90,9 +90,7 @@ class WindowQueryTest extends TestCase
         $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\), <name2> AS \(<name>\)', $sql, !$this->autoQuote);
 
         $sql = $query
-            ->window('name', function ($window, $query) {
-                return $window->name('name3');
-            }, true)
+            ->window('name', fn($window, $query) => $window->name('name3'), true)
             ->sql();
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
     }
@@ -101,9 +99,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new SelectQuery($this->connection))->window('name', function () {
-            return new QueryExpression();
-        });
+        (new SelectQuery($this->connection))->window('name', fn(): \Cake\Database\Expression\QueryExpression => new QueryExpression());
     }
 
     public function testPartitions(): void
@@ -125,7 +121,7 @@ class WindowQueryTest extends TestCase
             ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(4, $result[0]['num_rows']);
+        $this->assertSame(4, $result[0]['num_rows']);
 
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -134,9 +130,9 @@ class WindowQueryTest extends TestCase
             ->orderBy(['updated'])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(1, $result[0]['num_rows']);
-        $this->assertEquals(4, $result[3]['num_rows']);
-        $this->assertEquals(1, $result[4]['num_rows']);
+        $this->assertSame(1, $result[0]['num_rows']);
+        $this->assertSame(4, $result[3]['num_rows']);
+        $this->assertSame(1, $result[4]['num_rows']);
     }
 
     /**
@@ -148,6 +144,7 @@ class WindowQueryTest extends TestCase
         if (!$skip) {
             $skip = $this->connection->getDriver() instanceof Sqlserver;
         }
+
         $this->skipIf($skip);
 
         $query = new SelectQuery($this->connection);
@@ -158,7 +155,7 @@ class WindowQueryTest extends TestCase
             ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(4, $result[0]['num_rows']);
+        $this->assertSame(4, $result[0]['num_rows']);
     }
 
     public function testWindowChaining(): void
@@ -171,6 +168,7 @@ class WindowQueryTest extends TestCase
                 $skip = version_compare($driver->version(), '3.28.0', '<');
             }
         }
+
         $this->skipIf($skip);
 
         $query = new SelectQuery($this->connection);
@@ -182,6 +180,6 @@ class WindowQueryTest extends TestCase
             ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(4, $result[0]['num_rows']);
+        $this->assertSame(4, $result[0]['num_rows']);
     }
 }

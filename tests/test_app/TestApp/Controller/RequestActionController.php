@@ -27,89 +27,69 @@ class RequestActionController extends AppController
 {
     /**
      * The default model to use.
-     *
-     * @var string|null
      */
     protected ?string $modelClass = 'Posts';
 
     /**
      * test_request_action method
-     *
-     * @return \Cake\Http\Response
      */
-    public function test_request_action()
+    public function test_request_action(): \Cake\Http\Response
     {
         return $this->response->withStringBody('This is a test');
     }
 
     /**
      * another_ra_test method
-     *
-     * @param mixed $id
-     * @param mixed $other
-     * @return \Cake\Http\Response
      */
-    public function another_ra_test($id, $other)
+    public function another_ra_test(mixed $id, mixed $other): \Cake\Http\Response
     {
         return $this->response->withStringBody($id + $other);
     }
 
     /**
      * normal_request_action method
-     *
-     * @return \Cake\Http\Response
      */
-    public function normal_request_action()
+    public function normal_request_action(): \Cake\Http\Response
     {
         return $this->response->withStringBody('Hello World');
     }
 
     /**
      * returns $this->here as body
-     *
-     * @return \Cake\Http\Response
      */
-    public function return_here()
+    public function return_here(): \Cake\Http\Response
     {
         return $this->response->withStringBody($this->here);
     }
 
     /**
      * post pass, testing post passing
-     *
-     * @return \Cake\Http\Response
      */
-    public function post_pass()
+    public function post_pass(): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode($this->request->getData()));
     }
 
     /**
      * query pass, testing query passing
-     *
-     * @return \Cake\Http\Response
      */
-    public function query_pass()
+    public function query_pass(): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode($this->request->getQueryParams()));
     }
 
     /**
      * cookie pass, testing cookie passing
-     *
-     * @return \Cake\Http\Response
      */
-    public function cookie_pass()
+    public function cookie_pass(): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode($this->request->getCookieParams()));
     }
 
     /**
      * test param passing and parsing.
-     *
-     * @return \Cake\Http\Response
      */
-    public function params_pass()
+    public function params_pass(): \Cake\Http\Response
     {
         return $this->response->withStringBody(json_encode([
             'params' => $this->request->getAttribute('params'),
@@ -124,10 +104,8 @@ class RequestActionController extends AppController
 
     /**
      * param check method.
-     *
-     * @return \Cake\Http\Response
      */
-    public function param_check()
+    public function param_check(): \Cake\Http\Response
     {
         $this->autoRender = false;
         $content = '';
@@ -140,20 +118,16 @@ class RequestActionController extends AppController
 
     /**
      * Tests session transmission
-     *
-     * @return \Cake\Http\Response
      */
-    public function session_test()
+    public function session_test(): \Cake\Http\Response
     {
         return $this->response->withStringBody($this->request->getSession()->read('foo'));
     }
 
     /**
      * Tests input data transmission
-     *
-     * @return \Cake\Http\Response
      */
-    public function input_test()
+    public function input_test(): \Cake\Http\Response
     {
         $text = json_decode((string)$this->request->getBody())->hello;
 
@@ -164,24 +138,19 @@ class RequestActionController extends AppController
      * Tests exception handling
      *
      * @throws \Cake\Http\Exception\NotFoundException
-     * @return void
      */
-    public function error_method()
+    public function error_method(): never
     {
         throw new NotFoundException('Not there or here.');
     }
 
     /**
      * Tests uploaded files
-     *
-     * @return \Cake\Http\Response
      */
-    public function uploaded_files()
+    public function uploaded_files(): \Cake\Http\Response
     {
         $files = Hash::flatten($this->request->getUploadedFiles());
-        $names = collection($files)->map(function (UploadedFileInterface $file) {
-            return $file->getClientFilename();
-        });
+        $names = collection($files)->map(fn(UploadedFileInterface $file): ?string => $file->getClientFilename());
 
         return $this->response->withStringBody(json_encode($names));
     }

@@ -35,8 +35,6 @@ class EventList implements ArrayAccess, Countable
 
     /**
      * Empties the list of dispatched events.
-     *
-     * @return void
      */
     public function flush(): void
     {
@@ -47,7 +45,6 @@ class EventList implements ArrayAccess, Countable
      * Adds an event to the list when event listing is enabled.
      *
      * @param \Cake\Event\EventInterface<object> $event An event to the list of dispatched events.
-     * @return void
      */
     public function add(EventInterface $event): void
     {
@@ -88,7 +85,6 @@ class EventList implements ArrayAccess, Countable
      * @link https://secure.php.net/manual/en/arrayaccess.offsetset.php
      * @param mixed $offset The offset to assign the value to.
      * @param mixed $value The value to set.
-     * @return void
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -100,7 +96,6 @@ class EventList implements ArrayAccess, Countable
      *
      * @link https://secure.php.net/manual/en/arrayaccess.offsetunset.php
      * @param mixed $offset The offset to unset.
-     * @return void
      */
     public function offsetUnset(mixed $offset): void
     {
@@ -122,7 +117,6 @@ class EventList implements ArrayAccess, Countable
      * Checks if an event is in the list.
      *
      * @param string $name Event name.
-     * @return bool
      */
     public function hasEvent(string $name): bool
     {

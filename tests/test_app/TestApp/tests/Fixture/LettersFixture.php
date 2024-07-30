@@ -13,8 +13,6 @@ class LettersFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['letter' => 'a'],

@@ -81,15 +81,11 @@ class QueryCompiler
      * Indicate whether this query dialect supports ordered unions.
      *
      * Overridden in subclasses.
-     *
-     * @var bool
      */
     protected bool $_orderedUnion = true;
 
     /**
      * Indicate whether aliases in SELECT clause need to be always quoted.
-     *
-     * @var bool
      */
     protected bool $_quotedSelectAliases = false;
 
@@ -99,7 +95,6 @@ class QueryCompiler
      *
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholders
-     * @return string
      */
     public function compile(Query $query, ValueBinder $binder): string
     {
@@ -107,7 +102,7 @@ class QueryCompiler
         $type = $query->type();
         $query->traverseParts(
             $this->_sqlCompiler($sql, $query, $binder),
-            $this->{"_{$type}Parts"}
+            $this->{sprintf('_%sParts', $type)}
         );
 
         // Propagate bound parameters from sub-queries if the
@@ -115,7 +110,7 @@ class QueryCompiler
         if ($query->getValueBinder() !== $binder) {
             foreach ($query->getValueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
-                if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
+                if (preg_match('/' . $placeholder . '(?:\W|$)/', (string) $sql) > 0) {
                     $binder->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }
@@ -131,11 +126,10 @@ class QueryCompiler
      * @param string $sql initial sql string to append to
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return \Closure
      */
     protected function _sqlCompiler(string &$sql, Query $query, ValueBinder $binder): Closure
     {
-        return function ($part, $partName) use (&$sql, $query, $binder): void {
+        return function ($part, string $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
                 (is_array($part) && empty($part)) ||
@@ -147,6 +141,7 @@ class QueryCompiler
             if ($part instanceof ExpressionInterface) {
                 $part = [$part->sql($binder)];
             }
+
             if (isset($this->_templates[$partName])) {
                 $part = $this->_stringifyExpressions((array)$part, $binder);
                 $sql .= sprintf($this->_templates[$partName], implode(', ', $part));
@@ -166,7 +161,6 @@ class QueryCompiler
      * @param array<\Cake\Database\Expression\CommonTableExpression> $parts List of CTEs to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildWithPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -191,7 +185,6 @@ class QueryCompiler
      * @param array $parts list of fields to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildSelectPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -199,6 +192,7 @@ class QueryCompiler
         if ($this->_orderedUnion && $query->clause('union')) {
             $select = '(SELECT%s %s%s';
         }
+
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
 
@@ -208,13 +202,14 @@ class QueryCompiler
         $parts = $this->_stringifyExpressions($parts, $binder);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ';
+                $p .= ' AS ';
                 if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {
                     $p .= $k;
                 }
             }
+
             $normalized[] = $p;
         }
 
@@ -238,7 +233,6 @@ class QueryCompiler
      * @param array $parts list of tables to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildFromPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -249,6 +243,7 @@ class QueryCompiler
             if (!is_numeric($k)) {
                 $p = $p . ' ' . $k;
             }
+
             $normalized[] = $p;
         }
 
@@ -264,7 +259,6 @@ class QueryCompiler
      * @param array $parts list of joins to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildJoinPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -277,6 +271,7 @@ class QueryCompiler
                     $join['alias']
                 ));
             }
+
             if ($join['table'] instanceof ExpressionInterface) {
                 $join['table'] = '(' . $join['table']->sql($binder) . ')';
             }
@@ -287,10 +282,11 @@ class QueryCompiler
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($binder);
             }
+
             if ($condition === '') {
                 $joins .= ' ON 1 = 1';
             } else {
-                $joins .= " ON {$condition}";
+                $joins .= ' ON ' . $condition;
             }
         }
 
@@ -303,7 +299,6 @@ class QueryCompiler
      * @param array $parts List of windows to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildWindowPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -325,7 +320,6 @@ class QueryCompiler
      * @param array $parts List of keys & values to set.
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildSetPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -334,9 +328,11 @@ class QueryCompiler
             if ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);
             }
+
             if ($part[0] === '(') {
-                $part = substr($part, 1, -1);
+                $part = substr((string) $part, 1, -1);
             }
+
             $set[] = $part;
         }
 
@@ -351,18 +347,17 @@ class QueryCompiler
      * @param array $parts list of queries to be operated with UNION
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
-        $parts = array_map(function ($p) use ($binder) {
+        $parts = array_map(function (array $p) use ($binder): string {
             /** @var \Cake\Database\Expression\IdentifierExpression $expr */
             $expr = $p['query'];
             $p['query'] = $expr->sql($binder);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
-                return "{$prefix}({$p['query']})";
+                return sprintf('%s(%s)', $prefix, $p['query']);
             }
 
             return $prefix . $p['query'];
@@ -391,6 +386,7 @@ class QueryCompiler
                 'Use `into()` to define a table.'
             );
         }
+
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $binder);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
@@ -451,7 +447,6 @@ class QueryCompiler
      * @param array $expressions list of strings and ExpressionInterface objects
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @param bool $wrap Whether to wrap each expression object with parenthesis
-     * @return array
      */
     protected function _stringifyExpressions(array $expressions, ValueBinder $binder, bool $wrap = true): array
     {
@@ -461,6 +456,7 @@ class QueryCompiler
                 $value = $expression->sql($binder);
                 $expression = $wrap ? '(' . $value . ')' : $value;
             }
+
             $result[$k] = $expression;
         }
 

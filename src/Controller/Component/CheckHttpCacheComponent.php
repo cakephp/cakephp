@@ -37,7 +37,6 @@ class CheckHttpCacheComponent extends Component
      * Before Render hook
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event The Controller.beforeRender event.
-     * @return void
      */
     public function beforeRender(EventInterface $event): void
     {

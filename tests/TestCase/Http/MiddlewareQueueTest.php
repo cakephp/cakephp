@@ -38,7 +38,7 @@ class MiddlewareQueueTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class MiddlewareQueueTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         static::setAppNamespace($this->previousNamespace);
@@ -164,10 +164,10 @@ class MiddlewareQueueTest extends TestCase
     {
         $queue = new MiddlewareQueue();
         $queue->add('Sample');
-        $queue->prepend('TestApp\Middleware\SampleMiddleware');
+        $queue->prepend(\TestApp\Middleware\SampleMiddleware::class);
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
+        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
+        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
     }
 
     /**
@@ -180,9 +180,9 @@ class MiddlewareQueueTest extends TestCase
 
         $queue = new MiddlewareQueue();
         $queue->add([$one]);
-        $queue->prepend(['TestApp\Middleware\SampleMiddleware']);
+        $queue->prepend([\TestApp\Middleware\SampleMiddleware::class]);
 
-        $this->assertInstanceOf('TestApp\Middleware\SampleMiddleware', $queue->current());
+        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }

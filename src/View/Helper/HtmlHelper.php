@@ -35,8 +35,6 @@ class HtmlHelper extends Helper
 
     /**
      * List of helpers used by this helper
-     *
-     * @var array
      */
     protected array $helpers = ['Url'];
 
@@ -180,6 +178,7 @@ class HtmlHelper extends Helper
             } else {
                 $options['link'] = $this->Url->assetUrl($options['link']);
             }
+
             if (isset($options['rel']) && $options['rel'] === 'icon') {
                 $out = $this->formatTemplate('metalink', [
                     'url' => $options['link'],
@@ -187,6 +186,7 @@ class HtmlHelper extends Helper
                 ]);
                 $options['rel'] = 'shortcut icon';
             }
+
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
                 'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
@@ -200,9 +200,11 @@ class HtmlHelper extends Helper
         if (empty($options['block'])) {
             return $out;
         }
+
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
+
         $this->_View->append($options['block'], $out);
 
         return null;
@@ -223,7 +225,7 @@ class HtmlHelper extends Helper
         }
 
         return $this->formatTemplate('charset', [
-            'charset' => !empty($charset) ? $charset : 'utf-8',
+            'charset' => empty($charset) ? 'utf-8' : $charset,
         ]);
     }
 
@@ -275,7 +277,7 @@ class HtmlHelper extends Helper
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
+            $title = htmlentities((string) $title, ENT_QUOTES, $escapeTitle);
         }
 
         $templater = $this->templater();
@@ -284,6 +286,7 @@ class HtmlHelper extends Helper
             $confirmMessage = $options['confirm'];
             unset($options['confirm']);
         }
+
         if ($confirmMessage) {
             $confirm = $this->_confirm('return true;', 'return false;');
             $options['data-confirm-message'] = $confirmMessage;
@@ -387,8 +390,9 @@ class HtmlHelper extends Helper
         if (is_array($path)) {
             $out = '';
             foreach ($path as $i) {
-                $out .= "\n\t" . (string)$this->css($i, $options);
+                $out .= "\n\t" . $this->css($i, $options);
             }
+
             if (empty($options['block'])) {
                 return $out . "\n";
             }
@@ -402,6 +406,7 @@ class HtmlHelper extends Helper
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
             return null;
         }
+
         unset($options['once']);
         $this->_includedAssets[__METHOD__][$path] = true;
 
@@ -422,9 +427,11 @@ class HtmlHelper extends Helper
         if (empty($options['block'])) {
             return $out;
         }
+
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
+
         $this->_View->append($options['block'], $out);
 
         return null;
@@ -487,8 +494,9 @@ class HtmlHelper extends Helper
         if (is_array($url)) {
             $out = '';
             foreach ($url as $i) {
-                $out .= "\n\t" . (string)$this->script($i, $options);
+                $out .= "\n\t" . $this->script($i, $options);
             }
+
             if (empty($options['block'])) {
                 return $out . "\n";
             }
@@ -502,6 +510,7 @@ class HtmlHelper extends Helper
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
             return null;
         }
+
         $this->_includedAssets[__METHOD__][$url] = true;
 
         $out = $this->formatTemplate('javascriptlink', [
@@ -512,9 +521,11 @@ class HtmlHelper extends Helper
         if (empty($options['block'])) {
             return $out;
         }
+
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
+
         $this->_View->append($options['block'], $out);
 
         return null;
@@ -546,9 +557,11 @@ class HtmlHelper extends Helper
         if (empty($options['block'])) {
             return $out;
         }
+
         if ($options['block'] === true) {
             $options['block'] = 'script';
         }
+
         $this->_View->append($options['block'], $out);
 
         return null;
@@ -565,7 +578,6 @@ class HtmlHelper extends Helper
      *   custom block name.
      *
      * @param array<string, mixed> $options Options for the code block.
-     * @return void
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
     public function scriptStart(array $options = []): void
@@ -614,6 +626,7 @@ class HtmlHelper extends Helper
         foreach ($data as $key => $value) {
             $out[] = $key . ':' . $value . ';';
         }
+
         if ($oneLine) {
             return implode(' ', $out);
         }
@@ -654,11 +667,8 @@ class HtmlHelper extends Helper
      */
     public function image(array|string $path, array $options = []): string
     {
-        if (is_string($path)) {
-            $path = $this->Url->image($path, $options);
-        } else {
-            $path = $this->Url->build($path, $options);
-        }
+        $path = is_string($path) ? $this->Url->image($path, $options) : $this->Url->build($path, $options);
+
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
@@ -818,7 +828,6 @@ class HtmlHelper extends Helper
      *
      * @param string $content The content of the row.
      * @param array<string, mixed> $options HTML attributes.
-     * @return string
      */
     public function tableRow(string $content, array $options = []): string
     {
@@ -833,7 +842,6 @@ class HtmlHelper extends Helper
      *
      * @param string $content The content of the cell.
      * @param array<string, mixed> $options HTML attributes.
-     * @return string
      */
     public function tableCell(string $content, array $options = []): string
     {
@@ -862,11 +870,8 @@ class HtmlHelper extends Helper
             $text = h($text);
             unset($options['escape']);
         }
-        if ($text === null) {
-            $tag = 'tagstart';
-        } else {
-            $tag = 'tag';
-        }
+
+        $tag = $text === null ? 'tagstart' : 'tag';
 
         return $this->formatTemplate($tag, [
             'attrs' => $this->templater()->formatAttributes($options),
@@ -914,9 +919,11 @@ class HtmlHelper extends Helper
         if (!empty($options['escape'])) {
             $text = h($text);
         }
+
         if ($class) {
             $options['class'] = $class;
         }
+
         $tag = 'para';
         if ($text === null) {
             $tag = 'parastart';
@@ -996,11 +1003,7 @@ class HtmlHelper extends Helper
             'text' => '',
         ];
 
-        if (!empty($options['tag'])) {
-            $tag = $options['tag'];
-        } else {
-            $tag = null;
-        }
+        $tag = empty($options['tag']) ? null : $options['tag'];
 
         if (is_array($path)) {
             $sourceTags = '';
@@ -1010,16 +1013,19 @@ class HtmlHelper extends Helper
                         'src' => $source,
                     ];
                 }
+
                 if (!isset($source['type'])) {
-                    $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
+                    $ext = pathinfo((string) $source['src'], PATHINFO_EXTENSION);
                     $source['type'] = $this->_View->getResponse()->getMimeType($ext);
                 }
+
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
                 $sourceTags .= $this->formatTemplate('tagselfclosing', [
                     'tag' => 'source',
                     'attrs' => $this->templater()->formatAttributes($source),
                 ]);
             }
+
             unset($source);
             $options['text'] = $sourceTags . $options['text'];
             unset($options['fullBase']);
@@ -1027,6 +1033,7 @@ class HtmlHelper extends Helper
             if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
+
             /** @psalm-suppress PossiblyNullArgument */
             $options['src'] = $this->Url->assetUrl($path, $options);
         }
@@ -1035,14 +1042,11 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
+                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo((string) $path, PATHINFO_EXTENSION));
                 assert(is_string($mimeType));
             }
-            if (str_starts_with($mimeType, 'video/')) {
-                $tag = 'video';
-            } else {
-                $tag = 'audio';
-            }
+
+            $tag = str_starts_with((string) $mimeType, 'video/') ? 'video' : 'audio';
         }
 
         if (isset($options['poster'])) {
@@ -1051,6 +1055,7 @@ class HtmlHelper extends Helper
                 ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options
             );
         }
+
         $text = $options['text'];
 
         $options = array_diff_key($options, [
@@ -1110,11 +1115,13 @@ class HtmlHelper extends Helper
             if (is_array($item)) {
                 $item = $key . $this->nestedList($item, $options, $itemOptions);
             }
+
             if (isset($itemOptions['even']) && $index % 2 === 0) {
                 $itemOptions['class'] = $itemOptions['even'];
             } elseif (isset($itemOptions['odd']) && $index % 2 !== 0) {
                 $itemOptions['class'] = $itemOptions['odd'];
             }
+
             $out .= $this->formatTemplate('li', [
                 'attrs' => $this->templater()->formatAttributes($itemOptions, ['even', 'odd']),
                 'content' => $item,

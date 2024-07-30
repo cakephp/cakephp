@@ -36,7 +36,7 @@ class TableImplementedEventsTest extends TestCase
             'Model.afterDelete' => 'afterDelete',
             'Model.afterRules' => 'afterRules',
         ];
-        $this->assertEquals($expected, $result, 'Events do not match.');
+        $this->assertSame($expected, $result, 'Events do not match.');
     }
 }
 
@@ -44,12 +44,20 @@ class TableImplementedEventsTest extends TestCase
 class ImplementedEventsTable extends Table
 {
     public function buildValidator(): void {}
+
     public function beforeMarshal(): void {}
+
     public function beforeFind(): void {}
+
     public function beforeSave(): void {}
+
     public function afterSave(): void {}
+
     public function beforeDelete(): void {}
+
     public function afterDelete(): void {}
+
     public function afterRules(): void {}
 }
+
 // phpcs:enable

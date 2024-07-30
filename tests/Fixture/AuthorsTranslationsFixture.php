@@ -23,8 +23,6 @@ class AuthorsTranslationsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['locale' => 'eng', 'id' => 1, 'name' => 'May-rianoh'],

@@ -27,16 +27,7 @@ use NumberFormatter;
 class StubConsoleInput extends ConsoleInput
 {
     /**
-     * Reply values for ask() and askChoice()
-     *
-     * @var array<string>
-     */
-    protected array $replies = [];
-
-    /**
      * Current message index
-     *
-     * @var int
      */
     protected int $currentIndex = -1;
 
@@ -45,12 +36,14 @@ class StubConsoleInput extends ConsoleInput
      *
      * @param array<string> $replies A list of replies for read()
      */
-    public function __construct(array $replies)
+    public function __construct(/**
+     * Reply values for ask() and askChoice()
+     */
+    protected array $replies)
     {
         parent::__construct();
 
         unset($this->_input);
-        $this->replies = $replies;
     }
 
     /**
@@ -68,7 +61,7 @@ class StubConsoleInput extends ConsoleInput
             $nth = $formatter->format($this->currentIndex + 1);
 
             $replies = implode(', ', $this->replies);
-            $message = "There are no more input replies available. This is the {$nth} read operation, " .
+            $message = sprintf('There are no more input replies available. This is the %s read operation, ', $nth) .
                 "only {$total} replies were set.\nThe provided replies are: {$replies}";
             throw new MissingConsoleInputException($message);
         }
@@ -90,7 +83,7 @@ class StubConsoleInput extends ConsoleInput
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\StubConsoleInput',
+    \Cake\Console\TestSuite\StubConsoleInput::class,
     'Cake\TestSuite\Stub\ConsoleInput'
 );
 // phpcs:enable

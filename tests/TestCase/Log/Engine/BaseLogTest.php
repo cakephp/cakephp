@@ -27,18 +27,15 @@ use TestApp\Log\Formatter\ValidFormatter;
 
 class BaseLogTest extends TestCase
 {
-    private $testData = ['ä', 'ö', 'ü'];
+    private array $testData = ['ä', 'ö', 'ü'];
 
-    /**
-     * @var \TestApp\Log\Engine\TestBaseLog
-     */
-    private $logger;
+    private \TestApp\Log\Engine\TestBaseLog $logger;
 
     /**
      * Setting up the test case.
      * Creates a stub logger implementing the log() function missing from abstract class BaseLog.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +58,7 @@ class BaseLogTest extends TestCase
      */
     public function testLogUnicodeString(): void
     {
-        $this->logger->log(LogLevel::INFO, implode($this->testData));
+        $this->logger->log(LogLevel::INFO, implode('', $this->testData));
 
         $this->assertUnescapedUnicode($this->testData, $this->logger->getMessage());
     }

@@ -80,13 +80,14 @@ class ViewTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $request = new ServerRequest();
         $this->PostsController = new ViewPostsController($request);
         $this->PostsController->index();
+
         $this->View = $this->PostsController->createView();
         $this->View->setTemplatePath('Posts');
 
@@ -102,7 +103,7 @@ class ViewTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -125,6 +126,7 @@ class ViewTest extends TestCase
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
         $ThemeView->setTheme('TestTheme');
+
         $expected = TEST_APP . 'templates' . DS . 'Pages' . DS . 'home.php';
         $result = $ThemeView->getTemplateFileName('home');
         $this->assertPathEquals($expected, $result);
@@ -150,6 +152,7 @@ class ViewTest extends TestCase
         $ThemeView = new TestView(null, null, null, $viewOptions);
 
         $ThemeView->setTheme('Company/TestPluginThree');
+
         $expected = Plugin::path('Company/TestPluginThree') . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
@@ -436,6 +439,7 @@ class ViewTest extends TestCase
         $view = new TestView(null, null, null, $viewOptions);
 
         $view->setSubDir('json');
+
         $result = $view->getTemplateFileName('index');
         $expected = TEST_APP . 'templates' . DS . 'Jobs' . DS . 'json' . DS . 'index.php';
         $this->assertPathEquals($expected, $result);
@@ -505,6 +509,7 @@ class ViewTest extends TestCase
 
         // Prefix specific layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix'));
+
         $expected = TEST_APP . 'templates' . DS .
             'FooPrefix' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
@@ -596,7 +601,7 @@ class ViewTest extends TestCase
      */
     public function testViewVars(): void
     {
-        $this->assertEquals(['testData', 'test2', 'test3'], $this->View->getVars());
+        $this->assertSame(['testData', 'test2', 'test3'], $this->View->getVars());
     }
 
     /**
@@ -807,7 +812,7 @@ class ViewTest extends TestCase
         $this->assertSame($expected, trim($result));
 
         $result = Cache::read('element__subfolder_test_element', 'test_view');
-        $this->assertSame($expected, trim($result));
+        $this->assertSame($expected, trim((string) $result));
     }
 
     /**
@@ -818,6 +823,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
         $View->enableAutoLayout(false);
+
         $listener = new TestViewEventListenerInterface();
 
         $View->getEventManager()->on($listener);
@@ -840,7 +846,7 @@ class ViewTest extends TestCase
     public function testAddHelper(): void
     {
         $View = new TestView();
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('myval', $config['mykey']);
@@ -854,7 +860,7 @@ class ViewTest extends TestCase
         $View = new View();
 
         $View->loadHelper('Html', ['foo' => 'bar']);
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -871,8 +877,8 @@ class ViewTest extends TestCase
         try {
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The `Html` alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertStringContainsString('The `Html` alias has already been loaded', $runtimeException->getMessage());
         }
     }
 
@@ -888,8 +894,8 @@ class ViewTest extends TestCase
         $result = $View->loadHelpers();
         $this->assertSame($View, $result);
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(\Cake\View\Helper\FormHelper::class, $View->Form, 'Object type is wrong.');
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -905,8 +911,8 @@ class ViewTest extends TestCase
     {
         $View = new View();
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(\Cake\View\Helper\FormHelper::class, $View->Form, 'Object type is wrong.');
     }
 
     /**
@@ -916,8 +922,8 @@ class ViewTest extends TestCase
     {
         $view = new View(null, null, null, ['plugin' => 'TestPlugin']);
 
-        $this->assertEquals('hello other', $view->OtherHelper->hello());
-        $this->assertEquals('hello plugged, hello other', $view->PluggedHelper->hello());
+        $this->assertSame('hello other', $view->OtherHelper->hello());
+        $this->assertSame('hello plugged, hello other', $view->PluggedHelper->hello());
     }
 
     /**
@@ -938,37 +944,21 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
 
-        $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $manager = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
         $View->setEventManager($manager);
 
         $manager->expects($this->exactly(8))
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeLayout';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterLayout';
-                    })]
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.beforeRender')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.beforeRenderFile')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.afterRenderFile')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.afterRender')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.beforeLayout')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.beforeRenderFile')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.afterRenderFile')],
+                    [$this->callback(fn(EventInterface $event): bool => $event->getName() === 'View.afterLayout')]
                 )
             );
 
@@ -1024,7 +1014,7 @@ class ViewTest extends TestCase
 
         $attached = $View->helpers()->loaded();
         // HtmlHelper is loaded in TestView::initialize()
-        $this->assertEquals(['Form', 'Number', 'Html'], $attached);
+        $this->assertSame(['Form', 'Number', 'Html'], $attached);
 
         $this->PostsController->viewBuilder()->addHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
@@ -1037,7 +1027,7 @@ class ViewTest extends TestCase
 
         $attached = $View->helpers()->loaded();
         $expected = ['Form', 'Number', 'Html', 'PluggedHelper'];
-        $this->assertEquals($expected, $attached, 'Attached helpers are wrong.');
+        $this->assertSame($expected, $attached, 'Attached helpers are wrong.');
     }
 
     /**
@@ -1047,6 +1037,7 @@ class ViewTest extends TestCase
     {
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
+
         $result = $View->render('index');
 
         $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
@@ -1061,6 +1052,7 @@ class ViewTest extends TestCase
 
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
+
         $result = $View->render('index');
 
         $this->assertMatchesRegularExpression("/<meta charset=\"utf-8\">\s*<title>/", $result);
@@ -1094,7 +1086,7 @@ class ViewTest extends TestCase
         $trace = $error->getTrace();
 
         $View = $this->PostsController->createView(TestView::class);
-        $View->set(compact('error', 'exceptions', 'message', 'trace'));
+        $View->set(['error' => $error, 'exceptions' => $exceptions, 'message' => $message, 'trace' => $trace]);
         $View->setTemplatePath('Error');
 
         $result = $View->render('pdo_error', 'error');
@@ -1147,8 +1139,10 @@ class ViewTest extends TestCase
     {
         $Controller = new ViewPostsController(new ServerRequest());
         $Controller->set('html', 'I am some test html');
+
         $View = $Controller->createView();
         $View->setTemplatePath($Controller->getName());
+
         $result = $View->render('helper_overwrite', false);
 
         $this->assertMatchesRegularExpression('/I am some test html/', $result);
@@ -1348,13 +1342,11 @@ class ViewTest extends TestCase
      *
      * @return array
      */
-    public static function blockValueProvider(): array
+    public static function blockValueProvider(): \Iterator
     {
-        return [
-            'string' => ['A string value'],
-            'decimal' => [1.23456],
-            'object with __toString' => [new TestObjectWithToString()],
-        ];
+        yield 'string' => ['A string value'];
+        yield 'decimal' => [1.23456];
+        yield 'object with __toString' => [new TestObjectWithToString()];
     }
 
     /**
@@ -1363,7 +1355,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockAppend($value): void
+    public function testBlockAppend(string|float|\TestApp\View\Object\TestObjectWithToString $value): void
     {
         $this->View->assign('testBlock', 'Block');
         $this->View->append('testBlock', $value);
@@ -1392,7 +1384,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockPrepend($value): void
+    public function testBlockPrepend(string|float|\TestApp\View\Object\TestObjectWithToString $value): void
     {
         $this->View->assign('test', 'Block');
         $result = $this->View->prepend('test', $value);
@@ -1446,7 +1438,7 @@ class ViewTest extends TestCase
         $this->View->append('test', 'one');
         $this->View->assign('test1', 'one');
 
-        $this->assertEquals(['test', 'test1'], $this->View->blocks());
+        $this->assertSame(['test', 'test1'], $this->View->blocks());
     }
 
     /**
@@ -1475,7 +1467,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (CakeException $e) {
+        } catch (CakeException) {
             ob_end_clean();
             $this->assertTrue(true);
         }
@@ -1490,9 +1482,9 @@ class ViewTest extends TestCase
         try {
             $this->View->render('open_block');
             $this->fail('No exception');
-        } catch (LogicException $e) {
+        } catch (LogicException $logicException) {
             ob_end_clean();
-            $this->assertStringContainsString('The `no_close` block was left open', $e->getMessage());
+            $this->assertStringContainsString('The `no_close` block was left open', $logicException->getMessage());
         }
     }
 
@@ -1519,8 +1511,8 @@ TEXT;
         try {
             $this->View->render('extend_self', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('cannot have templates extend themselves', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('cannot have templates extend themselves', $logicException->getMessage());
         }
     }
 
@@ -1532,8 +1524,8 @@ TEXT;
         try {
             $this->View->render('extend_loop', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('cannot have templates extend in a loop', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('cannot have templates extend in a loop', $logicException->getMessage());
         }
     }
 
@@ -1578,8 +1570,8 @@ TEXT;
         try {
             $this->View->render('extend_missing_element', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('element', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('element', $logicException->getMessage());
         }
     }
 
@@ -1604,6 +1596,7 @@ TEXT;
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $this->View->disableAutoLayout();
+
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT
 Parent View.
@@ -1624,11 +1617,11 @@ TEXT;
         $e = null;
         try {
             $this->View->element('exception_with_open_buffers');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertNotNull($exception);
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 
@@ -1659,14 +1652,14 @@ TEXT;
                 'key' => __FUNCTION__,
                 'config' => 'test_view',
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         Cache::clear('test_view');
         Cache::drop('test_view');
 
         $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 
@@ -1688,6 +1681,7 @@ TEXT;
         for ($i = 0; $i < 10; $i++) {
             $View->element('test_element');
         }
+
         $end = memory_get_usage();
         $this->assertLessThanOrEqual($start + 15000, $end);
     }
@@ -1727,7 +1721,7 @@ TEXT;
      */
     public function testHelpers(): void
     {
-        $this->assertInstanceOf('Cake\View\HelperRegistry', $this->View->helpers());
+        $this->assertInstanceOf(\Cake\View\HelperRegistry::class, $this->View->helpers());
 
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());
@@ -1837,7 +1831,7 @@ TEXT;
     /**
      * Somewhat pointless, but helps ensure BC for defaults.
      */
-    public function testContentType()
+    public function testContentType(): void
     {
         $this->assertSame('', $this->View->contentType());
     }

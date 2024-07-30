@@ -29,23 +29,17 @@ use Traversable;
 class PaginatedResultSet extends IteratorIterator implements JsonSerializable, PaginatedInterface
 {
     /**
-     * Paging params.
-     *
-     * @var array
-     */
-    protected array $params = [];
-
-    /**
      * Constructor
      *
      * @param \Traversable<T> $results Resultset instance.
      * @param array $params Paging params.
      */
-    public function __construct(Traversable $results, array $params)
+    public function __construct(Traversable $results, /**
+     * Paging params.
+     */
+    protected array $params)
     {
         parent::__construct($results);
-
-        $this->params = $params;
     }
 
     /**
@@ -68,8 +62,6 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
 
     /**
      * Provide data which should be serialized to JSON.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {

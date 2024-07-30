@@ -37,21 +37,16 @@ abstract class Helper
     protected array $_defaultConfig = [];
 
     /**
-     * ConsoleIo instance.
-     *
-     * @var \Cake\Console\ConsoleIo
-     */
-    protected ConsoleIo $_io;
-
-    /**
      * Constructor.
      *
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use.
+     * @param \Cake\Console\ConsoleIo $_io The ConsoleIo instance to use.
      * @param array<string, mixed> $config The settings for this helper.
      */
-    public function __construct(ConsoleIo $io, array $config = [])
+    public function __construct(/**
+     * ConsoleIo instance.
+     */
+    protected ConsoleIo $_io, array $config = [])
     {
-        $this->_io = $io;
         $this->setConfig($config);
     }
 
@@ -59,7 +54,6 @@ abstract class Helper
      * This method should output content using `$this->_io`.
      *
      * @param array $args The arguments for the helper.
-     * @return void
      */
     abstract public function output(array $args): void;
 }

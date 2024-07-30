@@ -23,15 +23,11 @@ trait TypedResultTrait
 {
     /**
      * The type name this expression will return when executed
-     *
-     * @var string
      */
     protected string $_returnType = 'string';
 
     /**
      * Gets the type of the value this object will generate.
-     *
-     * @return string
      */
     public function getReturnType(): string
     {

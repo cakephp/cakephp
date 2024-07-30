@@ -23,8 +23,6 @@ class ArticlesMoreTranslationsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['locale' => 'eng', 'id' => 1, 'title' => 'Title #1', 'subtitle' => 'SubTitle #1', 'body' => 'Content #1'],

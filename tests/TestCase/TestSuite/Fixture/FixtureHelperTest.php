@@ -120,7 +120,7 @@ class FixtureHelperTest extends TestCase
         ConnectionManager::alias('test', 'test2');
 
         $numCalls = 0;
-        (new FixtureHelper())->runPerConnection(function () use (&$numCalls) {
+        (new FixtureHelper())->runPerConnection(function () use (&$numCalls): void {
             ++$numCalls;
         }, [$fixture1, $fixture2]);
         $this->assertSame(2, $numCalls);
@@ -142,6 +142,7 @@ class FixtureHelperTest extends TestCase
 
         $helper = new FixtureHelper();
         $helper->insert($helper->loadFixtures(['core.Articles']));
+
         $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
         $rows->closeCursor();
@@ -158,12 +159,12 @@ class FixtureHelperTest extends TestCase
             ->willReturn('test');
         $fixture->expects($this->once())
             ->method('insert')
-            ->will($this->throwException(new PDOException('Missing key')));
+            ->willThrowException(new PDOException('Missing key'));
 
         $helper = $this->getMockBuilder(FixtureHelper::class)
             ->onlyMethods(['sortByConstraint'])
             ->getMock();
-        $helper->expects($this->any())
+        $helper
             ->method('sortByConstraint')
             ->willReturn([$fixture]);
 
@@ -187,6 +188,7 @@ class FixtureHelperTest extends TestCase
 
         $helper = new FixtureHelper();
         $helper->truncate($helper->loadFixtures(['core.Articles']));
+
         $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
@@ -203,12 +205,12 @@ class FixtureHelperTest extends TestCase
             ->willReturn('test');
         $fixture->expects($this->once())
             ->method('truncate')
-            ->will($this->throwException(new PDOException('Missing key')));
+            ->willThrowException(new PDOException('Missing key'));
 
         $helper = $this->getMockBuilder(FixtureHelper::class)
             ->onlyMethods(['sortByConstraint'])
             ->getMock();
-        $helper->expects($this->any())
+        $helper
             ->method('sortByConstraint')
             ->willReturn([$fixture]);
 

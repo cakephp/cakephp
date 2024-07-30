@@ -55,7 +55,7 @@ class TimeHelper extends Helper
      */
     protected function _getTimezone(DateTimeZone|string|null $timezone): DateTimeZone|string|null
     {
-        if ($timezone) {
+        if ($timezone !== null) {
             return $timezone;
         }
 
@@ -67,7 +67,6 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
-     * @return \Cake\I18n\DateTime
      */
     public function fromString(
         ChronosDate|DateTimeInterface|string|int $dateString,
@@ -75,7 +74,7 @@ class TimeHelper extends Helper
     ): DateTime {
         $time = new DateTime($dateString);
         if ($timezone !== null) {
-            $time = $time->setTimezone($timezone);
+            return $time->setTimezone($timezone);
         }
 
         return $time;
@@ -305,6 +304,7 @@ class TimeHelper extends Helper
             if ($dateTime instanceof DateTime) {
                 $dateTime = clone $dateTime;
             }
+
             /** @var \DateTimeImmutable|\DateTime $dateTime */
             $dateTime = $dateTime->setTimezone($options['timezone']);
             unset($options['timezone']);
@@ -322,12 +322,14 @@ class TimeHelper extends Helper
             } else {
                 $element['tag'] = $options['element'];
             }
+
             unset($options['element']);
         }
+
         $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
-            $relativeDate = sprintf(
+            return sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),
@@ -346,7 +348,6 @@ class TimeHelper extends Helper
      *    Example of valid types: 6 hours, 2 days, 1 minute.
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
-     * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
     public function wasWithinLast(
@@ -364,7 +365,6 @@ class TimeHelper extends Helper
      *    Example of valid types: 6 hours, 2 days, 1 minute.
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
-     * @return bool
      * @see \Cake\I18n\Time::wasWithinLast()
      */
     public function isWithinNext(
@@ -432,15 +432,16 @@ class TimeHelper extends Helper
         if ($date === null) {
             return $invalid;
         }
+
         $timezone = $this->_getTimezone($timezone);
 
         try {
             $time = new DateTime($date);
 
             return $time->i18nFormat($format, $timezone);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             if ($invalid === false) {
-                throw $e;
+                throw $exception;
             }
 
             return $invalid;

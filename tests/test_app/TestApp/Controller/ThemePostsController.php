@@ -21,14 +21,12 @@ class ThemePostsController extends Controller
 {
     /**
      * index method
-     *
-     * @return void
      */
-    public function index()
+    public function index(): void
     {
         $this->set('testData', 'Some test data');
         $test2 = 'more data';
         $test3 = 'even more data';
-        $this->set(compact('test2', 'test3'));
+        $this->set(['test2' => $test2, 'test3' => $test3]);
     }
 }

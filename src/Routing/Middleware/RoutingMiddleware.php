@@ -44,26 +44,21 @@ class RoutingMiddleware implements MiddlewareInterface
     public const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 
     /**
-     * The application that will have its routing hook invoked.
-     *
-     * @var \Cake\Routing\RoutingApplicationInterface
-     */
-    protected RoutingApplicationInterface $app;
-
-    /**
      * Constructor
      *
      * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
      */
-    public function __construct(RoutingApplicationInterface $app)
+    public function __construct(
+        /**
+         * The application that will have its routing hook invoked.
+         */
+        protected RoutingApplicationInterface $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Trigger the application's and plugin's routes() hook.
-     *
-     * @return void
      */
     protected function loadRoutes(): void
     {
@@ -97,6 +92,7 @@ class RoutingMiddleware implements MiddlewareInterface
                 if (isset($params['_middleware'])) {
                     $middleware = $params['_middleware'];
                 }
+
                 $route = $params['_route'];
                 unset($params['_middleware'], $params['_route']);
 
@@ -106,13 +102,14 @@ class RoutingMiddleware implements MiddlewareInterface
                 assert($request instanceof ServerRequest);
                 Router::setRequest($request);
             }
-        } catch (RedirectException $e) {
+        } catch (RedirectException $redirectException) {
             return new RedirectResponse(
-                $e->getMessage(),
-                $e->getCode(),
-                $e->getHeaders()
+                $redirectException->getMessage(),
+                $redirectException->getCode(),
+                $redirectException->getHeaders()
             );
         }
+
         $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {
             return $handler->handle($request);

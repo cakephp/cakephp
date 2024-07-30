@@ -33,18 +33,15 @@ class FileSent extends ResponseBase
      * Checks assertion
      *
      * @param mixed $other Expected type
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         return $this->response->getFile() !== null;
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -55,7 +52,6 @@ class FileSent extends ResponseBase
      * Overwrites the descriptions so we can remove the automatic "expected" message
      *
      * @param mixed $other Value
-     * @return string
      */
     protected function failureDescription(mixed $other): string
     {

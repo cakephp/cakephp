@@ -33,10 +33,9 @@ class FileSentAs extends ResponseBase
      * Checks assertion
      *
      * @param mixed $other Expected type
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         $file = $this->response->getFile();
         if (!$file) {
@@ -48,8 +47,6 @@ class FileSentAs extends ResponseBase
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

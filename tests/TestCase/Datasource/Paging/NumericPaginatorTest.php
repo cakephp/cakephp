@@ -39,7 +39,7 @@ class NumericPaginatorTest extends TestCase
      */
     public function testPaginateCustomFind(): void
     {
-        $titleExtractor = function ($result) {
+        $titleExtractor = function ($result): array {
             $ids = [];
             foreach ($result as $record) {
                 $ids[] = $record->title;
@@ -55,7 +55,7 @@ class NumericPaginatorTest extends TestCase
 
         $result = $this->Paginator->paginate($table);
         $this->assertCount(4, $result, '4 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(4, $pagingParams['count']);
@@ -64,7 +64,7 @@ class NumericPaginatorTest extends TestCase
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(3, $result, '3 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(3, $pagingParams['count']);
@@ -73,7 +73,7 @@ class NumericPaginatorTest extends TestCase
         $settings = ['finder' => 'published', 'limit' => 2, 'page' => 2];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(1, $result, '1 rows should come back');
-        $this->assertEquals(['Third Post'], $titleExtractor($result));
+        $this->assertSame(['Third Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(1, $pagingParams['count']);
@@ -83,7 +83,7 @@ class NumericPaginatorTest extends TestCase
         $settings = ['finder' => 'published', 'limit' => 2];
         $result = $this->Paginator->paginate($table, [], $settings);
         $this->assertCount(2, $result, '2 rows should come back');
-        $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
+        $this->assertSame(['First Post', 'Second Post'], $titleExtractor($result));
 
         $pagingParams = $result->pagingParams();
         $this->assertSame(2, $pagingParams['count']);
@@ -142,8 +142,6 @@ class NumericPaginatorTest extends TestCase
 
     /**
      * https://github.com/cakephp/cakephp/issues/16909
-     *
-     * @return void
      */
     public function testPaginateOrderWithNumericKeyAndSortSpecified(): void
     {
@@ -168,7 +166,7 @@ class NumericPaginatorTest extends TestCase
     {
         $this->expectWarningMessageMatches(
             '/Passing query options as paginator settings is no longer supported/',
-            function () {
+            function (): void {
                 $table = $this->getTableLocator()->get('PaginatorPosts');
                 $this->Paginator->paginate($table, [], ['fields' => ['title']]);
             }

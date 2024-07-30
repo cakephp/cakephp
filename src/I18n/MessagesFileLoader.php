@@ -32,32 +32,9 @@ use function Cake\Core\pluginSplit;
 class MessagesFileLoader
 {
     /**
-     * The package (domain) name.
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
      * The package (domain) plugin
-     *
-     * @var string|null
      */
     protected ?string $_plugin = null;
-
-    /**
-     * The locale to load for the given package.
-     *
-     * @var string
-     */
-    protected string $_locale;
-
-    /**
-     * The extension name.
-     *
-     * @var string
-     */
-    protected string $_extension;
 
     /**
      * Creates a translation file loader. The file to be loaded corresponds to
@@ -94,15 +71,23 @@ class MessagesFileLoader
      * Vendor prefixed plugins are expected to use `my_prefix_my_plugin` syntax.
      * ```
      *
-     * @param string $name The name (domain) of the translations package.
-     * @param string $locale The locale to load, this will be mapped to a folder
+     * @param string $_name The name (domain) of the translations package.
+     * @param string $_locale The locale to load, this will be mapped to a folder
      * in the system.
-     * @param string $extension The file extension to use. This will also be mapped
+     * @param string $_extension The file extension to use. This will also be mapped
      * to a messages parser class.
      */
-    public function __construct(string $name, string $locale, string $extension = 'po')
+    public function __construct(/**
+     * The package (domain) name.
+     */
+    protected string $_name, /**
+     * The locale to load for the given package.
+     */
+    protected string $_locale, /**
+     * The extension name.
+     */
+    protected string $_extension = 'po')
     {
-        $this->_name = $name;
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
         if (strpos($this->_name, '.')) {
@@ -110,8 +95,6 @@ class MessagesFileLoader
         } elseif (Plugin::isLoaded($pluginName)) {
             $this->_plugin = $pluginName;
         }
-        $this->_locale = $locale;
-        $this->_extension = $extension;
     }
 
     /**
@@ -134,7 +117,7 @@ class MessagesFileLoader
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
-            throw new CakeException(sprintf('Could not find class `%s`.', "{$name}FileParser"));
+            throw new CakeException(sprintf('Could not find class `%s`.', $name . 'FileParser'));
         }
 
         /** @var \Cake\I18n\Parser\MoFileParser|\Cake\I18n\Parser\PoFileParser $object */
@@ -167,6 +150,7 @@ class MessagesFileLoader
         if (!$localePaths && defined('APP')) {
             $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
         }
+
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
                 $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
@@ -196,7 +180,7 @@ class MessagesFileLoader
         $name = str_replace('/', '_', $name);
 
         foreach ($folders as $folder) {
-            $path = $folder . $name . ".$ext";
+            $path = $folder . $name . ('.' . $ext);
             if (is_file($path)) {
                 $file = $path;
                 break;

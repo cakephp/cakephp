@@ -44,7 +44,7 @@ class CellTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -57,7 +57,7 @@ class CellTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -70,7 +70,7 @@ class CellTest extends TestCase
     public function testCellRender(): void
     {
         $cell = $this->View->cell('Articles::teaserList');
-        $render = "{$cell}";
+        $render = $cell;
 
         $this->assertSame('teaser_list', $cell->viewBuilder()->getTemplate());
         $this->assertStringContainsString('<h2>Lorem ipsum</h2>', $render);
@@ -79,7 +79,7 @@ class CellTest extends TestCase
         $this->assertStringContainsString('<h2>Suspendisse gravida neque</h2>', $render);
 
         $cell = $this->View->cell('Cello');
-        $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
+        $this->assertInstanceOf(\TestApp\View\Cell\CelloCell::class, $cell);
         $this->assertSame("Cellos\n", $cell->render());
     }
 
@@ -93,7 +93,7 @@ class CellTest extends TestCase
         $this->assertArrayHasKey('request', $data);
         $this->assertArrayHasKey('response', $data);
         $this->assertSame('teaserList', $data['action']);
-        $this->assertEquals([], $data['args']);
+        $this->assertSame([], $data['args']);
     }
 
     /**
@@ -110,7 +110,6 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Articles::teaserList');
         $cell->viewBuilder()->setTemplate('nope');
-        (string)$cell;
     }
 
     /**
@@ -122,18 +121,18 @@ class CellTest extends TestCase
     public function testCellWithArguments(): void
     {
         $cell = $this->View->cell('Articles::doEcho', ['dummy', ' message']);
-        $render = "{$cell}";
+        $render = $cell;
         $this->assertStringContainsString('dummy message', $render);
     }
 
     public function testCellWithNamedArguments(): void
     {
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
-        $render = "{$cell}";
+        $render = $cell;
         $this->assertStringContainsString('dummy message', $render);
 
         $cell = $this->View->cell('Articles::doEcho', ['msg2' => ' dummy', 'msg1' => 'message']);
-        $render = "{$cell}";
+        $render = $cell;
         $this->assertStringContainsString('message dummy', $render);
     }
 
@@ -145,10 +144,10 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles');
 
         $this->assertSame('display', $appCell->viewBuilder()->getTemplate());
-        $this->assertStringContainsString('dummy', "{$appCell}");
+        $this->assertStringContainsString('dummy', $appCell);
 
         $pluginCell = $this->View->cell('TestPlugin.Dummy');
-        $this->assertStringContainsString('dummy', "{$pluginCell}");
+        $this->assertStringContainsString('dummy', $pluginCell);
         $this->assertSame('display', $pluginCell->viewBuilder()->getTemplate());
     }
 
@@ -159,7 +158,7 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
-        $this->assertStringContainsString('Articles subdir custom_template_path template', "{$appCell}");
+        $this->assertStringContainsString('Articles subdir custom_template_path template', $appCell);
         $this->assertSame('custom_template_path', $appCell->viewBuilder()->getTemplate());
         $this->assertSame(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
@@ -171,7 +170,7 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
-        $this->assertStringContainsString('This is the alternate template', "{$appCell}");
+        $this->assertStringContainsString('This is the alternate template', $appCell);
         $this->assertSame('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
     }
 
@@ -198,10 +197,10 @@ class CellTest extends TestCase
         $e = null;
         try {
             $cell->render('fooBar');
-        } catch (MissingCellTemplateException $e) {
+        } catch (MissingCellTemplateException $missingCellTemplateException) {
         }
 
-        $this->assertNotNull($e);
+        $this->assertNotNull($missingCellTemplateException);
         $message = $e->getMessage();
         $this->assertStringContainsString(
             str_replace('/', DS, 'Cell template file `cell/Articles/foo_bar.php` could not be found.'),
@@ -209,7 +208,7 @@ class CellTest extends TestCase
         );
         $this->assertStringContainsString('The following paths', $message);
         $this->assertStringContainsString(ROOT . DS . 'templates', $message);
-        $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
+        $this->assertInstanceOf(MissingTemplateException::class, $missingCellTemplateException->getPrevious());
     }
 
     /**
@@ -249,7 +248,7 @@ class CellTest extends TestCase
     public function testPluginCell(): void
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $this->assertStringContainsString('hello world!', "{$cell}");
+        $this->assertStringContainsString('hello world!', $cell);
     }
 
     /**
@@ -277,7 +276,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $cell->viewBuilder()->setTemplate('../../element/translate');
-        $this->assertStringContainsString('This is a translatable string', "{$cell}");
+        $this->assertStringContainsString('This is a translatable string', $cell);
     }
 
     /**
@@ -318,7 +317,7 @@ class CellTest extends TestCase
         /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
         $this->assertSame(10, $cell->limit);
-        $this->assertTrue(!isset($cell->nope), 'Not a valid option');
+        $this->assertFalse(property_exists($cell, 'nope') && $cell->nope !== null, 'Not a valid option');
     }
 
     /**
@@ -346,8 +345,9 @@ class CellTest extends TestCase
         $response = new Response();
         $view = new CustomJsonView($request, $response);
         $view->setTheme('Pretty');
+
         $cell = $view->cell('Articles');
-        $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
+        $this->assertSame(\TestApp\View\CustomJsonView::class, $cell->viewBuilder()->getClassName());
         $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
 

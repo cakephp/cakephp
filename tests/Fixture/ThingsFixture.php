@@ -20,8 +20,6 @@ class ThingsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['id' => 1, 'title' => 'a title', 'body' => 'a body'],

@@ -27,8 +27,6 @@ class Plugin
 {
     /**
      * Holds a list of all loaded plugins and their configuration
-     *
-     * @var \Cake\Core\PluginCollection|null
      */
     protected static ?PluginCollection $plugins = null;
 
@@ -93,7 +91,6 @@ class Plugin
      * Returns true if the plugin $plugin is already loaded.
      *
      * @param string $plugin Plugin name.
-     * @return bool
      * @since 3.7.0
      */
     public static function isLoaded(string $plugin): bool
@@ -112,6 +109,7 @@ class Plugin
         foreach (static::getCollection() as $plugin) {
             $names[] = $plugin->getName();
         }
+
         sort($names);
 
         return $names;
@@ -122,8 +120,6 @@ class Plugin
      *
      * This method should generally not be used during application
      * runtime as plugins should be set during Application startup.
-     *
-     * @return \Cake\Core\PluginCollection
      */
     public static function getCollection(): PluginCollection
     {

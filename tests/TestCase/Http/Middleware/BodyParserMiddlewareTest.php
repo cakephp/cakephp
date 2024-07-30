@@ -35,12 +35,10 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider(): array
+    public static function safeHttpMethodProvider(): \Iterator
     {
-        return [
-            ['GET'],
-            ['HEAD'],
-        ];
+        yield ['GET'];
+        yield ['HEAD'];
     }
 
     /**
@@ -48,11 +46,12 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider(): array
+    public static function httpMethodProvider(): \Iterator
     {
-        return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
-        ];
+        yield ['PATCH'];
+        yield ['PUT'];
+        yield ['POST'];
+        yield ['DELETE'];
     }
 
     /**
@@ -60,17 +59,16 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function jsonScalarValues(): array
+    public static function jsonScalarValues(): \Iterator
     {
-        return [
-            ['', []], // Requests without body
-            ['true', [true]],
-            ['false', [false]],
-            ['0', [0]],
-            ['0.1', [0.1]],
-            ['"cake"', ['cake']],
-            ['null', []],
-        ];
+        yield ['', []];
+        // Requests without body
+        yield ['true', [true]];
+        yield ['false', [false]];
+        yield ['0', [0]];
+        yield ['0.1', [0.1]];
+        yield ['"cake"', ['cake']];
+        yield ['null', []];
     }
 
     /**
@@ -79,7 +77,7 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorMethodsOption(): void
     {
         $parser = new BodyParserMiddleware(['methods' => ['PUT']]);
-        $this->assertEquals(['PUT'], $parser->getMethods());
+        $this->assertSame(['PUT'], $parser->getMethods());
     }
 
     /**
@@ -88,13 +86,13 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorXmlOption(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $this->assertEquals([], $parser->getParsers(), 'Xml off by default');
+        $this->assertSame([], $parser->getParsers(), 'Xml off by default');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => false]);
-        $this->assertEquals([], $parser->getParsers(), 'No Xml types set.');
+        $this->assertSame([], $parser->getParsers(), 'No Xml types set.');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => true]);
-        $this->assertEquals(
+        $this->assertSame(
             ['application/xml', 'text/xml'],
             array_keys($parser->getParsers()),
             'Default XML parsers are not set.'
@@ -107,10 +105,10 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorJsonOption(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $this->assertEquals([], $parser->getParsers(), 'No JSON types set.');
+        $this->assertSame([], $parser->getParsers(), 'No JSON types set.');
 
         $parser = new BodyParserMiddleware([]);
-        $this->assertEquals(
+        $this->assertSame(
             ['application/json', 'text/json'],
             array_keys($parser->getParsers()),
             'Default JSON parsers are not set.'
@@ -124,7 +122,7 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $parser = new BodyParserMiddleware();
         $this->assertSame($parser, $parser->setMethods(['PUT']));
-        $this->assertEquals(['PUT'], $parser->getMethods());
+        $this->assertSame(['PUT'], $parser->getMethods());
     }
 
     /**
@@ -133,9 +131,7 @@ class BodyParserMiddlewareTest extends TestCase
     public function testAddParserReturn(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $f1 = function (string $body) {
-            return json_decode($body, true);
-        };
+        $f1 = fn(string $body): mixed => json_decode($body, true);
         $this->assertSame($parser, $parser->addParser(['application/json'], $f1));
     }
 
@@ -146,12 +142,8 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $parser = new BodyParserMiddleware(['json' => false]);
 
-        $f1 = function (string $body) {
-            return json_decode($body, true);
-        };
-        $f2 = function (string $body) {
-            return ['overridden'];
-        };
+        $f1 = fn(string $body): mixed => json_decode($body, true);
+        $f2 = fn(string $body): array => ['overridden'];
         $parser->addParser(['application/json'], $f1);
         $parser->addParser(['application/json'], $f2);
 
@@ -174,8 +166,8 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => 'a,b,c',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals([], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame([], $req->getParsedBody());
 
             return new Response();
         });
@@ -198,8 +190,8 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
         });
@@ -222,8 +214,8 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
         });
@@ -244,8 +236,8 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
         });
@@ -268,8 +260,8 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals([], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame([], $req->getParsedBody());
 
             return new Response();
         });
@@ -295,11 +287,11 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
             $expected = [
                 'article' => ['title' => 'yay'],
             ];
-            $this->assertEquals($expected, $req->getParsedBody());
+            $this->assertSame($expected, $req->getParsedBody());
 
             return new Response();
         });
@@ -326,14 +318,14 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
             $expected = [
                 'article' => [
                     'id' => 1,
                     'title' => 'first',
                 ],
             ];
-            $this->assertEquals($expected, $req->getParsedBody());
+            $this->assertSame($expected, $req->getParsedBody());
 
             return new Response();
         });
@@ -370,8 +362,8 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            $this->assertEquals([], $req->getParsedBody());
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+            $this->assertSame([], $req->getParsedBody());
 
             return new Response();
         });
@@ -385,7 +377,7 @@ XML;
      * @dataProvider jsonScalarValues
      * @param mixed $expected
      */
-    public function testInvokeParseNoArray(string $body, $expected): void
+    public function testInvokeParseNoArray(string $body, array $expected): void
     {
         $parser = new BodyParserMiddleware();
 
@@ -396,7 +388,7 @@ XML;
                 ],
                 'input' => $body,
         ]);
-        $handler = new TestRequestHandler(function ($req) use ($expected) {
+        $handler = new TestRequestHandler(function ($req) use ($expected): \Cake\Http\Response {
             $this->assertSame($expected, $req->getParsedBody());
 
             return new Response();
@@ -416,9 +408,7 @@ XML;
             ],
             'input' => 'lol',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response());
         $this->expectException(BadRequestException::class);
         $parser = new BodyParserMiddleware();
         $parser->process($request, $handler);

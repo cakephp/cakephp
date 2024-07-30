@@ -10,8 +10,6 @@ class TestSecurityComponent extends SecurityComponent
 {
     /**
      * validatePost method
-     *
-     * @return void
      */
     public function validatePost(Controller $controller): void
     {

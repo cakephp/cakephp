@@ -29,28 +29,21 @@ use PDOException;
 class Collection implements CollectionInterface
 {
     /**
-     * Connection object
-     *
-     * @var \Cake\Database\Connection
-     */
-    protected Connection $_connection;
-
-    /**
      * Schema dialect instance.
-     *
-     * @var \Cake\Database\Schema\SchemaDialect
      */
     protected SchemaDialect $_dialect;
 
     /**
      * Constructor.
      *
-     * @param \Cake\Database\Connection $connection The connection instance.
+     * @param \Cake\Database\Connection $_connection The connection instance.
      */
-    public function __construct(Connection $connection)
+    public function __construct(/**
+     * Connection object
+     */
+    protected Connection $_connection)
     {
-        $this->_connection = $connection;
-        $this->_dialect = $connection->getDriver()->schemaDialect();
+        $this->_dialect = $this->_connection->getDriver()->schemaDialect();
     }
 
     /**
@@ -111,10 +104,11 @@ class Collection implements CollectionInterface
         if (str_contains($name, '.')) {
             [$config['schema'], $name] = explode('.', $name);
         }
+
         $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
-        if (count($table->columns()) === 0) {
+        if ($table->columns() === []) {
             throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
         }
 
@@ -132,31 +126,24 @@ class Collection implements CollectionInterface
      * @param string $name The table name.
      * @param array<string, mixed> $config The config data.
      * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance.
-     * @return void
      * @throws \Cake\Database\Exception\DatabaseException on query failure.
-     * @uses \Cake\Database\Schema\SchemaDialect::describeColumnSql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeIndexSql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeForeignKeySql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeOptionsSql
-     * @uses \Cake\Database\Schema\SchemaDialect::convertColumnDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertIndexDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertForeignKeyDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertOptionsDescription
      */
     protected function _reflect(string $stage, string $name, array $config, TableSchemaInterface $schema): void
     {
-        $describeMethod = "describe{$stage}Sql";
-        $convertMethod = "convert{$stage}Description";
+        $describeMethod = sprintf('describe%sSql', $stage);
+        $convertMethod = sprintf('convert%sDescription', $stage);
 
         [$sql, $params] = $this->_dialect->{$describeMethod}($name, $config);
         if (!$sql) {
             return;
         }
+
         try {
             $statement = $this->_connection->execute($sql, $params);
-        } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), 500, $e);
+        } catch (PDOException $pdoException) {
+            throw new DatabaseException($pdoException->getMessage(), 500, $pdoException);
         }
+
         foreach ($statement->fetchAll('assoc') as $row) {
             $this->_dialect->{$convertMethod}($schema, $row);
         }

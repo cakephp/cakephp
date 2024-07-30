@@ -18,13 +18,14 @@ class TestAppsExceptionRenderer extends WebExceptionRenderer
     protected function _getController(): Controller
     {
         $request = $this->request ?: Router::getRequest();
-        if ($request === null) {
+        if (!$request instanceof \Cake\Http\ServerRequest) {
             $request = new ServerRequest();
         }
+
         try {
             $controller = new TestAppsErrorController($request);
             $controller->viewBuilder()->setLayout('banana');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $controller = new Controller($request);
             $controller->viewBuilder()->setTemplatePath('Error');
         }

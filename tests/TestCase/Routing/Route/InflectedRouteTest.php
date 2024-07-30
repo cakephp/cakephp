@@ -142,6 +142,7 @@ class InflectedRouteTest extends TestCase
     {
         $route = new InflectedRoute('/{controller}/{action}/{id}', [], ['id' => Router::ID]);
         $route->compile();
+
         $result = $route->parse('/my_posts/my_view/1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('my_view', $result['action']);
@@ -149,6 +150,7 @@ class InflectedRouteTest extends TestCase
 
         $route = new InflectedRoute('/{controller}/{action}-{id}');
         $route->compile();
+
         $result = $route->parse('/my_posts/my_view-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('my_view', $result['action']);
@@ -156,6 +158,7 @@ class InflectedRouteTest extends TestCase
 
         $route = new InflectedRoute('/{controller}/{action}/{slug}-{id}', [], ['id' => Router::ID]);
         $route->compile();
+
         $result = $route->parse('/my_posts/my_view/the-slug-1', 'GET');
         $this->assertSame('MyPosts', $result['controller']);
         $this->assertSame('my_view', $result['action']);
@@ -167,6 +170,7 @@ class InflectedRouteTest extends TestCase
             ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
+
         $result = $route->parse('/admin/', 'GET');
         $this->assertNull($result);
 
@@ -181,12 +185,12 @@ class InflectedRouteTest extends TestCase
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('search_it', $result['action']);
-        $this->assertEquals([], $result['pass']);
+        $this->assertSame([], $result['pass']);
 
         $result = $route->parse('/media/search/tv_shows', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('search_it', $result['action']);
-        $this->assertEquals(['tv_shows'], $result['pass']);
+        $this->assertSame(['tv_shows'], $result['pass']);
     }
 
     /**
@@ -220,7 +224,7 @@ class InflectedRouteTest extends TestCase
         $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 
-    public function testMatchDoesNotCorruptDefaults()
+    public function testMatchDoesNotCorruptDefaults(): void
     {
         $route = new InflectedRoute('/user_permissions/edit', ['controller' => 'UserPermissions', 'action' => 'edit']);
         $route->match(['controller' => 'UserPermissions', 'action' => 'edit'], []);

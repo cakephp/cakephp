@@ -76,7 +76,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -113,7 +113,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -229,6 +229,7 @@ class CounterCacheBehaviorTest extends TestCase
         $before = $this->_getUser();
         $post = $this->post->find('all')->first();
         $this->post->delete($post);
+
         $after = $this->_getUser();
 
         $this->assertSame(2, $before->get('post_count'));
@@ -252,6 +253,7 @@ class CounterCacheBehaviorTest extends TestCase
         $post = $this->post->find('all')
             ->first();
         $this->post->delete($post, ['ignoreCounterCache' => true]);
+
         $after = $this->_getUser();
 
         $this->assertSame(2, $before->get('post_count'));
@@ -350,7 +352,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table): int {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -379,7 +381,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table): bool {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -408,7 +410,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable, $original) use ($entity, $table) {
+                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable, $original) use ($entity, $table): int {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -422,6 +424,7 @@ class CounterCacheBehaviorTest extends TestCase
         ]);
 
         $this->post->save($entity);
+
         $between = $this->_getUser();
         $entity->user_id = 2;
         $this->post->save($entity);
@@ -442,9 +445,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $event, EntityInterface $entity, Table $table) {
-                    return $table->getConnection()->selectQuery(4);
-                },
+                'posts_published' => fn(EventInterface $event, EntityInterface $entity, Table $table): \Cake\Database\Query\SelectQuery => $table->getConnection()->selectQuery(4),
             ],
         ]);
 

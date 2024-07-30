@@ -27,8 +27,6 @@ class SqliteSchemaDialect extends SchemaDialect
 {
     /**
      * Whether there is any table in this connection to SQLite containing sequences.
-     *
-     * @var bool
      */
     protected bool $_hasSequences;
 
@@ -59,19 +57,22 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (str_contains($length, ',')) {
                 [$length, $precision] = explode(',', $length);
             }
+
             $length = (int)$length;
             $precision = (int)$precision;
         }
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            ['length' => $length, 'precision' => $precision, 'scale' => $scale]
         );
         if ($type !== null) {
             return $type;
@@ -80,15 +81,19 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'bigint') {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
+
         if ($col === 'smallint') {
             return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
+
         if ($col === 'tinyint') {
             return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
+
         if (str_contains($col, 'int')) {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
+
         if (str_contains($col, 'decimal')) {
             return [
                 'type' => TableSchemaInterface::TYPE_DECIMAL,
@@ -97,6 +102,7 @@ class SqliteSchemaDialect extends SchemaDialect
                 'unsigned' => $unsigned,
             ];
         }
+
         if (in_array($col, ['float', 'real', 'double'])) {
             return [
                 'type' => TableSchemaInterface::TYPE_FLOAT,
@@ -113,12 +119,15 @@ class SqliteSchemaDialect extends SchemaDialect
         if (($col === 'binary' && $length === 16) || strtolower($column) === 'uuid_blob') {
             return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
         }
+
         if (($col === 'char' && $length === 36) || $col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }
+
         if ($col === 'char') {
             return ['type' => TableSchemaInterface::TYPE_CHAR, 'length' => $length];
         }
+
         if (str_contains($col, 'char')) {
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
@@ -237,7 +246,6 @@ class SqliteSchemaDialect extends SchemaDialect
      * We need to remove those.
      *
      * @param string|int|null $default The default value.
-     * @return string|int|null
      */
     protected function _defaultValue(string|int|null $default): string|int|null
     {
@@ -271,7 +279,6 @@ class SqliteSchemaDialect extends SchemaDialect
      * may not be quoted with any of the supported quotes.
      *
      * @param string $identifier The identifier to match.
-     * @return string
      */
     protected function possiblyQuotedIdentifierRegex(string $identifier): string
     {
@@ -299,7 +306,6 @@ class SqliteSchemaDialect extends SchemaDialect
      * identifiers.
      *
      * @param string $value The identifier to normalize.
-     * @return string
      */
     protected function normalizePossiblyQuotedIdentifier(string $value): string
     {
@@ -331,7 +337,6 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table object to append
      *    an index or constraint to.
      * @param array $row The row data from `describeIndexSql`.
-     * @return void
      */
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
@@ -346,10 +351,12 @@ class SqliteSchemaDialect extends SchemaDialect
         );
         $statement = $this->_driver->prepare($sql);
         $statement->execute();
+
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $column) {
             $columns[] = $column['name'];
         }
+
         if ($row['unique']) {
             if ($row['origin'] === 'u') {
                 // Try to obtain the actual constraint name for indexes that are
@@ -369,13 +376,13 @@ class SqliteSchemaDialect extends SchemaDialect
                     $columnsPattern = implode(
                         '\s*,\s*',
                         array_map(
-                            fn ($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
+                            fn ($column): string => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
                             $columns
                         )
                     );
 
-                    $regex = "/CONSTRAINT\s*(['\"`\[ ].+?['\"`\] ])\s*UNIQUE\s*\(\s*(?:{$columnsPattern})\s*\)/i";
-                    if (preg_match($regex, $tableSql, $matches)) {
+                    $regex = sprintf('/CONSTRAINT\s*([\'"`\[ ].+?[\'"`\] ])\s*UNIQUE\s*\(\s*(?:%s)\s*\)/i', $columnsPattern);
+                    if (preg_match($regex, (string) $tableSql, $matches)) {
                         $row['name'] = $this->normalizePossiblyQuotedIdentifier($matches[1]);
                     }
                 }
@@ -436,6 +443,7 @@ class SqliteSchemaDialect extends SchemaDialect
         } else {
             $data['references'] = [$foreignKey['table'], $data['references']];
         }
+
         $data['update'] = $this->_convertOnClause($foreignKey['on_update'] ?? '');
         $data['delete'] = $this->_convertOnClause($foreignKey['on_delete'] ?? '');
 
@@ -495,12 +503,9 @@ class SqliteSchemaDialect extends SchemaDialect
 
         if (
             in_array($data['type'], $hasUnsigned, true) &&
-            isset($data['unsigned']) &&
-            $data['unsigned'] === true
+            isset($data['unsigned']) && $data['unsigned'] === true && ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
         ) {
-            if ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
-                $out .= ' UNSIGNED';
-            }
+            $out .= ' UNSIGNED';
         }
 
         if (isset($typeMap[$data['type']])) {
@@ -565,14 +570,11 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
-            if ($schema->getPrimaryKey() === [$name]) {
-                $out .= ' PRIMARY KEY';
-
-                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
-                    $out .= ' AUTOINCREMENT';
-                    unset($data['default']);
-                }
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
+            $out .= ' PRIMARY KEY';
+            if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                $out .= ' AUTOINCREMENT';
+                unset($data['default']);
             }
         }
 
@@ -586,6 +588,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes, true)) {
             $out .= ' DEFAULT NULL';
         }
+
         if (isset($data['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
         }
@@ -618,14 +621,17 @@ class SqliteSchemaDialect extends SchemaDialect
         ) {
             return '';
         }
+
         $clause = '';
         $type = '';
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $type = 'PRIMARY KEY';
         }
+
         if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $type = 'UNIQUE';
         }
+
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
@@ -637,8 +643,9 @@ class SqliteSchemaDialect extends SchemaDialect
                 $this->_foreignOnClause($data['delete'])
             );
         }
+
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -687,7 +694,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -735,8 +742,6 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * Returns whether there is any table in this connection to SQLite containing
      * sequences
-     *
-     * @return bool
      */
     public function hasSequences(): bool
     {
@@ -744,6 +749,7 @@ class SqliteSchemaDialect extends SchemaDialect
             'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"'
         );
         $result->execute();
+
         $this->_hasSequences = (bool)$result->fetch();
 
         return $this->_hasSequences;

@@ -44,8 +44,6 @@ class JsonConfig implements ConfigEngineInterface
 
     /**
      * File extension.
-     *
-     * @var string
      */
     protected string $_extension = '.json';
 
@@ -80,6 +78,7 @@ class JsonConfig implements ConfigEngineInterface
         if ($jsonContent === false) {
             throw new CakeException(sprintf('Cannot read file content of `%s`', $file));
         }
+
         $values = json_decode($jsonContent, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CakeException(sprintf(
@@ -88,6 +87,7 @@ class JsonConfig implements ConfigEngineInterface
                 json_last_error_msg()
             ));
         }
+
         if (!is_array($values)) {
             throw new CakeException(sprintf(
                 'Decoding JSON config file `%s.json` did not return an array',

@@ -25,13 +25,6 @@ use Throwable;
 class PersistenceFailedException extends CakeException
 {
     /**
-     * The entity on which the persistence operation failed
-     *
-     * @var \Cake\Datasource\EntityInterface
-     */
-    protected EntityInterface $_entity;
-
-    /**
      * @inheritDoc
      */
     protected string $_messageTemplate = 'Entity %s failure.';
@@ -39,36 +32,38 @@ class PersistenceFailedException extends CakeException
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\EntityInterface $entity The entity on which the persistence operation failed
+     * @param \Cake\Datasource\EntityInterface $_entity The entity on which the persistence operation failed
      * @param array<string>|string $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
      * @param int|null $code The code of the error, is also the HTTP status code for the error.
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
-        EntityInterface $entity,
+        /**
+         * The entity on which the persistence operation failed
+         */
+        protected EntityInterface $_entity,
         array|string $message,
         ?int $code = null,
         ?Throwable $previous = null
     ) {
-        $this->_entity = $entity;
         if (is_array($message)) {
             $errors = [];
-            foreach (Hash::flatten($entity->getErrors()) as $field => $error) {
+            foreach (Hash::flatten($this->_entity->getErrors()) as $field => $error) {
                 $errors[] = $field . ': "' . $error . '"';
             }
+
             if ($errors) {
                 $message[] = implode(', ', $errors);
                 $this->_messageTemplate = 'Entity %s failure. Found the following errors (%s).';
             }
         }
+
         parent::__construct($message, $code, $previous);
     }
 
     /**
      * Get the passed in entity
-     *
-     * @return \Cake\Datasource\EntityInterface
      */
     public function getEntity(): EntityInterface
     {

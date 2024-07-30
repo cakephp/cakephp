@@ -31,8 +31,6 @@ class SchemacacheBuildCommand extends Command
 {
     /**
      * Get the command name.
-     *
-     * @return string
      */
     public static function defaultName(): string
     {
@@ -53,11 +51,12 @@ class SchemacacheBuildCommand extends Command
             assert($connection instanceof Connection);
 
             $cache = new SchemaCache($connection);
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $io->error($runtimeException->getMessage());
 
             return static::CODE_ERROR;
         }
+
         $tables = $cache->build($args->getArgument('name'));
 
         foreach ($tables as $table) {
@@ -73,9 +72,8 @@ class SchemacacheBuildCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
             'Build all metadata caches for the connection. If a ' .

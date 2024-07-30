@@ -27,14 +27,8 @@ use Cake\Error\PhpError;
  */
 class ConsoleErrorRenderer implements ErrorRendererInterface
 {
-    /**
-     * @var \Cake\Console\ConsoleOutput
-     */
     protected ConsoleOutput $output;
 
-    /**
-     * @var bool
-     */
     protected bool $trace = false;
 
     /**

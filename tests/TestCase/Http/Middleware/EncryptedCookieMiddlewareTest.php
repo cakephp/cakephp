@@ -51,7 +51,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
@@ -70,9 +70,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
             'plain' => 'always plain',
             'secret' => $this->_encrypt('decoded', 'aes'),
         ]);
-        $this->assertNotEquals('decoded', $request->getCookie('decoded'));
+        $this->assertNotSame('decoded', $request->getCookie('decoded'));
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): \Psr\Http\Message\MessageInterface {
             $this->assertSame('decoded', $req->getCookie('secret'));
             $this->assertSame('always plain', $req->getCookie('plain'));
 
@@ -93,7 +93,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams(['secret' => $cookie]);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
             $this->assertSame('', $req->getCookie('secret'));
 
             return new Response();
@@ -111,14 +111,12 @@ class EncryptedCookieMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function malformedCookies(): array
+    public static function malformedCookies(): \Iterator
     {
-        return [
-            'empty' => [''],
-            'wrong prefix' => [substr_replace(static::$encryptedString, 'foo', 0, 3)],
-            'altered' => [str_replace('M', 'A', static::$encryptedString)],
-            'invalid chars' => [str_replace('M', 'M#', static::$encryptedString)],
-        ];
+        yield 'empty' => [''];
+        yield 'wrong prefix' => [substr_replace(static::$encryptedString, 'foo', 0, 3)];
+        yield 'altered' => [str_replace('M', 'A', static::$encryptedString)];
+        yield 'invalid chars' => [str_replace('M', 'M#', static::$encryptedString)];
     }
 
     /**
@@ -127,11 +125,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseSetCookieHeader(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
-            return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
-                ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
-                ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
-        });
+        $handler = new TestRequestHandler(fn($req): \Psr\Http\Message\MessageInterface => (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
+            ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
+            ->withAddedHeader('Set-Cookie', 'ninja=shuriken'));
         $response = $this->middleware->process($request, $handler);
         $this->assertStringNotContainsString('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
         $this->assertStringContainsString('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
@@ -150,11 +146,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseCookieData(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
-            return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
-                ->withCookie(new Cookie('plain', 'in clear'))
-                ->withCookie(new Cookie('ninja', 'shuriken'));
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => (new Response())->withCookie(new Cookie('secret', 'be quiet'))
+            ->withCookie(new Cookie('plain', 'in clear'))
+            ->withCookie(new Cookie('ninja', 'shuriken')));
         $response = $this->middleware->process($request, $handler);
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertSame(

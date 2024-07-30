@@ -39,13 +39,14 @@ class CheckboxWidgetTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
     }
 
@@ -160,14 +161,12 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function checkedProvider(): array
+    public static function checkedProvider(): \Iterator
     {
-        return [
-            ['checked'],
-            ['1'],
-            [1],
-            [true],
-        ];
+        yield ['checked'];
+        yield ['1'];
+        yield [1];
+        yield [true];
     }
 
     /**
@@ -176,7 +175,7 @@ class CheckboxWidgetTest extends TestCase
      * @dataProvider checkedProvider
      * @param mixed $checked
      */
-    public function testRenderCheckedValue($checked): void
+    public function testRenderCheckedValue(string|int|bool $checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -201,15 +200,13 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function uncheckedProvider(): array
+    public static function uncheckedProvider(): \Iterator
     {
-        return [
-            [''],
-            ['0'],
-            [0],
-            [false],
-            [null],
-        ];
+        yield [''];
+        yield ['0'];
+        yield [0];
+        yield [false];
+        yield [null];
     }
 
     /**
@@ -218,7 +215,7 @@ class CheckboxWidgetTest extends TestCase
      * @dataProvider uncheckedProvider
      * @param mixed $checked
      */
-    public function testRenderUnCheckedValue($checked): void
+    public function testRenderUnCheckedValue(string|int|bool|null $checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [

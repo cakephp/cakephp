@@ -34,6 +34,7 @@ if (is_file('vendor/autoload.php')) {
 if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
+
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
 
@@ -119,13 +120,13 @@ Configure::write('Debugger.exportFormatter', TextFormatter::class);
 
 Log::setConfig([
     'debug' => [
-        'engine' => 'Cake\Log\Engine\FileLog',
+        'engine' => \Cake\Log\Engine\FileLog::class,
         'levels' => ['notice', 'info', 'debug'],
         'file' => 'debug',
         'path' => LOGS,
     ],
     'error' => [
-        'engine' => 'Cake\Log\Engine\FileLog',
+        'engine' => \Cake\Log\Engine\FileLog::class,
         'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         'file' => 'error',
         'path' => LOGS,

@@ -52,7 +52,6 @@ TEXT;
      * Convert a tree of NodeInterface objects into a plain text string.
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
-     * @return string
      */
     public function dump(NodeInterface $node): string
     {
@@ -66,7 +65,6 @@ TEXT;
      *
      * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
      * @param int $indent The current indentation level.
-     * @return string
      */
     protected function export(NodeInterface $var, int $indent): string
     {
@@ -74,19 +72,23 @@ TEXT;
             return match ($var->getType()) {
                 'bool' => $var->getValue() ? 'true' : 'false',
                 'null' => 'null',
-                'string' => "'" . (string)$var->getValue() . "'",
-                default => "({$var->getType()}) {$var->getValue()}",
+                'string' => "'" . $var->getValue() . "'",
+                default => sprintf('(%s) %s', $var->getType(), is_resource($var->getValue()) ? '(resource)' : $var->getValue()),
             };
         }
+
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);
         }
+
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
             return $this->exportObject($var, $indent + 1);
         }
+
         if ($var instanceof SpecialNode) {
             return $var->getValue();
         }
+
         throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
@@ -108,7 +110,8 @@ TEXT;
             $val = $item->getValue();
             $vars[] = $break . $this->export($item->getKey(), $indent) . ' => ' . $this->export($val, $indent);
         }
-        if (count($vars)) {
+
+        if ($vars !== []) {
             return $out . implode(',', $vars) . $end . ']';
         }
 
@@ -120,7 +123,6 @@ TEXT;
      *
      * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
      * @param int $indent Current indentation level.
-     * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
@@ -129,10 +131,10 @@ TEXT;
         $props = [];
 
         if ($var instanceof ReferenceNode) {
-            return "object({$var->getValue()}) id:{$var->getId()} {}";
+            return sprintf('object(%s) id:%d {}', $var->getValue(), $var->getId());
         }
 
-        $out .= "object({$var->getValue()}) id:{$var->getId()} {";
+        $out .= sprintf('object(%s) id:%d {', $var->getValue(), $var->getId());
         $break = "\n" . str_repeat('  ', $indent);
         $end = "\n" . str_repeat('  ', $indent - 1) . '}';
 
@@ -140,12 +142,13 @@ TEXT;
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = "[{$visibility}] {$name} => " . $this->export($property->getValue(), $indent);
+                $props[] = sprintf('[%s] %s => ', $visibility, $name) . $this->export($property->getValue(), $indent);
             } else {
-                $props[] = "{$name} => " . $this->export($property->getValue(), $indent);
+                $props[] = $name . ' => ' . $this->export($property->getValue(), $indent);
             }
         }
-        if (count($props)) {
+
+        if ($props !== []) {
             return $out . $break . implode($break, $props) . $end;
         }
 

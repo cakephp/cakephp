@@ -65,8 +65,6 @@ class ExtractIterator extends Collection
     /**
      * Returns the column value defined in $path or null if the path could not be
      * followed
-     *
-     * @return mixed
      */
     public function current(): mixed
     {

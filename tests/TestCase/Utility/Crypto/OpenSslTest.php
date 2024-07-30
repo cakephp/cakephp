@@ -24,15 +24,12 @@ use Cake\Utility\Crypto\OpenSsl;
  */
 class OpenSslTest extends TestCase
 {
-    /**
-     * @var OpenSsl
-     */
-    private $crypt;
+    private \Cake\Utility\Crypto\OpenSsl $crypt;
 
     /**
      * Setup function.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('openssl_encrypt'), 'No openssl skipping tests');
@@ -47,8 +44,8 @@ class OpenSslTest extends TestCase
         $txt = 'The quick brown fox';
         $key = 'This key is enough bytes';
         $result = $this->crypt->encrypt($txt, $key);
-        $this->assertNotEquals($txt, $result, 'Should be encrypted.');
-        $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
+        $this->assertNotSame($txt, $result, 'Should be encrypted.');
+        $this->assertNotSame($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
         $this->assertSame($txt, $this->crypt->decrypt($result, $key));
     }
 

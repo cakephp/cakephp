@@ -31,7 +31,6 @@ trait MergeVariablesTrait
      *
      * @param list<string> $properties An array of properties and the merge strategy for them.
      * @param array<string, mixed> $options The options to use when merging properties.
-     * @return void
      */
     protected function _mergeVars(array $properties, array $options = []): void
     {
@@ -42,17 +41,25 @@ trait MergeVariablesTrait
             if (!$parent) {
                 break;
             }
+
             $parents[] = $parent;
             $class = $parent;
         }
+
         foreach ($properties as $property) {
             if (!property_exists($this, $property)) {
                 continue;
             }
+
             $thisValue = $this->{$property};
-            if ($thisValue === null || $thisValue === false) {
+            if ($thisValue === null) {
                 continue;
             }
+
+            if ($thisValue === false) {
+                continue;
+            }
+
             $this->_mergeProperty($property, $parents, $options);
         }
     }
@@ -63,7 +70,6 @@ trait MergeVariablesTrait
      * @param string $property The name of the property being merged.
      * @param list<string> $parentClasses An array of classes you want to merge with.
      * @param array<string, mixed> $options Options for merging the property, see _mergeVars()
-     * @return void
      */
     protected function _mergeProperty(string $property, array $parentClasses, array $options): void
     {
@@ -79,17 +85,21 @@ trait MergeVariablesTrait
         if ($isAssoc) {
             $thisValue = Hash::normalize($thisValue);
         }
+
         foreach ($parentClasses as $class) {
             $parentProperties = get_class_vars($class);
             if (empty($parentProperties[$property])) {
                 continue;
             }
+
             $parentProperty = $parentProperties[$property];
             if (!is_array($parentProperty)) {
                 continue;
             }
+
             $thisValue = $this->_mergePropertyData($thisValue, $parentProperty, $isAssoc);
         }
+
         $this->{$property} = $thisValue;
     }
 
@@ -106,6 +116,7 @@ trait MergeVariablesTrait
         if (!$isAssoc) {
             return array_merge($parent, $current);
         }
+
         $parent = Hash::normalize($parent);
         foreach ($parent as $key => $value) {
             if (!isset($current[$key])) {

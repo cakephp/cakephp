@@ -37,29 +37,22 @@ class TestFixture implements FixtureInterface
 
     /**
      * Fixture Datasource
-     *
-     * @var string
      */
     public string $connection = 'test';
 
     /**
      * Full Table Name
-     *
-     * @var string
      */
     public string $table = '';
 
     /**
      * Fixture records to be inserted.
-     *
-     * @var array
      */
     public array $records = [];
 
     /**
      * The schema for this fixture.
      *
-     * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      * @psalm-suppress PropertyNotSetInConstructor
      */
     protected TableSchemaInterface&SqlGeneratorInterface $_schema;
@@ -82,6 +75,7 @@ class TestFixture implements FixtureInterface
                 throw new CakeException($message);
             }
         }
+
         $this->init();
     }
 
@@ -104,7 +98,6 @@ class TestFixture implements FixtureInterface
     /**
      * Initialize the fixture.
      *
-     * @return void
      * @throws \Cake\ORM\Exception\MissingTableClassException When importing from a table that does not exist.
      */
     public function init(): void
@@ -118,8 +111,6 @@ class TestFixture implements FixtureInterface
 
     /**
      * Returns the table name using the fixture class
-     *
-     * @return string
      */
     protected function _tableFromClass(): string
     {
@@ -133,7 +124,6 @@ class TestFixture implements FixtureInterface
     /**
      * Build fixture schema directly from the datasource
      *
-     * @return void
      * @throws \Cake\Core\Exception\CakeException when trying to reflect a table that does not exist
      */
     protected function _schemaFromReflection(): void
@@ -153,13 +143,13 @@ class TestFixture implements FixtureInterface
             $this->_schema = $schema;
 
             $this->getTableLocator()->clear();
-        } catch (CakeException $e) {
+        } catch (CakeException $cakeException) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
                 $this->table,
                 static::class
             );
-            throw new CakeException($message, null, $e);
+            throw new CakeException($message, null, $cakeException);
         }
     }
 
@@ -178,6 +168,7 @@ class TestFixture implements FixtureInterface
             foreach ($values as $row) {
                 $query->values($row);
             }
+
             $query->execute();
         }
 
@@ -186,16 +177,17 @@ class TestFixture implements FixtureInterface
 
     /**
      * Converts the internal records into data used to generate a query.
-     *
-     * @return array
      */
     protected function _getRecords(): array
     {
-        $fields = $values = $types = [];
+        $fields = [];
+        $values = [];
+        $types = [];
         $columns = $this->_schema->columns();
         foreach ($this->records as $record) {
             $fields = array_merge($fields, array_intersect(array_keys($record), $columns));
         }
+
         /** @var array<string> $fields */
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
@@ -203,6 +195,7 @@ class TestFixture implements FixtureInterface
             assert($column !== null);
             $types[$field] = $column['type'];
         }
+
         $default = array_fill_keys($fields, null);
         foreach ($this->records as $record) {
             $values[] = array_merge($default, $record);
@@ -227,8 +220,6 @@ class TestFixture implements FixtureInterface
 
     /**
      * Returns the table schema for this fixture.
-     *
-     * @return \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
     public function getTableSchema(): TableSchemaInterface&SqlGeneratorInterface
     {

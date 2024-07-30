@@ -36,7 +36,6 @@ class FactoryLocator
      *
      * @param string $type The name of the repository type the factory function is for.
      * @param \Cake\Datasource\Locator\LocatorInterface $factory The factory function used to create instances.
-     * @return void
      */
     public static function add(string $type, LocatorInterface $factory): void
     {
@@ -47,7 +46,6 @@ class FactoryLocator
      * Drop a model factory.
      *
      * @param string $type The name of the repository type to drop the factory for.
-     * @return void
      */
     public static function drop(string $type): void
     {

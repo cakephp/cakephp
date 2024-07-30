@@ -81,7 +81,7 @@ class ConnectionTest extends TestCase
      */
     protected $defaultLogger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -89,7 +89,7 @@ class ConnectionTest extends TestCase
         static::setAppNamespace();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->disableSavePoints();
@@ -106,7 +106,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getMockFormDriver()
+    public function getMockFormDriver(): \PHPUnit\Framework\MockObject\MockObject
     {
         $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
@@ -168,14 +168,14 @@ class ConnectionTest extends TestCase
     public function testDriverOptionClassNameSupport(): void
     {
         $connection = new Connection(['driver' => 'TestDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(\TestApp\Database\Driver\TestDriver::class, $connection->getDriver());
 
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
-        $this->assertInstanceOf('TestPlugin\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(\TestPlugin\Database\Driver\TestDriver::class, $connection->getDriver());
 
-        [, $name] = namespaceSplit(get_class($this->connection->getDriver()));
+        [, $name] = namespaceSplit($this->connection->getDriver()::class);
         $connection = new Connection(['driver' => $name]);
-        $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
+        $this->assertInstanceOf($this->connection->getDriver()::class, $connection->getDriver());
     }
 
     /**
@@ -238,16 +238,16 @@ class ConnectionTest extends TestCase
         $e = null;
         try {
             $connection->getDriver()->connect();
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException $missingConnectionException) {
         }
 
-        $this->assertNotNull($e);
+        $this->assertNotNull($missingConnectionException);
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
-                App::shortName(get_class($connection->getDriver()), 'Database/Driver')
+                App::shortName($connection->getDriver()::class, 'Database/Driver')
             ),
-            $e->getMessage()
+            $missingConnectionException->getMessage()
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
@@ -261,7 +261,7 @@ class ConnectionTest extends TestCase
 
         try {
             $connection->execute('SELECT 1');
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException) {
             $this->assertSame(4, $connection->getDriver()->getConnectRetries());
         }
     }
@@ -275,7 +275,7 @@ class ConnectionTest extends TestCase
         $statement = $this->connection->execute($sql, [1], ['integer']);
         $result = $statement->fetchAll();
         $this->assertCount(1, $result);
-        $this->assertEquals([2], $result[0]);
+        $this->assertSame([2], $result[0]);
         $statement->closeCursor();
 
         $sql = 'SELECT 1 + ? + ? AS total';
@@ -283,14 +283,14 @@ class ConnectionTest extends TestCase
         $result = $statement->fetchAll('assoc');
         $statement->closeCursor();
         $this->assertCount(1, $result);
-        $this->assertEquals(['total' => 6], $result[0]);
+        $this->assertSame(['total' => 6], $result[0]);
 
         $sql = 'SELECT 1 + :one + :two AS total';
         $statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], ['one' => 'integer', 'two' => 'integer']);
         $result = $statement->fetchAll('assoc');
         $statement->closeCursor();
         $this->assertCount(1, $result);
-        $this->assertEquals(['total' => 6], $result[0]);
+        $this->assertSame(['total' => 6], $result[0]);
     }
 
     /**
@@ -324,7 +324,7 @@ class ConnectionTest extends TestCase
         $statement = $this->connection->execute($sql);
         $result = $statement->fetch();
         $this->assertCount(1, $result);
-        $this->assertEquals([1], $result);
+        $this->assertSame([1], $result);
         $statement->closeCursor();
     }
 
@@ -342,10 +342,11 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
         $result = $this->connection->execute('SELECT * from things where id = 3');
+
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
         $result->closeCursor();
-        $this->assertEquals($data, $rows[0]);
+        $this->assertSame($data, $rows[0]);
     }
 
     /**
@@ -360,13 +361,14 @@ class ConnectionTest extends TestCase
             ['id' => 'integer', 'title' => 'string', 'body' => 'string']
         );
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
         $result->closeCursor();
 
         $result = $this->connection->execute('SELECT * from things where id = 3');
+
         $row = $result->fetch('assoc');
         $result->closeCursor();
-        $this->assertEquals($data, $row);
+        $this->assertSame($data, $row);
     }
 
     /**
@@ -386,7 +388,7 @@ class ConnectionTest extends TestCase
         $rows = $result->fetchAll('assoc');
         $result->closeCursor();
         $this->assertCount(1, $rows);
-        $this->assertEquals($data, $rows[0]);
+        $this->assertSame($data, $rows[0]);
     }
 
     /**
@@ -396,12 +398,13 @@ class ConnectionTest extends TestCase
     {
         $total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
         $result = $total->fetch('assoc');
-        $this->assertEquals(2, $result['total']);
+        $this->assertSame(2, $result['total']);
         $total->closeCursor();
 
         $total->execute();
+
         $result = $total->fetch('assoc');
-        $this->assertEquals(2, $result['total']);
+        $this->assertSame(2, $result['total']);
         $total->closeCursor();
 
         $result = $this->connection->execute('SELECT title, body  FROM things');
@@ -479,7 +482,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $this->connection->update('things', $values, [], ['body' => 'date']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -496,7 +499,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -512,7 +515,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $query->execute()->closeCursor();
 
@@ -614,7 +617,7 @@ class ConnectionTest extends TestCase
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
 
-        $logger = $this->createMock('Psr\Log\AbstractLogger');
+        $logger = $this->createMock(\Psr\Log\AbstractLogger::class);
         $logger->expects($this->once())
             ->method('log')
             ->with('warning', $this->stringContains('The connection is going to be closed'));
@@ -662,6 +665,7 @@ class ConnectionTest extends TestCase
         $this->connection->begin();
 
         $this->connection->delete('things', ['id' => 1]);
+
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result->fetchAll());
         $this->connection->rollback();
@@ -683,6 +687,7 @@ class ConnectionTest extends TestCase
         $this->connection->begin();
 
         $this->connection->delete('things', ['id' => 1]);
+
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result->fetchAll());
         $this->connection->commit();
@@ -699,7 +704,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -709,6 +714,7 @@ class ConnectionTest extends TestCase
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 2]);
+
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result->fetchAll());
 
@@ -728,7 +734,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints2(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -738,6 +744,7 @@ class ConnectionTest extends TestCase
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 2]);
+
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result->fetchAll());
 
@@ -786,7 +793,7 @@ class ConnectionTest extends TestCase
         );
 
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());
@@ -834,7 +841,7 @@ class ConnectionTest extends TestCase
             ->getMock();
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
-        $result = $connection->transactional(function ($conn) use ($connection) {
+        $result = $connection->transactional(function ($conn) use ($connection): string {
             $this->assertSame($connection, $conn);
 
             return 'thing';
@@ -856,7 +863,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $connection->expects($this->never())->method('commit');
-        $result = $connection->transactional(function ($conn) use ($connection) {
+        $result = $connection->transactional(function ($conn) use ($connection): bool {
             $this->assertSame($connection, $conn);
 
             return false;
@@ -896,9 +903,9 @@ class ConnectionTest extends TestCase
         $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
-        $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
+        $this->assertInstanceOf(\Cake\Database\Schema\Collection::class, $schema);
 
-        $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
+        $schema = $this->getMockBuilder(\Cake\Database\Schema\Collection::class)
             ->setConstructorArgs([$connection])
             ->getMock();
         $connection->setSchemaCollection($schema);
@@ -941,28 +948,22 @@ class ConnectionTest extends TestCase
      */
     public function testNestedTransactionRollbackExceptionNotThrown(): void
     {
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return true;
-            });
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(fn(): bool => true);
 
             return true;
         });
         $this->assertFalse($this->connection->inTransaction());
 
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return true;
-            });
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(fn(): bool => true);
 
             return false;
         });
         $this->assertFalse($this->connection->inTransaction());
 
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return false;
-            });
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(fn(): bool => false);
 
             return false;
         });
@@ -979,10 +980,8 @@ class ConnectionTest extends TestCase
 
         $e = null;
         try {
-            $this->connection->transactional(function () {
-                $this->connection->transactional(function () {
-                    return false;
-                });
+            $this->connection->transactional(function (): bool {
+                $this->connection->transactional(fn(): bool => false);
                 $this->rollbackSourceLine = __LINE__ - 1;
                 if (PHP_VERSION_ID >= 80200) {
                     $this->rollbackSourceLine -= 2;
@@ -992,12 +991,12 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException) {
         }
 
         $trace = $e->getTrace();
-        $this->assertEquals(__FILE__, $trace[1]['file']);
-        $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
+        $this->assertSame(__FILE__, $trace[1]['file']);
+        $this->assertSame($this->rollbackSourceLine, $trace[1]['line']);
     }
 
     /**
@@ -1011,19 +1010,15 @@ class ConnectionTest extends TestCase
 
         $e = null;
         try {
-            $this->connection->transactional(function () {
+            $this->connection->transactional(function (): bool {
                 $this->pushNestedTransactionState();
 
-                $this->connection->transactional(function () {
-                    return true;
-                });
+                $this->connection->transactional(fn(): bool => true);
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(function (): bool {
                     $this->pushNestedTransactionState();
 
-                    $this->connection->transactional(function () {
-                        return false;
-                    });
+                    $this->connection->transactional(fn(): bool => false);
                     $this->rollbackSourceLine = __LINE__ - 1;
                     if (PHP_VERSION_ID >= 80200) {
                         $this->rollbackSourceLine -= 2;
@@ -1034,9 +1029,7 @@ class ConnectionTest extends TestCase
                     return true;
                 });
 
-                $this->connection->transactional(function () {
-                    return false;
-                });
+                $this->connection->transactional(fn(): bool => false);
 
                 $this->pushNestedTransactionState();
 
@@ -1044,7 +1037,7 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException) {
         }
 
         $this->pushNestedTransactionState();
@@ -1053,8 +1046,8 @@ class ConnectionTest extends TestCase
         $this->assertFalse($this->connection->inTransaction());
 
         $trace = $e->getTrace();
-        $this->assertEquals(__FILE__, $trace[1]['file']);
-        $this->assertEquals($this->rollbackSourceLine, $trace[1]['line']);
+        $this->assertSame(__FILE__, $trace[1]['file']);
+        $this->assertSame($this->rollbackSourceLine, $trace[1]['line']);
     }
 
     /**
@@ -1115,17 +1108,18 @@ class ConnectionTest extends TestCase
             $prop->setValue($conn, $newDriver);
             $prop = new ReflectionProperty($conn, 'writeDriver');
             $prop->setAccessible(true);
+
             $oldDriver = $prop->getValue($conn);
             $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
             ->method('execute')
-            ->will($this->throwException(new Exception('server gone away')));
+            ->willThrowException(new Exception('server gone away'));
 
         try {
             $conn->execute('SELECT 1');
-        } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e);
+        } catch (Exception $exception) {
+            $this->assertInstanceOf(Exception::class, $exception);
             $prop->setValue($conn, $oldDriver);
             $conn->rollback();
         }

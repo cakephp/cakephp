@@ -21,13 +21,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class TestRequestHandler implements RequestHandlerInterface
 {
+    /**
+     * @var callable
+     */
     public $callable;
 
     public function __construct(?callable $callable = null)
     {
-        $this->callable = $callable ?: function ($request) {
-            return new Response();
-        };
+        $this->callable = $callable ?: fn($request): \Cake\Http\Response => new Response();
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface

@@ -39,22 +39,22 @@ class TimeTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -130,81 +130,75 @@ class TimeTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): array
+    public static function marshalProvider(): \Iterator
     {
-        return [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['16-nope!', null],
-            ['2014-02-14 13:14:15', null],
-
-            // valid string types
-            ['13:10:10', new Time('13:10:10')],
-            ['14:15', new Time('14:15:00')],
-
-            [new ChronosTime('13:10:10'), new Time('13:10:10')],
-            [new Time('13:10:10'), new Time('13:10:10')],
-            [new NativeDateTime('13:10:10'), new Time('13:10:10')],
-            [new DateTimeImmutable('13:10:10'), new Time('13:10:10')],
-
-            // valid array types
+        // invalid types.
+        yield [null, null];
+        yield [false, null];
+        yield [true, null];
+        yield ['', null];
+        yield ['derpy', null];
+        yield ['16-nope!', null];
+        yield ['2014-02-14 13:14:15', null];
+        // valid string types
+        yield ['13:10:10', new Time('13:10:10')];
+        yield ['14:15', new Time('14:15:00')];
+        yield [new ChronosTime('13:10:10'), new Time('13:10:10')];
+        yield [new Time('13:10:10'), new Time('13:10:10')];
+        yield [new NativeDateTime('13:10:10'), new Time('13:10:10')];
+        yield [new DateTimeImmutable('13:10:10'), new Time('13:10:10')];
+        // valid array types
+        yield [
+            ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+            new Time('13:14:15'),
+        ];
+        yield [
             [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('13:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'am',
             ],
+            new Time('01:14:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new Time('01:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'pm',
             ],
+            new Time('13:14:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new Time('13:14:15'),
+                'hour' => 1, 'minute' => 14, 'second' => 15,
             ],
+            new Time('01:14:15'),
+        ];
+        yield [
             [
-                [
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                ],
-                new Time('01:14:15'),
+                'hour' => 1, 'minute' => 14,
             ],
+            new Time('01:14:00'),
+        ];
+        // Invalid array types
+        yield [
+            ['hour' => '', 'minute' => '', 'second' => ''],
+            null,
+        ];
+        yield [
+            ['hour' => '', 'minute' => '', 'meridian' => ''],
+            null,
+        ];
+        yield [
+            ['hour' => 'nope', 'minute' => 14, 'second' => 15],
+            null,
+        ];
+        yield [
             [
-                [
-                    'hour' => 1, 'minute' => 14,
-                ],
-                new Time('01:14:00'),
+                'year' => '2014', 'month' => '02', 'day' => '14',
+                'hour' => 'nope', 'minute' => 'nope',
             ],
-
-            // Invalid array types
-            [
-                ['hour' => '', 'minute' => '', 'second' => ''],
-                null,
-            ],
-            [
-                ['hour' => '', 'minute' => '', 'meridian' => ''],
-                null,
-            ],
-            [
-                ['hour' => 'nope', 'minute' => 14, 'second' => 15],
-                null,
-            ],
-            [
-                [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'nope', 'minute' => 'nope',
-                ],
-                null,
-            ],
+            null,
         ];
     }
 
@@ -215,7 +209,7 @@ class TimeTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|\Cake\Chronos\ChronosTime|NativeDateTime|\DateTimeImmutable|array|null $value, ?\Cake\I18n\Time $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

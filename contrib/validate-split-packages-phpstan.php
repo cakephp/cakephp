@@ -21,6 +21,7 @@ foreach ($options as $file) {
         break;
     }
 }
+
 require COMPOSER_INSTALL;
 
 $path = dirname(__DIR__) . DS . 'src' . DS;
@@ -36,6 +37,7 @@ foreach ($iterator as $file) {
     $package = substr($filePath, strrpos($filePath, '/') + 1);
     $packages[$filePath . '/'] = $package;
 }
+
 ksort($packages);
 
 $issues = [];
@@ -51,6 +53,7 @@ foreach ($packages as $path => $package) {
 
         $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
     }
+
     exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
 }
 

@@ -35,9 +35,7 @@ class CspMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function ($request) {
-            return new Response();
-        });
+        return new TestRequestHandler(fn($request): \Cake\Http\Response => new Response());
     }
 
     /**
@@ -61,7 +59,7 @@ class CspMiddlewareTest extends TestCase
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
 
-        $expected = 'script-src \'self\' https://www.google-analytics.com';
+        $expected = "script-src 'self' https://www.google-analytics.com";
         $this->assertStringContainsString($expected, $policy);
         $this->assertStringNotContainsString('nonce-', $policy);
     }
@@ -90,7 +88,7 @@ class CspMiddlewareTest extends TestCase
             'styleNonce' => true,
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertNotEmpty($request->getAttribute('cspScriptNonce'));
             $this->assertNotEmpty($request->getAttribute('cspStyleNonce'));
 
@@ -133,7 +131,7 @@ class CspMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
-        $expected = 'script-src \'self\' https://www.google-analytics.com';
+        $expected = "script-src 'self' https://www.google-analytics.com";
 
         $this->assertStringContainsString($expected, $policy);
     }

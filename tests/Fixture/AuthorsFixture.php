@@ -23,8 +23,6 @@ class AuthorsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['name' => 'mariano'],

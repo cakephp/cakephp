@@ -42,8 +42,6 @@ class PluginLoadCommand extends Command
 
     /**
      * Config file
-     *
-     * @var string
      */
     protected string $configFile = CONFIG . 'plugins.php';
 
@@ -61,9 +59,11 @@ class PluginLoadCommand extends Command
         if ($args->getOption('only-debug')) {
             $options['onlyDebug'] = true;
         }
+
         if ($args->getOption('only-cli')) {
             $options['onlyCli'] = true;
         }
+
         if ($args->getOption('optional')) {
             $options['optional'] = true;
         }
@@ -76,9 +76,9 @@ class PluginLoadCommand extends Command
 
         try {
             Plugin::getCollection()->findPath($plugin);
-        } catch (MissingPluginException $e) {
+        } catch (MissingPluginException $missingPluginException) {
             if (empty($options['optional'])) {
-                $io->err($e->getMessage());
+                $io->err($missingPluginException->getMessage());
                 $io->err('Ensure you have the correct spelling and casing.');
 
                 return static::CODE_ERROR;
@@ -100,17 +100,12 @@ class PluginLoadCommand extends Command
      *
      * @param string $plugin Plugin name.
      * @param array<string, mixed> $options Plugin options.
-     * @return int
      */
     protected function modifyConfigFile(string $plugin, array $options): int
     {
         // phpcs:ignore
         $config = @include $this->configFile;
-        if (!is_array($config)) {
-            $config = [];
-        } else {
-            $config = Hash::normalize($config);
-        }
+        $config = is_array($config) ? Hash::normalize($config) : [];
 
         $config[$plugin] = $options;
 
@@ -119,6 +114,7 @@ class PluginLoadCommand extends Command
         } else {
             $array = var_export($config, true);
         }
+
         $contents = '<?php' . "\n\n" . 'return ' . $array . ';' . "\n";
 
         if (file_put_contents($this->configFile, $contents)) {
@@ -132,9 +128,8 @@ class PluginLoadCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
                 'Command for loading plugins.',

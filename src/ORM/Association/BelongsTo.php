@@ -66,7 +66,7 @@ class BelongsTo extends Association
      *  no join conditions will be generated automatically.
      * @return $this
      */
-    public function setForeignKey(array|string|false $key)
+    public function setForeignKey(array|string|false $key): static
     {
         $this->_foreignKey = $key;
 
@@ -89,8 +89,6 @@ class BelongsTo extends Association
 
     /**
      * Returns default property name based on association name.
-     *
-     * @return string
      */
     protected function _propertyName(): string
     {
@@ -105,7 +103,6 @@ class BelongsTo extends Association
      * or required information if the row in 'source' did not exist.
      *
      * @param \Cake\ORM\Table $side The potential Table with ownership
-     * @return bool
      */
     public function isOwningSide(Table $side): bool
     {
@@ -114,8 +111,6 @@ class BelongsTo extends Association
 
     /**
      * Get the relationship type.
-     *
-     * @return string
      */
     public function type(): string
     {

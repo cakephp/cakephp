@@ -33,10 +33,9 @@ class ContentType extends ResponseBase
      * Checks assertion
      *
      * @param mixed $other Expected type
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         $alias = $this->response->getMimeType($other);
         if ($alias !== false) {
@@ -48,8 +47,6 @@ class ContentType extends ResponseBase
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -32,7 +32,7 @@ use Laminas\Diactoros\Request as LaminasRequest;
  */
 class ClientTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -77,128 +77,126 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function urlProvider(): array
+    public static function urlProvider(): \Iterator
     {
-        return [
+        yield [
+            'http://example.com/test.html',
+            'http://example.com/test.html',
+            [],
+            null,
+            'Null options',
+        ];
+        yield [
+            'http://example.com/test.html',
+            'http://example.com/test.html',
+            [],
+            [],
+            'Simple string',
+        ];
+        yield [
+            'http://example.com/test.html',
+            '/test.html',
+            [],
+            ['host' => 'example.com'],
+            'host name option',
+        ];
+        yield [
+            'https://example.com/test.html',
+            '/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https'],
+            'HTTPS',
+        ];
+        yield [
+            'https://example.com/api/v1/foo/test.html',
+            '/foo/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1'],
+            'Base path included',
+        ];
+        yield [
+            'https://example.com/api/v1/foo/test.html',
+            '/foo/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1/'],
+            'Base path with trailing forward slash',
+        ];
+        yield [
+            'https://example.com/api/v1/foo/test.html',
+            '/foo/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https', 'basePath' => 'api/v1/'],
+            'Base path with no prepended forward slash',
+        ];
+        yield [
+            'http://example.com:8080/test.html',
+            '/test.html',
+            [],
+            ['host' => 'example.com', 'port' => '8080'],
+            'Non standard port',
+        ];
+        yield [
+            'http://example.com/test.html',
+            '/test.html',
+            [],
+            ['host' => 'example.com', 'port' => '80'],
+            'standard port, does not display',
+        ];
+        yield [
+            'https://example.com/test.html',
+            '/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https', 'port' => '443'],
+            'standard port, does not display',
+        ];
+        yield [
+            'http://example.com/test.html',
+            'http://example.com/test.html',
+            [],
+            ['host' => 'example.com', 'scheme' => 'https'],
+            'options do not duplicate',
+        ];
+        yield [
+            'http://example.com/search?q=hi%20there&cat%5Bid%5D%5B0%5D=2&cat%5Bid%5D%5B1%5D=3',
+            'http://example.com/search',
+            ['q' => 'hi there', 'cat' => ['id' => [2, 3]]],
+            [],
+            'query string data.',
+        ];
+        yield [
+            'http://example.com/search?q=hi+there&id=12',
+            'http://example.com/search?q=hi+there',
+            ['id' => '12'],
+            [],
+            'query string data with some already on the url.',
+        ];
+        yield [
+            'http://example.com/test.html',
+            '//test.html',
+            [],
             [
-                'http://example.com/test.html',
-                'http://example.com/test.html',
-                [],
-                null,
-                'Null options',
+                'scheme' => 'http',
+                'host' => 'example.com',
+                'protocolRelative' => false,
             ],
+            'url with a double slash',
+        ];
+        yield [
+            'http://example.com/test.html',
+            '//example.com/test.html',
+            [],
             [
-                'http://example.com/test.html',
-                'http://example.com/test.html',
-                [],
-                [],
-                'Simple string',
+                'scheme' => 'http',
+                'protocolRelative' => true,
             ],
-            [
-                'http://example.com/test.html',
-                '/test.html',
-                [],
-                ['host' => 'example.com'],
-                'host name option',
-            ],
-            [
-                'https://example.com/test.html',
-                '/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https'],
-                'HTTPS',
-            ],
-            [
-                'https://example.com/api/v1/foo/test.html',
-                '/foo/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1'],
-                'Base path included',
-            ],
-            [
-                'https://example.com/api/v1/foo/test.html',
-                '/foo/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => '/api/v1/'],
-                'Base path with trailing forward slash',
-            ],
-            [
-                'https://example.com/api/v1/foo/test.html',
-                '/foo/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https', 'basePath' => 'api/v1/'],
-                'Base path with no prepended forward slash',
-            ],
-            [
-                'http://example.com:8080/test.html',
-                '/test.html',
-                [],
-                ['host' => 'example.com', 'port' => '8080'],
-                'Non standard port',
-            ],
-            [
-                'http://example.com/test.html',
-                '/test.html',
-                [],
-                ['host' => 'example.com', 'port' => '80'],
-                'standard port, does not display',
-            ],
-            [
-                'https://example.com/test.html',
-                '/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https', 'port' => '443'],
-                'standard port, does not display',
-            ],
-            [
-                'http://example.com/test.html',
-                'http://example.com/test.html',
-                [],
-                ['host' => 'example.com', 'scheme' => 'https'],
-                'options do not duplicate',
-            ],
-            [
-                'http://example.com/search?q=hi%20there&cat%5Bid%5D%5B0%5D=2&cat%5Bid%5D%5B1%5D=3',
-                'http://example.com/search',
-                ['q' => 'hi there', 'cat' => ['id' => [2, 3]]],
-                [],
-                'query string data.',
-            ],
-            [
-                'http://example.com/search?q=hi+there&id=12',
-                'http://example.com/search?q=hi+there',
-                ['id' => '12'],
-                [],
-                'query string data with some already on the url.',
-            ],
-            [
-                'http://example.com/test.html',
-                '//test.html',
-                [],
-                [
-                    'scheme' => 'http',
-                    'host' => 'example.com',
-                    'protocolRelative' => false,
-                ],
-                'url with a double slash',
-            ],
-            [
-                'http://example.com/test.html',
-                '//example.com/test.html',
-                [],
-                [
-                    'scheme' => 'http',
-                    'protocolRelative' => true,
-                ],
-                'protocol relative url',
-            ],
-            [
-                'https://example.com/operations?%24filter=operation_id%20eq%2012',
-                'https://example.com/operations',
-                ['$filter' => 'operation_id eq 12'],
-                [],
-                'check the RFC 3986 query encoding',
-            ],
+            'protocol relative url',
+        ];
+        yield [
+            'https://example.com/operations?%24filter=operation_id%20eq%2012',
+            'https://example.com/operations',
+            ['$filter' => 'operation_id eq 12'],
+            [],
+            'check the RFC 3986 query encoding',
         ];
     }
 
@@ -210,7 +208,7 @@ class ClientTest extends TestCase
         $http = new Client();
 
         $result = $http->buildUrl($url, $query, (array)$opts);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -234,8 +232,8 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
+            ->with($this->callback(function ($request) use ($headers): bool {
+                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('2', $request->getProtocolVersion());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
@@ -267,7 +265,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
                 $this->assertSame(
@@ -299,7 +297,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
@@ -333,7 +331,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . ''
@@ -368,7 +366,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search', '' . $request->getUri());
                 $this->assertSame('some data', '' . $request->getBody());
@@ -424,7 +422,7 @@ class ClientTest extends TestCase
         ];
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/', '' . $request->getUri());
                 $this->assertSame($headers['Authorization'], $request->getHeaderLine('Authorization'));
@@ -450,17 +448,15 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): array
+    public static function methodProvider(): \Iterator
     {
-        return [
-            [Request::METHOD_GET],
-            [Request::METHOD_POST],
-            [Request::METHOD_PUT],
-            [Request::METHOD_DELETE],
-            [Request::METHOD_PATCH],
-            [Request::METHOD_OPTIONS],
-            [Request::METHOD_TRACE],
-        ];
+        yield [Request::METHOD_GET];
+        yield [Request::METHOD_POST];
+        yield [Request::METHOD_PUT];
+        yield [Request::METHOD_DELETE];
+        yield [Request::METHOD_PATCH];
+        yield [Request::METHOD_OPTIONS];
+        yield [Request::METHOD_TRACE];
     }
 
     /**
@@ -477,9 +473,9 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($method) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
-                $this->assertEquals($method, $request->getMethod());
+            ->with($this->callback(function ($request) use ($method): bool {
+                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
+                $this->assertSame($method, $request->getMethod());
                 $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
 
                 return true;
@@ -499,14 +495,12 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function typeProvider(): array
+    public static function typeProvider(): \Iterator
     {
-        return [
-            ['application/json', 'application/json'],
-            ['json', 'application/json'],
-            ['xml', 'application/xml'],
-            ['application/xml', 'application/xml'],
-        ];
+        yield ['application/json', 'application/json'];
+        yield ['json', 'application/json'];
+        yield ['xml', 'application/xml'];
+        yield ['application/xml', 'application/xml'];
     }
 
     /**
@@ -528,10 +522,10 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
-                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
-                $this->assertEquals($headers['Accept'], $request->getHeaderLine('Accept'));
+                $this->assertSame($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertSame($headers['Accept'], $request->getHeaderLine('Accept'));
 
                 return true;
             }))
@@ -555,9 +549,9 @@ class ClientTest extends TestCase
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
-        $mock->expects($this->any())
+        $mock
             ->method('send')
-            ->with($this->callback(function ($request) use ($data) {
+            ->with($this->callback(function ($request) use ($data): bool {
                 $this->assertSame($data, '' . $request->getBody());
                 $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
 
@@ -618,6 +612,7 @@ class ClientTest extends TestCase
         ]);
 
         $http->get('/projects');
+
         $cookies = $http->cookies();
         $this->assertCount(1, $cookies);
         $this->assertTrue($cookies->has('first'));
@@ -695,8 +690,8 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
+            ->with($this->callback(function ($request): bool {
+                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
 
@@ -746,33 +741,33 @@ class ClientTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url, (string)$request->getUri());
 
                         return true;
                     }),
-                    $this->callback(function ($options) {
+                    $this->callback(function ($options): bool {
                         $this->assertArrayNotHasKey('redirect', $options);
 
                         return true;
                     }),
                     ],
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
 
                         return true;
                     }),
-                    $this->callback(function ($options) {
+                    $this->callback(function ($options): bool {
                         $this->assertArrayNotHasKey('redirect', $options);
 
                         return true;
                     }),
                     ],
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
 
@@ -818,8 +813,8 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
-                $this->assertInstanceOf('Laminas\Diactoros\Request', $request);
+            ->with($this->callback(function ($request) use ($headers): bool {
+                $this->assertInstanceOf(\Laminas\Diactoros\Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertSame($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -865,7 +860,7 @@ class ClientTest extends TestCase
                 ...self::withConsecutive(
                     [$this->anything()],
                     [
-                    $this->callback(function ($request) {
+                    $this->callback(function ($request): bool {
                         $this->assertSame('http://backstage.example.org', (string)$request->getUri());
                         $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
@@ -1026,9 +1021,7 @@ class ClientTest extends TestCase
     {
         $one = new Response(['HTTP/1.0 200'], 'one');
         Client::addMockResponse('GET', 'http://example.com/info', $one, [
-            'match' => function ($request) {
-                return false;
-            },
+            'match' => fn($request): bool => false,
         ]);
 
         $two = new Response(['HTTP/1.0 200'], 'two');
@@ -1096,11 +1089,11 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
+            'match' => function ($request): bool {
                 $this->assertInstanceOf(Request::class, $request);
                 $uri = $request->getUri();
-                $this->assertEquals('/path', $uri->getPath());
-                $this->assertEquals('example.com', $uri->getHost());
+                $this->assertSame('/path', $uri->getPath());
+                $this->assertSame('example.com', $uri->getHost());
 
                 return true;
             },
@@ -1119,9 +1112,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function () {
-                return false;
-            },
+            'match' => fn(): bool => false,
         ]);
 
         $client = new Client();
@@ -1138,9 +1129,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
-                return 'invalid';
-            },
+            'match' => fn($request): string => 'invalid',
         ]);
 
         $client = new Client();

@@ -12,7 +12,6 @@ class HeaderUtility
      * Get an array representation of the HTTP Link header values.
      *
      * @param array $linkHeaders An array of Link header strings.
-     * @return array
      */
     public static function parseLinks(array $linkHeaders): array
     {
@@ -46,13 +45,14 @@ class HeaderUtility
                 $trimedValue = trim($explodedParam[1], '"');
                 if ($trimedKey === 'title*') {
                     // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
-                    preg_match('/(.*)\'(.*)\'(.*)/i', $trimedValue, $matches);
+                    preg_match("/(.*)'(.*)'(.*)/i", $trimedValue, $matches);
                     $trimedValue = [
                         'language' => $matches[2],
                         'encoding' => $matches[1],
                         'value' => urldecode($matches[3]),
                     ];
                 }
+
                 $parsedParams[$trimedKey] = $trimedValue;
             }
         }
@@ -93,10 +93,12 @@ class HeaderUtility
             if (!isset($accept[$prefValue])) {
                 $accept[$prefValue] = [];
             }
+
             if ($prefValue) {
                 $accept[$prefValue][] = $value;
             }
         }
+
         krsort($accept);
 
         return $accept;
@@ -104,7 +106,6 @@ class HeaderUtility
 
     /**
      * @param string $value The WWW-Authenticate header
-     * @return array
      */
     public static function parseWwwAuthenticate(string $value): array
     {

@@ -54,8 +54,6 @@ class TableRegistry
 {
     /**
      * Returns a singleton instance of LocatorInterface implementation.
-     *
-     * @return \Cake\ORM\Locator\LocatorInterface
      */
     public static function getTableLocator(): LocatorInterface
     {
@@ -67,7 +65,6 @@ class TableRegistry
      * Sets singleton instance of LocatorInterface implementation.
      *
      * @param \Cake\ORM\Locator\LocatorInterface $tableLocator Instance of a locator to use.
-     * @return void
      */
     public static function setTableLocator(LocatorInterface $tableLocator): void
     {

@@ -24,8 +24,6 @@ interface EnumLabelInterface
 {
     /**
      * Label to return as string.
-     *
-     * @return string
      */
     public function label(): string;
 }

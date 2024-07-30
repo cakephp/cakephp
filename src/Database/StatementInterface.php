@@ -62,7 +62,6 @@ interface StatementInterface
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
      * @param string|int|null $type name of configured Type class
-     * @return void
      */
     public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void;
 
@@ -70,8 +69,6 @@ interface StatementInterface
      * Closes the cursor, enabling the statement to be executed again.
      *
      * This behaves the same as `PDOStatement::closeCursor()`.
-     *
-     * @return void
      */
     public function closeCursor(): void;
 
@@ -80,7 +77,6 @@ interface StatementInterface
      *
      * This behaves the same as `PDOStatement::columnCount()`.
      *
-     * @return int
      * @link https://php.net/manual/en/pdostatement.columncount.php
      */
     public function columnCount(): int;
@@ -90,7 +86,6 @@ interface StatementInterface
      *
      * This behaves the same as `PDOStatement::errorCode()`.
      *
-     * @return string
      * @link https://www.php.net/manual/en/pdostatement.errorcode.php
      */
     public function errorCode(): string;
@@ -100,7 +95,6 @@ interface StatementInterface
      *
      * This behaves the same as `PDOStatement::errorInfo()`.
      *
-     * @return array
      * @link https://www.php.net/manual/en/pdostatement.errorinfo.php
      */
     public function errorInfo(): array;
@@ -124,7 +118,6 @@ interface StatementInterface
      *
      * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
      *   Valid names are 'assoc', 'num' or 'obj'.
-     * @return mixed
      * @throws \InvalidArgumentException
      * @link https://www.php.net/manual/en/pdo.constants.php
      */
@@ -138,7 +131,6 @@ interface StatementInterface
      *
      * @param string|int $mode PDO::FETCH_* constant or fetch mode name.
      *   Valid names are 'assoc', 'num' or 'obj'.
-     * @return array
      * @throws \InvalidArgumentException
      * @link https://www.php.net/manual/en/pdo.constants.php
      */
@@ -152,7 +144,6 @@ interface StatementInterface
      * a specific column from the row is returned.
      *
      * @param int $position Column index in result row.
-     * @return mixed
      */
     public function fetchColumn(int $position): mixed;
 
@@ -162,8 +153,6 @@ interface StatementInterface
      *
      * This behaves the same as `PDOStatement::fetch()` except an
      * empty array is returned instead of false.
-     *
-     * @return array
      */
     public function fetchAssoc(): array;
 
@@ -172,7 +161,6 @@ interface StatementInterface
      *
      * This behaves the same as `PDOStatement::rowCount()`.
      *
-     * @return int
      * @link https://www.php.net/manual/en/pdostatement.rowcount.php
      */
     public function rowCount(): int;
@@ -182,7 +170,6 @@ interface StatementInterface
      *
      * @param array $params list of values to be bound
      * @param array $types list of types to be used, keys should match those in $params
-     * @return void
      */
     public function bind(array $params, array $types): void;
 
@@ -191,21 +178,16 @@ interface StatementInterface
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
-     * @return string|int
      */
     public function lastInsertId(?string $table = null, ?string $column = null): string|int;
 
     /**
      * Returns prepared query string.
-     *
-     * @return string
      */
     public function queryString(): string;
 
     /**
      * Get the bound params.
-     *
-     * @return array
      */
     public function getBoundParams(): array;
 }

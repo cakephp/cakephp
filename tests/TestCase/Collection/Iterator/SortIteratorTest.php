@@ -40,16 +40,14 @@ class SortIteratorTest extends TestCase
     public function testSortNumbersIdentity(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
-        $identity = function ($a) {
-            return $a;
-        };
+        $identity = fn($a) => $a;
         $sorted = new SortIterator($items, $identity);
         $expected = range(5, 1);
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
 
         $sorted = new SortIterator($items, $identity, SORT_ASC);
         $expected = range(1, 5);
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
     }
 
     /**
@@ -58,16 +56,14 @@ class SortIteratorTest extends TestCase
     public function testSortNumbersCustom(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
-        $callback = function ($a) {
-            return $a * -1;
-        };
+        $callback = fn($a): int|float => $a * -1;
         $sorted = new SortIterator($items, $callback);
         $expected = range(1, 5);
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
 
         $sorted = new SortIterator($items, $callback, SORT_ASC);
         $expected = range(5, 1);
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
     }
 
     /**
@@ -81,9 +77,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 2, 'bar' => 'a'],
             ['foo' => 13, 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
-            return $a['foo'];
-        };
+        $callback = fn($a) => $a['foo'];
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
         $expected = [
             ['foo' => 13, 'bar' => 'a'],
@@ -91,7 +85,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 2, 'bar' => 'a'],
             ['foo' => 1, 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
 
         $sorted = new SortIterator($items, $callback, SORT_ASC, SORT_NUMERIC);
         $expected = [
@@ -100,7 +94,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 10, 'bar' => 'a'],
             ['foo' => 13, 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
     }
 
     /**
@@ -114,9 +108,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_2', 'bar' => 'a'],
             ['foo' => 'foo_13', 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
-            return $a['foo'];
-        };
+        $callback = fn($a) => $a['foo'];
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NATURAL);
         $expected = [
             ['foo' => 'foo_13', 'bar' => 'a'],
@@ -124,7 +116,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_2', 'bar' => 'a'],
             ['foo' => 'foo_1', 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
 
         $sorted = new SortIterator($items, $callback, SORT_ASC, SORT_NATURAL);
         $expected = [
@@ -133,8 +125,8 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_10', 'bar' => 'a'],
             ['foo' => 'foo_13', 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
-        $this->assertEquals($expected, $sorted->toList(), 'Iterator should rewind');
+        $this->assertSame($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList(), 'Iterator should rewind');
     }
 
     /**
@@ -155,7 +147,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_2', 'bar' => 'a'],
             ['foo' => 'foo_1', 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
 
         $sorted = new SortIterator($items, 'foo', SORT_ASC, SORT_NATURAL);
         $expected = [
@@ -164,8 +156,8 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_10', 'bar' => 'a'],
             ['foo' => 'foo_13', 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
-        $this->assertEquals($expected, $sorted->toList(), 'Iterator should rewind');
+        $this->assertSame($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList(), 'Iterator should rewind');
     }
 
     /**
@@ -186,7 +178,7 @@ class SortIteratorTest extends TestCase
             ['foo' => ['bar' => 10], 'bar' => 'a'],
             ['foo' => ['bar' => 12], 'bar' => 'a'],
         ];
-        $this->assertEquals($expected, $sorted->toList());
+        $this->assertSame($expected, $sorted->toList());
     }
 
     /**
@@ -200,9 +192,7 @@ class SortIteratorTest extends TestCase
             new DateTimeImmutable('2013-08-12'),
         ]);
 
-        $callback = function ($a) {
-            return $a->add(new DateInterval('P1Y'));
-        };
+        $callback = fn($a) => $a->add(new DateInterval('P1Y'));
         $sorted = new SortIterator($items, $callback);
         $expected = [
             new DateTime('2016-06-30'),

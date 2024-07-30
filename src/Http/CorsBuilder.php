@@ -33,27 +33,6 @@ use Psr\Http\Message\ResponseInterface;
 class CorsBuilder
 {
     /**
-     * The response object this builder is attached to.
-     *
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    protected ResponseInterface $_response;
-
-    /**
-     * The request's Origin header value
-     *
-     * @var string
-     */
-    protected string $_origin;
-
-    /**
-     * Whether the request was over SSL.
-     *
-     * @var bool
-     */
-    protected bool $_isSsl;
-
-    /**
      * The headers that have been queued so far.
      *
      * @var array<string, mixed>
@@ -63,15 +42,25 @@ class CorsBuilder
     /**
      * Constructor.
      *
-     * @param \Psr\Http\Message\ResponseInterface $response The response object to add headers onto.
-     * @param string $origin The request's Origin header.
-     * @param bool $isSsl Whether the request was over SSL.
+     * @param \Psr\Http\Message\ResponseInterface $_response The response object to add headers onto.
+     * @param string $_origin The request's Origin header.
+     * @param bool $_isSsl Whether the request was over SSL.
      */
-    public function __construct(ResponseInterface $response, string $origin, bool $isSsl = false)
+    public function __construct(
+        /**
+         * The response object this builder is attached to.
+         */
+        protected ResponseInterface $_response,
+        /**
+         * The request's Origin header value
+         */
+        protected string $_origin,
+        /**
+         * Whether the request was over SSL.
+         */
+        protected bool $_isSsl = false
+    )
     {
-        $this->_origin = $origin;
-        $this->_isSsl = $isSsl;
-        $this->_response = $response;
     }
 
     /**
@@ -107,13 +96,14 @@ class CorsBuilder
      * @param array<string>|string $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin(array|string $domains)
+    public function allowOrigin(array|string $domains): static
     {
         $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
             }
+
             $value = $domain['original'] === '*' ? '*' : $this->_origin;
             $this->_headers['Access-Control-Allow-Origin'] = $value;
             break;
@@ -137,12 +127,14 @@ class CorsBuilder
                 continue;
             }
 
-            $original = $preg = $domain;
+            $original = $domain;
+            $preg = $domain;
             if (!str_contains($domain, '://')) {
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }
+
             $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';
-            $result[] = compact('original', 'preg');
+            $result[] = ['original' => $original, 'preg' => $preg];
         }
 
         return $result;
@@ -154,7 +146,7 @@ class CorsBuilder
      * @param list<string> $methods The allowed HTTP methods
      * @return $this
      */
-    public function allowMethods(array $methods)
+    public function allowMethods(array $methods): static
     {
         $this->_headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
 
@@ -166,7 +158,7 @@ class CorsBuilder
      *
      * @return $this
      */
-    public function allowCredentials()
+    public function allowCredentials(): static
     {
         $this->_headers['Access-Control-Allow-Credentials'] = 'true';
 
@@ -179,7 +171,7 @@ class CorsBuilder
      * @param list<string> $headers The list of headers to accept in CORS requests.
      * @return $this
      */
-    public function allowHeaders(array $headers)
+    public function allowHeaders(array $headers): static
     {
         $this->_headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
 
@@ -192,7 +184,7 @@ class CorsBuilder
      * @param list<string> $headers The list of headers to expose CORS responses
      * @return $this
      */
-    public function exposeHeaders(array $headers)
+    public function exposeHeaders(array $headers): static
     {
         $this->_headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
 
@@ -205,7 +197,7 @@ class CorsBuilder
      * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
-    public function maxAge(string|int $age)
+    public function maxAge(string|int $age): static
     {
         $this->_headers['Access-Control-Max-Age'] = $age;
 

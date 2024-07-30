@@ -43,8 +43,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
 
     /**
      * The table using this registry.
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $_table;
 
@@ -69,7 +67,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     public function __construct(?Table $table = null)
     {
-        if ($table !== null) {
+        if ($table instanceof \Cake\ORM\Table) {
             $this->setTable($table);
         }
     }
@@ -78,7 +76,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Attaches a table instance to this registry.
      *
      * @param \Cake\ORM\Table $table The table this registry is attached to.
-     * @return void
      */
     public function setTable(Table $table): void
     {
@@ -121,7 +118,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the behavior is missing in.
-     * @return void
      * @throws \Cake\ORM\Exception\MissingBehaviorException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
@@ -155,6 +151,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         if ($enable) {
             $this->getEventManager()->on($instance);
         }
+
         $methods = $this->_getMethods($instance, $class, $alias);
         $this->_methodMap += $methods['methods'];
         $this->_finderMap += $methods['finders'];
@@ -191,6 +188,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                 );
                 throw new LogicException($error);
             }
+
             $finders[$finder] = [$alias, $methodName];
         }
 
@@ -205,10 +203,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                 );
                 throw new LogicException($error);
             }
+
             $methods[$method] = [$alias, $methodName];
         }
 
-        return compact('methods', 'finders');
+        return ['methods' => $methods, 'finders' => $finders];
     }
 
     /**
@@ -228,6 +227,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         foreach ($methods as $method) {
             unset($this->_methodMap[$method]);
         }
+
         $finders = $instance->implementedFinders();
         foreach ($finders as $finder) {
             unset($this->_finderMap[$finder]);
@@ -243,7 +243,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * with the chosen name.
      *
      * @param string $method The method to check for.
-     * @return bool
      */
     public function hasMethod(string $method): bool
     {
@@ -259,7 +258,6 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * the chosen name.
      *
      * @param string $method The method to check for.
-     * @return bool
      */
     public function hasFinder(string $method): bool
     {

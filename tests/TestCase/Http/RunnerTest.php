@@ -55,18 +55,14 @@ class RunnerTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->queue = new MiddlewareQueue();
 
-        $this->ok = function ($request, $handler) {
-            return $handler->handle($request->withAttribute('ok', true));
-        };
-        $this->pass = function ($request, $handler) {
-            return $handler->handle($request->withAttribute('pass', true));
-        };
+        $this->ok = fn($request, $handler) => $handler->handle($request->withAttribute('ok', true));
+        $this->pass = fn($request, $handler) => $handler->handle($request->withAttribute('pass', true));
         $this->fail = function ($request, $handler): void {
             throw new RuntimeException('A bad thing');
         };
@@ -114,7 +110,7 @@ class RunnerTest extends TestCase
         $this->assertInstanceof(Response::class, $result);
 
         $expected = ['one', 'two', 'three'];
-        $this->assertEquals($expected, $log);
+        $this->assertSame($expected, $log);
     }
 
     /**

@@ -31,9 +31,10 @@ foreach ($exceptions as $level => $exc):
         <div class="stack-exception-header">
             <span class="stack-exception-caused">Caused by</span>
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
-            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
+            <span class="stack-exception-type"><?= h($exc::class); ?></span>
         </div>
-    <?php endif; ?>
+    <?php endif;
+     ?>
 
     <div class="stack-frame">
         <?php
@@ -48,7 +49,8 @@ foreach ($exceptions as $level => $exc):
         </span>
         <?php if ($line !== null): ?>
             <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
-        <?php endif; ?>
+        <?php endif;
+         ?>
 
         <table class="code-excerpt" cellspacing="0" cellpadding="0">
         <?php foreach ($excerpt as $l => $line): ?>
@@ -56,26 +58,23 @@ foreach ($exceptions as $level => $exc):
                 <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
                 <td class="excerpt-line"><?= $line ?></td>
             </tr>
-        <?php endforeach; ?>
+        <?php endforeach;
+         ?>
         </table>
     </div>
 
     <ul class="stack-frames">
     <?php
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];
             $excerpt = Debugger::excerpt($stack['file'], $line, 4);
         endif;
 
-        if (isset($stack['file'])):
-            $file = $stack['file'];
-        else:
-            $file = '[internal function]';
-        endif;
+        $file = $stack['file'] ?? '[internal function]';
 
         if (isset($stack['function'])):
             if (!empty($stack['args'])):
@@ -87,9 +86,9 @@ foreach ($exceptions as $level => $exc):
             endif;
         endif;
 
-        $frameId = "{$level}-{$i}";
+        $frameId = sprintf('%s-%s', $level, $i);
         $activeFrame = $i == 0;
-        $vendorFrame = isset($stack['file']) && str_starts_with($stack['file'], ROOT . DS . 'vendor') ? 'vendor-frame' : '';
+        $vendorFrame = isset($stack['file']) && str_starts_with((string) $stack['file'], ROOT . DS . 'vendor') ? 'vendor-frame' : '';
     ?>
         <li id="stack-frame-<?= $frameId ?>" class="stack-frame <?= $vendorFrame ?>">
             <div class="stack-frame-header">
@@ -116,12 +115,14 @@ foreach ($exceptions as $level => $exc):
                             <?= h($stack['class'] . $stack['type'] . $stack['function']) ?>
                         <?php elseif (isset($stack['function'])): ?>
                             <?= h($stack['function']) ?>
-                        <?php endif; ?>
+                        <?php endif;
+     ?>
                     </span>
 
                     <?php if ($line !== null): ?>
                         <?= $this->Html->link('(edit)', Debugger::editorUrl($file, $line), ['class' => 'stack-frame-edit']); ?>
-                    <?php endif; ?>
+                    <?php endif;
+     ?>
                 </div>
             </div>
             <div
@@ -136,17 +137,20 @@ foreach ($exceptions as $level => $exc):
                         <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
                         <td class="excerpt-line"><?= $line ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach;
+     ?>
                 </table>
 
                 <a href="#" class="stack-frame-args" data-target="stack-args-<?= $frameId ?>">Toggle Arguments</a>
                 <div id="stack-args-<?= $frameId ?>" class="stack-args" style="display: none;">
                     <?php foreach ($params as $param): ?>
                         <div class="cake-debug"><?= $param ?></div>
-                    <?php endforeach; ?>
+                    <?php endforeach;
+     ?>
                 </div>
             </div>
         </li>
-    <?php endforeach; ?>
+<?php endforeach;
+         ?>
     </ul>
 <?php endforeach; ?>

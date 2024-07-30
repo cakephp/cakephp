@@ -38,6 +38,7 @@ class InvalidCsrfTokenException extends HttpException
         if (!$message) {
             $message = 'Invalid CSRF Token';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

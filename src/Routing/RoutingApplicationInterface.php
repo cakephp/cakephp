@@ -27,7 +27,6 @@ interface RoutingApplicationInterface
      * Use the provided RouteBuilder to define an application's routing.
      *
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
-     * @return void
      */
     public function routes(RouteBuilder $routes): void;
 }

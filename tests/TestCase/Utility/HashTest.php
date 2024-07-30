@@ -31,8 +31,6 @@ class HashTest extends TestCase
 {
     /**
      * Data provider
-     *
-     * @return array
      */
     public static function articleData(): array
     {
@@ -270,18 +268,14 @@ class HashTest extends TestCase
      *
      * @return array
      */
-    public static function articleDataSets(): array
+    public static function articleDataSets(): \Iterator
     {
-        return [
-            [static::articleData()],
-            [static::articleDataObject()],
-        ];
+        yield [static::articleData()];
+        yield [static::articleDataObject()];
     }
 
     /**
      * Data provider
-     *
-     * @return array
      */
     public static function userData(): array
     {
@@ -907,7 +901,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractSingleValueWithFilteringByAnotherField($data): void
+    public function testExtractSingleValueWithFilteringByAnotherField(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{*}.Article[id=1].title');
         $this->assertSame([0 => 'First Article'], $result);
@@ -922,7 +916,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractBasic($data): void
+    public function testExtractBasic(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '');
         $this->assertSame($data, $result);
@@ -943,7 +937,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractNumericKey($data): void
+    public function testExtractNumericKey(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article.title');
         $expected = [
@@ -1076,7 +1070,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractStringKey($data): void
+    public function testExtractStringKey(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.{s}.user');
         $expected = [
@@ -1142,7 +1136,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributePresence($data): void
+    public function testExtractAttributePresence(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[published]');
         $expected = [$data[1]['Article']];
@@ -1159,7 +1153,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeEquality($data): void
+    public function testExtractAttributeEquality(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[id=3]');
         $expected = [$data[2]['Article']];
@@ -1272,7 +1266,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeComparison($data): void
+    public function testExtractAttributeComparison(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
         $expected = [$data[0]['Comment'][1]];
@@ -1301,7 +1295,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeMultiple($data): void
+    public function testExtractAttributeMultiple(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
         $this->assertEmpty($result);
@@ -1318,7 +1312,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributePattern($data): void
+    public function testExtractAttributePattern(\ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');
         $expected = [$data[0]['Article']];
@@ -1996,7 +1990,7 @@ class HashTest extends TestCase
             6 => ['arrayish' => new ArrayObject(['val']), 'Item' => ['id' => 6, 'title' => 'sixth']],
         ];
         $result = Hash::insert($data, '{n}.{s}[id=4].new', 'value');
-        $this->assertEquals('value', $result[4]['Item']['new']);
+        $this->assertSame('value', $result[4]['Item']['new']);
     }
 
     /**
@@ -2134,14 +2128,14 @@ class HashTest extends TestCase
         $data = static::articleData();
 
         $result = Hash::remove($data, '{n}.Article.title');
-        $this->assertFalse(isset($result[0]['Article']['title']));
-        $this->assertFalse(isset($result[1]['Article']['title']));
+        $this->assertArrayNotHasKey('title', $result[0]['Article']);
+        $this->assertArrayNotHasKey('title', $result[1]['Article']);
 
         $result = Hash::remove($data, '{n}.Article.{s}');
-        $this->assertFalse(isset($result[0]['Article']['id']));
-        $this->assertFalse(isset($result[0]['Article']['user_id']));
-        $this->assertFalse(isset($result[0]['Article']['title']));
-        $this->assertFalse(isset($result[0]['Article']['body']));
+        $this->assertArrayNotHasKey('id', $result[0]['Article']);
+        $this->assertArrayNotHasKey('user_id', $result[0]['Article']);
+        $this->assertArrayNotHasKey('title', $result[0]['Article']);
+        $this->assertArrayNotHasKey('body', $result[0]['Article']);
 
         $data = [
             0 => ['Item' => ['id' => 1, 'title' => 'first']],
@@ -2255,14 +2249,14 @@ class HashTest extends TestCase
             0 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
             1 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
             2 => ['user' => 'gwoo', 'name' => 'The Gwoo']];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Hash::combine($a, null, '{n}.User.Data.name');
         $expected = [
             0 => 'Mariano Iglesias',
             1 => 'Larry E. Masters',
             2 => 'The Gwoo'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2320,7 +2314,7 @@ class HashTest extends TestCase
                 0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
         $expected = [
@@ -2344,7 +2338,7 @@ class HashTest extends TestCase
                 0 => 'Larry E. Masters',
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
         $expected = [
@@ -2368,7 +2362,7 @@ class HashTest extends TestCase
                 0 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
         $expected = [
@@ -2434,7 +2428,7 @@ class HashTest extends TestCase
                 0 => 'phpnut: Larry E. Masters',
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Hash::combine(
             $a,
@@ -2573,9 +2567,8 @@ class HashTest extends TestCase
      * testing method for map callbacks.
      *
      * @param mixed $value Value
-     * @return mixed
      */
-    public function mapCallback($value)
+    public function mapCallback(mixed $value): int|float
     {
         return $value * 2;
     }
@@ -2585,9 +2578,8 @@ class HashTest extends TestCase
      *
      * @param mixed $one First param
      * @param mixed $two Second param
-     * @return mixed
      */
-    public function reduceCallback($one, $two)
+    public function reduceCallback(mixed $one, mixed $two): float|int|array
     {
         return $one + $two;
     }
@@ -3001,6 +2993,7 @@ class HashTest extends TestCase
                 unset($row['children']);
             }
         }
+
         $this->assertSame($input, $result);
     }
 

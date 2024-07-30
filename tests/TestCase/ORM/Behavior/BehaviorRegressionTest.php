@@ -65,6 +65,7 @@ class BehaviorRegressionTest extends TestCase
         foreach ($all as $node) {
             $results[] = $node->translation('dan')->name;
         }
-        $this->assertEquals(['Elektroniker', 'Alien Tingerne'], $results);
+
+        $this->assertSame(['Elektroniker', 'Alien Tingerne'], $results);
     }
 }

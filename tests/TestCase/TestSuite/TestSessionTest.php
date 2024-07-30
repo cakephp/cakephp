@@ -31,7 +31,7 @@ class TestSessionTest extends TestCase
      */
     protected $session;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

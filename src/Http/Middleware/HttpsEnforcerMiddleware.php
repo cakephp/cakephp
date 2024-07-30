@@ -94,7 +94,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         ) {
             $response = $handler->handle($request);
             if ($this->config['hsts']) {
-                $response = $this->addHsts($response);
+                return $this->addHsts($response);
             }
 
             return $response;
@@ -123,7 +123,6 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      * Adds Strict-Transport-Security header to response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response Response
-     * @return \Psr\Http\Message\ResponseInterface
      */
     protected function addHsts(ResponseInterface $response): ResponseInterface
     {
@@ -136,6 +135,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         if ($config['includeSubDomains'] ?? false) {
             $value .= '; includeSubDomains';
         }
+
         if ($config['preload'] ?? false) {
             $value .= '; preload';
         }

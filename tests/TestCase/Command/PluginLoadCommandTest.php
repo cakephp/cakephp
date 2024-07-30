@@ -40,7 +40,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -53,7 +53,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -89,9 +89,9 @@ class PluginLoadCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $config = include $this->configFile;
-        $this->assertTrue(isset($config['TestPlugin']));
-        $this->assertTrue(isset($config['TestPluginTwo']));
-        $this->assertTrue(isset($config['Company/TestPluginThree']));
+        $this->assertArrayHasKey('TestPlugin', $config);
+        $this->assertArrayHasKey('TestPluginTwo', $config);
+        $this->assertArrayHasKey('Company/TestPluginThree', $config);
         $this->assertSame(['onlyDebug' => true, 'onlyCli' => true], $config['Company/TestPluginThree']);
         $this->assertSame(
             ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
@@ -109,7 +109,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertErrorContains('Plugin `NopeNotThere` could not be found');
 
         $config = include $this->configFile;
-        $this->assertFalse(isset($config['NopeNotThere']));
+        $this->assertArrayNotHasKey('NopeNotThere', $config);
     }
 
     /**
@@ -120,7 +120,7 @@ class PluginLoadCommandTest extends TestCase
         $this->exec('plugin load NopeNotThere --optional');
 
         $config = include $this->configFile;
-        $this->assertTrue(isset($config['NopeNotThere']));
+        $this->assertArrayHasKey('NopeNotThere', $config);
         $this->assertSame(['optional' => true], $config['NopeNotThere']);
     }
 }

@@ -81,7 +81,7 @@ class SessionTest extends TestCase
         ];
 
         Session::create($config);
-        $this->assertEquals(86400, ini_get('session.gc_maxlifetime'), 'ini value unchanged when timeout disabled');
+        $this->assertSame(86400, ini_get('session.gc_maxlifetime'), 'ini value unchanged when timeout disabled');
     }
 
     /**
@@ -101,7 +101,7 @@ class SessionTest extends TestCase
         ];
 
         Session::create($config);
-        $this->assertEquals(30 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
+        $this->assertSame(30 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
     }
 
     /**
@@ -144,6 +144,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
         $session->write('testing', '1,2,3');
+
         $result = $session->read('testing');
         $this->assertSame('1,2,3', $result);
 
@@ -152,14 +153,14 @@ class SessionTest extends TestCase
         $this->assertSame('one', $result);
 
         $result = $session->read('testing');
-        $this->assertEquals(['1' => 'one', '2' => 'two', '3' => 'three'], $result);
+        $this->assertSame(['1' => 'one', '2' => 'two', '3' => 'three'], $result);
 
         $result = $session->read();
         $this->assertArrayHasKey('testing', $result);
 
         $session->write('This.is.a.deep.array.my.friend', 'value');
         $result = $session->read('This.is.a.deep.array');
-        $this->assertEquals(['my' => ['friend' => 'value']], $result);
+        $this->assertSame(['my' => ['friend' => 'value']], $result);
     }
 
     /**
@@ -197,6 +198,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
         $session->write('testing', '1,2,3');
+
         $result = $session->readOrFail('testing');
         $this->assertSame('1,2,3', $result);
 
@@ -227,7 +229,7 @@ class SessionTest extends TestCase
         $this->assertSame('empty', $session->read(''));
 
         $session->write('Simple', ['values']);
-        $this->assertEquals(['values'], $session->read('Simple'));
+        $this->assertSame(['values'], $session->read('Simple'));
     }
 
     /**
@@ -243,7 +245,7 @@ class SessionTest extends TestCase
             'null' => null,
         ]);
         $this->assertSame(1, $session->read('one'));
-        $this->assertEquals(['something'], $session->read('three'));
+        $this->assertSame(['something'], $session->read('three'));
         $this->assertNull($session->read('null'));
     }
 
@@ -257,7 +259,7 @@ class SessionTest extends TestCase
         $this->assertSame('value', $session->read('Some.string'));
 
         $session->write('Some.string.array', ['values']);
-        $this->assertEquals(['values'], $session->read('Some.string.array'));
+        $this->assertSame(['values'], $session->read('Some.string.array'));
     }
 
     /**
@@ -280,7 +282,7 @@ class SessionTest extends TestCase
 
         $value = $session->consume('Some.array');
         $expected = ['key1' => 'value1', 'key2' => 'value2'];
-        $this->assertEquals($expected, $value);
+        $this->assertSame($expected, $value);
         $this->assertFalse($session->check('Some.array'));
     }
 
@@ -294,6 +296,7 @@ class SessionTest extends TestCase
     {
         $session = new Session();
         $session->start();
+
         $result = $session->id();
         $this->assertNotEmpty($result);
         $this->assertSame(session_id(), $result);
@@ -485,9 +488,9 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestApp\Http\Session\TestAppLibSession', $session->engine());
+        $this->assertInstanceOf(\TestApp\Http\Session\TestAppLibSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
-        $this->assertEquals(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
+        $this->assertSame(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
     }
 
     /**
@@ -509,7 +512,7 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestPlugin\Http\Session\TestPluginSession', $session->engine());
+        $this->assertInstanceOf(\TestPlugin\Http\Session\TestPluginSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
     }
 
@@ -531,7 +534,7 @@ class SessionTest extends TestCase
         $this->assertSame($engine, $session->engine());
     }
 
-    public function testEngineIsNull()
+    public function testEngineIsNull(): void
     {
         $session = new Session();
         $this->assertNull($session->engine());

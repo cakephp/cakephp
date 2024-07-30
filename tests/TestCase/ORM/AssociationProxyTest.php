@@ -43,7 +43,7 @@ class AssociationProxyTest extends TestCase
         $articles = $this->getTableLocator()->get('articles');
         $articles->hasMany('comments');
         $articles->belongsTo('authors');
-        $this->assertTrue(isset($articles->authors));
+        $this->assertTrue(property_exists($articles, 'authors') && $articles->authors !== null);
         $this->assertTrue(isset($articles->comments));
         $this->assertFalse(isset($articles->posts));
         $this->assertSame($articles->getAssociation('authors'), $articles->authors);
@@ -164,7 +164,7 @@ class AssociationProxyTest extends TestCase
     public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(\Cake\ORM\Table::class)
             ->shouldAllowMockingMethod('crazy');
         $articles->belongsTo('authors', [
             'targetTable' => $mock,

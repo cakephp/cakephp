@@ -36,13 +36,14 @@ class BasicWidgetTest extends TestCase
      */
     protected $templates;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
     }
 

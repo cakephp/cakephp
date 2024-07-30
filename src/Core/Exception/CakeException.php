@@ -25,22 +25,16 @@ class CakeException extends RuntimeException
     /**
      * Array of attributes that are passed in from the constructor, and
      * made available in the view when a development error is displayed.
-     *
-     * @var array
      */
     protected array $_attributes = [];
 
     /**
      * Template string that has attributes sprintf()'ed into it.
-     *
-     * @var string
      */
     protected string $_messageTemplate = '';
 
     /**
      * Default exception code
-     *
-     * @var int
      */
     protected int $_defaultCode = 0;
 
@@ -61,13 +55,12 @@ class CakeException extends RuntimeException
             $this->_attributes = $message;
             $message = vsprintf($this->_messageTemplate, $message);
         }
+
         parent::__construct($message, $code ?? $this->_defaultCode, $previous);
     }
 
     /**
      * Get the passed in attributes
-     *
-     * @return array
      */
     public function getAttributes(): array
     {

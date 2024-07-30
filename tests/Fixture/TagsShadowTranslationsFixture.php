@@ -23,8 +23,6 @@ class TagsShadowTranslationsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['locale' => 'eng', 'id' => 1, 'name' => 'tag1 in eng'],

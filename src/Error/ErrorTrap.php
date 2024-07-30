@@ -83,8 +83,6 @@ class ErrorTrap
      *
      * This method will also set the global error level
      * via error_reporting().
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -117,6 +115,7 @@ class ErrorTrap
         if (!(error_reporting() & $code)) {
             return false;
         }
+
         if ($code === E_USER_ERROR || $code === E_ERROR || $code === E_PARSE) {
             throw new FatalErrorException($description, $code, $file, $line);
         }
@@ -145,10 +144,11 @@ class ErrorTrap
             if ($event->isStopped()) {
                 return true;
             }
+
             $renderer->write($event->getResult() ?: $renderer->render($error, $debug));
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Fatal errors always log.
-            $this->logger()->logException($e);
+            $this->logger()->logException($exception);
 
             return false;
         }
@@ -160,20 +160,18 @@ class ErrorTrap
      * Logging helper method.
      *
      * @param \Cake\Error\PhpError $error The error object to log.
-     * @return void
      */
     protected function logError(PhpError $error): void
     {
         if (!$this->_config['log']) {
             return;
         }
+
         $this->logger()->logError($error, Router::getRequest(), $this->_config['trace']);
     }
 
     /**
      * Get an instance of the renderer.
-     *
-     * @return \Cake\Error\ErrorRendererInterface
      */
     public function renderer(): ErrorRendererInterface
     {
@@ -185,8 +183,6 @@ class ErrorTrap
 
     /**
      * Get an instance of the logger.
-     *
-     * @return \Cake\Error\ErrorLoggerInterface
      */
     public function logger(): ErrorLoggerInterface
     {

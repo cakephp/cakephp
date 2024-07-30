@@ -34,32 +34,28 @@ use Psr\Http\Message\ResponseInterface;
 class MiddlewareDispatcher
 {
     /**
-     * The application that is being dispatched.
-     *
-     * @var \Cake\Core\HttpApplicationInterface
-     */
-    protected HttpApplicationInterface $app;
-
-    /**
      * Constructor
      *
      * @param \Cake\Core\HttpApplicationInterface $app The test case to run.
      */
-    public function __construct(HttpApplicationInterface $app)
+    public function __construct(
+        /**
+         * The application that is being dispatched.
+         */
+        protected HttpApplicationInterface $app
+    )
     {
-        $this->app = $app;
     }
 
     /**
      * Resolve the provided URL into a string.
      *
      * @param array|string $url The URL array/string to resolve.
-     * @return string
      */
     public function resolveUrl(array|string $url): string
     {
         // If we need to resolve a Route URL but there are no routes, load routes.
-        if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
+        if (is_array($url) && Router::getRouteCollection()->routes() === []) {
             return $this->resolveRoute($url);
         }
 
@@ -70,7 +66,6 @@ class MiddlewareDispatcher
      * Convert a URL array into a string URL via routing.
      *
      * @param array $url The url to resolve
-     * @return string
      */
     protected function resolveRoute(array $url): string
     {
@@ -80,11 +75,13 @@ class MiddlewareDispatcher
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
         }
+
         $builder = Router::createRouteBuilder('/');
 
         if ($this->app instanceof RoutingApplicationInterface) {
             $this->app->routes($builder);
         }
+
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
@@ -99,7 +96,6 @@ class MiddlewareDispatcher
      * Create a PSR7 request from the request spec.
      *
      * @param array<string, mixed> $spec The request spec.
-     * @return \Cake\Http\ServerRequest
      */
     protected function _createRequest(array $spec): ServerRequest
     {
@@ -107,13 +103,15 @@ class MiddlewareDispatcher
             $spec['post'] = [];
             $spec['environment']['CAKEPHP_INPUT'] = $spec['input'];
         }
+
         $environment = array_merge(
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
             $spec['environment']
         );
-        if (str_contains($environment['PHP_SELF'], 'phpunit')) {
+        if (str_contains((string) $environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
         }
+
         $request = ServerRequestFactory::fromGlobals(
             $environment,
             $spec['query'],

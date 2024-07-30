@@ -31,11 +31,7 @@ class TestAppCacheEngine extends CacheEngine
      */
     public function set($key, $value, $ttl = null): bool
     {
-        if ($key === 'fail') {
-            return false;
-        }
-
-        return true;
+        return $key !== 'fail';
     }
 
     /**
@@ -84,9 +80,8 @@ class TestAppCacheEngine extends CacheEngine
      * Return duration method result.
      *
      * @param mixed $ttl
-     * @return int
      */
-    public function getDuration($ttl): int
+    public function getDuration(\DateInterval|int|null $ttl): int
     {
         return $this->duration($ttl);
     }

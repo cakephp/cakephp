@@ -60,15 +60,11 @@ class JsonView extends SerializedView
 {
     /**
      * JSON layouts are located in the JSON subdirectory of `Layouts/`
-     *
-     * @var string
      */
     protected string $layoutPath = 'json';
 
     /**
      * JSON views are located in the 'json' subdirectory for controllers' views.
-     *
-     * @var string
      */
     protected string $subDir = 'json';
 
@@ -121,6 +117,7 @@ class JsonView extends SerializedView
             if ($jsonp === true) {
                 $jsonp = 'callback';
             }
+
             if ($this->request->getQuery($jsonp)) {
                 $return = sprintf('%s(%s)', h($this->request->getQuery($jsonp)), $return);
                 $this->response = $this->response->withType('js');
@@ -142,6 +139,7 @@ class JsonView extends SerializedView
         if ($jsonOptions === false) {
             $jsonOptions = 0;
         }
+
         $jsonOptions |= JSON_THROW_ON_ERROR;
 
         if (Configure::read('debug')) {
@@ -165,6 +163,7 @@ class JsonView extends SerializedView
                 if (is_numeric($alias)) {
                     $alias = $key;
                 }
+
                 if (array_key_exists($key, $this->viewVars)) {
                     $data[$alias] = $this->viewVars[$key];
                 }

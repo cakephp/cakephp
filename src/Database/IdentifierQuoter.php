@@ -49,7 +49,6 @@ class IdentifierQuoter
      * be used safely in queries without the risk of using reserved words
      *
      * @param string $identifier The identifier to quote.
-     * @return string
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -106,7 +105,6 @@ class IdentifierQuoter
      * quotes them
      *
      * @param \Cake\Database\Query $query The query to have its identifiers quoted
-     * @return \Cake\Database\Query
      */
     public function quote(Query $query): Query
     {
@@ -135,7 +133,6 @@ class IdentifierQuoter
      * Quotes identifiers inside expression objects
      *
      * @param \Cake\Database\ExpressionInterface $expression The expression object to walk and quote.
-     * @return void
      */
     public function quoteExpression(ExpressionInterface $expression): void
     {
@@ -152,7 +149,6 @@ class IdentifierQuoter
      *
      * @param \Cake\Database\Query $query The query to quote.
      * @param array $parts Query clauses.
-     * @return void
      */
     protected function _quoteParts(Query $query, array $parts): void
     {
@@ -180,7 +176,7 @@ class IdentifierQuoter
     {
         $result = [];
         foreach ($part as $alias => $value) {
-            $value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+            $value = is_string($value) ? $this->quoteIdentifier($value) : $value;
             $alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
             $result[$alias] = $value;
         }
@@ -219,7 +215,6 @@ class IdentifierQuoter
      * Quotes all identifiers in each of the clauses of a SELECT query
      *
      * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to quote.
-     * @return void
      */
     protected function _quoteSelect(SelectQuery $query): void
     {
@@ -236,7 +231,6 @@ class IdentifierQuoter
      * Quotes all identifiers in each of the clauses of a DELETE query
      *
      * @param \Cake\Database\Query\DeleteQuery $query The query to quote.
-     * @return void
      */
     protected function _quoteDelete(DeleteQuery $query): void
     {
@@ -253,7 +247,6 @@ class IdentifierQuoter
      * Quotes the table name and columns for an insert query
      *
      * @param \Cake\Database\Query\InsertQuery $query The insert query to quote.
-     * @return void
      */
     protected function _quoteInsert(InsertQuery $query): void
     {
@@ -261,6 +254,7 @@ class IdentifierQuoter
         if (!isset($insert[0]) || !isset($insert[1])) {
             return;
         }
+
         [$table, $columns] = $insert;
         $table = $this->quoteIdentifier($table);
         foreach ($columns as &$column) {
@@ -268,6 +262,7 @@ class IdentifierQuoter
                 $column = $this->quoteIdentifier((string)$column);
             }
         }
+
         $query->insert($columns)->into($table);
     }
 
@@ -275,7 +270,6 @@ class IdentifierQuoter
      * Quotes the table name for an update query
      *
      * @param \Cake\Database\Query\UpdateQuery $query The update query to quote.
-     * @return void
      */
     protected function _quoteUpdate(UpdateQuery $query): void
     {
@@ -290,7 +284,6 @@ class IdentifierQuoter
      * Quotes identifiers in expression objects implementing the field interface
      *
      * @param \Cake\Database\Expression\FieldInterface $expression The expression to quote.
-     * @return void
      */
     protected function _quoteComparison(FieldInterface $expression): void
     {
@@ -302,6 +295,7 @@ class IdentifierQuoter
             foreach ($field as $f) {
                 $quoted[] = $this->quoteIdentifier($f);
             }
+
             $expression->setField($quoted);
         } else {
             $this->quoteExpression($field);
@@ -315,7 +309,6 @@ class IdentifierQuoter
      * and will not have identifiers quoted.
      *
      * @param \Cake\Database\Expression\OrderByExpression $expression The expression to quote.
-     * @return void
      */
     protected function _quoteOrderBy(OrderByExpression $expression): void
     {
@@ -325,6 +318,7 @@ class IdentifierQuoter
 
                 return $part;
             }
+
             if (is_string($part) && !str_contains($part, ' ')) {
                 return $this->quoteIdentifier($part);
             }
@@ -337,7 +331,6 @@ class IdentifierQuoter
      * Quotes identifiers in "order by" expression objects
      *
      * @param \Cake\Database\Expression\IdentifierExpression $expression The identifiers to quote.
-     * @return void
      */
     protected function _quoteIdentifierExpression(IdentifierExpression $expression): void
     {

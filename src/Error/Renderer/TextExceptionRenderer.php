@@ -28,24 +28,16 @@ use Throwable;
 class TextExceptionRenderer implements ExceptionRendererInterface
 {
     /**
-     * @var \Throwable
-     */
-    protected Throwable $error;
-
-    /**
      * Constructor.
      *
      * @param \Throwable $error The error to render.
      */
-    public function __construct(Throwable $error)
+    public function __construct(protected Throwable $error)
     {
-        $this->error = $error;
     }
 
     /**
      * Render an exception into a plain text message.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|string
      */
     public function render(): ResponseInterface|string
     {
@@ -63,7 +55,6 @@ class TextExceptionRenderer implements ExceptionRendererInterface
      * Write output to stdout.
      *
      * @param \Psr\Http\Message\ResponseInterface|string $output The output to print.
-     * @return void
      */
     public function write(ResponseInterface|string $output): void
     {

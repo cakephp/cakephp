@@ -28,5 +28,6 @@ $this->start('subheading');
 Datasource class <em><?= h($pluginDot . $class) ?></em> could not be found.
     <?php if (isset($message)):  ?>
         <?= h($message); ?>
-    <?php endif; ?>
+    <?php endif;
+ ?>
 <?php $this->end() ?>

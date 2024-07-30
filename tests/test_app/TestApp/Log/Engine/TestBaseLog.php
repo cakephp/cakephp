@@ -22,8 +22,6 @@ class TestBaseLog extends BaseLog
      * Logs with an arbitrary level.
      *
      * @param mixed $level
-     * @param \Stringable|string $message
-     * @param array $context
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {

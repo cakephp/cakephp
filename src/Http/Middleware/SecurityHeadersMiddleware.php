@@ -110,7 +110,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      * @return $this
      */
-    public function noSniff()
+    public function noSniff(): static
     {
         $this->headers['x-content-type-options'] = self::NOSNIFF;
 
@@ -125,7 +125,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @link https://msdn.microsoft.com/en-us/library/jj542450(v=vs.85).aspx
      * @return $this
      */
-    public function noOpen()
+    public function noOpen(): static
     {
         $this->headers['x-download-options'] = self::NOOPEN;
 
@@ -140,7 +140,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy(string $policy = self::SAME_ORIGIN)
+    public function setReferrerPolicy(string $policy = self::SAME_ORIGIN): static
     {
         $available = [
             self::NO_REFERRER,
@@ -167,7 +167,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param string|null $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions(string $option = self::SAMEORIGIN, ?string $url = null)
+    public function setXFrameOptions(string $option = self::SAMEORIGIN, ?string $url = null): static
     {
         $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
@@ -175,6 +175,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             if (!$url) {
                 throw new InvalidArgumentException('The 2nd arg $url can not be empty when `allow-from` is used');
             }
+
             $option .= ' ' . $url;
         }
 
@@ -192,7 +193,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
-    public function setXssProtection(string $mode = self::XSS_BLOCK)
+    public function setXssProtection(string $mode = self::XSS_BLOCK): static
     {
         if ($mode === self::XSS_BLOCK) {
             $mode = self::XSS_ENABLED_BLOCK;
@@ -212,7 +213,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy(string $policy = self::ALL)
+    public function setCrossDomainPolicy(string $policy = self::ALL): static
     {
         $this->checkValues($policy, [
             self::ALL,
@@ -232,12 +233,11 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value Value to check
      * @param list<string> $allowed List of allowed values
-     * @return void
      */
     protected function checkValues(string $value, array $allowed): void
     {
         if (!in_array($value, $allowed, true)) {
-            array_walk($allowed, fn (&$x) => $x = "`$x`");
+            array_walk($allowed, fn (&$x): string => $x = sprintf('`%s`', $x));
             throw new InvalidArgumentException(sprintf(
                 'Invalid arg `%s`, use one of these: %s.',
                 $value,

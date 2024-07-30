@@ -42,29 +42,21 @@ trait ConsoleIntegrationTestTrait
 
     /**
      * Last exit code
-     *
-     * @var int|null
      */
     protected ?int $_exitCode = null;
 
     /**
      * Console output stub
-     *
-     * @var \Cake\Console\TestSuite\StubConsoleOutput|null
      */
     protected ?StubConsoleOutput $_out = null;
 
     /**
      * Console error output stub
-     *
-     * @var \Cake\Console\TestSuite\StubConsoleOutput|null
      */
     protected ?StubConsoleOutput $_err = null;
 
     /**
      * Console input mock
-     *
-     * @var \Cake\Console\TestSuite\StubConsoleInput|null
      */
     protected ?StubConsoleInput $_in = null;
 
@@ -75,7 +67,6 @@ trait ConsoleIntegrationTestTrait
      * @param array $input Input values to pass to an interactive shell
      * @throws \Cake\Console\TestSuite\MissingConsoleInputException
      * @throws \InvalidArgumentException
-     * @return void
      */
     public function exec(string $command, array $input = []): void
     {
@@ -91,16 +82,17 @@ trait ConsoleIntegrationTestTrait
             );
         }
 
-        $args = $this->commandStringToArgs("cake $command");
+        $args = $this->commandStringToArgs('cake ' . $command);
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (MissingConsoleInputException $e) {
             $messages = $this->_out->messages();
-            if (count($messages)) {
+            if ($messages !== []) {
                 $e->setQuestion($messages[count($messages) - 1]);
             }
+
             throw $e;
         } catch (StopException $exception) {
             $this->_exitCode = $exception->getCode();
@@ -110,10 +102,9 @@ trait ConsoleIntegrationTestTrait
     /**
      * Cleans state to get ready for the next test
      *
-     * @after
-     * @return void
      * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
+    #[\PHPUnit\Framework\Attributes\After]
     public function cleanupConsoleTrait(): void
     {
         $this->_exitCode = null;
@@ -127,7 +118,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param int $expected Expected exit code
      * @param string $message Failure message
-     * @return void
      */
     public function assertExitCode(int $expected, string $message = ''): void
     {
@@ -138,7 +128,6 @@ trait ConsoleIntegrationTestTrait
      * Asserts shell exited with the Command::CODE_SUCCESS
      *
      * @param string $message Failure message
-     * @return void
      */
     public function assertExitSuccess(string $message = ''): void
     {
@@ -149,7 +138,6 @@ trait ConsoleIntegrationTestTrait
      * Asserts shell exited with Command::CODE_ERROR
      *
      * @param string $message Failure message
-     * @return void
      */
     public function assertExitError(string $message = ''): void
     {
@@ -160,7 +148,6 @@ trait ConsoleIntegrationTestTrait
      * Asserts that `stdout` is empty
      *
      * @param string $message The message to output when the assertion fails.
-     * @return void
      */
     public function assertOutputEmpty(string $message = ''): void
     {
@@ -172,7 +159,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $expected Expected output
      * @param string $message Failure message
-     * @return void
      */
     public function assertOutputContains(string $expected, string $message = ''): void
     {
@@ -184,7 +170,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $expected Expected output
      * @param string $message Failure message
-     * @return void
      */
     public function assertOutputNotContains(string $expected, string $message = ''): void
     {
@@ -196,7 +181,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $pattern Expected pattern
      * @param string $message Failure message
-     * @return void
      */
     public function assertOutputRegExp(string $pattern, string $message = ''): void
     {
@@ -208,7 +192,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param array $row Row of cells to ensure exist in the output.
      * @param string $message Failure message.
-     * @return void
      */
     protected function assertOutputContainsRow(array $row, string $message = ''): void
     {
@@ -220,7 +203,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $expected Expected output
      * @param string $message Failure message
-     * @return void
      */
     public function assertErrorContains(string $expected, string $message = ''): void
     {
@@ -232,7 +214,6 @@ trait ConsoleIntegrationTestTrait
      *
      * @param string $pattern Expected pattern
      * @param string $message Failure message
-     * @return void
      */
     public function assertErrorRegExp(string $pattern, string $message = ''): void
     {
@@ -243,7 +224,6 @@ trait ConsoleIntegrationTestTrait
      * Asserts that `stderr` is empty
      *
      * @param string $message The message to output when the assertion fails.
-     * @return void
      */
     public function assertErrorEmpty(string $message = ''): void
     {
@@ -252,8 +232,6 @@ trait ConsoleIntegrationTestTrait
 
     /**
      * Builds the appropriate command dispatcher
-     *
-     * @return \Cake\Console\CommandRunner
      */
     protected function makeRunner(): CommandRunner
     {
@@ -284,6 +262,7 @@ trait ConsoleIntegrationTestTrait
                 if ($arg !== '') {
                     $argv[] = $arg;
                 }
+
                 $arg = '';
                 continue;
             }
@@ -314,6 +293,7 @@ trait ConsoleIntegrationTestTrait
 
             $arg .= $char;
         }
+
         $argv[] = $arg;
 
         return $argv;
@@ -322,7 +302,7 @@ trait ConsoleIntegrationTestTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\ConsoleIntegrationTestTrait',
+    \Cake\Console\TestSuite\ConsoleIntegrationTestTrait::class,
     'Cake\TestSuite\ConsoleIntegrationTestTrait'
 );
 // phpcs:enable

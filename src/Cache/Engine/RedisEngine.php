@@ -31,8 +31,6 @@ class RedisEngine extends CacheEngine
 {
     /**
      * Redis wrapper.
-     *
-     * @var \Redis
      */
     protected Redis $_Redis;
 
@@ -119,18 +117,20 @@ class RedisEngine extends CacheEngine
                     $persistentId
                 );
             }
-        } catch (RedisException $e) {
+        } catch (RedisException $redisException) {
             if (class_exists(Log::class)) {
-                Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
+                Log::error('RedisEngine could not connect. Got error: ' . $redisException->getMessage());
             }
 
             return false;
         }
+
         if ($return && $this->_config['password']) {
             $return = $this->_Redis->auth($this->_config['password']);
         }
+
         if ($return) {
-            $return = $this->_Redis->select((int)$this->_config['database']);
+            return $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
@@ -319,12 +319,7 @@ class RedisEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
         $value = $this->serialize($value);
-
-        if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->_Redis->set($key, $value, ['nx', 'ex' => $duration]);
     }
 
     /**
@@ -343,6 +338,7 @@ class RedisEngine extends CacheEngine
                 $value = $this->serialize(1);
                 $this->_Redis->set($this->_config['prefix'] . $group, $value);
             }
+
             $result[] = $group . $value;
         }
 
@@ -368,7 +364,6 @@ class RedisEngine extends CacheEngine
      * as it creates problems incrementing/decrementing intially set integer value.
      *
      * @param mixed $value Value to serialize.
-     * @return string
      * @link https://github.com/phpredis/phpredis/issues/81
      */
     protected function serialize(mixed $value): string
@@ -384,7 +379,6 @@ class RedisEngine extends CacheEngine
      * Unserialize string value fetched from Redis.
      *
      * @param string $value Value to unserialize.
-     * @return mixed
      */
     protected function unserialize(string $value): mixed
     {

@@ -40,7 +40,8 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 <div class="cake-debug">
     <?= Debugger::exportVar($attributes['context']); ?>
 </div>
-<?php endif; ?>
+<?php endif;
+ ?>
 
 <details>
     <summary style="font-size: 1.25rem; cursor: pointer">Connected Routes</summary>
@@ -53,7 +54,8 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
                     <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->defaults) ?></div></td>
                     <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($route->options) ?></div></td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endforeach;
+ ?>
         </table>
     </div>
 </details>

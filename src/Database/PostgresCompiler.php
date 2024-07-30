@@ -30,8 +30,6 @@ class PostgresCompiler extends QueryCompiler
      * Always quote aliases in SELECT clause.
      *
      * Postgres auto converts unquoted identifiers to lower case.
-     *
-     * @var bool
      */
     protected bool $_quotedSelectAliases = true;
 
@@ -59,7 +57,6 @@ class PostgresCompiler extends QueryCompiler
      * @param array $parts list of fields to be transformed to string
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
-     * @return string
      */
     protected function _buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
     {
@@ -69,12 +66,14 @@ class PostgresCompiler extends QueryCompiler
             if (!$selectPart instanceof FunctionExpression) {
                 continue;
             }
+
             foreach ($parts as $k => $p) {
                 if (!is_string($p)) {
                     continue;
                 }
+
                 preg_match_all(
-                    '/\b' . trim($selectKey, '"') . '\b/i',
+                    '/\b' . trim((string) $selectKey, '"') . '\b/i',
                     $p,
                     $matches
                 );
@@ -84,7 +83,7 @@ class PostgresCompiler extends QueryCompiler
                 }
 
                 $parts[$k] = preg_replace(
-                    ['/"/', '/\b' . trim($selectKey, '"') . '\b/i'],
+                    ['/"/', '/\b' . trim((string) $selectKey, '"') . '\b/i'],
                     ['', $selectPart->sql($binder)],
                     $p
                 );

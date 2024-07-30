@@ -31,7 +31,7 @@ class ConfigureTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::disable();
@@ -40,27 +40,33 @@ class ConfigureTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(TMP . 'cache/persistent/cake_core_core_paths')) {
             unlink(TMP . 'cache/persistent/cake_core_core_paths');
         }
+
         if (file_exists(TMP . 'cache/persistent/cake_core_dir_map')) {
             unlink(TMP . 'cache/persistent/cake_core_dir_map');
         }
+
         if (file_exists(TMP . 'cache/persistent/cake_core_file_map')) {
             unlink(TMP . 'cache/persistent/cake_core_file_map');
         }
+
         if (file_exists(TMP . 'cache/persistent/cake_core_object_map')) {
             unlink(TMP . 'cache/persistent/cake_core_object_map');
         }
+
         if (file_exists(TMP . 'cache/persistent/test.config.php')) {
             unlink(TMP . 'cache/persistent/test.config.php');
         }
+
         if (file_exists(TMP . 'cache/persistent/test.php')) {
             unlink(TMP . 'cache/persistent/test.php');
         }
+
         Configure::drop('test');
         Cache::enable();
     }
@@ -117,7 +123,7 @@ class ConfigureTest extends TestCase
 
         $default = ['default'];
         $result = Configure::read('something_I_just_made_up_now', $default);
-        $this->assertEquals($default, $result);
+        $this->assertSame($default, $result);
     }
 
     /**
@@ -137,13 +143,13 @@ class ConfigureTest extends TestCase
         Configure::write('Key', $expected);
 
         $result = Configure::read('Key');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = Configure::read('Key.One');
-        $this->assertEquals($expected['One'], $result);
+        $this->assertSame($expected['One'], $result);
 
         $result = Configure::read('Key.One.Two');
-        $this->assertEquals($expected['One']['Two'], $result);
+        $this->assertSame($expected['One']['Two'], $result);
 
         $result = Configure::read('Key.One.Two.Three.Four.Five');
         $this->assertSame('cool', $result);
@@ -273,7 +279,7 @@ class ConfigureTest extends TestCase
     {
         try {
             Configure::load('nonexistent_configuration_file');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(Configure::isConfigured('default'));
             $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }
@@ -412,7 +418,7 @@ class ConfigureTest extends TestCase
         Configure::write('testing', 'value');
         Configure::store('store_test', 'configure', ['store_test' => 'one']);
         Configure::delete('testing');
-        $this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
+        $this->assertNull(Configure::read('store_test'), "Calling store with data shouldn't modify runtime.");
 
         Configure::restore('store_test', 'configure');
         $this->assertSame('one', Configure::read('store_test'));
@@ -543,7 +549,7 @@ class ConfigureTest extends TestCase
 
         $result = Configure::consume('Test');
         $expected = ['key2' => 'value2'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**

@@ -22,16 +22,6 @@ namespace Cake\Error\Debug;
 class ClassNode implements NodeInterface
 {
     /**
-     * @var string
-     */
-    private string $class;
-
-    /**
-     * @var int
-     */
-    private int $id;
-
-    /**
      * @var array<\Cake\Error\Debug\PropertyNode>
      */
     private array $properties = [];
@@ -42,17 +32,14 @@ class ClassNode implements NodeInterface
      * @param string $class The class name
      * @param int $id The reference id of this object in the DumpContext
      */
-    public function __construct(string $class, int $id)
+    public function __construct(private readonly string $class, private readonly int $id)
     {
-        $this->class = $class;
-        $this->id = $id;
     }
 
     /**
      * Add a property
      *
      * @param \Cake\Error\Debug\PropertyNode $node The property to add.
-     * @return void
      */
     public function addProperty(PropertyNode $node): void
     {
@@ -61,8 +48,6 @@ class ClassNode implements NodeInterface
 
     /**
      * Get the class name
-     *
-     * @return string
      */
     public function getValue(): string
     {
@@ -71,8 +56,6 @@ class ClassNode implements NodeInterface
 
     /**
      * Get the reference id
-     *
-     * @return int
      */
     public function getId(): int
     {

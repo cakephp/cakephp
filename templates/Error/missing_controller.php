@@ -20,7 +20,8 @@ use function Cake\Core\h;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
-$prefixNs = $prefixPath = '';
+$prefixNs = '';
+$prefixPath = '';
 
 $controller = (string)$controller;
 $incompleteInflection = (str_contains($controller, '_') || str_contains($controller, '-'));
@@ -29,7 +30,7 @@ $originalClass = $controller;
 $class = Inflector::camelize($controller);
 
 if (!empty($prefix)) {
-    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map(\Cake\Utility\Inflector::class . '::camelize', explode('/', (string) $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefixPath = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }
@@ -39,11 +40,7 @@ if (!empty($plugin)) {
 }
 
 $filePath = 'Controller' . DIRECTORY_SEPARATOR . $prefixPath . h($class) . 'Controller.php';
-if (empty($plugin)) {
-    $path = APP_DIR . DIRECTORY_SEPARATOR . $filePath;
-} else {
-    $path = Plugin::classPath($plugin) . $filePath;
-}
+$path = empty($plugin) ? APP_DIR . DIRECTORY_SEPARATOR . $filePath : Plugin::classPath($plugin) . $filePath;
 
 $this->layout = 'dev_error';
 
@@ -57,7 +54,8 @@ $this->assign('templateName', 'missing_controller.php');
     Your routing resulted in <em><?= h($originalClass) ?></em> as a controller name.
 <?php else: ?>
     <em><?= h($pluginDot . $class) ?>Controller</em> could not be found.
-<?php endif; ?>
+<?php endif;
+ ?>
 <?php $this->end() ?>
 
 
@@ -92,5 +90,6 @@ $this->assign('templateName', 'missing_controller.php');
 PHP;
     ?>
     <div class="code-dump"><?php highlight_string($code); ?></div>
-<?php endif; ?>
+<?php endif;
+ ?>
 <?php $this->end(); ?>

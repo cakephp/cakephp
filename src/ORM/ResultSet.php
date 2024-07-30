@@ -36,23 +36,18 @@ class ResultSet implements ResultSetInterface
 
     /**
      * Points to the next record number that should be fetched
-     *
-     * @var int
      */
     protected int $_index = 0;
 
     /**
      * Last record fetched from the statement
      *
-     * @var \Cake\Datasource\EntityInterface|array|null
      * @psalm-var T|null
      */
-    protected EntityInterface|array|null $_current;
+    protected EntityInterface|array|null $_current = null;
 
     /**
      * Holds the count of records in this result set
-     *
-     * @var int
      */
     protected int $_count = 0;
 
@@ -78,7 +73,6 @@ class ResultSet implements ResultSetInterface
      *
      * Part of Iterator interface.
      *
-     * @return \Cake\Datasource\EntityInterface|array|null
      * @psalm-return T|null
      */
     public function current(): EntityInterface|array|null
@@ -90,8 +84,6 @@ class ResultSet implements ResultSetInterface
      * Returns the key of the current record in the iterator.
      *
      * Part of Iterator interface.
-     *
-     * @return int
      */
     public function key(): int
     {
@@ -102,8 +94,6 @@ class ResultSet implements ResultSetInterface
      * Advances the iterator pointer to the next record.
      *
      * Part of Iterator interface.
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -114,8 +104,6 @@ class ResultSet implements ResultSetInterface
      * Rewinds a ResultSet.
      *
      * Part of Iterator interface.
-     *
-     * @return void
      */
     public function rewind(): void
     {
@@ -126,8 +114,6 @@ class ResultSet implements ResultSetInterface
      * Whether there are more results to be fetched from the iterator.
      *
      * Part of Iterator interface.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -145,7 +131,6 @@ class ResultSet implements ResultSetInterface
      *
      * This method will also close the underlying statement cursor.
      *
-     * @return \Cake\Datasource\EntityInterface|array|null
      * @psalm-return T|null
      */
     public function first(): EntityInterface|array|null
@@ -159,8 +144,6 @@ class ResultSet implements ResultSetInterface
 
     /**
      * Serializes a resultset.
-     *
-     * @return array
      */
     public function __serialize(): array
     {
@@ -171,7 +154,6 @@ class ResultSet implements ResultSetInterface
      * Unserializes a resultset.
      *
      * @param array $data Data array.
-     * @return void
      */
     public function __unserialize(array $data): void
     {
@@ -183,8 +165,6 @@ class ResultSet implements ResultSetInterface
      * Gives the number of rows in the result set.
      *
      * Part of the Countable interface.
-     *
-     * @return int
      */
     public function count(): int
     {

@@ -35,7 +35,7 @@ class TimeTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->now = DateTime::getTestNow();
@@ -44,7 +44,7 @@ class TimeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
@@ -132,11 +132,11 @@ class TimeTest extends TestCase
         Time::setJsonEncodeFormat('HH:mm:ss');
         $this->assertTimeFormat('"10:10:10"', json_encode($time));
 
-        Time::setJsonEncodeFormat(fn (Time $time) => 'custom format');
+        Time::setJsonEncodeFormat(fn (Time $time): string => 'custom format');
         $this->assertTimeFormat('"custom format"', json_encode($time));
     }
 
-    public function testInvalidJsonEncodeFormat()
+    public function testInvalidJsonEncodeFormat(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Time::setJsonEncodeFormat(DateTime::UNIX_TIMESTAMP_FORMAT);

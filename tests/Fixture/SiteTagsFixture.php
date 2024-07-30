@@ -20,8 +20,6 @@ class SiteTagsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['id' => 1, 'site_id' => 1, 'name' => 'tag1'],

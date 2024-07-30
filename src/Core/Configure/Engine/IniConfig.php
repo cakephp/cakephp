@@ -60,30 +60,23 @@ class IniConfig implements ConfigEngineInterface
 
     /**
      * File extension.
-     *
-     * @var string
      */
     protected string $_extension = '.ini';
-
-    /**
-     * The section to read, if null all sections will be read.
-     *
-     * @var string|null
-     */
-    protected ?string $_section = null;
 
     /**
      * Build and construct a new ini file parser. The parser can be used to read
      * ini files that are on the filesystem.
      *
      * @param string|null $path Path to load ini config files from. Defaults to CONFIG.
-     * @param string|null $section Only get one section, leave null to parse and fetch
+     * @param string|null $_section Only get one section, leave null to parse and fetch
      *     all sections in the ini file.
      */
-    public function __construct(?string $path = null, ?string $section = null)
+    public function __construct(?string $path = null, /**
+     * The section to read, if null all sections will be read.
+     */
+    protected ?string $_section = null)
     {
         $this->_path = $path ?? CONFIG;
-        $this->_section = $section;
     }
 
     /**
@@ -133,9 +126,11 @@ class IniConfig implements ConfigEngineInterface
             if ($value === '1') {
                 $value = true;
             }
+
             if ($value === '') {
                 $value = false;
             }
+
             unset($values[$key]);
             if (str_contains((string)$key, '.')) {
                 $values = Hash::insert($values, $key, $value);
@@ -162,19 +157,22 @@ class IniConfig implements ConfigEngineInterface
             $isSection = false;
             /** @psalm-suppress InvalidArrayAccess */
             if ($k[0] !== '[') {
-                $result[] = "[$k]";
+                $result[] = sprintf('[%s]', $k);
                 $isSection = true;
             }
+
             if (is_array($value)) {
                 $kValues = Hash::flatten($value, '.');
                 foreach ($kValues as $k2 => $v) {
-                    $result[] = "$k2 = " . $this->_value($v);
+                    $result[] = $k2 . ' = ' . $this->_value($v);
                 }
             }
+
             if ($isSection) {
                 $result[] = '';
             }
         }
+
         $contents = trim(implode("\n", $result));
 
         $filename = $this->_getFilePath($key);

@@ -37,7 +37,7 @@ class MemcachedEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
@@ -73,7 +73,7 @@ class MemcachedEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('memcached');
@@ -255,7 +255,7 @@ class MemcachedEngineTest extends TestCase
     public function testJsonSerializerThrowException(): void
     {
         $this->skipIf(
-            (bool)Memcached::HAVE_JSON,
+            Memcached::HAVE_JSON,
             'Memcached extension is compiled with json support'
         );
 
@@ -282,7 +282,7 @@ class MemcachedEngineTest extends TestCase
             'Memcached::HAVE_MSGPACK constant is not available in Memcached below 3.0.0'
         );
         $this->skipIf(
-            (bool)Memcached::HAVE_MSGPACK,
+            Memcached::HAVE_MSGPACK,
             'Memcached extension is compiled with msgpack support'
         );
 
@@ -305,7 +305,7 @@ class MemcachedEngineTest extends TestCase
     public function testIgbinarySerializerThrowException(): void
     {
         $this->skipIf(
-            (bool)Memcached::HAVE_IGBINARY,
+            Memcached::HAVE_IGBINARY,
             'Memcached extension is compiled with igbinary support'
         );
 
@@ -386,6 +386,7 @@ class MemcachedEngineTest extends TestCase
             if (!$Memcached->addServer($host, (int)$port)) {
                 $available = false;
             }
+
             // phpcs:enable
         }
 
@@ -423,7 +424,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new MemcachedEngine();
         $result = $Memcached->parseServerString('udomain.net:13211');
-        $this->assertEquals(['udomain.net', '13211'], $result);
+        $this->assertSame(['udomain.net', '13211'], $result);
     }
 
     /**
@@ -433,10 +434,10 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new MemcachedEngine();
         $result = $Memcached->parseServerString('schülervz.net:13211');
-        $this->assertEquals(['schülervz.net', '13211'], $result);
+        $this->assertSame(['schülervz.net', '13211'], $result);
 
         $result = $Memcached->parseServerString('sülül:1111');
-        $this->assertEquals(['sülül', '1111'], $result);
+        $this->assertSame(['sülül', '1111'], $result);
     }
 
     /**
@@ -446,7 +447,7 @@ class MemcachedEngineTest extends TestCase
     {
         $Memcached = new MemcachedEngine();
         $result = $Memcached->parseServerString('unix:///path/to/memcachedd.sock');
-        $this->assertEquals(['/path/to/memcachedd.sock', 0], $result);
+        $this->assertSame(['/path/to/memcachedd.sock', 0], $result);
     }
 
     /**
@@ -625,6 +626,7 @@ class MemcachedEngineTest extends TestCase
         foreach ($data as $key => $value) {
             Cache::write($key, $value, 'memcached');
         }
+
         Cache::write('App.keepTest', 'keepMe', 'memcached');
 
         Cache::deleteMany(array_merge(array_keys($data), ['App.doesNotExist']), 'memcached');

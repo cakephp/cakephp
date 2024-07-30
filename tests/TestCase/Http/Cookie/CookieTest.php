@@ -33,16 +33,14 @@ class CookieTest extends TestCase
      *
      * @return array
      */
-    public static function invalidNameProvider(): array
+    public static function invalidNameProvider(): \Iterator
     {
-        return [
-            ['no='],
-            ["no\rnewline"],
-            ["no\nnewline"],
-            ["no\ttab"],
-            ['no,comma'],
-            ['no;semi'],
-        ];
+        yield ['no='];
+        yield ["no\rnewline"];
+        yield ["no\nnewline"];
+        yield ["no\ttab"];
+        yield ['no,comma'];
+        yield ['no;semi'];
     }
 
     /**
@@ -402,13 +400,13 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', $data);
 
         $result = $cookie->getValue();
-        $this->assertEquals($data, $result);
+        $this->assertSame($data, $result);
 
         $result = $cookie->read('foo');
         $this->assertNull($result);
 
         $result = $cookie->read();
-        $this->assertEquals($data, $result);
+        $this->assertSame($data, $result);
 
         $result = $cookie->read('profile.profession');
         $this->assertSame('developer', $result);

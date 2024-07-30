@@ -38,42 +38,31 @@ class ValuesExpression implements ExpressionInterface
 
     /**
      * Array of values to insert.
-     *
-     * @var array
      */
     protected array $_values = [];
 
     /**
-     * List of columns to ensure are part of the insert.
-     *
-     * @var array
-     */
-    protected array $_columns = [];
-
-    /**
      * The Query object to use as a values expression
-     *
-     * @var \Cake\Database\Query|null
      */
     protected ?Query $_query = null;
 
     /**
      * Whether values have been casted to expressions
      * already.
-     *
-     * @var bool
      */
     protected bool $_castedExpressions = false;
 
     /**
      * Constructor
      *
-     * @param array $columns The list of columns that are going to be part of the values.
+     * @param array $_columns The list of columns that are going to be part of the values.
      * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
      */
-    public function __construct(array $columns, TypeMap $typeMap)
+    public function __construct(/**
+     * List of columns to ensure are part of the insert.
+     */
+    protected array $_columns, TypeMap $typeMap)
     {
-        $this->_columns = $columns;
         $this->setTypeMap($typeMap);
     }
 
@@ -82,7 +71,6 @@ class ValuesExpression implements ExpressionInterface
      *
      * @param \Cake\Database\Query|array $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
-     * @return void
      * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
      */
     public function add(Query|array $values): void
@@ -93,7 +81,7 @@ class ValuesExpression implements ExpressionInterface
                 $values instanceof Query
             ) ||
             (
-                $this->_query &&
+                $this->_query instanceof \Cake\Database\Query &&
                 is_array($values)
             )
         ) {
@@ -101,11 +89,13 @@ class ValuesExpression implements ExpressionInterface
                 'You cannot mix subqueries and array values in inserts.'
             );
         }
+
         if ($values instanceof Query) {
             $this->setQuery($values);
 
             return;
         }
+
         $this->_values[] = $values;
         $this->_castedExpressions = false;
     }
@@ -116,7 +106,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $columns Array with columns to be inserted.
      * @return $this
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): static
     {
         $this->_columns = $columns;
         $this->_castedExpressions = false;
@@ -126,8 +116,6 @@ class ValuesExpression implements ExpressionInterface
 
     /**
      * Gets the columns to be inserted.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -139,8 +127,6 @@ class ValuesExpression implements ExpressionInterface
      *
      * Because column names could be identifier quoted, we
      * need to strip the identifiers off of the columns.
-     *
-     * @return array
      */
     protected function _columnNames(): array
     {
@@ -149,6 +135,7 @@ class ValuesExpression implements ExpressionInterface
             if (is_string($col)) {
                 $col = trim($col, '`[]"');
             }
+
             $columns[] = $col;
         }
 
@@ -161,7 +148,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $values Array with values to be inserted.
      * @return $this
      */
-    public function setValues(array $values)
+    public function setValues(array $values): static
     {
         $this->_values = $values;
         $this->_castedExpressions = false;
@@ -171,8 +158,6 @@ class ValuesExpression implements ExpressionInterface
 
     /**
      * Gets the values to be inserted.
-     *
-     * @return array
      */
     public function getValues(): array
     {
@@ -190,7 +175,7 @@ class ValuesExpression implements ExpressionInterface
      * @param \Cake\Database\Query $query The query to set
      * @return $this
      */
-    public function setQuery(Query $query)
+    public function setQuery(Query $query): static
     {
         $this->_query = $query;
 
@@ -200,8 +185,6 @@ class ValuesExpression implements ExpressionInterface
     /**
      * Gets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
-     *
-     * @return \Cake\Database\Query|null
      */
     public function getQuery(): ?Query
     {
@@ -213,7 +196,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if (!$this->_values && $this->_query === null) {
+        if (!$this->_values && !$this->_query instanceof \Cake\Database\Query) {
             return '';
         }
 
@@ -227,7 +210,7 @@ class ValuesExpression implements ExpressionInterface
 
         $types = [];
         $typeMap = $this->getTypeMap();
-        foreach ($defaults as $col => $v) {
+        foreach (array_keys($defaults) as $col) {
             $types[$col] = $typeMap->type($col);
         }
 
@@ -252,7 +235,7 @@ class ValuesExpression implements ExpressionInterface
         }
 
         $query = $this->getQuery();
-        if ($query) {
+        if ($query instanceof \Cake\Database\Query) {
             return ' ' . $query->sql($binder);
         }
 
@@ -262,9 +245,9 @@ class ValuesExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
-        if ($this->_query) {
+        if ($this->_query instanceof \Cake\Database\Query) {
             return $this;
         }
 
@@ -276,9 +259,11 @@ class ValuesExpression implements ExpressionInterface
             if ($v instanceof ExpressionInterface) {
                 $v->traverse($callback);
             }
+
             if (!is_array($v)) {
                 continue;
             }
+
             foreach ($v as $field) {
                 if ($field instanceof ExpressionInterface) {
                     $callback($field);
@@ -292,8 +277,6 @@ class ValuesExpression implements ExpressionInterface
 
     /**
      * Converts values that need to be casted to expressions
-     *
-     * @return void
      */
     protected function _processExpressions(): void
     {
@@ -305,6 +288,7 @@ class ValuesExpression implements ExpressionInterface
             if (!is_string($c) && !is_int($c)) {
                 continue;
             }
+
             $types[$c] = $typeMap->type($c);
         }
 
@@ -320,6 +304,7 @@ class ValuesExpression implements ExpressionInterface
                 $this->_values[$row][$col] = $type->toExpression($values[$col]);
             }
         }
+
         $this->_castedExpressions = true;
     }
 }

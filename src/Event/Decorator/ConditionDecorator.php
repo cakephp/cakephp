@@ -30,9 +30,8 @@ class ConditionDecorator extends AbstractDecorator
     /**
      * @inheritDoc
      */
-    public function __invoke(): mixed
+    public function __invoke(mixed ...$args): mixed
     {
-        $args = func_get_args();
         if (!$this->canTrigger($args[0])) {
             return null;
         }
@@ -45,7 +44,6 @@ class ConditionDecorator extends AbstractDecorator
      *
      * @template TSubject of object
      * @param \Cake\Event\EventInterface<TSubject> $event Event object.
-     * @return bool
      */
     public function canTrigger(EventInterface $event): bool
     {
@@ -61,13 +59,13 @@ class ConditionDecorator extends AbstractDecorator
      * @template TSubject of object
      * @param string $condition Condition type
      * @param \Cake\Event\EventInterface<TSubject> $event Event object
-     * @return bool
      */
     protected function _evaluateCondition(string $condition, EventInterface $event): bool
     {
         if (!isset($this->_options[$condition])) {
             return $condition !== 'unless';
         }
+
         if (!is_callable($this->_options[$condition])) {
             throw new InvalidArgumentException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }

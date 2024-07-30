@@ -25,8 +25,5 @@ use Cake\Core\Exception\CakeException;
  */
 class MissingEntityException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Entity class `%s` could not be found.';
 }

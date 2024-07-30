@@ -51,11 +51,7 @@ if (!function_exists('Cake\Core\h')) {
 
             return $texts;
         } elseif (is_object($text)) {
-            if ($text instanceof Stringable) {
-                $text = (string)$text;
-            } else {
-                $text = '(object)' . $text::class;
-            }
+            $text = $text instanceof Stringable ? (string)$text : '(object)' . $text::class;
         } elseif ($text === null || is_scalar($text)) {
             return $text;
         }
@@ -65,7 +61,7 @@ if (!function_exists('Cake\Core\h')) {
             $defaultCharset = mb_internal_encoding() ?: 'UTF-8';
         }
 
-        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
+        return htmlspecialchars((string) $text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
     }
 }
 
@@ -245,7 +241,6 @@ if (!function_exists('Cake\Core\triggerWarning')) {
      * Triggers an E_USER_WARNING.
      *
      * @param string $message The warning message.
-     * @return void
      */
     function triggerWarning(string $message): void
     {
@@ -260,6 +255,7 @@ if (!function_exists('Cake\Core\triggerWarning')) {
                 $frame['line']
             );
         }
+
         trigger_error($message, E_USER_WARNING);
     }
 }
@@ -272,7 +268,6 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
      * @param string $message The message to output as a deprecation warning.
      * @param int $stackFrame The stack frame to include in the error. Defaults to 1
      *   as that should point to application/plugin code.
-     * @return void
      */
     function deprecationWarning(string $version, string $message, int $stackFrame = 1): void
     {
@@ -290,7 +285,8 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
             if (defined('ROOT')) {
                 $root = ROOT;
             }
-            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen($root) + 1));
+
+            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen((string) $root) + 1));
             $patterns = (array)Configure::read('Error.ignoredDeprecationPaths');
             foreach ($patterns as $pattern) {
                 $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);
@@ -318,6 +314,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
         if (isset($errors[$checksum]) && !$duplicate) {
             return;
         }
+
         if (!$duplicate) {
             $errors[$checksum] = true;
         }

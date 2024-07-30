@@ -42,6 +42,7 @@ class FatalErrorException extends CakeException
         if ($file) {
             $this->file = $file;
         }
+
         if ($line) {
             $this->line = $line;
         }

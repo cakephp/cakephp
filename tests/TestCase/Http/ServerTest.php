@@ -59,7 +59,7 @@ class ServerTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -71,7 +71,7 @@ class ServerTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -134,9 +134,7 @@ class ServerTest extends TestCase
             ->makePartial();
         $app->shouldReceive('pluginBootstrap', 'pluginMiddleware')
             ->with(Mockery::type(MiddlewareQueue::class))
-            ->andReturnUsing(function ($middleware) {
-                return $middleware;
-            });
+            ->andReturnUsing(fn($middleware) => $middleware);
 
         $server = new Server($app);
         $res = $server->run($request);

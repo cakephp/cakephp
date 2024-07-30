@@ -20,8 +20,6 @@ class SiteAuthorsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['id' => 1, 'name' => 'mark', 'site_id' => 1],

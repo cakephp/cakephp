@@ -28,8 +28,6 @@ class OrdersFixture extends TestFixture
 
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['product_category' => 1, 'product_id' => 1],

@@ -31,31 +31,23 @@ class CookieEquals extends ResponseBase
     protected ResponseInterface $response;
 
     /**
-     * @var string
-     */
-    protected string $cookieName;
-
-    /**
      * Constructor.
      *
      * @param \Cake\Http\Response|null $response A response instance.
      * @param string $cookieName Cookie name
      */
-    public function __construct(?Response $response, string $cookieName)
+    public function __construct(?Response $response, protected string $cookieName)
     {
         parent::__construct($response);
-
-        $this->cookieName = $cookieName;
     }
 
     /**
      * Checks assertion
      *
      * @param mixed $other Expected content
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         $cookie = $this->readCookie($this->cookieName);
 
@@ -64,11 +56,9 @@ class CookieEquals extends ResponseBase
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
-        return sprintf('is in cookie \'%s\'', $this->cookieName);
+        return sprintf("is in cookie '%s'", $this->cookieName);
     }
 }

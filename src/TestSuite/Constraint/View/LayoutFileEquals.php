@@ -24,8 +24,6 @@ class LayoutFileEquals extends TemplateFileEquals
 {
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -118,7 +118,6 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject<string, mixed> $options The options for the query
-     * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -159,7 +158,6 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was saved.
      * @param \ArrayObject<string, mixed> $options The options for the query
-     * @return void
      */
     public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -179,7 +177,6 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The afterDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that was deleted.
      * @param \ArrayObject<string, mixed> $options The options for the query
-     * @return void
      */
     public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
@@ -195,7 +192,6 @@ class CounterCacheBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     * @return void
      */
     protected function _processAssociations(EventInterface $event, EntityInterface $entity): void
     {
@@ -212,7 +208,6 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for counter cache for this association
-     * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
     protected function _processAssociation(
@@ -260,6 +255,7 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countConditions);
                 }
+
                 if ($count !== false) {
                     $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
                 }
@@ -271,6 +267,7 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
                 }
+
                 if ($count !== false) {
                     $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
                 }
@@ -286,9 +283,7 @@ class CounterCacheBehavior extends Behavior
      */
     protected function _shouldUpdateCount(array $conditions): bool
     {
-        return !empty(array_filter($conditions, function ($value) {
-            return $value !== null;
-        }));
+        return !empty(array_filter($conditions, fn($value): bool => $value !== null));
     }
 
     /**

@@ -13,27 +13,21 @@ class CakesController extends Controller
 {
     /**
      * The default model to use.
-     *
-     * @var string
      */
     protected ?string $modelClass = 'Posts';
 
     /**
      * index method
-     *
-     * @return \Cake\Http\Response
      */
-    public function index()
+    public function index(): \Cake\Http\Response
     {
         return $this->response->withStringBody('Hello Jane');
     }
 
     /**
      * No autoRender
-     *
-     * @return void
      */
-    public function noRender()
+    public function noRender(): void
     {
         $this->autoRender = false;
         $this->response = $this->response->withStringBody('autoRender false body');
@@ -41,10 +35,8 @@ class CakesController extends Controller
 
     /**
      * invalid method
-     *
-     * @return string
      */
-    public function invalid()
+    public function invalid(): string
     {
         return 'Some string';
     }

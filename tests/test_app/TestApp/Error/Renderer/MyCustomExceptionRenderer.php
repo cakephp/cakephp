@@ -7,10 +7,7 @@ use Cake\Error\Renderer\WebExceptionRenderer;
 
 class MyCustomExceptionRenderer extends WebExceptionRenderer
 {
-    /**
-     * @param \Cake\Controller\Controller $controller
-     */
-    public function setController($controller): void
+    public function setController(\Cake\Controller\Controller $controller): void
     {
         $this->controller = $controller;
     }

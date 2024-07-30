@@ -34,16 +34,16 @@ class BinaryTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('binary');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**

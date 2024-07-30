@@ -56,9 +56,6 @@ class MessagesFileLoaderTest extends TestCase
         $this->assertFalse($package);
     }
 
-    /**
-     * @return void
-     */
     public function testTranslationsFolders(): void
     {
         $this->loadPlugins(['Company/TestPluginThree']);

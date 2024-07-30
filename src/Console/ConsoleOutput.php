@@ -88,7 +88,6 @@ class ConsoleOutput
      * The current output type.
      *
      * @see setOutputAs() For manipulation.
-     * @var int
      */
     protected int $_outputAs = self::COLOR;
 
@@ -225,6 +224,7 @@ class ConsoleOutput
         if ($this->_outputAs === static::RAW) {
             return $text;
         }
+
         if ($this->_outputAs !== static::PLAIN) {
             /** @var \Closure $replaceTags */
             $replaceTags = $this->_replaceTags(...);
@@ -249,7 +249,6 @@ class ConsoleOutput
      * Replace tags with color codes.
      *
      * @param array<string, string> $matches An array of matches to replace.
-     * @return string
      */
     protected function _replaceTags(array $matches): string
     {
@@ -262,9 +261,11 @@ class ConsoleOutput
         if (!empty($style['text']) && isset(static::$_foregroundColors[$style['text']])) {
             $styleInfo[] = static::$_foregroundColors[$style['text']];
         }
+
         if (!empty($style['background']) && isset(static::$_backgroundColors[$style['background']])) {
             $styleInfo[] = static::$_backgroundColors[$style['background']];
         }
+
         unset($style['text'], $style['background']);
         foreach ($style as $option => $value) {
             if ($value) {
@@ -283,7 +284,7 @@ class ConsoleOutput
      */
     protected function _write(string $message): int
     {
-        if (!isset($this->_output)) {
+        if ($this->_output === null) {
             return 0;
         }
 
@@ -318,7 +319,6 @@ class ConsoleOutput
      *
      * @param string $style The style to set.
      * @param array $definition The array definition of the style to change or create..
-     * @return void
      */
     public function setStyle(string $style, array $definition): void
     {
@@ -343,8 +343,6 @@ class ConsoleOutput
 
     /**
      * Get the output type on how formatting tags are treated.
-     *
-     * @return int
      */
     public function getOutputAs(): int
     {
@@ -355,7 +353,6 @@ class ConsoleOutput
      * Set the output type on how formatting tags are treated.
      *
      * @param int $type The output type to use. Should be one of the class constants.
-     * @return void
      * @throws \InvalidArgumentException in case of a not supported output type.
      */
     public function setOutputAs(int $type): void
@@ -373,9 +370,10 @@ class ConsoleOutput
     public function __destruct()
     {
         /** @psalm-suppress RedundantCondition */
-        if (isset($this->_output) && is_resource($this->_output)) {
+        if ($this->_output !== null && is_resource($this->_output)) {
             fclose($this->_output);
         }
+
         unset($this->_output);
     }
 }

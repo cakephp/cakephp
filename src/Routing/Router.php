@@ -37,16 +37,12 @@ class Router
 {
     /**
      * Default route class.
-     *
-     * @var string
      */
     protected static string $_defaultRouteClass = Route::class;
 
     /**
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
-     *
-     * @var string|null
      */
     protected static ?string $_fullBaseUrl = null;
 
@@ -94,8 +90,6 @@ class Router
 
     /**
      * The route collection routes would be added to.
-     *
-     * @var \Cake\Routing\RouteCollection
      */
     protected static RouteCollection $_collection;
 
@@ -122,8 +116,6 @@ class Router
 
     /**
      * Maintains the request object reference.
-     *
-     * @var \Cake\Http\ServerRequest|null
      */
     protected static ?ServerRequest $_request = null;
 
@@ -131,8 +123,6 @@ class Router
      * Initial state is populated the first time reload() is called which is at the bottom
      * of this file. This is a cheat as get_class_vars() returns the value of static vars even if they
      * have changed.
-     *
-     * @var array
      */
     protected static array $_initialState = [];
 
@@ -162,13 +152,13 @@ class Router
      * Get or set default route class.
      *
      * @param string|null $routeClass Class name.
-     * @return string|null
      */
     public static function defaultRouteClass(?string $routeClass = null): ?string
     {
         if ($routeClass === null) {
             return static::$_defaultRouteClass;
         }
+
         static::$_defaultRouteClass = $routeClass;
 
         return null;
@@ -201,7 +191,6 @@ class Router
      * Set current request instance.
      *
      * @param \Cake\Http\ServerRequest $request request object.
-     * @return void
      */
     public static function setRequest(ServerRequest $request): void
     {
@@ -217,8 +206,6 @@ class Router
 
     /**
      * Get the current request object.
-     *
-     * @return \Cake\Http\ServerRequest|null
      */
     public static function getRequest(): ?ServerRequest
     {
@@ -228,8 +215,6 @@ class Router
     /**
      * Reloads default Router settings. Resets all class variables and
      * removes all connected routes.
-     *
-     * @return void
      */
     public static function reload(): void
     {
@@ -239,11 +224,13 @@ class Router
 
             return;
         }
+
         foreach (static::$_initialState as $key => $val) {
             if ($key !== '_initialState' && $key !== '_collection') {
                 static::${$key} = $val;
             }
         }
+
         static::$_collection = new RouteCollection();
         static::$_routePaths = [];
     }
@@ -263,7 +250,6 @@ class Router
      * Extensions and default route classes will not be modified
      *
      * @internal
-     * @return void
      */
     public static function resetRoutes(): void
     {
@@ -298,7 +284,6 @@ class Router
      * ```
      *
      * @param \Closure $function The function to add
-     * @return void
      */
     public static function addUrlFilter(Closure $function): void
     {
@@ -381,7 +366,7 @@ class Router
             $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
-                $output = static::fullBaseUrl() . $output;
+                return static::fullBaseUrl() . $output;
             }
 
             return $output;
@@ -411,9 +396,11 @@ class Router
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
             }
+
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
             }
+
             unset($url['_https'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
@@ -448,6 +435,7 @@ class Router
             if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
                 $url['_host'] = $context['_host'];
             }
+
             $context['params'] = $params;
 
             $output = static::$_collection->match($url, $context);
@@ -516,7 +504,6 @@ class Router
      *   string.
      * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
-     * @return bool
      */
     public static function routeExists(array|string|null $url = null, bool $full = false): bool
     {
@@ -542,7 +529,6 @@ class Router
      *
      * @param string|null $base the prefix for URLs generated containing the domain.
      * For example: `http://example.com`
-     * @return string
      */
     public static function fullBaseUrl(?string $base = null): string
     {
@@ -608,6 +594,7 @@ class Router
             assert(is_array($params));
             $params['?'] = $queryString;
         }
+
         $pass = $params['pass'] ?? [];
 
         $template = $params['_matchedRoute'] ?? null;
@@ -626,6 +613,7 @@ class Router
                 }
             }
         }
+
         if ($route) {
             // If we found a route, slice off the number of passed args.
             $routePass = $route->options['pass'] ?? [];
@@ -669,22 +657,26 @@ class Router
         if (is_array($url)) {
             $url = static::url($url);
         }
+
         if (preg_match('/^[a-z\-]+:\/\//', $url)) {
             return $url;
         }
+
         $request = static::getRequest();
 
-        if ($request) {
+        if ($request instanceof \Cake\Http\ServerRequest) {
             $base = $request->getAttribute('base', '');
-            if ($base !== '' && stristr($url, $base)) {
-                $url = (string)preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
+            if ($base !== '' && stristr($url, (string) $base)) {
+                $url = (string)preg_replace('/^' . preg_quote((string) $base, '/') . '/', '', $url, 1);
             }
         }
+
         $url = '/' . $url;
 
         while (str_contains($url, '//')) {
             $url = str_replace('//', '/', $url);
         }
+
         $url = preg_replace('/(?:(\/$))/', '', $url);
 
         if (!$url) {
@@ -734,7 +726,6 @@ class Router
      *
      * @param string $path The path to set the builder to.
      * @param array<string, mixed> $options The options for the builder
-     * @return \Cake\Routing\RouteBuilder
      */
     public static function createRouteBuilder(string $path, array $options = []): RouteBuilder
     {
@@ -762,8 +753,6 @@ class Router
 
     /**
      * Get the RouteCollection inside the Router
-     *
-     * @return \Cake\Routing\RouteCollection
      */
     public static function getRouteCollection(): RouteCollection
     {
@@ -774,7 +763,6 @@ class Router
      * Set the RouteCollection inside the Router
      *
      * @param \Cake\Routing\RouteCollection $routeCollection route collection
-     * @return void
      */
     public static function setRouteCollection(RouteCollection $routeCollection): void
     {
@@ -785,17 +773,17 @@ class Router
      * Inject route defaults from `_path` key
      *
      * @param array $url Route array with `_path` key
-     * @return array
      */
     protected static function unwrapShortString(array $url): array
     {
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
                 throw new InvalidArgumentException(
-                    "`$key` cannot be used when defining route targets with a string route path."
+                    sprintf('`%s` cannot be used when defining route targets with a string route path.', $key)
                 );
             }
         }
+
         $url += static::parseRoutePath($url['_path']);
         $url += [
             'plugin' => false,
@@ -846,6 +834,7 @@ class Router
         if ($matches['plugin'] !== '') {
             $defaults['plugin'] = $matches['plugin'];
         }
+
         if ($matches['prefix'] !== '') {
             $defaults['prefix'] = $matches['prefix'];
         }
@@ -853,24 +842,27 @@ class Router
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             foreach ($paramsArray as $param) {
-                if (strpos($param, '=') !== false) {
+                if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
-                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                            sprintf('Could not parse a key=value from `%s` in route path `%s`.', $param, $url)
                         );
                     }
+
                     $paramKey = $paramMatches['key'];
-                    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
+                    if (!preg_match('/^[a-zA-Z_]\w*$/', $paramKey)) {
                         throw new InvalidArgumentException(
-                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                            sprintf('Param key `%s` is not valid in route path `%s`.', $paramKey, $url)
                         );
                     }
+
                     $defaults[$paramKey] = trim($paramMatches['value'], '\'"');
                 } else {
                     $defaults[] = $param;
                 }
             }
         }
+
         // Only cache 200 routes per request. Beyond that we could
         // be soaking up too much memory.
         if (count(static::$_routePaths) < 200) {

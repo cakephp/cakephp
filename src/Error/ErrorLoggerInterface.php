@@ -32,7 +32,6 @@ interface ErrorLoggerInterface
      * @param \Throwable $exception The exception to log a message for.
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
      * @param bool $includeTrace Should the log message include a stacktrace.
-     * @return void
      */
     public function logException(
         Throwable $exception,
@@ -46,7 +45,6 @@ interface ErrorLoggerInterface
      * @param \Cake\Error\PhpError $error The error to log.
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if in an HTTP context.
      * @param bool $includeTrace Should the log message include a stacktrace.
-     * @return void
      */
     public function logError(
         PhpError $error,

@@ -14,8 +14,8 @@ class TestLogStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'console' => 'Cake\Log\Engine\ConsoleLog',
-        'file' => 'Cake\Log\Engine\FileLog',
-        'syslog' => 'Cake\Log\Engine\SyslogLog',
+        'console' => \Cake\Log\Engine\ConsoleLog::class,
+        'file' => \Cake\Log\Engine\FileLog::class,
+        'syslog' => \Cake\Log\Engine\SyslogLog::class,
     ];
 }

@@ -39,4 +39,5 @@ $this->start('file');
 if (extension_loaded('xdebug')):
     xdebug_print_function_stack();
 endif;
+
 $this->end();

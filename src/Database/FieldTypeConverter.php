@@ -28,14 +28,7 @@ use Cake\Database\Type\OptionalConvertInterface;
 class FieldTypeConverter
 {
     /**
-     * @var \Cake\Database\Driver
-     */
-    protected Driver $driver;
-
-    /**
      * Maps type names to conversion settings.
-     *
-     * @var array
      */
     protected array $conversions = [];
 
@@ -45,14 +38,16 @@ class FieldTypeConverter
      * @param \Cake\Database\TypeMap $typeMap Contains the types to use for converting results
      * @param \Cake\Database\Driver $driver The driver to use for the type conversion
      */
-    public function __construct(TypeMap $typeMap, Driver $driver)
+    public function __construct(TypeMap $typeMap, protected Driver $driver)
     {
-        $this->driver = $driver;
-
         $types = TypeFactory::buildAll();
         foreach ($typeMap->toArray() as $field => $typeName) {
             $type = $types[$typeName] ?? null;
-            if (!$type || ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast())) {
+            if (!$type) {
+                continue;
+            }
+
+            if ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast()) {
                 continue;
             }
 
@@ -70,7 +65,6 @@ class FieldTypeConverter
      * using the corresponding Type class.
      *
      * @param mixed $row The array with the fields to be casted
-     * @return mixed
      */
     public function __invoke(mixed $row): mixed
     {

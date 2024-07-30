@@ -27,8 +27,6 @@ class OrangeComponent extends Component
 {
     /**
      * components property
-     *
-     * @var array
      */
     protected array $components = ['Banana'];
 
@@ -41,9 +39,6 @@ class OrangeComponent extends Component
 
     /**
      * initialize method
-     *
-     * @param array $config
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -53,8 +48,6 @@ class OrangeComponent extends Component
 
     /**
      * startup method
-     *
-     * @return void
      */
     public function startup(EventInterface $event): void
     {

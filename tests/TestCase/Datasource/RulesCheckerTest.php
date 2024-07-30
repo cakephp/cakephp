@@ -36,9 +36,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addDelete(
-            function () {
-                return false;
-            },
+            fn(): bool => false,
             'ruleName',
             ['errorField' => 'name']
         );
@@ -49,7 +47,7 @@ class RulesCheckerTest extends TestCase
         $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+        $this->assertSame(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -63,9 +61,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addUpdate(
-            function () {
-                return false;
-            },
+            fn(): bool => false,
             'ruleName',
             ['errorField' => 'name']
         );
@@ -76,7 +72,7 @@ class RulesCheckerTest extends TestCase
         $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+        $this->assertSame(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -90,9 +86,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addCreate(
-            function () {
-                return false;
-            },
+            fn(): bool => false,
             'ruleName',
             ['errorField' => 'name']
         );
@@ -103,7 +97,7 @@ class RulesCheckerTest extends TestCase
         $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+        $this->assertSame(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -117,15 +111,13 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
-                return false;
-            },
+            fn(): bool => false,
             'ruleName',
             ['errorField' => 'name']
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+        $this->assertSame(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -139,14 +131,12 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
-                return 'worst thing ever';
-            },
+            fn(): string => 'worst thing ever',
             ['errorField' => 'name']
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['worst thing ever'], $entity->getError('name'));
+        $this->assertSame(['worst thing ever'], $entity->getError('name'));
     }
 
     /**
@@ -160,14 +150,12 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
-                return false;
-            },
+            fn(): bool => false,
             ['message' => 'this is bad', 'errorField' => 'name']
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['this is bad'], $entity->getError('name'));
+        $this->assertSame(['this is bad'], $entity->getError('name'));
     }
 
     /**
@@ -180,9 +168,7 @@ class RulesCheckerTest extends TestCase
         ]);
 
         $rules = new RulesChecker();
-        $rules->add(function () {
-            return false;
-        });
+        $rules->add(fn(): bool => false);
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
         $this->assertEmpty($entity->getErrors());

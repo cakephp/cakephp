@@ -66,8 +66,6 @@ abstract class Driver
 
     /**
      * Instance of PDO.
-     *
-     * @var \PDO|null
      */
     protected ?PDO $pdo = null;
 
@@ -89,50 +87,36 @@ abstract class Driver
     /**
      * Indicates whether the driver is doing automatic identifier quoting
      * for all queries
-     *
-     * @var bool
      */
     protected bool $_autoQuoting = false;
 
     /**
      * String used to start a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_startQuote = '';
 
     /**
      * String used to end a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_endQuote = '';
 
     /**
      * Identifier quoter
-     *
-     * @var \Cake\Database\IdentifierQuoter|null
      */
     protected ?IdentifierQuoter $quoter = null;
 
     /**
      * The server version
-     *
-     * @var string|null
      */
     protected ?string $_version = null;
 
     /**
      * The last number of connection retry attempts.
-     *
-     * @var int
      */
     protected int $connectRetries = 0;
 
     /**
      * The schema dialect for this driver
-     *
-     * @var \Cake\Database\Schema\SchemaDialect
      */
     protected SchemaDialect $_schemaDialect;
 
@@ -149,11 +133,13 @@ abstract class Driver
                 'Please pass "username" instead of "login" for connecting to the database'
             );
         }
+
         $config += $this->_baseConfig + ['log' => false];
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
             $this->enableAutoQuoting();
         }
+
         if ($config['log'] !== false) {
             $this->logger = $this->createLogger($config['log'] === true ? null : $config['log']);
         }
@@ -174,11 +160,10 @@ abstract class Driver
      *
      * @param string $dsn A Driver-specific PDO-DSN
      * @param array<string, mixed> $config configuration to be used for creating connection
-     * @return \PDO
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn () => new PDO(
+        $action = fn (): \PDO => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,
@@ -188,14 +173,14 @@ abstract class Driver
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {
             return $retry->run($action);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             throw new MissingConnectionException(
                 [
                     'driver' => App::shortName(static::class, 'Database/Driver'),
-                    'reason' => $e->getMessage(),
+                    'reason' => $pdoException->getMessage(),
                 ],
                 null,
-                $e
+                $pdoException
             );
         } finally {
             $this->connectRetries = $retry->getRetries();
@@ -206,14 +191,11 @@ abstract class Driver
      * Establishes a connection to the database server.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException If database connection could not be established.
-     * @return void
      */
     abstract public function connect(): void;
 
     /**
      * Disconnects from database server.
-     *
-     * @return void
      */
     public function disconnect(): void
     {
@@ -223,8 +205,6 @@ abstract class Driver
 
     /**
      * Returns connected server version.
-     *
-     * @return string
      */
     public function version(): string
     {
@@ -233,15 +213,14 @@ abstract class Driver
 
     /**
      * Get the PDO connection instance.
-     *
-     * @return \PDO
      */
     protected function getPdo(): PDO
     {
-        if ($this->pdo === null) {
+        if (!$this->pdo instanceof \PDO) {
             $this->connect();
         }
-        assert($this->pdo !== null);
+
+        assert($this->pdo instanceof \PDO);
 
         return $this->pdo;
     }
@@ -279,6 +258,7 @@ abstract class Driver
         if ($params) {
             $statement->bind($params, $types);
         }
+
         $this->executeStatement($statement);
 
         return $statement;
@@ -305,11 +285,10 @@ abstract class Driver
      *
      * @param \Cake\Database\StatementInterface $statement Statement to execute.
      * @param array|null $params List of values to be bound to query.
-     * @return void
      */
     protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
-        if ($this->logger === null) {
+        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
             $statement->execute($params);
 
             return;
@@ -322,8 +301,8 @@ abstract class Driver
             $start = microtime(true);
             $statement->execute($params);
             $took = (float)number_format((microtime(true) - $start) * 1000, 1);
-        } catch (PDOException $e) {
-            $exception = $e;
+        } catch (PDOException $pdoException) {
+            $exception = $pdoException;
         }
 
         $logContext = [
@@ -331,13 +310,14 @@ abstract class Driver
             'error' => $exception,
             'params' => $params ?? $statement->getBoundParams(),
         ];
-        if (!$exception) {
+        if (!$exception instanceof \PDOException) {
             $logContext['numRows'] = $statement->rowCount();
             $logContext['took'] = $took;
         }
+
         $this->log($statement->queryString(), $logContext);
 
-        if ($exception) {
+        if ($exception instanceof \PDOException) {
             throw $exception;
         }
     }
@@ -346,7 +326,6 @@ abstract class Driver
      * Prepares a sql statement to be executed.
      *
      * @param \Cake\Database\Query|string $query The query to turn into a prepared statement.
-     * @return \Cake\Database\StatementInterface
      */
     public function prepare(Query|string $query): StatementInterface
     {
@@ -411,8 +390,6 @@ abstract class Driver
 
     /**
      * Returns whether a transaction is active for connection.
-     *
-     * @return bool
      */
     public function inTransaction(): bool
     {
@@ -423,7 +400,6 @@ abstract class Driver
      * Returns a SQL snippet for creating a new transaction savepoint
      *
      * @param string|int $name save point name
-     * @return string
      */
     public function savePointSQL(string|int $name): string
     {
@@ -434,7 +410,6 @@ abstract class Driver
      * Returns a SQL snippet for releasing a previously created save point
      *
      * @param string|int $name save point name
-     * @return string
      */
     public function releaseSavePointSQL(string|int $name): string
     {
@@ -445,7 +420,6 @@ abstract class Driver
      * Returns a SQL snippet for rollbacking a previously created save point
      *
      * @param string|int $name save point name
-     * @return string
      */
     public function rollbackSavePointSQL(string|int $name): string
     {
@@ -454,15 +428,11 @@ abstract class Driver
 
     /**
      * Get the SQL for disabling foreign keys.
-     *
-     * @return string
      */
     abstract public function disableForeignKeySQL(): string;
 
     /**
      * Get the SQL for enabling foreign keys.
-     *
-     * @return string
      */
     abstract public function enableForeignKeySQL(): string;
 
@@ -472,7 +442,6 @@ abstract class Driver
      * It will also quote the identifiers if auto quoting is enabled.
      *
      * @param \Cake\Database\Query $query Query to transform.
-     * @return \Cake\Database\Query
      */
     protected function transformQuery(Query $query): Query
     {
@@ -567,8 +536,10 @@ abstract class Driver
             if (is_string($alias)) {
                 $hadAlias = true;
             }
+
             $tables[] = $table;
         }
+
         if ($hadAlias) {
             $query->from($tables, true);
         }
@@ -618,7 +589,7 @@ abstract class Driver
 
         $conditions = $query->clause('where');
         assert($conditions === null || $conditions instanceof ExpressionInterface);
-        if ($conditions) {
+        if ($conditions instanceof \Cake\Database\ExpressionInterface) {
             $conditions->traverse(function ($expression) {
                 if ($expression instanceof ComparisonExpression) {
                     $field = $expression->getField();
@@ -669,8 +640,6 @@ abstract class Driver
      *
      * If all the tables that use this Driver specify their
      * own schemas, then this may return null.
-     *
-     * @return \Cake\Database\Schema\SchemaDialect
      */
     abstract public function schemaDialect(): SchemaDialect;
 
@@ -679,7 +648,6 @@ abstract class Driver
      * be used safely in queries without the risk of using reserved words
      *
      * @param string $identifier The identifier to quote.
-     * @return string
      */
     public function quoteIdentifier(string $identifier): string
     {
@@ -688,8 +656,6 @@ abstract class Driver
 
     /**
      * Get identifier quoter instance.
-     *
-     * @return \Cake\Database\IdentifierQuoter
      */
     public function quoter(): IdentifierQuoter
     {
@@ -707,15 +673,19 @@ abstract class Driver
         if ($value === null) {
             return 'NULL';
         }
+
         if ($value === false) {
             return 'FALSE';
         }
+
         if ($value === true) {
             return 'TRUE';
         }
+
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
+
         /** @psalm-suppress InvalidArgument */
         if (
             (
@@ -737,8 +707,6 @@ abstract class Driver
 
     /**
      * Returns the schema name that's being used.
-     *
-     * @return string
      */
     public function schema(): string
     {
@@ -749,7 +717,6 @@ abstract class Driver
      * Returns last id generated for a table or sequence in database.
      *
      * @param string|null $table table name or sequence to get last insert value from.
-     * @return string
      */
     public function lastInsertId(?string $table = null): string
     {
@@ -758,15 +725,13 @@ abstract class Driver
 
     /**
      * Checks whether the driver is connected.
-     *
-     * @return bool
      */
     public function isConnected(): bool
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             try {
                 $connected = (bool)$this->pdo->query('SELECT 1');
-            } catch (PDOException $e) {
+            } catch (PDOException) {
                 $connected = false;
             }
         } else {
@@ -805,8 +770,6 @@ abstract class Driver
     /**
      * Returns whether this driver should automatically quote identifiers
      * in queries.
-     *
-     * @return bool
      */
     public function isAutoQuotingEnabled(): bool
     {
@@ -819,7 +782,6 @@ abstract class Driver
      * Should return false for unknown features.
      *
      * @param \Cake\Database\DriverFeatureEnum $feature Driver feature
-     * @return bool
      */
     abstract public function supports(DriverFeatureEnum $feature): bool;
 
@@ -839,9 +801,6 @@ abstract class Driver
         return $processor->compile($query, $binder);
     }
 
-    /**
-     * @return \Cake\Database\QueryCompiler
-     */
     public function newCompiler(): QueryCompiler
     {
         return new QueryCompiler();
@@ -852,7 +811,6 @@ abstract class Driver
      *
      * @param string $table The table name.
      * @param array<string, mixed> $columns The list of columns for the schema.
-     * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
     {
@@ -876,8 +834,6 @@ abstract class Driver
 
     /**
      * Get the logger instance.
-     *
-     * @return \Psr\Log\LoggerInterface|null
      */
     public function getLogger(): ?LoggerInterface
     {
@@ -888,7 +844,6 @@ abstract class Driver
      * Create logger instance.
      *
      * @param string|null $className Logger's class name
-     * @return \Psr\Log\LoggerInterface
      */
     protected function createLogger(?string $className): LoggerInterface
     {
@@ -915,7 +870,7 @@ abstract class Driver
      */
     public function log(Stringable|string $message, array $context = []): bool
     {
-        if ($this->logger === null) {
+        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
             return false;
         }
 
@@ -930,8 +885,6 @@ abstract class Driver
 
     /**
      * Returns the connection role this driver performs.
-     *
-     * @return string
      */
     public function getRole(): string
     {
@@ -955,7 +908,7 @@ abstract class Driver
     public function __debugInfo(): array
     {
         return [
-            'connected' => $this->pdo !== null,
+            'connected' => $this->pdo instanceof \PDO,
             'role' => $this->getRole(),
         ];
     }

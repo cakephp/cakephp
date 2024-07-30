@@ -38,6 +38,7 @@ class GoneException extends HttpException
         if (!$message) {
             $message = 'Gone';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

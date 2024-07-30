@@ -12,11 +12,15 @@ class Stub
 {
     use ModelAwareTrait;
 
-    public $Articles = null;
-    public $Comments = null;
-    public $Foo = null;
-    public $Magic = null;
-    public $PaginatorPosts = null;
+    public $Articles;
+
+    public $Comments;
+
+    public $Foo;
+
+    public $Magic;
+
+    public $PaginatorPosts;
 
     public function setProps(string $name): void
     {

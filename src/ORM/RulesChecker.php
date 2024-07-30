@@ -51,7 +51,6 @@ class RulesChecker extends BaseRulesChecker
      * @param list<string> $fields The list of fields to check for uniqueness.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
-     * @return \Cake\Datasource\RuleInvoker
      */
     public function isUnique(array $fields, array|string|null $message = null): RuleInvoker
     {
@@ -60,16 +59,12 @@ class RulesChecker extends BaseRulesChecker
         unset($options['message']);
 
         if (!$message) {
-            if ($this->_useI18n) {
-                $message = __d('cake', 'This value is already in use');
-            } else {
-                $message = 'This value is already in use';
-            }
+            $message = $this->_useI18n ? __d('cake', 'This value is already in use') : 'This value is already in use';
         }
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields, $options), '_isUnique', ['errorField' => $errorField, 'message' => $message]);
     }
 
     /**
@@ -95,7 +90,6 @@ class RulesChecker extends BaseRulesChecker
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $table The table name where the fields existence will be checked.
      * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
-     * @return \Cake\Datasource\RuleInvoker
      */
     public function existsIn(
         array|string $field,
@@ -110,16 +104,12 @@ class RulesChecker extends BaseRulesChecker
         }
 
         if (!$message) {
-            if ($this->_useI18n) {
-                $message = __d('cake', 'This value does not exist');
-            } else {
-                $message = 'This value does not exist';
-            }
+            $message = $this->_useI18n ? __d('cake', 'This value does not exist') : 'This value does not exist';
         }
 
         $errorField = is_string($field) ? $field : current($field);
 
-        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', ['errorField' => $errorField, 'message' => $message]);
     }
 
     /**
@@ -138,7 +128,6 @@ class RulesChecker extends BaseRulesChecker
      * @param string|null $field The name of the association property. When supplied, this is the name used to set
      *  possible errors. When absent, the name is inferred from `$association`.
      * @param string|null $message The error message to show in case the rule does not pass.
-     * @return \Cake\Datasource\RuleInvoker
      * @since 4.0.0
      */
     public function isLinkedTo(
@@ -171,7 +160,6 @@ class RulesChecker extends BaseRulesChecker
      * @param string|null $field The name of the association property. When supplied, this is the name used to set
      *  possible errors. When absent, the name is inferred from `$association`.
      * @param string|null $message The error message to show in case the rule does not pass.
-     * @return \Cake\Datasource\RuleInvoker
      * @since 4.0.0
      */
     public function isNotLinkedTo(
@@ -197,7 +185,6 @@ class RulesChecker extends BaseRulesChecker
      * @param string|null $message The error message to show in case the rule does not pass.
      * @param string $linkStatus The ink status required for the check to pass.
      * @param string $ruleName The alias/name of the rule.
-     * @return \Cake\Datasource\RuleInvoker
      * @throws \InvalidArgumentException In case the `$association` argument is of an invalid type.
      * @since 4.0.0
      * @see \Cake\ORM\RulesChecker::isLinkedTo()
@@ -249,7 +236,7 @@ class RulesChecker extends BaseRulesChecker
             $linkStatus
         );
 
-        return $this->_addError($rule, $ruleName, compact('errorField', 'message'));
+        return $this->_addError($rule, $ruleName, ['errorField' => $errorField, 'message' => $message]);
     }
 
     /**
@@ -259,7 +246,6 @@ class RulesChecker extends BaseRulesChecker
      * @param int $count The expected count.
      * @param string $operator The operator for the count comparison.
      * @param string|null $message The error message to show in case the rule does not pass.
-     * @return \Cake\Datasource\RuleInvoker
      */
     public function validCount(
         string $field,
@@ -280,7 +266,7 @@ class RulesChecker extends BaseRulesChecker
         return $this->_addError(
             new ValidCount($field),
             '_validCount',
-            compact('count', 'operator', 'errorField', 'message')
+            ['count' => $count, 'operator' => $operator, 'errorField' => $errorField, 'message' => $message]
         );
     }
 }

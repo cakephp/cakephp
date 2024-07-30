@@ -40,6 +40,7 @@ class DuplicateNamedRouteException extends CakeException
         if (is_array($message) && isset($message['message'])) {
             $this->_messageTemplate = $message['message'];
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

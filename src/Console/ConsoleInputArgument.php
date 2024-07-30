@@ -29,22 +29,16 @@ class ConsoleInputArgument
 {
     /**
      * Name of the argument.
-     *
-     * @var string
      */
     protected string $_name;
 
     /**
      * Help string
-     *
-     * @var string
      */
     protected string $_help;
 
     /**
      * Is this option required?
-     *
-     * @var bool
      */
     protected bool $_required;
 
@@ -92,7 +86,6 @@ class ConsoleInputArgument
      * Checks if this argument is equal to another argument.
      *
      * @param \Cake\Console\ConsoleInputArgument $argument ConsoleInputArgument to compare to.
-     * @return bool
      */
     public function isEqualTo(ConsoleInputArgument $argument): bool
     {
@@ -104,7 +97,6 @@ class ConsoleInputArgument
      * Generate the help for this argument.
      *
      * @param int $width The width to make the name of the option.
-     * @return string
      */
     public function help(int $width = 0): string
     {
@@ -112,10 +104,12 @@ class ConsoleInputArgument
         if (strlen($name) < $width) {
             $name = str_pad($name, $width, ' ');
         }
+
         $optional = '';
         if (!$this->isRequired()) {
             $optional = ' <comment>(optional)</comment>';
         }
+
         if ($this->_choices) {
             $optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
@@ -125,8 +119,6 @@ class ConsoleInputArgument
 
     /**
      * Get the usage value for this argument
-     *
-     * @return string
      */
     public function usage(): string
     {
@@ -134,9 +126,10 @@ class ConsoleInputArgument
         if ($this->_choices) {
             $name = implode('|', $this->_choices);
         }
+
         $name = '<' . $name . '>';
         if (!$this->isRequired()) {
-            $name = '[' . $name . ']';
+            return '[' . $name . ']';
         }
 
         return $name;
@@ -144,8 +137,6 @@ class ConsoleInputArgument
 
     /**
      * Check if this argument is a required argument
-     *
-     * @return bool
      */
     public function isRequired(): bool
     {
@@ -164,6 +155,7 @@ class ConsoleInputArgument
         if (empty($this->_choices)) {
             return true;
         }
+
         if (!in_array($value, $this->_choices, true)) {
             throw new ConsoleException(
                 sprintf(
@@ -190,6 +182,7 @@ class ConsoleInputArgument
         $option->addAttribute('name', $this->_name);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('required', (string)(int)$this->isRequired());
+
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

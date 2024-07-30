@@ -20,8 +20,6 @@ class NullableAuthorsFixture extends TestFixture
 {
     /**
      * fields property
-     *
-     * @var array
      */
     public array $fields = [
         'id' => ['type' => 'integer'],
@@ -31,8 +29,6 @@ class NullableAuthorsFixture extends TestFixture
 
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['author_id' => 3],

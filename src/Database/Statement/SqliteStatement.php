@@ -23,9 +23,6 @@ namespace Cake\Database\Statement;
  */
 class SqliteStatement extends Statement
 {
-    /**
-     * @var int|null
-     */
     protected ?int $affectedRows = null;
 
     /**

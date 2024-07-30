@@ -31,34 +31,25 @@ use Closure;
 class IdentifierExpression implements ExpressionInterface
 {
     /**
-     * Holds the identifier string
-     *
-     * @var string
-     */
-    protected string $_identifier;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $collation = null;
-
-    /**
      * Constructor
      *
-     * @param string $identifier The identifier this expression represents
+     * @param string $_identifier The identifier this expression represents
      * @param string|null $collation The identifier collation
      */
-    public function __construct(string $identifier, ?string $collation = null)
+    public function __construct(
+        /**
+         * Holds the identifier string
+         */
+        protected string $_identifier,
+        protected ?string $collation = null
+    )
     {
-        $this->_identifier = $identifier;
-        $this->collation = $collation;
     }
 
     /**
      * Sets the identifier this expression represents
      *
      * @param string $identifier The identifier
-     * @return void
      */
     public function setIdentifier(string $identifier): void
     {
@@ -67,8 +58,6 @@ class IdentifierExpression implements ExpressionInterface
 
     /**
      * Returns the identifier this expression represents
-     *
-     * @return string
      */
     public function getIdentifier(): string
     {
@@ -79,7 +68,6 @@ class IdentifierExpression implements ExpressionInterface
      * Sets the collation.
      *
      * @param string $collation Identifier collation
-     * @return void
      */
     public function setCollation(string $collation): void
     {
@@ -88,8 +76,6 @@ class IdentifierExpression implements ExpressionInterface
 
     /**
      * Returns the collation.
-     *
-     * @return string|null
      */
     public function getCollation(): ?string
     {
@@ -112,7 +98,7 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         return $this;
     }

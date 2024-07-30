@@ -25,13 +25,6 @@ use Cake\Utility\Hash;
 class IsUnique
 {
     /**
-     * The list of fields to check
-     *
-     * @var list<string>
-     */
-    protected array $_fields;
-
-    /**
      * The unique check options
      *
      * @var array<string, mixed>
@@ -47,12 +40,14 @@ class IsUnique
      *
      * - `allowMultipleNulls` Allows any field to have multiple null values. Defaults to true.
      *
-     * @param list<string> $fields The list of fields to check uniqueness for
+     * @param list<string> $_fields The list of fields to check uniqueness for
      * @param array<string, mixed> $options The options for unique checks.
      */
-    public function __construct(array $fields, array $options = [])
+    public function __construct(/**
+     * The list of fields to check
+     */
+    protected array $_fields, array $options = [])
     {
-        $this->_fields = $fields;
         $this->_options = $options + $this->_options;
     }
 
@@ -62,7 +57,6 @@ class IsUnique
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      *   where the `repository` key is required.
      * @param array<string, mixed> $options Options passed to the check,
-     * @return bool
      */
     public function __invoke(EntityInterface $entity, array $options): bool
     {
@@ -102,7 +96,7 @@ class IsUnique
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["$alias.$key IS"] = $value;
+            $aliased[sprintf('%s.%s IS', $alias, $key)] = $value;
         }
 
         return $aliased;

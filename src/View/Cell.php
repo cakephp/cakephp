@@ -57,8 +57,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
     /**
      * Instance of the View created during rendering. Won't be set until after
      * Cell::__toString()/render() is called.
-     *
-     * @var \Cake\View\View
      */
     protected View $View;
 
@@ -66,29 +64,21 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
-     *
-     * @var \Cake\Http\ServerRequest
      */
     protected ServerRequest $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
-     *
-     * @var \Cake\Http\Response
      */
     protected Response $response;
 
     /**
      * The cell's action to invoke.
-     *
-     * @var string
      */
     protected string $action;
 
     /**
      * Arguments to pass to cell's action.
-     *
-     * @var array
      */
     protected array $args = [];
 
@@ -103,8 +93,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
 
     /**
      * Caching setup.
-     *
-     * @var array|bool
      */
     protected array|bool $_cache = false;
 
@@ -122,9 +110,10 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
-        if ($eventManager !== null) {
+        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
             $this->setEventManager($eventManager);
         }
+
         $this->request = $request;
         $this->response = $response;
 
@@ -134,6 +123,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 $this->{$var} = $cellOptions[$var];
             }
         }
+
         if (!empty($cellOptions['cache'])) {
             $this->_cache = $cellOptions['cache'];
         }
@@ -146,8 +136,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * Implement this method to avoid having to overwrite
      * the constructor and calling parent::__construct().
-     *
-     * @return void
      */
     public function initialize(): void
     {
@@ -168,16 +156,16 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $cache = $this->_cacheConfig($this->action, $template);
         }
 
-        $render = function () use ($template) {
+        $render = function () use ($template): string {
             try {
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException $reflectionException) {
                 throw new BadMethodCallException(sprintf(
                     'Class `%s` does not have a `%s` method.',
                     static::class,
                     $this->action
-                ));
+                ), $reflectionException->getCode(), $reflectionException);
             }
 
             $builder = $this->viewBuilder();
@@ -196,19 +184,20 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                     static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name)
                 );
             }
+
             $template = $builder->getTemplate();
 
             $view = $this->createView();
             try {
                 return $view->render($template, false);
-            } catch (MissingTemplateException $e) {
-                $attributes = $e->getAttributes();
+            } catch (MissingTemplateException $missingTemplateException) {
+                $attributes = $missingTemplateException->getAttributes();
                 throw new MissingCellTemplateException(
                     $name,
                     $attributes['file'],
                     $attributes['paths'],
                     null,
-                    $e
+                    $missingTemplateException
                 );
             }
         };
@@ -234,9 +223,11 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         if (!$this->_cache) {
             return [];
         }
+
         $template = $template ?: 'default';
         $key = 'cell_' . Inflector::underscore(static::class) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
+
         $default = [
             'config' => 'default',
             'key' => $key,

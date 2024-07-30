@@ -26,15 +26,11 @@ trait EventDispatcherTrait
     /**
      * Instance of the Cake\Event\EventManager this object is using
      * to dispatch inner events.
-     *
-     * @var \Cake\Event\EventManagerInterface|null
      */
     protected ?EventManagerInterface $_eventManager = null;
 
     /**
      * Default class name for new event objects.
-     *
-     * @var string
      */
     protected string $_eventClass = Event::class;
 
@@ -43,8 +39,6 @@ trait EventDispatcherTrait
      *
      * You can use this instance to register any new listeners or callbacks to the
      * object events, or create your own events and trigger them at will.
-     *
-     * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager(): EventManagerInterface
     {

@@ -331,7 +331,7 @@ use function Cake\Core\h;
 <body>
     <header>
         <?php
-        $title = explode("\n", trim($this->fetch('title')));
+        $title = explode("\n", trim((string) $this->fetch('title')));
         $errorTitle = array_shift($title);
         $errorDescription = implode("\n", $title);
         ?>
@@ -342,20 +342,22 @@ use function Cake\Core\h;
         <?php if (strlen($errorDescription)) : ?>
             <span class="header-description"><?= Debugger::formatHtmlMessage($errorDescription) ?></span>
         <?php endif ?>
-        <span class="header-type"><?= get_class($error) ?></span>
+        <span class="header-type"><?= $error::class ?></span>
     </header>
     <div class="error-content">
         <?php if ($this->fetch('subheading')): ?>
         <p class="error-subheading">
             <?= $this->fetch('subheading') ?>
         </p>
-        <?php endif; ?>
+        <?php endif;
+         ?>
 
         <?php if ($this->fetch('file')): ?>
         <div class="error-suggestion">
             <?= $this->fetch('file') ?>
         </div>
-        <?php endif; ?>
+        <?php endif;
+         ?>
 
         <?= $this->element('dev_error_stacktrace'); ?>
 
@@ -364,7 +366,8 @@ use function Cake\Core\h;
             If you want to customize this error message, create
             <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
         </p>
-        <?php endif; ?>
+        <?php endif;
+         ?>
     </div>
 
     <script type="text/javascript">

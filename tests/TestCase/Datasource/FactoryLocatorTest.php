@@ -66,7 +66,7 @@ class FactoryLocatorTest extends TestCase
         FactoryLocator::get('Test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         FactoryLocator::drop('Test');
         FactoryLocator::drop('MyType');

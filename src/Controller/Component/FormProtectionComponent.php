@@ -70,8 +70,6 @@ class FormProtectionComponent extends Component
     /**
      * Get Session id for FormProtector
      * Must be the same as in FormHelper
-     *
-     * @return string
      */
     protected function _getSessionId(): string
     {
@@ -87,7 +85,6 @@ class FormProtectionComponent extends Component
      * Token check happens here.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null
      */
     public function startup(EventInterface $event): ?Response
     {
@@ -170,7 +167,6 @@ class FormProtectionComponent extends Component
      *
      * @param \Closure $callback Callback
      * @param \Cake\Http\Exception\BadRequestException $exception Exception instance.
-     * @return \Cake\Http\Response|null
      */
     protected function executeCallback(Closure $callback, BadRequestException $exception): ?Response
     {

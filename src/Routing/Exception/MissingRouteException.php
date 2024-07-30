@@ -30,8 +30,6 @@ class MissingRouteException extends CakeException
 
     /**
      * Message template to use when the requested method is included.
-     *
-     * @var string
      */
     protected string $_messageTemplateWithMethod = 'A `%s` route matching `%s` could not be found.';
 
@@ -52,6 +50,7 @@ class MissingRouteException extends CakeException
                 $this->_messageTemplate = $this->_messageTemplateWithMethod;
             }
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

@@ -47,6 +47,7 @@ class InvalidParameterException extends CakeException
             $this->_messageTemplate = $this->templates[$message['template']] ?? '';
             unset($message['template']);
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

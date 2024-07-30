@@ -29,8 +29,6 @@ class NegotiationRequiredView extends View
 {
     /**
      * Get the content-type
-     *
-     * @return string
      */
     public static function contentType(): string
     {
@@ -39,8 +37,6 @@ class NegotiationRequiredView extends View
 
     /**
      * Initialization hook method.
-     *
-     * @return void
      */
     public function initialize(): void
     {

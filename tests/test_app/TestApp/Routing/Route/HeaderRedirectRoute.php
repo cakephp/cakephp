@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Routing\Route;
 
 use Cake\Http\Exception\RedirectException;
-use Cake\Routing\Route\Route as Route;
+use Cake\Routing\Route\Route;
 
 class HeaderRedirectRoute extends Route
 {
@@ -14,6 +14,7 @@ class HeaderRedirectRoute extends Route
         if (!$params) {
             return null;
         }
+
         throw new RedirectException('http://localhost/pages', 301, ['Redirect-Exception' => 'yes']);
     }
 }

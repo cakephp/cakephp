@@ -43,20 +43,14 @@ class FlashMessage
     ];
 
     /**
-     * @var \Cake\Http\Session
-     */
-    protected Session $session;
-
-    /**
      * Constructor
      *
      * @param \Cake\Http\Session $session Session instance.
      * @param array<string, mixed> $config Config array.
      * @see FlashMessage::set() For list of valid config keys.
      */
-    public function __construct(Session $session, array $config = [])
+    public function __construct(protected Session $session, array $config = [])
     {
-        $this->session = $session;
         $this->setConfig($config);
     }
 
@@ -78,7 +72,6 @@ class FlashMessage
      *
      * @param string $message Message to be flashed.
      * @param array<string, mixed> $options An array of options
-     * @return void
      * @see FlashMessage::$_defaultConfig For default values for the options.
      */
     public function set(string $message, array $options = []): void
@@ -94,11 +87,7 @@ class FlashMessage
             $plugin = $options['plugin'];
         }
 
-        if ($plugin) {
-            $options['element'] = $plugin . '.flash/' . $element;
-        } else {
-            $options['element'] = 'flash/' . $element;
-        }
+        $options['element'] = $plugin ? $plugin . '.flash/' . $element : 'flash/' . $element;
 
         $messages = [];
         if (!$options['clear']) {
@@ -134,7 +123,6 @@ class FlashMessage
      *
      * @param \Throwable $exception Exception instance.
      * @param array<string, mixed> $options An array of options.
-     * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function setExceptionMessage(Throwable $exception, array $options = []): void
@@ -150,11 +138,10 @@ class FlashMessage
      * Get the messages for given key and remove from session.
      *
      * @param string $key The key for get messages for.
-     * @return array|null
      */
     public function consume(string $key): ?array
     {
-        return $this->session->consume("Flash.{$key}");
+        return $this->session->consume('Flash.' . $key);
     }
 
     /**
@@ -164,7 +151,6 @@ class FlashMessage
      *
      * @param string $message Message to flash.
      * @param array<string, mixed> $options An array of options.
-     * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function success(string $message, array $options = []): void
@@ -180,7 +166,6 @@ class FlashMessage
      *
      * @param string $message Message to flash.
      * @param array<string, mixed> $options An array of options.
-     * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function error(string $message, array $options = []): void
@@ -196,7 +181,6 @@ class FlashMessage
      *
      * @param string $message Message to flash.
      * @param array<string, mixed> $options An array of options.
-     * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function warning(string $message, array $options = []): void
@@ -212,7 +196,6 @@ class FlashMessage
      *
      * @param string $message Message to flash.
      * @param array<string, mixed> $options An array of options.
-     * @return void
      * @see FlashMessage::set() For list of valid options
      */
     public function info(string $message, array $options = []): void

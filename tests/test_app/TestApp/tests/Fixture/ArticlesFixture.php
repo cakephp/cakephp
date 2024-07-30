@@ -9,15 +9,11 @@ class ArticlesFixture extends TestFixture
 {
     /**
      * Table property
-     *
-     * @var string
      */
     public string $table = 'articles';
 
     /**
      * Records property
-     *
-     * @var array
      */
     public array $records = [
         ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],

@@ -23,9 +23,6 @@ enum Priority: int implements EnumLabelInterface
     case Medium = 2;
     case High = 3;
 
-    /**
-     * @return string
-     */
     public function label(): string
     {
         return 'Is ' . Inflector::humanize(Inflector::underscore($this->name));

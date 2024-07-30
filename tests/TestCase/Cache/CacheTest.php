@@ -38,7 +38,7 @@ class CacheTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::enable();
@@ -47,7 +47,7 @@ class CacheTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('tests');
@@ -108,7 +108,7 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function () {
+        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function (): void {
             Cache::pool('tests');
         });
     }
@@ -130,14 +130,14 @@ class CacheTest extends TestCase
         $e = null;
         try {
             Cache::pool('tests');
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $invalidArgumentException) {
         }
 
         Cache::drop('tests');
         unlink($filename);
 
         $this->assertNotNull($e);
-        $this->assertStringEndsWith('cannot fallback to itself.', $e->getMessage());
+        $this->assertStringEndsWith('cannot fallback to itself.', $invalidArgumentException->getMessage());
         $this->assertInstanceOf('RunTimeException', $e->getPrevious());
     }
 
@@ -281,12 +281,12 @@ class CacheTest extends TestCase
         $config = ['engine' => 'TestAppCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);
         $engine = Cache::pool('libEngine');
-        $this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
+        $this->assertInstanceOf(\TestApp\Cache\Engine\TestAppCacheEngine::class, $engine);
 
         $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         Cache::setConfig('pluginLibEngine', $config);
         $engine = Cache::pool('pluginLibEngine');
-        $this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
+        $this->assertInstanceOf(\TestPlugin\Cache\Engine\TestPluginCacheEngine::class, $engine);
 
         Cache::drop('libEngine');
         Cache::drop('pluginLibEngine');
@@ -349,21 +349,19 @@ class CacheTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider(): array
+    public static function configProvider(): \Iterator
     {
-        return [
-            'Array of data using engine key.' => [[
-                'engine' => 'File',
-                'path' => CACHE . 'tests',
-                'prefix' => 'cake_test_',
-            ]],
-            'Array of data using classname key.' => [[
-                'className' => 'File',
-                'path' => CACHE . 'tests',
-                'prefix' => 'cake_test_',
-            ]],
-            'Direct instance' => [new FileEngine()],
-        ];
+        yield 'Array of data using engine key.' => [[
+            'engine' => 'File',
+            'path' => CACHE . 'tests',
+            'prefix' => 'cake_test_',
+        ]];
+        yield 'Array of data using classname key.' => [[
+            'className' => 'File',
+            'path' => CACHE . 'tests',
+            'prefix' => 'cake_test_',
+        ]];
+        yield 'Direct instance' => [new FileEngine()];
     }
 
     /**
@@ -372,13 +370,13 @@ class CacheTest extends TestCase
      * @dataProvider configProvider
      * @param \Cake\Cache\CacheEngine|array $config
      */
-    public function testConfigVariants($config): void
+    public function testConfigVariants(\Cake\Cache\Engine\FileEngine|array $config): void
     {
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
         Cache::setConfig('tests', $config);
 
         $engine = Cache::pool('tests');
-        $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
+        $this->assertInstanceOf(\Cake\Cache\Engine\FileEngine::class, $engine);
         $this->assertContains('tests', Cache::configured());
     }
 
@@ -471,7 +469,7 @@ class CacheTest extends TestCase
         $engine = Cache::pool('cache.dotted');
         $this->assertContains('cache.dotted', Cache::configured());
         $this->assertNotContains('dotted', Cache::configured());
-        $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
+        $this->assertInstanceOf(\Cake\Cache\Engine\FileEngine::class, $engine);
         Cache::drop('cache.dotted');
     }
 
@@ -496,7 +494,7 @@ class CacheTest extends TestCase
         $this->assertContains('latest', $result['comments']);
 
         $result = Cache::groupConfigs('posts');
-        $this->assertEquals(['posts' => ['latest']], $result);
+        $this->assertSame(['posts' => ['latest']], $result);
 
         Cache::setConfig('page', [
             'duration' => 86400,
@@ -519,7 +517,7 @@ class CacheTest extends TestCase
         $this->assertNotContains('latest', $result['archive']);
 
         $result = Cache::groupConfigs('archive');
-        $this->assertEquals(['archive' => ['page']], $result);
+        $this->assertSame(['archive' => ['page']], $result);
 
         Cache::setConfig('archive', [
             'duration' => 86400 * 30,
@@ -528,7 +526,7 @@ class CacheTest extends TestCase
         ]);
 
         $result = Cache::groupConfigs('archive');
-        $this->assertEquals(['archive' => ['archive', 'page']], $result);
+        $this->assertSame(['archive' => ['archive', 'page']], $result);
     }
 
     /**
@@ -546,7 +544,7 @@ class CacheTest extends TestCase
         Cache::setConfig('cached', $cache);
 
         $result = Cache::groupConfigs('users');
-        $this->assertEquals(['users' => ['cached']], $result);
+        $this->assertSame(['users' => ['cached']], $result);
     }
 
     /**
@@ -563,7 +561,7 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigsThrowsOldException(): void
     {
-        $this->expectException('Cake\Cache\Exception\InvalidArgumentException');
+        $this->expectException(\Cake\Cache\Exception\InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
     }
 
@@ -594,7 +592,7 @@ class CacheTest extends TestCase
             'engine' => 'TestAppCache',
         ]);
         $this->assertInstanceOf(
-            'TestApp\Cache\Engine\TestAppCacheEngine',
+            \TestApp\Cache\Engine\TestAppCacheEngine::class,
             Cache::pool('unconfigTest')
         );
         $this->assertTrue(Cache::drop('unconfigTest'));
@@ -818,9 +816,7 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         $counter = 0;
-        $cacher = function () use ($counter) {
-            return 'This is some data ' . $counter;
-        };
+        $cacher = fn(): string => 'This is some data ' . $counter;
 
         $expected = 'This is some data 0';
         $result = Cache::remember('test_key', $cacher, 'tests');

@@ -21,7 +21,7 @@ use function Cake\I18n\__d;
     <strong><?= __d('cake', 'Error'); ?>: </strong>
     <?= sprintf(
         __d('cake', 'The requested address %s was not found on this server.'),
-        "<strong>'{$url}'</strong>"
+        sprintf("<strong>'%s'</strong>", $url)
     ) ?>
 </p>
 <?php

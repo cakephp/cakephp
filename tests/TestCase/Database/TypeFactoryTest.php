@@ -39,7 +39,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Backup original Type class state
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_originalMap = TypeFactory::getMap();
         parent::setUp();
@@ -48,7 +48,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Restores Type class state
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -64,8 +64,8 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build($name);
         $this->assertInstanceOf(TypeInterface::class, $type);
-        $this->assertEquals($name, $type->getName());
-        $this->assertEquals($name, $type->getBaseType());
+        $this->assertSame($name, $type->getName());
+        $this->assertSame($name, $type->getBaseType());
     }
 
     /**
@@ -73,16 +73,14 @@ class TypeFactoryTest extends TestCase
      *
      * @return array
      */
-    public static function basicTypesProvider(): array
+    public static function basicTypesProvider(): \Iterator
     {
-        return [
-            ['string'],
-            ['text'],
-            ['smallinteger'],
-            ['tinyinteger'],
-            ['integer'],
-            ['biginteger'],
-        ];
+        yield ['string'];
+        yield ['text'];
+        yield ['smallinteger'];
+        yield ['tinyinteger'];
+        yield ['integer'];
+        yield ['biginteger'];
     }
 
     /**
@@ -134,11 +132,11 @@ class TypeFactoryTest extends TestCase
     public function testSetAndBuild(): void
     {
         $types = TypeFactory::buildAll();
-        $this->assertFalse(isset($types['foo']));
+        $this->assertArrayNotHasKey('foo', $types);
 
         TypeFactory::set('foo', new FooType());
         $types = TypeFactory::buildAll();
-        $this->assertTrue(isset($types['foo']));
+        $this->assertArrayHasKey('foo', $types);
     }
 
     /**
@@ -188,7 +186,7 @@ class TypeFactoryTest extends TestCase
         );
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
         $this->assertSame($integer, $type->toPHP('' . $integer, $driver));
         $this->assertSame(3, $type->toPHP(3.57, $driver));
@@ -201,7 +199,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
         $this->assertSame(PDO::PARAM_INT, $type->toStatement($integer, $driver));
     }
 
@@ -211,7 +209,7 @@ class TypeFactoryTest extends TestCase
     public function testDecimalToPHP(): void
     {
         $type = TypeFactory::build('decimal');
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
 
         $this->assertSame('3.14159', $type->toPHP('3.14159', $driver));
         $this->assertSame('3.14159', $type->toPHP(3.14159, $driver));
@@ -225,7 +223,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('decimal');
         $string = '12.55';
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
         $this->assertSame(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 

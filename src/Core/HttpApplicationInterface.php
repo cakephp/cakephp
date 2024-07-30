@@ -28,8 +28,6 @@ interface HttpApplicationInterface extends RequestHandlerInterface
      * Load all the application configuration and bootstrap logic.
      *
      * Override this method to add additional bootstrap logic for your application.
-     *
-     * @return void
      */
     public function bootstrap(): void;
 
@@ -37,7 +35,6 @@ interface HttpApplicationInterface extends RequestHandlerInterface
      * Define the HTTP middleware layers for an application.
      *
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to set in your App Class
-     * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue;
 }

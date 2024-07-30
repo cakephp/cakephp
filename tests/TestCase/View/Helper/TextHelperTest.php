@@ -38,7 +38,7 @@ class TextHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -49,7 +49,7 @@ class TextHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->Text, $this->View);
         parent::tearDown();
@@ -60,13 +60,11 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): array
+    public static function methodProvider(): \Iterator
     {
-        return [
-            ['highlight', ['this is a test', 'test']],
-            ['slug', ['test']],
-            ['tail', ['test test']],
-        ];
+        yield ['highlight', ['this is a test', 'test']];
+        yield ['slug', ['test']];
+        yield ['tail', ['test test']];
     }
 
     /**
@@ -205,113 +203,111 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function autoLinkProvider(): array
+    public static function autoLinkProvider(): \Iterator
     {
-        return [
-            [
-                'This is a test text',
-                'This is a test text',
-            ],
-            [
-                'This is a test that includes (www.cakephp.org)',
-                'This is a test that includes (<a href="http://www.cakephp.org">www.cakephp.org</a>)',
-            ],
-            [
-                'This is a test that includes www.cakephp.org:8080',
-                'This is a test that includes <a href="http://www.cakephp.org:8080">www.cakephp.org:8080</a>',
-            ],
-            [
-                'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
-                'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
-            ],
-            [
-                'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
-                'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
-            ],
-            [
-                'This is a test that includes Http://example.com/test.php?foo=bar text',
-                'This is a test that includes <a href="Http://example.com/test.php?foo=bar">Http://example.com/test.php?foo=bar</a> text',
-            ],
-            [
-                'This is a test that includes http://example.com/test.php?foo=bar text',
-                'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text',
-            ],
-            [
-                'This is a test that includes www.example.com/test.php?foo=bar text',
-                'This is a test that includes <a href="http://www.example.com/test.php?foo=bar">www.example.com/test.php?foo=bar</a> text',
-            ],
-            [
-                'Text with a partial www.cakephp.org URL',
-                'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL',
-            ],
-            [
-                'Text with a partial WWW.cakephp.org URL',
-                'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> URL',
-            ],
-            [
-                'Text with a partial WWW.cakephp.org &copy, URL',
-                'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> &amp;copy, URL',
-            ],
-            [
-                'Text with a url www.cot.ag/cuIb2Q and more',
-                'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more',
-            ],
-            [
-                'Text with a url http://www.does--not--work.com and more',
-                'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more',
-            ],
-            [
-                'Text with a url http://www.not--work.com and more',
-                'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
-            ],
-            [
-                'Text with a url http://www.sub_domain.domain.pl and more',
-                'Text with a url <a href="http://www.sub_domain.domain.pl">http://www.sub_domain.domain.pl</a> and more',
-            ],
-            [
-                'Text with a partial www.küchenschöhn-not-working.de URL',
-                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL',
-            ],
-            [
-                'Text with a partial http://www.küchenschöhn-not-working.de URL',
-                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL',
-            ],
-            [
-                "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
-                "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF",
-            ],
-            [
-                'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
-                '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>',
-            ],
-            [
-                'http://dev.local/threads/search?search_string=this+is+a+test',
-                '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>',
-            ],
-            [
-                'http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed',
-                '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>',
-            ],
-            [
-                'https://sevvlor.com/page%20not%20found',
-                '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>',
-            ],
-            [
-                'https://fakedomain.ext/path/#!topic/test',
-                '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>',
-            ],
-            [
-                'https://fakedomain.ext/path/#!topic/test;other;tag',
-                '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>',
-            ],
-            [
-                'This is text,https://fakedomain.ext/path/#!topic/test,tag, with a comma',
-                'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma',
-            ],
-            [
-                'This is text https://fakedomain.ext/path/#!topic/path!',
-                'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!',
-            ],
+        yield [
+            'This is a test text',
+            'This is a test text',
+        ];
+        yield [
+            'This is a test that includes (www.cakephp.org)',
+            'This is a test that includes (<a href="http://www.cakephp.org">www.cakephp.org</a>)',
+        ];
+        yield [
+            'This is a test that includes www.cakephp.org:8080',
+            'This is a test that includes <a href="http://www.cakephp.org:8080">www.cakephp.org:8080</a>',
+        ];
+        yield [
+            'This is a test that includes http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
+            'This is a test that includes <a href="http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">http://de.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
+        ];
+        yield [
+            'This is a test that includes www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment',
+            'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
+        ];
+        yield [
+            'This is a test that includes Http://example.com/test.php?foo=bar text',
+            'This is a test that includes <a href="Http://example.com/test.php?foo=bar">Http://example.com/test.php?foo=bar</a> text',
+        ];
+        yield [
+            'This is a test that includes http://example.com/test.php?foo=bar text',
+            'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text',
+        ];
+        yield [
+            'This is a test that includes www.example.com/test.php?foo=bar text',
+            'This is a test that includes <a href="http://www.example.com/test.php?foo=bar">www.example.com/test.php?foo=bar</a> text',
+        ];
+        yield [
+            'Text with a partial www.cakephp.org URL',
+            'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL',
+        ];
+        yield [
+            'Text with a partial WWW.cakephp.org URL',
+            'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> URL',
+        ];
+        yield [
+            'Text with a partial WWW.cakephp.org &copy, URL',
+            'Text with a partial <a href="http://WWW.cakephp.org">WWW.cakephp.org</a> &amp;copy, URL',
+        ];
+        yield [
+            'Text with a url www.cot.ag/cuIb2Q and more',
+            'Text with a url <a href="http://www.cot.ag/cuIb2Q">www.cot.ag/cuIb2Q</a> and more',
+        ];
+        yield [
+            'Text with a url http://www.does--not--work.com and more',
+            'Text with a url <a href="http://www.does--not--work.com">http://www.does--not--work.com</a> and more',
+        ];
+        yield [
+            'Text with a url http://www.not--work.com and more',
+            'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
+        ];
+        yield [
+            'Text with a url http://www.sub_domain.domain.pl and more',
+            'Text with a url <a href="http://www.sub_domain.domain.pl">http://www.sub_domain.domain.pl</a> and more',
+        ];
+        yield [
+            'Text with a partial www.küchenschöhn-not-working.de URL',
+            'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL',
+        ];
+        yield [
+            'Text with a partial http://www.küchenschöhn-not-working.de URL',
+            'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL',
+        ];
+        yield [
+            "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
+            "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF",
+        ];
+        yield [
+            'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
+            '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>',
+        ];
+        yield [
+            'http://dev.local/threads/search?search_string=this+is+a+test',
+            '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>',
+        ];
+        yield [
+            'http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed',
+            '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>',
+        ];
+        yield [
+            'https://sevvlor.com/page%20not%20found',
+            '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>',
+        ];
+        yield [
+            'https://fakedomain.ext/path/#!topic/test',
+            '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>',
+        ];
+        yield [
+            'https://fakedomain.ext/path/#!topic/test;other;tag',
+            '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>',
+        ];
+        yield [
+            'This is text,https://fakedomain.ext/path/#!topic/test,tag, with a comma',
+            'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma',
+        ];
+        yield [
+            'This is text https://fakedomain.ext/path/#!topic/path!',
+            'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!',
         ];
     }
 
@@ -323,7 +319,7 @@ class TextHelperTest extends TestCase
     public function testAutoLinkUrls(string $text, string $expected): void
     {
         $result = $this->Text->autoLinkUrls($text);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -409,66 +405,54 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function autoLinkEmailProvider(): array
+    public static function autoLinkEmailProvider(): \Iterator
     {
-        return [
-            [
-                'This is a test text',
-                'This is a test text',
-            ],
-
-            [
-                'email@example.com address',
-                '<a href="mailto:email@example.com">email@example.com</a> address',
-            ],
-
-            [
-                'email@example.com address',
-                '<a href="mailto:email@example.com">email@example.com</a> address',
-            ],
-
-            [
-                '(email@example.com) address',
-                '(<a href="mailto:email@example.com">email@example.com</a>) address',
-            ],
-
-            [
-                'Text with email@example.com address',
-                'Text with <a href="mailto:email@example.com">email@example.com</a> address',
-            ],
-
-            [
-                "Text with o'hare._-bob@example.com address",
-                'Text with <a href="mailto:o&#039;hare._-bob@example.com">o&#039;hare._-bob@example.com</a> address',
-            ],
-
-            [
-                'Text with düsentrieb@küchenschöhn-not-working.de address',
-                'Text with <a href="mailto:düsentrieb@küchenschöhn-not-working.de">düsentrieb@küchenschöhn-not-working.de</a> address',
-            ],
-
-            [
-                'Text with me@subdomain.küchenschöhn.de address',
-                'Text with <a href="mailto:me@subdomain.küchenschöhn.de">me@subdomain.küchenschöhn.de</a> address',
-            ],
-
-            [
-                'Text with email@example.com address',
-                'Text with <a href="mailto:email@example.com" class="link">email@example.com</a> address',
-                ['class' => 'link'],
-            ],
-
-            [
-                '<p>mark@example.com</p>',
-                '<p><a href="mailto:mark@example.com">mark@example.com</a></p>',
-                ['escape' => false],
-            ],
-
-            [
-                'Some&nbsp;mark@example.com&nbsp;Text',
-                'Some&nbsp;<a href="mailto:mark@example.com">mark@example.com</a>&nbsp;Text',
-                ['escape' => false],
-            ],
+        yield [
+            'This is a test text',
+            'This is a test text',
+        ];
+        yield [
+            'email@example.com address',
+            '<a href="mailto:email@example.com">email@example.com</a> address',
+        ];
+        yield [
+            'email@example.com address',
+            '<a href="mailto:email@example.com">email@example.com</a> address',
+        ];
+        yield [
+            '(email@example.com) address',
+            '(<a href="mailto:email@example.com">email@example.com</a>) address',
+        ];
+        yield [
+            'Text with email@example.com address',
+            'Text with <a href="mailto:email@example.com">email@example.com</a> address',
+        ];
+        yield [
+            "Text with o'hare._-bob@example.com address",
+            'Text with <a href="mailto:o&#039;hare._-bob@example.com">o&#039;hare._-bob@example.com</a> address',
+        ];
+        yield [
+            'Text with düsentrieb@küchenschöhn-not-working.de address',
+            'Text with <a href="mailto:düsentrieb@küchenschöhn-not-working.de">düsentrieb@küchenschöhn-not-working.de</a> address',
+        ];
+        yield [
+            'Text with me@subdomain.küchenschöhn.de address',
+            'Text with <a href="mailto:me@subdomain.küchenschöhn.de">me@subdomain.küchenschöhn.de</a> address',
+        ];
+        yield [
+            'Text with email@example.com address',
+            'Text with <a href="mailto:email@example.com" class="link">email@example.com</a> address',
+            ['class' => 'link'],
+        ];
+        yield [
+            '<p>mark@example.com</p>',
+            '<p><a href="mailto:mark@example.com">mark@example.com</a></p>',
+            ['escape' => false],
+        ];
+        yield [
+            'Some&nbsp;mark@example.com&nbsp;Text',
+            'Some&nbsp;<a href="mailto:mark@example.com">mark@example.com</a>&nbsp;Text',
+            ['escape' => false],
         ];
     }
 

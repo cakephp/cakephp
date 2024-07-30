@@ -27,22 +27,16 @@ use PHPUnit\Framework\Constraint\Constraint;
 class EventFired extends Constraint
 {
     /**
-     * Array of fired events
-     *
-     * @var \Cake\Event\EventManager
-     */
-    protected EventManager $_eventManager;
-
-    /**
      * Constructor
      *
-     * @param \Cake\Event\EventManager $eventManager Event manager to check
+     * @param \Cake\Event\EventManager $_eventManager Event manager to check
      */
-    public function __construct(EventManager $eventManager)
+    public function __construct(/**
+     * Array of fired events
+     */
+    protected EventManager $_eventManager)
     {
-        $this->_eventManager = $eventManager;
-
-        if ($this->_eventManager->getEventList() === null) {
+        if (!$this->_eventManager->getEventList() instanceof \Cake\Event\EventList) {
             throw new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             );
@@ -53,19 +47,16 @@ class EventFired extends Constraint
      * Checks if event is in fired array
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         $list = $this->_eventManager->getEventList();
 
-        return $list === null ? false : $list->hasEvent($other);
+        return $list instanceof \Cake\Event\EventList && $list->hasEvent($other);
     }
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

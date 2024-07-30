@@ -27,7 +27,7 @@ class MailerSendActionTest extends TestCase
         $mailer->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
-        $mailer->expects($this->any())
+        $mailer
             ->method('deliver')
             ->willReturn([]);
 
@@ -44,4 +44,5 @@ class SendActionMailer extends Mailer
     {
     }
 }
+
 // phpcs:enable

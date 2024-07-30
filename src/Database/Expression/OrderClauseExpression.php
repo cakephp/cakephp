@@ -30,8 +30,6 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
 
     /**
      * The direction of sorting.
-     *
-     * @var string
      */
     protected string $_direction;
 
@@ -58,6 +56,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
         } elseif ($field instanceof ExpressionInterface) {
             $field = $field->sql($binder);
         }
+
         assert(is_string($field));
 
         return sprintf('%s %s', $field, $this->_direction);
@@ -66,7 +65,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->_field instanceof ExpressionInterface) {
             $callback($this->_field);

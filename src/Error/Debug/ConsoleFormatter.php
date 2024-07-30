@@ -52,18 +52,18 @@ class ConsoleFormatter implements FormatterInterface
 
     /**
      * Check if the current environment supports ANSI output.
-     *
-     * @return bool
      */
     public static function environmentMatches(): bool
     {
         if (PHP_SAPI !== 'cli') {
             return false;
         }
+
         // NO_COLOR in environment means no color.
         if (env('NO_COLOR')) {
             return false;
         }
+
         // Windows environment checks
         if (
             DIRECTORY_SEPARATOR === '\\' &&
@@ -87,6 +87,7 @@ class ConsoleFormatter implements FormatterInterface
         if (isset($location['file'], $location['file'])) {
             $lineInfo = sprintf('%s (line %s)', $location['file'], $location['line']);
         }
+
         $parts = [
             $this->style('const', $lineInfo),
             $this->style('special', '########## DEBUG ##########'),
@@ -102,7 +103,6 @@ class ConsoleFormatter implements FormatterInterface
      * Convert a tree of NodeInterface objects into a plain text string.
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
-     * @return string
      */
     public function dump(NodeInterface $node): string
     {
@@ -116,7 +116,6 @@ class ConsoleFormatter implements FormatterInterface
      *
      * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
      * @param int $indent The current indentation level.
-     * @return string
      */
     protected function export(NodeInterface $var, int $indent): string
     {
@@ -124,21 +123,26 @@ class ConsoleFormatter implements FormatterInterface
             return match ($var->getType()) {
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
-                'string' => $this->style('string', "'" . (string)$var->getValue() . "'"),
-                'int', 'float' => $this->style('visibility', "({$var->getType()})") .
-                        ' ' . $this->style('number', "{$var->getValue()}"),
-                default => "({$var->getType()}) {$var->getValue()}",
+                'string' => $this->style('string', "'" . $var->getValue() . "'"),
+                'resource' => '(resource) (resource)',
+                'int', 'float' => $this->style('visibility', sprintf('(%s)', $var->getType())) .
+                        ' ' . $this->style('number', $var->getValue() /** @phpstan-ignore argument.type */),
+                default => sprintf('(%s) %s', $var->getType(), is_resource($var->getValue()) ? '(resource)' : $var->getValue()),
             };
         }
+
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);
         }
+
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
             return $this->exportObject($var, $indent + 1);
         }
+
         if ($var instanceof SpecialNode) {
             return $this->style('special', $var->getValue());
         }
+
         throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
@@ -163,7 +167,7 @@ class ConsoleFormatter implements FormatterInterface
         }
 
         $close = $this->style('punct', ']');
-        if (count($vars)) {
+        if ($vars !== []) {
             return $out . implode($this->style('punct', ','), $vars) . $end . $close;
         }
 
@@ -175,7 +179,6 @@ class ConsoleFormatter implements FormatterInterface
      *
      * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
      * @param int $indent Current indentation level.
-     * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
@@ -215,7 +218,8 @@ class ConsoleFormatter implements FormatterInterface
                     $this->export($property->getValue(), $indent);
             }
         }
-        if (count($props)) {
+
+        if ($props !== []) {
             return $out . $break . implode($break, $props) . $end;
         }
 
@@ -233,6 +237,6 @@ class ConsoleFormatter implements FormatterInterface
     {
         $code = $this->styles[$style];
 
-        return "\033[{$code}m{$text}\033[0m";
+        return sprintf('[%sm%s[0m', $code, $text);
     }
 }

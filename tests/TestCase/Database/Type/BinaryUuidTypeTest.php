@@ -35,16 +35,16 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new BinaryUuidType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
@@ -63,7 +63,7 @@ class BinaryUuidTypeTest extends TestCase
         );
 
         $result = $matches[0];
-        $this->assertSame(count($result), 2);
+        $this->assertCount(2, $result);
 
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toPHP($fh, $this->driver);
@@ -94,7 +94,7 @@ class BinaryUuidTypeTest extends TestCase
 
         $value = Text::uuid();
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertSame(str_replace('-', '', $value), unpack('H*', $result)[1]);
+        $this->assertSame(str_replace('-', '', $value), unpack('H*', (string) $result)[1]);
     }
 
     /**

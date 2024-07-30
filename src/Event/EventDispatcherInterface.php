@@ -56,8 +56,6 @@ interface EventDispatcherInterface
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.
-     *
-     * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager(): EventManagerInterface;
 }

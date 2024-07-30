@@ -35,8 +35,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 {
     /**
      * The command collection to get help on.
-     *
-     * @var \Cake\Console\CommandCollection
      */
     protected CommandCollection $commands;
 
@@ -53,7 +51,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
@@ -78,7 +75,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param iterable<string, string|object> $commands The command collection to output.
-     * @return void
      */
     protected function asText(ConsoleIo $io, iterable $commands): void
     {
@@ -87,11 +83,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
+
             if (!isset($invert[$class])) {
                 $invert[$class] = [];
             }
+
             $invert[$class][] = $name;
         }
+
         $grouped = [];
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
@@ -100,6 +99,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (!$matches) {
                 continue;
             }
+
             $namespace = str_replace('\\', '/', $matches[1]);
             $prefix = 'App';
             if ($namespace === 'Cake') {
@@ -107,6 +107,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             } elseif (in_array($namespace, $plugins, true)) {
                 $prefix = $namespace;
             }
+
             $shortestName = $this->getShortestName($names);
             if (str_contains($shortestName, '.')) {
                 [, $shortestName] = explode('.', $shortestName, 2);
@@ -117,13 +118,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 'description' => is_subclass_of($class, BaseCommand::class) ? $class::getDescription() : '',
             ];
         }
+
         ksort($grouped);
 
         $this->outputPaths($io);
         $io->out('<info>Available Commands:</info>', 2);
 
         foreach ($grouped as $prefix => $names) {
-            $io->out("<info>{$prefix}</info>:");
+            $io->out(sprintf('<info>%s</info>:', $prefix));
             sort($names);
             foreach ($names as $data) {
                 $io->out(' - ' . $data['name']);
@@ -131,47 +133,52 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                     $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
                 }
             }
+
             $io->out('');
         }
+
         $root = $this->getRootName();
 
-        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
-        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+        $io->out(sprintf('To run a command, type <info>`%s command_name [args|options]`</info>', $root));
+        $io->out(sprintf('To get help on a specific command, type <info>`%s command_name --help`</info>', $root), 2);
     }
 
     /**
      * Output relevant paths if defined
      *
      * @param \Cake\Console\ConsoleIo $io IO object.
-     * @return void
      */
     protected function outputPaths(ConsoleIo $io): void
     {
         $paths = [];
         if (Configure::check('App.dir')) {
-            $appPath = rtrim(Configure::read('App.dir'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $appPath = rtrim((string) Configure::read('App.dir'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             // Extra space is to align output
             $paths['app'] = ' ' . $appPath;
         }
+
         if (defined('ROOT')) {
-            $paths['root'] = rtrim(ROOT, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $paths['root'] = rtrim((string) ROOT, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
+
         if (defined('CORE_PATH')) {
             $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
-        if (!count($paths)) {
+
+        if ($paths === []) {
             return;
         }
+
         $io->out('<info>Current Paths:</info>', 2);
         foreach ($paths as $key => $value) {
-            $io->out("* {$key}: {$value}");
+            $io->out(sprintf('* %s: %s', $key, $value));
         }
+
         $io->out('');
     }
 
     /**
      * @param list<string> $names Names
-     * @return string
      */
     protected function getShortestName(array $names): string
     {
@@ -179,9 +186,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return (string)array_shift($names);
         }
 
-        usort($names, function ($a, $b) {
-            return strlen($a) - strlen($b);
-        });
+        usort($names, fn($a, $b): int => strlen($a) - strlen($b));
 
         return array_shift($names);
     }
@@ -191,7 +196,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param iterable<string, string|object> $commands The command collection to output
-     * @return void
      */
     protected function asXml(ConsoleIo $io, iterable $commands): void
     {
@@ -200,12 +204,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
+
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);
             $shell->addAttribute('call_as', $name);
             $shell->addAttribute('provider', $class);
             $shell->addAttribute('help', $name . ' -h');
         }
+
         $io->setOutputAs(ConsoleOutput::RAW);
         $io->out((string)$shells->saveXML());
     }
@@ -214,7 +220,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * Gets the option parser instance and configures it.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
-     * @return \Cake\Console\ConsoleOptionParser
      */
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {

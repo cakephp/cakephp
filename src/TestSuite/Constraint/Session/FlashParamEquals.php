@@ -27,25 +27,7 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class FlashParamEquals extends Constraint
 {
-    /**
-     * @var \Cake\Http\Session
-     */
     protected Session $session;
-
-    /**
-     * @var string
-     */
-    protected string $key;
-
-    /**
-     * @var string
-     */
-    protected string $param;
-
-    /**
-     * @var int|null
-     */
-    protected ?int $at = null;
 
     /**
      * Constructor
@@ -55,27 +37,23 @@ class FlashParamEquals extends Constraint
      * @param string $param Param to check
      * @param int|null $at Expected index
      */
-    public function __construct(?Session $session, string $key, string $param, ?int $at = null)
+    public function __construct(?Session $session, protected string $key, protected string $param, protected ?int $at = null)
     {
-        if (!$session) {
+        if (!$session instanceof \Cake\Http\Session) {
             $message = 'There is no stored session data. Perhaps you need to run a request?';
             $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';
             throw new AssertionFailedError($message);
         }
 
         $this->session = $session;
-        $this->key = $key;
-        $this->param = $param;
-        $this->at = $at;
     }
 
     /**
      * Compare to flash message(s)
      *
      * @param mixed $other Value to compare with
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
@@ -91,6 +69,7 @@ class FlashParamEquals extends Constraint
             if (!isset($message[$this->param])) {
                 continue;
             }
+
             if ($message[$this->param] === $other) {
                 return true;
             }
@@ -101,15 +80,13 @@ class FlashParamEquals extends Constraint
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {
         if ($this->at !== null) {
-            return sprintf('is in \'%s\' %s #%d', $this->key, $this->param, $this->at);
+            return sprintf("is in '%s' %s #%d", $this->key, $this->param, $this->at);
         }
 
-        return sprintf('is in \'%s\' %s', $this->key, $this->param);
+        return sprintf("is in '%s' %s", $this->key, $this->param);
     }
 }

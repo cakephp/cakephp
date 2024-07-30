@@ -30,8 +30,6 @@ trait StringCompareTrait
      * The base path for output comparisons
      *
      * Must be initialized before use
-     *
-     * @var string
      */
     protected string $_compareBasePath = '';
 
@@ -39,8 +37,6 @@ trait StringCompareTrait
      * Update comparisons to match test changes
      *
      * Initialized with the env variable UPDATE_TEST_COMPARISON_FILES
-     *
-     * @var bool
      */
     protected bool $_updateComparisons;
 
@@ -49,7 +45,6 @@ trait StringCompareTrait
      *
      * @param string $path partial path to test comparison file
      * @param string $result test result as a string
-     * @return void
      */
     public function assertSameAsFile(string $path, string $result): void
     {

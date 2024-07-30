@@ -29,7 +29,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -160,9 +160,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     public function testExecWithMockServiceDependencies(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"console-mock":true}');
-        });
+        $this->mockService(stdClass::class, fn(): mixed => json_decode('{"console-mock":true}'));
         $this->exec('dependency');
 
         $this->assertOutputContains('constructor inject: {"console-mock":true}');
@@ -194,7 +192,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs(sprintf("   --json='%s'", $json));
         $expected = [
             '--json=' . $json,
         ];
@@ -207,10 +205,9 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $command Command to test
-     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
+    public function testAssertionFailureMessages(string $assertion, string $message, string $command, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessageMatches('#' . $message . '.?#');
@@ -225,17 +222,15 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureMessagesProvider(): array
+    public static function assertionFailureMessagesProvider(): \Iterator
     {
-        return [
-            'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
-            'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
-            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
-            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],
-            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'],
-            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `.*` row was in output', 'routes', ['test', 'missing']],
-            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output', 'routes', 'test'],
-            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
-        ];
+        yield 'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR];
+        yield 'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'];
+        yield 'assertOutputContains' => ['assertOutputContains', "Failed asserting that 'missing' is in output", 'routes', 'missing'];
+        yield 'assertOutputNotContains' => ['assertOutputNotContains', "Failed asserting that 'controller' is not in output", 'routes', 'controller'];
+        yield 'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'];
+        yield 'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `.*` row was in output', 'routes', ['test', 'missing']];
+        yield 'assertErrorContains' => ['assertErrorContains', "Failed asserting that 'test' is in error output", 'routes', 'test'];
+        yield 'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'];
     }
 }

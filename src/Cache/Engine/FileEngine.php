@@ -38,8 +38,6 @@ class FileEngine extends CacheEngine
 {
     /**
      * Instance of SplFileObject class
-     *
-     * @var \SplFileObject
      */
     protected SplFileObject $_File;
 
@@ -73,8 +71,6 @@ class FileEngine extends CacheEngine
 
     /**
      * True unless FileEngine::__active(); fails
-     *
-     * @var bool
      */
     protected bool $_init = true;
 
@@ -91,9 +87,10 @@ class FileEngine extends CacheEngine
         parent::init($config);
 
         $this->_config['path'] ??= sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
-        if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
+        if (substr((string) $this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
+
         if ($this->_groupPrefix) {
             $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
@@ -128,7 +125,7 @@ class FileEngine extends CacheEngine
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, PHP_EOL, $value, PHP_EOL]);
+        $contents = implode('', [$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
@@ -142,6 +139,7 @@ class FileEngine extends CacheEngine
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_UN);
         }
+
         unset($this->_File);
 
         return $success;
@@ -194,7 +192,7 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            $data = unserialize($data);
+            return unserialize($data);
         }
 
         return $data;
@@ -237,6 +235,7 @@ class FileEngine extends CacheEngine
         if (!$this->_init) {
             return false;
         }
+
         unset($this->_File);
 
         $this->_clearDirectory($this->_config['path']);
@@ -284,7 +283,6 @@ class FileEngine extends CacheEngine
      * Used to clear a directory of matching files.
      *
      * @param string $path The path to search.
-     * @return void
      */
     protected function _clearDirectory(string $path): void
     {
@@ -297,7 +295,7 @@ class FileEngine extends CacheEngine
             return;
         }
 
-        $prefixLength = strlen($this->_config['prefix']);
+        $prefixLength = strlen((string) $this->_config['prefix']);
 
         while (($entry = $dir->read()) !== false) {
             if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
@@ -363,6 +361,7 @@ class FileEngine extends CacheEngine
         if ($this->_groupPrefix) {
             $groups = vsprintf($this->_groupPrefix, $this->groups());
         }
+
         $dir = $this->_config['path'] . $groups;
 
         if (!is_dir($dir)) {
@@ -374,6 +373,7 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
+
         /** @psalm-suppress TypeDoesNotContainType */
         if (
             !isset($this->_File) ||
@@ -388,6 +388,7 @@ class FileEngine extends CacheEngine
 
                 return false;
             }
+
             unset($path);
 
             if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
@@ -404,8 +405,6 @@ class FileEngine extends CacheEngine
 
     /**
      * Determine if cache directory is writable
-     *
-     * @return bool
      */
     protected function _active(): bool
     {
@@ -460,7 +459,7 @@ class FileEngine extends CacheEngine
         /** @var array<\SplFileInfo> $filtered */
         $filtered = new CallbackFilterIterator(
             $contents,
-            function (SplFileInfo $current) use ($group, $prefix) {
+            function (SplFileInfo $current) use ($group, $prefix): bool {
                 if (!$current->isFile()) {
                     return false;
                 }

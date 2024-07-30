@@ -36,7 +36,7 @@ class PostgresSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], 'Postgres'), 'Not using Postgres for test config');
+        $this->skipIf(!str_contains((string) $config['driver'], 'Postgres'), 'Not using Postgres for test config');
     }
 
     /**
@@ -103,151 +103,149 @@ SQL;
      *
      * @return array
      */
-    public static function convertColumnProvider(): array
+    public static function convertColumnProvider(): \Iterator
     {
-        return [
-            // Timestamp
-            [
-                ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
-                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
-            ],
-            [
-                ['type' => 'TIMESTAMP', 'datetime_precision' => 0],
-                ['type' => 'timestamp', 'length' => null, 'precision' => 0],
-            ],
-            [
-                ['type' => 'TIMESTAMP WITHOUT TIME ZONE', 'datetime_precision' => 6],
-                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
-            ],
-            [
-                ['type' => 'TIMESTAMP WITH TIME ZONE', 'datetime_precision' => 6],
-                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
-            ],
-            [
-                ['type' => 'TIMESTAMPTZ', 'datetime_precision' => 6],
-                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
-            ],
-            // Date & time
-            [
-                ['type' => 'DATE'],
-                ['type' => 'date', 'length' => null],
-            ],
-            [
-                ['type' => 'TIME'],
-                ['type' => 'time', 'length' => null],
-            ],
-            [
-                ['type' => 'TIME WITHOUT TIME ZONE'],
-                ['type' => 'time', 'length' => null],
-            ],
-            // Integer
-            [
-                ['type' => 'SMALLINT'],
-                ['type' => 'smallinteger', 'length' => 5],
-            ],
-            [
-                ['type' => 'INTEGER'],
-                ['type' => 'integer', 'length' => 10],
-            ],
-            [
-                ['type' => 'SERIAL'],
-                ['type' => 'integer', 'length' => 10],
-            ],
-            [
-                ['type' => 'BIGINT'],
-                ['type' => 'biginteger', 'length' => 20],
-            ],
-            [
-                ['type' => 'BIGSERIAL'],
-                ['type' => 'biginteger', 'length' => 20],
-            ],
-            // Decimal
-            [
-                ['type' => 'NUMERIC'],
-                ['type' => 'decimal', 'length' => null, 'precision' => null],
-            ],
-            [
-                ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
-                ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null],
-            ],
-            [
-                ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
-                ['type' => 'decimal', 'length' => 10, 'precision' => 2],
-            ],
-            // String
-            [
-                ['type' => 'VARCHAR'],
-                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'VARCHAR(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHARACTER VARYING'],
-                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHARACTER VARYING(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
-                ['type' => 'string', 'length' => 255, 'default' => null, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHAR(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHAR(36)'],
-                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'CHARACTER(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
-            ],
-            [
-                ['type' => 'MONEY'],
-                ['type' => 'string', 'length' => null],
-            ],
-            // UUID
-            [
-                ['type' => 'UUID'],
-                ['type' => 'uuid', 'length' => null],
-            ],
-            [
-                ['type' => 'INET'],
-                ['type' => 'string', 'length' => 39],
-            ],
-            // Text
-            [
-                ['type' => 'TEXT'],
-                ['type' => 'text', 'length' => null, 'collate' => 'ja_JP.utf8'],
-            ],
-            // Blob
-            [
-                ['type' => 'BYTEA'],
-                ['type' => 'binary', 'length' => null],
-            ],
-            // Float
-            [
-                ['type' => 'REAL'],
-                ['type' => 'float', 'length' => null],
-            ],
-            [
-                ['type' => 'DOUBLE PRECISION'],
-                ['type' => 'float', 'length' => null],
-            ],
-            // JSON
-            [
-                ['type' => 'JSON'],
-                ['type' => 'json', 'length' => null],
-            ],
-            [
-                ['type' => 'JSONB'],
-                ['type' => 'json', 'length' => null],
-            ],
+        // Timestamp
+        yield [
+            ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
+            ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+        ];
+        yield [
+            ['type' => 'TIMESTAMP', 'datetime_precision' => 0],
+            ['type' => 'timestamp', 'length' => null, 'precision' => 0],
+        ];
+        yield [
+            ['type' => 'TIMESTAMP WITHOUT TIME ZONE', 'datetime_precision' => 6],
+            ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+        ];
+        yield [
+            ['type' => 'TIMESTAMP WITH TIME ZONE', 'datetime_precision' => 6],
+            ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
+        ];
+        yield [
+            ['type' => 'TIMESTAMPTZ', 'datetime_precision' => 6],
+            ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
+        ];
+        // Date & time
+        yield [
+            ['type' => 'DATE'],
+            ['type' => 'date', 'length' => null],
+        ];
+        yield [
+            ['type' => 'TIME'],
+            ['type' => 'time', 'length' => null],
+        ];
+        yield [
+            ['type' => 'TIME WITHOUT TIME ZONE'],
+            ['type' => 'time', 'length' => null],
+        ];
+        // Integer
+        yield [
+            ['type' => 'SMALLINT'],
+            ['type' => 'smallinteger', 'length' => 5],
+        ];
+        yield [
+            ['type' => 'INTEGER'],
+            ['type' => 'integer', 'length' => 10],
+        ];
+        yield [
+            ['type' => 'SERIAL'],
+            ['type' => 'integer', 'length' => 10],
+        ];
+        yield [
+            ['type' => 'BIGINT'],
+            ['type' => 'biginteger', 'length' => 20],
+        ];
+        yield [
+            ['type' => 'BIGSERIAL'],
+            ['type' => 'biginteger', 'length' => 20],
+        ];
+        // Decimal
+        yield [
+            ['type' => 'NUMERIC'],
+            ['type' => 'decimal', 'length' => null, 'precision' => null],
+        ];
+        yield [
+            ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
+            ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null],
+        ];
+        yield [
+            ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
+            ['type' => 'decimal', 'length' => 10, 'precision' => 2],
+        ];
+        // String
+        yield [
+            ['type' => 'VARCHAR'],
+            ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'VARCHAR(10)'],
+            ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHARACTER VARYING'],
+            ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHARACTER VARYING(10)'],
+            ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
+            ['type' => 'string', 'length' => 255, 'default' => null, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHAR(10)'],
+            ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHAR(36)'],
+            ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'CHARACTER(10)'],
+            ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+        ];
+        yield [
+            ['type' => 'MONEY'],
+            ['type' => 'string', 'length' => null],
+        ];
+        // UUID
+        yield [
+            ['type' => 'UUID'],
+            ['type' => 'uuid', 'length' => null],
+        ];
+        yield [
+            ['type' => 'INET'],
+            ['type' => 'string', 'length' => 39],
+        ];
+        // Text
+        yield [
+            ['type' => 'TEXT'],
+            ['type' => 'text', 'length' => null, 'collate' => 'ja_JP.utf8'],
+        ];
+        // Blob
+        yield [
+            ['type' => 'BYTEA'],
+            ['type' => 'binary', 'length' => null],
+        ];
+        // Float
+        yield [
+            ['type' => 'REAL'],
+            ['type' => 'float', 'length' => null],
+        ];
+        yield [
+            ['type' => 'DOUBLE PRECISION'],
+            ['type' => 'float', 'length' => null],
+        ];
+        // JSON
+        yield [
+            ['type' => 'JSON'],
+            ['type' => 'json', 'length' => null],
+        ];
+        yield [
+            ['type' => 'JSONB'],
+            ['type' => 'json', 'length' => null],
         ];
     }
 
@@ -274,7 +272,7 @@ SQL;
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Postgres::class)->getMock();
         $dialect = new PostgresSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -317,7 +315,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('public.schema_articles');
-        $this->assertEquals(['id'], $result->getPrimaryKey());
+        $this->assertSame(['id'], $result->getPrimaryKey());
         $this->assertSame('schema_articles', $result->name());
     }
 
@@ -455,7 +453,7 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertEquals(['id'], $result->getPrimaryKey());
+        $this->assertSame(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
         }
@@ -481,7 +479,7 @@ SQL;
         $result = $schema->describe('schema_composite');
         $connection->execute('DROP TABLE schema_composite');
 
-        $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
+        $this->assertSame(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
         $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
@@ -543,9 +541,9 @@ SQL;
                 'comment' => null,
             ],
         ];
-        $this->assertEquals(['id'], $result->getPrimaryKey());
+        $this->assertSame(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in $field column");
+            $this->assertEquals($definition, $result->getColumn($field), sprintf('Mismatch in %s column', $field));
         }
     }
 
@@ -559,7 +557,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_authors');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -573,8 +571,8 @@ SQL;
             ],
         ];
         $this->assertCount(2, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
-        $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
+        $this->assertSame($expected['primary'], $result->getConstraint('primary'));
+        $this->assertSame($expected['unique_position'], $result->getConstraint('unique_position'));
     }
 
     /**
@@ -587,7 +585,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
         $expected = [
@@ -617,10 +615,10 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
-        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+        $this->assertSame($expected['primary'], $result->getConstraint('primary'));
+        $this->assertSame($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertSame($expected['author_idx'], $result->getConstraint('author_idx'));
+        $this->assertSame($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -628,7 +626,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => [],
         ];
-        $this->assertEquals($expected, $result->getIndex('author_idx'));
+        $this->assertSame($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -669,7 +667,7 @@ SQL;
             'columns' => ['group_id', 'grade'],
             'length' => [],
         ];
-        $this->assertEquals($expected, $result->getIndex('schema_index_nulls'));
+        $this->assertSame($expected, $result->getIndex('schema_index_nulls'));
         $connection->execute('DROP TABLE schema_index');
     }
 
@@ -710,245 +708,243 @@ SQL;
      *
      * @return array
      */
-    public static function columnSqlProvider(): array
+    public static function columnSqlProvider(): \Iterator
     {
-        return [
-            // strings
-            [
-                'title',
-                ['type' => 'string', 'length' => 25, 'null' => false],
-                '"title" VARCHAR(25) NOT NULL',
-            ],
-            [
-                'title',
-                ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '"title" VARCHAR(25) DEFAULT \'ignored\'',
-            ],
-            [
-                'id',
-                ['type' => 'char', 'length' => 32, 'null' => false],
-                '"id" CHAR(32) NOT NULL',
-            ],
-            [
-                'title',
-                ['type' => 'string', 'length' => 36, 'null' => false],
-                '"title" VARCHAR(36) NOT NULL',
-            ],
-            [
-                'id',
-                ['type' => 'uuid', 'length' => 36, 'null' => false],
-                '"id" UUID NOT NULL',
-            ],
-            [
-                'id',
-                ['type' => 'binaryuuid', 'length' => null, 'null' => false],
-                '"id" UUID NOT NULL',
-            ],
-            [
-                'role',
-                ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\'',
-            ],
-            [
-                'title',
-                ['type' => 'string'],
-                '"title" VARCHAR',
-            ],
-            [
-                'title',
-                ['type' => 'string', 'length' => 36],
-                '"title" VARCHAR(36)',
-            ],
-            [
-                'title',
-                ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
-                '"title" VARCHAR(255) COLLATE "C" NOT NULL',
-            ],
-            // Text
-            [
-                'body',
-                ['type' => 'text', 'null' => false],
-                '"body" TEXT NOT NULL',
-            ],
-            [
-                'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
-                sprintf('"body" VARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY),
-            ],
-            [
-                'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
-                '"body" TEXT NOT NULL',
-            ],
-            [
-                'body',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
-                '"body" TEXT NOT NULL',
-            ],
-            [
-                'body',
-                ['type' => 'text', 'null' => false, 'collate' => 'C'],
-                '"body" TEXT COLLATE "C" NOT NULL',
-            ],
-            // Integers
-            [
-                'post_id',
-                ['type' => 'tinyinteger', 'length' => 11],
-                '"post_id" SMALLINT',
-            ],
-            [
-                'post_id',
-                ['type' => 'smallinteger', 'length' => 11],
-                '"post_id" SMALLINT',
-            ],
-            [
-                'post_id',
-                ['type' => 'integer', 'length' => 11],
-                '"post_id" INT',
-            ],
-            [
-                'post_id',
-                ['type' => 'biginteger', 'length' => 20],
-                '"post_id" BIGINT',
-            ],
-            [
-                'post_id',
-                ['type' => 'integer', 'autoIncrement' => true, 'length' => 11],
-                '"post_id" SERIAL',
-            ],
-            [
-                'post_id',
-                ['type' => 'biginteger', 'autoIncrement' => true, 'length' => 20],
-                '"post_id" BIGSERIAL',
-            ],
-            // Decimal
-            [
-                'value',
-                ['type' => 'decimal'],
-                '"value" DECIMAL',
-            ],
-            [
-                'value',
-                ['type' => 'decimal', 'length' => 11],
-                '"value" DECIMAL(11,0)',
-            ],
-            [
-                'value',
-                ['type' => 'decimal', 'length' => 12, 'precision' => 5],
-                '"value" DECIMAL(12,5)',
-            ],
-            // Float
-            [
-                'value',
-                ['type' => 'float'],
-                '"value" FLOAT',
-            ],
-            [
-                'value',
-                ['type' => 'float', 'length' => 11, 'precision' => 3],
-                '"value" FLOAT(3)',
-            ],
-            // Binary
-            [
-                'img',
-                ['type' => 'binary'],
-                '"img" BYTEA',
-            ],
-            // Boolean
-            [
-                'checked',
-                ['type' => 'boolean', 'default' => false],
-                '"checked" BOOLEAN DEFAULT FALSE',
-            ],
-            [
-                'checked',
-                ['type' => 'boolean', 'default' => true, 'null' => false],
-                '"checked" BOOLEAN NOT NULL DEFAULT TRUE',
-            ],
-            // Boolean
-            [
-                'checked',
-                ['type' => 'boolean', 'default' => 0],
-                '"checked" BOOLEAN DEFAULT FALSE',
-            ],
-            [
-                'checked',
-                ['type' => 'boolean', 'default' => 1, 'null' => false],
-                '"checked" BOOLEAN NOT NULL DEFAULT TRUE',
-            ],
-            // Date & Time
-            [
-                'start_date',
-                ['type' => 'date'],
-                '"start_date" DATE',
-            ],
-            [
-                'start_time',
-                ['type' => 'time'],
-                '"start_time" TIME',
-            ],
-            // Datetime
-            [
-                'created',
-                ['type' => 'datetime', 'null' => true],
-                '"created" TIMESTAMP DEFAULT NULL',
-            ],
-            [
-                'created_without_precision',
-                ['type' => 'datetime', 'precision' => 0],
-                '"created_without_precision" TIMESTAMP(0)',
-            ],
-            [
-                'created_without_precision',
-                ['type' => 'datetimefractional', 'precision' => 0],
-                '"created_without_precision" TIMESTAMP(0)',
-            ],
-            [
-                'created_with_precision',
-                ['type' => 'datetimefractional', 'precision' => 3],
-                '"created_with_precision" TIMESTAMP(3)',
-            ],
-            // Timestamp
-            [
-                'created',
-                ['type' => 'timestamp', 'null' => true],
-                '"created" TIMESTAMP DEFAULT NULL',
-            ],
-            [
-                'created_without_precision',
-                ['type' => 'timestamp', 'precision' => 0],
-                '"created_without_precision" TIMESTAMP(0)',
-            ],
-            [
-                'created_without_precision',
-                ['type' => 'timestampfractional', 'precision' => 0],
-                '"created_without_precision" TIMESTAMP(0)',
-            ],
-            [
-                'created_with_precision',
-                ['type' => 'timestampfractional', 'precision' => 3],
-                '"created_with_precision" TIMESTAMP(3)',
-            ],
-            [
-                'open_date',
-                ['type' => 'timestampfractional', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '"open_date" TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
-            ],
-            [
-                'null_date',
-                ['type' => 'timestampfractional', 'null' => true],
-                '"null_date" TIMESTAMP DEFAULT NULL',
-            ],
-            [
-                'current_timestamp',
-                ['type' => 'timestamp', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
-                '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            ],
-            [
-                'current_timestamp_fractional',
-                ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
-                '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            ],
+        // strings
+        yield [
+            'title',
+            ['type' => 'string', 'length' => 25, 'null' => false],
+            '"title" VARCHAR(25) NOT NULL',
+        ];
+        yield [
+            'title',
+            ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
+            '"title" VARCHAR(25) DEFAULT \'ignored\'',
+        ];
+        yield [
+            'id',
+            ['type' => 'char', 'length' => 32, 'null' => false],
+            '"id" CHAR(32) NOT NULL',
+        ];
+        yield [
+            'title',
+            ['type' => 'string', 'length' => 36, 'null' => false],
+            '"title" VARCHAR(36) NOT NULL',
+        ];
+        yield [
+            'id',
+            ['type' => 'uuid', 'length' => 36, 'null' => false],
+            '"id" UUID NOT NULL',
+        ];
+        yield [
+            'id',
+            ['type' => 'binaryuuid', 'length' => null, 'null' => false],
+            '"id" UUID NOT NULL',
+        ];
+        yield [
+            'role',
+            ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
+            '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\'',
+        ];
+        yield [
+            'title',
+            ['type' => 'string'],
+            '"title" VARCHAR',
+        ];
+        yield [
+            'title',
+            ['type' => 'string', 'length' => 36],
+            '"title" VARCHAR(36)',
+        ];
+        yield [
+            'title',
+            ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
+            '"title" VARCHAR(255) COLLATE "C" NOT NULL',
+        ];
+        // Text
+        yield [
+            'body',
+            ['type' => 'text', 'null' => false],
+            '"body" TEXT NOT NULL',
+        ];
+        yield [
+            'body',
+            ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+            sprintf('"body" VARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY),
+        ];
+        yield [
+            'body',
+            ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+            '"body" TEXT NOT NULL',
+        ];
+        yield [
+            'body',
+            ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+            '"body" TEXT NOT NULL',
+        ];
+        yield [
+            'body',
+            ['type' => 'text', 'null' => false, 'collate' => 'C'],
+            '"body" TEXT COLLATE "C" NOT NULL',
+        ];
+        // Integers
+        yield [
+            'post_id',
+            ['type' => 'tinyinteger', 'length' => 11],
+            '"post_id" SMALLINT',
+        ];
+        yield [
+            'post_id',
+            ['type' => 'smallinteger', 'length' => 11],
+            '"post_id" SMALLINT',
+        ];
+        yield [
+            'post_id',
+            ['type' => 'integer', 'length' => 11],
+            '"post_id" INT',
+        ];
+        yield [
+            'post_id',
+            ['type' => 'biginteger', 'length' => 20],
+            '"post_id" BIGINT',
+        ];
+        yield [
+            'post_id',
+            ['type' => 'integer', 'autoIncrement' => true, 'length' => 11],
+            '"post_id" SERIAL',
+        ];
+        yield [
+            'post_id',
+            ['type' => 'biginteger', 'autoIncrement' => true, 'length' => 20],
+            '"post_id" BIGSERIAL',
+        ];
+        // Decimal
+        yield [
+            'value',
+            ['type' => 'decimal'],
+            '"value" DECIMAL',
+        ];
+        yield [
+            'value',
+            ['type' => 'decimal', 'length' => 11],
+            '"value" DECIMAL(11,0)',
+        ];
+        yield [
+            'value',
+            ['type' => 'decimal', 'length' => 12, 'precision' => 5],
+            '"value" DECIMAL(12,5)',
+        ];
+        // Float
+        yield [
+            'value',
+            ['type' => 'float'],
+            '"value" FLOAT',
+        ];
+        yield [
+            'value',
+            ['type' => 'float', 'length' => 11, 'precision' => 3],
+            '"value" FLOAT(3)',
+        ];
+        // Binary
+        yield [
+            'img',
+            ['type' => 'binary'],
+            '"img" BYTEA',
+        ];
+        // Boolean
+        yield [
+            'checked',
+            ['type' => 'boolean', 'default' => false],
+            '"checked" BOOLEAN DEFAULT FALSE',
+        ];
+        yield [
+            'checked',
+            ['type' => 'boolean', 'default' => true, 'null' => false],
+            '"checked" BOOLEAN NOT NULL DEFAULT TRUE',
+        ];
+        // Boolean
+        yield [
+            'checked',
+            ['type' => 'boolean', 'default' => 0],
+            '"checked" BOOLEAN DEFAULT FALSE',
+        ];
+        yield [
+            'checked',
+            ['type' => 'boolean', 'default' => 1, 'null' => false],
+            '"checked" BOOLEAN NOT NULL DEFAULT TRUE',
+        ];
+        // Date & Time
+        yield [
+            'start_date',
+            ['type' => 'date'],
+            '"start_date" DATE',
+        ];
+        yield [
+            'start_time',
+            ['type' => 'time'],
+            '"start_time" TIME',
+        ];
+        // Datetime
+        yield [
+            'created',
+            ['type' => 'datetime', 'null' => true],
+            '"created" TIMESTAMP DEFAULT NULL',
+        ];
+        yield [
+            'created_without_precision',
+            ['type' => 'datetime', 'precision' => 0],
+            '"created_without_precision" TIMESTAMP(0)',
+        ];
+        yield [
+            'created_without_precision',
+            ['type' => 'datetimefractional', 'precision' => 0],
+            '"created_without_precision" TIMESTAMP(0)',
+        ];
+        yield [
+            'created_with_precision',
+            ['type' => 'datetimefractional', 'precision' => 3],
+            '"created_with_precision" TIMESTAMP(3)',
+        ];
+        // Timestamp
+        yield [
+            'created',
+            ['type' => 'timestamp', 'null' => true],
+            '"created" TIMESTAMP DEFAULT NULL',
+        ];
+        yield [
+            'created_without_precision',
+            ['type' => 'timestamp', 'precision' => 0],
+            '"created_without_precision" TIMESTAMP(0)',
+        ];
+        yield [
+            'created_without_precision',
+            ['type' => 'timestampfractional', 'precision' => 0],
+            '"created_without_precision" TIMESTAMP(0)',
+        ];
+        yield [
+            'created_with_precision',
+            ['type' => 'timestampfractional', 'precision' => 3],
+            '"created_with_precision" TIMESTAMP(3)',
+        ];
+        yield [
+            'open_date',
+            ['type' => 'timestampfractional', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+            '"open_date" TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+        ];
+        yield [
+            'null_date',
+            ['type' => 'timestampfractional', 'null' => true],
+            '"null_date" TIMESTAMP DEFAULT NULL',
+        ];
+        yield [
+            'current_timestamp',
+            ['type' => 'timestamp', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+            '"current_timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        ];
+        yield [
+            'current_timestamp_fractional',
+            ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
+            '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
         ];
     }
 
@@ -963,7 +959,7 @@ SQL;
         $schema = new PostgresSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
-        $this->assertEquals($expected, $schema->columnSql($table, $name));
+        $this->assertSame($expected, $schema->columnSql($table, $name));
     }
 
     /**
@@ -993,49 +989,47 @@ SQL;
      *
      * @return array
      */
-    public static function constraintSqlProvider(): array
+    public static function constraintSqlProvider(): \Iterator
     {
-        return [
-            [
-                'primary',
-                ['type' => 'primary', 'columns' => ['title']],
-                'PRIMARY KEY ("title")',
-            ],
-            [
-                'unique_idx',
-                ['type' => 'unique', 'columns' => ['title', 'author_id']],
-                'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")',
-            ],
-            [
-                'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
-            ],
-            [
-                'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
-            ],
-            [
-                'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
-            ],
-            [
-                'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
-            ],
-            [
-                'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
-            ],
+        yield [
+            'primary',
+            ['type' => 'primary', 'columns' => ['title']],
+            'PRIMARY KEY ("title")',
+        ];
+        yield [
+            'unique_idx',
+            ['type' => 'unique', 'columns' => ['title', 'author_id']],
+            'CONSTRAINT "unique_idx" UNIQUE ("title", "author_id")',
+        ];
+        yield [
+            'author_id_idx',
+            ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
+            'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+            'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+        ];
+        yield [
+            'author_id_idx',
+            ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
+            'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+            'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+        ];
+        yield [
+            'author_id_idx',
+            ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
+            'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+            'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+        ];
+        yield [
+            'author_id_idx',
+            ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
+            'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+            'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+        ];
+        yield [
+            'author_id_idx',
+            ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
+            'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+            'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
         ];
     }
 
@@ -1065,10 +1059,10 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1105,7 +1099,7 @@ SQL;
         ];
         $result = $table->addConstraintSql($connection);
         $this->assertCount(2, $result);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1114,10 +1108,10 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1154,7 +1148,7 @@ SQL;
         ];
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(2, $result);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1163,10 +1157,10 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -1233,10 +1227,10 @@ SQL;
     public function testCreateInSchema(): void
     {
         $driver = $this->_getMockedDriver(['schema' => 'notpublic']);
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())
+        $connection
             ->method('getDriver')
             ->willReturn($driver);
 
@@ -1254,16 +1248,17 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
         ]);
         $table->setTemporary(true);
+
         $sql = $table->createSql($connection);
         $this->assertStringContainsString('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -1274,10 +1269,10 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
@@ -1338,10 +1333,10 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1356,10 +1351,10 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->method('getDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1384,18 +1379,16 @@ SQL;
             ->onlyMethods(['quote', 'exec'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
+        $mock
             ->method('quote')
-            ->willReturnCallback(function ($value) {
-                return "'$value'";
-            });
+            ->willReturnCallback(fn($value): string => sprintf("'%s'", $value));
 
         $driver = $this->getMockBuilder(Postgres::class)
             ->setConstructorArgs([$config])
             ->onlyMethods(['createPdo'])
             ->getMock();
 
-        $driver->expects($this->any())
+        $driver
             ->method('createPdo')
             ->willReturn($mock);
 

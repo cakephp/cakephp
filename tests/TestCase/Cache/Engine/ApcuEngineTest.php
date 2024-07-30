@@ -57,7 +57,7 @@ class ApcuEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('apcu_store'), 'APCu is not installed or configured properly.');
@@ -74,7 +74,7 @@ class ApcuEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('apcu');
@@ -83,8 +83,6 @@ class ApcuEngineTest extends TestCase
 
     /**
      * Helper method for testing.
-     *
-     * @param array $config
      */
     protected function _configCache(array $config = []): void
     {

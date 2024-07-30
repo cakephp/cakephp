@@ -26,23 +26,20 @@ class HeaderContains extends HeaderEquals
      * Checks assertion
      *
      * @param mixed $other Expected content
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
-        return mb_strpos($this->response->getHeaderLine($this->headerName), $other) !== false;
+        return mb_strpos($this->response->getHeaderLine($this->headerName), (string) $other) !== false;
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
         return sprintf(
-            'is in header \'%s\' (`%s`)',
+            "is in header '%s' (`%s`)",
             $this->headerName,
             $this->response->getHeaderLine($this->headerName)
         );

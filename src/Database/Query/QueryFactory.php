@@ -41,7 +41,6 @@ class QueryFactory
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields Fields/columns list for the query.
      * @param array|string $table List of tables to query.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
-     * @return \Cake\Database\Query\SelectQuery
      */
     public function select(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
@@ -64,7 +63,6 @@ class QueryFactory
      * @param string|null $table The table to insert rows into.
      * @param array $values Associative array of column => value to be inserted.
      * @param array<int|string, string> $types Associative array containing the types to be used for casting.
-     * @return \Cake\Database\Query\InsertQuery
      */
     public function insert(?string $table = null, array $values = [], array $types = []): InsertQuery
     {
@@ -91,7 +89,6 @@ class QueryFactory
      * @param array $values Values to be updated.
      * @param array $conditions Conditions to be set for the update statement.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
-     * @return \Cake\Database\Query\UpdateQuery
      */
     public function update(
         ExpressionInterface|string|null $table = null,
@@ -101,12 +98,14 @@ class QueryFactory
     ): UpdateQuery {
         $query = new UpdateQuery($this->connection);
 
-        if ($table) {
+        if ($table !== null) {
             $query->update($table);
         }
+
         if ($values) {
             $query->set($values, $types);
         }
+
         if ($conditions) {
             $query->where($conditions, $types);
         }
@@ -120,7 +119,6 @@ class QueryFactory
      * @param string|null $table The table to delete rows from.
      * @param array $conditions Conditions to be set for the delete statement.
      * @param array<string, string> $types Associative array containing the types to be used for casting.
-     * @return \Cake\Database\Query\DeleteQuery
      */
     public function delete(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
     {

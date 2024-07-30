@@ -33,14 +33,14 @@ use UnexpectedValueException;
  */
 class HttpsEnforcerMiddlewareTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         Configure::write('debug', false);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -53,9 +53,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response(['body' => 'success']);
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response(['body' => 'success']));
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -70,9 +68,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response(['body' => 'success']);
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response(['body' => 'success']));
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000]]);
 
@@ -87,9 +83,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response(['body' => 'success']);
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response(['body' => 'success']));
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000, 'includeSubDomains' => true, 'preload' => true]]);
 
@@ -104,9 +98,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response(['body' => 'success']);
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response(['body' => 'success']));
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => true]);
 
@@ -121,16 +113,14 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('GET');
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response());
 
         $middleware = new HttpsEnforcerMiddleware();
 
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertSame(301, $result->getStatusCode());
-        $this->assertEquals(['location' => ['https://localhost/foo']], $result->getHeaders());
+        $this->assertSame(['location' => ['https://localhost/foo']], $result->getHeaders());
 
         $middleware = new HttpsEnforcerMiddleware([
             'statusCode' => 302,
@@ -139,7 +129,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertSame(302, $result->getStatusCode());
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'location' => ['https://localhost/foo'],
                 'X-Foo' => ['bar'],
@@ -156,16 +146,14 @@ class HttpsEnforcerMiddlewareTest extends TestCase
             'method' => 'GET',
         ]);
 
-        $handler = new TestRequestHandler(function () {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn(): \Cake\Http\Response => new Response());
 
         $middleware = new HttpsEnforcerMiddleware();
 
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertSame(301, $result->getStatusCode());
-        $this->assertEquals(['location' => ['https://localhost/base/articles']], $result->getHeaders());
+        $this->assertSame(['location' => ['https://localhost/base/articles']], $result->getHeaders());
     }
 
     /**
@@ -179,9 +167,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response());
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => false]);
         $middleware->process($request, $handler);
@@ -198,9 +184,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('POST');
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response());
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => true]);
         $middleware->process($request, $handler);
@@ -217,9 +201,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
-            return new Response(['body' => 'skipped']);
-        });
+        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response(['body' => 'skipped']));
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -241,9 +223,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
-        $handler = new TestRequestHandler(function () {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn(): \Cake\Http\Response => new Response());
 
         $middleware = new HttpsEnforcerMiddleware();
         $result = $middleware->process($request, $handler);

@@ -21,14 +21,8 @@ use Exception;
 
 class TestRetryStrategy implements RetryStrategyInterface
 {
-    /**
-     * @var bool
-     */
-    protected $allowRetry;
-
-    public function __construct(bool $allowRetry)
+    public function __construct(protected bool $allowRetry)
     {
-        $this->allowRetry = $allowRetry;
     }
 
     /**

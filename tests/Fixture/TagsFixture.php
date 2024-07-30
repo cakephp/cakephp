@@ -23,8 +23,6 @@ class TagsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['name' => 'tag1', 'description' => 'A big description', 'created' => '2016-01-01 00:00'],

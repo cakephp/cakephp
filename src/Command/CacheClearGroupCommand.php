@@ -29,8 +29,6 @@ class CacheClearGroupCommand extends Command
 {
     /**
      * Get the command name.
-     *
-     * @return string
      */
     public static function defaultName(): string
     {
@@ -44,7 +42,7 @@ class CacheClearGroupCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
         $parser->setDescription('Clear all data in a single cache group.');
@@ -72,7 +70,7 @@ class CacheClearGroupCommand extends Command
         $group = (string)$args->getArgument('group');
         try {
             $groupConfigs = Cache::groupConfigs($group);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             $io->error(sprintf('Cache group "%s" not found', $group));
 
             return static::CODE_ERROR;

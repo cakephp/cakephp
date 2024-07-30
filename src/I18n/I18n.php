@@ -36,15 +36,11 @@ class I18n
 
     /**
      * The translators collection
-     *
-     * @var \Cake\I18n\TranslatorRegistry|null
      */
     protected static ?TranslatorRegistry $_collection = null;
 
     /**
      * The environment default locale
-     *
-     * @var string|null
      */
     protected static ?string $_defaultLocale = null;
 
@@ -57,7 +53,7 @@ class I18n
      */
     public static function translators(): TranslatorRegistry
     {
-        if (static::$_collection !== null) {
+        if (static::$_collection instanceof \Cake\I18n\TranslatorRegistry) {
             return static::$_collection;
         }
 
@@ -114,7 +110,6 @@ class I18n
      * @param callable $loader A callback function or callable class responsible for
      *   constructing a translations package instance.
      * @param string|null $locale The locale for the translator.
-     * @return void
      */
     public static function setTranslator(string $name, callable $loader, ?string $locale = null): void
     {
@@ -147,7 +142,7 @@ class I18n
         }
 
         $translator = $translators->get($name);
-        if ($translator === null) {
+        if (!$translator instanceof \Cake\I18n\Translator) {
             throw new I18nException(sprintf(
                 'Translator for domain `%s` could not be found.',
                 $name
@@ -202,7 +197,6 @@ class I18n
      * @param string $name The name of the translator to create a loader for
      * @param callable $loader A callable object that should return a Package
      * instance to be used for assembling a new translator.
-     * @return void
      */
     public static function config(string $name, callable $loader): void
     {
@@ -214,7 +208,6 @@ class I18n
      * This also affects the `intl.default_locale` PHP setting.
      *
      * @param string $locale The name of the locale to set as default.
-     * @return void
      */
     public static function setLocale(string $locale): void
     {
@@ -249,8 +242,6 @@ class I18n
      * This returns the default locale before any modifications, i.e.
      * the value as stored in the `intl.default_locale` PHP setting before
      * any manipulation by this class.
-     *
-     * @return string
      */
     public static function getDefaultLocale(): string
     {
@@ -273,7 +264,6 @@ class I18n
      * are available.
      *
      * @param string $name The name of the formatter to use.
-     * @return void
      */
     public static function setDefaultFormatter(string $name): void
     {
@@ -284,7 +274,6 @@ class I18n
      * Set if the domain fallback is used.
      *
      * @param bool $enable flag to enable or disable fallback
-     * @return void
      */
     public static function useFallback(bool $enable = true): void
     {
@@ -294,8 +283,6 @@ class I18n
     /**
      * Destroys all translator instances and creates a new empty translations
      * collection.
-     *
-     * @return void
      */
     public static function clear(): void
     {

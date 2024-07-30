@@ -40,6 +40,7 @@ class TruncateFixtureStrategyTest extends TestCase
 
         $strategy = new TruncateFixtureStrategy();
         $strategy->setupTest(['core.Articles']);
+
         $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
         $rows->closeCursor();

@@ -28,103 +28,60 @@ use SimpleXMLElement;
 class ConsoleInputOption
 {
     /**
-     * Name of the option
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
-     * Short (1 character) alias for the option.
-     *
-     * @var string
-     */
-    protected string $_short;
-
-    /**
-     * Help text for the option.
-     *
-     * @var string
-     */
-    protected string $_help;
-
-    /**
-     * Is the option a boolean option. Boolean options do not consume a parameter.
-     *
-     * @var bool
-     */
-    protected bool $_boolean;
-
-    /**
      * Default value for the option
-     *
-     * @var string|bool|null
      */
     protected string|bool|null $_default = null;
 
     /**
-     * Can the option accept multiple value definition.
-     *
-     * @var bool
-     */
-    protected bool $_multiple;
-
-    /**
-     * An array of choices for the option.
-     *
-     * @var list<string>
-     */
-    protected array $_choices;
-
-    /**
-     * The prompt string
-     *
-     * @var string|null
-     */
-    protected ?string $prompt = null;
-
-    /**
-     * Is the option required.
-     *
-     * @var bool
-     */
-    protected bool $required;
-
-    /**
      * Make a new Input Option
      *
-     * @param string $name The long name of the option, or an array with all the properties.
-     * @param string $short The short alias for this option
-     * @param string $help The help text for this option
-     * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
+     * @param string $_name The long name of the option, or an array with all the properties.
+     * @param string $_short The short alias for this option
+     * @param string $_help The help text for this option
+     * @param bool $_boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
-     * @param list<string> $choices Valid choices for this option.
-     * @param bool $multiple Whether this option can accept multiple value definition.
+     * @param list<string> $_choices Valid choices for this option.
+     * @param bool $_multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
      * @param string|null $prompt The prompt string.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        string $name,
-        string $short = '',
-        string $help = '',
-        bool $isBoolean = false,
+        /**
+         * Name of the option
+         */
+        protected string $_name,
+        /**
+         * Short (1 character) alias for the option.
+         */
+        protected string $_short = '',
+        /**
+         * Help text for the option.
+         */
+        protected string $_help = '',
+        /**
+         * Is the option a boolean option. Boolean options do not consume a parameter.
+         */
+        protected bool $_boolean = false,
         string|bool|null $default = null,
-        array $choices = [],
-        bool $multiple = false,
-        bool $required = false,
-        ?string $prompt = null
+        /**
+         * An array of choices for the option.
+         */
+        protected array $_choices = [],
+        /**
+         * Can the option accept multiple value definition.
+         */
+        protected bool $_multiple = false,
+        /**
+         * Is the option required.
+         */
+        protected bool $required = false,
+        /**
+         * The prompt string
+         */
+        protected ?string $prompt = null
     ) {
-        $this->_name = $name;
-        $this->_short = $short;
-        $this->_help = $help;
-        $this->_boolean = $isBoolean;
-        $this->_choices = $choices;
-        $this->_multiple = $multiple;
-        $this->required = $required;
-        $this->prompt = $prompt;
-
-        if ($isBoolean) {
+        if ($this->_boolean) {
             $this->_default = (bool)$default;
         } elseif ($default !== null) {
             $this->_default = (string)$default;
@@ -135,6 +92,7 @@ class ConsoleInputOption
                 sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short)
             );
         }
+
         if ($this->_default !== null && $this->prompt) {
             throw new ConsoleException(
                 'You cannot set both `prompt` and `default` options. ' .
@@ -167,24 +125,28 @@ class ConsoleInputOption
      * Generate the help for this this option.
      *
      * @param int $width The width to make the name of the option.
-     * @return string
      */
     public function help(int $width = 0): string
     {
-        $default = $short = '';
+        $default = '';
+        $short = '';
         if ($this->_default && $this->_default !== true) {
             $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }
+
         if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+
         if ($this->_short !== '') {
             $short = ', -' . $this->_short;
         }
+
         $name = sprintf('--%s%s', $this->_name, $short);
         if (strlen($name) < $width) {
             $name = str_pad($name, $width, ' ');
         }
+
         $required = '';
         if ($this->isRequired()) {
             $required = ' <comment>(required)</comment>';
@@ -195,8 +157,6 @@ class ConsoleInputOption
 
     /**
      * Get the usage value for this option
-     *
-     * @return string
      */
     public function usage(): string
     {
@@ -205,9 +165,11 @@ class ConsoleInputOption
         if ($this->_default !== null && !is_bool($this->_default) && $this->_default !== '') {
             $default = ' ' . $this->_default;
         }
+
         if ($this->_choices) {
             $default = ' ' . implode('|', $this->_choices);
         }
+
         $template = '[%s%s]';
         if ($this->isRequired()) {
             $template = '%s%s';
@@ -218,8 +180,6 @@ class ConsoleInputOption
 
     /**
      * Get the default value for this option
-     *
-     * @return string|bool|null
      */
     public function defaultValue(): string|bool|null
     {
@@ -228,8 +188,6 @@ class ConsoleInputOption
 
     /**
      * Check if this option is required
-     *
-     * @return bool
      */
     public function isRequired(): bool
     {
@@ -238,8 +196,6 @@ class ConsoleInputOption
 
     /**
      * Check if this option is a boolean option
-     *
-     * @return bool
      */
     public function isBoolean(): bool
     {
@@ -248,8 +204,6 @@ class ConsoleInputOption
 
     /**
      * Check if this option accepts multiple values.
-     *
-     * @return bool
      */
     public function acceptsMultiple(): bool
     {
@@ -268,6 +222,7 @@ class ConsoleInputOption
         if (empty($this->_choices)) {
             return true;
         }
+
         if (!in_array($value, $this->_choices, true)) {
             throw new ConsoleException(
                 sprintf(
@@ -284,8 +239,6 @@ class ConsoleInputOption
 
     /**
      * Get the list of choices this option has.
-     *
-     * @return array
      */
     public function choices(): array
     {
@@ -294,8 +247,6 @@ class ConsoleInputOption
 
     /**
      * Get the prompt string
-     *
-     * @return string
      */
     public function prompt(): string
     {
@@ -312,21 +263,25 @@ class ConsoleInputOption
     {
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);
+
         $short = '';
         if ($this->_short !== '') {
             $short = '-' . $this->_short;
         }
+
         $default = $this->_default;
         if ($default === true) {
             $default = 'true';
         } elseif ($default === false) {
             $default = 'false';
         }
+
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('boolean', (string)(int)$this->_boolean);
         $option->addAttribute('required', (string)(int)$this->required);
         $option->addChild('default', (string)$default);
+
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

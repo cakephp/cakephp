@@ -48,7 +48,6 @@ class TransportRegistry extends ObjectRegistry
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the cache is missing in.
-     * @return void
      * @throws \BadMethodCallException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
@@ -81,7 +80,7 @@ class TransportRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
         unset($this->_loaded[$name]);
 

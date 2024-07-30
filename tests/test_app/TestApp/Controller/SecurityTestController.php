@@ -30,8 +30,6 @@ class SecurityTestController extends Controller
 
     /**
      * fail method
-     *
-     * @return void
      */
     public function fail(): void
     {
@@ -48,8 +46,6 @@ class SecurityTestController extends Controller
 
     /**
      * Convenience method for header()
-     *
-     * @return void
      */
     public function header(string $status): void
     {

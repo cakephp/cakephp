@@ -23,28 +23,6 @@ namespace Cake\I18n;
 class Package
 {
     /**
-     * Message keys and translations in this package.
-     *
-     * @var array<array|string>
-     */
-    protected array $messages = [];
-
-    /**
-     * The name of a fallback package to use when a message key does not
-     * exist.
-     *
-     * @var string|null
-     */
-    protected ?string $fallback = null;
-
-    /**
-     * The name of the formatter to use when formatting translated messages.
-     *
-     * @var string
-     */
-    protected string $formatter;
-
-    /**
      * Constructor.
      *
      * @param string $formatter The name of the formatter to use.
@@ -52,20 +30,27 @@ class Package
      * @param array<array|string> $messages The messages in this package.
      */
     public function __construct(
-        string $formatter = 'default',
-        ?string $fallback = null,
-        array $messages = []
-    ) {
-        $this->formatter = $formatter;
-        $this->fallback = $fallback;
-        $this->messages = $messages;
+        /**
+         * The name of the formatter to use when formatting translated messages.
+         */
+        protected string $formatter = 'default',
+        /**
+         * The name of a fallback package to use when a message key does not
+         * exist.
+         */
+        protected ?string $fallback = null,
+        /**
+         * Message keys and translations in this package.
+         */
+        protected array $messages = []
+    )
+    {
     }
 
     /**
      * Sets the messages for this package.
      *
      * @param array<array|string> $messages The messages for this package.
-     * @return void
      */
     public function setMessages(array $messages): void
     {
@@ -77,7 +62,6 @@ class Package
      *
      * @param string $key the key of the message
      * @param array|string $message the actual message
-     * @return void
      */
     public function addMessage(string $key, array|string $message): void
     {
@@ -88,7 +72,6 @@ class Package
      * Adds new messages for this package.
      *
      * @param array<array|string> $messages The messages to add in this package.
-     * @return void
      */
     public function addMessages(array $messages): void
     {
@@ -120,7 +103,6 @@ class Package
      * Sets the formatter name for this package.
      *
      * @param string $formatter The formatter name for this package.
-     * @return void
      */
     public function setFormatter(string $formatter): void
     {
@@ -129,8 +111,6 @@ class Package
 
     /**
      * Gets the formatter name for this package.
-     *
-     * @return string
      */
     public function getFormatter(): string
     {
@@ -141,7 +121,6 @@ class Package
      * Sets the fallback package name.
      *
      * @param string|null $fallback The fallback package name.
-     * @return void
      */
     public function setFallback(?string $fallback): void
     {
@@ -150,8 +129,6 @@ class Package
 
     /**
      * Gets the fallback package name.
-     *
-     * @return string|null
      */
     public function getFallback(): ?string
     {

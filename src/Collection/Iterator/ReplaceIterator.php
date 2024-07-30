@@ -37,8 +37,6 @@ class ReplaceIterator extends Collection
 
     /**
      * A reference to the internal iterator this object is wrapping.
-     *
-     * @var \Traversable
      */
     protected Traversable $_innerIterator;
 
@@ -63,8 +61,6 @@ class ReplaceIterator extends Collection
     /**
      * Returns the value returned by the callback after passing the current value in
      * the iteration
-     *
-     * @return mixed
      */
     public function current(): mixed
     {

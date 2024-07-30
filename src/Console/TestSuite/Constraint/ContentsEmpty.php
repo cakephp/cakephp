@@ -26,17 +26,14 @@ class ContentsEmpty extends ContentsBase
      * Checks if contents are empty
      *
      * @param mixed $other Expected
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         return $this->contents === '';
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -47,7 +44,6 @@ class ContentsEmpty extends ContentsBase
      * Overwrites the descriptions so we can remove the automatic "expected" message
      *
      * @param mixed $other Value
-     * @return string
      */
     protected function failureDescription(mixed $other): string
     {
@@ -57,7 +53,7 @@ class ContentsEmpty extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsEmpty',
+    \Cake\Console\TestSuite\Constraint\ContentsEmpty::class,
     'Cake\TestSuite\Constraint\Console\ContentsEmpty'
 );
 // phpcs:enable

@@ -19,8 +19,5 @@ namespace Cake\Console\Exception;
  */
 class MissingHelperException extends ConsoleException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Helper class `%s` could not be found.';
 }

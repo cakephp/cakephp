@@ -40,13 +40,13 @@ class TableSchemaTest extends TestCase
 
     protected $_map;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         TypeFactory::clear();
         TypeFactory::setMap($this->_map);
@@ -69,7 +69,7 @@ class TableSchemaTest extends TestCase
             ],
         ];
         $table = new TableSchema('articles', $columns);
-        $this->assertEquals(['id', 'title'], $table->columns());
+        $this->assertSame(['id', 'title'], $table->columns());
     }
 
     /**
@@ -84,11 +84,11 @@ class TableSchemaTest extends TestCase
             'null' => false,
         ]);
         $this->assertSame($table, $result);
-        $this->assertEquals(['title'], $table->columns());
+        $this->assertSame(['title'], $table->columns());
 
         $result = $table->addColumn('body', 'text');
         $this->assertSame($table, $result);
-        $this->assertEquals(['title', 'body'], $table->columns());
+        $this->assertSame(['title', 'body'], $table->columns());
     }
 
     /**
@@ -118,7 +118,7 @@ class TableSchemaTest extends TestCase
         ->removeColumn('unknown');
 
         $this->assertSame($table, $result);
-        $this->assertEquals([], $table->columns());
+        $this->assertSame([], $table->columns());
         $this->assertNull($table->getColumn('title'));
         $this->assertSame([], $table->typeMap());
     }
@@ -311,7 +311,7 @@ class TableSchemaTest extends TestCase
             'columns' => ['id'],
         ]);
         $this->assertSame($result, $table);
-        $this->assertEquals(['primary'], $table->constraints());
+        $this->assertSame(['primary'], $table->constraints());
     }
 
     /**
@@ -343,7 +343,7 @@ class TableSchemaTest extends TestCase
             'references' => ['users', 'project_id', 'id'],
             'columns' => ['project_id', 'user_id'],
         ]);
-        $this->assertEquals(['users_idx'], $table->constraints());
+        $this->assertSame(['users_idx'], $table->constraints());
     }
 
     /**
@@ -351,19 +351,17 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addConstraintErrorProvider(): array
+    public static function addConstraintErrorProvider(): \Iterator
     {
-        return [
-            // No properties
-            [[]],
-            // Empty columns
-            [['columns' => '', 'type' => TableSchema::CONSTRAINT_UNIQUE]],
-            [['columns' => [], 'type' => TableSchema::CONSTRAINT_UNIQUE]],
-            // Missing column
-            [['columns' => ['derp'], 'type' => TableSchema::CONSTRAINT_UNIQUE]],
-            // Invalid type
-            [['columns' => 'author_id', 'type' => 'derp']],
-        ];
+        // No properties
+        yield [[]];
+        // Empty columns
+        yield [['columns' => '', 'type' => TableSchema::CONSTRAINT_UNIQUE]];
+        yield [['columns' => [], 'type' => TableSchema::CONSTRAINT_UNIQUE]];
+        // Missing column
+        yield [['columns' => ['derp'], 'type' => TableSchema::CONSTRAINT_UNIQUE]];
+        // Invalid type
+        yield [['columns' => 'author_id', 'type' => 'derp']];
     }
 
     /**
@@ -394,7 +392,7 @@ class TableSchemaTest extends TestCase
             'columns' => ['title'],
         ]);
         $this->assertSame($result, $table);
-        $this->assertEquals(['faster'], $table->indexes());
+        $this->assertSame(['faster'], $table->indexes());
     }
 
     /**
@@ -402,16 +400,14 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addIndexErrorProvider(): array
+    public static function addIndexErrorProvider(): \Iterator
     {
-        return [
-            // Empty
-            [[]],
-            // Invalid type
-            [['columns' => 'author_id', 'type' => 'derp']],
-            // Missing column
-            [['columns' => ['not_there'], 'type' => TableSchema::INDEX_INDEX]],
-        ];
+        // Empty
+        yield [[]];
+        // Invalid type
+        yield [['columns' => 'author_id', 'type' => 'derp']];
+        // Missing column
+        yield [['columns' => ['not_there'], 'type' => TableSchema::INDEX_INDEX]];
     }
 
     /**
@@ -446,7 +442,7 @@ class TableSchemaTest extends TestCase
                 'columns' => ['title'],
             ]);
 
-        $this->assertEquals(
+        $this->assertSame(
             ['author_idx', 'texty'],
             $table->indexes()
         );
@@ -468,13 +464,13 @@ class TableSchemaTest extends TestCase
                 'type' => 'primary',
                 'columns' => ['id'],
             ]);
-        $this->assertEquals(['id'], $table->getPrimaryKey());
+        $this->assertSame(['id'], $table->getPrimaryKey());
 
         $table = new TableSchema('articles');
         $table->addColumn('id', 'integer')
             ->addColumn('title', 'string')
             ->addColumn('author_id', 'integer');
-        $this->assertEquals([], $table->getPrimaryKey());
+        $this->assertSame([], $table->getPrimaryKey());
     }
 
     /**
@@ -487,8 +483,8 @@ class TableSchemaTest extends TestCase
             'engine' => 'InnoDB',
         ];
         $return = $table->setOptions($options);
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $return);
-        $this->assertEquals($options, $table->getOptions());
+        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $return);
+        $this->assertSame($options, $table->getOptions());
     }
 
     /**
@@ -505,7 +501,7 @@ class TableSchemaTest extends TestCase
                 'update' => 'cascade',
                 'delete' => 'cascade',
             ]);
-        $this->assertEquals(['author_id_idx'], $table->constraints());
+        $this->assertSame(['author_id_idx'], $table->constraints());
     }
 
     /**
@@ -529,9 +525,9 @@ class TableSchemaTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expected, $compositeConstraint);
+        $this->assertSame($expected, $compositeConstraint);
 
-        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<tag_id>\\) REFERENCES <tags> \\(<id>\\)";
+        $expectedSubstring = sprintf('CONSTRAINT <%s> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)', $name);
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }
 
@@ -568,9 +564,9 @@ class TableSchemaTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expected, $compositeConstraint);
+        $this->assertSame($expected, $compositeConstraint);
 
-        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)" .
+        $expectedSubstring = sprintf('CONSTRAINT <%s> FOREIGN KEY \(<product_category>, <product_id>\)', $name) .
             ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
@@ -581,28 +577,26 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function badForeignKeyProvider(): array
+    public static function badForeignKeyProvider(): \Iterator
     {
-        return [
-            'references is bad' => [[
-                'type' => TableSchema::CONSTRAINT_FOREIGN,
-                'columns' => ['author_id'],
-                'references' => ['authors'],
-                'delete' => 'derp',
-            ]],
-            'bad update value' => [[
-                'type' => TableSchema::CONSTRAINT_FOREIGN,
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'update' => 'derp',
-            ]],
-            'bad delete value' => [[
-                'type' => TableSchema::CONSTRAINT_FOREIGN,
-                'columns' => ['author_id'],
-                'references' => ['authors', 'id'],
-                'delete' => 'derp',
-            ]],
-        ];
+        yield 'references is bad' => [[
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
+            'columns' => ['author_id'],
+            'references' => ['authors'],
+            'delete' => 'derp',
+        ]];
+        yield 'bad update value' => [[
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
+            'columns' => ['author_id'],
+            'references' => ['authors', 'id'],
+            'update' => 'derp',
+        ]];
+        yield 'bad delete value' => [[
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
+            'columns' => ['author_id'],
+            'references' => ['authors', 'id'],
+            'delete' => 'derp',
+        ]];
     }
 
     /**
@@ -642,11 +636,12 @@ class TableSchemaTest extends TestCase
      * @param string $query the result to compare against
      * @param bool $optional
      */
-    public function assertQuotedQuery($pattern, $query, $optional = false): void
+    public function assertQuotedQuery($pattern, string $query, $optional = false): void
     {
         if ($optional) {
             $optional = '?';
         }
+
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertMatchesRegularExpression('#' . $pattern . '#', $query);

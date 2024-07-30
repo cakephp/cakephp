@@ -51,12 +51,10 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider(): array
+    public static function safeHttpMethodProvider(): \Iterator
     {
-        return [
-            ['GET'],
-            ['HEAD'],
-        ];
+        yield ['GET'];
+        yield ['HEAD'];
     }
 
     /**
@@ -64,11 +62,15 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider(): array
+    public static function httpMethodProvider(): \Iterator
     {
-        return [
-            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],
-        ];
+        yield ['OPTIONS'];
+        yield ['PATCH'];
+        yield ['PUT'];
+        yield ['POST'];
+        yield ['DELETE'];
+        yield ['PURGE'];
+        yield ['INVALIDMETHOD'];
     }
 
     /**
@@ -76,9 +78,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
-            return new Response();
-        });
+        return new TestRequestHandler(fn(): \Cake\Http\Response => new Response());
     }
 
     /**
@@ -93,7 +93,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -112,7 +112,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
 
         $this->assertNotEquals($cookie['value'], $requestAttr);
-        $this->assertEquals(strlen($cookie['value']) * 2, strlen($requestAttr));
+        $this->assertSame(strlen((string) $cookie['value']) * 2, strlen((string) $requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
@@ -125,7 +125,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -161,7 +161,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -196,10 +196,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the CSRF tokens are regenerated when token is not valid
-     *
-     * @return void
      */
-    public function testRegenerateTokenOnGetWithInvalidData()
+    public function testRegenerateTokenOnGetWithInvalidData(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -212,7 +210,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         /** @var \Cake\Http\Response $response */
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertGreaterThan(32, strlen($response->getCookie('csrfToken')['value']));
+        $this->assertGreaterThan(32, strlen((string) $response->getCookie('csrfToken')['value']));
     }
 
     /**
@@ -223,9 +221,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
-            return new RedirectResponse('/');
-        });
+        $handler = new TestRequestHandler(fn(): \Laminas\Diactoros\Response\RedirectResponse => new RedirectResponse('/'));
 
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
@@ -241,9 +237,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $request = $request->withAttribute('csrfToken', 'not-good');
-        $handler = new TestRequestHandler(function () {
-            return new RedirectResponse('/');
-        });
+
+        $handler = new TestRequestHandler(fn(): \Laminas\Diactoros\Response\RedirectResponse => new RedirectResponse('/'));
 
         $middleware = new CsrfProtectionMiddleware();
         $this->expectException(CakeException::class);
@@ -258,9 +253,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
-            return new DiactorosResponse();
-        });
+        $handler = new TestRequestHandler(fn(): \Laminas\Diactoros\Response => new DiactorosResponse());
 
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
@@ -338,8 +331,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
 
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
@@ -367,7 +360,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -396,7 +389,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -408,10 +401,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that invalid string cookies are rejected.
-     *
-     * @return void
      */
-    public function testInvalidTokenStringCookies()
+    public function testInvalidTokenStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
@@ -427,10 +418,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that empty value cookies are rejected
-     *
-     * @return void
      */
-    public function testInvalidTokenEmptyStringCookies()
+    public function testInvalidTokenEmptyStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
@@ -483,8 +472,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
@@ -551,8 +540,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
             $this->assertEmpty($responseHeaders, 'Should not send any header');
         }
     }
@@ -624,13 +613,13 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->skipCheckCallback(function (ServerRequestInterface $request) {
+        $middleware->skipCheckCallback(function (ServerRequestInterface $request): bool {
             $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
 
             return true;
         });
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertEmpty($request->getParsedBody());
 
             return new Response();
@@ -651,6 +640,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         for ($i = 0; $i < 10; $i++) {
             $results[] = $middleware->saltToken($token);
         }
+
         $this->assertCount(10, array_unique($results));
     }
 }

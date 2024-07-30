@@ -22,6 +22,7 @@ foreach ($options as $file) {
         break;
     }
 }
+
 require COMPOSER_INSTALL;
 
 $path = dirname(__DIR__) . DS . 'src' . DS;
@@ -34,9 +35,11 @@ foreach ($iterator as $file) {
     if (pathinfo((string)$file, PATHINFO_EXTENSION) !== 'php') {
         continue;
     }
+
     if (pathinfo((string)$file, PATHINFO_FILENAME) === 'functions') {
         continue;
     }
+
     if (strpos($file->getRealPath(), '/TestSuite/')) {
         continue;
     }
@@ -63,7 +66,7 @@ foreach ($iterator as $file) {
 
     $newFileContent = file_get_contents($filePath);
 
-    if (strpos($newFileContent, 'class_exists(') === false && !str_contains($newFileContent, 'class_alias(')) {
+    if (!str_contains($newFileContent, 'class_exists(') && !str_contains($newFileContent, 'class_alias(')) {
         $oldPath = str_replace($path, '', $file->getRealPath());
         $newPath = str_replace($path, '', $filePath);
         echo "\033[31m" . ' * Missing `class_exists()` or `class_alias()` on new file for `' . $oldPath . '` => `' . $newPath . '`' .  "\033[0m" . PHP_EOL;

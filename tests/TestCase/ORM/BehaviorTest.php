@@ -36,7 +36,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder(Table::class)->getMock();
         $config = ['key' => 'value'];
         $behavior = new TestBehavior($table, $config);
-        $this->assertEquals($config, $behavior->getConfig());
+        $this->assertSame($config, $behavior->getConfig());
     }
 
     /**
@@ -63,7 +63,7 @@ class BehaviorTest extends TestCase
                 'testReflectionCache' => 'testReflectionCache',
             ],
         ];
-        $this->assertEquals($expected, $behavior->testReflectionCache());
+        $this->assertSame($expected, $behavior->testReflectionCache());
     }
 
     /**
@@ -81,7 +81,7 @@ class BehaviorTest extends TestCase
             'Model.afterRules' => 'afterRules',
             'Model.afterDeleteCommit' => 'afterDeleteCommit',
         ];
-        $this->assertEquals($expected, $behavior->implementedEvents());
+        $this->assertSame($expected, $behavior->implementedEvents());
     }
 
     /**
@@ -117,7 +117,7 @@ class BehaviorTest extends TestCase
                 'callable' => 'afterDeleteCommit',
             ],
         ];
-        $this->assertEquals($expected, $behavior->implementedEvents());
+        $this->assertSame($expected, $behavior->implementedEvents());
     }
 
     /**
@@ -130,7 +130,7 @@ class BehaviorTest extends TestCase
         $expected = [
             'doSomething' => 'doSomething',
         ];
-        $this->assertEquals($expected, $behavior->implementedMethods());
+        $this->assertSame($expected, $behavior->implementedMethods());
     }
 
     /**
@@ -147,7 +147,7 @@ class BehaviorTest extends TestCase
         $expected = [
             'aliased' => 'doSomething',
         ];
-        $this->assertEquals($expected, $behavior->implementedMethods());
+        $this->assertSame($expected, $behavior->implementedMethods());
     }
 
     /**
@@ -160,7 +160,7 @@ class BehaviorTest extends TestCase
             'implementedMethods' => [],
         ]);
         $expected = [];
-        $this->assertEquals($expected, $behavior->implementedMethods());
+        $this->assertSame($expected, $behavior->implementedMethods());
     }
 
     /**
@@ -173,7 +173,7 @@ class BehaviorTest extends TestCase
         $expected = [
             'foo' => 'findFoo',
         ];
-        $this->assertEquals($expected, $behavior->implementedFinders());
+        $this->assertSame($expected, $behavior->implementedFinders());
     }
 
     /**
@@ -190,7 +190,7 @@ class BehaviorTest extends TestCase
         $expected = [
             'aliased' => 'findFoo',
         ];
-        $this->assertEquals($expected, $behavior->implementedFinders());
+        $this->assertSame($expected, $behavior->implementedFinders());
     }
 
     /**
@@ -202,7 +202,7 @@ class BehaviorTest extends TestCase
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [],
         ]);
-        $this->assertEquals([], $behavior->implementedFinders());
+        $this->assertSame([], $behavior->implementedFinders());
     }
 
     /**

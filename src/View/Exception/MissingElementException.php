@@ -19,8 +19,5 @@ namespace Cake\View\Exception;
  */
 class MissingElementException extends MissingTemplateException
 {
-    /**
-     * @var string
-     */
     protected string $type = 'Element';
 }

@@ -22,14 +22,8 @@ use Cake\View\Widget\WidgetInterface;
 
 class TestUsingViewWidget implements WidgetInterface
 {
-    protected $_templates;
-
-    protected $_view;
-
-    public function __construct(StringTemplate $templates, View $view)
+    public function __construct(protected \Cake\View\StringTemplate $_templates, protected \Cake\View\View $_view)
     {
-        $this->_templates = $templates;
-        $this->_view = $view;
     }
 
     public function getView(): View

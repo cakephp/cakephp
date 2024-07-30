@@ -42,7 +42,7 @@ class FlashHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $session = new Session();
@@ -108,7 +108,7 @@ class FlashHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->View, $this->Flash);

@@ -20,8 +20,6 @@ class TestController extends ControllerTestAppController
 
     /**
      * modelClass property
-     *
-     * @var string
      */
     protected ?string $modelClass = 'Comments';
 
@@ -36,12 +34,8 @@ class TestController extends ControllerTestAppController
 
     /**
      * index method
-     *
-     * @param mixed $testId
-     * @param mixed $testTwoId
-     * @return void
      */
-    public function index($testId, $testTwoId): void
+    public function index(mixed $testId, mixed $testTwoId): void
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
@@ -51,12 +45,8 @@ class TestController extends ControllerTestAppController
 
     /**
      * view method
-     *
-     * @param mixed $testId
-     * @param mixed $testTwoId
-     * @return void
      */
-    public function view($testId, $testTwoId): void
+    public function view(mixed $testId, mixed $testTwoId): void
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
@@ -64,17 +54,11 @@ class TestController extends ControllerTestAppController
         ]);
     }
 
-    /**
-     * @param mixed $passed
-     */
-    public function reflection($passed, Table $table)
+    public function reflection(mixed $passed, Table $table)
     {
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function returner()
+    public function returner(): \Cake\Http\Response
     {
         return $this->response->withStringBody('I am from the controller.');
     }
@@ -82,7 +66,7 @@ class TestController extends ControllerTestAppController
     /**
      * @return \Cake\Http\Response
      */
-    public function willCauseException()
+    public function willCauseException(): string
     {
         return '';
     }
@@ -92,13 +76,10 @@ class TestController extends ControllerTestAppController
     {
     }
 
-    private function private_m()
-    {
-    }
-
     public function _hidden()
     {
     }
+
     // phpcs:enable
 
     public function admin_add(): void

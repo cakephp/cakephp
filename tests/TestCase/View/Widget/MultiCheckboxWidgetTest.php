@@ -41,7 +41,7 @@ class MultiCheckboxWidgetTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -54,6 +54,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
     }
 
@@ -417,6 +418,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
         ];
         $this->templates->add($templates);
+
         $result = $input->render($data, $this->context);
         $expected = [
             ['div' => ['class' => 'checkbox']],

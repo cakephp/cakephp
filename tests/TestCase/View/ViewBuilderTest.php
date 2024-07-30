@@ -43,18 +43,18 @@ class ViewBuilderTest extends TestCase
 
         $data = ['test' => 'val', 'foo' => 'bar'];
         $builder->setVars($data);
-        $this->assertEquals($data, $builder->getVars());
+        $this->assertSame($data, $builder->getVars());
 
         $update = ['test' => 'updated'];
         $builder->setVars($update);
-        $this->assertEquals(
+        $this->assertSame(
             ['foo' => 'bar', 'test' => 'updated'],
             $builder->getVars()
         );
 
         $update = ['overwrite' => 'yes'];
         $builder->setVars($update, false);
-        $this->assertEquals(
+        $this->assertSame(
             ['overwrite' => 'yes'],
             $builder->getVars()
         );
@@ -78,18 +78,16 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function stringPropertyProvider(): array
+    public static function stringPropertyProvider(): \Iterator
     {
-        return [
-            ['layoutPath', 'Admin/'],
-            ['templatePath', 'Admin/'],
-            ['plugin', 'TestPlugin'],
-            ['layout', 'admin'],
-            ['theme', 'TestPlugin'],
-            ['template', 'edit'],
-            ['name', 'Articles'],
-            ['className', 'Cake\View\JsonView'],
-        ];
+        yield ['layoutPath', 'Admin/'];
+        yield ['templatePath', 'Admin/'];
+        yield ['plugin', 'TestPlugin'];
+        yield ['layout', 'admin'];
+        yield ['theme', 'TestPlugin'];
+        yield ['template', 'edit'];
+        yield ['name', 'Articles'];
+        yield ['className', \Cake\View\JsonView::class];
     }
 
     /**
@@ -98,11 +96,9 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function boolPropertyProvider(): array
+    public static function boolPropertyProvider(): \Iterator
     {
-        return [
-            ['autoLayout', true, false],
-        ];
+        yield ['autoLayout', true, false];
     }
 
     /**
@@ -110,11 +106,9 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function arrayPropertyProvider(): array
+    public static function arrayPropertyProvider(): \Iterator
     {
-        return [
-            ['options', ['key' => 'value']],
-        ];
+        yield ['options', ['key' => 'value']];
     }
 
     /**
@@ -187,8 +181,6 @@ class ViewBuilderTest extends TestCase
 
     /**
      * Tests that adding non-assoc and assoc merge properly.
-     *
-     * @return void
      */
     public function testAddHelpers(): void
     {
@@ -230,7 +222,7 @@ class ViewBuilderTest extends TestCase
             $response,
             $events
         );
-        $this->assertInstanceOf('Cake\View\AjaxView', $view);
+        $this->assertInstanceOf(\Cake\View\AjaxView::class, $view);
         $this->assertSame('edit', $view->getTemplate());
         $this->assertSame('default', $view->getLayout());
         $this->assertSame('Articles/', $view->getTemplatePath());
@@ -242,8 +234,8 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['foo', 'x'], $view->getVars());
         $this->assertSame('bar', $view->get('foo'));
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $view->Html);
+        $this->assertInstanceOf(\Cake\View\Helper\FormHelper::class, $view->Form);
     }
 
     /**
@@ -265,7 +257,7 @@ class ViewBuilderTest extends TestCase
         static::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
-        $this->assertInstanceOf('TestApp\View\AppView', $view);
+        $this->assertInstanceOf(\TestApp\View\AppView::class, $view);
     }
 
     /**
@@ -328,7 +320,7 @@ class ViewBuilderTest extends TestCase
 
         $this->assertSame('default', $builder->getTemplate());
         $this->assertSame('test', $builder->getLayout());
-        $this->assertEquals(['Html' => []], $builder->getHelpers());
+        $this->assertSame(['Html' => []], $builder->getHelpers());
         $this->assertSame('JsonView', $builder->getClassName());
     }
 
@@ -355,7 +347,7 @@ class ViewBuilderTest extends TestCase
         $expects = ['key' => 'newOption', 'anotherKey' => 'anotherOption'];
 
         $result = $builder->getOptions();
-        $this->assertEquals($expects, $result);
+        $this->assertSame($expects, $result);
     }
 
     /**
@@ -366,7 +358,7 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->setOptions(['one', 'two', 'three'], false);
 
-        $this->assertEquals(['one', 'two', 'three'], $builder->getOptions());
+        $this->assertSame(['one', 'two', 'three'], $builder->getOptions());
     }
 
     /**
@@ -379,7 +371,7 @@ class ViewBuilderTest extends TestCase
 
         $expected = ['four', 'five', 'six'];
         $builder->setOptions($expected, false);
-        $this->assertEquals($expected, $builder->getOptions());
+        $this->assertSame($expected, $builder->getOptions());
     }
 
     /**
@@ -389,6 +381,7 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
         $builder->setOptions([], false);
+
         $result = $builder->getOptions();
         $this->assertIsArray($result);
         $this->assertEmpty($result);

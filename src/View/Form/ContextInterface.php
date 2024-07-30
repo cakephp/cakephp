@@ -38,14 +38,11 @@ interface ContextInterface
      *
      * @param string $field A dot separated path to the field a value
      *   is needed for.
-     * @return bool
      */
     public function isPrimaryKey(string $field): bool;
 
     /**
      * Returns whether this form is for a create operation.
-     *
-     * @return bool
      */
     public function isCreate(): bool;
 
@@ -63,7 +60,6 @@ interface ContextInterface
      * @param string $field A dot separated path to the field a value
      * @param array<string, mixed> $options Options.
      *   is needed for.
-     * @return mixed
      */
     public function val(string $field, array $options = []): mixed;
 
@@ -73,7 +69,6 @@ interface ContextInterface
      * In this context class, this is simply defined by the 'required' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return bool|null
      */
     public function isRequired(string $field): ?bool;
 
@@ -81,7 +76,6 @@ interface ContextInterface
      * Gets the default "required" error message for a field
      *
      * @param string $field A dot separated path to the field name
-     * @return string|null
      */
     public function getRequiredMessage(string $field): ?string;
 
@@ -89,7 +83,6 @@ interface ContextInterface
      * Get maximum length of a field from model validation.
      *
      * @param string $field Field name.
-     * @return int|null
      */
     public function getMaxLength(string $field): ?int;
 

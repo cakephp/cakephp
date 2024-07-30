@@ -39,9 +39,10 @@ class TableValidationWithBadDefinerTest extends TestCase
 // phpcs:disable
 class ValidationWithBadDefinerTable extends Table
 {
-    public function validationBad($validator)
+    public function validationBad($validator): string
     {
         return '';
     }
 }
+
 // phpcs:enable

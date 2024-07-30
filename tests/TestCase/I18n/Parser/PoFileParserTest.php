@@ -41,7 +41,7 @@ class PoFileParserTest extends TestCase
     /**
      * Set Up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->path = Configure::read('App.paths.locales.0');
@@ -50,7 +50,7 @@ class PoFileParserTest extends TestCase
     /**
      * Tear down method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();
@@ -125,7 +125,7 @@ class PoFileParserTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $messages);
+        $this->assertSame($expected, $messages);
     }
 
     /**
@@ -167,7 +167,7 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages) {
+        I18n::setTranslator('default', function () use ($messages): \Cake\I18n\Package {
             $package = new Package('default');
             $package->setMessages($messages);
 
@@ -201,7 +201,7 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages) {
+        I18n::setTranslator('default', function () use ($messages): \Cake\I18n\Package {
             $package = new Package('default');
             $package->setMessages($messages);
 

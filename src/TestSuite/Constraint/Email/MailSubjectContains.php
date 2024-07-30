@@ -29,15 +29,15 @@ class MailSubjectContains extends MailConstraintBase
      * Checks constraint
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         if (!is_string($other)) {
             throw new InvalidArgumentException(
                 'Invalid data type, must be a string.'
             );
         }
+
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             $subject = $message->getOriginalSubject();
@@ -52,8 +52,6 @@ class MailSubjectContains extends MailConstraintBase
     /**
      * Returns the subjects of all messages
      * respects $this->at
-     *
-     * @return string
      */
     protected function getAssertedMessages(): string
     {
@@ -62,9 +60,11 @@ class MailSubjectContains extends MailConstraintBase
         foreach ($messages as $message) {
             $messageMembers[] = $message->getSubject();
         }
+
         if ($this->at && isset($messageMembers[$this->at - 1])) {
             $messageMembers = [$messageMembers[$this->at - 1]];
         }
+
         $result = implode(PHP_EOL, $messageMembers);
 
         return PHP_EOL . 'was: ' . mb_substr($result, 0, 1000);
@@ -72,8 +72,6 @@ class MailSubjectContains extends MailConstraintBase
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

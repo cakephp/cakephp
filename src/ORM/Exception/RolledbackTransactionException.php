@@ -21,9 +21,6 @@ use Cake\Core\Exception\CakeException;
  */
 class RolledbackTransactionException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'The afterSave event in `%s` is aborting the transaction'
         . ' before the save process is done.';
 }

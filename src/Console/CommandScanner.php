@@ -74,6 +74,7 @@ class CommandScanner
         if (!Plugin::isLoaded($plugin)) {
             return [];
         }
+
         $path = Plugin::classPath($plugin);
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
@@ -118,13 +119,16 @@ class CommandScanner
             if (!is_subclass_of($class, CommandInterface::class)) {
                 continue;
             }
+
             $reflection = new ReflectionClass($class);
             if ($reflection->isAbstract()) {
                 continue;
             }
+
             if (is_subclass_of($class, BaseCommand::class)) {
                 $name = $class::defaultName();
             }
+
             $commands[$path . $file] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,

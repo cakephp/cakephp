@@ -24,18 +24,12 @@ class AuthorsTable extends Table
 {
     /**
      * @param array<string, mixed> $config
-     * @return void
      */
     public function initialize(array $config): void
     {
         $this->hasMany('articles');
     }
 
-    /**
-     * @param \Cake\ORM\Query\SelectQuery $query
-     * @param int|null $authorId
-     * @return \Cake\ORM\Query\SelectQuery
-     */
     public function findByAuthor(SelectQuery $query, ?int $authorId = null): SelectQuery
     {
         if ($authorId !== null) {
@@ -50,17 +44,14 @@ class AuthorsTable extends Table
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query
      * @param array<string, mixed> $options The options
-     * @return \Cake\ORM\Query\SelectQuery
      */
     public function findFormatted(SelectQuery $query, array $options = []): SelectQuery
     {
-        return $query->formatResults(function ($results) {
-            return $results->map(function ($author) {
-                $author->formatted = $author->name . '!!';
+        return $query->formatResults(fn($results) => $results->map(function ($author) {
+            $author->formatted = $author->name . '!!';
 
-                return $author;
-            });
-        });
+            return $author;
+        }));
     }
 
     /**
@@ -68,7 +59,6 @@ class AuthorsTable extends Table
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query
      * @param int $id Author ID
-     * @return \Cake\ORM\Query\SelectQuery
      */
     public function findWithIdArgument(SelectQuery $query, int $id): SelectQuery
     {

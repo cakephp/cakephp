@@ -31,7 +31,7 @@ class QueryLoggerTest extends TestCase
     /**
      * Tear down
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('queryLoggerTest');
@@ -64,7 +64,7 @@ class QueryLoggerTest extends TestCase
             'className' => 'Array',
             'scopes' => ['foo'],
         ]);
-        $logger->log(LogLevel::DEBUG, $query, compact('query'));
+        $logger->log(LogLevel::DEBUG, $query, ['query' => $query]);
 
         $this->assertCount(1, Log::engine('queryLoggerTest')->read());
         $this->assertCount(1, Log::engine('newScope')->read());
@@ -110,7 +110,7 @@ class QueryLoggerTest extends TestCase
             'className' => 'Array',
             'scopes' => ['queriesLog'],
         ]);
-        $logger->log(LogLevel::DEBUG, '', compact('query'));
+        $logger->log(LogLevel::DEBUG, '', ['query' => $query]);
 
         $this->assertStringContainsString('connection=test role= duration=', current(Log::engine('queryLoggerTest')->read()));
     }

@@ -52,8 +52,6 @@ class Configure
 
     /**
      * Flag to track whether ini_set exists.
-     *
-     * @var bool|null
      */
     protected static ?bool $_hasIniSet = null;
 
@@ -78,7 +76,6 @@ class Configure
      * @param array<string, mixed>|string $config The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
      * @param mixed $value Value to set for the given key.
-     * @return void
      * @link https://book.cakephp.org/5/en/development/configuration.html#writing-configuration-data
      */
     public static function write(array|string $config, mixed $value = null): void
@@ -177,7 +174,6 @@ class Configure
      * ```
      *
      * @param string $var the var to be deleted
-     * @return void
      * @link https://book.cakephp.org/5/en/development/configuration.html#deleting-configuration-data
      */
     public static function delete(string $var): void
@@ -214,7 +210,6 @@ class Configure
      * out of configure into the various other classes in CakePHP.
      *
      * @param string $var The key to read and remove.
-     * @return mixed
      */
     public static function consume(string $var): mixed
     {
@@ -222,11 +217,13 @@ class Configure
             if (!isset(static::$_values[$var])) {
                 return null;
             }
+
             $value = static::$_values[$var];
             unset(static::$_values[$var]);
 
             return $value;
         }
+
         $value = Hash::get(static::$_values, $var);
         static::delete($var);
 
@@ -247,7 +244,6 @@ class Configure
      * @param string $name The name of the engine being configured. This alias is used later to
      *   read values from a specific engine.
      * @param \Cake\Core\Configure\ConfigEngineInterface $engine The engine to append.
-     * @return void
      */
     public static function config(string $name, ConfigEngineInterface $engine): void
     {
@@ -258,7 +254,6 @@ class Configure
      * Returns true if the Engine objects is configured.
      *
      * @param string $name Engine name.
-     * @return bool
      */
     public static function isConfigured(string $name): bool
     {
@@ -274,9 +269,7 @@ class Configure
     {
         $engines = array_keys(static::$_engines);
 
-        return array_map(function ($key) {
-            return (string)$key;
-        }, $engines);
+        return array_map(fn($key): string => (string)$key, $engines);
     }
 
     /**
@@ -291,6 +284,7 @@ class Configure
         if (!isset(static::$_engines[$name])) {
             return false;
         }
+
         unset(static::$_engines[$name]);
 
         return true;
@@ -326,7 +320,7 @@ class Configure
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
         $engine = static::_getEngine($config);
-        if (!$engine) {
+        if (!$engine instanceof \Cake\Core\Configure\ConfigEngineInterface) {
             throw new CakeException(
                 sprintf(
                     'Config %s engine not found when attempting to load %s.',
@@ -379,9 +373,10 @@ class Configure
     public static function dump(string $key, string $config = 'default', array $keys = []): bool
     {
         $engine = static::_getEngine($config);
-        if (!$engine) {
+        if (!$engine instanceof \Cake\Core\Configure\ConfigEngineInterface) {
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
+
         $values = static::$_values;
         if ($keys) {
             $values = array_intersect_key($values, array_flip($keys));
@@ -403,6 +398,7 @@ class Configure
             if ($config !== 'default') {
                 return null;
             }
+
             static::config($config, new PhpConfig());
         }
 
@@ -471,6 +467,7 @@ class Configure
         if (!class_exists(Cache::class)) {
             throw new CakeException('You must install cakephp/cache to use Configure::restore()');
         }
+
         $values = Cache::read($name, $cacheConfig);
         if ($values) {
             static::write($values);
@@ -483,8 +480,6 @@ class Configure
 
     /**
      * Clear all values stored in Configure.
-     *
-     * @return void
      */
     public static function clear(): void
     {

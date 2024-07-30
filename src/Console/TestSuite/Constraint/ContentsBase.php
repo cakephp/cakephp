@@ -24,15 +24,7 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 abstract class ContentsBase extends Constraint
 {
-    /**
-     * @var string
-     */
     protected string $contents;
-
-    /**
-     * @var string
-     */
-    protected string $output;
 
     /**
      * Constructor
@@ -40,16 +32,15 @@ abstract class ContentsBase extends Constraint
      * @param list<string> $contents Contents
      * @param string $output Output type
      */
-    public function __construct(array $contents, string $output)
+    public function __construct(array $contents, protected string $output)
     {
         $this->contents = implode(PHP_EOL, $contents);
-        $this->output = $output;
     }
 }
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsBase',
+    \Cake\Console\TestSuite\Constraint\ContentsBase::class,
     'Cake\TestSuite\Constraint\Console\ContentsBase'
 );
 // phpcs:enable

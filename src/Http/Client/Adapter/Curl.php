@@ -56,7 +56,7 @@ class Curl implements AdapterInterface
             $error = curl_error($ch);
             curl_close($ch);
 
-            $message = "cURL Error ({$errorCode}) {$error}";
+            $message = sprintf('cURL Error (%d) %s', $errorCode, $error);
             $errorNumbers = [
                 CURLE_FAILED_INIT,
                 CURLE_URL_MALFORMAT,
@@ -65,6 +65,7 @@ class Curl implements AdapterInterface
             if (in_array($errorCode, $errorNumbers, true)) {
                 throw new RequestException($message, $request);
             }
+
             throw new NetworkException($message, $request);
         }
 
@@ -79,7 +80,6 @@ class Curl implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request.
      * @param array<string, mixed> $options The client options
-     * @return array
      */
     public function buildOptions(RequestInterface $request, array $options): array
     {
@@ -121,6 +121,7 @@ class Curl implements AdapterInterface
         if ($out[CURLOPT_POSTFIELDS] !== '' && isset($out[CURLOPT_HTTPGET])) {
             $out[CURLOPT_CUSTOMREQUEST] = 'get';
         }
+
         if ($out[CURLOPT_POSTFIELDS] === '') {
             unset($out[CURLOPT_POSTFIELDS]);
         }
@@ -128,10 +129,12 @@ class Curl implements AdapterInterface
         if (empty($options['ssl_cafile'])) {
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
+
         if (!empty($options['ssl_verify_host'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
             $options['ssl_verify_host'] = 2;
         }
+
         $optionMap = [
             'timeout' => CURLOPT_TIMEOUT,
             'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
@@ -145,13 +148,16 @@ class Curl implements AdapterInterface
                 $out[$curlOpt] = $options[$option];
             }
         }
+
         if (isset($options['proxy']['proxy'])) {
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
         }
+
         if (isset($options['proxy']['username'])) {
-            $password = !empty($options['proxy']['password']) ? $options['proxy']['password'] : '';
+            $password = empty($options['proxy']['password']) ? '' : $options['proxy']['password'];
             $out[CURLOPT_PROXYUSERPWD] = $options['proxy']['username'] . ':' . $password;
         }
+
         if (isset($options['curl']) && is_array($options['curl'])) {
             // Can't use array_merge() because keys will be re-ordered.
             foreach ($options['curl'] as $key => $value) {
@@ -166,7 +172,6 @@ class Curl implements AdapterInterface
      * Convert HTTP version number into curl value.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get a protocol version for.
-     * @return int
      */
     protected function getProtocolVersion(RequestInterface $request): int
     {
@@ -204,7 +209,6 @@ class Curl implements AdapterInterface
      * Execute the curl handle.
      *
      * @param \CurlHandle $ch Curl Resource handle
-     * @return string|bool
      */
     protected function exec(CurlHandle $ch): string|bool
     {

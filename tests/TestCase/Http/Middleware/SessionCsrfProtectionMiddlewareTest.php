@@ -37,12 +37,10 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider(): array
+    public static function safeHttpMethodProvider(): \Iterator
     {
-        return [
-            ['GET'],
-            ['HEAD'],
-        ];
+        yield ['GET'];
+        yield ['HEAD'];
     }
 
     /**
@@ -50,11 +48,15 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider(): array
+    public static function httpMethodProvider(): \Iterator
     {
-        return [
-            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],
-        ];
+        yield ['OPTIONS'];
+        yield ['PATCH'];
+        yield ['PUT'];
+        yield ['POST'];
+        yield ['DELETE'];
+        yield ['PURGE'];
+        yield ['INVALIDMETHOD'];
     }
 
     /**
@@ -62,9 +64,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
-            return new Response();
-        });
+        return new TestRequestHandler(fn(): \Cake\Http\Response => new Response());
     }
 
     /**
@@ -79,7 +79,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest|null $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -94,7 +94,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertMatchesRegularExpression('/^[A-Z0-9+\/]+=*$/i', $token, 'Should look like base64 data.');
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
         $this->assertNotEquals($token, $requestAttr);
-        $this->assertEquals(strlen($token) * 2, strlen($requestAttr));
+        $this->assertSame(strlen((string) $token) * 2, strlen((string) $requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
@@ -192,7 +192,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertSame('testing123', $token, 'session token should not change.');
         }
@@ -218,7 +218,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         ]);
         $request->getSession()->write('csrfToken', $token);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -249,7 +249,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         ]);
         $request->getSession()->write('csrfToken', $token);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -321,7 +321,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertNotEmpty($token, 'Should set a token in the session on failure.');
         }
@@ -384,13 +384,13 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $request->getSession()->write('csrfToken', 'foo');
 
         $middleware = new SessionCsrfProtectionMiddleware();
-        $middleware->skipCheckCallback(function (ServerRequestInterface $request) {
+        $middleware->skipCheckCallback(function (ServerRequestInterface $request): bool {
             $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
 
             return true;
         });
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
             $this->assertEmpty($request->getParsedBody());
 
             return new Response();
@@ -411,6 +411,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         for ($i = 0; $i < 10; $i++) {
             $results[] = $middleware->saltToken($token);
         }
+
         $this->assertCount(10, array_unique($results));
     }
 

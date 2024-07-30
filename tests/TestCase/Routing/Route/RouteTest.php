@@ -33,7 +33,7 @@ class RouteTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Routing', ['prefixes' => []]);
@@ -47,8 +47,8 @@ class RouteTest extends TestCase
         $route = new Route('/{controller}/{action}/{id}', [], ['id' => '[0-9]+']);
 
         $this->assertSame('/{controller}/{action}/{id}', $route->template);
-        $this->assertEquals([], $route->defaults);
-        $this->assertEquals(['id' => '[0-9]+', '_ext' => []], $route->options);
+        $this->assertSame([], $route->defaults);
+        $this->assertSame(['id' => '[0-9]+', '_ext' => []], $route->options);
         $this->assertFalse($route->compiled());
     }
 
@@ -77,7 +77,7 @@ class RouteTest extends TestCase
         $result = $route->compile();
         $expected = '#^/*$#';
         $this->assertSame($expected, $result);
-        $this->assertEquals([], $route->keys);
+        $this->assertSame([], $route->keys);
 
         $route = new Route('/{controller}/{action}', ['controller' => 'Posts']);
         $result = $route->compile();
@@ -96,7 +96,7 @@ class RouteTest extends TestCase
         $this->assertDoesNotMatchRegularExpression($result, '/posts');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/');
 
-        $this->assertEquals(['id'], $route->keys);
+        $this->assertSame(['id'], $route->keys);
 
         $route = new Route('/{plugin}/{controller}/{action}/*', ['plugin' => 'test_plugin', 'action' => 'index']);
         $result = $route->compile();
@@ -273,28 +273,23 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public static function provideMatchParseExtension(): array
+    public static function provideMatchParseExtension(): \Iterator
     {
-        return [
-            ['/foo/bar.xml', ['/foo/bar', 'xml'], ['xml', 'json', 'xml.gz']],
-            ['/foo/bar.json', ['/foo/bar', 'json'], ['xml', 'json', 'xml.gz']],
-            ['/foo/bar.xml.gz', ['/foo/bar', 'xml.gz'], ['xml', 'json', 'xml.gz']],
-            ['/foo/with.dots.json.xml.zip', ['/foo/with.dots.json.xml', 'zip'], ['zip']],
-            ['/foo/confusing.extensions.dots.json.xml.zip', ['/foo/confusing.extensions.dots.json.xml', 'zip'], ['json', 'xml', 'zip']],
-            ['/foo/confusing.extensions.dots.json.xml', ['/foo/confusing.extensions.dots.json', 'xml'], ['json', 'xml', 'zip']],
-            ['/foo/confusing.extensions.dots.json', ['/foo/confusing.extensions.dots', 'json'], ['json', 'xml', 'zip']],
-        ];
+        yield ['/foo/bar.xml', ['/foo/bar', 'xml'], ['xml', 'json', 'xml.gz']];
+        yield ['/foo/bar.json', ['/foo/bar', 'json'], ['xml', 'json', 'xml.gz']];
+        yield ['/foo/bar.xml.gz', ['/foo/bar', 'xml.gz'], ['xml', 'json', 'xml.gz']];
+        yield ['/foo/with.dots.json.xml.zip', ['/foo/with.dots.json.xml', 'zip'], ['zip']];
+        yield ['/foo/confusing.extensions.dots.json.xml.zip', ['/foo/confusing.extensions.dots.json.xml', 'zip'], ['json', 'xml', 'zip']];
+        yield ['/foo/confusing.extensions.dots.json.xml', ['/foo/confusing.extensions.dots.json', 'xml'], ['json', 'xml', 'zip']];
+        yield ['/foo/confusing.extensions.dots.json', ['/foo/confusing.extensions.dots', 'json'], ['json', 'xml', 'zip']];
     }
 
     /**
      * Expects _parseExtension to match extensions in URLs
      *
-     * @param string $url
-     * @param array $expected
-     * @param array $ext
      * @dataProvider provideMatchParseExtension
      */
-    public function testMatchParseExtension($url, array $expected, array $ext): void
+    public function testMatchParseExtension(string $url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         $result = $route->parseExtension($url);
@@ -304,26 +299,22 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public static function provideNoMatchParseExtension(): array
+    public static function provideNoMatchParseExtension(): \Iterator
     {
-        return [
-            ['/foo/bar', ['xml']],
-            ['/foo/bar.zip', ['xml']],
-            ['/foo/bar.xml.zip', ['xml']],
-            ['/foo/bar.', ['xml']],
-            ['/foo/bar.xml', []],
-            ['/foo/bar...xml...zip...', ['xml']],
-        ];
+        yield ['/foo/bar', ['xml']];
+        yield ['/foo/bar.zip', ['xml']];
+        yield ['/foo/bar.xml.zip', ['xml']];
+        yield ['/foo/bar.', ['xml']];
+        yield ['/foo/bar.xml', []];
+        yield ['/foo/bar...xml...zip...', ['xml']];
     }
 
     /**
      * Expects _parseExtension to not match extensions in URLs
      *
-     * @param string $url
-     * @param array $ext
      * @dataProvider provideNoMatchParseExtension
      */
-    public function testNoMatchParseExtension($url, array $ext): void
+    public function testNoMatchParseExtension(string $url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         [$outUrl, $outExt] = $route->parseExtension($url);
@@ -337,16 +328,16 @@ class RouteTest extends TestCase
     public function testSetExtensions(): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', []);
-        $this->assertEquals([], $route->getExtensions());
+        $this->assertSame([], $route->getExtensions());
         $route->setExtensions(['xml']);
-        $this->assertEquals(['xml'], $route->getExtensions());
+        $this->assertSame(['xml'], $route->getExtensions());
         $route->setExtensions(['xml', 'json', 'zip']);
-        $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
+        $this->assertSame(['xml', 'json', 'zip'], $route->getExtensions());
         $route->setExtensions([]);
-        $this->assertEquals([], $route->getExtensions());
+        $this->assertSame([], $route->getExtensions());
 
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => ['one', 'two']]);
-        $this->assertEquals(['one', 'two'], $route->getExtensions());
+        $this->assertSame(['one', 'two'], $route->getExtensions());
     }
 
     /**
@@ -355,15 +346,15 @@ class RouteTest extends TestCase
     public function testGetExtensions(): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', []);
-        $this->assertEquals([], $route->getExtensions());
+        $this->assertSame([], $route->getExtensions());
 
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => ['one', 'two']]);
-        $this->assertEquals(['one', 'two'], $route->getExtensions());
+        $this->assertSame(['one', 'two'], $route->getExtensions());
 
         $route = new ProtectedRoute('/{controller}/{action}/*', []);
-        $this->assertEquals([], $route->getExtensions());
+        $this->assertSame([], $route->getExtensions());
         $route->setExtensions(['xml', 'json', 'zip']);
-        $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
+        $this->assertSame(['xml', 'json', 'zip'], $route->getExtensions());
     }
 
     /**
@@ -395,7 +386,7 @@ class RouteTest extends TestCase
         $this->assertMatchesRegularExpression($result, '/posts/view/518098');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/edit/name-of-post');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/edit/4/other:param');
-        $this->assertEquals(['id', 'controller', 'action'], $route->keys);
+        $this->assertSame(['id', 'controller', 'action'], $route->keys);
 
         $route = new Route(
             '/{lang}/{controller}/{action}/{id}',
@@ -407,7 +398,7 @@ class RouteTest extends TestCase
         $this->assertMatchesRegularExpression($result, '/cze/articles/view/1');
         $this->assertDoesNotMatchRegularExpression($result, '/language/articles/view/2');
         $this->assertDoesNotMatchRegularExpression($result, '/eng/articles/view/name-of-article');
-        $this->assertEquals(['lang', 'id', 'controller', 'action'], $route->keys);
+        $this->assertSame(['lang', 'id', 'controller', 'action'], $route->keys);
 
         foreach ([':', '@', ';', '$', '-'] as $delim) {
             $route = new Route('/posts/{id}' . $delim . '{title}');
@@ -418,7 +409,7 @@ class RouteTest extends TestCase
             $this->assertDoesNotMatchRegularExpression($result, '/posts/11!nameofarticle');
             $this->assertDoesNotMatchRegularExpression($result, '/posts/11');
 
-            $this->assertEquals(['title', 'id'], $route->keys);
+            $this->assertSame(['title', 'id'], $route->keys);
         }
 
         $route = new Route(
@@ -432,7 +423,7 @@ class RouteTest extends TestCase
         $this->assertDoesNotMatchRegularExpression($result, '/posts/hey_now:nameofarticle');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/:nameofarticle/2009');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/:nameofarticle/01');
-        $this->assertEquals(['year', 'title', 'id'], $route->keys);
+        $this->assertSame(['year', 'title', 'id'], $route->keys);
 
         $route = new Route(
             '/posts/{url_title}-(uuid:{id})',
@@ -445,7 +436,7 @@ class RouteTest extends TestCase
         $this->assertDoesNotMatchRegularExpression($result, '/posts/');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/nameofarticle');
         $this->assertDoesNotMatchRegularExpression($result, '/posts/nameofarticle-12347');
-        $this->assertEquals(['url_title', 'id'], $route->keys);
+        $this->assertSame(['url_title', 'id'], $route->keys);
     }
 
     /**
@@ -504,13 +495,13 @@ class RouteTest extends TestCase
 
         $this->assertMatchesRegularExpression($result, '/some_extra/page/this_is_the_slug');
         $this->assertMatchesRegularExpression($result, '/page/this_is_the_slug');
-        $this->assertEquals(['slug', 'extra'], $route->keys);
-        $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
+        $this->assertSame(['slug', 'extra'], $route->keys);
+        $this->assertSame(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
         $expected = [
             'controller' => 'Pages',
             'action' => 'view',
         ];
-        $this->assertEquals($expected, $route->defaults);
+        $this->assertSame($expected, $route->defaults);
 
         $route = new Route(
             '/{controller}/{action}/*',
@@ -1038,7 +1029,7 @@ class RouteTest extends TestCase
     public function testParseRequestDelegates(): void
     {
         /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
+        $route = $this->getMockBuilder(\Cake\Routing\Route\Route::class)
             ->onlyMethods(['parse'])
             ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
             ->getMock();
@@ -1114,6 +1105,7 @@ class RouteTest extends TestCase
             ['id' => Router::ID]
         );
         $route->compile();
+
         $result = $route->parse('/Posts/view/1', 'GET');
         $this->assertSame('Posts', $result['controller']);
         $this->assertSame('view', $result['action']);
@@ -1124,6 +1116,7 @@ class RouteTest extends TestCase
             ['prefix' => 'Admin', 'action' => 'index']
         );
         $route->compile();
+
         $result = $route->parse('/admin/', 'GET');
         $this->assertNull($result);
 
@@ -1138,19 +1131,17 @@ class RouteTest extends TestCase
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('search', $result['action']);
-        $this->assertEquals([], $result['pass']);
+        $this->assertSame([], $result['pass']);
 
         $result = $route->parse('/media/search/tv/shows', 'GET');
         $this->assertSame('Media', $result['controller']);
         $this->assertSame('search', $result['action']);
-        $this->assertEquals(['tv', 'shows'], $result['pass']);
+        $this->assertSame(['tv', 'shows'], $result['pass']);
     }
 
     /**
      * Test that parse() throws a BadRequestException instead of InvalidArgumentException
      * for an invalid method.
-     *
-     * @return void
      */
     public function testParseException(): void
     {
@@ -1174,6 +1165,7 @@ class RouteTest extends TestCase
             ['action' => 'view']
         );
         $route->compile();
+
         $result = $route->parse('/posts/%E2%88%82%E2%88%82', 'GET');
         $this->assertSame('posts', $result['controller']);
         $this->assertSame('view', $result['action']);
@@ -1209,6 +1201,7 @@ class RouteTest extends TestCase
     {
         $route = new Route('/{controller}', ['action' => 'display', 'home']);
         $route->setMiddleware(['auth', 'cookie']);
+
         $result = $route->parse('/Posts', 'GET');
         $expected = [
             'controller' => 'Posts',
@@ -1677,7 +1670,7 @@ class RouteTest extends TestCase
             '_greedy' => false,
             '_compiledRoute' => null,
         ]);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
+        $this->assertInstanceOf(\Cake\Routing\Route\Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));
         $this->assertNull($route->match(['controller' => 'Pages', 'action' => 'display', 'about']));
         $expected = [
@@ -1781,7 +1774,7 @@ class RouteTest extends TestCase
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPass(['date', 'id']);
         $this->assertSame($result, $route, 'Should return this');
-        $this->assertEquals(['date', 'id'], $route->options['pass']);
+        $this->assertSame(['date', 'id'], $route->options['pass']);
     }
 
     /**
@@ -1792,7 +1785,7 @@ class RouteTest extends TestCase
         $route = new Route('/reviews/{date}/{id}', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPersist(['date']);
         $this->assertSame($result, $route, 'Should return this');
-        $this->assertEquals(['date'], $route->options['persist']);
+        $this->assertSame(['date'], $route->options['persist']);
     }
 
     /**

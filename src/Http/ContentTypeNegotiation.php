@@ -74,6 +74,7 @@ class ContentTypeNegotiation
         if (!$parsed) {
             return null;
         }
+
         if (!$choices) {
             $preferred = array_shift($parsed);
 
@@ -108,8 +109,10 @@ class ContentTypeNegotiation
                 if (strpos($lang, '_')) {
                     $lang = str_replace('_', '-', $lang);
                 }
+
                 $lang = strtolower($lang);
             }
+
             $accept = array_merge($accept, $languages);
         }
 

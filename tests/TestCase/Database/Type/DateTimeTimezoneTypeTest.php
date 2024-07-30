@@ -34,16 +34,16 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeTimezoneType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
@@ -246,70 +246,66 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): array
+    public static function marshalProvider(): \Iterator
     {
-        return [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['2013-nope!', null],
-            ['2014-02-14T13:14:15.1234567', null],
-            ['2017-04-05T17:18:00.1234567+00:00', null],
-
-            // valid string types
-            ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')],
-            ['2014-02-14 12:02:12', new DateTime('2014-02-14 12:02:12')],
-            ['2014-02-14 00:00:00.123456', new DateTime('2014-02-14 00:00:00.123456')],
-            ['2014-02-14 13:14:15.123456', new DateTime('2014-02-14 13:14:15.123456')],
-            ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')],
-            ['2014-02-14T13:14:12', new DateTime('2014-02-14T13:14:12')],
-            ['2014-02-14T13:14:15.123456', new DateTime('2014-02-14T13:14:15.123456')],
-            ['2017-04-05T17:18:00.123456+02:00', new DateTime('2017-04-05T17:18:00.123456+02:00')],
-            ['2017-04-05T17:18:00.123456+0200', new DateTime('2017-04-05T17:18:00.123456+02:00')],
-            ['2017-04-05T17:18:00.123456 Europe/Paris', new DateTime('2017-04-05T17:18:00.123456+02:00')],
-
-            // valid array types
+        // invalid types.
+        yield [null, null];
+        yield [false, null];
+        yield [true, null];
+        yield ['', null];
+        yield ['derpy', null];
+        yield ['2013-nope!', null];
+        yield ['2014-02-14T13:14:15.1234567', null];
+        yield ['2017-04-05T17:18:00.1234567+00:00', null];
+        // valid string types
+        yield ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')];
+        yield ['2014-02-14 12:02:12', new DateTime('2014-02-14 12:02:12')];
+        yield ['2014-02-14 00:00:00.123456', new DateTime('2014-02-14 00:00:00.123456')];
+        yield ['2014-02-14 13:14:15.123456', new DateTime('2014-02-14 13:14:15.123456')];
+        yield ['2014-02-14T13:14', new DateTime('2014-02-14T13:14:00')];
+        yield ['2014-02-14T13:14:12', new DateTime('2014-02-14T13:14:12')];
+        yield ['2014-02-14T13:14:15.123456', new DateTime('2014-02-14T13:14:15.123456')];
+        yield ['2017-04-05T17:18:00.123456+02:00', new DateTime('2017-04-05T17:18:00.123456+02:00')];
+        yield ['2017-04-05T17:18:00.123456+0200', new DateTime('2017-04-05T17:18:00.123456+02:00')];
+        yield ['2017-04-05T17:18:00.123456 Europe/Paris', new DateTime('2017-04-05T17:18:00.123456+02:00')];
+        // valid array types
+        yield [
+            ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => '', 'microsecond' => ''],
+            null,
+        ];
+        yield [
+            ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15, 'microsecond' => 123456],
+            new DateTime('2014-02-14 13:14:15.123456'),
+        ];
+        yield [
             [
-                ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => '', 'microsecond' => ''],
-                null,
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15, 'microsecond' => 123456,
+                'meridian' => 'am',
             ],
+            new DateTime('2014-02-14 01:14:15.123456'),
+        ];
+        yield [
             [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15, 'microsecond' => 123456],
-                new DateTime('2014-02-14 13:14:15.123456'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 12, 'minute' => 04, 'second' => 15, 'microsecond' => 123456,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 12:04:15.123456'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15, 'microsecond' => 123456,
-                    'meridian' => 'am',
-                ],
-                new DateTime('2014-02-14 01:14:15.123456'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15, 'microsecond' => 123456,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 13:14:15.123456'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 12, 'minute' => 04, 'second' => 15, 'microsecond' => 123456,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 12:04:15.123456'),
+                'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'microsecond' => 123456, 'timezone' => 'Europe/Paris',
             ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15, 'microsecond' => 123456,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 13:14:15.123456'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'microsecond' => 123456, 'timezone' => 'Europe/Paris',
-                ],
-                new DateTime('2014-02-14 11:30:00.123456', 'UTC'),
-            ],
+            new DateTime('2014-02-14 11:30:00.123456', 'UTC'),
         ];
     }
 
@@ -320,7 +316,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|array|null $value, ?\Cake\I18n\DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -335,87 +331,82 @@ class DateTimeTimezoneTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProviderWithoutMicroseconds(): array
+    public static function marshalProviderWithoutMicroseconds(): \Iterator
     {
-        return [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['2013-nope!', null],
-
-            // valid string types
-            ['1392387900', new DateTime('@1392387900')],
-            [1392387900, new DateTime('@1392387900')],
-            ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')],
-            ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')],
-            ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')],
-            ['2017-04-05T17:18:00+02:00', new DateTime('2017-04-05T17:18:00+02:00')],
-
-            // valid array types
+        // invalid types.
+        yield [null, null];
+        yield [false, null];
+        yield [true, null];
+        yield ['', null];
+        yield ['derpy', null];
+        yield ['2013-nope!', null];
+        // valid string types
+        yield ['1392387900', new DateTime('@1392387900')];
+        yield [1392387900, new DateTime('@1392387900')];
+        yield ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')];
+        yield ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')];
+        yield ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')];
+        yield ['2017-04-05T17:18:00+02:00', new DateTime('2017-04-05T17:18:00+02:00')];
+        // valid array types
+        yield [
+            ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''],
+            null,
+        ];
+        yield [
+            ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+            new DateTime('2014-02-14 13:14:15'),
+        ];
+        yield [
             [
-                ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''],
-                null,
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'am',
             ],
+            new DateTime('2014-02-14 01:14:15'),
+        ];
+        yield [
             [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new DateTime('2014-02-14 13:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 12, 'minute' => 04, 'second' => 15,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 12:04:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new DateTime('2014-02-14 01:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'pm',
             ],
+            new DateTime('2014-02-14 13:14:15'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 12, 'minute' => 04, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 12:04:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14,
             ],
+            new DateTime('2014-02-14 00:00:00'),
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new DateTime('2014-02-14 13:14:15'),
+                'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
             ],
+            new DateTime('2014-02-14 11:30:00', 'UTC'),
+        ];
+        // Invalid array types
+        yield [
+            ['year' => 'farts', 'month' => 'derp'],
+            null,
+        ];
+        yield [
+            ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+            null,
+        ];
+        yield [
             [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                ],
-                new DateTime('2014-02-14 00:00:00'),
+                'year' => '2014', 'month' => '02', 'day' => '14',
+                'hour' => 'farts', 'minute' => 'farts',
             ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
-                ],
-                new DateTime('2014-02-14 11:30:00', 'UTC'),
-            ],
-
-            // Invalid array types
-            [
-                ['year' => 'farts', 'month' => 'derp'],
-                null,
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                null,
-            ],
-            [
-                [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts',
-                ],
-                null,
-            ],
+            null,
         ];
     }
 
@@ -426,7 +417,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshalWithoutMicroseconds($value, $expected): void
+    public function testMarshalWithoutMicroseconds(bool|string|int|array|null $value, ?\Cake\I18n\DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

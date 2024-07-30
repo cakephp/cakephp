@@ -32,71 +32,51 @@ class BasePlugin implements PluginInterface
 {
     /**
      * Do bootstrapping or not
-     *
-     * @var bool
      */
     protected bool $bootstrapEnabled = true;
 
     /**
      * Console middleware
-     *
-     * @var bool
      */
     protected bool $consoleEnabled = true;
 
     /**
      * Enable middleware
-     *
-     * @var bool
      */
     protected bool $middlewareEnabled = true;
 
     /**
      * Register container services
-     *
-     * @var bool
      */
     protected bool $servicesEnabled = true;
 
     /**
      * Load routes or not
-     *
-     * @var bool
      */
     protected bool $routesEnabled = true;
 
     /**
      * The path to this plugin.
-     *
-     * @var string|null
      */
     protected ?string $path = null;
 
     /**
      * The class path for this plugin.
-     *
-     * @var string|null
      */
     protected ?string $classPath = null;
 
     /**
      * The config path for this plugin.
-     *
-     * @var string|null
      */
     protected ?string $configPath = null;
 
     /**
      * The templates path for this plugin.
-     *
-     * @var string|null
      */
     protected ?string $templatePath = null;
 
     /**
      * The name of this plugin
-     *
-     * @var string|null
      */
     protected ?string $name = null;
 
@@ -109,9 +89,10 @@ class BasePlugin implements PluginInterface
     {
         foreach (static::VALID_HOOKS as $key) {
             if (isset($options[$key])) {
-                $this->{"{$key}Enabled"} = (bool)$options[$key];
+                $this->{$key . 'Enabled'} = (bool)$options[$key];
             }
         }
+
         foreach (['name', 'path', 'classPath', 'configPath', 'templatePath'] as $path) {
             if (isset($options[$path])) {
                 $this->{$path} = $options[$path];
@@ -123,8 +104,6 @@ class BasePlugin implements PluginInterface
 
     /**
      * Initialization hook called from constructor.
-     *
-     * @return void
      */
     public function initialize(): void
     {
@@ -138,6 +117,7 @@ class BasePlugin implements PluginInterface
         if ($this->name !== null) {
             return $this->name;
         }
+
         $parts = explode('\\', static::class);
         array_pop($parts);
 
@@ -152,6 +132,7 @@ class BasePlugin implements PluginInterface
         if ($this->path !== null) {
             return $this->path;
         }
+
         $reflection = new ReflectionClass($this);
         $path = dirname((string)$reflection->getFileName());
 
@@ -171,6 +152,7 @@ class BasePlugin implements PluginInterface
         if ($this->configPath !== null) {
             return $this->configPath;
         }
+
         $path = $this->getPath();
 
         return $path . 'config' . DIRECTORY_SEPARATOR;
@@ -184,6 +166,7 @@ class BasePlugin implements PluginInterface
         if ($this->classPath !== null) {
             return $this->classPath;
         }
+
         $path = $this->getPath();
 
         return $path . 'src' . DIRECTORY_SEPARATOR;
@@ -197,6 +180,7 @@ class BasePlugin implements PluginInterface
         if ($this->templatePath !== null) {
             return $this->templatePath;
         }
+
         $path = $this->getPath();
 
         return $this->templatePath = $path . 'templates' . DIRECTORY_SEPARATOR;
@@ -205,10 +189,10 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function enable(string $hook)
+    public function enable(string $hook): static
     {
         $this->checkHook($hook);
-        $this->{"{$hook}Enabled"} = true;
+        $this->{$hook . 'Enabled'} = true;
 
         return $this;
     }
@@ -216,10 +200,10 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function disable(string $hook)
+    public function disable(string $hook): static
     {
         $this->checkHook($hook);
-        $this->{"{$hook}Enabled"} = false;
+        $this->{$hook . 'Enabled'} = false;
 
         return $this;
     }
@@ -231,7 +215,7 @@ class BasePlugin implements PluginInterface
     {
         $this->checkHook($hook);
 
-        return $this->{"{$hook}Enabled"} === true;
+        return $this->{$hook . 'Enabled'} === true;
     }
 
     /**
@@ -239,7 +223,6 @@ class BasePlugin implements PluginInterface
      *
      * @param string $hook The hook name to check
      * @throws \InvalidArgumentException on invalid hooks
-     * @return void
      */
     protected function checkHook(string $hook): void
     {
@@ -297,7 +280,6 @@ class BasePlugin implements PluginInterface
      * Register container services for this plugin.
      *
      * @param \Cake\Core\ContainerInterface $container The container to add services to.
-     * @return void
      */
     public function services(ContainerInterface $container): void
     {

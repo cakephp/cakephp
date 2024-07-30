@@ -49,7 +49,6 @@ class LogEngineRegistry extends ObjectRegistry
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the logger is missing in.
-     * @return void
      * @throws \Cake\Core\Exception\CakeException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
@@ -87,7 +86,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $name The logger name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
         unset($this->_loaded[$name]);
 

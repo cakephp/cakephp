@@ -30,7 +30,6 @@ interface ControllerFactoryInterface
      * Create a controller for a given request
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
-     * @return mixed
      * @throws \Cake\Http\Exception\MissingControllerException
      * @psalm-return TController
      */

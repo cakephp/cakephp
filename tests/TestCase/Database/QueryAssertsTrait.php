@@ -35,6 +35,7 @@ trait QueryAssertsTrait
         if ($optional) {
             $optional = '?';
         }
+
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertMatchesRegularExpression('#' . $pattern . '#', $query);

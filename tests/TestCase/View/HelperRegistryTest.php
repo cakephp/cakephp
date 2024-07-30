@@ -49,7 +49,7 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -60,7 +60,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Helpers, $this->View);
@@ -77,7 +77,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(HtmlHelper::class, $this->Helpers->Html);
 
         $result = $this->Helpers->loaded();
-        $this->assertEquals(['Html'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Html'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -126,7 +126,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(HtmlAliasHelper::class, $this->Helpers->Html);
 
         $result = $this->Helpers->loaded();
-        $this->assertEquals(['Html'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Html'], $result, 'loaded() results are wrong.');
 
         $result = $this->Helpers->load('Html');
         $this->assertInstanceOf(HtmlAliasHelper::class, $result);
@@ -143,7 +143,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(OtherHelperHelper::class, $this->Helpers->SomeOther);
 
         $result = $this->Helpers->loaded();
-        $this->assertEquals(['SomeOther'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['SomeOther'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -284,7 +284,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMultipleTimesDefaultConfigValuesWorks(): void
     {
-        $this->Helpers->load('Number', ['engine' => 'Cake\I18n\Number']);
+        $this->Helpers->load('Number', ['engine' => \Cake\I18n\Number::class]);
         $this->Helpers->load('Number');
         $this->addToAssertionCount(1);
     }
@@ -339,7 +339,7 @@ class HelperRegistryTest extends TestCase
                 'value2' => 4,
             ],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -378,6 +378,6 @@ class HelperRegistryTest extends TestCase
                 'className' => 'Plugin.SomeHelper',
             ],
         ];
-        $this->assertEquals($expected, $result2);
+        $this->assertSame($expected, $result2);
     }
 }

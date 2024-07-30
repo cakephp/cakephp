@@ -32,15 +32,11 @@ trait PluginAssetsTrait
 {
     /**
      * Arguments
-     *
-     * @var \Cake\Console\Arguments
      */
     protected Arguments $args;
 
     /**
      * Console IO
-     *
-     * @var \Cake\Console\ConsoleIo
      */
     protected ConsoleIo $io;
 
@@ -53,11 +49,7 @@ trait PluginAssetsTrait
      */
     protected function _list(?string $name = null): array
     {
-        if ($name === null) {
-            $pluginsList = Plugin::loaded();
-        } else {
-            $pluginsList = [$name];
-        }
+        $pluginsList = $name === null ? Plugin::loaded() : [$name];
 
         $plugins = [];
 
@@ -100,7 +92,6 @@ trait PluginAssetsTrait
      * @param array<string, mixed> $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
      * @param bool $overwrite Overwrite existing files.
-     * @return void
      */
     protected function _process(array $plugins, bool $copy = false, bool $overwrite = false): void
     {
@@ -122,12 +113,13 @@ trait PluginAssetsTrait
             if (file_exists($dest)) {
                 if ($overwrite && !$this->_remove($config)) {
                     continue;
-                } elseif (!$overwrite) {
+                }
+
+                if (!$overwrite) {
                     $this->io->verbose(
                         $dest . ' already exists',
                         1
                     );
-
                     continue;
                 }
             }
@@ -156,7 +148,6 @@ trait PluginAssetsTrait
      * Remove folder/symlink.
      *
      * @param array<string, mixed> $config Plugin config.
-     * @return bool
      */
     protected function _remove(array $config): bool
     {
@@ -187,11 +178,10 @@ trait PluginAssetsTrait
                 $this->io->out('Unlinked ' . $dest);
 
                 return true;
-            } else {
-                $this->io->err('Failed to unlink  ' . $dest);
-
-                return false;
             }
+
+            $this->io->err('Failed to unlink  ' . $dest);
+            return false;
         }
 
         $fs = new Filesystem();
@@ -199,18 +189,16 @@ trait PluginAssetsTrait
             $this->io->out('Deleted ' . $dest);
 
             return true;
-        } else {
-            $this->io->err('Failed to delete ' . $dest);
-
-            return false;
         }
+
+        $this->io->err('Failed to delete ' . $dest);
+        return false;
     }
 
     /**
      * Create directory
      *
      * @param string $dir Directory name
-     * @return bool
      */
     protected function _createDirectory(string $dir): bool
     {
@@ -236,7 +224,6 @@ trait PluginAssetsTrait
      *
      * @param string $target Target directory
      * @param string $link Link name
-     * @return bool
      */
     protected function _createSymlink(string $target, string $link): bool
     {
@@ -258,7 +245,6 @@ trait PluginAssetsTrait
      *
      * @param string $source Source directory
      * @param string $destination Destination directory
-     * @return bool
      */
     protected function _copyDirectory(string $source, string $destination): bool
     {

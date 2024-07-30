@@ -20,8 +20,6 @@ class SiteArticlesFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         [

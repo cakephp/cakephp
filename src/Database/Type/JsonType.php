@@ -27,9 +27,6 @@ use PDO;
  */
 class JsonType extends BaseType implements BatchCastingInterface
 {
-    /**
-     * @var int
-     */
     protected int $_encodingOptions = 0;
 
     /**
@@ -37,7 +34,6 @@ class JsonType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|null
      * @throws \InvalidArgumentException
      * @throws \JsonException
      */
@@ -59,7 +55,6 @@ class JsonType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return mixed
      */
     public function toPHP(mixed $value, Driver $driver): mixed
     {
@@ -80,7 +75,7 @@ class JsonType extends BaseType implements BatchCastingInterface
                 continue;
             }
 
-            $values[$field] = json_decode($values[$field], true);
+            $values[$field] = json_decode((string) $values[$field], true);
         }
 
         return $values;
@@ -112,7 +107,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @return $this
      * @see https://www.php.net/manual/en/function.json-encode.php
      */
-    public function setEncodingOptions(int $options)
+    public function setEncodingOptions(int $options): static
     {
         $this->_encodingOptions = $options;
 

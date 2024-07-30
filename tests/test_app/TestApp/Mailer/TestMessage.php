@@ -12,8 +12,6 @@ class TestMessage extends Message
 {
     /**
      * Wrap to protected method
-     *
-     * @return array
      */
     public function fmtAddress(array $address): array
     {
@@ -46,8 +44,6 @@ class TestMessage extends Message
 
     /**
      * Wrap to protected method
-     *
-     * @return array
      */
     public function doWrap(string $text, int $length = Message::LINE_LENGTH_MUST): array
     {

@@ -31,22 +31,16 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
 
     /**
      * The first value in the expression
-     *
-     * @var mixed
      */
     protected mixed $_from;
 
     /**
      * The second value in the expression
-     *
-     * @var mixed
      */
     protected mixed $_to;
 
     /**
      * The data type for the from and to arguments
-     *
-     * @var mixed
      */
     protected mixed $_type;
 
@@ -91,8 +85,10 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
                 $parts[$name] = $part->sql($binder);
                 continue;
             }
+
             $parts[$name] = $this->_bindValue($part, $binder, $this->_type);
         }
+
         assert(is_string($field));
 
         return sprintf('%s BETWEEN %s AND %s', $field, $parts['from'], $parts['to']);
@@ -101,7 +97,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         foreach ([$this->_field, $this->_from, $this->_to] as $part) {
             if ($part instanceof ExpressionInterface) {

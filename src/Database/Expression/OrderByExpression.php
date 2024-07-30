@@ -51,6 +51,7 @@ class OrderByExpression extends QueryExpression
             if ($direction instanceof ExpressionInterface) {
                 $direction = $direction->sql($binder);
             }
+
             $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
         }
 
@@ -65,7 +66,6 @@ class OrderByExpression extends QueryExpression
      *
      * @param array $conditions list of order by expressions
      * @param array $types list of types associated on fields referenced in $conditions
-     * @return void
      */
     protected function _addConditions(array $conditions, array $types): void
     {
@@ -77,7 +77,7 @@ class OrderByExpression extends QueryExpression
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
+                        "Passing extra expressions by associative array (`'%s' => '%s'`) " .
                         'is not allowed to avoid potential SQL injection. ' .
                         'Use QueryExpression or numeric array instead.',
                         $key,

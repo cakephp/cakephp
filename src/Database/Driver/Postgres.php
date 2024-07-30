@@ -60,15 +60,11 @@ class Postgres extends Driver
 
     /**
      * String used to start a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_startQuote = '"';
 
     /**
      * String used to end a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_endQuote = '"';
 
@@ -77,9 +73,10 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             return;
         }
+
         $config = $this->_config;
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
@@ -87,9 +84,9 @@ class Postgres extends Driver
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         if (empty($config['unix_socket'])) {
-            $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+            $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s', $config['host'], $config['port'], $config['database']);
         } else {
-            $dsn = "pgsql:dbname={$config['database']}";
+            $dsn = 'pgsql:dbname=' . $config['database'];
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
@@ -125,18 +122,13 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new PostgresSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new PostgresSchemaDialect($this));
     }
 
     /**
      * Sets connection encoding
      *
      * @param string $encoding The encoding to use.
-     * @return void
      */
     public function setEncoding(string $encoding): void
     {
@@ -149,7 +141,6 @@ class Postgres extends Driver
      * postgres will fallback to looking the relation into defined default schema
      *
      * @param string $schema The schema names to set `search_path` to.
-     * @return void
      */
     public function setSchema(string $schema): void
     {
@@ -159,8 +150,6 @@ class Postgres extends Driver
 
     /**
      * Get the SQL for disabling foreign keys.
-     *
-     * @return string
      */
     public function disableForeignKeySQL(): string
     {
@@ -227,7 +216,6 @@ class Postgres extends Driver
      * Changes identifer expression into postgresql format.
      *
      * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to tranform.
-     * @return void
      */
     protected function _transformIdentifierExpression(IdentifierExpression $expression): void
     {
@@ -244,7 +232,6 @@ class Postgres extends Driver
      *
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert
      *   to postgres SQL.
-     * @return void
      */
     protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
@@ -257,7 +244,7 @@ class Postgres extends Driver
                 $expression
                     ->setName('')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
+                    ->iterateParts(function ($p): \Cake\Database\Expression\FunctionExpression {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
                         } else {
@@ -287,7 +274,7 @@ class Postgres extends Driver
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = sprintf("'%s'", $p);
+                            return sprintf("'%s'", $p);
                         }
 
                         return $p;
@@ -307,7 +294,6 @@ class Postgres extends Driver
      * Changes string expression into postgresql format.
      *
      * @param \Cake\Database\Expression\StringExpression $expression The string expression to tranform.
-     * @return void
      */
     protected function _transformStringExpression(StringExpression $expression): void
     {

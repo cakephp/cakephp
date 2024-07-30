@@ -44,7 +44,7 @@ class ControllerFactoryTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -65,7 +65,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->create($request);
-        $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
+        $this->assertInstanceOf(\TestApp\Controller\CakesController::class, $result);
         $this->assertSame($request, $result->getRequest());
     }
 
@@ -84,7 +84,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\PostsController',
+            \TestApp\Controller\Admin\PostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -105,7 +105,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\Sub\PostsController',
+            \TestApp\Controller\Admin\Sub\PostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -126,7 +126,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\TestPluginController',
+            \TestPlugin\Controller\TestPluginController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -147,7 +147,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'Company\TestPluginThree\Controller\OvensController',
+            \Company\TestPluginThree\Controller\OvensController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -169,7 +169,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\Admin\CommentsController',
+            \TestPlugin\Controller\Admin\CommentsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -238,7 +238,7 @@ class ControllerFactoryTest extends TestCase
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
-                'controller' => 'TestApp\Controller\CakesController',
+                'controller' => \TestApp\Controller\CakesController::class,
                 'action' => 'index',
             ],
         ]);
@@ -304,7 +304,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->getControllerClass($request);
-        $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
+        $this->assertSame(\Company\TestPluginThree\Controller\OvensController::class, $result);
     }
 
     /**

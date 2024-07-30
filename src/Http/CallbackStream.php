@@ -43,6 +43,7 @@ class CallbackStream extends BaseCallbackStream
         if ($callback !== null) {
             $result = $callback();
         }
+
         if (!is_string($result)) {
             return '';
         }

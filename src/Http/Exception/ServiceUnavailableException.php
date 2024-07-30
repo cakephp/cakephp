@@ -38,6 +38,7 @@ class ServiceUnavailableException extends HttpException
         if (!$message) {
             $message = 'Service Unavailable';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

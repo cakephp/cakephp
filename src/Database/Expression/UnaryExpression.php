@@ -40,38 +40,27 @@ class UnaryExpression implements ExpressionInterface
     public const POSTFIX = 1;
 
     /**
-     * The operator this unary expression represents
-     *
-     * @var string
-     */
-    protected string $_operator;
-
-    /**
-     * Holds the value which the unary expression operates
-     *
-     * @var mixed
-     */
-    protected mixed $_value;
-
-    /**
-     * Where to place the operator
-     *
-     * @var int
-     */
-    protected int $position;
-
-    /**
      * Constructor
      *
-     * @param string $operator The operator to used for the expression
-     * @param mixed $value the value to use as the operand for the expression
+     * @param string $_operator The operator to used for the expression
+     * @param mixed $_value the value to use as the operand for the expression
      * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct(string $operator, mixed $value, int $position = self::PREFIX)
+    public function __construct(
+        /**
+         * The operator this unary expression represents
+         */
+        protected string $_operator,
+        /**
+         * Holds the value which the unary expression operates
+         */
+        protected mixed $_value,
+        /**
+         * Where to place the operator
+         */
+        protected int $position = self::PREFIX
+    )
     {
-        $this->_operator = $operator;
-        $this->_value = $value;
-        $this->position = $position;
     }
 
     /**
@@ -94,7 +83,7 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->_value instanceof ExpressionInterface) {
             $callback($this->_value);

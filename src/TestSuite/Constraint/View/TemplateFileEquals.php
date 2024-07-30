@@ -25,35 +25,26 @@ use PHPUnit\Framework\Constraint\Constraint;
 class TemplateFileEquals extends Constraint
 {
     /**
-     * @var string
-     */
-    protected string $filename;
-
-    /**
      * Constructor
      *
      * @param string $filename Template file name
      */
-    public function __construct(string $filename)
+    public function __construct(protected string $filename)
     {
-        $this->filename = $filename;
     }
 
     /**
      * Checks assertion
      *
      * @param mixed $other Expected filename
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
-        return str_contains($this->filename, $other);
+        return str_contains($this->filename, (string) $other);
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -87,8 +87,6 @@ class Cache
 
     /**
      * Flag for tracking whether caching is enabled.
-     *
-     * @var bool
      */
     protected static bool $_enabled = true;
 
@@ -101,15 +99,11 @@ class Cache
 
     /**
      * Cache Registry used for creating and using cache adapters.
-     *
-     * @var \Cake\Cache\CacheRegistry
      */
     protected static CacheRegistry $_registry;
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
-     *
-     * @return \Cake\Cache\CacheRegistry
      */
     public static function getRegistry(): CacheRegistry
     {
@@ -122,7 +116,6 @@ class Cache
      * Also allows for injecting of a new registry instance.
      *
      * @param \Cake\Cache\CacheRegistry $registry Injectable registry object.
-     * @return void
      */
     public static function setRegistry(CacheRegistry $registry): void
     {
@@ -135,7 +128,6 @@ class Cache
      * @param string $name Name of the config array that needs an engine instance built
      * @throws \Cake\Cache\Exception\InvalidArgumentException When a cache engine cannot be created.
      * @throws \RuntimeException If loading of the engine failed.
-     * @return void
      */
     protected static function _buildEngine(string $name): void
     {
@@ -151,23 +143,23 @@ class Cache
 
         try {
             $registry->load($name, $config);
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $runtimeException) {
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                trigger_error($runtimeException->getMessage(), E_USER_WARNING);
 
                 return;
             }
 
             if ($config['fallback'] === false) {
-                throw $e;
+                throw $runtimeException;
             }
 
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
                     '`%s` cache configuration cannot fallback to itself.',
                     $name
-                ), 0, $e);
+                ), 0, $runtimeException);
             }
 
             $fallbackEngine = clone static::pool($config['fallback']);
@@ -178,6 +170,7 @@ class Cache
             if ($newConfig['prefix']) {
                 $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
             }
+
             $registry->set($name, $fallbackEngine);
         }
 
@@ -199,7 +192,6 @@ class Cache
      * Get a SimpleCacheEngine object for the named cache pool.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
     public static function pool(string $config): CacheInterface&CacheEngineInterface
     {
@@ -253,7 +245,7 @@ class Cache
                 "%s cache was unable to write '%s' to %s cache",
                 $config,
                 $key,
-                get_class($backend)
+                $backend::class
             ));
         }
 
@@ -493,6 +485,7 @@ class Cache
         foreach (static::configured() as $config) {
             static::pool($config);
         }
+
         if ($group === null) {
             return static::$_groups;
         }
@@ -508,8 +501,6 @@ class Cache
      * Re-enable caching.
      *
      * If caching has been disabled with Cache::disable() this method will reverse that effect.
-     *
-     * @return void
      */
     public static function enable(): void
     {
@@ -520,8 +511,6 @@ class Cache
      * Disable caching.
      *
      * When disabled all cache operations will return null.
-     *
-     * @return void
      */
     public static function disable(): void
     {
@@ -530,8 +519,6 @@ class Cache
 
     /**
      * Check whether caching is enabled.
-     *
-     * @return bool
      */
     public static function enabled(): bool
     {
@@ -569,6 +556,7 @@ class Cache
         if ($existing !== null) {
             return $existing;
         }
+
         $results = $default();
         self::write($key, $results, $config);
 

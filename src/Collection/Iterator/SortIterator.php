@@ -84,6 +84,7 @@ class SortIterator extends Collection
             if ($isDateTime && $type === SORT_NUMERIC) {
                 $val = $val->format('U');
             }
+
             $results[$key] = $val;
         }
 
@@ -92,13 +93,12 @@ class SortIterator extends Collection
         foreach (array_keys($results) as $key) {
             $results[$key] = $items[$key];
         }
+
         parent::__construct($results);
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @return \Iterator
      */
     public function unwrap(): Iterator
     {

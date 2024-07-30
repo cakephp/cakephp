@@ -44,9 +44,6 @@ abstract class BaseLog extends AbstractLogger
         'formatter' => DefaultFormatter::class,
     ];
 
-    /**
-     * @var \Cake\Log\Formatter\AbstractFormatter
-     */
     protected AbstractFormatter $formatter;
 
     /**
@@ -63,6 +60,7 @@ abstract class BaseLog extends AbstractLogger
             deprecationWarning('5.0.0', 'Using `false` to disable logging scopes is deprecated. Use `null` instead.');
             $this->_config['scopes'] = null;
         }
+
         if ($this->_config['scopes'] !== null) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];
         }
@@ -84,6 +82,7 @@ abstract class BaseLog extends AbstractLogger
                 $class = $formatter;
                 $options = [];
             }
+
             $formatter = new $class($options);
         }
 
@@ -115,7 +114,6 @@ abstract class BaseLog extends AbstractLogger
      *
      * @param \Stringable|string $message Formatted message.
      * @param array $context Context for placeholder values.
-     * @return string
      */
     protected function interpolate(Stringable|string $message, array $context = []): string
     {

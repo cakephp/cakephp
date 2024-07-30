@@ -27,9 +27,6 @@ use Cake\Database\Exception\DatabaseException;
  */
 class TransactionFixtureStrategy implements FixtureStrategyInterface
 {
-    /**
-     * @var \Cake\TestSuite\Fixture\FixtureHelper
-     */
     protected FixtureHelper $helper;
 
     /**
@@ -61,7 +58,7 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
                     throw new DatabaseException(
-                        "Could not enable save points for the `{$connection->configName()}` connection. " .
+                        sprintf('Could not enable save points for the `%s` connection. ', $connection->configName()) .
                             'Your database needs to support savepoints in order to use ' .
                             'TransactionFixtureStrategy.'
                     );

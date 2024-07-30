@@ -23,7 +23,6 @@ trait PHPUnitConsecutiveTrait
     /**
      * @param array $firstCallArguments The call arguments
      * @param array ...$consecutiveCallsArguments Additional arguments
-     * @return iterable
      */
     public static function withConsecutive(array $firstCallArguments, array ...$consecutiveCallsArguments): iterable
     {
@@ -37,7 +36,7 @@ trait PHPUnitConsecutiveTrait
 
         $mockedMethodCall = 0;
         $callbackCall = 0;
-        foreach ($argumentList as $index => $argument) {
+        foreach (array_keys($argumentList) as $index) {
             yield new Callback(
                 static function (mixed $actualArgument) use (
                     $argumentList,

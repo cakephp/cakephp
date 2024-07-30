@@ -41,15 +41,17 @@ class DependentDeleteHelper
         if (!$association->getDependent()) {
             return true;
         }
+
         $table = $association->getTarget();
         /** @var callable $callable */
-        $callable = [$association, 'aliasField'];
+        $callable = $association->aliasField(...);
         $foreignKey = array_map($callable, (array)$association->getForeignKey());
         $bindingKey = (array)$association->getBindingKey();
         $bindingValue = $entity->extract($bindingKey);
         if (in_array(null, $bindingValue, true)) {
             return true;
         }
+
         $conditions = array_combine($foreignKey, $bindingValue);
 
         if ($association->getCascadeCallbacks()) {

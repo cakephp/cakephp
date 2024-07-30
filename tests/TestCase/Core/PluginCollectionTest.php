@@ -49,7 +49,7 @@ class PluginCollectionTest extends TestCase
         $this->assertCount(1, $plugins);
     }
 
-    public function testAddFromConfig()
+    public function testAddFromConfig(): void
     {
         Configure::write('debug', false);
 
@@ -171,6 +171,7 @@ class PluginCollectionTest extends TestCase
             $this->assertInstanceOf(PluginInterface::class, $plugin);
             $out[] = $plugin;
         }
+
         $this->assertSame($data, $out);
     }
 
@@ -189,6 +190,7 @@ class PluginCollectionTest extends TestCase
         foreach ($plugins->with('routes') as $p) {
             $out[] = $p;
         }
+
         $this->assertCount(1, $out);
         $this->assertSame($pluginThree, $out[0]);
     }
@@ -215,8 +217,10 @@ class PluginCollectionTest extends TestCase
             foreach ($plugins as $i) {
                 // Do nothing, we just need to enumerate the collection
             }
+
             $out[] = $p;
         }
+
         $this->assertCount(2, $out);
         $this->assertSame($plugin, $out[0]);
         $this->assertSame($pluginThree, $out[1]);
@@ -227,9 +231,6 @@ class PluginCollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $plugins = new PluginCollection();
-        // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
-        foreach ($plugins->with('bad') as $p) {
-        }
     }
 
     public function testFindPathNoConfigureData(): void

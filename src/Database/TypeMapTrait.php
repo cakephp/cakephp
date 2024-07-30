@@ -24,9 +24,6 @@ namespace Cake\Database;
  */
 trait TypeMapTrait
 {
-    /**
-     * @var \Cake\Database\TypeMap|null
-     */
     protected ?TypeMap $_typeMap = null;
 
     /**
@@ -44,8 +41,6 @@ trait TypeMapTrait
 
     /**
      * Returns the existing type map.
-     *
-     * @return \Cake\Database\TypeMap
      */
     public function getTypeMap(): TypeMap
     {

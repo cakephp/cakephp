@@ -36,37 +36,27 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Points to the next record number that should be fetched
-     *
-     * @var int
      */
     protected int $_index = 0;
 
     /**
      * Last record fetched from the inner iterator
-     *
-     * @var mixed
      */
     protected mixed $_current;
 
     /**
      * Last key obtained from the inner iterator
-     *
-     * @var mixed
      */
     protected mixed $_key;
 
     /**
      * Whether the internal iterator's rewind method was already
      * called
-     *
-     * @var bool
      */
     protected bool $_started = false;
 
     /**
      * Whether the internal iterator has reached its end.
-     *
-     * @var bool
      */
     protected bool $_finished = false;
 
@@ -84,8 +74,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Returns the current key in the iterator
-     *
-     * @return mixed
      */
     public function key(): mixed
     {
@@ -94,8 +82,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Returns the current record in the iterator
-     *
-     * @return mixed
      */
     public function current(): mixed
     {
@@ -104,8 +90,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Rewinds the collection
-     *
-     * @return void
      */
     public function rewind(): void
     {
@@ -121,8 +105,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Returns whether the iterator has more elements
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -152,8 +134,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Advances the iterator pointer to the next element
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -163,6 +143,7 @@ class BufferedIterator extends Collection implements Countable
         if ($this->_buffer->offsetExists($this->_index)) {
             return;
         }
+
         if (!$this->_finished) {
             parent::next();
         }
@@ -170,8 +151,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Returns the number or items in this collection
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -188,8 +167,6 @@ class BufferedIterator extends Collection implements Countable
 
     /**
      * Magic method used for serializing the iterator instance.
-     *
-     * @return array
      */
     public function __serialize(): array
     {
@@ -204,7 +181,6 @@ class BufferedIterator extends Collection implements Countable
      * Magic method used to rebuild the iterator instance.
      *
      * @param array $data Data array.
-     * @return void
      */
     public function __unserialize(array $data): void
     {

@@ -44,29 +44,21 @@ class ServerCommand extends Command
 
     /**
      * server host
-     *
-     * @var string
      */
     protected string $_host = self::DEFAULT_HOST;
 
     /**
      * listen port
-     *
-     * @var int
      */
     protected int $_port = self::DEFAULT_PORT;
 
     /**
      * document root
-     *
-     * @var string
      */
     protected string $_documentRoot = WWW_ROOT;
 
     /**
      * ini path
-     *
-     * @var string
      */
     protected string $_iniPath = '';
 
@@ -76,7 +68,6 @@ class ServerCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void
      * @link https://book.cakephp.org/5/en/console-and-shells.html#hook-methods
      */
     protected function startup(Arguments $args, ConsoleIo $io): void
@@ -84,12 +75,15 @@ class ServerCommand extends Command
         if ($args->getOption('host')) {
             $this->_host = (string)$args->getOption('host');
         }
+
         if ($args->getOption('port')) {
             $this->_port = (int)$args->getOption('port');
         }
+
         if ($args->getOption('document_root')) {
             $this->_documentRoot = (string)$args->getOption('document_root');
         }
+
         if ($args->getOption('ini_path')) {
             $this->_iniPath = (string)$args->getOption('ini_path');
         }
@@ -98,6 +92,7 @@ class ServerCommand extends Command
         if (substr($this->_documentRoot, -1, 1) === DIRECTORY_SEPARATOR) {
             $this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
         }
+
         if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
             $this->_documentRoot = $m[1] . '\\' . $m[2];
         }
@@ -154,13 +149,12 @@ class ServerCommand extends Command
      * Hook method for defining this command's option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
             'PHP Built-in Server for CakePHP',
-            '<warning>[WARN] Don\'t use this in a production environment</warning>',
+            "<warning>[WARN] Don't use this in a production environment</warning>",
         ])->addOption('host', [
             'short' => 'H',
             'help' => 'ServerHost',

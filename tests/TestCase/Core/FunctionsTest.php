@@ -58,8 +58,8 @@ class FunctionsTest extends TestCase
         $this->assertSame(0, env('ZERO', 1));
 
         $_ENV['ZERO'] = 0.0;
-        $this->assertSame(0.0, env('ZERO'));
-        $this->assertSame(0.0, env('ZERO', 1));
+        $this->assertEqualsWithDelta(0.0, env('ZERO'), PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(0.0, env('ZERO', 1), PHP_FLOAT_EPSILON);
 
         $this->assertSame('', env('DOCUMENT_ROOT'));
         $this->assertStringContainsString('phpunit', env('PHP_SELF'));
@@ -71,18 +71,19 @@ class FunctionsTest extends TestCase
 
         $server = $_SERVER;
         $env = $_ENV;
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_ENV['CGI_MODE'] = 'BINARY';
         $_ENV['SCRIPT_URL'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertFalse(env('HTTPS'));
 
@@ -114,8 +115,8 @@ class FunctionsTest extends TestCase
 
         $_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
         $this->assertFalse(env('HTTPS'));
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertNull(env('TEST_ME'));
 
@@ -139,24 +140,22 @@ class FunctionsTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testH($value, $expected): void
+    public function testH(string|int|float|\stdClass|\Cake\Http\Response|array|null $value, string|int|float|array|null $expected): void
     {
         $result = h($value);
         $this->assertSame($expected, $result);
     }
 
-    public static function hInputProvider(): array
+    public static function hInputProvider(): \Iterator
     {
-        return [
-            ['i am clean', 'i am clean'],
-            ['i "need" escaping', 'i &quot;need&quot; escaping'],
-            [null, null],
-            [1, 1],
-            [1.1, 1.1],
-            [new stdClass(), '(object)stdClass'],
-            [new Response(), ''],
-            [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
-        ];
+        yield ['i am clean', 'i am clean'];
+        yield ['i "need" escaping', 'i &quot;need&quot; escaping'];
+        yield [null, null];
+        yield [1, 1];
+        yield [1.1, 1.1];
+        yield [new stdClass(), '(object)stdClass'];
+        yield [new Response(), ''];
+        yield [['clean', '"clean-me'], ['clean', '&quot;clean-me']];
     }
 
     public function testH2(): void
@@ -279,7 +278,7 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabled(): void
     {
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/', function () {
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 deprecationWarning('5.0.0', 'This is going away', 2);
             });
@@ -291,7 +290,7 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 deprecationWarning('5.0.0', 'This is going away too');
             });
@@ -328,7 +327,7 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 triggerWarning('This will be gone one day');
                 $this->assertTrue(true);

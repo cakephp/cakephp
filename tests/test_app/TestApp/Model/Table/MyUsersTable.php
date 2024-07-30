@@ -12,8 +12,6 @@ class MyUsersTable extends Table
 {
     /**
      * Overrides default table name
-     *
-     * @var string
      */
     protected ?string $_table = 'users';
 }

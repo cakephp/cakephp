@@ -37,7 +37,7 @@ class DateTimeTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->now = DateTime::getTestNow();
@@ -46,7 +46,7 @@ class DateTimeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
@@ -83,23 +83,21 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider(): array
+    public static function timeAgoProvider(): \Iterator
     {
-        return [
-            ['-12 seconds', '12 seconds ago'],
-            ['-12 minutes', '12 minutes ago'],
-            ['-2 hours', '2 hours ago'],
-            ['-1 day', '1 day ago'],
-            ['-2 days', '2 days ago'],
-            ['-2 days -3 hours', '2 days, 3 hours ago'],
-            ['-1 week', '1 week ago'],
-            ['-2 weeks -2 days', '2 weeks, 2 days ago'],
-            ['+1 week', '1 week'],
-            ['+1 week 1 day', '1 week, 1 day'],
-            ['+2 weeks 2 day', '2 weeks, 2 days'],
-            ['2007-9-24', 'on 9/24/07'],
-            ['now', 'just now'],
-        ];
+        yield ['-12 seconds', '12 seconds ago'];
+        yield ['-12 minutes', '12 minutes ago'];
+        yield ['-2 hours', '2 hours ago'];
+        yield ['-1 day', '1 day ago'];
+        yield ['-2 days', '2 days ago'];
+        yield ['-2 days -3 hours', '2 days, 3 hours ago'];
+        yield ['-1 week', '1 week ago'];
+        yield ['-2 weeks -2 days', '2 weeks, 2 days ago'];
+        yield ['+1 week', '1 week'];
+        yield ['+1 week 1 day', '1 week, 1 day'];
+        yield ['+2 weeks 2 day', '2 weeks, 2 days'];
+        yield ['2007-9-24', 'on 9/24/07'];
+        yield ['now', 'just now'];
     }
 
     /**
@@ -111,7 +109,7 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime($input);
         $result = $time->timeAgoInWords();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -119,44 +117,42 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoEndProvider(): array
+    public static function timeAgoEndProvider(): \Iterator
     {
-        return [
-            [
-                '+4 months +2 weeks +3 days',
-                '4 months, 2 weeks, 3 days',
-                '8 years',
-            ],
-            [
-                '+4 months +2 weeks +1 day',
-                '4 months, 2 weeks, 1 day',
-                '8 years',
-            ],
-            [
-                '+3 months +2 weeks',
-                '3 months, 2 weeks',
-                '8 years',
-            ],
-            [
-                '+3 months +2 weeks +1 day',
-                '3 months, 2 weeks, 1 day',
-                '8 years',
-            ],
-            [
-                '+1 months +1 week +1 day',
-                '1 month, 1 week, 1 day',
-                '8 years',
-            ],
-            [
-                '+2 months +2 days',
-                '2 months, 2 days',
-                '+2 months +2 days',
-            ],
-            [
-                '+2 months +12 days',
-                '2 months, 1 week, 5 days',
-                '3 months',
-            ],
+        yield [
+            '+4 months +2 weeks +3 days',
+            '4 months, 2 weeks, 3 days',
+            '8 years',
+        ];
+        yield [
+            '+4 months +2 weeks +1 day',
+            '4 months, 2 weeks, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+3 months +2 weeks',
+            '3 months, 2 weeks',
+            '8 years',
+        ];
+        yield [
+            '+3 months +2 weeks +1 day',
+            '3 months, 2 weeks, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+1 months +1 week +1 day',
+            '1 month, 1 week, 1 day',
+            '8 years',
+        ];
+        yield [
+            '+2 months +2 days',
+            '2 months, 2 days',
+            '+2 months +2 days',
+        ];
+        yield [
+            '+2 months +12 days',
+            '2 months, 1 week, 5 days',
+            '3 months',
         ];
     }
 
@@ -185,7 +181,7 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime($input);
         $result = $time->timeAgoInWords(['end' => $end]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -443,24 +439,28 @@ class DateTimeTest extends TestCase
         $time = new DateTime('2014-01-01T00:00:00+00');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00+09');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT+09:00';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00:00-01:30');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
         $this->assertTimeFormat($expected, $result);
 
         $time = new DateTime('2014-01-01T00:00Z');
         $result = $time->i18nFormat(IntlDateFormatter::FULL);
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
         $this->assertTimeFormat($expected, $result);
     }
@@ -471,20 +471,20 @@ class DateTimeTest extends TestCase
     public function testListTimezones(): void
     {
         $return = DateTime::listTimezones();
-        $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
+        $this->assertArrayHasKey('Asia/Bangkok', $return['Asia']);
         $this->assertSame('Bangkok', $return['Asia']['Asia/Bangkok']);
-        $this->assertTrue(isset($return['America']['America/Argentina/Buenos_Aires']));
+        $this->assertArrayHasKey('America/Argentina/Buenos_Aires', $return['America']);
         $this->assertSame('Argentina/Buenos_Aires', $return['America']['America/Argentina/Buenos_Aires']);
-        $this->assertTrue(isset($return['UTC']['UTC']));
+        $this->assertArrayHasKey('UTC', $return['UTC']);
         $this->assertArrayNotHasKey('Cuba', $return);
         $this->assertArrayNotHasKey('US', $return);
 
         $return = DateTime::listTimezones('#^Asia/#');
-        $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
+        $this->assertArrayHasKey('Asia/Bangkok', $return['Asia']);
         $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = DateTime::listTimezones(null, null, ['abbr' => true]);
-        $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
+        $this->assertArrayHasKey('Asia/Jakarta', $return['Asia']);
         $this->assertSame('Jakarta - WIB', $return['Asia']['Asia/Jakarta']);
         $this->assertSame('Regina - CST', $return['America']['America/Regina']);
 
@@ -501,7 +501,7 @@ class DateTimeTest extends TestCase
         $this->assertArrayHasKey('Pacific/Tahiti', $return);
 
         $return = DateTime::listTimezones(DateTimeZone::ASIA);
-        $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
+        $this->assertArrayHasKey('Asia/Bangkok', $return['Asia']);
         $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = DateTime::listTimezones(DateTimeZone::PER_COUNTRY, 'US', false);
@@ -526,12 +526,10 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider(): array
+    public static function invalidDataProvider(): \Iterator
     {
-        return [
-            [null],
-            [''],
-        ];
+        yield [null];
+        yield [''];
     }
 
     /**
@@ -540,7 +538,7 @@ class DateTimeTest extends TestCase
      * @dataProvider invalidDataProvider
      * @param mixed $value
      */
-    public function testToStringInvalid($value): void
+    public function testToStringInvalid(?string $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -553,7 +551,7 @@ class DateTimeTest extends TestCase
      * @dataProvider invalidDataProvider
      * @param mixed $value
      */
-    public function testToStringInvalidFrozen($value): void
+    public function testToStringInvalidFrozen(?string $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -670,6 +668,7 @@ class DateTimeTest extends TestCase
         if (version_compare(INTL_ICU_VERSION, '50.0', '<')) {
             $this->markTestSkipped('ICU 5x is needed');
         }
+
         $date = new DateTime('2016-11-29 09:00:00');
         $this->assertInstanceOf('DateTimeZone', $date->timezone);
 
@@ -685,9 +684,7 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime('2014-04-20 10:10:10');
 
-        DateTime::setJsonEncodeFormat(static function ($t) {
-            return $t->format(DATE_ATOM);
-        });
+        DateTime::setJsonEncodeFormat(static fn($t) => $t->format(DATE_ATOM));
         $this->assertSame('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
         DateTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");
@@ -790,7 +787,7 @@ class DateTimeTest extends TestCase
 
         DateTime::disableLenientParsing();
         $time = DateTime::parseDate('04/21/2013');
-        $this->assertSame(null, $time);
+        $this->assertNull($time);
 
         DateTime::enableLenientParsing();
         $time = DateTime::parseDate('04/21/2013');

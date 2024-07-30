@@ -24,8 +24,6 @@ class SampleSubCommand extends Command
 {
     /**
      * Get the command name.
-     *
-     * @return string
      */
     public static function defaultName(): string
     {

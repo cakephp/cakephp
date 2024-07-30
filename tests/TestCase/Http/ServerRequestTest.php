@@ -40,9 +40,7 @@ class ServerRequestTest extends TestCase
     public function testCustomArgsDetector(): void
     {
         $request = new ServerRequest();
-        $request->addDetector('controller', function ($request, $name) {
-            return $request->getParam('controller') === $name;
-        });
+        $request->addDetector('controller', fn($request, $name): bool => $request->getParam('controller') === $name);
 
         $request = $request->withParam('controller', 'cake');
         $this->assertTrue($request->is('controller', 'cake'));
@@ -120,7 +118,7 @@ class ServerRequestTest extends TestCase
         ];
         $request = new ServerRequest($data);
         $this->assertSame('param', $request->getQuery('one'));
-        $this->assertEquals($data['query'], $request->getQueryParams());
+        $this->assertSame($data['query'], $request->getQueryParams());
         $this->assertSame('/some/path', $request->getRequestTarget());
     }
 
@@ -146,7 +144,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
-        $this->assertEquals($expected, $request->getQueryParams());
+        $this->assertSame($expected, $request->getQueryParams());
         $this->assertSame('/some/path', $request->getUri()->getPath());
         $this->assertSame('one=something&two=else', $request->getUri()->getQuery());
     }
@@ -210,19 +208,19 @@ class ServerRequestTest extends TestCase
         $post = [
             'Article' => ['title'],
         ];
-        $request = new ServerRequest(compact('post'));
-        $this->assertEquals($post, $request->getData());
+        $request = new ServerRequest(['post' => $post]);
+        $this->assertSame($post, $request->getData());
 
         $post = ['one' => 1, 'two' => 'three'];
-        $request = new ServerRequest(compact('post'));
-        $this->assertEquals($post, $request->getData());
+        $request = new ServerRequest(['post' => $post]);
+        $this->assertSame($post, $request->getData());
 
         $post = [
             'Article' => ['title' => 'Testing'],
             'action' => 'update',
         ];
-        $request = new ServerRequest(compact('post'));
-        $this->assertEquals($post, $request->getData());
+        $request = new ServerRequest(['post' => $post]);
+        $this->assertSame($post, $request->getData());
     }
 
     /**
@@ -400,6 +398,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['webroot' => '/']);
 
         $request = $request->withEnv('HTTP_REFERER', 'http://cakephp.org');
+
         $result = $request->referer(false);
         $this->assertSame('http://cakephp.org', $result);
 
@@ -473,7 +472,7 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('delete'));
     }
 
-    public function testExceptionForInvalidType()
+    public function testExceptionForInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No detector set for type `nonexistent`');
@@ -678,16 +677,16 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
-        $this->assertEquals(['something'], $request->subdomains());
+        $this->assertSame(['something'], $request->subdomains());
 
         $request = $request->withEnv('HTTP_HOST', 'www.something.example.com');
-        $this->assertEquals(['www', 'something'], $request->subdomains());
+        $this->assertSame(['www', 'something'], $request->subdomains());
 
         $request = $request->withEnv('HTTP_HOST', 'www.something.example.co.uk');
-        $this->assertEquals(['www', 'something'], $request->subdomains(2));
+        $this->assertSame(['www', 'something'], $request->subdomains(2));
 
         $request = $request->withEnv('HTTP_HOST', 'example.co.uk');
-        $this->assertEquals([], $request->subdomains(2));
+        $this->assertSame([], $request->subdomains(2));
     }
 
     /**
@@ -745,14 +744,10 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        ServerRequest::addDetector('closure', function ($request) {
-            return true;
-        });
+        ServerRequest::addDetector('closure', fn($request): bool => true);
         $this->assertTrue($request->is('closure'));
 
-        ServerRequest::addDetector('get', function ($request) {
-            return $request->getEnv('REQUEST_METHOD') === 'GET';
-        });
+        ServerRequest::addDetector('get', fn($request): bool => $request->getEnv('REQUEST_METHOD') === 'GET');
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -797,7 +792,7 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isIndex());
 
-        ServerRequest::addDetector('withParams', function ($request, array $params) {
+        ServerRequest::addDetector('withParams', function ($request, array $params): bool {
             foreach ($params as $name => $value) {
                 if ($request->getParam($name) != $value) {
                     return false;
@@ -815,9 +810,7 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
 
-        ServerRequest::addDetector('callme', function ($request) {
-            return $request->getAttribute('return');
-        });
+        ServerRequest::addDetector('callme', fn($request) => $request->getAttribute('return'));
         $request = $request->withAttribute('return', true);
         $request->clearDetectorCache();
         $this->assertTrue($request->isCallMe());
@@ -872,7 +865,7 @@ class ServerRequestTest extends TestCase
             'Content-Md5' => ['abc123'],
             'Double' => ['a', 'b'],
         ];
-        $this->assertEquals($expected, $headers);
+        $this->assertSame($expected, $headers);
     }
 
     /**
@@ -906,13 +899,13 @@ class ServerRequestTest extends TestCase
             'HTTP_CONTENT_MD5' => 'abc123',
             'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
-        $this->assertEquals([], $request->getHeader('Not-there'));
+        $this->assertSame([], $request->getHeader('Not-there'));
 
         $expected = [$request->getEnv('HTTP_HOST')];
         $this->assertEquals($expected, $request->getHeader('Host'));
         $this->assertEquals($expected, $request->getHeader('host'));
         $this->assertEquals($expected, $request->getHeader('HOST'));
-        $this->assertEquals(['a', 'b'], $request->getHeader('Double'));
+        $this->assertSame(['a', 'b'], $request->getHeader('Double'));
     }
 
     /**
@@ -955,7 +948,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame('999', $new->getHeaderLine('Content-length'), 'new request is correct');
 
         $new = $request->withHeader('Double', ['a']);
-        $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
+        $this->assertSame(['a'], $new->getHeader('Double'), 'List values are overwritten');
     }
 
     /**
@@ -977,10 +970,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
 
         $new = $request->withAddedHeader('Content-Length', 777);
-        $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
+        $this->assertSame([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
 
         $new = $request->withAddedHeader('Content-Length', [123, 456]);
-        $this->assertEquals([1337, 123, 456], $new->getHeader('Content-Length'), 'List values are merged');
+        $this->assertSame([1337, 123, 456], $new->getHeader('Content-Length'), 'List values are merged');
     }
 
     /**
@@ -1015,7 +1008,7 @@ class ServerRequestTest extends TestCase
         $expected = [
             'text/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png', 'application/xml',
         ];
-        $this->assertEquals($expected, $result, 'Content types differ.');
+        $this->assertSame($expected, $result, 'Content types differ.');
 
         $result = $request->accepts('text/html');
         $this->assertTrue($result);
@@ -1036,7 +1029,7 @@ class ServerRequestTest extends TestCase
         $expected = [
             'text/xml', 'text/html', 'text/plain', 'image/png',
         ];
-        $this->assertEquals($expected, $result, 'Content types differ.');
+        $this->assertSame($expected, $result, 'Content types differ.');
 
         $this->assertTrue($request->accepts('text/html'));
     }
@@ -1051,7 +1044,7 @@ class ServerRequestTest extends TestCase
         ]]);
         $result = $request->accepts();
         $expected = ['application/xml', 'text/html', 'application/json'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1070,7 +1063,7 @@ class ServerRequestTest extends TestCase
         ];
         $request = new ServerRequest($array);
 
-        $this->assertEquals([
+        $this->assertSame([
             'foo' => 'bar',
             'zero' => '0',
             'test' => [
@@ -1154,10 +1147,10 @@ class ServerRequestTest extends TestCase
                 'field' => 'value',
             ],
         ];
-        $request = new ServerRequest(compact('post'));
-        $this->assertEquals($post['Model'], $request->getData('Model'));
+        $request = new ServerRequest(['post' => $post]);
+        $this->assertSame($post['Model'], $request->getData('Model'));
 
-        $this->assertEquals($post, $request->getData());
+        $this->assertSame($post, $request->getData());
         $this->assertNull($request->getData('Model.imaginary'));
 
         $this->assertSame('value', $request->getData('Model.field', 'default'));
@@ -1173,7 +1166,7 @@ class ServerRequestTest extends TestCase
         $this->expectExceptionMessage('`post` key must be an array, object or null. Got `string` instead.');
 
         $post = 'strange, but could happen';
-        new ServerRequest(compact('post'));
+        new ServerRequest(['post' => $post]);
     }
 
     /**
@@ -1202,7 +1195,7 @@ class ServerRequestTest extends TestCase
      * @dataProvider paramReadingDataProvider
      * @param mixed $expected
      */
-    public function testGetParam(string $toRead, $expected): void
+    public function testGetParam(string $toRead, string|bool|int|array|null $expected): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -1244,41 +1237,39 @@ class ServerRequestTest extends TestCase
      *
      * @return array
      */
-    public static function paramReadingDataProvider(): array
+    public static function paramReadingDataProvider(): \Iterator
     {
-        return [
+        yield [
+            'action',
+            'index',
+        ];
+        yield [
+            'baz',
             [
-                'action',
-                'index',
-            ],
-            [
-                'baz',
-                [
-                    'a' => [
-                        'b' => 'c',
-                    ],
+                'a' => [
+                    'b' => 'c',
                 ],
             ],
-            [
-                'baz.a.b',
-                'c',
-            ],
-            [
-                'does_not_exist',
-                null,
-            ],
-            [
-                'admin',
-                true,
-            ],
-            [
-                'truthy',
-                1,
-            ],
-            [
-                'zero',
-                '0',
-            ],
+        ];
+        yield [
+            'baz.a.b',
+            'c',
+        ];
+        yield [
+            'does_not_exist',
+            null,
+        ];
+        yield [
+            'admin',
+            true,
+        ];
+        yield [
+            'truthy',
+            1,
+        ];
+        yield [
+            'zero',
+            '0',
         ];
     }
 
@@ -1291,7 +1282,7 @@ class ServerRequestTest extends TestCase
         $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
-            'Cake\Http\ServerRequest',
+            \Cake\Http\ServerRequest::class,
             $request->withParam('some', 'thing'),
             'Method has not returned $this'
         );
@@ -1322,23 +1313,24 @@ class ServerRequestTest extends TestCase
 
         // Weird language
         $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'inexistent,en-ca');
+
         $result = $request->acceptLanguage();
-        $this->assertEquals(['inexistent', 'en-ca'], $result, 'Languages do not match');
+        $this->assertSame(['inexistent', 'en-ca'], $result, 'Languages do not match');
 
         // No qualifier
         $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'es_mx,en_ca');
         $result = $request->acceptLanguage();
-        $this->assertEquals(['es-mx', 'en-ca'], $result, 'Languages do not match');
+        $this->assertSame(['es-mx', 'en-ca'], $result, 'Languages do not match');
 
         // With qualifier
         $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4');
         $result = $request->acceptLanguage();
-        $this->assertEquals(['en-us', 'en', 'pt-br', 'pt'], $result, 'Languages do not match');
+        $this->assertSame(['en-us', 'en', 'pt-br', 'pt'], $result, 'Languages do not match');
 
         // With spaces
         $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'da, en-gb;q=0.8, en;q=0.7');
         $result = $request->acceptLanguage();
-        $this->assertEquals(['da', 'en-gb', 'en'], $result, 'Languages do not match');
+        $this->assertSame(['da', 'en-gb', 'en'], $result, 'Languages do not match');
 
         // Checking if requested
         $request = $request->withEnv('HTTP_ACCEPT_LANGUAGE', 'es_mx,en_ca');
@@ -1365,7 +1357,7 @@ class ServerRequestTest extends TestCase
             'input' => 'key=val&some=data',
         ]);
         $result = $request->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $result);
         $this->assertSame('key=val&some=data', $result->getContents());
     }
 
@@ -1377,7 +1369,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
         ]);
-        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $body = $this->getMockBuilder(\Psr\Http\Message\StreamInterface::class)->getMock();
         $new = $request->withBody($body);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($body, $request->getBody());
@@ -1391,7 +1383,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
-        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertInstanceOf(\Psr\Http\Message\UriInterface::class, $result);
         $this->assertSame('/articles/view/3', $result->getPath());
     }
 
@@ -1406,7 +1398,7 @@ class ServerRequestTest extends TestCase
             ],
             'url' => 'articles/view/3',
         ]);
-        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $uri = $this->getMockBuilder(\Psr\Http\Message\UriInterface::class)->getMock();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());
@@ -1566,8 +1558,8 @@ class ServerRequestTest extends TestCase
         try {
             $request->allowMethod(['POST', 'DELETE']);
             $this->fail('An expected exception has not been raised.');
-        } catch (MethodNotAllowedException $e) {
-            $this->assertEquals(['Allow' => 'POST, DELETE'], $e->getHeaders());
+        } catch (MethodNotAllowedException $methodNotAllowedException) {
+            $this->assertSame(['Allow' => 'POST, DELETE'], $methodNotAllowedException->getHeaders());
         }
 
         $this->expectException(MethodNotAllowedException::class);
@@ -1697,7 +1689,7 @@ class ServerRequestTest extends TestCase
         $this->assertNotSame($updated, $request);
         $this->assertSame('value', $request->getData('Model.field'), 'Original request should not change.');
         $this->assertNull($updated->getData('Model.field'), 'data removed from updated request');
-        $this->assertFalse(isset($updated->getData()['Model']['field']), 'data removed from updated request');
+        $this->assertArrayNotHasKey('field', $updated->getData()['Model'], 'data removed from updated request');
     }
 
     /**
@@ -1898,14 +1890,12 @@ class ServerRequestTest extends TestCase
      *
      * @return array
      */
-    public static function emulatedPropertyProvider(): array
+    public static function emulatedPropertyProvider(): \Iterator
     {
-        return [
-            ['here'],
-            ['params'],
-            ['base'],
-            ['webroot'],
-            ['session'],
-        ];
+        yield ['here'];
+        yield ['params'];
+        yield ['base'];
+        yield ['webroot'];
+        yield ['session'];
     }
 }

@@ -50,13 +50,6 @@ class RadioWidget extends BasicWidget
     ];
 
     /**
-     * Label instance.
-     *
-     * @var \Cake\View\Widget\LabelWidget
-     */
-    protected LabelWidget $_label;
-
-    /**
      * Constructor
      *
      * This class uses a few templates:
@@ -68,12 +61,14 @@ class RadioWidget extends BasicWidget
      *   variables.
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
-     * @param \Cake\View\Widget\LabelWidget $label Label widget instance.
+     * @param \Cake\View\Widget\LabelWidget $_label Label widget instance.
      */
-    public function __construct(StringTemplate $templates, LabelWidget $label)
+    public function __construct(StringTemplate $templates, /**
+     * Label instance.
+     */
+    protected LabelWidget $_label)
     {
         $this->_templates = $templates;
-        $this->_label = $label;
     }
 
     /**
@@ -94,22 +89,18 @@ class RadioWidget extends BasicWidget
      *
      * @param array<string, mixed> $data The data to build radio buttons with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return string
      */
     public function render(array $data, ContextInterface $context): string
     {
         $data += $this->mergeDefaults($data, $context);
 
-        if ($data['options'] instanceof Traversable) {
-            $options = iterator_to_array($data['options']);
-        } else {
-            $options = (array)$data['options'];
-        }
+        $options = $data['options'] instanceof Traversable ? iterator_to_array($data['options']) : (array)$data['options'];
 
         if (!empty($data['empty'])) {
             $empty = $data['empty'] === true ? 'empty' : $data['empty'];
             $options = ['' => $empty] + $options;
         }
+
         unset($data['empty']);
 
         $this->_idPrefix = $data['idPrefix'];
@@ -127,16 +118,17 @@ class RadioWidget extends BasicWidget
      *
      * @param array<string, mixed> $radio Radio info.
      * @param array|string|true|null $disabled The disabled values.
-     * @return bool
      */
     protected function _isDisabled(array $radio, array|string|bool|null $disabled): bool
     {
         if (!$disabled) {
             return false;
         }
+
         if ($disabled === true) {
             return true;
         }
+
         $isNumeric = is_numeric($radio['value']);
 
         return !is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric);
@@ -149,7 +141,6 @@ class RadioWidget extends BasicWidget
      * @param array<string, mixed>|string|int $text The label text, or complex radio type.
      * @param array<string, mixed> $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
-     * @return string
      */
     protected function _renderInput(
         string|int $val,
@@ -158,11 +149,8 @@ class RadioWidget extends BasicWidget
         ContextInterface $context
     ): string {
         $escape = $data['escape'];
-        if (is_array($text) && isset($text['text'], $text['value'])) {
-            $radio = $text;
-        } else {
-            $radio = ['value' => $val, 'text' => $text];
-        }
+        $radio = is_array($text) && isset($text['text'], $text['value']) ? $text : ['value' => $val, 'text' => $text];
+
         $radio['name'] = $data['name'];
 
         $radio['templateVars'] ??= [];
@@ -180,9 +168,11 @@ class RadioWidget extends BasicWidget
                 $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
             }
         }
+
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
         }
+
         if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
             $radio['checked'] = true;
             $radio['templateVars']['activeClass'] = 'active';
@@ -197,6 +187,7 @@ class RadioWidget extends BasicWidget
         if (!empty($data['required'])) {
             $radio['required'] = true;
         }
+
         if (!empty($data['form'])) {
             $radio['form'] = $data['form'];
         }
@@ -221,7 +212,7 @@ class RadioWidget extends BasicWidget
 
         if (
             $label === false &&
-            !str_contains($this->_templates->get('radioWrapper'), '{{input}}')
+            !str_contains((string) $this->_templates->get('radioWrapper'), '{{input}}')
         ) {
             $label = $input;
         }
@@ -258,6 +249,7 @@ class RadioWidget extends BasicWidget
         } elseif ($label === false) {
             return false;
         }
+
         $labelAttrs = is_array($label) ? $label : [];
         $labelAttrs += [
             'for' => $radio['id'],

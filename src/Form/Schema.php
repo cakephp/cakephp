@@ -46,7 +46,7 @@ class Schema
      * @param array<string, array<string, mixed>|string> $fields The fields to add.
      * @return $this
      */
-    public function addFields(array $fields)
+    public function addFields(array $fields): static
     {
         foreach ($fields as $name => $attrs) {
             $this->addField($name, $attrs);
@@ -63,11 +63,12 @@ class Schema
      *   as a string.
      * @return $this
      */
-    public function addField(string $name, array|string $attrs)
+    public function addField(string $name, array|string $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
         }
+
         $attrs = array_intersect_key($attrs, $this->_fieldDefaults);
         $this->_fields[$name] = $attrs + $this->_fieldDefaults;
 
@@ -80,7 +81,7 @@ class Schema
      * @param string $name The field to remove.
      * @return $this
      */
-    public function removeField(string $name)
+    public function removeField(string $name): static
     {
         unset($this->_fields[$name]);
 

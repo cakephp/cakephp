@@ -44,7 +44,6 @@ class UriFactory implements UriFactoryInterface
      *
      * @param array|null $server Array of server data to build the Uri from.
      *   $_SERVER will be used if $server parameter is null.
-     * @return array
      * @psalm-return array{uri: \Psr\Http\Message\UriInterface, base: string, webroot: string}
      */
     public static function marshalUriAndBaseFromSapi(?array $server = null): array
@@ -58,11 +57,7 @@ class UriFactory implements UriFactoryInterface
         // Look in PATH_INFO first, as this is the exact value we need prepared
         // by PHP.
         $pathInfo = $server['PATH_INFO'] ?? null;
-        if ($pathInfo) {
-            $uri = $uri->withPath($pathInfo);
-        } else {
-            $uri = static::updatePath($base, $uri);
-        }
+        $uri = $pathInfo ? $uri->withPath($pathInfo) : static::updatePath($base, $uri);
 
         if (!$uri->getHost()) {
             $uri = $uri->withHost('localhost');
@@ -76,7 +71,6 @@ class UriFactory implements UriFactoryInterface
      *
      * @param string $base The base path to remove.
      * @param \Psr\Http\Message\UriInterface $uri The uri to update.
-     * @return \Psr\Http\Message\UriInterface
      */
     protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
@@ -84,12 +78,15 @@ class UriFactory implements UriFactoryInterface
         if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
+
         if ($path === '/index.php' && $uri->getQuery()) {
             $path = $uri->getQuery();
         }
+
         if (!$path || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
+
         $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
         if (
@@ -131,7 +128,7 @@ class UriFactory implements UriFactoryInterface
                 return ['base' => '', 'webroot' => '/'];
             }
 
-            $base = dirname($server['PHP_SELF'] ?? DIRECTORY_SEPARATOR);
+            $base = dirname((string) ($server['PHP_SELF'] ?? DIRECTORY_SEPARATOR));
             // Clean up additional / which cause following code to fail..
             $base = (string)preg_replace('#/+#', '/', $base);
 
@@ -139,6 +136,7 @@ class UriFactory implements UriFactoryInterface
             if ($indexPos !== false) {
                 $base = substr($base, 0, $indexPos) . '/' . $webroot;
             }
+
             if ($webroot === basename($base)) {
                 $base = dirname($base);
             }
@@ -146,22 +144,24 @@ class UriFactory implements UriFactoryInterface
             if ($base === DIRECTORY_SEPARATOR || $base === '.') {
                 $base = '';
             }
+
             $base = implode('/', array_map('rawurlencode', explode('/', $base)));
 
             return ['base' => $base, 'webroot' => $base . '/'];
         }
 
-        $file = '/' . basename($baseUrl);
-        $base = dirname($baseUrl);
+        $file = '/' . basename((string) $baseUrl);
+        $base = dirname((string) $baseUrl);
 
         if ($base === DIRECTORY_SEPARATOR || $base === '.') {
             $base = '';
         }
+
         $webrootDir = $base . '/';
 
         $docRoot = $server['DOCUMENT_ROOT'] ?? null;
         if (
-            (!empty($base) || !str_contains($docRoot, $webroot))
+            (!empty($base) || !str_contains((string) $docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

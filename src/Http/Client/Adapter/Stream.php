@@ -61,8 +61,6 @@ class Stream implements AdapterInterface
 
     /**
      * Connection error list.
-     *
-     * @var array
      */
     protected array $_connectionErrors = [];
 
@@ -94,12 +92,14 @@ class Stream implements AdapterInterface
      */
     public function createResponses(array $headers, string $content): array
     {
-        $indexes = $responses = [];
+        $indexes = [];
+        $responses = [];
         foreach ($headers as $i => $header) {
-            if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
+            if (strtoupper(substr((string) $header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;
             }
         }
+
         $last = count($indexes) - 1;
         foreach ($indexes as $i => $start) {
             /** @psalm-suppress InvalidOperand */
@@ -118,7 +118,6 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
      * @param array<string, mixed> $options Additional request options.
-     * @return void
      */
     protected function _buildContext(RequestInterface $request, array $options): void
     {
@@ -131,6 +130,7 @@ class Stream implements AdapterInterface
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
         }
+
         $this->_context = stream_context_create([
             'http' => $this->_contextOptions,
             'ssl' => $this->_sslContextOptions,
@@ -144,7 +144,6 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array<string, mixed> $options Array of options to use.
-     * @return void
      */
     protected function _buildHeaders(RequestInterface $request, array $options): void
     {
@@ -152,6 +151,7 @@ class Stream implements AdapterInterface
         foreach ($request->getHeaders() as $name => $values) {
             $headers[] = sprintf('%s: %s', $name, implode(', ', $values));
         }
+
         $this->_contextOptions['header'] = implode("\r\n", $headers);
     }
 
@@ -163,7 +163,6 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array<string, mixed> $options Array of options to use.
-     * @return void
      */
     protected function _buildContent(RequestInterface $request, array $options): void
     {
@@ -177,7 +176,6 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array<string, mixed> $options Array of options to use.
-     * @return void
      */
     protected function _buildOptions(RequestInterface $request, array $options): void
     {
@@ -188,6 +186,7 @@ class Stream implements AdapterInterface
         if (isset($options['timeout'])) {
             $this->_contextOptions['timeout'] = $options['timeout'];
         }
+
         // Redirects are handled in the client layer because of cookie handling issues.
         $this->_contextOptions['max_redirects'] = 0;
 
@@ -202,7 +201,6 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array<string, mixed> $options Array of options to use.
-     * @return void
      */
     protected function _buildSslContext(RequestInterface $request, array $options): void
     {
@@ -219,11 +217,13 @@ class Stream implements AdapterInterface
         if (empty($options['ssl_cafile'])) {
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
+
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
             $host = parse_url((string)$url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
         }
+
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
                 $name = substr($key, 4);
@@ -289,7 +289,6 @@ class Stream implements AdapterInterface
      *
      * @param array $headers Unparsed headers.
      * @param string $body The response body.
-     * @return \Cake\Http\Client\Response
      */
     protected function _buildResponse(array $headers, string $body): Response
     {
@@ -301,7 +300,6 @@ class Stream implements AdapterInterface
      *
      * @param string $url The url to connect to.
      * @param \Psr\Http\Message\RequestInterface $request The request object.
-     * @return void
      * @throws \Psr\Http\Client\RequestExceptionInterface
      */
     protected function _open(string $url, RequestInterface $request): void
@@ -320,6 +318,7 @@ class Stream implements AdapterInterface
             if ($stream === false) {
                 $stream = null;
             }
+
             $this->_stream = $stream;
         } finally {
             restore_error_handler();

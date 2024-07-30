@@ -38,7 +38,7 @@ class ComponentRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $controller = new Controller(new ServerRequest());
@@ -48,7 +48,7 @@ class ComponentRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Components);
@@ -65,7 +65,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertInstanceOf(FlashComponent::class, $this->Components->Flash);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Flash'], $result, 'loaded() results are wrong.');
 
         $result = $this->Components->load('Flash');
         $this->assertSame($result, $this->Components->Flash);
@@ -82,7 +82,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertTrue($this->Components->Flash->getConfig('somesetting'));
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Flash'], $result, 'loaded() results are wrong.');
 
         $result = $this->Components->load('Flash');
         $this->assertInstanceOf(FlashAliasComponent::class, $result);
@@ -93,7 +93,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertInstanceOf(OtherComponent::class, $this->Components->SomeOther);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Flash', 'SomeOther'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Flash', 'SomeOther'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -101,7 +101,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse(): void
     {
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
         $mock->expects($this->never())
             ->method('on');
 
@@ -143,7 +143,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertInstanceOf(OtherComponent::class, $this->Components->AliasedOther);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['AliasedOther'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -152,7 +152,7 @@ class ComponentRegistryTest extends TestCase
     public function testGetController(): void
     {
         $result = $this->Components->getController();
-        $this->assertInstanceOf('Cake\Controller\Controller', $result);
+        $this->assertInstanceOf(\Cake\Controller\Controller::class, $result);
     }
 
     /**
@@ -186,7 +186,7 @@ class ComponentRegistryTest extends TestCase
         $result = $this->Components->unload('FormProtection');
 
         $this->assertSame($this->Components, $result);
-        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
+        $this->assertFalse(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection !== null, 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -200,7 +200,7 @@ class ComponentRegistryTest extends TestCase
         $this->Components->load('FormProtection');
         unset($this->Components->FormProtection);
 
-        $this->assertFalse(isset($this->Components->FormProtection), 'Should be gone');
+        $this->assertFalse(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection !== null, 'Should be gone');
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
     }
 
@@ -226,7 +226,7 @@ class ComponentRegistryTest extends TestCase
         $result = $this->Components->set('FormProtection', $formProtection);
 
         $this->assertEquals($this->Components, $result);
-        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
+        $this->assertTrue(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection !== null, 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -241,7 +241,7 @@ class ComponentRegistryTest extends TestCase
         $formProtection = new FormProtectionComponent($this->Components);
         $this->Components->FormProtection = $formProtection;
 
-        $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
+        $this->assertTrue(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection instanceof \Cake\Controller\Component\FormProtectionComponent, 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 
@@ -268,6 +268,7 @@ class ComponentRegistryTest extends TestCase
         foreach ($this->Components as $component) {
             $result = $component;
         }
+
         $this->assertNotNull($result);
     }
 }

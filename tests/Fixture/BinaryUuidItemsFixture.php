@@ -23,8 +23,6 @@ class BinaryUuidItemsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'published' => true, 'name' => 'Item 1'],

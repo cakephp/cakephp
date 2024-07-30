@@ -39,13 +39,14 @@ class FileWidgetTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
             'file' => '<input type="file" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
     }
 
@@ -108,9 +109,9 @@ class FileWidgetTest extends TestCase
     {
         $input = new FileWidget($this->templates);
         $data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
-        $this->assertEquals(['image'], $input->secureFields($data));
+        $this->assertSame(['image'], $input->secureFields($data));
 
-        $this->assertEquals(
+        $this->assertSame(
             ['image'],
             $input->secureFields($data)
         );

@@ -63,6 +63,7 @@ class I18nCommand extends Command
                         'Please choose a command to execute by entering E, I, H, or Q.'
                     );
             }
+
             if ($code === static::CODE_ERROR) {
                 $this->abort();
             }
@@ -75,9 +76,8 @@ class I18nCommand extends Command
      * Gets the option parser instance and configures it.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
             'I18n commands let you generate .pot files to power translations in your application.'

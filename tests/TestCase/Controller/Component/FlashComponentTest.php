@@ -47,7 +47,7 @@ class FlashComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -60,7 +60,7 @@ class FlashComponentTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->Session->destroy();
@@ -85,7 +85,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is a test message', ['element' => 'test', 'params' => ['foo' => 'bar']]);
         $expected[] = [
@@ -95,7 +95,7 @@ class FlashComponentTest extends TestCase
             'params' => ['foo' => 'bar'],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is a test message', ['element' => 'MyPlugin.alert']);
         $expected[] = [
@@ -105,7 +105,7 @@ class FlashComponentTest extends TestCase
             'params' => [],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is a test message', ['key' => 'foobar']);
         $expected = [
@@ -117,7 +117,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.foobar');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testDuplicateIgnored(): void
@@ -127,6 +127,7 @@ class FlashComponentTest extends TestCase
         $this->Flash->setConfig('duplicate', false);
         $this->Flash->set('This test message should appear once only');
         $this->Flash->set('This test message should appear once only');
+
         $result = $this->Session->read('Flash.flash');
         $this->assertCount(1, $result);
     }
@@ -179,7 +180,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is another test message', ['clear' => true]);
         $expected = [
@@ -191,7 +192,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -213,7 +214,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -234,7 +235,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -256,7 +257,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->error('It did not work', ['element' => 'error_thing']);
 
@@ -267,7 +268,7 @@ class FlashComponentTest extends TestCase
             'params' => [],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
+        $this->assertSame($expected, $result, 'Element is ignored in magic call.');
 
         $this->Flash->success('It worked', ['plugin' => 'MyPlugin']);
 
@@ -278,7 +279,7 @@ class FlashComponentTest extends TestCase
             'params' => [],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -299,7 +300,7 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->Flash->success('It worked too', ['clear' => true]);
         $expected = [
             [
@@ -310,6 +311,6 @@ class FlashComponentTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

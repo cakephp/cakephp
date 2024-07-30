@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  */
 class LogTraitTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('trait_test');
@@ -35,7 +35,7 @@ class LogTraitTest extends TestCase
      */
     public function testLog(): void
     {
-        $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $mock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
         $mock->expects($this->exactly(2))
             ->method('log')
             ->with(

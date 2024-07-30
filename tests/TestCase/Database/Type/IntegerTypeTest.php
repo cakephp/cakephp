@@ -34,16 +34,16 @@ class IntegerTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('integer');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
@@ -138,13 +138,11 @@ class IntegerTypeTest extends TestCase
      *
      * @return array
      */
-    public static function invalidIntegerProvider(): array
+    public static function invalidIntegerProvider(): \Iterator
     {
-        return [
-            'array' => [['3', '4']],
-            'non-numeric-string' => ['some-data'],
-            'uuid' => ['6a88accf-a34e-4dd9-ade0-8d255ccaecbe'],
-        ];
+        yield 'array' => [['3', '4']];
+        yield 'non-numeric-string' => ['some-data'];
+        yield 'uuid' => ['6a88accf-a34e-4dd9-ade0-8d255ccaecbe'];
     }
 
     /**
@@ -153,7 +151,7 @@ class IntegerTypeTest extends TestCase
      * @dataProvider invalidIntegerProvider
      * @param  mixed $value Invalid value to test against the database type.
      */
-    public function testToDatabaseInvalid($value): void
+    public function testToDatabaseInvalid(string|array $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase($value, $this->driver);

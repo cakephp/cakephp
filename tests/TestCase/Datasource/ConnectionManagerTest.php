@@ -29,7 +29,7 @@ class ConnectionManagerTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -43,16 +43,14 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider(): array
+    public static function configProvider(): \Iterator
     {
-        return [
-            'Array of data using classname key.' => [[
-                'className' => FakeConnection::class,
-                'instance' => 'Sqlite',
-                'database' => ':memory:',
-            ]],
-            'Direct instance' => [new FakeConnection()],
-        ];
+        yield 'Array of data using classname key.' => [[
+            'className' => FakeConnection::class,
+            'instance' => 'Sqlite',
+            'database' => ':memory:',
+        ]];
+        yield 'Direct instance' => [new FakeConnection()];
     }
 
     /**
@@ -61,7 +59,7 @@ class ConnectionManagerTest extends TestCase
      * @dataProvider configProvider
      * @param \Cake\Datasource\ConnectionInterface|array $settings
      */
-    public function testConfigVariants($settings): void
+    public function testConfigVariants(\TestApp\Datasource\FakeConnection|array $settings): void
     {
         $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
         ConnectionManager::setConfig('test_variant', $settings);
@@ -118,7 +116,7 @@ class ConnectionManagerTest extends TestCase
 
         $ds = ConnectionManager::get('test');
         $this->assertSame($ds, ConnectionManager::get('test'));
-        $this->assertInstanceOf('Cake\Database\Connection', $ds);
+        $this->assertInstanceOf(\Cake\Database\Connection::class, $ds);
         $this->assertSame('test', $ds->configName());
     }
 
@@ -160,7 +158,7 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::setConfig($name, $config);
         $connection = ConnectionManager::get($name);
 
-        $this->assertInstanceOf('TestPlugin\Datasource\TestSource', $connection);
+        $this->assertInstanceOf(\TestPlugin\Datasource\TestSource::class, $connection);
         unset($config['className']);
         $this->assertSame($config + ['name' => 'test_variant'], $connection->config());
     }
@@ -212,168 +210,166 @@ class ConnectionManagerTest extends TestCase
      *
      * @return array
      */
-    public static function dsnProvider(): array
+    public static function dsnProvider(): \Iterator
     {
-        return [
-            'no user' => [
-                'mysql://localhost:3306/database',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'database' => 'database',
-                    'port' => 3306,
-                    'scheme' => 'mysql',
-                ],
+        yield 'no user' => [
+            'mysql://localhost:3306/database',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'database' => 'database',
+                'port' => 3306,
+                'scheme' => 'mysql',
             ],
-            'subdomain host' => [
-                'mysql://my.host-name.com:3306/database',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'my.host-name.com',
-                    'database' => 'database',
-                    'port' => 3306,
-                    'scheme' => 'mysql',
-                ],
+        ];
+        yield 'subdomain host' => [
+            'mysql://my.host-name.com:3306/database',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'my.host-name.com',
+                'database' => 'database',
+                'port' => 3306,
+                'scheme' => 'mysql',
             ],
-            'user & pass' => [
-                'mysql://root:secret@localhost:3306/database?log=1',
-                [
-                    'scheme' => 'mysql',
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'username' => 'root',
-                    'password' => 'secret',
-                    'port' => 3306,
-                    'database' => 'database',
-                    'log' => '1',
-                ],
+        ];
+        yield 'user & pass' => [
+            'mysql://root:secret@localhost:3306/database?log=1',
+            [
+                'scheme' => 'mysql',
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'username' => 'root',
+                'password' => 'secret',
+                'port' => 3306,
+                'database' => 'database',
+                'log' => '1',
             ],
-            'no password' => [
-                'mysql://user@localhost:3306/database',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'database' => 'database',
-                    'port' => 3306,
-                    'scheme' => 'mysql',
-                    'username' => 'user',
-                ],
+        ];
+        yield 'no password' => [
+            'mysql://user@localhost:3306/database',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'database' => 'database',
+                'port' => 3306,
+                'scheme' => 'mysql',
+                'username' => 'user',
             ],
-            'empty password' => [
-                'mysql://user:@localhost:3306/database',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'database' => 'database',
-                    'port' => 3306,
-                    'scheme' => 'mysql',
-                    'username' => 'user',
-                    'password' => '',
-                ],
+        ];
+        yield 'empty password' => [
+            'mysql://user:@localhost:3306/database',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'database' => 'database',
+                'port' => 3306,
+                'scheme' => 'mysql',
+                'username' => 'user',
+                'password' => '',
             ],
-            'sqlite memory' => [
-                'sqlite:///:memory:',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Sqlite',
-                    'database' => ':memory:',
-                    'scheme' => 'sqlite',
-                ],
+        ];
+        yield 'sqlite memory' => [
+            'sqlite:///:memory:',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Sqlite::class,
+                'database' => ':memory:',
+                'scheme' => 'sqlite',
             ],
-            'sqlite path' => [
-                'sqlite:////absolute/path',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Sqlite',
-                    'database' => '/absolute/path',
-                    'scheme' => 'sqlite',
-                ],
+        ];
+        yield 'sqlite path' => [
+            'sqlite:////absolute/path',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Sqlite::class,
+                'database' => '/absolute/path',
+                'scheme' => 'sqlite',
             ],
-            'sqlite database query' => [
-                'sqlite:///?database=:memory:',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Sqlite',
-                    'database' => ':memory:',
-                    'scheme' => 'sqlite',
-                ],
+        ];
+        yield 'sqlite database query' => [
+            'sqlite:///?database=:memory:',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Sqlite::class,
+                'database' => ':memory:',
+                'scheme' => 'sqlite',
             ],
-            'sqlserver' => [
-                'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Sqlserver',
-                    'host' => '.\SQL2012SP1',
-                    'MultipleActiveResultSets' => false,
-                    'password' => 'Password12!',
-                    'database' => 'cakephp',
-                    'scheme' => 'sqlserver',
-                    'username' => 'sa',
-                ],
+        ];
+        yield 'sqlserver' => [
+            'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Sqlserver::class,
+                'host' => '.\SQL2012SP1',
+                'MultipleActiveResultSets' => false,
+                'password' => 'Password12!',
+                'database' => 'cakephp',
+                'scheme' => 'sqlserver',
+                'username' => 'sa',
             ],
-            'sqllocaldb' => [
-                'sqlserver://username:password@(localdb)\.\DeptSharedLocalDB/database',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'driver' => 'Cake\Database\Driver\Sqlserver',
-                    'host' => '(localdb)\.\DeptSharedLocalDB',
-                    'password' => 'password',
-                    'database' => 'database',
-                    'scheme' => 'sqlserver',
-                    'username' => 'username',
-                ],
+        ];
+        yield 'sqllocaldb' => [
+            'sqlserver://username:password@(localdb)\.\DeptSharedLocalDB/database',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'driver' => \Cake\Database\Driver\Sqlserver::class,
+                'host' => '(localdb)\.\DeptSharedLocalDB',
+                'password' => 'password',
+                'database' => 'database',
+                'scheme' => 'sqlserver',
+                'username' => 'username',
             ],
-            'classname query arg' => [
-                'mysql://localhost/database?className=Custom\Driver',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'database' => 'database',
-                    'driver' => 'Custom\Driver',
-                    'host' => 'localhost',
-                    'scheme' => 'mysql',
-                ],
+        ];
+        yield 'classname query arg' => [
+            'mysql://localhost/database?className=Custom\Driver',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'database' => 'database',
+                'driver' => 'Custom\Driver',
+                'host' => 'localhost',
+                'scheme' => 'mysql',
             ],
-            'classname and port' => [
-                'mysql://localhost:3306/database?className=Custom\Driver',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'database' => 'database',
-                    'driver' => 'Custom\Driver',
-                    'host' => 'localhost',
-                    'scheme' => 'mysql',
-                    'port' => 3306,
-                ],
+        ];
+        yield 'classname and port' => [
+            'mysql://localhost:3306/database?className=Custom\Driver',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'database' => 'database',
+                'driver' => 'Custom\Driver',
+                'host' => 'localhost',
+                'scheme' => 'mysql',
+                'port' => 3306,
             ],
-            'custom connection class' => [
-                'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'database' => 'database',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'scheme' => 'Cake\Database\Connection',
-                    'port' => 3306,
-                ],
+        ];
+        yield 'custom connection class' => [
+            'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'database' => 'database',
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'scheme' => \Cake\Database\Connection::class,
+                'port' => 3306,
             ],
-            'complex password' => [
-                'mysql://user:/?#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1',
-                [
-                    'className' => 'Cake\Database\Connection',
-                    'database' => 'database',
-                    'driver' => 'Cake\Database\Driver\Mysql',
-                    'host' => 'localhost',
-                    'password' => '/?#][{}$%20@!',
-                    'port' => 3306,
-                    'scheme' => 'mysql',
-                    'username' => 'user',
-                    'log' => 1,
-                    'quoteIdentifiers' => 1,
-                ],
+        ];
+        yield 'complex password' => [
+            'mysql://user:/?#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1',
+            [
+                'className' => \Cake\Database\Connection::class,
+                'database' => 'database',
+                'driver' => \Cake\Database\Driver\Mysql::class,
+                'host' => 'localhost',
+                'password' => '/?#][{}$%20@!',
+                'port' => 3306,
+                'scheme' => 'mysql',
+                'username' => 'user',
+                'log' => 1,
+                'quoteIdentifiers' => 1,
             ],
         ];
     }
@@ -416,7 +412,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigWithCallable(): void
     {
         $connection = new FakeConnection();
-        $callable = function ($alias) use ($connection) {
+        $callable = function ($alias) use ($connection): \TestApp\Datasource\FakeConnection {
             $this->assertSame('test_variant', $alias);
 
             return $connection;

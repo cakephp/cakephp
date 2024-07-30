@@ -32,12 +32,9 @@ use LogicException;
  */
 class ConsoleOptionParserTest extends TestCase
 {
-    /**
-     * @var \Cake\Console\ConsoleIo
-     */
-    private $io;
+    private \Cake\Console\ConsoleIo $io;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
@@ -93,7 +90,7 @@ class ConsoleOptionParserTest extends TestCase
             ->removeOption('test')
             ->removeOption('help');
         $this->assertSame($parser, $result, 'Did not return $this from removeOption');
-        $this->assertEquals([], $result->options());
+        $this->assertSame([], $result->options());
     }
 
     /**
@@ -116,6 +113,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('count', []);
+
         $result = $parser->parse(['--count', '0'], $this->io);
         $this->assertEquals(['count' => '0', 'help' => false], $result[0], 'Zero parameter did not parse out');
     }
@@ -127,6 +125,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption(new ConsoleInputOption('test', 't'));
+
         $result = $parser->parse(['--test=value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
     }
@@ -388,7 +387,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $this->assertCount(1, $messages);
         $expected = "<question>What is your favorite?</question>\n> ";
-        $this->assertEquals($expected, $messages[0]);
+        $this->assertSame($expected, $messages[0]);
     }
 
     /**
@@ -442,7 +441,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $this->assertCount(1, $messages);
         $expected = "<question>What is your favorite?</question>\n> ";
-        $this->assertEquals($expected, $messages[0]);
+        $this->assertSame($expected, $messages[0]);
     }
 
     /**
@@ -465,8 +464,8 @@ class ConsoleOptionParserTest extends TestCase
 
         $this->assertCount(2, $messages);
         $expected = "<question>What is your favorite?</question> (red/green/blue) \n> ";
-        $this->assertEquals($expected, $messages[0]);
-        $this->assertEquals($expected, $messages[1]);
+        $this->assertSame($expected, $messages[0]);
+        $this->assertSame($expected, $messages[1]);
     }
 
     /**
@@ -509,7 +508,7 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['--he', 'other'], $this->io);
-        } catch (MissingOptionException $e) {
+        } catch (MissingOptionException $missingOptionException) {
             $this->assertStringContainsString(
                 "Unknown option `he`.\n" .
                 "Did you mean: `help`?\n" .
@@ -517,7 +516,7 @@ class ConsoleOptionParserTest extends TestCase
                 "Other valid choices:\n" .
                 "\n" .
                 '- help',
-                $e->getFullMessage()
+                $missingOptionException->getFullMessage()
             );
         }
     }
@@ -534,8 +533,8 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['-f'], $this->io);
-        } catch (MissingOptionException $e) {
-            $this->assertStringContainsString('Unknown short option `f`.', $e->getFullMessage());
+        } catch (MissingOptionException $missingOptionException) {
+            $this->assertStringContainsString('Unknown short option `f`.', $missingOptionException->getFullMessage());
         }
     }
 
@@ -590,8 +589,8 @@ class ConsoleOptionParserTest extends TestCase
             ->addArgument('second', ['help' => 'An argument', 'choices' => [1, 2]]);
         $args = $parser->arguments();
         $this->assertCount(2, $args);
-        $this->assertEquals('first', $args[0]->name());
-        $this->assertEquals('second', $args[1]->name());
+        $this->assertSame('first', $args[0]->name());
+        $this->assertSame('second', $args[1]->name());
     }
 
     /**
@@ -601,6 +600,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addArgument(new ConsoleInputArgument('test'));
+
         $result = $parser->arguments();
         $this->assertCount(1, $result);
         $this->assertSame('test', $result[0]->name());
@@ -622,7 +622,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame('name', $result[1]->name());
         $this->assertSame('bag', $result[2]->name());
         $this->assertSame([0, 1, 2], array_keys($result));
-        $this->assertEquals(
+        $this->assertSame(
             ['other', 'name', 'bag'],
             $parser->argumentNames()
         );
@@ -653,7 +653,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $expected = ['one', 'two'];
         $result = $parser->parse($expected, $this->io);
-        $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+        $this->assertSame($expected, $result[1], 'Arguments are not as expected');
 
         $parser->parse(['one', 'two', 'three'], $this->io);
     }
@@ -667,7 +667,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $expected = ['one', 'two', 0, 'after', 'zero'];
         $result = $parser->parse($expected, $this->io);
-        $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+        $this->assertSame($expected, $result[1], 'Arguments are not as expected');
     }
 
     /**
@@ -707,7 +707,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->parse(['mark', 'samurai', 'sword'], $this->io);
         $expected = ['mark', 'samurai', 'sword'];
-        $this->assertEquals($expected, $result[1], 'Got the correct value.');
+        $this->assertSame($expected, $result[1], 'Got the correct value.');
 
         $parser->parse(['jose', 'coder'], $this->io);
     }
@@ -733,7 +733,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test');
 
         $result = $parser->parse(['one', 'two', '--', '-h', '--help', '--test=value'], $this->io);
-        $this->assertEquals(['one', 'two', '-h', '--help', '--test=value'], $result[1]);
+        $this->assertSame(['one', 'two', '-h', '--help', '--test=value'], $result[1]);
     }
 
     public function testParseArgumentsOptionsDoubleDash(): void
@@ -743,11 +743,11 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->parse(['--test=value', '--', '--test'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0]);
-        $this->assertEquals(['--test'], $result[1]);
+        $this->assertSame(['--test'], $result[1]);
 
         $result = $parser->parse(['--', '--test'], $this->io);
         $this->assertEquals(['help' => false], $result[0]);
-        $this->assertEquals(['--test'], $result[1]);
+        $this->assertSame(['--test'], $result[1]);
     }
 
     /**
@@ -841,7 +841,7 @@ TEXT;
     public function testCreateFactory(): void
     {
         $parser = ConsoleOptionParser::create('factory', false);
-        $this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
+        $this->assertInstanceOf(\Cake\Console\ConsoleOptionParser::class, $parser);
         $this->assertSame('factory', $parser->getCommand());
     }
 

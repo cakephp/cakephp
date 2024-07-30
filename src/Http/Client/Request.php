@@ -67,7 +67,6 @@ class Request extends Message implements RequestInterface
      *
      * @phpstan-param array<non-empty-string, non-empty-string> $headers
      * @param array<string, string> $headers The headers to add.
-     * @return void
      */
     protected function addHeaders(array $headers): void
     {
@@ -87,7 +86,7 @@ class Request extends Message implements RequestInterface
      * @param array|string $content The body for the request.
      * @return $this
      */
-    protected function setContent(array|string $content)
+    protected function setContent(array|string $content): static
     {
         if (is_array($content)) {
             $formData = new FormData();

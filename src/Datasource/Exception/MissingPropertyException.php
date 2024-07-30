@@ -23,8 +23,5 @@ use Cake\Core\Exception\CakeException;
  */
 class MissingPropertyException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Property `%s` does not exist for the entity `%s`.';
 }

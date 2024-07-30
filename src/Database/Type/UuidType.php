@@ -29,7 +29,6 @@ class UuidType extends StringType
      *
      * @param mixed $value value to be converted to database equivalent
      * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     * @return string|null
      */
     public function toDatabase(mixed $value, Driver $driver): ?string
     {

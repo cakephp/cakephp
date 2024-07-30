@@ -16,7 +16,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 
     protected array $typeMap;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->typeMap = TypeFactory::getMap();
 
@@ -27,7 +27,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -69,7 +69,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
             ->expects($this->once())
             ->method('convertColumnDefinition')
             ->willReturnCallback(function (array $definition, Driver $driver) {
-                $this->assertEquals(
+                $this->assertSame(
                     [
                         'length',
                         'precision',

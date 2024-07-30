@@ -33,16 +33,16 @@ class UuidTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('uuid');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
@@ -96,7 +96,7 @@ class UuidTypeTest extends TestCase
         $one = $this->type->newId();
         $two = $this->type->newId();
 
-        $this->assertNotEquals($one, $two, 'Should be different values');
+        $this->assertNotSame($one, $two, 'Should be different values');
         $this->assertMatchesRegularExpression('/^[a-f0-9-]+$/', $one, 'Should quack like a uuid');
         $this->assertMatchesRegularExpression('/^[a-f0-9-]+$/', $two, 'Should quack like a uuid');
     }

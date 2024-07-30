@@ -65,6 +65,7 @@ class CspMiddleware implements MiddlewareInterface
         if (!class_exists(CSPBuilder::class)) {
             throw new CakeException('You must install paragonie/csp-builder to use CspMiddleware');
         }
+
         $this->setConfig($config);
 
         if (!$csp instanceof CSPBuilder) {
@@ -86,9 +87,11 @@ class CspMiddleware implements MiddlewareInterface
         if ($this->getConfig('scriptNonce')) {
             $request = $request->withAttribute('cspScriptNonce', $this->csp->nonce('script-src'));
         }
+
         if ($this->getconfig('styleNonce')) {
             $request = $request->withAttribute('cspStyleNonce', $this->csp->nonce('style-src'));
         }
+
         $response = $handler->handle($request);
 
         /** @var \Psr\Http\Message\ResponseInterface */

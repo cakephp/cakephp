@@ -65,7 +65,6 @@ function debug(mixed $var, ?bool $showHtml = null, bool $showFrom = true): mixed
  * - `start` - The stack frame to start generating a trace from. Defaults to 1
  *
  * @param array<string, mixed> $options Format for outputting stack trace
- * @return void
  */
 function stackTrace(array $options = []): void
 {
@@ -89,7 +88,6 @@ function stackTrace(array $options = []): void
  *
  * @param mixed $var Variable to show debug information for.
  * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
- * @return void
  * @link https://book.cakephp.org/5/en/development/debugging.html#basic-debugging
  */
 function dd(mixed $var, ?bool $showHtml = null): void

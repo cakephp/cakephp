@@ -52,33 +52,34 @@ class ContextFactory
      *
      * @param array $providers Array of provider callables. Each element should
      *   be of form `['type' => 'a-string', 'callable' => ..]`
-     * @return static
      */
     public static function createWithDefaults(array $providers = []): static
     {
         $providers = [
             [
                 'type' => 'orm',
-                'callable' => function ($request, $data) {
+                'callable' => function ($request, array $data) {
                     if ($data['entity'] instanceof EntityInterface) {
                         return new EntityContext($data);
                     }
+
                     if (isset($data['table'])) {
                         return new EntityContext($data);
                     }
+
                     if (is_iterable($data['entity'])) {
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($data);
-                        } else {
-                            return new NullContext($data);
                         }
+
+                        return new NullContext();
                     }
                 },
             ],
             [
                 'type' => 'form',
-                'callable' => function ($request, $data) {
+                'callable' => function ($request, array $data) {
                     if ($data['entity'] instanceof Form) {
                         return new FormContext($data);
                     }
@@ -94,9 +95,9 @@ class ContextFactory
             ],
             [
                 'type' => 'null',
-                'callable' => function ($request, $data) {
+                'callable' => function ($request, array $data) {
                     if ($data['entity'] === null) {
-                        return new NullContext($data);
+                        return new NullContext();
                     }
                 },
             ],
@@ -120,7 +121,7 @@ class ContextFactory
      *   when the form context is the correct type.
      * @return $this
      */
-    public function addProvider(string $type, callable $check)
+    public function addProvider(string $type, callable $check): static
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;

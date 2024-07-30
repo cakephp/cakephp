@@ -42,7 +42,8 @@ class RoutesCommand extends Command
         }
 
         $availableRoutes = Router::routes();
-        $output = $duplicateRoutesCounter = [];
+        $output = [];
+        $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
@@ -74,9 +75,7 @@ class RoutesCommand extends Command
         }
 
         if ($args->getOption('sort')) {
-            usort($output, function ($a, $b) {
-                return strcasecmp($a[0], $b[0]);
-            });
+            usort($output, fn($a, $b): int => strcasecmp((string) $a[0], (string) $b[0]));
         }
 
         array_unshift($output, $header);
@@ -124,9 +123,8 @@ class RoutesCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser
             ->setDescription('Get the list of routes connected in this application.')

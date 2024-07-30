@@ -18,25 +18,21 @@
 use Cake\Error\Debugger;
 use function Cake\Core\h;
 
-foreach ($exceptions as $level => $exc):
+foreach ($exceptions as $exc):
     $stackTrace = Debugger::formatTrace($exc->getTrace(), [
         'format' => 'array',
         'args' => true,
     ]);
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];
             $excerpt = Debugger::excerpt($stack['file'], $line, 4);
         endif;
 
-        if (isset($stack['file'])):
-            $file = $stack['file'];
-        else:
-            $file = '[internal function]';
-        endif;
+        $file = $stack['file'] ?? '[internal function]';
 
         if (isset($stack['function'])):
             if (!empty($stack['args'])):
@@ -55,7 +51,8 @@ foreach ($exceptions as $level => $exc):
                         <?= $this->Html->link(Debugger::trimPath($file), Debugger::editorUrl($file, $line)); ?>
                     <?php else: ?>
                         <?= h(Debugger::trimPath($file)); ?>
-                    <?php endif; ?>
+                    <?php endif;
+     ?>
                 </span>
                 <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>
             </div>
@@ -67,15 +64,17 @@ foreach ($exceptions as $level => $exc):
                     <td class="excerpt-number" data-number="<?= $lineno + $l ?>"></td>
                     <td class="excerpt-line"><?= $line ?></td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endforeach;
+     ?>
             </table>
 
             <div id="stack-args-<?= $i ?>" class="cake-debug" style="display: none;">
                 <h4>Arguments</h4>
                 <?php foreach ($params as $param): ?>
                     <div class="cake-debug"><?= $param ?></div>
-                <?php endforeach; ?>
+                <?php endforeach;
+     ?>
             </div>
         </div>
-    <?php endforeach; ?>
+<?php endforeach; ?>
 <?php endforeach; ?>

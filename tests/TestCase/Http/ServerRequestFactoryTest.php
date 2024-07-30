@@ -469,14 +469,14 @@ class ServerRequestFactoryTest extends TestCase
             'REQUEST_URI' => '/posts/index/add.add',
         ]);
         $this->assertSame('', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
+        $this->assertSame([], $request->getQueryParams());
 
         $request = ServerRequestFactory::fromGlobals([
             'PHP_SELF' => '/cake_dev/webroot/index.php',
             'REQUEST_URI' => '/cake_dev/posts/index/add.add',
         ]);
         $this->assertSame('/cake_dev', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
+        $this->assertSame([], $request->getQueryParams());
     }
 
     /**
@@ -489,14 +489,14 @@ class ServerRequestFactoryTest extends TestCase
             'REQUEST_URI' => '/posts/add/%E2%88%82%E2%88%82',
         ]);
         $this->assertSame('', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
+        $this->assertSame([], $request->getQueryParams());
 
         $request = ServerRequestFactory::fromGlobals([
             'PHP_SELF' => '/cake_dev/webroot/index.php',
             'REQUEST_URI' => '/cake_dev/posts/add/%E2%88%82%E2%88%82',
         ]);
         $this->assertSame('/cake_dev', $request->getAttribute('base'));
-        $this->assertEquals([], $request->getQueryParams());
+        $this->assertSame([], $request->getQueryParams());
     }
 
     /**
@@ -504,395 +504,393 @@ class ServerRequestFactoryTest extends TestCase
      *
      * @return array Environment array
      */
-    public static function environmentGenerator(): array
+    public static function environmentGenerator(): \Iterator
     {
-        return [
+        yield [
+            'IIS - No rewrite base path',
             [
-                'IIS - No rewrite base path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php',
-                        'URL' => '/index.php',
-                        'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php',
-                        'ORIG_PATH_INFO' => '/index.php',
-                        'PATH_INFO' => '',
-                        'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/index.php',
-                    ],
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'base' => '/index.php',
-                    'webroot' => '/webroot/',
-                    'url' => '',
+                'SERVER' => [
+                    'SCRIPT_NAME' => '/index.php',
+                    'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
+                    'QUERY_STRING' => '',
+                    'REQUEST_URI' => '/index.php',
+                    'URL' => '/index.php',
+                    'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\index.php',
+                    'ORIG_PATH_INFO' => '/index.php',
+                    'PATH_INFO' => '',
+                    'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\index.php',
+                    'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+                    'PHP_SELF' => '/index.php',
                 ],
             ],
             [
-                'IIS - No rewrite with path, no PHP_SELF',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php?',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'QUERY_STRING' => '/posts/add',
-                        'REQUEST_URI' => '/index.php?/posts/add',
-                        'PHP_SELF' => '',
-                        'URL' => '/index.php?/posts/add',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'argv' => ['/posts/add'],
-                        'argc' => 1,
-                    ],
+                'base' => '/index.php',
+                'webroot' => '/webroot/',
+                'url' => '',
+            ],
+        ];
+        yield [
+            'IIS - No rewrite with path, no PHP_SELF',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/index.php?',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/index.php?',
-                    'webroot' => '/webroot/',
+                'SERVER' => [
+                    'QUERY_STRING' => '/posts/add',
+                    'REQUEST_URI' => '/index.php?/posts/add',
+                    'PHP_SELF' => '',
+                    'URL' => '/index.php?/posts/add',
+                    'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+                    'argv' => ['/posts/add'],
+                    'argc' => 1,
                 ],
             ],
             [
-                'IIS - No rewrite sub dir 2',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/site/index.php',
-                        'URL' => '/site/index.php',
-                        'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/site/index.php',
-                        'argv' => [],
-                        'argc' => 0,
-                    ],
+                'url' => 'posts/add',
+                'base' => '/index.php?',
+                'webroot' => '/webroot/',
+            ],
+        ];
+        yield [
+            'IIS - No rewrite sub dir 2',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/site/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
+                'SERVER' => [
+                    'SCRIPT_NAME' => '/site/index.php',
+                    'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
+                    'QUERY_STRING' => '',
+                    'REQUEST_URI' => '/site/index.php',
+                    'URL' => '/site/index.php',
+                    'SCRIPT_FILENAME' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
+                    'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+                    'PHP_SELF' => '/site/index.php',
+                    'argv' => [],
+                    'argc' => 0,
                 ],
             ],
             [
-                'IIS - No rewrite sub dir 2 with path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
-                        'QUERY_STRING' => '/posts/add',
-                        'REQUEST_URI' => '/site/index.php/posts/add',
-                        'URL' => '/site/index.php/posts/add',
-                        'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
-                        'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
-                        'PHP_SELF' => '/site/index.php/posts/add',
-                        'argv' => ['/posts/add'],
-                        'argc' => 1,
-                    ],
+                'url' => '',
+                'base' => '/site/index.php',
+                'webroot' => '/site/webroot/',
+            ],
+        ];
+        yield [
+            'IIS - No rewrite sub dir 2 with path',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/site/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
+                'SERVER' => [
+                    'SCRIPT_NAME' => '/site/index.php',
+                    'PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot',
+                    'QUERY_STRING' => '/posts/add',
+                    'REQUEST_URI' => '/site/index.php/posts/add',
+                    'URL' => '/site/index.php/posts/add',
+                    'ORIG_PATH_TRANSLATED' => 'C:\\Inetpub\\wwwroot\\site\\index.php',
+                    'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
+                    'PHP_SELF' => '/site/index.php/posts/add',
+                    'argv' => ['/posts/add'],
+                    'argc' => 1,
                 ],
             ],
             [
-                'Apache - No rewrite, document root set to webroot, requesting path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php/posts/index',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/index.php/posts/index',
-                    ],
+                'url' => 'posts/add',
+                'base' => '/site/index.php',
+                'webroot' => '/site/webroot/',
+            ],
+        ];
+        yield [
+            'Apache - No rewrite, document root set to webroot, requesting path',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/index.php',
-                    'webroot' => '/',
+                'SERVER' => [
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+                    'QUERY_STRING' => '',
+                    'REQUEST_URI' => '/index.php/posts/index',
+                    'SCRIPT_NAME' => '/index.php',
+                    'PATH_INFO' => '/posts/index',
+                    'PHP_SELF' => '/index.php/posts/index',
                 ],
             ],
             [
-                'Apache - No rewrite, document root set to webroot, requesting root',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'QUERY_STRING' => '',
-                        'REQUEST_URI' => '/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PATH_INFO' => '',
-                        'PHP_SELF' => '/index.php',
-                    ],
+                'url' => 'posts/index',
+                'base' => '/index.php',
+                'webroot' => '/',
+            ],
+        ];
+        yield [
+            'Apache - No rewrite, document root set to webroot, requesting root',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '/index.php',
-                    'webroot' => '/',
+                'SERVER' => [
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+                    'QUERY_STRING' => '',
+                    'REQUEST_URI' => '/index.php',
+                    'SCRIPT_NAME' => '/index.php',
+                    'PATH_INFO' => '',
+                    'PHP_SELF' => '/index.php',
                 ],
             ],
             [
-                'Apache - No rewrite, document root set above top level cake dir, requesting path',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/posts/index',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/site/index.php/posts/index',
-                    ],
+                'url' => '',
+                'base' => '/index.php',
+                'webroot' => '/',
+            ],
+        ];
+        yield [
+            'Apache - No rewrite, document root set above top level cake dir, requesting path',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/site/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'REQUEST_URI' => '/site/index.php/posts/index',
+                    'SCRIPT_NAME' => '/site/index.php',
+                    'PATH_INFO' => '/posts/index',
+                    'PHP_SELF' => '/site/index.php/posts/index',
                 ],
             ],
             [
-                'Apache - No rewrite, document root set above top level cake dir, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PHP_SELF' => '/site/index.php/',
-                    ],
+                'url' => 'posts/index',
+                'base' => '/site/index.php',
+                'webroot' => '/site/webroot/',
+            ],
+        ];
+        yield [
+            'Apache - No rewrite, document root set above top level cake dir, request root, no PATH_INFO',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/site/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'REQUEST_URI' => '/site/index.php/',
+                    'SCRIPT_NAME' => '/site/index.php',
+                    'PHP_SELF' => '/site/index.php/',
                 ],
             ],
             [
-                'Apache - No rewrite, document root set above top level cake dir, request path, with GET',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => '/site/index.php',
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'GET' => ['a' => 'b', 'c' => 'd'],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/index.php/posts/index?a=b&c=d',
-                        'SCRIPT_NAME' => '/site/index.php',
-                        'PATH_INFO' => '/posts/index',
-                        'PHP_SELF' => '/site/index.php/posts/index',
-                        'QUERY_STRING' => 'a=b&c=d',
-                    ],
+                'url' => '',
+                'base' => '/site/index.php',
+                'webroot' => '/site/webroot/',
+            ],
+        ];
+        yield [
+            'Apache - No rewrite, document root set above top level cake dir, request path, with GET',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => '/site/index.php',
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'urlParams' => ['a' => 'b', 'c' => 'd'],
-                    'url' => 'posts/index',
-                    'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/',
+                'GET' => ['a' => 'b', 'c' => 'd'],
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'REQUEST_URI' => '/site/index.php/posts/index?a=b&c=d',
+                    'SCRIPT_NAME' => '/site/index.php',
+                    'PATH_INFO' => '/posts/index',
+                    'PHP_SELF' => '/site/index.php/posts/index',
+                    'QUERY_STRING' => 'a=b&c=d',
                 ],
             ],
             [
-                'Apache - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                    ],
+                'urlParams' => ['a' => 'b', 'c' => 'd'],
+                'url' => 'posts/index',
+                'base' => '/site/index.php',
+                'webroot' => '/site/webroot/',
+            ],
+        ];
+        yield [
+            'Apache - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '/site',
-                    'webroot' => '/site/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'REQUEST_URI' => '/site/',
+                    'SCRIPT_NAME' => '/site/webroot/index.php',
+                    'PHP_SELF' => '/site/webroot/index.php',
                 ],
             ],
             [
-                'Apache - w/rewrite, document root above top level cake dir, request root, no PATH_INFO/REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => null,
-                    ],
+                'url' => '',
+                'base' => '/site',
+                'webroot' => '/site/',
+            ],
+        ];
+        yield [
+            'Apache - w/rewrite, document root above top level cake dir, request root, no PATH_INFO/REQUEST_URI',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '/site',
-                    'webroot' => '/site/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'SCRIPT_NAME' => '/site/webroot/index.php',
+                    'PHP_SELF' => '/site/webroot/index.php',
+                    'PATH_INFO' => null,
+                    'REQUEST_URI' => null,
                 ],
             ],
             [
-                'Apache - w/rewrite, document root set to webroot, request root, no PATH_INFO/REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PHP_SELF' => '/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => null,
-                    ],
+                'url' => '',
+                'base' => '/site',
+                'webroot' => '/site/',
+            ],
+        ];
+        yield [
+            'Apache - w/rewrite, document root set to webroot, request root, no PATH_INFO/REQUEST_URI',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => '',
-                    'base' => '',
-                    'webroot' => '/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
+                    'SCRIPT_NAME' => '/index.php',
+                    'PHP_SELF' => '/index.php',
+                    'PATH_INFO' => null,
+                    'REQUEST_URI' => null,
                 ],
             ],
             [
-                'Apache - w/rewrite, document root set above top level cake dir, request root, absolute REQUEST_URI',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-                        'REQUEST_URI' => '/site/posts/index',
-                        'SCRIPT_NAME' => '/site/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                    ],
+                'url' => '',
+                'base' => '',
+                'webroot' => '/',
+            ],
+        ];
+        yield [
+            'Apache - w/rewrite, document root set above top level cake dir, request root, absolute REQUEST_URI',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/index',
-                    'base' => '/site',
-                    'webroot' => '/site/',
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
+                    'REQUEST_URI' => '/site/posts/index',
+                    'SCRIPT_NAME' => '/site/webroot/index.php',
+                    'PHP_SELF' => '/site/webroot/index.php',
                 ],
             ],
             [
-                'Nginx - w/rewrite, document root set to webroot, request root, no PATH_INFO',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'TestApp',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
-                        'SCRIPT_NAME' => '/index.php',
-                        'PHP_SELF' => '/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => '/posts/add',
-                    ],
+                'url' => 'posts/index',
+                'base' => '/site',
+                'webroot' => '/site/',
+            ],
+        ];
+        yield [
+            'Nginx - w/rewrite, document root set to webroot, request root, no PATH_INFO',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'TestApp',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '',
-                    'webroot' => '/',
-                    'urlParams' => [],
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
+                    'SCRIPT_NAME' => '/index.php',
+                    'PHP_SELF' => '/index.php',
+                    'PATH_INFO' => null,
+                    'REQUEST_URI' => '/posts/add',
                 ],
             ],
             [
-                'Nginx - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO, base parameter set',
-                [
-                    'App' => [
-                        'base' => false,
-                        'baseUrl' => false,
-                        'dir' => 'app',
-                        'webroot' => 'webroot',
-                    ],
-                    'SERVER' => [
-                        'SERVER_NAME' => 'localhost',
-                        'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
-                        'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
-                        'SCRIPT_NAME' => '/site/app/webroot/index.php',
-                        'PHP_SELF' => '/site/webroot/index.php',
-                        'PATH_INFO' => null,
-                        'REQUEST_URI' => '/site/posts/add',
-                    ],
+                'url' => 'posts/add',
+                'base' => '',
+                'webroot' => '/',
+                'urlParams' => [],
+            ],
+        ];
+        yield [
+            'Nginx - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO, base parameter set',
+            [
+                'App' => [
+                    'base' => false,
+                    'baseUrl' => false,
+                    'dir' => 'app',
+                    'webroot' => 'webroot',
                 ],
-                [
-                    'url' => 'posts/add',
-                    'base' => '/site',
-                    'webroot' => '/site/',
-                    'urlParams' => [],
+                'SERVER' => [
+                    'SERVER_NAME' => 'localhost',
+                    'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+                    'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+                    'SCRIPT_NAME' => '/site/app/webroot/index.php',
+                    'PHP_SELF' => '/site/webroot/index.php',
+                    'PATH_INFO' => null,
+                    'REQUEST_URI' => '/site/posts/add',
                 ],
+            ],
+            [
+                'url' => 'posts/add',
+                'base' => '/site',
+                'webroot' => '/site/',
+                'urlParams' => [],
             ],
         ];
     }
@@ -901,11 +899,8 @@ class ServerRequestFactoryTest extends TestCase
      * Test environment detection
      *
      * @dataProvider environmentGenerator
-     * @param string $name
-     * @param array $data
-     * @param array $expected
      */
-    public function testEnvironmentDetection($name, $data, $expected): void
+    public function testEnvironmentDetection(string $name, array $data, array $expected): void
     {
         if (isset($data['App'])) {
             Configure::write('App', $data['App']);
@@ -936,7 +931,7 @@ class ServerRequestFactoryTest extends TestCase
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
             'CAKEPHP_INPUT' => 'Article[]=title',
         ]);
-        $this->assertEquals($data, $request->getData());
+        $this->assertSame($data, $request->getData());
 
         $data = ['one' => 1, 'two' => 'three'];
         $request = ServerRequestFactory::fromGlobals([
@@ -944,7 +939,7 @@ class ServerRequestFactoryTest extends TestCase
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
             'CAKEPHP_INPUT' => 'one=1&two=three',
         ]);
-        $this->assertEquals($data, $request->getData());
+        $this->assertSame($data, $request->getData());
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'DELETE',
@@ -955,7 +950,7 @@ class ServerRequestFactoryTest extends TestCase
             'Article' => ['title' => 'Testing'],
             'action' => 'update',
         ];
-        $this->assertEquals($expected, $request->getData());
+        $this->assertSame($expected, $request->getData());
 
         $data = [
             'Article' => ['title'],
@@ -966,7 +961,7 @@ class ServerRequestFactoryTest extends TestCase
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
             'CAKEPHP_INPUT' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
         ]);
-        $this->assertEquals($data, $request->getData());
+        $this->assertSame($data, $request->getData());
     }
 
     /**
@@ -1396,6 +1391,6 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('GET', $request->getMethod());
         $this->assertSame('/team', $request->getRequestTarget());
         $expected = ['foo' => 'bar', 'REQUEST_METHOD' => 'GET'];
-        $this->assertEquals($expected, $request->getServerParams());
+        $this->assertSame($expected, $request->getServerParams());
     }
 }

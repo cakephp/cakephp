@@ -27,7 +27,7 @@ class ArrayContextTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -46,7 +46,7 @@ class ArrayContextTest extends TestCase
 
         $this->assertSame('My custom message', $context->getRequiredMessage('Comments.required'));
         $this->assertSame('This field cannot be left empty', $context->getRequiredMessage('Comments.tags'));
-        $this->assertSame(null, $context->getRequiredMessage('Comments.nope'));
+        $this->assertNull($context->getRequiredMessage('Comments.nope'));
     }
 
     /**
@@ -55,14 +55,14 @@ class ArrayContextTest extends TestCase
     public function testPrimaryKey(): void
     {
         $context = new ArrayContext([]);
-        $this->assertEquals([], $context->getPrimaryKey());
+        $this->assertSame([], $context->getPrimaryKey());
 
         $context = new ArrayContext([
             'schema' => [
                 '_constraints' => 'mistake',
             ],
         ]);
-        $this->assertEquals([], $context->getPrimaryKey());
+        $this->assertSame([], $context->getPrimaryKey());
 
         $data = [
             'schema' => [
@@ -74,7 +74,7 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($data);
 
         $expected = ['id'];
-        $this->assertEquals($expected, $context->getPrimaryKey());
+        $this->assertSame($expected, $context->getPrimaryKey());
     }
 
     /**
@@ -269,11 +269,11 @@ class ArrayContextTest extends TestCase
                 ],
             ],
         ]);
-        $this->assertEquals([], $context->attributes('Comments.id'));
-        $this->assertEquals(['length' => 25], $context->attributes('Comments.0.tags'));
-        $this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
-        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
-        $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
+        $this->assertSame([], $context->attributes('Comments.id'));
+        $this->assertSame(['length' => 25], $context->attributes('Comments.0.tags'));
+        $this->assertSame(['length' => 255], $context->attributes('Comments.comment'));
+        $this->assertSame(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
+        $this->assertSame(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
     }
 
     /**
@@ -282,7 +282,7 @@ class ArrayContextTest extends TestCase
     public function testError(): void
     {
         $context = new ArrayContext([]);
-        $this->assertEquals([], $context->error('Comments.empty'));
+        $this->assertSame([], $context->error('Comments.empty'));
 
         $context = new ArrayContext([
             'errors' => [
@@ -293,10 +293,10 @@ class ArrayContextTest extends TestCase
                 ],
             ],
         ]);
-        $this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
-        $this->assertEquals(['A valid userid is required'], $context->error('Comments.user_id'));
-        $this->assertEquals([], $context->error('Comments.empty'));
-        $this->assertEquals([], $context->error('Comments.not_there'));
+        $this->assertSame(['Comment is required'], $context->error('Comments.comment'));
+        $this->assertSame(['A valid userid is required'], $context->error('Comments.user_id'));
+        $this->assertSame([], $context->error('Comments.empty'));
+        $this->assertSame([], $context->error('Comments.not_there'));
     }
 
     /**

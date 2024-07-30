@@ -27,17 +27,14 @@ class NoMailSent extends MailConstraintBase
      * Checks constraint
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
-        return count($this->getMessages()) === 0;
+        return $this->getMessages() === [];
     }
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -48,7 +45,6 @@ class NoMailSent extends MailConstraintBase
      * Overwrites the descriptions so we can remove the automatic "expected" message
      *
      * @param mixed $other Value
-     * @return string
      */
     protected function failureDescription(mixed $other): string
     {

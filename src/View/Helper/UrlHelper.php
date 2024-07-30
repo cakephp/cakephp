@@ -40,7 +40,6 @@ class UrlHelper extends Helper
     /**
      * Asset URL engine class name
      *
-     * @var string
      * @psalm-var class-string<\Cake\Routing\Asset>
      */
     protected string $_assetUrlClassName;
@@ -49,7 +48,6 @@ class UrlHelper extends Helper
      * Check proper configuration
      *
      * @param array<string, mixed> $config The configuration settings provided to this helper.
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -90,7 +88,7 @@ class UrlHelper extends Helper
 
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
-            $url = (string)h($url);
+            return (string)h($url);
         }
 
         return $url;

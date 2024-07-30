@@ -33,30 +33,23 @@ use Traversable;
 class QueryCacher
 {
     /**
-     * The key or function to generate a key.
-     *
-     * @var \Closure|string
-     */
-    protected Closure|string $_key;
-
-    /**
-     * Config for cache engine.
-     *
-     * @var \Psr\SimpleCache\CacheInterface|string
-     */
-    protected CacheInterface|string $_config;
-
-    /**
      * Constructor.
      *
-     * @param \Closure|string $key The key or function to generate a key.
-     * @param \Psr\SimpleCache\CacheInterface|string $config The cache config name or cache engine instance.
+     * @param \Closure|string $_key The key or function to generate a key.
+     * @param \Psr\SimpleCache\CacheInterface|string $_config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
-    public function __construct(Closure|string $key, CacheInterface|string $config)
+    public function __construct(
+        /**
+         * The key or function to generate a key.
+         */
+        protected Closure|string $_key,
+        /**
+         * Config for cache engine.
+         */
+        protected CacheInterface|string $_config
+    )
     {
-        $this->_key = $key;
-        $this->_config = $config;
     }
 
     /**
@@ -96,7 +89,6 @@ class QueryCacher
      * Get/generate the cache key.
      *
      * @param object $query The query to generate a key for.
-     * @return string
      * @throws \Cake\Core\Exception\CakeException
      */
     protected function _resolveKey(object $query): string
@@ -104,6 +96,7 @@ class QueryCacher
         if (is_string($this->_key)) {
             return $this->_key;
         }
+
         $func = $this->_key;
         $key = $func($query);
         if (!is_string($key)) {
@@ -116,8 +109,6 @@ class QueryCacher
 
     /**
      * Get the cache engine.
-     *
-     * @return \Psr\SimpleCache\CacheInterface
      */
     protected function _resolveCacher(): CacheInterface
     {

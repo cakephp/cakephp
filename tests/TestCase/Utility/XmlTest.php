@@ -37,7 +37,7 @@ class XmlTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.encoding', 'UTF-8');
@@ -49,8 +49,8 @@ class XmlTest extends TestCase
             $value = 'invalid-xml-input<<';
             Xml::build($value);
             $this->fail('This line should not be executed because of exception above.');
-        } catch (XmlException $exception) {
-            $cause = $exception->getPrevious();
+        } catch (XmlException $xmlException) {
+            $cause = $xmlException->getPrevious();
             $this->assertNotNull($cause);
             $this->assertInstanceOf(Exception::class, $cause);
         }
@@ -64,7 +64,7 @@ class XmlTest extends TestCase
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
         $this->assertInstanceOf(SimpleXMLElement::class, $obj);
-        $this->assertSame('tag', (string)$obj->getName());
+        $this->assertSame('tag', $obj->getName());
         $this->assertSame('value', (string)$obj);
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?><tag>value</tag>';
@@ -78,7 +78,7 @@ class XmlTest extends TestCase
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => true]);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
 
         $this->assertEquals(
             Xml::build($xml, ['readFile' => true]),
@@ -169,12 +169,10 @@ class XmlTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider(): array
+    public static function invalidDataProvider(): \Iterator
     {
-        return [
-            [''],
-            ['http://localhost/notthere.xml'],
-        ];
+        yield [''];
+        yield ['http://localhost/notthere.xml'];
     }
 
     /**
@@ -183,7 +181,7 @@ class XmlTest extends TestCase
      * @dataProvider invalidDataProvider
      * @param mixed $value
      */
-    public function testBuildInvalidData($value): void
+    public function testBuildInvalidData(string $value): void
     {
         $this->expectException(CakeException::class);
         Xml::build($value);
@@ -207,7 +205,7 @@ class XmlTest extends TestCase
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }
@@ -229,15 +227,15 @@ close to 5 million globally.
 ";
 
         $xml = Xml::loadHtml($html);
-        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertTrue(property_exists($xml->body, 'p') && $xml->body->p !== null, 'Paragraph present');
         $this->assertSame($paragraph, (string)$xml->body->p);
-        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertTrue(property_exists($xml->body, 'blockquote') && $xml->body->blockquote !== null, 'Blockquote present');
         $this->assertSame($blockquote, (string)$xml->body->blockquote);
 
         $xml = Xml::loadHtml($html, ['parseHuge' => true]);
-        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertTrue(property_exists($xml->body, 'p') && $xml->body->p !== null, 'Paragraph present');
         $this->assertSame($paragraph, (string)$xml->body->p);
-        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertTrue(property_exists($xml->body, 'blockquote') && $xml->body->blockquote !== null, 'Blockquote present');
         $this->assertSame($blockquote, (string)$xml->body->blockquote);
 
         $xml = Xml::loadHtml($html);
@@ -293,7 +291,7 @@ close to 5 million globally.
         $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -306,7 +304,7 @@ XML;
         $obj = Xml::fromArray($xml);
         $this->assertInstanceOf(SimpleXMLElement::class, $obj);
         $this->assertSame('tags', $obj->getName());
-        $this->assertSame(2, count($obj));
+        $this->assertCount(2, $obj);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -341,7 +339,7 @@ XML;
             ],
         ];
         $obj = Xml::fromArray($xml, ['format' => 'tags']);
-        $this->assertSame(6, count($obj));
+        $this->assertCount(6, $obj);
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
         $this->assertSame((string)$obj->float, '10.2');
@@ -563,40 +561,38 @@ XML;
      *
      * @return array
      */
-    public static function invalidArrayDataProvider(): array
+    public static function invalidArrayDataProvider(): \Iterator
     {
-        return [
-            [[]],
-            [['numeric key as root']],
-            [['item1' => '', 'item2' => '']],
-            [['items' => ['item1', 'item2']]],
-            [[
-                'tags' => [
-                    'tag' => [
+        yield [[]];
+        yield [['numeric key as root']];
+        yield [['item1' => '', 'item2' => '']];
+        yield [['items' => ['item1', 'item2']]];
+        yield [[
+            'tags' => [
+                'tag' => [
+                    [
                         [
-                            [
-                                'string',
-                            ],
+                            'string',
                         ],
                     ],
                 ],
-            ]],
-            [[
-                'tags' => [
-                    '@tag' => [
-                        [
-                            '@id' => '1',
-                            'name' => 'defect',
-                        ],
-                        [
-                            '@id' => '2',
-                            'name' => 'enhancement',
-                        ],
+            ],
+        ]];
+        yield [[
+            'tags' => [
+                '@tag' => [
+                    [
+                        '@id' => '1',
+                        'name' => 'defect',
+                    ],
+                    [
+                        '@id' => '2',
+                        'name' => 'enhancement',
                     ],
                 ],
-            ]],
-            [new DateTime()],
-        ];
+            ],
+        ]];
+        yield [new DateTime()];
     }
 
     /**
@@ -605,7 +601,7 @@ XML;
      * @dataProvider invalidArrayDataProvider
      * @param mixed $value
      */
-    public function testFromArrayFail($value): void
+    public function testFromArrayFail(\DateTime|array $value): void
     {
         $this->expectException(Exception::class);
         Xml::fromArray($value);
@@ -823,7 +819,7 @@ XML;
         $expected = [
             'title' => 'Alertpay automated sales via IPN',
             'link' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
-            'description' => 'I\'m going to show you how I implemented a payment module via the Alertpay payment processor.',
+            'description' => "I'm going to show you how I implemented a payment module via the Alertpay payment processor.",
             'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
             'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
         ];
@@ -1046,7 +1042,7 @@ XML;
                 'tag' => 'Tag without ns',
             ],
         ];
-        $this->assertEquals($expected, Xml::toArray($xmlResponse));
+        $this->assertSame($expected, Xml::toArray($xmlResponse));
 
         $xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1" /><tag><id>1</id></tag></root>');
         $expected = [
@@ -1059,7 +1055,7 @@ XML;
                 ],
             ],
         ];
-        $this->assertEquals($expected, Xml::toArray($xmlResponse));
+        $this->assertSame($expected, Xml::toArray($xmlResponse));
 
         $xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:attr>1</ns:attr></root>');
         $expected = [
@@ -1172,7 +1168,7 @@ XML;
         $file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
         $xml = <<<XML
 <!DOCTYPE cakephp [
-  <!ENTITY payload SYSTEM "file://$file" >]>
+  <!ENTITY payload SYSTEM "file://{$file}" >]>
 <request>
   <xxe>&payload;</xxe>
 </request>
@@ -1203,7 +1199,6 @@ XML;
      * Needed function for testClassnameInValueRegressionTest.
      *
      * @ignore
-     * @return array
      */
     public function toArray(): array
     {

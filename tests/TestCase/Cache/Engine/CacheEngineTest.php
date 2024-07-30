@@ -9,14 +9,12 @@ use TestApp\Cache\Engine\TestAppCacheEngine;
 
 class CacheEngineTest extends TestCase
 {
-    public static function durationProvider(): array
+    public static function durationProvider(): \Iterator
     {
-        return [
-            [null, 10],
-            [2, 2],
-            [new DateInterval('PT1S'), 1],
-            [new DateInterval('P1D'), 86400],
-        ];
+        yield [null, 10];
+        yield [2, 2];
+        yield [new DateInterval('PT1S'), 1];
+        yield [new DateInterval('P1D'), 86400];
     }
 
     /**
@@ -24,7 +22,7 @@ class CacheEngineTest extends TestCase
      *
      * @dataProvider durationProvider
      */
-    public function testDuration($ttl, $expected): void
+    public function testDuration(int|\DateInterval|null $ttl, int $expected): void
     {
         $engine = new TestAppCacheEngine();
         $engine->setConfig(['duration' => 10]);

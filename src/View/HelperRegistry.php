@@ -37,21 +37,16 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * View object to use when making helpers.
-     *
-     * @var \Cake\View\View
-     */
-    protected View $_View;
-
-    /**
      * Constructor
      *
-     * @param \Cake\View\View $view View object.
+     * @param \Cake\View\View $_View View object.
      */
-    public function __construct(View $view)
+    public function __construct(/**
+     * View object to use when making helpers.
+     */
+    protected View $_View)
     {
-        $this->_View = $view;
-        $this->setEventManager($view->getEventManager());
+        $this->setEventManager($this->_View->getEventManager());
     }
 
     /**
@@ -72,7 +67,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 
         try {
             $this->load($helper);
-        } catch (MissingHelperException $exception) {
+        } catch (MissingHelperException $missingHelperException) {
             $plugin = $this->_View->getPlugin();
             if ($plugin) {
                 $this->load($helper, ['className' => $plugin . '.' . $helper]);
@@ -81,8 +76,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             }
         }
 
-        if (!empty($exception)) {
-            throw $exception;
+        if (!empty($missingHelperException)) {
+            throw $missingHelperException;
         }
 
         return true;
@@ -92,7 +87,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return \Cake\View\Helper|null
      */
     public function __get(string $name): ?Helper
     {
@@ -126,7 +120,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the helper is missing in.
-     * @return void
      * @throws \Cake\View\Exception\MissingHelperException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void

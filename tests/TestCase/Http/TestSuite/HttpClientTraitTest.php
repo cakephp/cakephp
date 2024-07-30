@@ -29,23 +29,21 @@ class HttpClientTraitTest extends TestCase
      *
      * @return array<array>
      */
-    public static function methodProvider(): array
+    public static function methodProvider(): \Iterator
     {
-        return [
-            ['Get'],
-            ['Post'],
-            ['Put'],
-            ['Patch'],
-            ['Delete'],
-        ];
+        yield ['Get'];
+        yield ['Post'];
+        yield ['Put'];
+        yield ['Patch'];
+        yield ['Delete'];
     }
 
     /**
      * @dataProvider methodProvider
      */
-    public function testRequestMethods(string $httpMethod)
+    public function testRequestMethods(string $httpMethod): void
     {
-        $traitMethod = "mockClient{$httpMethod}";
+        $traitMethod = 'mockClient' . $httpMethod;
 
         $response = $this->newClientResponse(200, ['Content-Type: application/json'], '{"ok":true}');
         $this->{$traitMethod}('http://example.com', $response);

@@ -85,15 +85,11 @@ class ExceptionTrap
      *
      * This is best effort as we can't know if/when another
      * exception handler is registered.
-     *
-     * @var \Cake\Error\ExceptionTrap|null
      */
     protected static ?ExceptionTrap $registeredTrap = null;
 
     /**
      * Track if this trap was removed from the global handler.
-     *
-     * @var bool
      */
     protected bool $disabled = false;
 
@@ -112,7 +108,6 @@ class ExceptionTrap
      *
      * @param \Throwable $exception Exception to render
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The request if possible.
-     * @return \Cake\Error\ExceptionRendererInterface
      */
     public function renderer(Throwable $exception, ?ServerRequestInterface $request = null): ExceptionRendererInterface
     {
@@ -124,7 +119,7 @@ class ExceptionTrap
         if (is_string($class)) {
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
-                    "Cannot use `{$class}` as an `exceptionRenderer`. " .
+                    sprintf('Cannot use `%s` as an `exceptionRenderer`. ', $class) .
                     'It must be an instance of `Cake\Error\ExceptionRendererInterface`.'
                 );
             }
@@ -149,8 +144,6 @@ class ExceptionTrap
 
     /**
      * Get an instance of the logger.
-     *
-     * @return \Cake\Error\ErrorLoggerInterface
      */
     public function logger(): ErrorLoggerInterface
     {
@@ -165,8 +158,6 @@ class ExceptionTrap
      *
      * This will replace the existing exception handler, and the
      * previous exception handler will be discarded.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -182,8 +173,6 @@ class ExceptionTrap
      *
      * If this instance is not currently the registered singleton
      * nothing happens.
-     *
-     * @return void
      */
     public function unregister(): void
     {
@@ -214,7 +203,6 @@ class ExceptionTrap
      * environment appropriate way.
      *
      * @param \Throwable $exception Exception instance.
-     * @return void
      * @throws \Exception When renderer class not found
      * @see https://secure.php.net/manual/en/function.set-exception-handler.php
      */
@@ -223,6 +211,7 @@ class ExceptionTrap
         if ($this->disabled) {
             return;
         }
+
         $request = Router::getRequest();
 
         $this->logException($exception, $request);
@@ -232,16 +221,18 @@ class ExceptionTrap
             if ($event->isStopped()) {
                 return;
             }
+
             $exception = $event->getData('exception');
             assert($exception instanceof Throwable);
 
             $renderer = $this->renderer($exception, $request);
             $renderer->write($event->getResult() ?: $renderer->render());
-        } catch (Throwable $exception) {
-            $this->logInternalError($exception);
+        } catch (Throwable $throwable) {
+            $this->logInternalError($throwable);
         }
+
         // Use this constant as a proxy for cakephp tests.
-        if (PHP_SAPI == 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
+        if (PHP_SAPI === 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
             exit(1);
         }
     }
@@ -250,22 +241,23 @@ class ExceptionTrap
      * Shutdown handler
      *
      * Convert fatal errors into exceptions that we can render.
-     *
-     * @return void
      */
     public function handleShutdown(): void
     {
         if ($this->disabled) {
             return;
         }
+
         $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
         if ($megabytes > 0) {
             $this->increaseMemoryLimit($megabytes * 1024);
         }
+
         $error = error_get_last();
         if (!is_array($error)) {
             return;
         }
+
         $fatals = [
             E_USER_ERROR,
             E_ERROR,
@@ -274,6 +266,7 @@ class ExceptionTrap
         if (!in_array($error['type'], $fatals, true)) {
             return;
         }
+
         $this->handleFatalError(
             $error['type'],
             $error['message'],
@@ -287,7 +280,6 @@ class ExceptionTrap
      * in kilobytes
      *
      * @param int $additionalKb Number in kilobytes
-     * @return void
      */
     public function increaseMemoryLimit(int $additionalKb): void
     {
@@ -295,6 +287,7 @@ class ExceptionTrap
         if ($limit === false || $limit === '' || $limit === '-1') {
             return;
         }
+
         $limit = trim($limit);
         $units = strtoupper(substr($limit, -1));
         $current = (int)substr($limit, 0, -1);
@@ -302,6 +295,7 @@ class ExceptionTrap
             $current *= 1024;
             $units = 'K';
         }
+
         if ($units === 'G') {
             $current = $current * 1024 * 1024;
             $units = 'K';
@@ -319,7 +313,6 @@ class ExceptionTrap
      * @param string $description Error description
      * @param string $file File on which error occurred
      * @param int $line Line that triggered the error
-     * @return void
      */
     public function handleFatalError(int $code, string $description, string $file, int $line): void
     {
@@ -337,7 +330,6 @@ class ExceptionTrap
      *
      * @param \Throwable $exception The exception to log
      * @param \Psr\Http\Message\ServerRequestInterface|null $request The optional request
-     * @return void
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): void
     {
@@ -350,6 +342,7 @@ class ExceptionTrap
                 }
             }
         }
+
         if ($shouldLog) {
             $this->logger()->logException($exception, $request, $this->_config['trace']);
         }
@@ -363,7 +356,6 @@ class ExceptionTrap
      * and hopefully render an error page.
      *
      * @param \Throwable $exception Exception to log
-     * @return void
      */
     public function logInternalError(Throwable $exception): void
     {

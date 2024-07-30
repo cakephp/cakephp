@@ -42,29 +42,21 @@ class Session
 {
     /**
      * The Session handler instance used as an engine for persisting the session data.
-     *
-     * @var \SessionHandlerInterface|null
      */
     protected ?SessionHandlerInterface $_engine = null;
 
     /**
      * Indicates whether the sessions has already started
-     *
-     * @var bool
      */
     protected bool $_started = false;
 
     /**
      * The time in seconds the session will be valid for
-     *
-     * @var int
      */
     protected int $_lifetime;
 
     /**
      * Whether this session is running under a CLI environment
-     *
-     * @var bool
      */
     protected bool $_isCLI = false;
 
@@ -100,7 +92,6 @@ class Session
      *   minutes the session will be regenerated.
      *
      * @param array $sessionConfig Session config.
-     * @return static
      * @see \Cake\Http\Session::__construct()
      */
     public static function create(array $sessionConfig = []): static
@@ -225,6 +216,7 @@ class Session
         if (isset($config['timeout'])) {
             $lifetime = (int)$config['timeout'] * 60;
         }
+
         if ($lifetime !== 0) {
             $config['ini']['session.gc_maxlifetime'] = $lifetime;
         }
@@ -265,7 +257,6 @@ class Session
      *
      * @param \SessionHandlerInterface|string|null $class The session handler to use
      * @param array<string, mixed> $options the options to pass to the SessionHandler constructor
-     * @return \SessionHandlerInterface|null
      * @throws \InvalidArgumentException
      */
     public function engine(
@@ -275,6 +266,7 @@ class Session
         if ($class === null) {
             return $this->_engine;
         }
+
         if ($class instanceof SessionHandlerInterface) {
             return $this->setEngine($class);
         }
@@ -294,7 +286,6 @@ class Session
      * Set the engine property and update the session handler in PHP.
      *
      * @param \SessionHandlerInterface $handler The handler to set
-     * @return \SessionHandlerInterface
      */
     protected function setEngine(SessionHandlerInterface $handler): SessionHandlerInterface
     {
@@ -316,7 +307,6 @@ class Session
      * ```
      *
      * @param array<string, mixed> $options Ini options to set.
-     * @return void
      * @throws \Cake\Core\Exception\CakeException if any directive could not be set
      */
     public function options(array $options): void
@@ -357,7 +347,8 @@ class Session
             throw new CakeException('Session was already started');
         }
 
-        $filename = $line = null;
+        $filename = null;
+        $line = null;
         if (ini_get('session.use_cookies') && headers_sent($filename, $line)) {
             $this->headerSentInfo = ['filename' => $filename, 'line' => $line];
 
@@ -491,6 +482,7 @@ class Session
         if (!$name) {
             return null;
         }
+
         $value = $this->read($name);
         if ($value !== null) {
             /** @psalm-suppress InvalidScalarArgument */
@@ -505,7 +497,6 @@ class Session
      *
      * @param array|string $name Name of variable
      * @param mixed $value Value to write
-     * @return void
      */
     public function write(array|string $name, mixed $value = null): void
     {
@@ -562,7 +553,6 @@ class Session
      * Removes a variable from session.
      *
      * @param string $name Session variable to remove
-     * @return void
      */
     public function delete(string $name): void
     {
@@ -577,7 +567,6 @@ class Session
      *
      * @param array $old Set of old variables => values
      * @param array $new New set of variable => value
-     * @return void
      */
     protected function _overwrite(array &$old, array $new): void
     {
@@ -594,8 +583,6 @@ class Session
 
     /**
      * Helper method to destroy invalid sessions.
-     *
-     * @return void
      */
     public function destroy(): void
     {
@@ -617,7 +604,6 @@ class Session
      * Optionally it also clears the session id and renews the session.
      *
      * @param bool $renew If session should be renewed, as well. Defaults to false.
-     * @return void
      */
     public function clear(bool $renew = false): void
     {
@@ -629,8 +615,6 @@ class Session
 
     /**
      * Returns whether a session exists
-     *
-     * @return bool
      */
     protected function _hasSession(): bool
     {
@@ -642,8 +626,6 @@ class Session
 
     /**
      * Restarts this session.
-     *
-     * @return void
      */
     public function renew(): void
     {
@@ -656,11 +638,7 @@ class Session
         setcookie(
             (string)session_name(),
             '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
+            ['expires' => time() - 42000, 'path' => $params['path'], 'domain' => $params['domain'], 'secure' => $params['secure'], 'httponly' => $params['httponly']]
         );
 
         if (session_id() !== '') {
@@ -671,8 +649,6 @@ class Session
     /**
      * Returns true if the session is no longer valid because the last time it was
      * accessed was after the configured timeout.
-     *
-     * @return bool
      */
     protected function _timedOut(): bool
     {

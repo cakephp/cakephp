@@ -64,8 +64,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * Contains the compiled string with all group
      * prefixes to be prepended to every key in this cache engine
-     *
-     * @var string
      */
     protected string $_groupPrefix = '';
 
@@ -86,8 +84,9 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             sort($this->_config['groups']);
             $this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
         }
+
         if (!is_numeric($this->_config['duration'])) {
-            $this->_config['duration'] = strtotime($this->_config['duration']) - time();
+            $this->_config['duration'] = strtotime((string) $this->_config['duration']) - time();
         }
 
         return true;
@@ -97,12 +96,11 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * Ensure the validity of the given cache key.
      *
      * @param mixed $key Key to check.
-     * @return void
      * @throws \Cake\Cache\Exception\InvalidArgumentException When the key is not valid.
      */
     protected function ensureValidKey(mixed $key): void
     {
-        if (!is_string($key) || strlen($key) === 0) {
+        if (!is_string($key) || $key === '') {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');
         }
     }
@@ -112,7 +110,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param iterable $iterable The iterable to check.
      * @param string $check Whether to check keys or values.
-     * @return void
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     protected function ensureValidType(iterable $iterable, string $check = self::CHECK_VALUE): void
@@ -167,6 +164,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             $restore = $this->getConfig('duration');
             $this->setConfig('duration', $ttl);
         }
+
         try {
             foreach ($values as $key => $value) {
                 $success = $this->set($key, $value);
@@ -218,7 +216,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * another script can remove it making the state of your app out of date.
      *
      * @param string $key The cache item key.
-     * @return bool
      * @throws \Cake\Cache\Exception\InvalidArgumentException If the $key string is not a legal value.
      */
     public function has(string $key): bool
@@ -309,7 +306,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * the same result.
      *
      * @param string $group name of the group to be cleared
-     * @return bool
      */
     abstract public function clearGroup(string $group): bool;
 
@@ -343,6 +339,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
         if ($this->_groupPrefix) {
             $prefix = md5(implode('_', $this->groups()));
         }
+
         $key = preg_replace('/[\s]+/', '_', $key);
 
         return $this->_config['prefix'] . $prefix . $key;
@@ -353,7 +350,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * if option warnOnWriteFailures is set to true.
      *
      * @param string $message The warning message.
-     * @return void
      */
     protected function warning(string $message): void
     {
@@ -369,13 +365,13 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param \DateInterval|int|null $ttl The TTL value of this item. If null is sent, the
      *   driver's default duration will be used.
-     * @return int
      */
     protected function duration(DateInterval|int|null $ttl): int
     {
         if ($ttl === null) {
             return $this->_config['duration'];
         }
+
         if (is_int($ttl)) {
             return $ttl;
         }

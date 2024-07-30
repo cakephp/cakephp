@@ -64,16 +64,7 @@ class Component implements EventListenerInterface
     use LogTrait;
 
     /**
-     * Component registry class used to lazy load components.
-     *
-     * @var \Cake\Controller\ComponentRegistry
-     */
-    protected ComponentRegistry $_registry;
-
-    /**
      * Other Components this component uses.
-     *
-     * @var array
      */
     protected array $components = [];
 
@@ -96,19 +87,21 @@ class Component implements EventListenerInterface
     /**
      * Constructor
      *
-     * @param \Cake\Controller\ComponentRegistry $registry A component registry
+     * @param \Cake\Controller\ComponentRegistry $_registry A component registry
      *  this component can use to lazy load its components.
      * @param array<string, mixed> $config Array of configuration settings.
      */
-    public function __construct(ComponentRegistry $registry, array $config = [])
+    public function __construct(/**
+     * Component registry class used to lazy load components.
+     */
+    protected ComponentRegistry $_registry, array $config = [])
     {
-        $this->_registry = $registry;
-
         $this->setConfig($config);
 
         if ($this->components) {
-            $this->components = $registry->normalizeArray($this->components);
+            $this->components = $this->_registry->normalizeArray($this->components);
         }
+
         $this->initialize($config);
     }
 
@@ -129,7 +122,6 @@ class Component implements EventListenerInterface
      * the constructor and call parent.
      *
      * @param array<string, mixed> $config The configuration settings provided to this component.
-     * @return void
      */
     public function initialize(array $config): void
     {

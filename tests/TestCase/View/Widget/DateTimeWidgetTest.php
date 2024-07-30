@@ -42,13 +42,14 @@ class DateTimeWidgetTest extends TestCase
      */
     protected $DateTime;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
         ];
         $this->templates = new StringTemplate($templates);
+
         $this->context = new NullContext([]);
         $this->DateTime = new DateTimeWidget($this->templates);
     }
@@ -58,16 +59,13 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function selectedValuesProvider(): array
+    public static function selectedValuesProvider(): \Iterator
     {
         $date = new DateTime('2014-01-20 12:30:45');
-
-        return [
-            'DateTime' => [$date],
-            'string' => [$date->format('Y-m-d H:i:s')],
-            'int string' => [$date->format('U')],
-            'int' => [$date->getTimestamp()],
-        ];
+        yield 'DateTime' => [$date];
+        yield 'string' => [$date->format('Y-m-d H:i:s')];
+        yield 'int string' => [$date->format('U')];
+        yield 'int' => [$date->getTimestamp()];
     }
 
     /**
@@ -76,7 +74,7 @@ class DateTimeWidgetTest extends TestCase
      * @dataProvider selectedValuesProvider
      * @param mixed $selected
      */
-    public function testRenderValid($selected): void
+    public function testRenderValid(\DateTime|string|int $selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [
@@ -209,6 +207,7 @@ class DateTimeWidgetTest extends TestCase
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}><span>{{help}}</span>',
         ];
         $this->templates->add($templates);
+
         $result = $this->DateTime->render([
             'name' => 'date',
             'templateVars' => ['help' => 'some help'],
@@ -239,6 +238,6 @@ class DateTimeWidgetTest extends TestCase
         $expected = [
             'date',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

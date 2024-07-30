@@ -3,5 +3,5 @@
  * Widgets list for testing.
  */
 return [
-    'text' => ['Cake\View\Widget\LabelWidget'],
+    'text' => [\Cake\View\Widget\LabelWidget::class],
 ];

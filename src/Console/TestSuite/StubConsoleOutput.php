@@ -45,7 +45,6 @@ class StubConsoleOutput extends ConsoleOutput
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int
      */
     public function write(array|string $message, int $newlines = 1): int
     {
@@ -74,8 +73,6 @@ class StubConsoleOutput extends ConsoleOutput
 
     /**
      * Get the output as a string
-     *
-     * @return string
      */
     public function output(): string
     {
@@ -85,7 +82,7 @@ class StubConsoleOutput extends ConsoleOutput
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\StubConsoleOutput',
+    \Cake\Console\TestSuite\StubConsoleOutput::class,
     'Cake\TestSuite\Stub\ConsoleOutput'
 );
 // phpcs:enable

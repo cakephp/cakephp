@@ -87,15 +87,11 @@ class Sqlserver extends Driver
 
     /**
      * String used to start a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_startQuote = '[';
 
     /**
      * String used to end a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_endQuote = ']';
 
@@ -108,13 +104,13 @@ class Sqlserver extends Driver
      * information see: https://github.com/Microsoft/msphpsql/issues/65).
      *
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
-     * @return void
      */
     public function connect(): void
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             return;
         }
+
         $config = $this->_config;
 
         if (isset($config['persistent']) && $config['persistent']) {
@@ -131,32 +127,39 @@ class Sqlserver extends Driver
         if (!empty($config['encoding'])) {
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
+
         $port = '';
         if ($config['port']) {
             $port = ',' . $config['port'];
         }
 
-        $dsn = "sqlsrv:Server={$config['host']}{$port};Database={$config['database']};MultipleActiveResultSets=false";
+        $dsn = sprintf('sqlsrv:Server=%s%s;Database=%s;MultipleActiveResultSets=false', $config['host'], $port, $config['database']);
         if ($config['app'] !== null) {
-            $dsn .= ";APP={$config['app']}";
+            $dsn .= ';APP=' . $config['app'];
         }
+
         if ($config['connectionPooling'] !== null) {
-            $dsn .= ";ConnectionPooling={$config['connectionPooling']}";
+            $dsn .= ';ConnectionPooling=' . $config['connectionPooling'];
         }
+
         if ($config['failoverPartner'] !== null) {
-            $dsn .= ";Failover_Partner={$config['failoverPartner']}";
+            $dsn .= ';Failover_Partner=' . $config['failoverPartner'];
         }
+
         if ($config['loginTimeout'] !== null) {
-            $dsn .= ";LoginTimeout={$config['loginTimeout']}";
+            $dsn .= ';LoginTimeout=' . $config['loginTimeout'];
         }
+
         if ($config['multiSubnetFailover'] !== null) {
-            $dsn .= ";MultiSubnetFailover={$config['multiSubnetFailover']}";
+            $dsn .= ';MultiSubnetFailover=' . $config['multiSubnetFailover'];
         }
+
         if ($config['encrypt'] !== null) {
-            $dsn .= ";Encrypt={$config['encrypt']}";
+            $dsn .= ';Encrypt=' . $config['encrypt'];
         }
+
         if ($config['trustServerCertificate'] !== null) {
-            $dsn .= ";TrustServerCertificate={$config['trustServerCertificate']}";
+            $dsn .= ';TrustServerCertificate=' . $config['trustServerCertificate'];
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
@@ -165,11 +168,13 @@ class Sqlserver extends Driver
                 $this->pdo->exec($command);
             }
         }
+
         if (!empty($config['settings']) && is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
-                $this->pdo->exec("SET {$key} {$value}");
+                $this->pdo->exec(sprintf('SET %s %s', $key, $value));
             }
         }
+
         if (!empty($config['attributes']) && is_array($config['attributes'])) {
             foreach ($config['attributes'] as $key => $value) {
                 $this->pdo->setAttribute($key, $value);
@@ -376,16 +381,17 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . $offset]);
+            $outer->where([$field . ' > ' . $offset]);
         }
+
         if ($limit) {
             $value = (int)$offset + $limit;
-            $outer->where(["$field <= $value"]);
+            $outer->where([sprintf('%s <= %d', $field, $value)]);
         }
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(function (array $row): array {
             if (isset($row['_cake_page_rownum_'])) {
                 unset($row['_cake_page_rownum_']);
             }
@@ -413,7 +419,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function (Query $q) use ($distinct, $order) {
+            ->select(function (Query $q) use ($distinct, $order): array {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->newExpr()->add($distinct)->setConjunction(','))
@@ -436,7 +442,7 @@ class Sqlserver extends Driver
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(function (array $row): array {
             if (isset($row['_cake_distinct_pivot_'])) {
                 unset($row['_cake_distinct_pivot_']);
             }
@@ -463,7 +469,6 @@ class Sqlserver extends Driver
      * SQL dialect.
      *
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
-     * @return void
      */
     protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
@@ -486,6 +491,7 @@ class Sqlserver extends Driver
                 if (!$hasDay) {
                     $expression->add(['day' => 'literal'], [], true);
                 }
+
                 break;
             case 'CURRENT_DATE':
                 $time = new FunctionExpression('GETUTCDATE');

@@ -53,9 +53,7 @@ class MailTransport extends AbstractTransport
                 'bcc',
             ],
             $eol,
-            function ($val) {
-                return str_replace("\r\n", '', $val);
-            }
+            fn($val): array|string => str_replace("\r\n", '', $val)
         );
 
         $message = $message->getBodyString($eol);
@@ -78,7 +76,6 @@ class MailTransport extends AbstractTransport
      * @param string $headers email's custom headers
      * @param string $params additional params for sending email
      * @throws \Cake\Network\Exception\SocketException if mail could not be sent
-     * @return void
      */
     protected function _mail(
         string $to,
@@ -93,6 +90,7 @@ class MailTransport extends AbstractTransport
             $msg = 'Could not send email: ' . ($error['message'] ?? 'unknown');
             throw new CakeException($msg);
         }
+
         // phpcs:enable
     }
 }

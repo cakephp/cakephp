@@ -57,15 +57,11 @@ class Number
 
     /**
      * Default currency used by Number::currency()
-     *
-     * @var string|null
      */
     protected static ?string $_defaultCurrency = null;
 
     /**
      * Default currency format used by Number::currency()
-     *
-     * @var string|null
      */
     protected static ?string $_defaultCurrencyFormat = null;
 
@@ -274,7 +270,6 @@ class Number
      * @param string|null $currency Default currency string to be used by {@link currency()}
      * if $currency argument is not provided. If null is passed, it will clear the
      * currently stored value
-     * @return void
      */
     public static function setDefaultCurrency(?string $currency = null): void
     {
@@ -297,7 +292,6 @@ class Number
      * @param string|null $currencyFormat Default currency format to be used by currency()
      * if $currencyFormat argument is not provided. If null is passed, it will clear the
      * currently stored value
-     * @return void
      */
     public static function setDefaultCurrencyFormat(?string $currencyFormat = null): void
     {
@@ -360,7 +354,6 @@ class Number
      * @param string $locale The locale name to use for formatting the number, e.g. fr_FR
      * @param int $type The formatter type to construct. Defaults to NumberFormatter::DECIMAL.
      * @param array<string, mixed> $options See Number::formatter() for possible options.
-     * @return void
      */
     public static function config(string $locale, int $type = NumberFormatter::DECIMAL, array $options = []): void
     {
@@ -375,7 +368,6 @@ class Number
      *
      * @param \NumberFormatter $formatter Number formatter instance.
      * @param array<string, mixed> $options See Number::formatter() for possible options.
-     * @return \NumberFormatter
      */
     protected static function _setAttributes(NumberFormatter $formatter, array $options = []): NumberFormatter
     {
@@ -415,7 +407,6 @@ class Number
      *
      * @param float|int $value An integer
      * @param array<string, mixed> $options An array with options.
-     * @return string
      */
     public static function ordinal(float|int $value, array $options = []): string
     {

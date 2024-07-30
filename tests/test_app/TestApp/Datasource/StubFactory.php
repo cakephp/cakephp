@@ -9,7 +9,7 @@ use Cake\Datasource\RepositoryInterface;
 
 class StubFactory implements LocatorInterface
 {
-    private $instances = [];
+    private array $instances = [];
 
     /**
      * @inheritDoc

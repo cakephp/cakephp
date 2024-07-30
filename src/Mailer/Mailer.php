@@ -136,37 +136,28 @@ class Mailer implements EventListenerInterface
 
     /**
      * Mailer's name.
-     *
-     * @var string
      */
     public static string $name;
 
     /**
      * The transport instance to use for sending mail.
-     *
-     * @var \Cake\Mailer\AbstractTransport|null
      */
     protected ?AbstractTransport $transport = null;
 
     /**
      * Message class name.
      *
-     * @var string
      * @psalm-var class-string<\Cake\Mailer\Message>
      */
     protected string $messageClass = Message::class;
 
     /**
      * Message instance.
-     *
-     * @var \Cake\Mailer\Message
      */
     protected Message $message;
 
     /**
      * Email Renderer
-     *
-     * @var \Cake\Mailer\Renderer|null
      */
     protected ?Renderer $renderer = null;
 
@@ -190,9 +181,6 @@ class Mailer implements EventListenerInterface
      */
     protected static array $_dsnClassMap = [];
 
-    /**
-     * @var array|null
-     */
     protected ?array $logConfig = null;
 
     /**
@@ -213,8 +201,6 @@ class Mailer implements EventListenerInterface
 
     /**
      * Get the view builder.
-     *
-     * @return \Cake\View\ViewBuilder
      */
     public function viewBuilder(): ViewBuilder
     {
@@ -223,8 +209,6 @@ class Mailer implements EventListenerInterface
 
     /**
      * Get email renderer.
-     *
-     * @return \Cake\Mailer\Renderer
      */
     public function getRenderer(): Renderer
     {
@@ -237,7 +221,7 @@ class Mailer implements EventListenerInterface
      * @param \Cake\Mailer\Renderer $renderer Render instance.
      * @return $this
      */
-    public function setRenderer(Renderer $renderer)
+    public function setRenderer(Renderer $renderer): static
     {
         $this->renderer = $renderer;
 
@@ -246,8 +230,6 @@ class Mailer implements EventListenerInterface
 
     /**
      * Get message instance.
-     *
-     * @return \Cake\Mailer\Message
      */
     public function getMessage(): Message
     {
@@ -260,7 +242,7 @@ class Mailer implements EventListenerInterface
      * @param \Cake\Mailer\Message $message Message instance.
      * @return $this
      */
-    public function setMessage(Message $message)
+    public function setMessage(Message $message): static
     {
         $this->message = $message;
 
@@ -291,7 +273,7 @@ class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function setViewVars(array|string $key, mixed $value = null)
+    public function setViewVars(array|string $key, mixed $value = null): static
     {
         $this->getRenderer()->set($key, $value);
 
@@ -305,7 +287,6 @@ class Mailer implements EventListenerInterface
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return array
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      * @psalm-return array{headers: string, message: string}
@@ -325,7 +306,7 @@ class Mailer implements EventListenerInterface
 
         $this->clonedInstances['message'] = clone $this->message;
         $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
+        if ($this->transport instanceof \Cake\Mailer\AbstractTransport) {
             $this->clonedInstances['transport'] = clone $this->transport;
         }
 
@@ -351,7 +332,7 @@ class Mailer implements EventListenerInterface
      * @param string $content Content.
      * @return $this
      */
-    public function render(string $content = '')
+    public function render(string $content = ''): static
     {
         $content = $this->getRenderer()->render(
             $content,
@@ -367,7 +348,6 @@ class Mailer implements EventListenerInterface
      * Render content and send email using configured transport.
      *
      * @param string $content Content.
-     * @return array
      * @psalm-return array{headers: string, message: string}
      */
     public function deliver(string $content = ''): array
@@ -387,7 +367,7 @@ class Mailer implements EventListenerInterface
      *    an array with config.
      * @return $this
      */
-    public function setProfile(array|string $config)
+    public function setProfile(array|string $config): static
     {
         if (is_string($config)) {
             $name = $config;
@@ -395,6 +375,7 @@ class Mailer implements EventListenerInterface
             if (!$config) {
                 throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
+
             unset($name);
         }
 
@@ -422,18 +403,22 @@ class Mailer implements EventListenerInterface
             $this->viewBuilder()->setHelpers($config['helpers']);
             unset($config['helpers']);
         }
+
         if (array_key_exists('viewRenderer', $config)) {
             $this->viewBuilder()->setClassName($config['viewRenderer']);
             unset($config['viewRenderer']);
         }
+
         if (array_key_exists('viewVars', $config)) {
             $this->viewBuilder()->setVars($config['viewVars']);
             unset($config['viewVars']);
         }
+
         if (isset($config['autoLayout'])) {
             if ($config['autoLayout'] === false) {
                 $this->viewBuilder()->disableAutoLayout();
             }
+
             unset($config['autoLayout']);
         }
 
@@ -457,25 +442,19 @@ class Mailer implements EventListenerInterface
      * @return $this
      * @throws \LogicException When the chosen transport lacks a send method.
      */
-    public function setTransport(AbstractTransport|string $name)
+    public function setTransport(AbstractTransport|string $name): static
     {
-        if (is_string($name)) {
-            $this->transport = TransportFactory::get($name);
-        } else {
-            $this->transport = $name;
-        }
+        $this->transport = is_string($name) ? TransportFactory::get($name) : $name;
 
         return $this;
     }
 
     /**
      * Gets the transport.
-     *
-     * @return \Cake\Mailer\AbstractTransport
      */
     public function getTransport(): AbstractTransport
     {
-        if ($this->transport === null) {
+        if (!$this->transport instanceof \Cake\Mailer\AbstractTransport) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
                 . 'You must set on using setTransport() or set `transport` option in your mailer profile.'
@@ -490,7 +469,7 @@ class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    protected function restore()
+    protected function restore(): static
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
@@ -509,7 +488,7 @@ class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->message->reset();
         $this->getRenderer()->reset();
@@ -527,7 +506,6 @@ class Mailer implements EventListenerInterface
      * Log the email message delivery.
      *
      * @param array $contents The content with 'headers' and 'message' keys.
-     * @return void
      * @psalm-param array{headers: string, message: string} $contents
      */
     protected function logDelivery(array $contents): void
@@ -547,7 +525,6 @@ class Mailer implements EventListenerInterface
      * Set logging config.
      *
      * @param array<string, mixed>|string|true $log Log config.
-     * @return void
      */
     protected function setLogConfig(array|string|bool $log): void
     {
@@ -559,6 +536,7 @@ class Mailer implements EventListenerInterface
             if (!is_array($log)) {
                 $log = ['level' => $log];
             }
+
             $config = $log + $config;
         }
 
@@ -569,7 +547,6 @@ class Mailer implements EventListenerInterface
      * Converts given value to string
      *
      * @param array<string>|string $value The value to convert
-     * @return string
      */
     protected function flatten(array|string $value): string
     {

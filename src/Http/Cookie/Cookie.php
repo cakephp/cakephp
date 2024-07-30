@@ -53,64 +53,46 @@ class Cookie implements CookieInterface
 {
     /**
      * Cookie name
-     *
-     * @var string
      */
     protected string $name = '';
 
     /**
      * Raw Cookie value.
-     *
-     * @var array|string
      */
     protected array|string $value = '';
 
     /**
      * Whether a JSON value has been expanded into an array.
-     *
-     * @var bool
      */
     protected bool $isExpanded = false;
 
     /**
      * Expiration time
-     *
-     * @var \DateTimeInterface|null
      */
     protected ?DateTimeInterface $expiresAt = null;
 
     /**
      * Path
-     *
-     * @var string
      */
     protected string $path = '/';
 
     /**
      * Domain
-     *
-     * @var string
      */
     protected string $domain = '';
 
     /**
      * Secure
-     *
-     * @var bool
      */
     protected bool $secure = false;
 
     /**
      * HTTP only
-     *
-     * @var bool
      */
     protected bool $httpOnly = false;
 
     /**
      * Samesite
-     *
-     * @var \Cake\Http\Cookie\SameSiteEnum|null
      */
     protected ?SameSiteEnum $sameSite = null;
 
@@ -167,15 +149,17 @@ class Cookie implements CookieInterface
         $this->secure = $secure ?? static::$defaults['secure'];
         $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
 
-        if ($expiresAt) {
+        if ($expiresAt instanceof \DateTimeInterface) {
             if ($expiresAt instanceof DateTime) {
                 $expiresAt = clone $expiresAt;
             }
+
             /** @var \DateTimeImmutable|\DateTime $expiresAt */
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         } else {
             $expiresAt = static::$defaults['expires'];
         }
+
         $this->expiresAt = $expiresAt;
     }
 
@@ -193,13 +177,13 @@ class Cookie implements CookieInterface
      *    `CookieInterface::SAMESITE_NONE` or `null`. Defaults to `null`.
      *
      * @param array<string, mixed> $options Default options.
-     * @return void
      */
     public static function setDefaults(array $options): void
     {
         if (isset($options['expires'])) {
             $options['expires'] = static::dateTimeInstance($options['expires']);
         }
+
         if (isset($options['samesite'])) {
             $options['samesite'] = static::resolveSameSiteEnum($options['samesite']);
         }
@@ -213,7 +197,6 @@ class Cookie implements CookieInterface
      * @param string $name Cookie name
      * @param array|string|float|int|bool $value Value of the cookie
      * @param array<string, mixed> $options Cookies options.
-     * @return static
      * @see \Cake\Cookie\Cookie::setDefaults()
      */
     public static function create(string $name, array|string|float|int|bool $value, array $options = []): static
@@ -237,7 +220,6 @@ class Cookie implements CookieInterface
      * Converts non null expiry value into DateTimeInterface instance.
      *
      * @param \DateTimeInterface|string|int|null $expires Expiry value.
-     * @return \DateTimeInterface|null
      */
     protected static function dateTimeInstance(DateTimeInterface|string|int|null $expires): ?DateTimeInterface
     {
@@ -258,7 +240,7 @@ class Cookie implements CookieInterface
         }
 
         if ($expires !== null) {
-            $expires = new DateTimeImmutable('@' . (string)$expires);
+            return new DateTimeImmutable('@' . $expires);
         }
 
         return $expires;
@@ -269,7 +251,6 @@ class Cookie implements CookieInterface
      *
      * @param string $cookie Cookie header string.
      * @param array<string, mixed> $defaults Default attributes.
-     * @return static
      * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     public static function createFromHeaderString(string $cookie, array $defaults = []): static
@@ -331,8 +312,6 @@ class Cookie implements CookieInterface
 
     /**
      * Returns a header value as string
-     *
-     * @return string
      */
     public function toHeaderValue(): string
     {
@@ -347,21 +326,26 @@ class Cookie implements CookieInterface
         /** @var string $value */
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
 
-        if ($this->expiresAt) {
+        if ($this->expiresAt instanceof \DateTimeInterface) {
             $headerValue[] = sprintf('expires=%s', $this->getFormattedExpires());
         }
+
         if ($this->path !== '') {
             $headerValue[] = sprintf('path=%s', $this->path);
         }
+
         if ($this->domain !== '') {
             $headerValue[] = sprintf('domain=%s', $this->domain);
         }
-        if ($this->sameSite) {
+
+        if ($this->sameSite instanceof \Cake\Http\Cookie\SameSiteEnum) {
             $headerValue[] = sprintf('samesite=%s', $this->sameSite->value);
         }
+
         if ($this->secure) {
             $headerValue[] = 'secure';
         }
+
         if ($this->httpOnly) {
             $headerValue[] = 'httponly';
         }
@@ -386,7 +370,7 @@ class Cookie implements CookieInterface
      */
     public function getId(): string
     {
-        return "{$this->name};{$this->domain};{$this->path}";
+        return sprintf('%s;%s;%s', $this->name, $this->domain, $this->path);
     }
 
     /**
@@ -401,7 +385,6 @@ class Cookie implements CookieInterface
      * Validates the cookie name
      *
      * @param string $name Name of the cookie
-     * @return void
      * @throws \InvalidArgumentException
      * @link https://tools.ietf.org/html/rfc2616#section-2.2 Rules for naming cookies.
      */
@@ -457,7 +440,6 @@ class Cookie implements CookieInterface
      * Setter for the value attribute.
      *
      * @param array|string|float|int|bool $value The value to store.
-     * @return void
      */
     protected function _setValue(array|string|float|int|bool $value): void
     {
@@ -569,7 +551,7 @@ class Cookie implements CookieInterface
      */
     public function getExpiresTimestamp(): ?int
     {
-        if (!$this->expiresAt) {
+        if (!$this->expiresAt instanceof \DateTimeInterface) {
             return null;
         }
 
@@ -581,7 +563,7 @@ class Cookie implements CookieInterface
      */
     public function getFormattedExpires(): string
     {
-        if (!$this->expiresAt) {
+        if (!$this->expiresAt instanceof \DateTimeInterface) {
             return '';
         }
 
@@ -598,7 +580,7 @@ class Cookie implements CookieInterface
             $time = clone $time;
         }
 
-        if (!$this->expiresAt) {
+        if (!$this->expiresAt instanceof \DateTimeInterface) {
             return false;
         }
 
@@ -650,7 +632,6 @@ class Cookie implements CookieInterface
      * Create SameSiteEnum instance.
      *
      * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite SameSite value
-     * @return \Cake\Http\Cookie\SameSiteEnum|null
      */
     protected static function resolveSameSiteEnum(SameSiteEnum|string|null $sameSite): ?SameSiteEnum
     {
@@ -668,7 +649,6 @@ class Cookie implements CookieInterface
      * on first use.
      *
      * @param string $path Path to check
-     * @return bool
      */
     public function check(string $path): bool
     {
@@ -687,7 +667,6 @@ class Cookie implements CookieInterface
      *
      * @param string $path Path to write to
      * @param mixed $value Value to write
-     * @return static
      */
     public function withAddedValue(string $path, mixed $value): static
     {
@@ -707,7 +686,6 @@ class Cookie implements CookieInterface
      * Create a new cookie without a specific path
      *
      * @param string $path Path to remove
-     * @return static
      */
     public function withoutAddedValue(string $path): static
     {
@@ -731,7 +709,6 @@ class Cookie implements CookieInterface
      * on first use.
      *
      * @param string|null $path Path to read the data from
-     * @return mixed
      */
     public function read(?string $path = null): mixed
     {
@@ -752,8 +729,6 @@ class Cookie implements CookieInterface
 
     /**
      * Checks if the cookie value was expanded
-     *
-     * @return bool
      */
     public function isExpanded(): bool
     {
@@ -773,7 +748,7 @@ class Cookie implements CookieInterface
             'httponly' => $this->httpOnly,
         ];
 
-        if ($this->sameSite !== null) {
+        if ($this->sameSite instanceof \Cake\Http\Cookie\SameSiteEnum) {
             $options['samesite'] = $this->sameSite->value;
         }
 
@@ -823,6 +798,7 @@ class Cookie implements CookieInterface
             if (!isset($key[1])) {
                 return $key[0];
             }
+
             $array[$key[0]] = $key[1];
         }
 

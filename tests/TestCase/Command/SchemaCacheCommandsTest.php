@@ -44,12 +44,12 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * @var \Cake\Cache\Engine\NullEngine|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $cache;
+    protected \PHPUnit\Framework\MockObject\MockObject $cache;
 
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace();
@@ -66,7 +66,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->connection->cacheMetadata(false);
         parent::tearDown();
@@ -84,7 +84,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(\Cake\Database\Schema\CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**
@@ -96,7 +96,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache build --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(\Cake\Database\Schema\CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**

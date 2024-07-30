@@ -35,7 +35,7 @@ class NumberHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -46,7 +46,7 @@ class NumberHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -58,13 +58,11 @@ class NumberHelperTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): array
+    public static function methodProvider(): \Iterator
     {
-        return [
-            ['precision', 1.23],
-            ['toReadableSize', 1.23],
-            ['toPercentage', 1.23],
-        ];
+        yield ['precision', 1.23];
+        yield ['toReadableSize', 1.23];
+        yield ['toPercentage', 1.23];
     }
 
     /**

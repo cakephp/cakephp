@@ -41,7 +41,7 @@ class CacheListCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
         $parser->setDescription('Show a list of configured caches.');
@@ -60,7 +60,7 @@ class CacheListCommand extends Command
     {
         $engines = Cache::configured();
         foreach ($engines as $engine) {
-            $io->out("- $engine");
+            $io->out('- ' . $engine);
         }
 
         return static::CODE_SUCCESS;

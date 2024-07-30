@@ -27,13 +27,13 @@ use InvalidArgumentException;
  */
 class LogTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Log::reset();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -55,11 +55,11 @@ class LogTest extends TestCase
         ]);
 
         $result = Log::engine('libtest');
-        $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
+        $this->assertInstanceOf(\TestApp\Log\Engine\TestAppLog::class, $result);
         $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
-        $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
+        $this->assertInstanceOf(\TestPlugin\Log\Engine\TestPluginLog::class, $result);
         $this->assertContains('libtest', Log::configured());
         $this->assertContains('plugintest', Log::configured());
 
@@ -135,19 +135,17 @@ class LogTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider(): array
+    public static function configProvider(): \Iterator
     {
-        return [
-            'Array of data using engine key.' => [[
-                'engine' => 'File',
-                'path' => TMP . 'tests',
-            ]],
-            'Array of data using classname key.' => [[
-                'className' => 'File',
-                'path' => TMP . 'tests',
-            ]],
-            'Direct instance' => [new FileLog(['path' => LOGS])],
-        ];
+        yield 'Array of data using engine key.' => [[
+            'engine' => 'File',
+            'path' => TMP . 'tests',
+        ]];
+        yield 'Array of data using classname key.' => [[
+            'className' => 'File',
+            'path' => TMP . 'tests',
+        ]];
+        yield 'Direct instance' => [new FileLog(['path' => LOGS])];
     }
 
     /**
@@ -156,7 +154,7 @@ class LogTest extends TestCase
      * @dataProvider configProvider
      * @param mixed $settings
      */
-    public function testConfigVariants($settings): void
+    public function testConfigVariants(\Cake\Log\Engine\FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -170,7 +168,7 @@ class LogTest extends TestCase
      * @dataProvider configProvider
      * @param mixed $settings
      */
-    public function testSetConfigVariants($settings): void
+    public function testSetConfigVariants(\Cake\Log\Engine\FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -214,6 +212,7 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'error.log')) {
             unlink(LOGS . 'error.log');
         }
+
         $result = Log::write(LOG_WARNING, 'Test warning');
         $this->assertTrue($result);
         $this->assertFileExists(LOGS . 'error.log');
@@ -222,8 +221,8 @@ class LogTest extends TestCase
         Log::write(LOG_WARNING, 'Test warning 1');
         Log::write(LOG_WARNING, 'Test warning 2');
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 1/', $result);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 2$/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+ \d+:\d+:\d+ warning: Test warning 1/', $result);
+        $this->assertMatchesRegularExpression('/2\d{3}-\d+-\d+ \d+:\d+:\d+ warning: Test warning 2$/', $result);
         unlink(LOGS . 'error.log');
     }
 
@@ -235,9 +234,11 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
         }
+
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
+
         Log::setConfig('spam', [
             'engine' => 'File',
             'path' => LOGS,
@@ -268,6 +269,7 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
         }
+
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
@@ -281,9 +283,11 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
         }
+
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
+
         Log::setConfig('spam', [
             'engine' => 'File',
             'path' => LOGS,
@@ -314,6 +318,7 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
         }
+
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
@@ -340,18 +345,23 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'shops.log')) {
             unlink(LOGS . 'shops.log');
         }
+
         if (file_exists(LOGS . 'error.log')) {
             unlink(LOGS . 'error.log');
         }
+
         if (file_exists(LOGS . 'debug.log')) {
             unlink(LOGS . 'debug.log');
         }
+
         if (file_exists(LOGS . 'bogus.log')) {
             unlink(LOGS . 'bogus.log');
         }
+
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
         }
+
         if (file_exists(LOGS . 'eggs.log')) {
             unlink(LOGS . 'eggs.log');
         }
@@ -411,7 +421,7 @@ class LogTest extends TestCase
             'scopes' => false,
         ]);
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Log::write('debug', 'debug message', 'orders');
         });
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
@@ -462,9 +472,11 @@ class LogTest extends TestCase
         if (file_exists(LOGS . 'shops.log')) {
             unlink(LOGS . 'shops.log');
         }
+
         if (file_exists(LOGS . 'error.log')) {
             unlink(LOGS . 'error.log');
         }
+
         if (file_exists(LOGS . 'debug.log')) {
             unlink(LOGS . 'debug.log');
         }
@@ -556,10 +568,10 @@ class LogTest extends TestCase
         $this->assertNull($engine->passedScope);
 
         Log::write('debug', 'test message', 'foo');
-        $this->assertEquals(['scope' => ['foo']], $engine->passedScope);
+        $this->assertSame(['scope' => ['foo']], $engine->passedScope);
 
         Log::write('debug', 'test message', ['foo', 'bar']);
-        $this->assertEquals(['scope' => ['foo', 'bar']], $engine->passedScope);
+        $this->assertSame(['scope' => ['foo', 'bar']], $engine->passedScope);
 
         $result = Log::write('debug', 'test message');
         $this->assertFalse($result);
@@ -660,7 +672,7 @@ class LogTest extends TestCase
     public function testCreateLoggerWithCallable(): void
     {
         $instance = new FileLog();
-        Log::setConfig('default', function ($alias) use ($instance) {
+        Log::setConfig('default', function ($alias) use ($instance): \Cake\Log\Engine\FileLog {
             $this->assertSame('default', $alias);
 
             return $instance;

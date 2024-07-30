@@ -47,7 +47,7 @@ class PluginAssetsCommandsTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -65,7 +65,7 @@ class PluginAssetsCommandsTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -117,7 +117,7 @@ class PluginAssetsCommandsTest extends TestCase
         $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
-        $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
+        $command = $this->getMockBuilder(\Cake\Command\PluginAssetsSymlinkCommand::class)
             ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->willReturn($parser);
@@ -222,7 +222,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**
@@ -234,15 +234,15 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->exec('plugin assets copy');
 
-        $this->assertTrue(is_dir($this->wwwRoot . 'test_plugin'));
+        $this->assertDirectoryExists($this->wwwRoot . 'test_plugin');
 
-        $this->assertTrue(is_dir($this->wwwRoot . 'company' . DS . 'test_plugin_three'));
+        $this->assertDirectoryExists($this->wwwRoot . 'company' . DS . 'test_plugin_three');
 
         $this->exec('plugin assets remove');
 
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'test_plugin');
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'company' . DS . 'test_plugin_three');
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**
@@ -262,7 +262,7 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertTrue(is_link($path));
 
         $newfilectime = filectime($path);
-        $this->assertTrue($newfilectime !== $filectime);
+        $this->assertNotSame($filectime, $newfilectime);
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         mkdir($path, 0777, true);
@@ -272,6 +272,6 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets copy Company/TestPluginThree --overwrite');
 
         $newfilectime = filectime($path);
-        $this->assertTrue($newfilectime > $filectime);
+        $this->assertGreaterThan($filectime, $newfilectime);
     }
 }

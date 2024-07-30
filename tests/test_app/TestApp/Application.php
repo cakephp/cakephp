@@ -58,9 +58,7 @@ class Application extends BaseApplication
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($request, $handler) {
-            return $handler->handle($request)->withHeader('X-Middleware', 'true');
-        });
+        $middlewareQueue->add(fn($request, $handler) => $handler->handle($request)->withHeader('X-Middleware', 'true'));
         $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middlewareQueue->add(new RoutingMiddleware($this));
 
@@ -78,9 +76,10 @@ class Application extends BaseApplication
 
             try {
                 $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
-            } catch (DuplicateNamedRouteException $e) {
+            } catch (DuplicateNamedRouteException) {
                 // do nothing. This happens when one test does multiple requests.
             }
+
             $routes->redirect('/redirect', 'http://example.com/test.html');
             $routes->fallbacks();
         });

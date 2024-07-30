@@ -172,8 +172,6 @@ class Inflector
 
     /**
      * The initial state of Inflector so reset() works.
-     *
-     * @var array
      */
     protected static array $_initialState = [];
 
@@ -194,6 +192,7 @@ class Inflector
 
             return $value;
         }
+
         if (!isset(static::$_cache[$type][$key])) {
             return false;
         }
@@ -204,8 +203,6 @@ class Inflector
     /**
      * Clears Inflectors inflected value caches. And resets the inflection
      * rules to the initial values.
-     *
-     * @return void
      */
     public static function reset(): void
     {
@@ -214,6 +211,7 @@ class Inflector
 
             return;
         }
+
         foreach (static::$_initialState as $key => $val) {
             if ($key !== '_initialState') {
                 static::${$key} = $val;
@@ -238,7 +236,6 @@ class Inflector
      * @param array $rules Array of rules to be added.
      * @param bool $reset If true, will unset default inflections for all
      *        new rules that are being defined in $rules.
-     * @return void
      */
     public static function rules(string $type, array $rules, bool $reset = false): void
     {
@@ -361,6 +358,7 @@ class Inflector
                 return static::$_cache['singularize'][$word];
             }
         }
+
         static::$_cache['singularize'][$word] = $word;
 
         return $word;
@@ -435,6 +433,7 @@ class Inflector
             foreach ($result as &$word) {
                 $word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);
             }
+
             $result = implode(' ', $result);
             static::_cache($cacheKey, $string, $result);
         }

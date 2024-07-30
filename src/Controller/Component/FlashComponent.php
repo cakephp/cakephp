@@ -66,7 +66,6 @@ class FlashComponent extends Component
      *   of \Throwable the throwable message will be used and code will be set
      *   in params.
      * @param array<string, mixed> $options An array of options
-     * @return void
      */
     public function set(Throwable|string $message, array $options = []): void
     {
@@ -79,8 +78,6 @@ class FlashComponent extends Component
 
     /**
      * Get flash message utility instance.
-     *
-     * @return \Cake\Http\FlashMessage
      */
     protected function flash(): FlashMessage
     {
@@ -96,7 +93,7 @@ class FlashComponent extends Component
      * @return $this
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
-    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static
     {
         $this->flash()->setConfig($key, $value, $merge);
 
@@ -134,7 +131,7 @@ class FlashComponent extends Component
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function configShallow(array|string $key, mixed $value = null)
+    public function configShallow(array|string $key, mixed $value = null): static
     {
         $this->flash()->configShallow($key, $value);
 
@@ -160,7 +157,6 @@ class FlashComponent extends Component
      *
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
-     * @return void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
     public function __call(string $name, array $args): void
@@ -178,6 +174,7 @@ class FlashComponent extends Component
                 $options = ['element' => $args[1]['plugin'] . '.' . $element];
                 unset($args[1]['plugin']);
             }
+
             $options += (array)$args[1];
         }
 

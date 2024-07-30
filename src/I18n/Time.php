@@ -42,7 +42,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var string|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
     protected static string|int $_toStringFormat = IntlDateFormatter::SHORT;
@@ -54,7 +53,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var \Closure|string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
     protected static Closure|string|int $_jsonEncodeFormat = "HH':'mm':'ss";
@@ -66,7 +64,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var string|int
      * @see \Cake\I18n\Time::nice()
      */
     public static string|int $niceFormat = IntlDateFormatter::MEDIUM;
@@ -79,7 +76,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
      * @param string|int $format Format.
-     * @return void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public static function setToStringFormat($format): void
@@ -90,8 +86,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
     /**
      * Resets the format used to the default when converting an instance of this type to
      * a string
-     *
-     * @return void
      */
     public static function resetToStringFormat(): void
     {
@@ -110,7 +104,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      *
      * @see \Cake\I18n\Time::i18nFormat()
      * @param \Closure|string|int $format Format.
-     * @return void
      */
     public static function setJsonEncodeFormat(Closure|string|int $format): void
     {
@@ -135,7 +128,6 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      *
      * @param string $time The time string to parse.
      * @param string|int|null $format Any format accepted by IntlDateFormatter.
-     * @return static|null
      */
     public static function parseTime(string $time, string|int|null $format = null): ?static
     {

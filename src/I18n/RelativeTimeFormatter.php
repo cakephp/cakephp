@@ -49,6 +49,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $second = DateTime::now($first->getTimezone());
             }
         }
+
         assert(
             ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
             ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface)
@@ -73,6 +74,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 } else {
                     $message = __dn('cake', '{0} day', '{0} days', $count, $count);
                 }
+
                 break;
             case $diffInterval->h > 0:
                 $count = $diffInterval->h;
@@ -87,9 +89,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $message = __dn('cake', '{0} second', '{0} seconds', $count, $count);
                 break;
         }
+
         if ($absolute) {
             return $message;
         }
+
         $isFuture = $diffInterval->invert === 1;
         if ($isNow) {
             return $isFuture ? __d('cake', '{0} from now', $message) : __d('cake', '{0} ago', $message);
@@ -125,6 +129,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $futureTime = $inSeconds;
             $pastTime = $now;
         }
+
         $diff = $futureTime - $pastTime;
 
         if (!$diff) {
@@ -142,24 +147,31 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if ($fNum >= 1 && $years > 0) {
             $relativeDate[] = __dn('cake', '{0} year', '{0} years', $years, $years);
         }
+
         if ($fNum >= 2 && $months > 0) {
             $relativeDate[] = __dn('cake', '{0} month', '{0} months', $months, $months);
         }
+
         if ($fNum >= 3 && $weeks > 0) {
             $relativeDate[] = __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
         }
+
         if ($fNum >= 4 && $days > 0) {
             $relativeDate[] = __dn('cake', '{0} day', '{0} days', $days, $days);
         }
+
         if ($fNum >= 5 && $hours > 0) {
             $relativeDate[] = __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
         }
+
         if ($fNum >= 6 && $minutes > 0) {
             $relativeDate[] = __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
         }
+
         if ($fNum >= 7 && $seconds > 0) {
             $relativeDate[] = __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
         }
+
         $relativeDate = implode(', ', $relativeDate);
 
         // When time has passed
@@ -181,6 +193,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if ($relativeDate) {
             return $relativeDate;
         }
+
         $aboutIn = [
             'second' => __d('cake', 'in about a second'),
             'minute' => __d('cake', 'in about a minute'),
@@ -230,7 +243,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $past['m'],
                 $past['Y'],
             ] = explode('/', date('H/i/s/d/m/Y', $pastTime));
-            $weeks = $days = $hours = $minutes = $seconds = 0;
+            $weeks = 0;
+            $days = 0;
+            $hours = 0;
+            $minutes = 0;
+            $seconds = 0;
 
             $years = (int)$future['Y'] - (int)$past['Y'];
             $months = (int)$future['m'] + (12 * $years) - (int)$past['m'];
@@ -239,6 +256,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $years = floor($months / 12);
                 $months -= $years * 12;
             }
+
             if ((int)$future['m'] < (int)$past['m'] && (int)$future['Y'] - (int)$past['Y'] === 1) {
                 $years--;
             }
@@ -275,14 +293,13 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $days -= $weeks * 7;
             }
         } else {
-            $years = $months = $weeks = 0;
+            $years = 0;
+            $months = 0;
+            $weeks = 0;
             $days = floor($diff / 86400);
-
             $diff -= $days * 86400;
-
             $hours = floor($diff / 3600);
             $diff -= $hours * 3600;
-
             $minutes = floor($diff / 60);
             $diff -= $minutes * 60;
             $seconds = $diff;
@@ -349,6 +366,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $futureTime = $inSeconds;
             $pastTime = $now;
         }
+
         $diff = $futureTime - $pastTime;
 
         if (!$diff) {
@@ -366,15 +384,19 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if ($fNum >= 1 && $years > 0) {
             $relativeDate[] = __dn('cake', '{0} year', '{0} years', $years, $years);
         }
+
         if ($fNum >= 2 && $months > 0) {
             $relativeDate[] = __dn('cake', '{0} month', '{0} months', $months, $months);
         }
+
         if ($fNum >= 3 && $weeks > 0) {
             $relativeDate[] = __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
         }
+
         if ($fNum >= 4 && $days > 0) {
             $relativeDate[] = __dn('cake', '{0} day', '{0} days', $days, $days);
         }
+
         $relativeDate = implode(', ', $relativeDate);
 
         // When time has passed
@@ -393,6 +415,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if ($relativeDate) {
             return $relativeDate;
         }
+
         $aboutIn = [
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
@@ -425,7 +448,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if (is_string($options['accuracy'])) {
             $accuracy = $options['accuracy'];
             $options['accuracy'] = [];
-            foreach ($class::$wordAccuracy as $key => $level) {
+            foreach (array_keys($class::$wordAccuracy) as $key) {
                 $options['accuracy'][$key] = $accuracy;
             }
         } else {

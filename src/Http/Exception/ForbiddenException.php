@@ -38,6 +38,7 @@ class ForbiddenException extends HttpException
         if (!$message) {
             $message = 'Forbidden';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

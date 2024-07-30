@@ -16,9 +16,6 @@ class BlueberryComponent extends Component
 
     /**
      * initialize method
-     *
-     * @param array $config
-     * @return void
      */
     public function initialize(array $config): void
     {

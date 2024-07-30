@@ -27,19 +27,13 @@ use PHPUnit\Framework\Constraint\Constraint;
 abstract class MailConstraintBase extends Constraint
 {
     /**
-     * @var int|null
-     */
-    protected ?int $at = null;
-
-    /**
      * Constructor
      *
      * @param int|null $at At
      * @return void
      */
-    public function __construct(?int $at = null)
+    public function __construct(protected ?int $at = null)
     {
-        $this->at = $at;
     }
 
     /**

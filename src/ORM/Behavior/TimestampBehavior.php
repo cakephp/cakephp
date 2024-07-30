@@ -62,8 +62,6 @@ class TimestampBehavior extends Behavior
 
     /**
      * Current timestamp
-     *
-     * @var \Cake\I18n\DateTime|null
      */
     protected ?DateTime $_ts = null;
 
@@ -74,7 +72,6 @@ class TimestampBehavior extends Behavior
      * overwrite the events to listen on
      *
      * @param array<string, mixed> $config The config for this behavior.
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -89,7 +86,6 @@ class TimestampBehavior extends Behavior
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
-     * @return void
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(EventInterface $event, EntityInterface $entity): void
@@ -97,7 +93,7 @@ class TimestampBehavior extends Behavior
         $eventName = $event->getName();
         $events = $this->_config['events'];
 
-        $new = $entity->isNew() !== false;
+        $new = $entity->isNew();
         $refresh = $this->_config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
@@ -107,6 +103,7 @@ class TimestampBehavior extends Behavior
                     $when
                 ));
             }
+
             if (
                 $when === 'always' ||
                 (
@@ -145,16 +142,16 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \Cake\I18n\DateTime
      */
     public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTime
     {
-        if ($ts) {
+        if ($ts instanceof \DateTimeInterface) {
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
+
             $this->_ts = new DateTime($ts);
-        } elseif ($this->_ts === null || $refreshTimestamp) {
+        } elseif (!$this->_ts instanceof \Cake\I18n\DateTime || $refreshTimestamp) {
             $this->_ts = new DateTime();
         }
 
@@ -199,7 +196,6 @@ class TimestampBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @param string $field Field name
      * @param bool $refreshTimestamp Whether to refresh timestamp.
-     * @return void
      */
     protected function _updateField(EntityInterface $entity, string $field, bool $refreshTimestamp): void
     {

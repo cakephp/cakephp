@@ -10,11 +10,7 @@ use Cake\Routing\Route\Route;
  */
 class ProtectedRoute extends Route
 {
-    /**
-     * @param string $url
-     * @return array
-     */
-    public function parseExtension($url): array
+    public function parseExtension(string $url): array
     {
         return $this->_parseExtension($url);
     }

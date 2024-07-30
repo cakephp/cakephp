@@ -27,8 +27,6 @@ trait FileConfigTrait
 {
     /**
      * The path this engine finds files on.
-     *
-     * @var string
      */
     protected string $_path = '';
 
@@ -50,11 +48,7 @@ trait FileConfigTrait
 
         [$plugin, $key] = pluginSplit($key);
 
-        if ($plugin) {
-            $file = Plugin::configPath($plugin) . $key;
-        } else {
-            $file = $this->_path . $key;
-        }
+        $file = $plugin ? Plugin::configPath($plugin) . $key : $this->_path . $key;
 
         $file .= $this->_extension;
 

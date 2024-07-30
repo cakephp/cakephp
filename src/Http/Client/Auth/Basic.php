@@ -66,7 +66,6 @@ class Basic
      *
      * @param string $user Username.
      * @param string $pass Password.
-     * @return string
      */
     protected function _generateHeader(string $user, string $pass): string
     {

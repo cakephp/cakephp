@@ -26,10 +26,8 @@ trait HttpClientTrait
 {
     /**
      * Resets mocked responses
-     *
-     * @after
-     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\After]
     public function cleanupMockResponses(): void
     {
         Client::clearMockResponses();
@@ -41,11 +39,10 @@ trait HttpClientTrait
      * @param int $code The response code to use. Defaults to 200
      * @param list<string> $headers A list of headers for the response. Example `Content-Type: application/json`
      * @param string $body The body for the response.
-     * @return \Cake\Http\Client\Response
      */
     public function newClientResponse(int $code = 200, array $headers = [], string $body = ''): Response
     {
-        $headers = array_merge(["HTTP/1.1 {$code}"], $headers);
+        $headers = array_merge(['HTTP/1.1 ' . $code], $headers);
 
         return new Response($headers, $body);
     }
@@ -56,7 +53,6 @@ trait HttpClientTrait
      * @param string $url The URL to mock
      * @param \Cake\Http\Client\Response $response The response for the mock.
      * @param array<string, mixed> $options Additional options. See Client::addMockResponse()
-     * @return void
      */
     public function mockClientPost(string $url, Response $response, array $options = []): void
     {
@@ -69,7 +65,6 @@ trait HttpClientTrait
      * @param string $url The URL to mock
      * @param \Cake\Http\Client\Response $response The response for the mock.
      * @param array<string, mixed> $options Additional options. See Client::addMockResponse()
-     * @return void
      */
     public function mockClientGet(string $url, Response $response, array $options = []): void
     {
@@ -82,7 +77,6 @@ trait HttpClientTrait
      * @param string $url The URL to mock
      * @param \Cake\Http\Client\Response $response The response for the mock.
      * @param array<string, mixed> $options Additional options. See Client::addMockResponse()
-     * @return void
      */
     public function mockClientPatch(string $url, Response $response, array $options = []): void
     {
@@ -95,7 +89,6 @@ trait HttpClientTrait
      * @param string $url The URL to mock
      * @param \Cake\Http\Client\Response $response The response for the mock.
      * @param array<string, mixed> $options Additional options. See Client::addMockResponse()
-     * @return void
      */
     public function mockClientPut(string $url, Response $response, array $options = []): void
     {
@@ -108,7 +101,6 @@ trait HttpClientTrait
      * @param string $url The URL to mock
      * @param \Cake\Http\Client\Response $response The response for the mock.
      * @param array<string, mixed> $options Additional options. See Client::addMockResponse()
-     * @return void
      */
     public function mockClientDelete(string $url, Response $response, array $options = []): void
     {
@@ -118,7 +110,7 @@ trait HttpClientTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Http\TestSuite\HttpClientTrait',
+    \Cake\Http\TestSuite\HttpClientTrait::class,
     'Cake\TestSuite\HttpClientTrait'
 );
 // phpcs:enable

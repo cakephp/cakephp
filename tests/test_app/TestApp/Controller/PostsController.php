@@ -28,29 +28,17 @@ use RuntimeException;
  */
 class PostsController extends AppController
 {
-    /**
-     * @return void
-     */
     public function initialize(): void
     {
         $this->loadComponent('Flash');
         $this->loadComponent('FormProtection');
 
-        $this->middleware(function ($request, $handler) {
-            return $handler->handle($request->withAttribute('for-all', true));
-        });
-        $this->middleware(function ($request, $handler) {
-            return $handler->handle($request->withAttribute('index-only', true));
-        }, ['only' => 'index']);
-        $this->middleware(function ($request, $handler) {
-            return $handler->handle($request->withAttribute('all-except-index', true));
-        }, ['except' => ['index']]);
+        $this->middleware(fn($request, $handler) => $handler->handle($request->withAttribute('for-all', true)));
+        $this->middleware(fn($request, $handler) => $handler->handle($request->withAttribute('index-only', true)), ['only' => 'index']);
+        $this->middleware(fn($request, $handler) => $handler->handle($request->withAttribute('all-except-index', true)), ['except' => ['index']]);
     }
 
-    /**
-     * @return \Cake\Http\Response|null|void
-     */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->FormProtection);
@@ -59,7 +47,7 @@ class PostsController extends AppController
         $this->FormProtection->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         if ($this->request->getQuery('clear')) {
             $this->set('flash', $this->request->getSession()->consume('Flash'));
@@ -75,9 +63,8 @@ class PostsController extends AppController
      * Index method.
      *
      * @param string $layout
-     * @return void
      */
-    public function index($layout = 'default')
+    public function index(?string $layout = 'default'): void
     {
         $this->Flash->error('An error message');
         $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
@@ -85,10 +72,7 @@ class PostsController extends AppController
         $this->viewBuilder()->setLayout($layout);
     }
 
-    /**
-     * @return \Cake\Http\Response|null
-     */
-    public function someRedirect()
+    public function someRedirect(): ?\Cake\Http\Response
     {
         $this->Flash->success('A success message');
 
@@ -100,7 +84,7 @@ class PostsController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function flashNoRender()
+    public function flashNoRender(): ?\Cake\Http\Response
     {
         $this->Flash->error('An error message');
 
@@ -109,33 +93,27 @@ class PostsController extends AppController
 
     /**
      * Stub get method
-     *
-     * @return void
      */
-    public function get()
+    public function get(): void
     {
         // Do nothing.
     }
 
     /**
      * Stub AJAX method
-     *
-     * @return void
      */
-    public function ajax()
+    public function ajax(): void
     {
         $data = [];
 
-        $this->set(compact('data'));
+        $this->set(['data' => $data]);
         $this->viewBuilder()->setOption('serialize', ['data']);
     }
 
     /**
      * Post endpoint for integration testing with security component.
-     *
-     * @return void
      */
-    public function securePost()
+    public function securePost(): \Cake\Http\Response
     {
         return $this->response->withStringBody('Request was accepted');
     }
@@ -143,14 +121,14 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function file()
+    public function file(): \Psr\Http\Message\MessageInterface|\Cake\Http\Response
     {
         $filename = $this->request->getQuery('file');
         if ($filename) {
             $path = TMP . $filename;
 
             return $this->response->withFile($path, ['download' => true])
-                ->withHeader('Content-Disposition', "attachment;filename=*UTF-8''{$filename}");
+                ->withHeader('Content-Disposition', "attachment;filename=*UTF-8''" . $filename);
         }
 
         return $this->response->withFile(__FILE__);
@@ -159,15 +137,12 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function header()
+    public function header(): \Psr\Http\Message\MessageInterface
     {
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function hostData()
+    public function hostData(): \Cake\Http\Response
     {
         $data = [
             'host' => $this->request->host(),
@@ -177,25 +152,19 @@ class PostsController extends AppController
         return $this->getResponse()->withStringBody(json_encode($data));
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function empty_response()
+    public function empty_response(): \Cake\Http\Response
     {
         return $this->getResponse()->withStringBody('');
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function secretCookie()
+    public function secretCookie(): \Cake\Http\Response
     {
         return $this->response
             ->withCookie(new Cookie('secrets', 'name'))
             ->withStringBody('ok');
     }
 
-    public function redirectWithCookie()
+    public function redirectWithCookie(): void
     {
         $cookies = [
             Cookie::create('remember', '1'),
@@ -205,15 +174,13 @@ class PostsController extends AppController
         foreach ($cookies as $cookie) {
             $values[] = $cookie->toHeaderValue();
         }
+
         $headers = ['Set-Cookie' => $values];
 
         throw new RedirectException('/posts', 302, $headers);
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function stacked_flash()
+    public function stacked_flash(): \Cake\Http\Response
     {
         $this->Flash->error('Error 1');
         $this->Flash->error('Error 2');
@@ -223,19 +190,13 @@ class PostsController extends AppController
         return $this->getResponse()->withStringBody('');
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function throw_exception()
+    public function throw_exception(): never
     {
         $this->Flash->error('Error 1');
         throw new OutOfBoundsException('oh no!');
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function throw_chained()
+    public function throw_chained(): never
     {
         $inner = new RuntimeException('inner badness');
         throw new OutOfBoundsException('oh no!', 1, $inner);

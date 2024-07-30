@@ -46,8 +46,6 @@ class Helper implements EventListenerInterface
 
     /**
      * List of helpers used by this helper
-     *
-     * @var array
      */
     protected array $helpers = [];
 
@@ -66,25 +64,20 @@ class Helper implements EventListenerInterface
     protected array $helperInstances = [];
 
     /**
-     * The View instance this helper is attached to
-     *
-     * @var \Cake\View\View
-     */
-    protected View $_View;
-
-    /**
      * Default Constructor
      *
-     * @param \Cake\View\View $view The View this helper is being attached to.
+     * @param \Cake\View\View $_View The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
-    public function __construct(View $view, array $config = [])
+    public function __construct(/**
+     * The View instance this helper is attached to
+     */
+    protected View $_View, array $config = [])
     {
-        $this->_View = $view;
         $this->setConfig($config);
 
         if ($this->helpers) {
-            $this->helpers = $view->helpers()->normalizeArray($this->helpers);
+            $this->helpers = $this->_View->helpers()->normalizeArray($this->helpers);
         }
 
         $this->initialize($config);
@@ -130,7 +123,7 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm(string $okCode, string $cancelCode): string
     {
-        return "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
+        return sprintf('if (confirm(this.dataset.confirmMessage)) { %s } %s', $okCode, $cancelCode);
     }
 
     /**
@@ -145,7 +138,7 @@ class Helper implements EventListenerInterface
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
-        } elseif (isset($options[$key]) && trim($options[$key])) {
+        } elseif (isset($options[$key]) && trim((string) $options[$key])) {
             $options[$key] .= ' ' . $class;
         } else {
             $options[$key] = $class;
@@ -191,7 +184,6 @@ class Helper implements EventListenerInterface
      * Implement this method to avoid having to overwrite the constructor and call parent.
      *
      * @param array<string, mixed> $config The configuration settings provided to this helper.
-     * @return void
      */
     public function initialize(array $config): void
     {

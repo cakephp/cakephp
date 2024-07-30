@@ -45,7 +45,7 @@ class ValidationTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -1806,7 +1806,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::decimal('+1234', null));
         $this->assertTrue(Validation::decimal((float)1234, null));
         $this->assertTrue(Validation::decimal((float)1234, null));
-        $this->assertTrue(Validation::decimal((int)1234, null));
+        $this->assertTrue(Validation::decimal(1234, null));
 
         $this->assertFalse(Validation::decimal('', null));
         $this->assertFalse(Validation::decimal('string', null));
@@ -1839,7 +1839,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal('', true));
         $this->assertFalse(Validation::decimal('string', true));
         $this->assertFalse(Validation::decimal('1234.', true));
-        $this->assertFalse(Validation::decimal((int)1234, true));
+        $this->assertFalse(Validation::decimal(1234, true));
         $this->assertFalse(Validation::decimal('1234', true));
         $this->assertFalse(Validation::decimal('-1234', true));
         $this->assertFalse(Validation::decimal('+1234', true));
@@ -1871,7 +1871,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal(.00, 2));
         $this->assertFalse(Validation::decimal((float)1234, 1));
         $this->assertFalse(Validation::decimal((float)1234, 1));
-        $this->assertFalse(Validation::decimal((int)1234, 1));
+        $this->assertFalse(Validation::decimal(1234, 1));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
         $this->assertFalse(Validation::decimal(-1234.5678, 3));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
@@ -2693,18 +2693,16 @@ class ValidationTest extends TestCase
      *
      * @return array
      */
-    public static function uploadedFileProvider(): array
+    public static function uploadedFileProvider(): \Iterator
     {
-        return [
-            'minSize fail' => [false, ['minSize' => 500]],
-            'minSize pass' => [true, ['minSize' => 190]],
-            'maxSize fail' => [false, ['maxSize' => 100]],
-            'maxSize pass' => [true, ['maxSize' => 202]],
-            'types fail' => [false, ['types' => ['text/plain']]],
-            'types fail - string' => [false, ['types' => '/^text.*$/']],
-            'types pass - string' => [true, ['types' => '/^image.*$/']],
-            'types pass' => [true, ['types' => ['image/gif', 'image/png']]],
-        ];
+        yield 'minSize fail' => [false, ['minSize' => 500]];
+        yield 'minSize pass' => [true, ['minSize' => 190]];
+        yield 'maxSize fail' => [false, ['maxSize' => 100]];
+        yield 'maxSize pass' => [true, ['maxSize' => 202]];
+        yield 'types fail' => [false, ['types' => ['text/plain']]];
+        yield 'types fail - string' => [false, ['types' => '/^text.*$/']];
+        yield 'types pass - string' => [true, ['types' => '/^image.*$/']];
+        yield 'types pass' => [true, ['types' => ['image/gif', 'image/png']]];
     }
 
     /**
@@ -2956,9 +2954,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::numElements($array, Validation::COMPARE_GREATER, 3));
         $this->assertFalse(Validation::numElements($array, Validation::COMPARE_LESS, 1));
 
-        $callable = function () {
-            return '';
-        };
+        $callable = fn(): string => '';
 
         $this->assertFalse(Validation::numElements(null, Validation::COMPARE_EQUAL, 0));
         $this->assertFalse(Validation::numElements(new stdClass(), Validation::COMPARE_EQUAL, 0));

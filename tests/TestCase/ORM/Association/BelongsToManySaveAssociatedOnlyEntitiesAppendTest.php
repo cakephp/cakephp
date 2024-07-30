@@ -30,17 +30,17 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $tag;
+    protected \PHPUnit\Framework\MockObject\MockObject $tag;
 
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $article;
+    protected \PHPUnit\Framework\MockObject\MockObject $article;
 
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->tag = $this->getMockBuilder(Table::class)
@@ -105,6 +105,8 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
 class MockedTable extends Table
 {
     public function saveAssociated() {}
+
     public function schema() {}
 }
+
 // phpcs:enable

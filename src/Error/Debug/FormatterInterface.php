@@ -27,7 +27,6 @@ interface FormatterInterface
      * Convert a tree of NodeInterface objects into a plain text string.
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
-     * @return string
      */
     public function dump(NodeInterface $node): string;
 
@@ -36,7 +35,6 @@ interface FormatterInterface
      *
      * @param string $contents The contents to wrap and return
      * @param array $location The file and line the contents came from.
-     * @return string
      */
     public function formatWrapper(string $contents, array $location): string;
 }

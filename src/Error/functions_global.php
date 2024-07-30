@@ -66,7 +66,6 @@ if (!function_exists('stackTrace')) {
      * - `start` - The stack frame to start generating a trace from. Defaults to 1
      *
      * @param array<string, mixed> $options Format for outputting stack trace
-     * @return void
      */
     function stackTrace(array $options = []): void
     {
@@ -92,7 +91,6 @@ if (!function_exists('dd')) {
      *
      * @param mixed $var Variable to show debug information for.
      * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
-     * @return void
      * @link https://book.cakephp.org/5/en/development/debugging.html#basic-debugging
      */
     function dd(mixed $var, ?bool $showHtml = null): void
@@ -123,7 +121,6 @@ if (!function_exists('breakpoint')) {
      * eval(breakpoint());
      * ```
      *
-     * @return string|null
      * @link https://psysh.org/
      */
     function breakpoint(): ?string
@@ -132,6 +129,7 @@ if (!function_exists('breakpoint')) {
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(\Psy\Shell::class)) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
+
         trigger_error(
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
             E_USER_WARNING

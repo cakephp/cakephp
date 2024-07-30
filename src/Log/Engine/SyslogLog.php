@@ -81,8 +81,6 @@ class SyslogLog extends BaseLog
 
     /**
      * Whether the logger connection is open or not
-     *
-     * @var bool
      */
     protected bool $_open = false;
 
@@ -95,7 +93,6 @@ class SyslogLog extends BaseLog
      * @param mixed $level The severity level of log you are making.
      * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
-     * @return void
      * @see \Cake\Log\Log::$_levels
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
@@ -125,7 +122,6 @@ class SyslogLog extends BaseLog
      * @param string $ident the prefix to add to all messages logged
      * @param int $options the options flags to be used for logged messages
      * @param int $facility the stream or facility to log to
-     * @return void
      */
     protected function _open(string $ident, int $options, int $facility): void
     {
@@ -138,7 +134,6 @@ class SyslogLog extends BaseLog
      *
      * @param int $priority Message priority.
      * @param string $message Message to log.
-     * @return bool
      */
     protected function _write(int $priority, string $message): bool
     {

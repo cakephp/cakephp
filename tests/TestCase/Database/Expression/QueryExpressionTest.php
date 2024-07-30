@@ -42,8 +42,6 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Tests conditions with multi-word operators.
-     *
-     * @return void
      */
     public function testMultiWordOperators(): void
     {
@@ -56,8 +54,6 @@ class QueryExpressionTest extends TestCase
 
     /**
      * Tests conditions with symbol operators.
-     *
-     * @return void
      */
     public function testSymbolOperators(): void
     {
@@ -98,7 +94,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
-        $expected = 'Cake\Database\Expression\QueryExpression';
+        $expected = \Cake\Database\Expression\QueryExpression::class;
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -195,12 +191,18 @@ class QueryExpressionTest extends TestCase
      *
      * @return array
      */
-    public static function methodsProvider(): array
+    public static function methodsProvider(): \Iterator
     {
-        return [
-            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn'],
-        ];
+        yield ['eq'];
+        yield ['notEq'];
+        yield ['gt'];
+        yield ['lt'];
+        yield ['gte'];
+        yield ['lte'];
+        yield ['like'];
+        yield ['notLike'];
+        yield ['in'];
+        yield ['notIn'];
     }
 
     /**

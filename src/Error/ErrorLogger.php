@@ -58,12 +58,14 @@ class ErrorLogger implements ErrorLoggerInterface
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
         $message = $error->getMessage();
-        if ($request) {
+        if ($request instanceof \Psr\Http\Message\ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
+
         if ($includeTrace) {
             $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
         }
+
         $label = $error->getLabel();
         $level = match ($label) {
             'strict' => LOG_NOTICE,
@@ -84,9 +86,10 @@ class ErrorLogger implements ErrorLoggerInterface
     ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
-        if ($request !== null) {
+        if ($request instanceof \Psr\Http\Message\ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
+
         Log::error($message);
     }
 
@@ -125,13 +128,13 @@ class ErrorLogger implements ErrorLoggerInterface
                 if (is_string($line)) {
                     $message .= '- ' . $line;
                 } else {
-                    $message .= "- {$line['file']}:{$line['line']}\n";
+                    $message .= sprintf('- %s:%s%s', $line['file'], $line['line'], PHP_EOL);
                 }
             }
         }
 
         $previous = $exception->getPrevious();
-        if ($previous) {
+        if ($previous instanceof \Throwable) {
             $message .= $this->getMessage($previous, true, $includeTrace);
         }
 
@@ -142,7 +145,6 @@ class ErrorLogger implements ErrorLoggerInterface
      * Get the request context for an error/exception trace.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to read from.
-     * @return string
      */
     public function getRequestContext(ServerRequestInterface $request): string
     {

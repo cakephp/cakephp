@@ -23,8 +23,6 @@ class MembersFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['section_count' => 2],

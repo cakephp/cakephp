@@ -32,7 +32,6 @@ interface ContainerInterface extends DefinitionContainerInterface
 {
     /**
      * @param \Psr\Container\ContainerInterface $container The container instance to use as delegation
-     * @return \Psr\Container\ContainerInterface
      */
     public function delegate(PsrContainerInterface $container): PsrContainerInterface;
 }

@@ -37,7 +37,7 @@ class HelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class HelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Configure::delete('Asset');
@@ -71,7 +71,7 @@ class HelperTest extends TestCase
             'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'newval'],
             'key3' => 'val3',
         ];
-        $this->assertEquals($expected, $Helper->getConfig());
+        $this->assertSame($expected, $Helper->getConfig());
     }
 
     /**
@@ -82,8 +82,8 @@ class HelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $Helper = new TestHelper($this->View);
-        $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $Helper->Html);
+        $this->assertInstanceOf(\TestPlugin\View\Helper\OtherHelperHelper::class, $Helper->OtherHelper);
+        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $Helper->Html);
     }
 
     /**
@@ -91,7 +91,7 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached(): void
     {
-        $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $events = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
         $this->View->setEventManager($events);
 
         $events->expects($this->never())
@@ -142,7 +142,7 @@ class HelperTest extends TestCase
             ],
         ];
         $result = $Helper->__debugInfo();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -158,7 +158,7 @@ class HelperTest extends TestCase
             'element3',
         ]];
 
-        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+        $this->assertSame($expected, $helper->addClass($input, 'element3'));
     }
 
     /**
@@ -171,7 +171,7 @@ class HelperTest extends TestCase
         $input = ['class' => 'element1 element2'];
         $expected = ['class' => 'element1 element2 element3'];
 
-        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+        $this->assertSame($expected, $helper->addClass($input, 'element3'));
     }
 
     /**
@@ -184,6 +184,6 @@ class HelperTest extends TestCase
         $input = [];
         $expected = ['class' => 'element3'];
 
-        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+        $this->assertSame($expected, $helper->addClass($input, 'element3'));
     }
 }

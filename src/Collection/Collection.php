@@ -47,8 +47,6 @@ class Collection extends IteratorIterator implements CollectionInterface
 
     /**
      * Returns an array for serializing this of this object.
-     *
-     * @return array
      */
     public function __serialize(): array
     {
@@ -59,7 +57,6 @@ class Collection extends IteratorIterator implements CollectionInterface
      * Rebuilds the Collection instance.
      *
      * @param array $data Data array.
-     * @return void
      */
     public function __unserialize(array $data): void
     {
@@ -76,7 +73,7 @@ class Collection extends IteratorIterator implements CollectionInterface
     {
         try {
             $count = $this->count();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $count = 'An exception occurred while getting count';
         }
 

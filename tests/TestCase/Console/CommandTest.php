@@ -74,7 +74,7 @@ class CommandTest extends TestCase
     public function testSetNameInvalid(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+        $this->expectExceptionMessage("The name 'routes_show' is missing a space. Names should look like `cake routes`");
 
         $command = new Command();
         $command->setName('routes_show');
@@ -98,6 +98,7 @@ class CommandTest extends TestCase
     {
         $command = new Command();
         $command->setName('cake routes show');
+
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('routes show', $parser->getCommand());
@@ -124,6 +125,7 @@ class CommandTest extends TestCase
     {
         $command = new Command();
         $command->setName('cake demo');
+
         $output = new StubConsoleOutput();
 
         $this->assertSame(
@@ -142,6 +144,7 @@ class CommandTest extends TestCase
     {
         $command = new Command();
         $command->setName('cake demo');
+
         $output = new StubConsoleOutput();
 
         $this->assertSame(
@@ -160,6 +163,7 @@ class CommandTest extends TestCase
     {
         $command = new DemoCommand();
         $command->setName('cake demo');
+
         $output = new StubConsoleOutput();
 
         $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
@@ -177,6 +181,7 @@ class CommandTest extends TestCase
     {
         $command = new DemoCommand();
         $command->setName('cake demo');
+
         $output = new StubConsoleOutput();
 
         $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
@@ -244,7 +249,7 @@ class CommandTest extends TestCase
         $command = new Command();
         $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
         $this->assertNull($result);
-        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+        $this->assertSame(['Quiet!', 'Demo Command!'], $output->messages());
     }
 
     /**
@@ -255,7 +260,7 @@ class CommandTest extends TestCase
         $output = new StubConsoleOutput();
         $command = new Command();
         $command->executeCommand(DemoCommand::class, ['Jane'], $this->getMockIo($output));
-        $this->assertEquals(['Quiet!', 'Demo Command!', 'Jane'], $output->messages());
+        $this->assertSame(['Quiet!', 'Demo Command!', 'Jane'], $output->messages());
     }
 
     /**
@@ -266,7 +271,7 @@ class CommandTest extends TestCase
         $output = new StubConsoleOutput();
         $command = new Command();
         $command->executeCommand(DemoCommand::class, ['--quiet', 'Jane'], $this->getMockIo($output));
-        $this->assertEquals(['Quiet!'], $output->messages());
+        $this->assertSame(['Quiet!'], $output->messages());
     }
 
     /**
@@ -278,7 +283,7 @@ class CommandTest extends TestCase
         $command = new Command();
         $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
         $this->assertNull($result);
-        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+        $this->assertSame(['Quiet!', 'Demo Command!'], $output->messages());
     }
 
     /**
@@ -290,7 +295,7 @@ class CommandTest extends TestCase
         $command = new Command();
         $result = $command->executeCommand(AbortCommand::class, [], $this->getMockIo($output));
         $this->assertSame(127, $result);
-        $this->assertEquals(['<error>Command aborted</error>'], $output->messages());
+        $this->assertSame(['<error>Command aborted</error>'], $output->messages());
     }
 
     /**
@@ -301,7 +306,7 @@ class CommandTest extends TestCase
         $output = new StubConsoleOutput();
         $command = new Command();
         $command->executeCommand(NonInteractiveCommand::class, ['--quiet'], $this->getMockIo($output));
-        $this->assertEquals(['Result: Default!'], $output->messages());
+        $this->assertSame(['Result: Default!'], $output->messages());
     }
 
     /**

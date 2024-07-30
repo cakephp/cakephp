@@ -50,7 +50,7 @@ class LinkConstraintTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
@@ -59,7 +59,7 @@ class LinkConstraintTest extends TestCase
     /**
      * Tear down.
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -67,12 +67,15 @@ class LinkConstraintTest extends TestCase
 
     /**
      * Data provider for invalid constructor argument.
-     *
-     * @return array
      */
     public static function invalidConstructorArgumentOneDataProvider(): array
     {
-        return [[null, 'null'], [1, 'int'], [[], 'array'], [new stdClass(), 'stdClass']];
+        return [
+            [null, 'null'],
+            [1, 'int'],
+            [[], 'array'],
+            [new stdClass(), 'stdClass'],
+        ];
     }
 
     /**
@@ -81,7 +84,7 @@ class LinkConstraintTest extends TestCase
     public function testInvalidConstructorArgumentTwo(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.');
+        $this->expectExceptionMessage('Argument 2 is expected to match one of the `' . \Cake\ORM\Rule\LinkConstraint::class . '::STATUS_*` constants.');
 
         new LinkConstraint('Association', 'invalid');
     }
@@ -169,13 +172,11 @@ class LinkConstraintTest extends TestCase
      *
      * @return array
      */
-    public static function invalidRepositoryOptionsDataProvider(): array
+    public static function invalidRepositoryOptionsDataProvider(): \Iterator
     {
-        return [
-            [['repository' => null]],
-            [['repository' => new stdClass()]],
-            [[]],
-        ];
+        yield [['repository' => null]];
+        yield [['repository' => new stdClass()]];
+        yield [[]];
     }
 
     /**
@@ -184,7 +185,7 @@ class LinkConstraintTest extends TestCase
      * @dataProvider invalidRepositoryOptionsDataProvider
      * @param mixed $options
      */
-    public function testInvalidRepository($options): void
+    public function testInvalidRepository(array $options): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');
@@ -254,7 +255,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $comment->getErrors());
+        $this->assertSame($expected, $comment->getErrors());
     }
 
     /**
@@ -304,7 +305,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $tag->getErrors());
+        $this->assertSame($expected, $tag->getErrors());
     }
 
     /**
@@ -352,7 +353,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -400,7 +401,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -452,7 +453,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $comment->getErrors());
+        $this->assertSame($expected, $comment->getErrors());
     }
 
     /**
@@ -500,7 +501,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $tag->getErrors());
+        $this->assertSame($expected, $tag->getErrors());
     }
 
     /**
@@ -546,7 +547,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -592,7 +593,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -603,17 +604,15 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query): \Cake\Database\Expression\QueryExpression {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
-                            new IdentifierExpression('Articles.id'),
-                            new IdentifierExpression('RecentComments.article_id')
-                        );
-                    })
+                    ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                        new IdentifierExpression('Articles.id'),
+                        new IdentifierExpression('RecentComments.article_id')
+                    ))
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -639,17 +638,15 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query): \Cake\Database\Expression\QueryExpression {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
-                            new IdentifierExpression('Articles.id'),
-                            new IdentifierExpression('RecentComments.article_id')
-                        );
-                    })
+                    ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                        new IdentifierExpression('Articles.id'),
+                        new IdentifierExpression('RecentComments.article_id')
+                    ))
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -674,7 +671,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -728,7 +725,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -738,12 +735,10 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
-                return $exp->notEq(
-                    new IdentifierExpression('Comments.published'),
-                    new IdentifierExpression('Articles.published')
-                );
-            },
+            'conditions' => fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->notEq(
+                new IdentifierExpression('Comments.published'),
+                new IdentifierExpression('Articles.published')
+            ),
         ]);
 
         $article = $Articles->save($Articles->newEntity([
@@ -774,12 +769,10 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
-                return $exp->eq(
-                    new IdentifierExpression('Comments.published'),
-                    new IdentifierExpression('Articles.published')
-                );
-            },
+            'conditions' => fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                new IdentifierExpression('Comments.published'),
+                new IdentifierExpression('Articles.published')
+            ),
         ]);
 
         $rulesChecker = $Articles->rulesChecker();
@@ -799,7 +792,7 @@ class LinkConstraintTest extends TestCase
                 '_isNotLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $article->getErrors());
+        $this->assertSame($expected, $article->getErrors());
     }
 
     /**
@@ -860,7 +853,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $comment->getErrors());
+        $this->assertSame($expected, $comment->getErrors());
     }
 
     /**
@@ -914,7 +907,7 @@ class LinkConstraintTest extends TestCase
                 '_isLinkedTo' => 'invalid',
             ],
         ];
-        $this->assertEquals($expected, $comment->getErrors());
+        $this->assertSame($expected, $comment->getErrors());
     }
 
     /**

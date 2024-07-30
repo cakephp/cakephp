@@ -49,7 +49,7 @@ class ResultSetTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -72,13 +72,16 @@ class ResultSetTest extends TestCase
     {
         $query = $this->table->find('all');
         $results = $query->all();
-        $first = $second = [];
+        $first = [];
+        $second = [];
         foreach ($results as $result) {
             $first[] = $result;
         }
+
         foreach ($results as $result) {
             $second[] = $result;
         }
+
         $this->assertEquals($first, $second);
     }
 
@@ -111,7 +114,7 @@ class ResultSetTest extends TestCase
 
         // Use a loop to test Iterator implementation
         foreach ($results as $i => $row) {
-            $this->assertEquals($this->fixtureData[$i], $row, "Row $i does not match");
+            $this->assertEquals($this->fixtureData[$i], $row, sprintf('Row %s does not match', $i));
         }
     }
 
@@ -129,7 +132,7 @@ class ResultSetTest extends TestCase
             $expected->setNew(false);
             $expected->setSource($this->table->getAlias());
             $expected->clean();
-            $this->assertEquals($expected, $row, "Row $i does not match");
+            $this->assertEquals($expected, $row, sprintf('Row %s does not match', $i));
         }
     }
 
@@ -244,9 +247,7 @@ class ResultSetTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Comments');
         $query = $table->find()
-            ->formatResults(function ($results) {
-                return $results;
-            });
+            ->formatResults(fn($results) => $results);
         $res = $query->all();
         $res->isEmpty();
         $this->assertCount(6, $res->toArray());
@@ -282,6 +283,6 @@ class ResultSetTest extends TestCase
         $min = $query->all()->min('counter');
         $max = $query->all()->max('counter');
 
-        $this->assertTrue($max > $min);
+        $this->assertGreaterThan($min, $max);
     }
 }

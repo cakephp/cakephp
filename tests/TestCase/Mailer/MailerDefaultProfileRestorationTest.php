@@ -44,4 +44,5 @@ class DefaultProfileRestorationMailer extends Mailer
     {
     }
 }
+
 // phpcs:enable

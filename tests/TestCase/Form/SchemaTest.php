@@ -34,7 +34,7 @@ class SchemaTest extends TestCase
             'email' => 'string',
             'body' => ['type' => 'string', 'length' => 1000],
         ]);
-        $this->assertEquals(['email', 'body'], $schema->fields());
+        $this->assertSame(['email', 'body'], $schema->fields());
         $this->assertSame('string', $schema->field('email')['type']);
         $this->assertSame('string', $schema->field('body')['type']);
     }
@@ -49,7 +49,7 @@ class SchemaTest extends TestCase
         $res = $schema->addField('name', ['type' => 'string']);
         $this->assertSame($schema, $res, 'Should be chainable');
 
-        $this->assertEquals(['name'], $schema->fields());
+        $this->assertSame(['name'], $schema->fields());
         $res = $schema->field('name');
         $expected = ['type' => 'string', 'length' => null, 'precision' => null, 'default' => null];
         $this->assertEquals($expected, $res);
@@ -57,7 +57,7 @@ class SchemaTest extends TestCase
         $res = $schema->addField('email', 'string');
         $this->assertSame($schema, $res, 'Should be chainable');
 
-        $this->assertEquals(['name', 'email'], $schema->fields());
+        $this->assertSame(['name', 'email'], $schema->fields());
         $res = $schema->field('email');
         $expected = ['type' => 'string', 'length' => null, 'precision' => null, 'default' => null];
         $this->assertEquals($expected, $res);
@@ -71,6 +71,7 @@ class SchemaTest extends TestCase
         $schema = new Schema();
 
         $schema->addField('name', ['derp' => 'derp', 'type' => 'string']);
+
         $expected = ['type' => 'string', 'length' => null, 'precision' => null, 'default' => null];
         $this->assertEquals($expected, $schema->field('name'));
     }
@@ -83,11 +84,11 @@ class SchemaTest extends TestCase
         $schema = new Schema();
 
         $schema->addField('name', ['type' => 'string']);
-        $this->assertEquals(['name'], $schema->fields());
+        $this->assertSame(['name'], $schema->fields());
 
         $res = $schema->removeField('name');
         $this->assertSame($schema, $res, 'Should be chainable');
-        $this->assertEquals([], $schema->fields());
+        $this->assertSame([], $schema->fields());
         $this->assertNull($schema->field('name'));
     }
 

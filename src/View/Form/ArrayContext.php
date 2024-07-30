@@ -108,6 +108,7 @@ class ArrayContext implements ContextInterface
         ) {
             return [];
         }
+
         foreach ($this->_context['schema']['_constraints'] as $data) {
             if (isset($data['type']) && $data['type'] === 'primary') {
                 return (array)($data['columns'] ?? []);
@@ -133,8 +134,6 @@ class ArrayContext implements ContextInterface
      * For this method to return true, both the primary key constraint
      * must be defined in the 'schema' data, and the 'defaults' data must
      * contain a value for all fields in the key.
-     *
-     * @return bool
      */
     public function isCreate(): bool
     {
@@ -161,7 +160,6 @@ class ArrayContext implements ContextInterface
      *     context record.
      *   - `schemaDefault`: Boolean indicating whether default value from
      *     context's schema should be used if it's not explicitly provided.
-     * @return mixed
      */
     public function val(string $field, array $options = []): mixed
     {
@@ -177,6 +175,7 @@ class ArrayContext implements ContextInterface
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }
+
         if (empty($this->_context['defaults']) || !is_array($this->_context['defaults'])) {
             return null;
         }
@@ -195,7 +194,6 @@ class ArrayContext implements ContextInterface
      * In this context class, this is simply defined by the 'required' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return bool|null
      */
     public function isRequired(string $field): ?bool
     {
@@ -221,6 +219,7 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['required'])) {
             return null;
         }
+
         $required = Hash::get($this->_context['required'], $field)
             ?? Hash::get($this->_context['required'], $this->stripNesting($field));
 
@@ -229,7 +228,7 @@ class ArrayContext implements ContextInterface
         }
 
         if ($required === true) {
-            $required = __d('cake', 'This field cannot be left empty');
+            return __d('cake', 'This field cannot be left empty');
         }
 
         return $required;
@@ -241,7 +240,6 @@ class ArrayContext implements ContextInterface
      * In this context class, this is simply defined by the 'length' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return int|null
      */
     public function getMaxLength(string $field): ?int
     {
@@ -249,7 +247,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        return Hash::get($this->_context['schema'], "$field.length");
+        return Hash::get($this->_context['schema'], $field . '.length');
     }
 
     /**
@@ -294,6 +292,7 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['schema'])) {
             return [];
         }
+
         $schema = Hash::get($this->_context['schema'], $field)
             ?? Hash::get($this->_context['schema'], $this->stripNesting($field));
 

@@ -47,17 +47,8 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
 
     /**
      * Cached value for the current iteration element
-     *
-     * @var mixed
      */
     protected mixed $_current = null;
-
-    /**
-     * The string to use for prefixing the values according to their depth in the tree.
-     *
-     * @var string
-     */
-    protected string $_spacer;
 
     /**
      * Constructor
@@ -67,7 +58,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      * the display value.
      * @param callable|string $keyPath The property to use as iteration key or a
      * callable returning the key value.
-     * @param string $spacer The string to use for prefixing the values according to
+     * @param string $_spacer The string to use for prefixing the values according to
      * their depth in the tree.
      * @param int $mode Iterator mode.
      */
@@ -75,19 +66,19 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
         RecursiveIterator $items,
         callable|string $valuePath,
         callable|string $keyPath,
-        string $spacer,
+        /**
+         * The string to use for prefixing the values according to their depth in the tree.
+         */
+        protected string $_spacer,
         int $mode = RecursiveIteratorIterator::SELF_FIRST
     ) {
         parent::__construct($items, $mode);
         $this->_value = $this->_propertyExtractor($valuePath);
         $this->_key = $this->_propertyExtractor($keyPath);
-        $this->_spacer = $spacer;
     }
 
     /**
      * Returns the current iteration key
-     *
-     * @return mixed
      */
     public function key(): mixed
     {
@@ -98,8 +89,6 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
 
     /**
      * Returns the current iteration value
-     *
-     * @return string
      */
     public function current(): string
     {
@@ -112,8 +101,6 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
 
     /**
      * Advances the cursor one position
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -123,8 +110,6 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
 
     /**
      * Returns the current iteration element and caches its value
-     *
-     * @return mixed
      */
     protected function _fetchCurrent(): mixed
     {

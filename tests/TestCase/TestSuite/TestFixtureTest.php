@@ -43,7 +43,7 @@ class TestFixtureTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Log::reset();
@@ -52,7 +52,7 @@ class TestFixtureTest extends TestCase
     /**
      * Tear down
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -73,7 +73,7 @@ class TestFixtureTest extends TestCase
         $this->assertSame('articles', $Fixture->table);
 
         $schema = $Fixture->getTableSchema();
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
+        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $schema);
     }
 
     /**
@@ -103,6 +103,7 @@ class TestFixtureTest extends TestCase
             'letter' => ['type' => 'string', 'length' => 1],
         ]);
         $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+
         $sql = $table->createSql($db);
 
         foreach ($sql as $stmt) {
@@ -125,6 +126,7 @@ class TestFixtureTest extends TestCase
             'complex_field' => ['type' => 'text'],
         ]);
         $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+
         $sql = $table->createSql($db);
 
         foreach ($sql as $stmt) {
@@ -166,7 +168,7 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMockBuilder('Cake\Database\Connection')
+        $db = $this->getMockBuilder(\Cake\Database\Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $query = $this->getMockBuilder(InsertQuery::class)
@@ -208,7 +210,7 @@ class TestFixtureTest extends TestCase
             ->method('execute')
             ->willReturn($statement);
 
-        $this->assertSame(true, $fixture->insert($db));
+        $this->assertTrue($fixture->insert($db));
     }
 
     /**

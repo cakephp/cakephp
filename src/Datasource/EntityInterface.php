@@ -65,8 +65,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Returns whether a field is an original one.
      * Original fields are those that an entity was instantiated with.
-     *
-     * @return bool
      */
     public function isOriginalField(string $name): bool;
 
@@ -107,14 +105,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns whether this entity has errors.
      *
      * @param bool $includeNested true will check nested entities for hasErrors()
-     * @return bool
      */
     public function hasErrors(bool $includeNested = true): bool;
 
     /**
      * Returns all validation errors.
-     *
-     * @return array
      */
     public function getErrors(): array;
 
@@ -122,7 +117,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns validation errors of a field
      *
      * @param string $field Field name to get the errors from
-     * @return array
      */
     public function getError(string $field): array;
 
@@ -166,7 +160,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Checks if a field is accessible
      *
      * @param string $field Field name to check
-     * @return bool
      */
     public function isAccessible(string $field): bool;
 
@@ -180,8 +173,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 
     /**
      * Returns the alias of the repository from which this entity came from.
-     *
-     * @return string
      */
     public function getSource(): string;
 
@@ -220,7 +211,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns the value of a field by name
      *
      * @param string $field the name of the field to retrieve
-     * @return mixed
      */
     public function &get(string $field): mixed;
 
@@ -235,9 +225,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 
     /**
      * Returns whether a field has an original value
-     *
-     * @param string $field
-     * @return bool
      */
     public function hasOriginal(string $field): bool;
 
@@ -246,14 +233,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      *
      * @param string $field The name of the field.
      * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
-     * @return mixed
      */
     public function getOriginal(string $field, bool $allowFallback = true): mixed;
 
     /**
      * Gets all original values of the entity.
-     *
-     * @return array
      */
     public function getOriginalValues(): array;
 
@@ -263,7 +247,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * The method will return `true` even when the field is set to `null`.
      *
      * @param array<string>|string $field The field to check.
-     * @return bool
      */
     public function has(array|string $field): bool;
 
@@ -287,8 +270,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      *
      * *Note* hidden fields are not visible, and will not be output
      * by toArray().
-     *
-     * @return array
      */
     public function toArray(): array;
 
@@ -306,8 +287,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Sets the entire entity as clean, which means that it will appear as
      * no fields being modified or added at all. This is an useful call
      * for an initial object hydration
-     *
-     * @return void
      */
     public function clean(): void;
 

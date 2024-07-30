@@ -27,9 +27,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 abstract class ResponseBase extends Constraint
 {
-    /**
-     * @var \Psr\Http\Message\ResponseInterface
-     */
     protected ResponseInterface $response;
 
     /**
@@ -39,7 +36,7 @@ abstract class ResponseBase extends Constraint
      */
     public function __construct(?ResponseInterface $response)
     {
-        if (!$response) {
+        if (!$response instanceof \Psr\Http\Message\ResponseInterface) {
             throw new AssertionFailedError('No response set, cannot assert content.');
         }
 
@@ -68,6 +65,7 @@ abstract class ResponseBase extends Constraint
         if (method_exists($this->response, 'getCookie')) {
             return $this->response->getCookie($name);
         }
+
         $cookies = CookieCollection::createFromHeader($this->response->getHeader('Set-Cookie'));
         if (!$cookies->has($name)) {
             return null;

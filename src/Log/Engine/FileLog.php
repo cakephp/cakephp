@@ -62,22 +62,16 @@ class FileLog extends BaseLog
 
     /**
      * Path to save log files on.
-     *
-     * @var string
      */
     protected string $_path;
 
     /**
      * The name of the file to save logs into.
-     *
-     * @var string|null
      */
     protected ?string $_file = null;
 
     /**
      * Max file size, used for log file rotation.
-     *
-     * @var int|null
      */
     protected ?int $_size = null;
 
@@ -97,7 +91,7 @@ class FileLog extends BaseLog
 
         if (!empty($this->_config['file'])) {
             $this->_file = $this->_config['file'];
-            if (!str_ends_with($this->_file, '.log')) {
+            if (!str_ends_with((string) $this->_file, '.log')) {
                 $this->_file .= '.log';
             }
         }
@@ -117,7 +111,6 @@ class FileLog extends BaseLog
      * @param mixed $level The severity level of the message being written.
      * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
-     * @return void
      * @see \Cake\Log\Log::$_levels
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
@@ -197,11 +190,7 @@ class FileLog extends BaseLog
         }
 
         $rotate = $this->_config['rotate'];
-        if ($rotate === 0) {
-            $result = unlink($filePath);
-        } else {
-            $result = rename($filePath, $filePath . '.' . time());
-        }
+        $result = $rotate === 0 ? unlink($filePath) : rename($filePath, $filePath . '.' . time());
 
         $files = glob($filePath . '.*');
         if ($files) {

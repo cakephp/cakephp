@@ -26,8 +26,6 @@ class MutuallyReferencingOneComponent extends Component
 {
     /**
      * components property
-     *
-     * @var array
      */
     protected array $components = ['MutuallyReferencingTwo'];
 }

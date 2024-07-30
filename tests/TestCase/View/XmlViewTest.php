@@ -31,7 +31,7 @@ class XmlViewTest extends TestCase
 {
     protected array $fixtures = ['core.Authors'];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', false);
@@ -102,7 +102,7 @@ class XmlViewTest extends TestCase
             ->setOption('serialize', 'tags');
         $View = $Controller->createView();
         $View->render();
-        $this->assertFalse(isset($View->Html), 'No helper loaded.');
+        $this->assertNull($View->Html, 'No helper loaded.');
     }
 
     /**
@@ -296,6 +296,7 @@ class XmlViewTest extends TestCase
         $Controller->viewBuilder()->setClassName('Xml');
         $View = $Controller->createView();
         $View->setTemplatePath('Posts');
+
         $output = $View->render('index');
 
         $expected = [
@@ -304,7 +305,7 @@ class XmlViewTest extends TestCase
         $expected = Xml::build($expected)->asXML();
         $this->assertSame($expected, $output);
         $this->assertSame('application/xml', $View->getResponse()->getType());
-        $this->assertInstanceOf('Cake\View\HelperRegistry', $View->helpers());
+        $this->assertInstanceOf(\Cake\View\HelperRegistry::class, $View->helpers());
     }
 
     public function testSerializingResultSet(): void

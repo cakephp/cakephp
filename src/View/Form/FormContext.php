@@ -29,15 +29,11 @@ class FormContext implements ContextInterface
 {
     /**
      * The form object.
-     *
-     * @var \Cake\Form\Form
      */
     protected Form $_form;
 
     /**
      * Validator name.
-     *
-     * @var string|null
      */
     protected ?string $_validator = null;
 
@@ -112,7 +108,6 @@ class FormContext implements ContextInterface
      * Get default value from form schema for given field.
      *
      * @param string $field Field name.
-     * @return mixed
      */
     protected function _schemaDefault(string $field): mixed
     {
@@ -133,6 +128,7 @@ class FormContext implements ContextInterface
         if (!$validator->hasField($field)) {
             return null;
         }
+
         if ($this->type($field) !== 'boolean') {
             return !$validator->isEmptyAllowed($field, $this->isCreate());
         }
@@ -170,6 +166,7 @@ class FormContext implements ContextInterface
         if (!$validator->hasField($field)) {
             return null;
         }
+
         foreach ($validator->field($field)->rules() as $rule) {
             if ($rule->get('rule') === 'maxLength') {
                 return $rule->get('pass')[0];
@@ -218,7 +215,7 @@ class FormContext implements ContextInterface
     {
         $errors = $this->error($field);
 
-        return count($errors) > 0;
+        return $errors !== [];
     }
 
     /**

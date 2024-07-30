@@ -36,7 +36,7 @@ class FlashMessageTest extends TestCase
      */
     protected $Session;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -45,7 +45,7 @@ class FlashMessageTest extends TestCase
         $this->Flash = new FlashMessage($this->Session);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -66,7 +66,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set(
             'This is a test message',
@@ -79,7 +79,7 @@ class FlashMessageTest extends TestCase
             'params' => ['foo' => 'bar'],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is a test message', ['element' => 'MyPlugin.alert']);
         $expected[] = [
@@ -89,7 +89,7 @@ class FlashMessageTest extends TestCase
             'params' => [],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is a test message', ['key' => 'foobar']);
         $expected = [
@@ -101,7 +101,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.foobar');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testDefaultParamsOverriding(): void
@@ -122,7 +122,7 @@ class FlashMessageTest extends TestCase
             'params' => ['username' => 'ADmad'],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testDuplicateIgnored(): void
@@ -132,6 +132,7 @@ class FlashMessageTest extends TestCase
         $this->Flash->setConfig('duplicate', false);
         $this->Flash->set('This test message should appear once only');
         $this->Flash->set('This test message should appear once only');
+
         $result = $this->Session->read('Flash.flash');
         $this->assertCount(1, $result);
     }
@@ -185,7 +186,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->set('This is another test message', ['clear' => true]);
         $expected = [
@@ -197,7 +198,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testSetWithPlugin(): void
@@ -212,7 +213,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         // Value of 'plugin' will override the plugin name used in 'element'
         $this->Flash->set('This is a test message', [
@@ -229,7 +230,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.msg');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testSetExceptionMessage(): void
@@ -246,7 +247,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->Flash->setExceptionMessage(
             new Exception('This is a test message'),
@@ -270,6 +271,7 @@ class FlashMessageTest extends TestCase
 
         $flash = new FlashMessage($this->Session, ['element' => 'test']);
         $flash->set('This is a test message');
+
         $expected = [
             [
                 'message' => 'This is a test message',
@@ -279,7 +281,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -302,14 +304,12 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public static function convenienceMethods(): array
+    public static function convenienceMethods(): \Iterator
     {
-        return [
-            ['success'],
-            ['error'],
-            ['warning'],
-            ['info'],
-        ];
+        yield ['success'];
+        yield ['error'];
+        yield ['warning'];
+        yield ['info'];
     }
 
     public function testSuccessWithClear(): void
@@ -325,7 +325,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->Flash->success('It worked too', ['clear' => true]);
         $expected = [
             [
@@ -336,7 +336,7 @@ class FlashMessageTest extends TestCase
             ],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testError(): void
@@ -352,6 +352,6 @@ class FlashMessageTest extends TestCase
             'params' => [],
         ];
         $result = $this->Session->read('Flash.flash');
-        $this->assertEquals($expected, $result, 'Element is ignored in convenience method call.');
+        $this->assertSame($expected, $result, 'Element is ignored in convenience method call.');
     }
 }

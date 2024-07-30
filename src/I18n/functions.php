@@ -30,6 +30,7 @@ function __(string $singular, mixed ...$args): string
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -53,6 +54,7 @@ function __n(string $singular, string $plural, int $count, mixed ...$args): stri
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -77,6 +79,7 @@ function __d(string $domain, string $msg, mixed ...$args): string
     if (!$msg) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -102,6 +105,7 @@ function __dn(string $domain, string $singular, string $plural, int $count, mixe
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -128,6 +132,7 @@ function __x(string $context, string $singular, mixed ...$args): string
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -154,6 +159,7 @@ function __xn(string $context, string $singular, string $plural, int $count, mix
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -181,6 +187,7 @@ function __dx(string $domain, string $context, string $msg, mixed ...$args): str
     if (!$msg) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }
@@ -217,6 +224,7 @@ function __dxn(
     if (!$singular) {
         return '';
     }
+
     if (isset($args[0]) && is_array($args[0])) {
         $args = $args[0];
     }

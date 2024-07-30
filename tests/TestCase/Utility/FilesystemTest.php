@@ -33,7 +33,7 @@ class FilesystemTest extends TestCase
 
     protected $vfsPath;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -52,7 +52,7 @@ class FilesystemTest extends TestCase
     {
         $path = $this->vfsPath . DS . 'tests' . DS . 'first' . DS . 'second' . DS . 'third';
         $this->fs->mkdir($path);
-        $this->assertTrue(is_dir($path));
+        $this->assertDirectoryExists($path);
     }
 
     /**
@@ -120,6 +120,6 @@ class FilesystemTest extends TestCase
         @symlink($target, $link);
 
         $this->assertTrue($this->fs->deleteDir($path));
-        $this->assertFalse(file_exists($link));
+        $this->assertFileNotExists($link);
     }
 }

@@ -59,7 +59,6 @@ class FormatterLocator
      *
      * @param string $name The formatter name.
      * @param class-string<\Cake\I18n\FormatterInterface> $className A FQCN for a formatter.
-     * @return void
      */
     public function set(string $name, string $className): void
     {

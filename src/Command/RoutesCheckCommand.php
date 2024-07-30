@@ -76,7 +76,7 @@ class RoutesCheckCommand extends Command
             $io->helper('table')->output($output);
             $io->out();
         } catch (MissingRouteException) {
-            $io->warning("'$url' did not match any routes.");
+            $io->warning(sprintf("'%s' did not match any routes.", $url));
             $io->out();
 
             return static::CODE_ERROR;
@@ -89,9 +89,8 @@ class RoutesCheckCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
             'Check a URL string against the routes. ' .

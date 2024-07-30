@@ -29,30 +29,22 @@ trait TranslateStrategyTrait
 {
     /**
      * Table instance
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $table;
 
     /**
      * The locale name that will be used to override fields in the bound table
      * from the translations table
-     *
-     * @var string|null
      */
     protected ?string $locale = null;
 
     /**
      * Instance of Table responsible for translating
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $translationTable;
 
     /**
      * Return translation table instance.
-     *
-     * @return \Cake\ORM\Table
      */
     public function getTranslationTable(): Table
     {
@@ -87,7 +79,6 @@ trait TranslateStrategyTrait
      * If no locale has been explicitly set via `setLocale()`, this method will return
      * the currently configured global locale.
      *
-     * @return string
      * @see \Cake\I18n\I18n::getLocale()
      * @see \Cake\ORM\Behavior\TranslateBehavior::setLocale()
      */
@@ -102,7 +93,6 @@ trait TranslateStrategyTrait
      * Should only be called if $this->_config['allowEmptyTranslations'] is false.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for empty translations fields inside.
-     * @return void
      */
     protected function unsetEmptyFields(EntityInterface $entity): void
     {
@@ -165,6 +155,7 @@ trait TranslateStrategyTrait
                     if (!isset($translations[$language])) {
                         $translations[$language] = $this->table->newEmptyEntity();
                     }
+
                     $marshaller->merge($translations[$language], $fields, $options);
 
                     $translationErrors = $translations[$language]->getErrors();
@@ -188,7 +179,6 @@ trait TranslateStrategyTrait
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @return void
      */
     public function afterSave(EventInterface $event, EntityInterface $entity): void
     {

@@ -21,9 +21,6 @@ namespace Cake\TestSuite\Fixture;
  */
 class TruncateStrategy implements FixtureStrategyInterface
 {
-    /**
-     * @var \Cake\TestSuite\Fixture\FixtureHelper
-     */
     protected FixtureHelper $helper;
 
     /**

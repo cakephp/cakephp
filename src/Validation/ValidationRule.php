@@ -40,34 +40,26 @@ class ValidationRule
      *
      * @var callable|string|null
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
-     *
-     * @var bool
      */
     protected bool $_last = false;
 
     /**
      * The 'message' key
-     *
-     * @var string|null
      */
     protected ?string $_message = null;
 
     /**
      * Key under which the object or class where the method to be used for
      * validation will be found
-     *
-     * @var string
      */
     protected string $_provider = 'default';
 
     /**
      * Extra arguments to be passed to the validation method
-     *
-     * @var array
      */
     protected array $_pass = [];
 
@@ -84,8 +76,6 @@ class ValidationRule
     /**
      * Returns whether this rule should break validation process for associated field
      * after it fails
-     *
-     * @return bool
      */
     public function isLast(): bool
     {
@@ -106,7 +96,6 @@ class ValidationRule
      *   new record
      * - data: The full data that was passed to the validation process
      * - field: The name of the field that is being processed
-     * @return array|string|bool
      * @throws \InvalidArgumentException when the supplied rule is not a valid
      * callable for the configured scope
      */
@@ -188,7 +177,6 @@ class ValidationRule
      * Sets the rule properties from the rule entry in validate
      *
      * @param array<string, mixed> $validator [optional]
-     * @return void
      */
     protected function _addValidatorProps(array $validator = []): void
     {
@@ -196,12 +184,14 @@ class ValidationRule
             if (!$value) {
                 continue;
             }
+
             if ($key === 'rule' && is_array($value) && !is_callable($value)) {
                 $this->_pass = array_slice($value, 1);
                 $value = array_shift($value);
             }
+
             if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'], true)) {
-                $this->{"_$key"} = $value;
+                $this->{'_' . $key} = $value;
             }
         }
     }
@@ -210,7 +200,6 @@ class ValidationRule
      * Returns the value of a property by name
      *
      * @param string $property The name of the property to retrieve.
-     * @return mixed
      */
     public function get(string $property): mixed
     {

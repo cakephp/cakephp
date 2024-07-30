@@ -61,7 +61,7 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -335,8 +335,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->head('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -357,8 +357,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->options('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -400,8 +400,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->get('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
         $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -538,6 +538,7 @@ class IntegrationTestTraitTest extends TestCase
         if ($this->_response->getBody()->isSeekable()) {
             $this->_response->getBody()->rewind();
         }
+
         $this->assertSame('world', $this->_response->getBody()->getContents());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -572,7 +573,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(\Cake\Controller\Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -589,7 +590,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(\Cake\Controller\Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -776,7 +777,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testCookieNotSetFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie is not set');
+        $this->expectExceptionMessage("Failed asserting that 'remember_me' cookie is not set");
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
@@ -810,7 +811,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testCookieIsSetFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that \'not-secrets\' cookie is set');
+        $this->expectExceptionMessage("Failed asserting that 'not-secrets' cookie is set");
         $this->post('/posts/secretCookie');
         $this->assertCookieIsSet('not-secrets');
     }
@@ -1392,7 +1393,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+        $this->assertInstanceOf(\Cake\Event\EventManager::class, $eventManager);
 
         return $eventManager;
     }
@@ -1404,7 +1405,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
-        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
+        $this->assertInstanceOf(\Cake\Event\EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
@@ -1426,11 +1427,11 @@ class IntegrationTestTraitTest extends TestCase
         $path = TMP . $file;
         file_put_contents($path, 'testing unlink');
 
-        $this->get("/posts/file?file={$file}");
+        $this->get('/posts/file?file=' . $file);
         $this->assertResponseOk();
         $this->assertFileResponse($path);
         $this->assertFileExists($path);
-        system("rm -rf {$path}");
+        system('rm -rf ' . $path);
         $this->assertFileDoesNotExist($path);
     }
 
@@ -1536,10 +1537,9 @@ class IntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $url URL to test
-     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
+    public function testAssertionFailureMessages($assertion, string $message, array|string $url, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
@@ -1553,10 +1553,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * Test for assertion message generation for previous.
-     *
-     * @return void
      */
-    public function testAssertMessagePrevious()
+    public function testAssertMessagePrevious(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Caused by `RuntimeException`');
@@ -1570,64 +1568,59 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureMessagesProvider(): array
+    public static function assertionFailureMessagesProvider(): \Iterator
     {
         $templateDir = TEST_APP . 'templates' . DS;
-
-        return [
-            'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' is set as the Content-Type (`text/html`).', '/posts/index', 'test'],
-            'assertContentTypeVerbose' => ['assertContentType', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
-            'assertCookie' => ['assertCookie', 'Failed asserting that \'test\' is in cookie \'remember_me\'.', '/posts/index', 'test', 'remember_me'],
-            'assertCookieVerbose' => ['assertCookie', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'remember_me'],
-            'assertCookieEncrypted' => ['assertCookieEncrypted', 'Failed asserting that \'test\' is encrypted in cookie \'secrets\'.', '/posts/secretCookie', 'test', 'secrets'],
-            'assertCookieEncryptedVerbose' => ['assertCookieEncrypted', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'NameOfCookie'],
-            'assertCookieNotSet' => ['assertCookieNotSet', 'Failed asserting that \'remember_me\' cookie is not set.', '/posts/index', 'remember_me'],
-            'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
-            'assertFileResponseVerbose' => ['assertFileResponse', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
-            'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\' (`custom header`).', '/posts/header', 'X-Cake', 'test'],
-            'assertHeaderContains' => ['assertHeaderContains', 'Failed asserting that \'test\' is in header \'X-Cake\' (`custom header`)', '/posts/header', 'X-Cake', 'test'],
-            'assertHeaderNotContains' => ['assertHeaderNotContains', 'Failed asserting that \'custom header\' is not in header \'X-Cake\' (`custom header`)', '/posts/header', 'X-Cake', 'custom header'],
-            'assertHeaderContainsVerbose' => ['assertHeaderContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'],
-            'assertHeaderNotContainsVerbose' => ['assertHeaderNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'],
-            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file `' . $templateDir . 'layout' . DS . 'default.php`.', '/posts/index', 'custom_layout'],
-            'assertLayoutVerbose' => ['assertLayout', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_layout'],
-            'assertRedirect' => ['assertRedirect', 'Failed asserting that \'http://localhost/\' equals content in header \'Location\' (`http://localhost/posts`).', '/posts/flashNoRender', '/'],
-            'assertRedirectVerbose' => ['assertRedirect', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/'],
-            'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\' (`http://localhost/posts`).', '/posts/flashNoRender', '/posts/somewhere-else'],
-            'assertRedirectContainsVerbose' => ['assertRedirectContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'],
-            'assertRedirectNotContainsVerbose' => ['assertRedirectNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'],
-            'assertResponseCode' => ['assertResponseCode', 'Failed asserting that `302` matches response status code `200`.', '/posts/index', 302],
-            'assertResponseContains' => ['assertResponseContains', 'Failed asserting that \'test\' is in response body.', '/posts/index', 'test'],
-            'assertResponseEmpty' => ['assertResponseEmpty', 'Failed asserting that response body is empty.', '/posts/index'],
-            'assertResponseEquals' => ['assertResponseEquals', 'Failed asserting that \'test\' matches response body.', '/posts/index', 'test'],
-            'assertResponseEqualsVerbose' => ['assertResponseEquals', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
-            'assertResponseError' => ['assertResponseError', 'Failed asserting that 200 is between 400 and 429.', '/posts/index'],
-            'assertResponseFailure' => ['assertResponseFailure', 'Failed asserting that 200 is between 500 and 505.', '/posts/index'],
-            'assertResponseNotContains' => ['assertResponseNotContains', 'Failed asserting that \'index\' is not in response body.', '/posts/index', 'index'],
-            'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty_response'],
-            'assertResponseNotEquals' => ['assertResponseNotEquals', 'Failed asserting that \'posts index\' does not match response body.', '/posts/index/error', 'posts index'],
-            'assertResponseNotRegExp' => ['assertResponseNotRegExp', 'Failed asserting that `/index/` PCRE pattern not found in response body.', '/posts/index/error', '/index/'],
-            'assertResponseNotRegExpVerbose' => ['assertResponseNotRegExp', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/index/'],
-            'assertResponseOk' => ['assertResponseOk', 'Failed asserting that 404 is between 200 and 204.', '/posts/missing', '/index/'],
-            'assertResponseRegExp' => ['assertResponseRegExp', 'Failed asserting that `/test/` PCRE pattern found in response body.', '/posts/index/error', '/test/'],
-            'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'],
-            'assertResponseSuccessVerbose' => ['assertResponseSuccess', 'Possibly related to `Cake\Controller\Exception\MissingActionException`: "Action `PostsController::missing()` could not be found, or is not accessible."', '/posts/missing'],
-
-            'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
-            'assertSessionHasKey' => ['assertSessionHasKey', 'Failed asserting that \'Missing.path\' is a path present in the session.', '/posts/index', 'Missing.path'],
-            'assertSessionNotHasKey' => ['assertSessionNotHasKey', 'Failed asserting that \'Flash.flash\' is not a path present in the session.', '/posts/index', 'Flash.flash'],
-
-            'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file `' . $templateDir . 'Posts' . DS . 'index.php`.', '/posts/index', 'custom_template'],
-            'assertTemplateVerbose' => ['assertTemplate', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_template'],
-            'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'flash\' message.', '/posts/index', 'missing'],
-            'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'auth\' message.', '/posts/index', 'missing', 'auth'],
-            'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'flash\' message #0.', '/posts/index', 0, 'missing'],
-            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'auth\' message #0.', '/posts/index', 0, 'missing', 'auth'],
-            'assertFlashElement' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'flash\' element.', '/posts/index', 'missing'],
-            'assertFlashElementWithKey' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'auth\' element.', '/posts/index', 'missing', 'auth'],
-            'assertFlashElementAt' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'flash\' element #0.', '/posts/index', 0, 'missing'],
-            'assertFlashElementAtWithKey' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'auth\' element #0.', '/posts/index', 0, 'missing', 'auth'],
-        ];
+        yield 'assertContentType' => ['assertContentType', "Failed asserting that 'test' is set as the Content-Type (`text/html`).", '/posts/index', 'test'];
+        yield 'assertContentTypeVerbose' => ['assertContentType', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'];
+        yield 'assertCookie' => ['assertCookie', "Failed asserting that 'test' is in cookie 'remember_me'.", '/posts/index', 'test', 'remember_me'];
+        yield 'assertCookieVerbose' => ['assertCookie', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'remember_me'];
+        yield 'assertCookieEncrypted' => ['assertCookieEncrypted', "Failed asserting that 'test' is encrypted in cookie 'secrets'.", '/posts/secretCookie', 'test', 'secrets'];
+        yield 'assertCookieEncryptedVerbose' => ['assertCookieEncrypted', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'NameOfCookie'];
+        yield 'assertCookieNotSet' => ['assertCookieNotSet', "Failed asserting that 'remember_me' cookie is not set.", '/posts/index', 'remember_me'];
+        yield 'assertFileResponse' => ['assertFileResponse', "Failed asserting that 'test' file was sent.", '/posts/file', 'test'];
+        yield 'assertFileResponseVerbose' => ['assertFileResponse', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'];
+        yield 'assertHeader' => ['assertHeader', "Failed asserting that 'test' equals content in header 'X-Cake' (`custom header`).", '/posts/header', 'X-Cake', 'test'];
+        yield 'assertHeaderContains' => ['assertHeaderContains', "Failed asserting that 'test' is in header 'X-Cake' (`custom header`)", '/posts/header', 'X-Cake', 'test'];
+        yield 'assertHeaderNotContains' => ['assertHeaderNotContains', "Failed asserting that 'custom header' is not in header 'X-Cake' (`custom header`)", '/posts/header', 'X-Cake', 'custom header'];
+        yield 'assertHeaderContainsVerbose' => ['assertHeaderContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'];
+        yield 'assertHeaderNotContainsVerbose' => ['assertHeaderNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'];
+        yield 'assertLayout' => ['assertLayout', "Failed asserting that 'custom_layout' equals layout file `" . $templateDir . 'layout' . DS . 'default.php`.', '/posts/index', 'custom_layout'];
+        yield 'assertLayoutVerbose' => ['assertLayout', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_layout'];
+        yield 'assertRedirect' => ['assertRedirect', "Failed asserting that 'http://localhost/' equals content in header 'Location' (`http://localhost/posts`).", '/posts/flashNoRender', '/'];
+        yield 'assertRedirectVerbose' => ['assertRedirect', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/'];
+        yield 'assertRedirectContains' => ['assertRedirectContains', "Failed asserting that '/posts/somewhere-else' is in header 'Location' (`http://localhost/posts`).", '/posts/flashNoRender', '/posts/somewhere-else'];
+        yield 'assertRedirectContainsVerbose' => ['assertRedirectContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'];
+        yield 'assertRedirectNotContainsVerbose' => ['assertRedirectNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'];
+        yield 'assertResponseCode' => ['assertResponseCode', 'Failed asserting that `302` matches response status code `200`.', '/posts/index', 302];
+        yield 'assertResponseContains' => ['assertResponseContains', "Failed asserting that 'test' is in response body.", '/posts/index', 'test'];
+        yield 'assertResponseEmpty' => ['assertResponseEmpty', 'Failed asserting that response body is empty.', '/posts/index'];
+        yield 'assertResponseEquals' => ['assertResponseEquals', "Failed asserting that 'test' matches response body.", '/posts/index', 'test'];
+        yield 'assertResponseEqualsVerbose' => ['assertResponseEquals', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'];
+        yield 'assertResponseError' => ['assertResponseError', 'Failed asserting that 200 is between 400 and 429.', '/posts/index'];
+        yield 'assertResponseFailure' => ['assertResponseFailure', 'Failed asserting that 200 is between 500 and 505.', '/posts/index'];
+        yield 'assertResponseNotContains' => ['assertResponseNotContains', "Failed asserting that 'index' is not in response body.", '/posts/index', 'index'];
+        yield 'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty_response'];
+        yield 'assertResponseNotEquals' => ['assertResponseNotEquals', "Failed asserting that 'posts index' does not match response body.", '/posts/index/error', 'posts index'];
+        yield 'assertResponseNotRegExp' => ['assertResponseNotRegExp', 'Failed asserting that `/index/` PCRE pattern not found in response body.', '/posts/index/error', '/index/'];
+        yield 'assertResponseNotRegExpVerbose' => ['assertResponseNotRegExp', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/index/'];
+        yield 'assertResponseOk' => ['assertResponseOk', 'Failed asserting that 404 is between 200 and 204.', '/posts/missing', '/index/'];
+        yield 'assertResponseRegExp' => ['assertResponseRegExp', 'Failed asserting that `/test/` PCRE pattern found in response body.', '/posts/index/error', '/test/'];
+        yield 'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'];
+        yield 'assertResponseSuccessVerbose' => ['assertResponseSuccess', 'Possibly related to `Cake\Controller\Exception\MissingActionException`: "Action `PostsController::missing()` could not be found, or is not accessible."', '/posts/missing'];
+        yield 'assertSession' => ['assertSession', "Failed asserting that 'test' is in session path 'Missing.path'.", '/posts/index', 'test', 'Missing.path'];
+        yield 'assertSessionHasKey' => ['assertSessionHasKey', "Failed asserting that 'Missing.path' is a path present in the session.", '/posts/index', 'Missing.path'];
+        yield 'assertSessionNotHasKey' => ['assertSessionNotHasKey', "Failed asserting that 'Flash.flash' is not a path present in the session.", '/posts/index', 'Flash.flash'];
+        yield 'assertTemplate' => ['assertTemplate', "Failed asserting that 'custom_template' equals template file `" . $templateDir . 'Posts' . DS . 'index.php`.', '/posts/index', 'custom_template'];
+        yield 'assertTemplateVerbose' => ['assertTemplate', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_template'];
+        yield 'assertFlashMessage' => ['assertFlashMessage', "Failed asserting that 'missing' is in 'flash' message.", '/posts/index', 'missing'];
+        yield 'assertFlashMessageWithKey' => ['assertFlashMessage', "Failed asserting that 'missing' is in 'auth' message.", '/posts/index', 'missing', 'auth'];
+        yield 'assertFlashMessageAt' => ['assertFlashMessageAt', "Failed asserting that 'missing' is in 'flash' message #0.", '/posts/index', 0, 'missing'];
+        yield 'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', "Failed asserting that 'missing' is in 'auth' message #0.", '/posts/index', 0, 'missing', 'auth'];
+        yield 'assertFlashElement' => ['assertFlashElement', "Failed asserting that 'missing' is in 'flash' element.", '/posts/index', 'missing'];
+        yield 'assertFlashElementWithKey' => ['assertFlashElement', "Failed asserting that 'missing' is in 'auth' element.", '/posts/index', 'missing', 'auth'];
+        yield 'assertFlashElementAt' => ['assertFlashElementAt', "Failed asserting that 'missing' is in 'flash' element #0.", '/posts/index', 0, 'missing'];
+        yield 'assertFlashElementAtWithKey' => ['assertFlashElementAt', "Failed asserting that 'missing' is in 'auth' element #0.", '/posts/index', 0, 'missing', 'auth'];
     }
 
     /**
@@ -1635,15 +1628,13 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function methodsProvider(): array
+    public static function methodsProvider(): \Iterator
     {
-        return [
-            'GET' => ['get'],
-            'POST' => ['post'],
-            'PATCH' => ['patch'],
-            'PUT' => ['put'],
-            'DELETE' => ['delete'],
-        ];
+        yield 'GET' => ['get'];
+        yield 'POST' => ['post'];
+        yield 'PATCH' => ['patch'];
+        yield 'PUT' => ['put'];
+        yield 'DELETE' => ['delete'];
     }
 
     /**
@@ -1709,9 +1700,8 @@ class IntegrationTestTraitTest extends TestCase
      * Test the assertion generates a verbose message for session related checks.
      *
      * @dataProvider assertionFailureSessionVerboseProvider
-     * @param mixed ...$rest
      */
-    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
+    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `OutOfBoundsException`: "oh no!"');
@@ -1725,14 +1715,12 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureSessionVerboseProvider(): array
+    public static function assertionFailureSessionVerboseProvider(): \Iterator
     {
-        return [
-            'assertFlashMessageVerbose' => ['assertFlashMessage', 'notfound'],
-            'assertFlashMessageAtVerbose' => ['assertFlashMessageAt', 2, 'notfound'],
-            'assertFlashElementVerbose' => ['assertFlashElement', 'notfound'],
-            'assertSessionVerbose' => ['assertSession', 'notfound', 'notfound'],
-        ];
+        yield 'assertFlashMessageVerbose' => ['assertFlashMessage', 'notfound'];
+        yield 'assertFlashMessageAtVerbose' => ['assertFlashMessageAt', 2, 'notfound'];
+        yield 'assertFlashElementVerbose' => ['assertFlashElement', 'notfound'];
+        yield 'assertSessionVerbose' => ['assertSession', 'notfound', 'notfound'];
     }
 
     /**
@@ -1759,9 +1747,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServices(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"mock":true}');
-        });
+        $this->mockService(stdClass::class, fn(): mixed => json_decode('{"mock":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
@@ -1772,9 +1758,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, function () {
-            return new ReflectionDependency();
-        });
+        $this->mockService(ReflectionDependency::class, fn(): \TestApp\ReflectionDependency => new ReflectionDependency());
         $this->get('/dependencies/reflectionDep');
         $this->assertResponseOk();
         $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');
@@ -1785,12 +1769,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesOverwrite(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"second":true}');
-        });
+        $this->mockService(stdClass::class, fn(): mixed => json_decode('{"first":true}'));
+        $this->mockService(stdClass::class, fn(): mixed => json_decode('{"second":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"second":true', 'Contains the data from the stdClass mock container.');
@@ -1801,9 +1781,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesUnset(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
+        $this->mockService(stdClass::class, fn(): mixed => json_decode('{"first":true}'));
         $this->removeMockService(stdClass::class);
 
         $this->get('/dependencies/requiredDep');

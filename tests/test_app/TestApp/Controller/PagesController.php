@@ -34,29 +34,32 @@ class PagesController extends AppController
      * Displays a view
      *
      * @param mixed What page to display
-     * @return \Cake\Http\Response|null
      * @throws \Cake\Http\Exception\NotFoundException When the view file could not be found.
      * @throws \Cake\View\Exception\MissingTemplateException In debug mode.
      */
-    public function display()
+    public function display(...$path): ?\Cake\Http\Response
     {
-        $path = func_get_args();
-
         $count = count($path);
         if (!$count) {
             return $this->redirect('/');
         }
-        $page = $subpage = $titleForLayout = null;
+
+        $page = null;
+        $subpage = null;
+        $titleForLayout = null;
 
         if (!empty($path[0])) {
             $page = $path[0];
         }
+
         if (!empty($path[1])) {
             $subpage = $path[1];
         }
+
         if (!empty($path[$count - 1])) {
             $titleForLayout = Inflector::humanize($path[$count - 1]);
         }
+
         $this->set([
             'page' => $page,
             'subpage' => $subpage,
@@ -65,11 +68,14 @@ class PagesController extends AppController
 
         try {
             $this->render(implode('/', $path));
-        } catch (MissingTemplateException $e) {
+        } catch (MissingTemplateException $missingTemplateException) {
             if (Configure::read('debug')) {
-                throw $e;
+                throw $missingTemplateException;
             }
+
             throw new NotFoundException();
         }
+
+        return null;
     }
 }

@@ -23,8 +23,6 @@ interface SchemaInterface
 {
     /**
      * Get the name of the table.
-     *
-     * @return string
      */
     public function name(): string;
 
@@ -70,7 +68,6 @@ interface SchemaInterface
      * Returns true if a column exists in the schema.
      *
      * @param string $name Column name.
-     * @return bool
      */
     public function hasColumn(string $name): bool;
 
@@ -96,7 +93,6 @@ interface SchemaInterface
      * Returns column type or null if a column does not exist.
      *
      * @param string $name The column to get the type of.
-     * @return string|null
      */
     public function getColumnType(string $name): ?string;
 

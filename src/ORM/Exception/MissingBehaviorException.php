@@ -21,8 +21,5 @@ use Cake\Core\Exception\CakeException;
  */
 class MissingBehaviorException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Behavior class `%s` could not be found.';
 }

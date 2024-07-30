@@ -35,43 +35,31 @@ class SelectLoader
 {
     /**
      * The alias of the association loading the results
-     *
-     * @var string
      */
     protected string $alias;
 
     /**
      * The alias of the source association
-     *
-     * @var string
      */
     protected string $sourceAlias;
 
     /**
      * The alias of the target association
-     *
-     * @var string
      */
     protected string $targetAlias;
 
     /**
      * The foreignKey to the target association
-     *
-     * @var array|string
      */
     protected array|string $foreignKey;
 
     /**
      * The strategy to use for loading, either select or subquery
-     *
-     * @var string
      */
     protected string $strategy;
 
     /**
      * The binding key for the source association.
-     *
-     * @var array|string
      */
     protected array|string $bindingKey;
 
@@ -84,15 +72,11 @@ class SelectLoader
 
     /**
      * The type of the association triggering the load
-     *
-     * @var string
      */
     protected string $associationType;
 
     /**
      * The sorting options for loading the association
-     *
-     * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
     protected ExpressionInterface|Closure|array|string|null $sort = null;
 
@@ -120,7 +104,6 @@ class SelectLoader
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
      *
      * @param array<string, mixed> $options Same options as `Association::eagerLoader()`
-     * @return \Closure
      */
     public function buildEagerLoader(array $options): Closure
     {
@@ -153,7 +136,6 @@ class SelectLoader
      * the source table
      *
      * @param array<string, mixed> $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery(array $options): SelectQuery
@@ -224,7 +206,6 @@ class SelectLoader
      *
      * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
-     * @return array
      */
     protected function _extractFinder(array|string $finderData): array
     {
@@ -244,7 +225,6 @@ class SelectLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
      * @param list<string> $key The foreign key fields to check
-     * @return void
      * @throws \InvalidArgumentException
      */
     protected function _assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
@@ -257,7 +237,8 @@ class SelectLoader
         if (!$select) {
             return;
         }
-        $missingKey = function ($fieldList, $key) {
+
+        $missingKey = function ($fieldList, $key): bool {
             foreach ($key as $keyField) {
                 if (!in_array($keyField, $fieldList, true)) {
                     return true;
@@ -270,7 +251,7 @@ class SelectLoader
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->getConnection()->getDriver();
-            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $quoted = array_map($driver->quoteIdentifier(...), $key);
             $missingFields = $missingKey($select, $quoted);
         }
 
@@ -292,7 +273,6 @@ class SelectLoader
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
      * @param array<string>|string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query\SelectQuery $subquery The Subquery to use for filtering
-     * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
     {
@@ -306,6 +286,7 @@ class SelectLoader
                 $filter[$aliasedField] = $field;
             }
         }
+
         $subquery->select($filter, true);
 
         if (is_array($key)) {
@@ -328,15 +309,10 @@ class SelectLoader
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
      * @param array<string>|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
-     * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _addFilteringCondition(SelectQuery $query, array|string $key, mixed $filter): SelectQuery
     {
-        if (is_array($key)) {
-            $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
-        } else {
-            $conditions = [$key . ' IN' => $filter];
-        }
+        $conditions = is_array($key) ? $this->_createTupleCondition($query, $key, $filter, 'IN') : [$key . ' IN' => $filter];
 
         return $query->andWhere($conditions);
     }
@@ -349,7 +325,6 @@ class SelectLoader
      * @param list<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
-     * @return \Cake\Database\Expression\TupleComparison
      */
     protected function _createTupleCondition(
         SelectQuery $query,
@@ -408,7 +383,6 @@ class SelectLoader
      * to load records in the source table.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the original query used to load source records
-     * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _buildSubquery(SelectQuery $query): SelectQuery
     {
@@ -451,7 +425,8 @@ class SelectLoader
         }
 
         $fields = $query->aliasFields($keys, $this->sourceAlias);
-        $group = $fields = array_values($fields);
+        $group = array_values($fields);
+        $fields = $group;
 
         /** @var \Cake\Database\Expression\QueryExpression $order */
         $order = $query->clause('order');
@@ -489,6 +464,7 @@ class SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$k];
             }
+
             if ($singleResult) {
                 $resultMap[implode(';', $values)] = $result;
             } else {
@@ -507,7 +483,6 @@ class SelectLoader
      * @param array<string, mixed> $resultMap an array with the foreignKey as keys and
      * the corresponding target table results as value.
      * @param array<string, mixed> $options The options passed to the eagerLoader method
-     * @return \Closure
      */
     protected function _resultInjector(SelectQuery $fetchQuery, array $resultMap, array $options): Closure
     {
@@ -528,7 +503,7 @@ class SelectLoader
 
         $sourceKey = $sourceKeys[0];
 
-        return function ($row) use ($resultMap, $sourceKey, $nestKey) {
+        return function (array $row) use ($resultMap, $sourceKey, $nestKey): array {
             if (isset($row[$sourceKey], $resultMap[$row[$sourceKey]])) {
                 $row[$nestKey] = $resultMap[$row[$sourceKey]];
             }
@@ -545,11 +520,10 @@ class SelectLoader
      * @param array<string, mixed> $resultMap A keyed arrays containing the target table
      * @param list<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
-     * @return \Closure
      */
     protected function _multiKeysInjector(array $resultMap, array $sourceKeys, string $nestKey): Closure
     {
-        return function ($row) use ($resultMap, $sourceKeys, $nestKey) {
+        return function (array $row) use ($resultMap, $sourceKeys, $nestKey): array {
             $values = [];
             foreach ($sourceKeys as $key) {
                 $values[] = $row[$key];

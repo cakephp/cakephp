@@ -64,7 +64,7 @@ class MapReduceTest extends TestCase
             'thing' => ['document_3'],
             'that' => ['document_3'],
         ];
-        $this->assertEquals($expected, iterator_to_array($results));
+        $this->assertSame($expected, iterator_to_array($results));
     }
 
     /**
@@ -80,7 +80,7 @@ class MapReduceTest extends TestCase
         };
         $results = new MapReduce(new ArrayIterator($data), $mapper);
         $expected = ['one', 'two', 'three', 'four'];
-        $this->assertEquals($expected, iterator_to_array($results));
+        $this->assertSame($expected, iterator_to_array($results));
     }
 
     /**

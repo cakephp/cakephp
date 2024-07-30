@@ -25,29 +25,24 @@ class SomePagesController extends Controller
     /**
      * display method
      *
-     * @param mixed $page
      * @return void
      */
-    public function display($page = null)
+    public function display(mixed $page = null)
     {
     }
 
     /**
      * index method
-     *
-     * @return void
      */
-    public function index()
+    public function index(): bool
     {
         return true;
     }
 
     /**
      * Test method for returning responses.
-     *
-     * @return \Cake\Http\Response
      */
-    public function responseGenerator()
+    public function responseGenerator(): \Cake\Http\Response
     {
         return $this->response->withStringBody('new response');
     }

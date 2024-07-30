@@ -49,7 +49,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -84,7 +84,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->View, $this->Paginator);
@@ -684,12 +684,9 @@ class PaginatorHelperTest extends TestCase
      * Verify that sort links always result in a url that is page 1 (page not
      * present in the url)
      *
-     * @param string $field
-     * @param array $options
-     * @param string $expected
      * @dataProvider urlGenerationResetsToPage1Provider
      */
-    public function testUrlGenerationResetsToPage1($field, $options, $expected): void
+    public function testUrlGenerationResetsToPage1(string $field, array $options, string $expected): void
     {
         $this->setPaginatedResult([
             'alias' => 'Article',
@@ -709,29 +706,27 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public static function urlGenerationResetsToPage1Provider(): array
+    public static function urlGenerationResetsToPage1Provider(): \Iterator
     {
-        return [
-            'Sorting the field currently sorted asc, asc' => [
-                'name',
-                ['sort' => 'name', 'direction' => 'asc'],
-                '<a class="asc" href="/?sort=name&amp;direction=asc">Name</a>',
-            ],
-            'Sorting the field currently sorted asc, desc' => [
-                'name',
-                ['sort' => 'name', 'direction' => 'desc'],
-                '<a class="asc" href="/?sort=name&amp;direction=desc">Name</a>',
-            ],
-            'Sorting other asc' => [
-                'other',
-                ['sort' => 'other', 'direction' => 'asc'],
-                '<a href="/?sort=other&amp;direction=asc">Other</a>',
-            ],
-            'Sorting other desc' => [
-                'other',
-                ['sort' => 'other', 'direction' => 'desc'],
-                '<a href="/?sort=other&amp;direction=desc">Other</a>',
-            ],
+        yield 'Sorting the field currently sorted asc, asc' => [
+            'name',
+            ['sort' => 'name', 'direction' => 'asc'],
+            '<a class="asc" href="/?sort=name&amp;direction=asc">Name</a>',
+        ];
+        yield 'Sorting the field currently sorted asc, desc' => [
+            'name',
+            ['sort' => 'name', 'direction' => 'desc'],
+            '<a class="asc" href="/?sort=name&amp;direction=desc">Name</a>',
+        ];
+        yield 'Sorting other asc' => [
+            'other',
+            ['sort' => 'other', 'direction' => 'asc'],
+            '<a href="/?sort=other&amp;direction=asc">Other</a>',
+        ];
+        yield 'Sorting other desc' => [
+            'other',
+            ['sort' => 'other', 'direction' => 'desc'],
+            '<a href="/?sort=other&amp;direction=desc">Other</a>',
         ];
     }
 
@@ -1577,10 +1572,10 @@ class PaginatorHelperTest extends TestCase
             7 => '1 2 3 4 5 6 *7 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 7);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['first' => 'F', 'last' => 'L']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ',
@@ -1599,7 +1594,7 @@ class PaginatorHelperTest extends TestCase
             20 => '12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ',
@@ -1620,7 +1615,7 @@ class PaginatorHelperTest extends TestCase
             20 => '<F ... 12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 'F']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ',
@@ -1641,7 +1636,7 @@ class PaginatorHelperTest extends TestCase
             20 => '1 2 ... 12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ... L> ',
@@ -1666,7 +1661,7 @@ class PaginatorHelperTest extends TestCase
             20 => '12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['last' => 'L']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ... L> ',
@@ -1691,7 +1686,7 @@ class PaginatorHelperTest extends TestCase
             20 => '<F ... 12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 'F', 'last' => 'L']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ... 19 20 ',
@@ -1716,7 +1711,7 @@ class PaginatorHelperTest extends TestCase
             20 => '1 2 ... 12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2, 'last' => 2]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 6 7 8 9 ... 19 20 ',
@@ -1741,7 +1736,7 @@ class PaginatorHelperTest extends TestCase
             20 => '12 13 14 15 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['last' => 2]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -1752,7 +1747,7 @@ class PaginatorHelperTest extends TestCase
      * @param array $options Options for PaginatorHelper::numbers
      * @return string[]
      */
-    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, $options = []): array
+    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, array $options = []): array
     {
         $options['templates'] = [
             'first' => '<{{text}} ',
@@ -2017,7 +2012,7 @@ class PaginatorHelperTest extends TestCase
             7 => '4 5 6 *7 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['modulus' => 3]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 ... L> ',
@@ -2030,7 +2025,7 @@ class PaginatorHelperTest extends TestCase
         ];
 
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 7, ['modulus' => 3, 'first' => 'F', 'last' => 'L']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 ... 19 20 ',
@@ -2047,7 +2042,7 @@ class PaginatorHelperTest extends TestCase
             20 => '1 2 ... 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 2, 'modulus' => 2, 'last' => 2]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $expected = [
             1 => '*1 2 3 4 5 ... 16 17 18 19 20 ',
@@ -2072,7 +2067,7 @@ class PaginatorHelperTest extends TestCase
             20 => '1 2 3 4 5 ... 16 17 18 19 *20 ',
         ];
         $result = $this->getNumbersForMultiplePages(array_keys($expected), 20, ['first' => 5, 'modulus' => 4, 'last' => 5]);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -2631,57 +2626,49 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public static function dataMetaProvider(): array
+    public static function dataMetaProvider(): \Iterator
     {
-        return [
-            // Verifies that no next and prev links are created for single page results.
-            [1, false, false, 1, [], ''],
-            // Verifies that first and last pages are created for single page results.
-            [1, false, false, 1, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar" rel="first">' .
-                '<link href="http://localhost/?foo=bar" rel="last">'],
-            // Verifies that first page is created for single page results.
-            [1, false, false, 1, ['first' => true], '<link href="http://localhost/?foo=bar" rel="first">'],
-            // Verifies that last page is created for single page results.
-            [1, false, false, 1, ['last' => true], '<link href="http://localhost/?foo=bar" rel="last">'],
-            // Verifies that page 1 only has a next link.
-            [1, false, true, 2, [], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">'],
-            // Verifies that page 1 only has next, first and last link.
-            [1, false, true, 2, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
-                '<link href="http://localhost/?foo=bar" rel="first">' .
-                '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'],
-            // Verifies that page 1 only has next and first link.
-            [1, false, true, 2, ['first' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
-                '<link href="http://localhost/?foo=bar" rel="first">'],
-            // Verifies that page 1 only has next and last link.
-            [1, false, true, 2, ['last' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
-                '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'],
-            // Verifies that the last page only has a prev link.
-            [2, true, false, 2, [], '<link href="http://localhost/?foo=bar" rel="prev">'],
-            // Verifies that the last page only has a prev, first and last link.
-            [2, true, false, 2, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar" rel="prev">' .
-                '<link href="http://localhost/?foo=bar" rel="first">' .
-                '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'],
-            // Verifies that a page in the middle has both links.
-            [5, true, true, 10, [], '<link href="http://localhost/?foo=bar&amp;page=4" rel="prev">' .
-                '<link href="http://localhost/?foo=bar&amp;page=6" rel="next">'],
-            // Verifies that a page in the middle has both links.
-            [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar&amp;page=4" rel="prev">' .
-                '<link href="http://localhost/?foo=bar&amp;page=6" rel="next">' .
-                '<link href="http://localhost/?foo=bar" rel="first">' .
-                '<link href="http://localhost/?foo=bar&amp;page=10" rel="last">'],
-        ];
+        // Verifies that no next and prev links are created for single page results.
+        yield [1, false, false, 1, [], ''];
+        // Verifies that first and last pages are created for single page results.
+        yield [1, false, false, 1, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar" rel="first">' .
+            '<link href="http://localhost/?foo=bar" rel="last">'];
+        // Verifies that first page is created for single page results.
+        yield [1, false, false, 1, ['first' => true], '<link href="http://localhost/?foo=bar" rel="first">'];
+        // Verifies that last page is created for single page results.
+        yield [1, false, false, 1, ['last' => true], '<link href="http://localhost/?foo=bar" rel="last">'];
+        // Verifies that page 1 only has a next link.
+        yield [1, false, true, 2, [], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">'];
+        // Verifies that page 1 only has next, first and last link.
+        yield [1, false, true, 2, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
+            '<link href="http://localhost/?foo=bar" rel="first">' .
+            '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'];
+        // Verifies that page 1 only has next and first link.
+        yield [1, false, true, 2, ['first' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
+            '<link href="http://localhost/?foo=bar" rel="first">'];
+        // Verifies that page 1 only has next and last link.
+        yield [1, false, true, 2, ['last' => true], '<link href="http://localhost/?foo=bar&amp;page=2" rel="next">' .
+            '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'];
+        // Verifies that the last page only has a prev link.
+        yield [2, true, false, 2, [], '<link href="http://localhost/?foo=bar" rel="prev">'];
+        // Verifies that the last page only has a prev, first and last link.
+        yield [2, true, false, 2, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar" rel="prev">' .
+            '<link href="http://localhost/?foo=bar" rel="first">' .
+            '<link href="http://localhost/?foo=bar&amp;page=2" rel="last">'];
+        // Verifies that a page in the middle has both links.
+        yield [5, true, true, 10, [], '<link href="http://localhost/?foo=bar&amp;page=4" rel="prev">' .
+            '<link href="http://localhost/?foo=bar&amp;page=6" rel="next">'];
+        // Verifies that a page in the middle has both links.
+        yield [5, true, true, 10, ['first' => true, 'last' => true], '<link href="http://localhost/?foo=bar&amp;page=4" rel="prev">' .
+            '<link href="http://localhost/?foo=bar&amp;page=6" rel="next">' .
+            '<link href="http://localhost/?foo=bar" rel="first">' .
+            '<link href="http://localhost/?foo=bar&amp;page=10" rel="last">'];
     }
 
     /**
-     * @param int $page
-     * @param int $prevPage
-     * @param int $nextPage
-     * @param int $pageCount
-     * @param array $options
-     * @param string $expected
      * @dataProvider dataMetaProvider
      */
-    public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected): void
+    public function testMeta(int $page, bool $prevPage, bool $nextPage, int $pageCount, array $options, string $expected): void
     {
         $this->setPaginatedResult([
             'currentPage' => $page,
@@ -2796,10 +2783,8 @@ class PaginatorHelperTest extends TestCase
 
     /**
      * test the limitControl() with a request url and query.
-     *
-     * @return void
      */
-    public function testLimitControlUrlWithQuery()
+    public function testLimitControlUrlWithQuery(): void
     {
         $request = new ServerRequest([
             'url' => '/batches?owner=billy&expected=1',
@@ -3007,6 +2992,7 @@ class PaginatorHelperTest extends TestCase
         ]));
         $this->Paginator = new PaginatorHelper($this->View);
         $this->Paginator->setPaginated($this->paginatedResult, ['paging' => ['scope' => 'article']]);
+
         $result = $this->Paginator->generateUrl(['page' => 2]);
         $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
         $this->assertSame($expected, $result);

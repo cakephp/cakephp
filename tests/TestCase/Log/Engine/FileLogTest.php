@@ -38,19 +38,19 @@ class FileLogTest extends TestCase
         $this->assertFileExists(LOGS . 'error.log');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+ \d+:\d+:\d+ warning: Test warning/', $result);
 
         $log->log('debug', 'Test warning');
         $this->assertFileExists(LOGS . 'debug.log');
 
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+ \d+:\d+:\d+ debug: Test warning/', $result);
 
         $log->log('random', 'Test warning');
         $this->assertFileExists(LOGS . 'random.log');
 
         $result = file_get_contents(LOGS . 'random.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ random: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+ \d+:\d+:\d+ random: Test warning/', $result);
     }
 
     /**
@@ -61,7 +61,7 @@ class FileLogTest extends TestCase
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
 
-        $log = new FileLog(compact('path'));
+        $log = new FileLog(['path' => $path]);
         $log->log('warning', 'Test warning');
         $this->assertFileExists($path . 'error.log');
     }
@@ -143,7 +143,7 @@ class FileLogTest extends TestCase
         $this->assertFileExists($path . 'debug.log');
 
         $result = file_get_contents($path . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test debug/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+ \d+:\d+:\d+ debug: Test debug/', $result);
         $this->assertFalse(strstr($result, 'greater than 5 bytes'));
         $this->assertCount(0, glob($path . 'debug.log.*'));
     }
@@ -159,6 +159,7 @@ class FileLogTest extends TestCase
 
         $log = new FileLog(['path' => $path, 'mask' => 0666]);
         $log->log('warning', 'Test warning one');
+
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0666';
         $this->assertSame($expected, $result);
@@ -166,6 +167,7 @@ class FileLogTest extends TestCase
 
         $log = new FileLog(['path' => $path, 'mask' => 0644]);
         $log->log('warning', 'Test warning two');
+
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0644';
         $this->assertSame($expected, $result);
@@ -173,6 +175,7 @@ class FileLogTest extends TestCase
 
         $log = new FileLog(['path' => $path, 'mask' => 0640]);
         $log->log('warning', 'Test warning three');
+
         $result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
         $expected = '0640';
         $this->assertSame($expected, $result);
@@ -181,10 +184,8 @@ class FileLogTest extends TestCase
 
     /**
      * helper function to clears all log files in specified directory
-     *
-     * @param string $dir
      */
-    protected function _deleteLogs($dir): void
+    protected function _deleteLogs(string $dir): void
     {
         $files = array_merge(glob($dir . '*.log'), glob($dir . '*.log.*'));
         foreach ($files as $file) {
@@ -204,6 +205,6 @@ class FileLogTest extends TestCase
         $log->log('warning', 'Test warning');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression('/^2\d{3}-\d+-\d+T\d+:\d+:\d+\+\d{2}:\d{2} warning: Test warning/', $result);
     }
 }

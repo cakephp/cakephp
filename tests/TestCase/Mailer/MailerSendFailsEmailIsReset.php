@@ -28,7 +28,7 @@ class MailerSendFailsEmailIsReset extends TestCase
 
         $mailer->expects($this->once())
             ->method('deliver')
-            ->will($this->throwException(new RuntimeException('kaboom')));
+            ->willThrowException(new RuntimeException('kaboom'));
         // Mailer should be reset even if sending fails.
         $mailer->expects($this->once())
             ->method('restore');
@@ -36,7 +36,7 @@ class MailerSendFailsEmailIsReset extends TestCase
         try {
             $mailer->send('welcome', ['foo', 'bar']);
             $this->fail('Exception should bubble up.');
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }
@@ -49,4 +49,5 @@ class SendFailsEmailIsResetMailer extends Mailer
     {
     }
 }
+
 // phpcs:enable

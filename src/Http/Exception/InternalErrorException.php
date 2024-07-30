@@ -33,6 +33,7 @@ class InternalErrorException extends HttpException
         if (!$message) {
             $message = 'Internal Server Error';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

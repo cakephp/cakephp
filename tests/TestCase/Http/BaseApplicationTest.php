@@ -38,15 +38,12 @@ use TestPlugin\Plugin as TestPlugin;
  */
 class BaseApplicationTest extends TestCase
 {
-    /**
-     * @var \Cake\Http\BaseApplication
-     */
     protected BaseApplication $app;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -59,10 +56,7 @@ class BaseApplicationTest extends TestCase
         };
     }
 
-    /**
-     * @return void
-     */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -99,6 +93,7 @@ class BaseApplicationTest extends TestCase
     {
         $app = $this->app;
         $app->addPlugin('PluginJs');
+
         $plugin = $app->getPlugins()->get('PluginJs');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
 
@@ -269,7 +264,7 @@ class BaseApplicationTest extends TestCase
     public function testBuildContainerEventReplaceContainer(): void
     {
         $app = $this->app;
-        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event) {
+        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event): void {
             $new = new Container();
             $new->add('testing', 'yes');
 

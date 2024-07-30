@@ -117,13 +117,6 @@ class Behavior implements EventListenerInterface
     use InstanceConfigTrait;
 
     /**
-     * Table instance.
-     *
-     * @var \Cake\ORM\Table
-     */
-    protected Table $_table;
-
-    /**
      * Reflection method cache for behaviors.
      *
      * Stores the reflected method + finder methods per class.
@@ -147,10 +140,13 @@ class Behavior implements EventListenerInterface
      *
      * Merges config with the default and store in the config property
      *
-     * @param \Cake\ORM\Table $table The table this behavior is attached to.
+     * @param \Cake\ORM\Table $_table The table this behavior is attached to.
      * @param array<string, mixed> $config The config for this behavior.
      */
-    public function __construct(Table $table, array $config = [])
+    public function __construct(/**
+     * Table instance.
+     */
+    protected Table $_table, array $config = [])
     {
         $config = $this->_resolveMethodAliases(
             'implementedFinders',
@@ -162,7 +158,6 @@ class Behavior implements EventListenerInterface
             $this->_defaultConfig,
             $config
         );
-        $this->_table = $table;
         $this->setConfig($config);
         $this->initialize($config);
     }
@@ -174,7 +169,6 @@ class Behavior implements EventListenerInterface
      * the constructor and call parent.
      *
      * @param array<string, mixed> $config The configuration settings provided to this behavior.
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -203,6 +197,7 @@ class Behavior implements EventListenerInterface
         if (!isset($defaults[$key], $config[$key])) {
             return $config;
         }
+
         if (isset($config[$key]) && $config[$key] === []) {
             $this->setConfig($key, [], false);
             unset($config[$key]);
@@ -217,6 +212,7 @@ class Behavior implements EventListenerInterface
                 $indexedCustom[$method] = $alias;
             }
         }
+
         $this->setConfig($key, array_flip($indexedCustom), false);
         unset($config[$key]);
 
@@ -228,7 +224,6 @@ class Behavior implements EventListenerInterface
      *
      * Checks that implemented keys contain values pointing at callable.
      *
-     * @return void
      * @throws \Cake\Core\Exception\CakeException if config are invalid
      */
     public function verifyConfig(): void
@@ -287,14 +282,11 @@ class Behavior implements EventListenerInterface
             if (!method_exists($this, $method)) {
                 continue;
             }
-            if ($priority === null) {
-                $events[$event] = $method;
-            } else {
-                $events[$event] = [
-                    'callable' => $method,
-                    'priority' => $priority,
-                ];
-            }
+
+            $events[$event] = $priority === null ? $method : [
+                'callable' => $method,
+                'priority' => $priority,
+            ];
         }
 
         return $events;
@@ -319,7 +311,6 @@ class Behavior implements EventListenerInterface
      * of child classes such that it is not necessary to use reflections to derive the available
      * method list. See core behaviors for examples
      *
-     * @return array
      * @throws \ReflectionException
      */
     public function implementedFinders(): array
@@ -351,7 +342,6 @@ class Behavior implements EventListenerInterface
      * of child classes such that it is not necessary to use reflections to derive the available
      * method list. See core behaviors for examples
      *
-     * @return array
      * @throws \ReflectionException
      */
     public function implementedMethods(): array
@@ -371,7 +361,6 @@ class Behavior implements EventListenerInterface
      * Methods starting with `_` will be ignored, as will methods
      * declared on Cake\ORM\Behavior
      *
-     * @return array
      * @throws \ReflectionException
      */
     protected function _reflectionCache(): array
@@ -389,6 +378,7 @@ class Behavior implements EventListenerInterface
                 assert(is_string($callable));
                 $binding = $callable;
             }
+
             $eventMethods[$binding] = true;
         }
 
@@ -409,10 +399,11 @@ class Behavior implements EventListenerInterface
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if (
-                in_array($methodName, $baseMethods, true) ||
-                isset($eventMethods[$methodName])
-            ) {
+            if (in_array($methodName, $baseMethods, true)) {
+                continue;
+            }
+
+            if (isset($eventMethods[$methodName])) {
                 continue;
             }
 

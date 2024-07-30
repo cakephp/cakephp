@@ -35,7 +35,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subject = new class {
@@ -46,7 +46,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->subject);
         parent::tearDown();
@@ -57,7 +57,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testSimpleParseDsn(): void
     {
-        $className = get_class($this->subject);
+        $className = $this->subject::class;
         $this->assertSame([], $className::parseDsn(''));
     }
 
@@ -67,13 +67,13 @@ class StaticConfigTraitTest extends TestCase
     public function testParseBadType(): void
     {
         $this->expectException(TypeError::class);
-        $className = get_class($this->subject);
+        $className = $this->subject::class;
         $className::parseDsn(['url' => 'http://:80']);
     }
 
     public function testSetConfigValues(): void
     {
-        $className = get_class($this->subject);
+        $className = $this->subject::class;
         $className::setConfig('foo', true);
 
         $result = $className::getConfigOrFail('foo');
@@ -86,7 +86,7 @@ class StaticConfigTraitTest extends TestCase
 
     public function testGetConfigOrFail(): void
     {
-        $className = get_class($this->subject);
+        $className = $this->subject::class;
         $className::setConfig('foo2', ['bar' => true]);
 
         $result = $className::getConfigOrFail('foo2');
@@ -98,7 +98,7 @@ class StaticConfigTraitTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected configuration `unknown` not found.');
 
-        $className = get_class($this->subject);
+        $className = $this->subject::class;
         $className::getConfigOrFail('unknown');
     }
 
@@ -109,36 +109,36 @@ class StaticConfigTraitTest extends TestCase
     {
         $dsn = 'file:///?url=test';
         $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
+            'className' => \Cake\Log\Engine\FileLog::class,
             'path' => '/',
             'scheme' => 'file',
             'url' => 'test',
         ];
-        $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertSame($expected, TestLogStaticConfig::parseDsn($dsn));
 
         $dsn = 'file:///?file=debug&key=value';
         $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
+            'className' => \Cake\Log\Engine\FileLog::class,
             'file' => 'debug',
             'key' => 'value',
             'path' => '/',
             'scheme' => 'file',
         ];
-        $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertSame($expected, TestLogStaticConfig::parseDsn($dsn));
 
         $dsn = 'file:///tmp?file=debug&types[]=notice&types[]=info&types[]=debug';
         $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
+            'className' => \Cake\Log\Engine\FileLog::class,
             'file' => 'debug',
             'path' => '/tmp',
             'scheme' => 'file',
             'types' => ['notice', 'info', 'debug'],
         ];
-        $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertSame($expected, TestLogStaticConfig::parseDsn($dsn));
 
         $dsn = 'mail:///?timeout=30&key=true&key2=false&client=null&tls=null';
         $expected = [
-            'className' => 'Cake\Mailer\Transport\MailTransport',
+            'className' => \Cake\Mailer\Transport\MailTransport::class,
             'client' => null,
             'key' => true,
             'key2' => false,
@@ -151,7 +151,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'mail://true:false@null/1?timeout=30&key=true&key2=false&client=null&tls=null';
         $expected = [
-            'className' => 'Cake\Mailer\Transport\MailTransport',
+            'className' => \Cake\Mailer\Transport\MailTransport::class,
             'client' => null,
             'host' => 'null',
             'key' => true,
@@ -167,7 +167,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null#fragment';
         $expected = [
-            'className' => 'Cake\Mailer\Transport\MailTransport',
+            'className' => \Cake\Mailer\Transport\MailTransport::class,
             'client' => null,
             'host' => 'localhost',
             'password' => 'secret',
@@ -182,7 +182,7 @@ class StaticConfigTraitTest extends TestCase
 
         $dsn = 'file:///?prefix=myapp_cake_core_&serialize=true&duration=%2B2 minutes';
         $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
+            'className' => \Cake\Log\Engine\FileLog::class,
             'duration' => '+2 minutes',
             'path' => '/',
             'prefix' => 'myapp_cake_core_',
@@ -199,10 +199,10 @@ class StaticConfigTraitTest extends TestCase
     {
         $dsn = 'file:///?path=/tmp/persistent/';
         $expected = [
-            'className' => 'Cake\Log\Engine\FileLog',
+            'className' => \Cake\Log\Engine\FileLog::class,
             'path' => '/tmp/persistent/',
             'scheme' => 'file',
         ];
-        $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
+        $this->assertSame($expected, TestLogStaticConfig::parseDsn($dsn));
     }
 }

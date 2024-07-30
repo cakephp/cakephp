@@ -22,9 +22,6 @@ enum ArticleStatusLabelInterface: string implements EnumLabelInterface
     case Published = 'Y';
     case Unpublished = 'N';
 
-    /**
-     * @return string
-     */
     public function label(): string
     {
         return 'Is ' . Inflector::humanize(Inflector::underscore($this->name));

@@ -64,7 +64,7 @@ class App
 
         $base = $plugin ?: Configure::read('App.namespace');
         if ($base !== null) {
-            $base = str_replace('/', '\\', rtrim($base, '\\'));
+            $base = str_replace('/', '\\', rtrim((string) $base, '\\'));
 
             if (static::_classExistsInBase($fullname, $base)) {
                 /** @var class-string */
@@ -155,7 +155,6 @@ class App
      *
      * @param string $name Class name.
      * @param string $namespace Namespace.
-     * @return bool
      */
     protected static function _classExistsInBase(string $name, string $namespace): bool
     {

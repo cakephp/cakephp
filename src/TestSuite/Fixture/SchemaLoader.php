@@ -35,9 +35,6 @@ use InvalidArgumentException;
  */
 class SchemaLoader
 {
-    /**
-     * @var \Cake\TestSuite\ConnectionHelper
-     */
     protected ConnectionHelper $helper;
 
     /**
@@ -55,7 +52,6 @@ class SchemaLoader
      * @param string $connectionName Connection name
      * @param bool $dropTables Drop all tables prior to loading schema files
      * @param bool $truncateTables Truncate all tables after loading schema files
-     * @return void
      */
     public function loadSqlFiles(
         array|string $paths,
@@ -80,6 +76,7 @@ class SchemaLoader
             if (!file_exists($file)) {
                 throw new InvalidArgumentException(sprintf('Unable to load SQL file `%s`.', $file));
             }
+
             $sql = file_get_contents($file);
             if ($sql === false) {
                 throw new CakeException(sprintf('Cannot read file content of `%s`', $file));
@@ -148,7 +145,6 @@ class SchemaLoader
      * @param string $file Schema file
      * @param string $connectionName Connection name
      * @throws \InvalidArgumentException For missing table name(s).
-     * @return void
      */
     public function loadInternalFile(string $file, string $connectionName = 'test'): void
     {
@@ -171,15 +167,17 @@ class SchemaLoader
                 if (!is_string($name)) {
                     throw new InvalidArgumentException(
                         sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
-                            . '(`\'articles\' => [...]`) or define the `table` key in the table definition.', $name)
+                            . "(`'articles' => [...]`) or define the `table` key in the table definition.", $name)
                     );
                 }
+
                 $schema = new TableSchema($name, $table['columns']);
                 if (isset($table['indexes'])) {
                     foreach ($table['indexes'] as $key => $index) {
                         $schema->addIndex($key, $index);
                     }
                 }
+
                 if (isset($table['constraints'])) {
                     foreach ($table['constraints'] as $key => $index) {
                         $schema->addConstraint($key, $index);

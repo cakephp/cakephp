@@ -141,7 +141,7 @@ class ResponseTest extends TestCase
         $encoded = json_encode($data);
         $response = new Response([], '');
         $response->getBody()->write($encoded);
-        $this->assertEquals($data, $response->getJson());
+        $this->assertSame($data, $response->getJson());
     }
 
     /**
@@ -223,58 +223,56 @@ XML;
      *
      * @return array
      */
-    public static function isSuccessProvider(): array
+    public static function isSuccessProvider(): \Iterator
     {
-        return [
-            [
-                true,
-                new Response([
-                    'HTTP/1.1 200 OK',
-                    'Content-Type: text/html',
-                ], 'ok'),
-            ],
-            [
-                true,
-                new Response([
-                    'HTTP/1.1 201 Created',
-                    'Content-Type: text/html',
-                ], 'ok'),
-            ],
-            [
-                true,
-                new Response([
-                    'HTTP/1.1 202 Accepted',
-                    'Content-Type: text/html',
-                ], 'ok'),
-            ],
-            [
-                true,
-                new Response([
-                    'HTTP/1.1 203 Non-Authoritative Information',
-                    'Content-Type: text/html',
-                ], 'ok'),
-            ],
-            [
-                true,
-                new Response([
-                    'HTTP/1.1 204 No Content',
-                    'Content-Type: text/html',
-                ], ''),
-            ],
-            [
-                false,
-                new Response([
-                    'HTTP/1.1 301 Moved Permanently',
-                    'Content-Type: text/html',
-                ], ''),
-            ],
-            [
-                false,
-                new Response([
-                    'HTTP/1.0 404 Not Found',
-                    'Content-Type: text/html',
-                ], ''),
-            ],
+        yield [
+            true,
+            new Response([
+                'HTTP/1.1 200 OK',
+                'Content-Type: text/html',
+            ], 'ok'),
+        ];
+        yield [
+            true,
+            new Response([
+                'HTTP/1.1 201 Created',
+                'Content-Type: text/html',
+            ], 'ok'),
+        ];
+        yield [
+            true,
+            new Response([
+                'HTTP/1.1 202 Accepted',
+                'Content-Type: text/html',
+            ], 'ok'),
+        ];
+        yield [
+            true,
+            new Response([
+                'HTTP/1.1 203 Non-Authoritative Information',
+                'Content-Type: text/html',
+            ], 'ok'),
+        ];
+        yield [
+            true,
+            new Response([
+                'HTTP/1.1 204 No Content',
+                'Content-Type: text/html',
+            ], ''),
+        ];
+        yield [
+            false,
+            new Response([
+                'HTTP/1.1 301 Moved Permanently',
+                'Content-Type: text/html',
+            ], ''),
+        ];
+        yield [
+            false,
+            new Response([
+                'HTTP/1.0 404 Not Found',
+                'Content-Type: text/html',
+            ], ''),
         ];
     }
 

@@ -35,7 +35,7 @@ class FloatTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * @var string
@@ -45,18 +45,18 @@ class FloatTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new FloatType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
         $this->numberClass = FloatType::$numberClass;
     }
 
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -71,10 +71,10 @@ class FloatTypeTest extends TestCase
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
         $result = $this->type->toPHP('2', $this->driver);
-        $this->assertSame(2.0, $result);
+        $this->assertEqualsWithDelta(2.0, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toPHP('15.3', $this->driver);
-        $this->assertSame(15.3, $result);
+        $this->assertEqualsWithDelta(15.3, $result, PHP_FLOAT_EPSILON);
     }
 
     /**
@@ -112,16 +112,16 @@ class FloatTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->toDatabase('some data', $this->driver);
-        $this->assertSame(0.0, $result);
+        $this->assertEqualsWithDelta(0.0, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toDatabase(2, $this->driver);
-        $this->assertSame(2.0, $result);
+        $this->assertEqualsWithDelta(2.0, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toDatabase('2.51', $this->driver);
-        $this->assertSame(2.51, $result);
+        $this->assertEqualsWithDelta(2.51, $result, PHP_FLOAT_EPSILON);
 
         $result = $this->type->toDatabase(['3', '4'], $this->driver);
-        $this->assertSame(1.0, $result);
+        $this->assertEqualsWithDelta(1.0, $result, PHP_FLOAT_EPSILON);
     }
 
     /**
@@ -136,7 +136,7 @@ class FloatTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal('2.51');
-        $this->assertSame(2.51, $result);
+        $this->assertEqualsWithDelta(2.51, $result, PHP_FLOAT_EPSILON);
 
         // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
         $result = $this->type->marshal('1 230,73');

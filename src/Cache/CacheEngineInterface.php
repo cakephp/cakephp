@@ -63,7 +63,6 @@ interface CacheEngineInterface
      * to achieve the same result.
      *
      * @param string $group name of the group to be cleared
-     * @return bool
      */
     public function clearGroup(string $group): bool;
 }

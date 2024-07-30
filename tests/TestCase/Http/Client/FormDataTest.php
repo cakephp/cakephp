@@ -94,6 +94,7 @@ class FormDataTest extends TestCase
 
         $part = $data->newPart('test', 'value');
         $part->contentId('abc123');
+
         $data->add($part);
 
         $this->assertTrue($data->isMultipart());
@@ -138,6 +139,7 @@ class FormDataTest extends TestCase
 
         $data = new FormData();
         $data->addFile('upload', fopen($file, 'r'));
+
         $boundary = $data->boundary();
         $result = (string)$data;
 
@@ -163,6 +165,7 @@ class FormDataTest extends TestCase
 
         $data = new FormData();
         $data->add('upload', $fh);
+
         $boundary = $data->boundary();
         $result = (string)$data;
 
@@ -196,6 +199,7 @@ class FormDataTest extends TestCase
 
         $data = new FormData();
         $data->add('upload', $file);
+
         $boundary = $data->boundary();
         $result = (string)$data;
 
@@ -218,6 +222,7 @@ class FormDataTest extends TestCase
     {
         $data = new FormData();
         $data->add('key', 'value');
+
         $result = $data->contentType();
         $expected = 'application/x-www-form-urlencoded';
         $this->assertSame($expected, $result);
@@ -225,6 +230,7 @@ class FormDataTest extends TestCase
         $file = CORE_PATH . 'VERSION.txt';
         $data = new FormData();
         $data->addFile('upload', fopen($file, 'r'));
+
         $boundary = $data->boundary();
         $result = $data->contentType();
         $expected = 'multipart/form-data; boundary=' . $boundary;

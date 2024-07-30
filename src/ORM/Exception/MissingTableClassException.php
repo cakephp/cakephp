@@ -23,8 +23,5 @@ use Cake\Core\Exception\CakeException;
  */
 class MissingTableClassException extends CakeException
 {
-    /**
-     * @var string
-     */
     protected string $_messageTemplate = 'Table class %s could not be found.';
 }

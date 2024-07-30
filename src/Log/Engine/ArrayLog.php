@@ -77,8 +77,6 @@ class ArrayLog extends BaseLog
 
     /**
      * Reset internal storage.
-     *
-     * @return void
      */
     public function clear(): void
     {

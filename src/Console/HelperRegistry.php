@@ -30,8 +30,6 @@ class HelperRegistry extends ObjectRegistry
 {
     /**
      * IO instance.
-     *
-     * @var \Cake\Console\ConsoleIo
      */
     protected ConsoleIo $_io;
 
@@ -39,7 +37,6 @@ class HelperRegistry extends ObjectRegistry
      * Sets The IO instance that should be passed to the shell helpers
      *
      * @param \Cake\Console\ConsoleIo $io An io instance.
-     * @return void
      */
     public function setIo(ConsoleIo $io): void
     {
@@ -68,7 +65,6 @@ class HelperRegistry extends ObjectRegistry
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the helper is missing in.
-     * @return void
      * @throws \Cake\Console\Exception\MissingHelperException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void

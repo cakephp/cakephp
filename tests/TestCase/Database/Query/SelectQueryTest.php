@@ -64,10 +64,12 @@ class SelectQueryTest extends TestCase
      * @var int
      */
     public const ARTICLE_COUNT = 3;
+
     /**
      * @var int
      */
     public const AUTHOR_COUNT = 4;
+
     /**
      * @var int
      */
@@ -83,14 +85,14 @@ class SelectQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -106,18 +108,18 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $result = $query->select('1 + 1')->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertEquals([2], $result->fetch());
+        $this->assertSame([2], $result->fetch());
         $result->closeCursor();
 
         //This new field should be appended
         $result = $query->select(['1 + 3'])->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);
-        $this->assertEquals([2, 4], $result->fetch());
+        $this->assertSame([2, 4], $result->fetch());
         $result->closeCursor();
 
         //This should now overwrite all previous fields
         $result = $query->select(['1 + 2', '1 + 5'], true)->execute();
-        $this->assertEquals([3, 6], $result->fetch());
+        $this->assertSame([3, 6], $result->fetch());
         $result->closeCursor();
     }
 
@@ -128,12 +130,12 @@ class SelectQueryTest extends TestCase
     {
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new SelectQuery($this->connection);
-        $result = $query->select(function ($q) use ($query) {
+        $result = $query->select(function ($q) use ($query): array {
             $this->assertSame($query, $q);
 
             return ['1 + 2', '1 + 5'];
         })->execute();
-        $this->assertEquals([3, 6], $result->fetch());
+        $this->assertSame([3, 6], $result->fetch());
         $result->closeCursor();
     }
 
@@ -144,15 +146,15 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $result = $query->select(['body', 'author_id'])->from('articles')->execute();
-        $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['body' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['body' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['body' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
         //Append more tables to next execution
         $result = $query->select('name')->from(['authors'])->orderBy(['name' => 'desc', 'articles.id' => 'asc'])->execute();
-        $this->assertEquals(['body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
-        $this->assertEquals(['body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'], $result->fetch('assoc'));
-        $this->assertEquals(['body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertSame(['body' => 'First Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertSame(['body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertSame(['body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'], $result->fetch('assoc'));
         $result->closeCursor();
 
         // Overwrite tables and only fetch from authors
@@ -169,20 +171,20 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $result = $query->select(['text' => 'comment', 'article_id'])->from('comments')->execute();
-        $this->assertEquals(['text' => 'First Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'First Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'Second Comment for First Article', 'article_id' => 1], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query->select(['text' => 'comment', 'article' => 'article_id'])->from('comments')->execute();
-        $this->assertEquals(['text' => 'First Comment for First Article', 'article' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Comment for First Article', 'article' => 1], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'First Comment for First Article', 'article' => 1], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'Second Comment for First Article', 'article' => 1], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $query->select(['text' => 'comment'])->select(['article_id', 'foo' => 'comment']);
         $result = $query->from('comments')->execute();
-        $this->assertEquals(
+        $this->assertSame(
             ['foo' => 'First Comment for First Article', 'text' => 'First Comment for First Article', 'article_id' => 1],
             $result->fetch('assoc')
         );
@@ -193,7 +195,7 @@ class SelectQueryTest extends TestCase
         $comp = $query->newExpr(['article_id +' => 2]);
         $result = $query->select(['text' => 'comment', 'two' => $exp, 'three' => $comp])
             ->from('comments')->execute();
-        $this->assertEquals(['text' => 'First Comment for First Article', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'First Comment for First Article', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
         $result->closeCursor();
     }
 
@@ -206,18 +208,18 @@ class SelectQueryTest extends TestCase
         $result = $query->select(['text' => 'a.body', 'a.author_id'])
             ->from(['a' => 'articles'])->execute();
 
-        $this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query->select(['name' => 'b.name'])->from(['b' => 'authors'])
             ->orderBy(['text' => 'desc', 'name' => 'desc'])
             ->execute();
-        $this->assertEquals(
+        $this->assertSame(
             ['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'],
             $result->fetch('assoc')
         );
-        $this->assertEquals(
+        $this->assertSame(
             ['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'mariano'],
             $result->fetch('assoc')
         );
@@ -239,8 +241,8 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(3, $rows);
-        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $rows[0]);
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $rows[1]);
+        $this->assertSame(['title' => 'First Article', 'name' => 'mariano'], $rows[0]);
+        $this->assertSame(['title' => 'Second Article', 'name' => 'larry'], $rows[1]);
         $result->closeCursor();
 
         $result = $query->join('authors', [], true)->execute();
@@ -252,8 +254,8 @@ class SelectQueryTest extends TestCase
         ], [], true)->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(3, $rows);
-        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $rows[0]);
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $rows[1]);
+        $this->assertSame(['title' => 'First Article', 'name' => 'mariano'], $rows[0]);
+        $this->assertSame(['title' => 'Second Article', 'name' => 'larry'], $rows[1]);
         $result->closeCursor();
     }
 
@@ -269,8 +271,8 @@ class SelectQueryTest extends TestCase
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->newExpr()->equalFields('author_id ', 'a.id')]])
             ->orderBy(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -281,8 +283,8 @@ class SelectQueryTest extends TestCase
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $conditions])
             ->orderBy(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -293,7 +295,7 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join(['table' => 'comments', 'alias' => 'c', 'conditions' => ['created' => $time]], $types)
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'comment' => 'First Comment for First Article'], $result->fetch('assoc'));
         $result->closeCursor();
     }
 
@@ -309,8 +311,8 @@ class SelectQueryTest extends TestCase
             ->join(['a' => 'authors'])
             ->orderBy(['name' => 'desc', 'articles.id' => 'asc'])
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'name' => 'nate'], $result->fetch('assoc'));
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'name' => 'nate'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'Second Article', 'name' => 'nate'], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -321,8 +323,8 @@ class SelectQueryTest extends TestCase
             ->join(['a' => ['table' => 'authors', 'conditions' => $conditions]])
             ->orderBy(['title' => 'asc'])
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
-        $this->assertEquals(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'Second Article', 'name' => 'larry'], $result->fetch('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -333,7 +335,7 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join(['c' => ['table' => 'comments', 'conditions' => ['created' => $time]]], $types)
             ->execute();
-        $this->assertEquals(['title' => 'First Article', 'name' => 'First Comment for First Article'], $result->fetch('assoc'));
+        $this->assertSame(['title' => 'First Article', 'name' => 'First Comment for First Article'], $result->fetch('assoc'));
         $result->closeCursor();
     }
 
@@ -360,7 +362,7 @@ class SelectQueryTest extends TestCase
             ->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
             ->orderBy(['created' => 'asc'])
             ->execute();
-        $this->assertEquals(
+        $this->assertSame(
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
             $result->fetch('assoc')
         );
@@ -448,7 +450,7 @@ class SelectQueryTest extends TestCase
                 return $exp;
             })
             ->execute();
-        $this->assertEquals(
+        $this->assertSame(
             ['name' => 'mariano', 'commentary' => 'Second Comment for First Article'],
             $result->fetch('assoc')
         );
@@ -492,7 +494,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['comment' => 'First Comment for Second Article'], $rows[0]);
+        $this->assertSame(['comment' => 'First Comment for Second Article'], $rows[0]);
         $result->closeCursor();
     }
 
@@ -509,7 +511,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
     }
 
@@ -556,7 +558,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
     }
 
@@ -573,7 +575,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
     }
 
@@ -641,7 +643,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -652,8 +654,8 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(5, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -670,7 +672,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -687,7 +689,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 3], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -704,7 +706,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
     }
 
@@ -788,8 +790,8 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
         $result->closeCursor();
     }
 
@@ -820,9 +822,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id'])
             ->from('comments')
-            ->where(function ($exp, $q) {
-                return $exp->in($q->newExpr('SELECT 1'), []);
-            })
+            ->where(fn($exp, $q) => $exp->in($q->newExpr('SELECT 1'), []))
             ->execute();
     }
 
@@ -840,7 +840,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -868,7 +868,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
     }
 
@@ -882,39 +882,33 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->eq('id', 1);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->eq('id', 1))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp
-                    ->eq('id', 1)
-                    ->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp
+                ->eq('id', 1)
+                ->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime'))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp
-                    ->eq('id', 1)
-                    ->eq('created', new DateTime('2021-12-30 15:00'), 'datetime');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp
+                ->eq('id', 1)
+                ->eq('created', new DateTime('2021-12-30 15:00'), 'datetime'))
             ->execute();
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
@@ -931,9 +925,7 @@ class SelectQueryTest extends TestCase
             ->where([
                 'OR' => [
                     'id' => 1,
-                    function (ExpressionInterface $exp) {
-                        return $exp->eq('id', 2);
-                    },
+                    fn(ExpressionInterface $exp) => $exp->eq('id', 2),
                 ],
             ]);
 
@@ -956,13 +948,11 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(['id' => '1'])
-            ->andWhere(function (ExpressionInterface $exp) {
-                return $exp->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
-            })
+            ->andWhere(fn(ExpressionInterface $exp) => $exp->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime'))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -970,9 +960,7 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(['id' => '1'])
-            ->andWhere(function (ExpressionInterface $exp) {
-                return $exp->eq('created', new DateTime('2022-12-21 12:00'), 'datetime');
-            })
+            ->andWhere(fn(ExpressionInterface $exp) => $exp->eq('created', new DateTime('2022-12-21 12:00'), 'datetime'))
             ->execute();
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
@@ -1009,33 +997,27 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->gt('id', 1);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->gt('id', 1))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['title' => 'Second Article'], $rows[0]);
+        $this->assertSame(['title' => 'Second Article'], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->lt('id', 2);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->lt('id', 2))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->lte('id', 2);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->lte('id', 2))
             ->execute();
         $this->assertCount(2, $result->fetchAll());
         $result->closeCursor();
@@ -1044,9 +1026,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->gte('id', 1);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->gte('id', 1))
             ->execute();
         $this->assertCount(3, $result->fetchAll());
         $result->closeCursor();
@@ -1055,9 +1035,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->lte('id', 1);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->lte('id', 1))
             ->execute();
         $this->assertCount(1, $result->fetchAll());
         $result->closeCursor();
@@ -1066,35 +1044,29 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->notEq('id', 2);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->notEq('id', 2))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->like('title', 'First Article');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->like('title', 'First Article'))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['title' => 'First Article'], $rows[0]);
+        $this->assertSame(['title' => 'First Article'], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->like('title', '%Article%');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->like('title', '%Article%'))
             ->execute();
         $this->assertCount(3, $result->fetchAll());
         $result->closeCursor();
@@ -1103,9 +1075,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->notLike('title', '%Article%');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->notLike('title', '%Article%'))
             ->execute();
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
@@ -1114,9 +1084,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->isNull('published');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->isNull('published'))
             ->execute();
         $this->assertCount(0, $result->fetchAll());
         $result->closeCursor();
@@ -1125,9 +1093,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->isNotNull('published');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->isNotNull('published'))
             ->execute();
         $this->assertCount(6, $result->fetchAll());
         $result->closeCursor();
@@ -1136,9 +1102,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->in('published', ['Y', 'N']);
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->in('published', ['Y', 'N']))
             ->execute();
         $this->assertCount(6, $result->fetchAll());
         $result->closeCursor();
@@ -1147,35 +1111,31 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->in(
-                    'created',
-                    [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
-                    'datetime'
-                );
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->in(
+                'created',
+                [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
+                'datetime'
+            ))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 2], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[1]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->notIn(
-                    'created',
-                    [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
-                    'datetime'
-                );
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->notIn(
+                'created',
+                [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
+                'datetime'
+            ))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(4, $rows);
-        $this->assertEquals(['id' => 3], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[0]);
         $result->closeCursor();
     }
 
@@ -1188,59 +1148,51 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->in('created', '2007-03-18 10:45:23', 'datetime');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->in('created', '2007-03-18 10:45:23', 'datetime'))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->notIn('created', '2007-03-18 10:45:23', 'datetime');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->notIn('created', '2007-03-18 10:45:23', 'datetime'))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(5, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
-        $this->assertEquals(['id' => 4], $rows[2]);
-        $this->assertEquals(['id' => 5], $rows[3]);
+        $this->assertSame(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 4], $rows[2]);
+        $this->assertSame(['id' => 5], $rows[3]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function ($exp, $q) {
-                return $exp->in(
-                    'created',
-                    $q->newExpr("'2007-03-18 10:45:23'"),
-                    'datetime'
-                );
-            })
+            ->where(fn($exp, $q) => $exp->in(
+                'created',
+                $q->newExpr("'2007-03-18 10:45:23'"),
+                'datetime'
+            ))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function ($exp, $q) {
-                return $exp->notIn(
-                    'created',
-                    $q->newExpr("'2007-03-18 10:45:23'"),
-                    'datetime'
-                );
-            })
+            ->where(fn($exp, $q) => $exp->notIn(
+                'created',
+                $q->newExpr("'2007-03-18 10:45:23'"),
+                'datetime'
+            ))
             ->execute();
         $this->assertCount(5, $result->fetchAll());
         $result->closeCursor();
@@ -1260,7 +1212,7 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -1299,11 +1251,9 @@ class SelectQueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->where([
-                'id' => 'Cake\Error\Debugger::dump',
-                'title' => ['Cake\Error\Debugger', 'dump'],
-                'author_id' => function (ExpressionInterface $exp) {
-                    return 1;
-                },
+                'id' => \Cake\Error\Debugger::class . '::dump',
+                'title' => \Cake\Error\Debugger::dump(...),
+                'author_id' => fn(ExpressionInterface $exp): int => 1,
             ]);
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id> = :c0 AND <title> = :c1 AND <author_id> = :c2\)',
@@ -1337,16 +1287,14 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->between('id', 5, 6, 'integer');
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->between('id', 5, 6, 'integer'))
             ->execute();
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(5, $rows[0]['id']);
+        $this->assertSame(5, $rows[0]['id']);
 
-        $this->assertEquals(6, $rows[1]['id']);
+        $this->assertSame(6, $rows[1]['id']);
         $result->closeCursor();
     }
 
@@ -1370,9 +1318,9 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(4, $rows[0]['id']);
+        $this->assertSame(4, $rows[0]['id']);
 
-        $this->assertEquals(5, $rows[1]['id']);
+        $this->assertSame(5, $rows[1]['id']);
         $result->closeCursor();
     }
 
@@ -1395,9 +1343,9 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(5, $rows[0]['id']);
+        $this->assertSame(5, $rows[0]['id']);
 
-        $this->assertEquals(6, $rows[1]['id']);
+        $this->assertSame(6, $rows[1]['id']);
         $result->closeCursor();
     }
 
@@ -1421,9 +1369,9 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(4, $rows[0]['id']);
+        $this->assertSame(4, $rows[0]['id']);
 
-        $this->assertEquals(5, $rows[1]['id']);
+        $this->assertSame(5, $rows[1]['id']);
         $result->closeCursor();
     }
 
@@ -1444,7 +1392,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -1465,16 +1413,14 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
-                $and = $exp->and(function ($and) {
-                    return $and->eq('id', 1)->gt('id', 0);
-                });
+                $and = $exp->and(fn($and) => $and->eq('id', 1)->gt('id', 0));
 
                 return $exp->add($and);
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -1490,26 +1436,20 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                $or = $exp->or(function ($or) {
-                    return $or->eq('id', 1)->eq('id', 2);
-                });
-
-                return $or;
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->or(fn($or) => $or->eq('id', 1)->eq('id', 2)))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 2], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[1]);
         $result->closeCursor();
     }
 
@@ -1523,27 +1463,23 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
-                );
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->not(
+                $exp->and(['id' => 2, 'created' => new DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+            ))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(5, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['id'])
             ->from('comments')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
-                );
-            })
+            ->where(fn(ExpressionInterface $exp) => $exp->not(
+                $exp->and(['id' => 2, 'created' => new DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
+            ))
             ->execute();
         $this->assertCount(6, $result->fetchAll());
         $result->closeCursor();
@@ -1566,8 +1502,8 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 2], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[1]);
         $result->closeCursor();
     }
 
@@ -1590,7 +1526,7 @@ class SelectQueryTest extends TestCase
         );
 
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals(['id' => '2'], $result[0]);
+        $this->assertSame(['id' => '2'], $result[0]);
     }
 
     /**
@@ -1631,7 +1567,7 @@ class SelectQueryTest extends TestCase
         );
 
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals(['id' => '2'], $result[0]);
+        $this->assertSame(['id' => '2'], $result[0]);
     }
 
     /**
@@ -1652,7 +1588,7 @@ class SelectQueryTest extends TestCase
         );
 
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals(['id' => '1'], $result[0]);
+        $this->assertSame(['id' => '1'], $result[0]);
     }
 
     /**
@@ -1672,7 +1608,7 @@ class SelectQueryTest extends TestCase
         );
 
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals(['id' => '2'], $result[0]);
+        $this->assertSame(['id' => '2'], $result[0]);
     }
 
     /**
@@ -1693,7 +1629,7 @@ class SelectQueryTest extends TestCase
         );
 
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals(['id' => '1'], $result[0]);
+        $this->assertSame(['id' => '1'], $result[0]);
     }
 
     /**
@@ -1707,34 +1643,34 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->orderBy(['id' => 'desc'])
             ->execute();
-        $this->assertEquals(['id' => 6], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 5], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 4], $result->fetch('assoc'));
+        $this->assertSame(['id' => 6], $result->fetch('assoc'));
+        $this->assertSame(['id' => 5], $result->fetch('assoc'));
+        $this->assertSame(['id' => 4], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query->orderBy(['id' => 'asc'])->execute();
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 2], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query->orderBy(['comment' => 'asc'])->execute();
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 2], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query->orderBy(['comment' => 'asc'], true)->execute();
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 5], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 4], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 5], $result->fetch('assoc'));
+        $this->assertSame(['id' => 4], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query->orderBy(['user_id' => 'asc', 'created' => 'desc'], true)
             ->execute();
-        $this->assertEquals(['id' => 5], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 4], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 5], $result->fetch('assoc'));
+        $this->assertSame(['id' => 4], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
         $expression = $query->newExpr(['(id + :offset) % 2']);
@@ -1742,9 +1678,9 @@ class SelectQueryTest extends TestCase
             ->orderBy([$expression, 'id' => 'desc'], true)
             ->bind(':offset', 1, null)
             ->execute();
-        $this->assertEquals(['id' => 5], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 5], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
         $result->closeCursor();
 
         $result = $query
@@ -1752,9 +1688,9 @@ class SelectQueryTest extends TestCase
             ->orderBy(['id' => 'asc'])
             ->bind(':offset', 1, null)
             ->execute();
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 5], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 5], $result->fetch('assoc'));
         $result->closeCursor();
     }
 
@@ -1766,7 +1702,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->order(['id' => 'desc'])
             ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+        $this->assertSame([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -1774,7 +1710,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->orderDesc('id')
             ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+        $this->assertSame([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -1782,7 +1718,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->orderAsc('user_id')
             ->execute();
-        $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+        $this->assertSame([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
     }
 
     /**
@@ -1795,9 +1731,9 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->orderBy('id asc');
         $result = $query->execute();
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $this->assertSame(['id' => 1], $result->fetch('assoc'));
+        $this->assertSame(['id' => 2], $result->fetch('assoc'));
+        $this->assertSame(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
     }
 
@@ -1808,7 +1744,7 @@ class SelectQueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
+            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) " .
             'is not allowed to avoid potential SQL injection. ' .
             'Use QueryExpression or numeric array instead.'
         );
@@ -1830,7 +1766,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function ($exp, $q) use ($query) {
+            ->orderBy(function ($exp, $q) use ($query): array {
                 $this->assertInstanceOf(QueryExpression::class, $exp);
                 $this->assertSame($query, $q);
 
@@ -1847,9 +1783,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function (ExpressionInterface $exp) {
-                return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
-            });
+            ->orderBy(fn(ExpressionInterface $exp): array => [$exp->add(['id % 2 = 0']), 'title' => 'ASC']);
 
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY id % 2 = 0, <title> ASC',
@@ -1861,9 +1795,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function (ExpressionInterface $exp) {
-                return $exp->add('a + b');
-            });
+            ->orderBy(fn(ExpressionInterface $exp) => $exp->add('a + b'));
 
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY a \+ b',
@@ -1875,9 +1807,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function ($exp, $q) {
-                return $q->func()->sum('a');
-            });
+            ->orderBy(fn($exp, $q) => $q->func()->sum('a'));
 
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY SUM\(a\)',
@@ -1903,7 +1833,7 @@ class SelectQueryTest extends TestCase
             ['id' => 2],
             ['id' => 3],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY <id> ASC',
             $sql,
@@ -1921,18 +1851,16 @@ class SelectQueryTest extends TestCase
             ['id' => 2],
             ['id' => 3],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderByAsc(function (QueryExpression $exp, Query $query) {
-                return $exp
-                    ->case()
-                    ->when(['author_id' => 1])
-                    ->then(1)
-                    ->else($query->identifier('id'));
-            })
+            ->orderByAsc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $exp
+                ->case()
+                ->when(['author_id' => 1])
+                ->then(1)
+                ->else($query->identifier('id')))
             ->orderByAsc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
@@ -1941,7 +1869,7 @@ class SelectQueryTest extends TestCase
             ['id' => 3],
             ['id' => 2],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END ASC, <id> ASC',
             $sql,
@@ -1965,7 +1893,7 @@ class SelectQueryTest extends TestCase
             ['id' => 2],
             ['id' => 1],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY <id> DESC',
             $sql,
@@ -1983,18 +1911,16 @@ class SelectQueryTest extends TestCase
             ['id' => 2],
             ['id' => 1],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderByDesc(function (QueryExpression $exp, Query $query) {
-                return $exp
-                    ->case()
-                    ->when(['author_id' => 1])
-                    ->then(1)
-                    ->else($query->identifier('id'));
-            })
+            ->orderByDesc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $exp
+                ->case()
+                ->when(['author_id' => 1])
+                ->then(1)
+                ->else($query->identifier('id')))
             ->orderByDesc('id');
         $sql = $query->sql();
         $result = $query->execute()->fetchAll('assoc');
@@ -2003,7 +1929,7 @@ class SelectQueryTest extends TestCase
             ['id' => 3],
             ['id' => 1],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END DESC, <id> DESC',
             $sql,
@@ -2026,14 +1952,14 @@ class SelectQueryTest extends TestCase
             ->orderBy(['total' => 'desc'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $result = $query->select(['total' => 'count(title)', 'name'], true)
             ->groupBy(['name'], true)
             ->orderBy(['total' => 'asc'])
             ->execute();
         $expected = [['total' => 1, 'name' => 'larry'], ['total' => 2, 'name' => 'mariano']];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $result = $query->select(['articles.id'])
             ->groupBy(['articles.id'])
@@ -2052,7 +1978,7 @@ class SelectQueryTest extends TestCase
             ->orderBy(['total' => 'desc'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
     }
 
     /**
@@ -2088,7 +2014,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $results = $result->fetchAll('assoc');
         $this->assertCount(2, $results);
-        $this->assertEquals(
+        $this->assertSame(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
         );
@@ -2102,7 +2028,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $results = $result->fetchAll('assoc');
         $this->assertCount(2, $results);
-        $this->assertEquals(
+        $this->assertSame(
             [3, 1],
             collection($results)->sortBy('author_id')->extract('author_id')->toList()
         );
@@ -2186,19 +2112,17 @@ class SelectQueryTest extends TestCase
             ->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
         $expected = [['total' => 1, 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $result = $query->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'], true)
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
-        $result = $query->having(function ($e) {
-            return $e->add('count(author_id) = 1 + 1');
-        }, [], true)
+        $result = $query->having(fn($e) => $e->add('count(author_id) = 1 + 1'), [], true)
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
     }
 
     /**
@@ -2228,7 +2152,7 @@ class SelectQueryTest extends TestCase
             ->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -2236,12 +2160,10 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
             ->groupBy('author_id')
-            ->andHaving(function ($e) {
-                return $e->add('count(author_id) = 2 - 1');
-            })
+            ->andHaving(fn($e) => $e->add('count(author_id) = 2 - 1'))
             ->execute();
         $expected = [['total' => 1, 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
     }
 
     /**
@@ -2295,7 +2217,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('comments')
@@ -2304,7 +2226,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('comments')
@@ -2313,7 +2235,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-            $this->assertEquals(['id' => 3], $rows[0]);
+            $this->assertSame(['id' => 3], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('articles')
@@ -2323,13 +2245,13 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 3], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[0]);
 
         $result = $query->limit(2)->offset(1)->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
-        $this->assertEquals(['id' => 1], $rows[1]);
+        $this->assertSame(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[1]);
 
         $query = new SelectQuery($this->connection);
         $query->select('id')->from('comments')
@@ -2370,7 +2292,7 @@ class SelectQueryTest extends TestCase
 
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 1], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('comments')
@@ -2380,21 +2302,21 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 2], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $query->select('id')->from('comments')->page(3, 10);
-        $this->assertEquals(10, $query->clause('limit'));
-        $this->assertEquals(20, $query->clause('offset'));
+        $this->assertSame(10, $query->clause('limit'));
+        $this->assertSame(20, $query->clause('offset'));
 
         $query = new SelectQuery($this->connection);
         $query->select('id')->from('comments')->page(1);
-        $this->assertEquals(25, $query->clause('limit'));
-        $this->assertEquals(0, $query->clause('offset'));
+        $this->assertSame(25, $query->clause('limit'));
+        $this->assertSame(0, $query->clause('offset'));
 
         $query->select('id')->from('comments')->page(2);
-        $this->assertEquals(25, $query->clause('limit'));
-        $this->assertEquals(25, $query->clause('offset'));
+        $this->assertSame(25, $query->clause('limit'));
+        $this->assertSame(25, $query->clause('offset'));
     }
 
     /**
@@ -2414,7 +2336,7 @@ class SelectQueryTest extends TestCase
             ->limit(2)
             ->page(3)
             ->execute();
-        $this->assertEquals(
+        $this->assertSame(
             [
                 ['id' => '6', 'ids_added' => '4'],
                 ['id' => '2', 'ids_added' => '5'],
@@ -2462,7 +2384,7 @@ class SelectQueryTest extends TestCase
             ['id' => 2, 'name' => 'mariano'],
             ['id' => 3, 'name' => 'mariano'],
         ];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
     }
 
     /**
@@ -2488,7 +2410,7 @@ class SelectQueryTest extends TestCase
             ['say' => 'First Comment for Second Article'],
             ['say' => 'Second Comment for Second Article'],
         ];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
     }
 
     /**
@@ -2513,7 +2435,7 @@ class SelectQueryTest extends TestCase
             ['name' => 'larry'],
             ['name' => 'garrett'],
         ];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
@@ -2530,7 +2452,7 @@ class SelectQueryTest extends TestCase
         $expected = [
             ['name' => 'mariano'],
         ];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
         $result->closeCursor();
     }
 
@@ -2544,39 +2466,31 @@ class SelectQueryTest extends TestCase
         $subQuery = (new SelectQuery($this->connection))
             ->select(['id'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->equalFields('authors.id', 'articles.author_id');
-            });
+            ->where(fn(ExpressionInterface $exp) => $exp->equalFields('authors.id', 'articles.author_id'));
         $result = $query
             ->select(['id'])
             ->from('authors')
-            ->where(function ($exp) use ($subQuery) {
-                return $exp->exists($subQuery);
-            })
+            ->where(fn($exp) => $exp->exists($subQuery))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 1], $rows[0]);
-        $this->assertEquals(['id' => 3], $rows[1]);
+        $this->assertSame(['id' => 1], $rows[0]);
+        $this->assertSame(['id' => 3], $rows[1]);
 
         $query = new SelectQuery($this->connection);
         $subQuery = (new SelectQuery($this->connection))
             ->select(['id'])
             ->from('articles')
-            ->where(function (ExpressionInterface $exp) {
-                return $exp->equalFields('authors.id', 'articles.author_id');
-            });
+            ->where(fn(ExpressionInterface $exp) => $exp->equalFields('authors.id', 'articles.author_id'));
         $result = $query
             ->select(['id'])
             ->from('authors')
-            ->where(function ($exp) use ($subQuery) {
-                return $exp->notExists($subQuery);
-            })
+            ->where(fn($exp) => $exp->notExists($subQuery))
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
-        $this->assertEquals(['id' => 2], $rows[0]);
-        $this->assertEquals(['id' => 4], $rows[1]);
+        $this->assertSame(['id' => 2], $rows[0]);
+        $this->assertSame(['id' => 4], $rows[1]);
     }
 
     /**
@@ -2710,7 +2624,7 @@ class SelectQueryTest extends TestCase
             ->select(['id', 'title'])
             ->from('articles')
             ->orderBy(['id' => 'ASC'])
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['modified_id'] = $row['id'] + 1;
 
                 return $row;
@@ -2722,7 +2636,7 @@ class SelectQueryTest extends TestCase
         }
 
         $result = $query
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['modified_id']--;
 
                 return $row;
@@ -2734,7 +2648,7 @@ class SelectQueryTest extends TestCase
         }
 
         $result = $query
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['foo'] = 'bar';
 
                 return $row;
@@ -2760,7 +2674,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id', 'title'])
             ->from('articles')
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['generated'] = 'test';
 
                 return $row;
@@ -2773,6 +2687,7 @@ class SelectQueryTest extends TestCase
             $this->assertArrayHasKey('generated', $row);
             $this->assertSame('test', $row['generated']);
         }
+
         $this->assertSame(3, $count);
 
         $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
@@ -2782,6 +2697,7 @@ class SelectQueryTest extends TestCase
         foreach ($query->all() as $row) {
             ++$count;
         }
+
         $this->assertSame(3, $count);
 
         // Mark query as dirty
@@ -2793,6 +2709,7 @@ class SelectQueryTest extends TestCase
         foreach ($query->all() as $row) {
             ++$count;
         }
+
         $this->assertSame(2, $count);
     }
 
@@ -2803,7 +2720,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id', 'title'])
             ->from('articles')
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['generated'] = 'test';
 
                 return $row;
@@ -2815,6 +2732,7 @@ class SelectQueryTest extends TestCase
             $this->assertArrayHasKey('generated', $row);
             $this->assertSame('test', $row['generated']);
         }
+
         $this->assertSame(3, $count);
 
         $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
@@ -2829,6 +2747,7 @@ class SelectQueryTest extends TestCase
             $this->assertArrayHasKey('generated', $row);
             $this->assertSame('test', $row['generated']);
         }
+
         $this->assertSame(2, $count);
     }
 
@@ -2841,14 +2760,12 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $result = $query->select(
-            function ($q) {
-                return ['total' => $q->func()->count('*')];
-            }
+            fn($q): array => ['total' => $q->func()->count('*')]
         )
             ->from('comments')
             ->execute();
         $expected = [['total' => 6]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $query = new SelectQuery($this->connection);
         $result = $query->select([
@@ -2861,14 +2778,14 @@ class SelectQueryTest extends TestCase
         $expected = [
             ['c' => 'First Comment for First Article is appended'],
         ];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->assertSame($expected, $result->fetchAll('assoc'));
 
         $query = new SelectQuery($this->connection);
         $result = $query
             ->select(['d' => $query->func()->dateDiff(['2012-01-05', '2012-01-02'])])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals(3, abs((int)$result[0]['d']));
+        $this->assertSame(3, abs((int)$result[0]['d']));
 
         $query = new SelectQuery($this->connection);
         $result = $query
@@ -2918,8 +2835,8 @@ class SelectQueryTest extends TestCase
             ->execute()
             ->fetchAll('assoc');
 
-        $result[0]['addDays'] = substr($result[0]['addDays'], 0, 10);
-        $result[0]['substractYears'] = substr($result[0]['substractYears'], 0, 10);
+        $result[0]['addDays'] = substr((string) $result[0]['addDays'], 0, 10);
+        $result[0]['substractYears'] = substr((string) $result[0]['substractYears'], 0, 10);
 
         $expected = [
             'd' => 18,
@@ -2945,9 +2862,7 @@ class SelectQueryTest extends TestCase
                 'ye' => '2007',
             ] + $expected;
         } elseif ($driver instanceof Postgres || $driver instanceof Sqlserver) {
-            $expected = array_map(function ($value) {
-                return (string)$value;
-            }, $expected);
+            $expected = array_map(fn($value): string => (string)$value, $expected);
         }
 
         $this->assertSame($expected, $result[0]);
@@ -3039,7 +2954,7 @@ class SelectQueryTest extends TestCase
     public function testDefaultTypes(): void
     {
         $query = new SelectQuery($this->connection);
-        $this->assertEquals([], $query->getDefaultTypes());
+        $this->assertSame([], $query->getDefaultTypes());
         $types = ['id' => 'integer', 'created' => 'datetime'];
         $this->assertSame($query, $query->setDefaultTypes($types));
         $this->assertSame($types, $query->getDefaultTypes());
@@ -3049,7 +2964,7 @@ class SelectQueryTest extends TestCase
             ->where(['created >=' => new DateTime('2007-03-18 10:55:00')])
             ->execute();
         $expected = [['id' => '6', 'comment' => 'Second Comment for Second Article']];
-        $this->assertEquals($expected, $results->fetchAll('assoc'));
+        $this->assertSame($expected, $results->fetchAll('assoc'));
 
         // Now test default can be overridden
         $types = ['created' => 'date'];
@@ -3072,7 +2987,7 @@ class SelectQueryTest extends TestCase
             ->bind(':bar', new DateTime('2007-03-18 10:52:00'), 'datetime')
             ->execute();
         $expected = [['id' => '4', 'comment' => 'Fourth Comment for First Article']];
-        $this->assertEquals($expected, $results->fetchAll('assoc'));
+        $this->assertSame($expected, $results->fetchAll('assoc'));
 
         $query = new SelectQuery($this->connection);
         $results = $query->select(['id', 'comment'])
@@ -3081,7 +2996,7 @@ class SelectQueryTest extends TestCase
             ->bind(':foo', '2007-03-18 10:50:00')
             ->bind(':bar', '2007-03-18 10:52:00')
             ->execute();
-        $this->assertEquals($expected, $results->fetchAll('assoc'));
+        $this->assertSame($expected, $results->fetchAll('assoc'));
     }
 
     /**
@@ -3299,18 +3214,14 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['name'])
             ->from(['authors'])
-            ->where(function ($exp) use ($subquery) {
-                return $exp->isNotNull($subquery);
-            })
+            ->where(fn($exp) => $exp->isNotNull($subquery))
             ->execute();
         $this->assertNotEmpty($result->fetchAll('assoc'));
 
         $result = (new SelectQuery($this->connection))
             ->select(['name'])
             ->from(['authors'])
-            ->where(function ($exp) use ($subquery) {
-                return $exp->isNull($subquery);
-            })
+            ->where(fn($exp) => $exp->isNull($subquery))
             ->execute();
         $this->assertEmpty($result->fetchAll('assoc'));
     }
@@ -3323,15 +3234,11 @@ class SelectQueryTest extends TestCase
     {
         $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new SelectQuery($this->connection);
-        $query->select('*')->from('things')->where(function (ExpressionInterface $exp) {
-            return $exp->isNull('field');
-        });
+        $query->select('*')->from('things')->where(fn(ExpressionInterface $exp) => $exp->isNull('field'));
         $this->assertQuotedQuery('WHERE \(<field>\) IS NULL', $query->sql());
 
         $query = new SelectQuery($this->connection);
-        $query->select('*')->from('things')->where(function (ExpressionInterface $exp) {
-            return $exp->isNotNull('field');
-        });
+        $query->select('*')->from('things')->where(fn(ExpressionInterface $exp) => $exp->isNotNull('field'));
         $this->assertQuotedQuery('WHERE \(<field>\) IS NOT NULL', $query->sql());
     }
 
@@ -3355,7 +3262,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-        $this->assertEquals(['name' => 'larry'], $rows[0]);
+        $this->assertSame(['name' => 'larry'], $rows[0]);
     }
 
     /**
@@ -3410,7 +3317,7 @@ class SelectQueryTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(3, $results);
-        $this->assertNotEquals(['name' => 'larry'], $results[0]);
+        $this->assertNotSame(['name' => 'larry'], $results[0]);
     }
 
     public function testCloneWithExpression(): void
@@ -3423,11 +3330,9 @@ class SelectQueryTest extends TestCase
                     new SelectQuery($this->connection)
                 )
             )
-            ->with(function (CommonTableExpression $cte, Query $query) {
-                return $cte
-                    ->name('cte2')
-                    ->query($query);
-            });
+            ->with(fn(CommonTableExpression $cte, Query $query): \Cake\Database\Expression\CommonTableExpression => $cte
+                ->name('cte2')
+                ->query($query));
 
         $clause = $query->clause('with');
         $clauseClone = (clone $query)->clause('with');
@@ -3586,9 +3491,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query
             ->window('window1', new WindowExpression())
-            ->window('window2', function (WindowExpression $window) {
-                return $window;
-            });
+            ->window('window2', fn(WindowExpression $window): \Cake\Database\Expression\WindowExpression => $window);
 
         $clause = $query->clause('window');
         $clauseClone = (clone $query)->clause('window');
@@ -3834,7 +3737,7 @@ class SelectQueryTest extends TestCase
             ->disableResultsCasting()
             ->execute()
             ->fetchAll('assoc');
-        $this->assertEquals([['a' => '1']], $results);
+        $this->assertSame([['a' => '1']], $results);
     }
 
     /**
@@ -3863,7 +3766,7 @@ class SelectQueryTest extends TestCase
 
         // Convert to an array and make the query dirty again.
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertEquals([['a' => 1]], $result);
+        $this->assertSame([['a' => 1]], $result);
 
         $query->setSelectTypeMap(new TypeMap(['a' => 'float']));
         // Get results a second time.
@@ -3871,7 +3774,7 @@ class SelectQueryTest extends TestCase
 
         // Had the type casting being remembered from the first time,
         // The value would be a truncated float (1.0)
-        $this->assertEquals([['a' => 1.5]], $result);
+        $this->assertSame([['a' => 1.5]], $result);
     }
 
     /**
@@ -3973,13 +3876,15 @@ class SelectQueryTest extends TestCase
         $statement->closeCursor();
 
         $statement = $query->execute();
+
         $results = $statement->fetchColumn(1);
         $this->assertSame(2, $results);
         $statement->closeCursor();
 
         $statement = $query->execute();
+
         $results = $statement->fetchColumn(2);
-        $this->assertSame(false, $results);
+        $this->assertFalse($results);
         $statement->closeCursor();
     }
 
@@ -4057,7 +3962,7 @@ class SelectQueryTest extends TestCase
             !$this->autoQuote
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 [
                     'id' => 3,
@@ -4203,11 +4108,12 @@ class SelectQueryTest extends TestCase
         if ($driver instanceof Postgres) {
             // Older postgres versions throw an error on the parameter type without a cast
             $query->select(['test_string' => $query->func()->cast(new StringExpression('testString', $collation), 'text')]);
-            $expected = "SELECT \(CAST\(:c0 COLLATE \"{$collation}\" AS text\)\) AS <test_string>";
+            $expected = sprintf('SELECT \(CAST\(:c0 COLLATE "%s" AS text\)\) AS <test_string>', $collation);
         } else {
             $query->select(['test_string' => new StringExpression('testString', $collation)]);
-            $expected = "SELECT \(:c0 COLLATE {$collation}\) AS <test_string>";
+            $expected = sprintf('SELECT \(:c0 COLLATE %s\) AS <test_string>', $collation);
         }
+
         $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
 
         $statement = $query->execute();
@@ -4243,10 +4149,11 @@ class SelectQueryTest extends TestCase
 
         if ($driver instanceof Postgres) {
             // Older postgres versions throw an error on the parameter type without a cast
-            $expected = "SELECT \(<title> COLLATE \"{$collation}\"\) AS <test_string>";
+            $expected = sprintf('SELECT \(<title> COLLATE "%s"\) AS <test_string>', $collation);
         } else {
-            $expected = "SELECT \(<title> COLLATE {$collation}\) AS <test_string>";
+            $expected = sprintf('SELECT \(<title> COLLATE %s\) AS <test_string>', $collation);
         }
+
         $this->assertRegExpSql($expected, $query->sql(new ValueBinder()), !$this->autoQuote);
 
         $statement = $query->execute();

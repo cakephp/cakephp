@@ -37,8 +37,6 @@ class NumberTreesFixture extends TestFixture
      *          - cd:9
      *          - radios:10
      *  - alien ware: 11
-     *
-     * @var array
      */
     public array $records = [
         [

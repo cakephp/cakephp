@@ -20,15 +20,11 @@ class PolymorphicTaggedFixture extends TestFixture
 {
     /**
      * table property
-     *
-     * @var string
      */
     public string $table = 'polymorphic_tagged';
 
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['tag_id' => 1, 'foreign_key' => 1, 'foreign_model' => 'Posts', 'position' => 1],

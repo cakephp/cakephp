@@ -27,21 +27,6 @@ use Exception;
  */
 class CommandRetry
 {
-    /**
-     * The strategy to follow should the executed action fail.
-     *
-     * @var \Cake\Core\Retry\RetryStrategyInterface
-     */
-    protected RetryStrategyInterface $strategy;
-
-    /**
-     * @var int
-     */
-    protected int $maxRetries;
-
-    /**
-     * @var int
-     */
     protected int $numRetries;
 
     /**
@@ -50,10 +35,14 @@ class CommandRetry
      * @param \Cake\Core\Retry\RetryStrategyInterface $strategy The strategy to follow should the action fail
      * @param int $maxRetries The maximum number of retry attempts allowed
      */
-    public function __construct(RetryStrategyInterface $strategy, int $maxRetries = 1)
+    public function __construct(
+        /**
+         * The strategy to follow should the executed action fail.
+         */
+        protected RetryStrategyInterface $strategy,
+        protected int $maxRetries = 1
+    )
     {
-        $this->strategy = $strategy;
-        $this->maxRetries = $maxRetries;
     }
 
     /**
@@ -85,8 +74,6 @@ class CommandRetry
 
     /**
      * Returns the last number of retry attemps.
-     *
-     * @return int
      */
     public function getRetries(): int
     {

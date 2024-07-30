@@ -36,12 +36,12 @@ class StringTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('string');

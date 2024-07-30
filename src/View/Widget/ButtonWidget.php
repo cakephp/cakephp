@@ -30,20 +30,17 @@ use function Cake\Core\h;
 class ButtonWidget implements WidgetInterface
 {
     /**
-     * StringTemplate instance.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $_templates;
-
-    /**
      * Constructor.
      *
-     * @param \Cake\View\StringTemplate $templates Templates list.
+     * @param \Cake\View\StringTemplate $_templates Templates list.
      */
-    public function __construct(StringTemplate $templates)
+    public function __construct(
+        /**
+         * StringTemplate instance.
+         */
+        protected StringTemplate $_templates
+    )
     {
-        $this->_templates = $templates;
     }
 
     /**
@@ -61,7 +58,6 @@ class ButtonWidget implements WidgetInterface
      *
      * @param array<string, mixed> $data The data to build a button with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return string
      */
     public function render(array $data, ContextInterface $context): string
     {

@@ -49,7 +49,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
@@ -61,7 +61,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
@@ -75,11 +75,11 @@ class BehaviorRegistryTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
-        $expected = 'Cake\ORM\Behavior\TranslateBehavior';
+        $expected = \Cake\ORM\Behavior\TranslateBehavior::class;
         $result = BehaviorRegistry::className('Translate');
         $this->assertSame($expected, $result);
 
-        $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
+        $expected = \TestPlugin\Model\Behavior\PersisterOneBehavior::class;
         $result = BehaviorRegistry::className('TestPlugin.PersisterOne');
         $this->assertSame($expected, $result);
 
@@ -94,11 +94,11 @@ class BehaviorRegistryTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $config = ['alias' => 'Sluggable', 'replacement' => '-'];
         $result = $this->Behaviors->load('Sluggable', $config);
-        $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
-        $this->assertEquals($config, $result->getConfig());
+        $this->assertInstanceOf(\TestApp\Model\Behavior\SluggableBehavior::class, $result);
+        $this->assertSame($config, $result->getConfig());
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
-        $this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
+        $this->assertInstanceOf(\TestPlugin\Model\Behavior\PersisterOneBehavior::class, $result);
     }
 
     /**
@@ -135,7 +135,7 @@ class BehaviorRegistryTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
 
-        $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
+        $expected = \TestPlugin\Model\Behavior\PersisterOneBehavior::class;
         $this->assertInstanceOf($expected, $result);
         $this->assertInstanceOf($expected, $this->Behaviors->PersisterOne);
 
@@ -283,7 +283,7 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = Mockery::mock('Cake\ORM\Behavior')
+        $mockedBehavior = Mockery::mock(\Cake\ORM\Behavior::class)
             ->shouldAllowMockingMethod('findNoSlug')
             ->makePartial();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
@@ -351,7 +351,7 @@ class BehaviorRegistryTest extends TestCase
 
         $this->Behaviors->load('Sluggable');
 
-        $this->assertEquals(['Sluggable'], $this->Behaviors->loaded());
+        $this->assertSame(['Sluggable'], $this->Behaviors->loaded());
     }
 
     /**
@@ -381,7 +381,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testSetTable(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table = $this->getMockBuilder(\Cake\ORM\Table::class)->getMock();
         $table->expects($this->once())->method('getEventManager');
 
         $this->Behaviors->setTable($table);

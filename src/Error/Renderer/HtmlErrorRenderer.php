@@ -45,6 +45,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         if (!$debug) {
             return '';
         }
+
         $id = 'cakeErr' . uniqid();
         $file = $error->getFile();
 
@@ -66,6 +67,7 @@ class HtmlErrorRenderer implements ErrorRendererInterface
         if ($file && $line) {
             $excerpt = Debugger::excerpt($file, $line, 1);
         }
+
         $code = implode("\n", $excerpt);
 
         return <<<HTML
@@ -86,7 +88,6 @@ HTML;
      * @param string $text The text to insert. Assumed to be HTML safe.
      * @param string $id The error id scope.
      * @param string $suffix The element selector.
-     * @return string
      */
     private function renderToggle(string $text, string $id, string $suffix): string
     {

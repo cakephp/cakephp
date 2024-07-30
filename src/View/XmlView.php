@@ -63,15 +63,11 @@ class XmlView extends SerializedView
 {
     /**
      * XML layouts are located in the `layouts/xml/` subdirectory
-     *
-     * @var string
      */
     protected string $layoutPath = 'xml';
 
     /**
      * XML views are located in the 'xml' subdirectory for controllers' views.
-     *
-     * @var string
      */
     protected string $subDir = 'xml';
 
@@ -128,6 +124,7 @@ class XmlView extends SerializedView
                 if (is_numeric($alias)) {
                     $alias = $key;
                 }
+
                 if (array_key_exists($key, $this->viewVars)) {
                     $data[$rootNode][$alias] = $this->viewVars[$key];
                 }

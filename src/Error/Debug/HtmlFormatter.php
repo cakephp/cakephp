@@ -26,15 +26,10 @@ use function Cake\Core\h;
  */
 class HtmlFormatter implements FormatterInterface
 {
-    /**
-     * @var bool
-     */
     protected static bool $outputHeader = false;
 
     /**
      * Random id so that HTML ids are not shared between dump outputs.
-     *
-     * @var string
      */
     protected string $id;
 
@@ -48,16 +43,10 @@ class HtmlFormatter implements FormatterInterface
 
     /**
      * Check if the current environment is not a CLI context
-     *
-     * @return bool
      */
     public static function environmentMatches(): bool
     {
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            return false;
-        }
-
-        return true;
+        return PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg';
     }
 
     /**
@@ -73,6 +62,7 @@ class HtmlFormatter implements FormatterInterface
                 $location['line']
             );
         }
+
         $parts = [
             '<div class="cake-debug-output cake-debug" style="direction:ltr">',
             $lineInfo,
@@ -87,8 +77,6 @@ class HtmlFormatter implements FormatterInterface
      * Generate the CSS and Javascript for dumps
      *
      * Only output once per process as we don't need it more than once.
-     *
-     * @return string
      */
     protected function dumpHeader(): string
     {
@@ -102,7 +90,6 @@ class HtmlFormatter implements FormatterInterface
      * Convert a tree of NodeInterface objects into HTML
      *
      * @param \Cake\Error\Debug\NodeInterface $node The node tree to dump.
-     * @return string
      */
     public function dump(NodeInterface $node): string
     {
@@ -121,7 +108,6 @@ class HtmlFormatter implements FormatterInterface
      *
      * @param \Cake\Error\Debug\NodeInterface $var The node tree to dump.
      * @param int $indent The current indentation level.
-     * @return string
      */
     protected function export(NodeInterface $var, int $indent): string
     {
@@ -129,21 +115,25 @@ class HtmlFormatter implements FormatterInterface
             return match ($var->getType()) {
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
-                'string' => $this->style('string', "'" . (string)$var->getValue() . "'"),
-                'int', 'float' => $this->style('visibility', "({$var->getType()})") .
-                        ' ' . $this->style('number', "{$var->getValue()}"),
-                default => "({$var->getType()}) {$var->getValue()}",
+                'string' => $this->style('string', "'" . $var->getValue() . "'"),
+                'int', 'float' => $this->style('visibility', sprintf('(%s)', $var->getType())) .
+                        ' ' . $this->style('number', $var->getValue() /** @phpstan-ignore argument.type */),
+                default => sprintf('(%s) %s', $var->getType(), is_resource($var->getValue()) ? '(resource)' : $var->getValue()),
             };
         }
+
         if ($var instanceof ArrayNode) {
             return $this->exportArray($var, $indent + 1);
         }
+
         if ($var instanceof ClassNode || $var instanceof ReferenceNode) {
             return $this->exportObject($var, $indent + 1);
         }
+
         if ($var instanceof SpecialNode) {
             return $this->style('special', $var->getValue());
         }
+
         throw new InvalidArgumentException('Unknown node received ' . $var::class);
     }
 
@@ -185,12 +175,11 @@ class HtmlFormatter implements FormatterInterface
      *
      * @param \Cake\Error\Debug\ClassNode|\Cake\Error\Debug\ReferenceNode $var Object to convert.
      * @param int $indent The current indentation level.
-     * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected function exportObject(ClassNode|ReferenceNode $var, int $indent): string
     {
-        $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
+        $objectId = sprintf('cake-db-object-%s-%d', $this->id, $var->getId());
         $out = sprintf(
             '<span class="cake-debug-object" id="%s">',
             $objectId
@@ -250,7 +239,7 @@ class HtmlFormatter implements FormatterInterface
             $this->style('punct', '}') .
             '</span>';
 
-        if (count($props)) {
+        if ($props !== []) {
             return $out . implode('', $props) . $end;
         }
 

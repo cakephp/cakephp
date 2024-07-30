@@ -29,7 +29,6 @@ interface ContainerApplicationInterface
      * on service definitions.
      *
      * @param \Cake\Core\ContainerInterface $container The container to add services to
-     * @return void
      */
     public function services(ContainerInterface $container): void;
 

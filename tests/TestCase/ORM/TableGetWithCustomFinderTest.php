@@ -32,20 +32,17 @@ class TableGetWithCustomFinderTest extends TestCase
         static::setAppNamespace();
     }
 
-    public static function providerForTestGetWithCustomFinder(): array
+    public static function providerForTestGetWithCustomFinder(): \Iterator
     {
-        return [
-            [['fields' => ['id'], 'finder' => 'custom']],
-        ];
+        yield [['fields' => ['id'], 'finder' => 'custom']];
     }
 
     /**
      * Test that get() will call a custom finder.
      *
      * @dataProvider providerForTestGetWithCustomFinder
-     * @param array $options
      */
-    public function testGetWithCustomFinder($options): void
+    public function testGetWithCustomFinder(array $options): void
     {
         $table = $this->getMockBuilder(GetWithCustomFinderTable::class)
             ->onlyMethods(['selectQuery', 'findCustom'])
@@ -66,7 +63,7 @@ class TableGetWithCustomFinderTest extends TestCase
 
         $table->expects($this->once())->method('selectQuery')
             ->willReturn($query);
-        $table->expects($this->any())->method('findCustom')
+        $table->method('findCustom')
             ->willReturn($query);
 
         $entity = new Entity();
@@ -92,4 +89,5 @@ class GetWithCustomFinderTable extends Table
         return $query;
     }
 }
+
 // phpcs:enable

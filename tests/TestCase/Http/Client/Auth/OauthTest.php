@@ -25,22 +25,14 @@ use Cake\TestSuite\TestCase;
  */
 class OauthTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $privateKeyString;
+    private string|bool $privateKeyString;
 
-    /**
-     * @var string
-     */
-    private $privateKeyStringEnc;
+    private string|bool $privateKeyStringEnc;
 
     /**
      * Setup
-     *
-     * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->privateKeyString = file_get_contents(TEST_APP . DS . 'config' . DS . 'key.pem');
@@ -378,12 +370,13 @@ class OauthTest extends TestCase
             $request = $auth->authentication($request, $options);
             $result = $request->getHeaderLine('Authorization');
             $this->assertSignatureFormat($result);
-        } catch (CakeException $e) {
+        } catch (CakeException $cakeException) {
             // Handle 22.04 + OpenSSL bug. This should be safe to remove in the future.
-            if (str_contains($e->getMessage(), 'unexpected eof while reading')) {
+            if (str_contains($cakeException->getMessage(), 'unexpected eof while reading')) {
                 $this->markTestSkipped('Skipping because of OpenSSL bug.');
             }
-            throw $e;
+
+            throw $cakeException;
         }
     }
 
@@ -579,7 +572,7 @@ class OauthTest extends TestCase
     {
         $this->assertMatchesRegularExpression(
             '/oauth_signature="[a-zA-Z0-9\/=+]+"/',
-            urldecode($result)
+            urldecode((string) $result)
         );
     }
 }

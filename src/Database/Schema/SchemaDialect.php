@@ -33,8 +33,6 @@ abstract class SchemaDialect
 {
     /**
      * The driver instance being used.
-     *
-     * @var \Cake\Database\Driver
      */
     protected Driver $_driver;
 
@@ -56,22 +54,25 @@ abstract class SchemaDialect
      * Generate an ON clause for a foreign key.
      *
      * @param string $on The on clause
-     * @return string
      */
     protected function _foreignOnClause(string $on): string
     {
         if ($on === TableSchema::ACTION_SET_NULL) {
             return 'SET NULL';
         }
+
         if ($on === TableSchema::ACTION_SET_DEFAULT) {
             return 'SET DEFAULT';
         }
+
         if ($on === TableSchema::ACTION_CASCADE) {
             return 'CASCADE';
         }
+
         if ($on === TableSchema::ACTION_RESTRICT) {
             return 'RESTRICT';
         }
+
         if ($on === TableSchema::ACTION_NO_ACTION) {
             return 'NO ACTION';
         }
@@ -83,13 +84,13 @@ abstract class SchemaDialect
      * Convert string on clauses to the abstract ones.
      *
      * @param string $clause The on clause to convert.
-     * @return string
      */
     protected function _convertOnClause(string $clause): string
     {
         if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
             return strtolower($clause);
         }
+
         if ($clause === 'NO ACTION') {
             return TableSchema::ACTION_NO_ACTION;
         }
@@ -102,7 +103,6 @@ abstract class SchemaDialect
      * stringified list
      *
      * @param array<string>|string $references The referenced columns of a foreign key constraint statement
-     * @return string
      */
     protected function _convertConstraintColumns(array|string $references): string
     {
@@ -111,7 +111,7 @@ abstract class SchemaDialect
         }
 
         return implode(', ', array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $references
         ));
     }
@@ -235,7 +235,6 @@ abstract class SchemaDialect
      *
      * @param \Cake\Database\Schema\TableSchema $schema The table object to append fields to.
      * @param array $row The row data from `describeColumnSql`.
-     * @return void
      */
     abstract public function convertColumnDescription(TableSchema $schema, array $row): void;
 
@@ -245,7 +244,6 @@ abstract class SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table object to append
      *    an index or constraint to.
      * @param array $row The row data from `describeIndexSql`.
-     * @return void
      */
     abstract public function convertIndexDescription(TableSchema $schema, array $row): void;
 
@@ -255,7 +253,6 @@ abstract class SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table object to append
      *    a constraint to.
      * @param array $row The row data from `describeForeignKeySql`.
-     * @return void
      */
     abstract public function convertForeignKeyDescription(TableSchema $schema, array $row): void;
 
@@ -264,7 +261,6 @@ abstract class SchemaDialect
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
      * @param array $row The row of data.
-     * @return void
      */
     public function convertOptionsDescription(TableSchema $schema, array $row): void
     {

@@ -32,9 +32,9 @@ class StreamTest extends TestCase
     /**
      * @var \Cake\Http\Client\Adapter\Stream|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $stream;
+    protected \PHPUnit\Framework\MockObject\MockObject $stream;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->stream = $this->getMockBuilder(Stream::class)
@@ -44,7 +44,7 @@ class StreamTest extends TestCase
         stream_wrapper_register('http', CakeStreamWrapper::class);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         stream_wrapper_restore('http');
@@ -63,9 +63,10 @@ class StreamTest extends TestCase
 
         try {
             $responses = $stream->send($request, []);
-        } catch (CakeException $e) {
+        } catch (CakeException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
+
         $this->assertInstanceOf(Response::class, $responses[0]);
     }
 
@@ -98,7 +99,7 @@ class StreamTest extends TestCase
 
         try {
             $stream->send($request, []);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         $newHandler = set_error_handler(function (): void {
@@ -243,6 +244,7 @@ class StreamTest extends TestCase
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);
         }
+
         $this->assertIsReadable($result['cafile']);
     }
 
@@ -276,6 +278,7 @@ class StreamTest extends TestCase
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);
         }
+
         $this->assertIsReadable($result['cafile']);
     }
 

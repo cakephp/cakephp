@@ -28,7 +28,6 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
      * Initializes before any tests are run.
      *
      * @param \PHPUnit\Event\TestSuite\Started $event The event
-     * @return void
      */
     public function notify(Started $event): void
     {

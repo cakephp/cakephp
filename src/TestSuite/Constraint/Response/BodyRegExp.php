@@ -26,18 +26,15 @@ class BodyRegExp extends ResponseBase
      * Checks assertion
      *
      * @param mixed $other Expected pattern
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         return preg_match($other, $this->_getBodyAsString()) > 0;
     }
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -46,9 +43,8 @@ class BodyRegExp extends ResponseBase
 
     /**
      * @param mixed $other Expected
-     * @return string
      */
-    public function failureDescription(mixed $other): string
+    protected function failureDescription(mixed $other): string
     {
         return '`' . $other . '`' . ' ' . $this->toString();
     }

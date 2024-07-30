@@ -66,15 +66,11 @@ class Mysql extends Driver
 
     /**
      * String used to start a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_startQuote = '`';
 
     /**
      * String used to end a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_endQuote = '`';
 
@@ -83,8 +79,6 @@ class Mysql extends Driver
      *
      * If the underlying server is MariaDB, its value will get set to `'mariadb'`
      * after `version()` method is called.
-     *
-     * @var string
      */
     protected string $serverType = self::SERVER_TYPE_MYSQL;
 
@@ -111,9 +105,10 @@ class Mysql extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             return;
         }
+
         $config = $this->_config;
 
         if ($config['timezone'] === 'UTC') {
@@ -134,18 +129,19 @@ class Mysql extends Driver
             $config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
             $config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
         }
+
         if (!empty($config['ssl_ca'])) {
             $config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
         }
 
         if (empty($config['unix_socket'])) {
-            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+            $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s', $config['host'], $config['port'], $config['database']);
         } else {
-            $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+            $dsn = sprintf('mysql:unix_socket=%s;dbname=%s', $config['unix_socket'], $config['database']);
         }
 
         if (!empty($config['encoding'])) {
-            $dsn .= ";charset={$config['encoding']}";
+            $dsn .= ';charset=' . $config['encoding'];
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
@@ -172,11 +168,7 @@ class Mysql extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new MysqlSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new MysqlSchemaDialect($this));
     }
 
     /**
@@ -189,8 +181,6 @@ class Mysql extends Driver
 
     /**
      * Get the SQL for disabling foreign keys.
-     *
-     * @return string
      */
     public function disableForeignKeySQL(): string
     {
@@ -228,8 +218,6 @@ class Mysql extends Driver
 
     /**
      * Returns true if the connected server is MariaDB.
-     *
-     * @return bool
      */
     public function isMariadb(): bool
     {
@@ -240,8 +228,6 @@ class Mysql extends Driver
 
     /**
      * Returns connected server version.
-     *
-     * @return string
      */
     public function version(): string
     {

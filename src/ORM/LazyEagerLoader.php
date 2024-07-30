@@ -68,7 +68,6 @@ class LazyEagerLoader
      * @param array<\Cake\Datasource\EntityInterface> $entities The original entities
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
-     * @return \Cake\ORM\Query\SelectQuery
      */
     protected function _getQuery(array $entities, array $contain, Table $source): SelectQuery
     {
@@ -80,7 +79,7 @@ class LazyEagerLoader
         $query = $source
             ->find()
             ->select((array)$primaryKey)
-            ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source) {
+            ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source): \Cake\Database\Expression\QueryExpression|\Cake\Database\Expression\TupleComparison {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }
@@ -90,7 +89,7 @@ class LazyEagerLoader
                 }
 
                 $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
-                $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
+                $primaryKey = array_map($source->aliasField(...), $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys, $types, 'IN');
             })
@@ -149,7 +148,7 @@ class LazyEagerLoader
         /** @var array<\Cake\Datasource\EntityInterface> $results */
         $results = $query
             ->all()
-            ->indexBy(fn (EntityInterface $e) => implode(';', $e->extract($primaryKey)))
+            ->indexBy(fn (EntityInterface $e): string => implode(';', $e->extract($primaryKey)))
             ->toArray();
 
         foreach ($entities as $k => $object) {
@@ -165,6 +164,7 @@ class LazyEagerLoader
                 $object->set($property, $loaded->get($property), ['useSetters' => false]);
                 $object->setDirty($property, false);
             }
+
             $injected[$k] = $object;
         }
 

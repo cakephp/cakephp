@@ -63,6 +63,7 @@ class CheckboxWidget extends BasicWidget
         if ($this->_isChecked($data)) {
             $data['checked'] = true;
         }
+
         unset($data['val']);
 
         $attrs = $this->_templates->formatAttributes(
@@ -82,7 +83,6 @@ class CheckboxWidget extends BasicWidget
      * Checks whether the checkbox should be checked.
      *
      * @param array<string, mixed> $data Data to look at and determine checked state.
-     * @return bool
      */
     protected function _isChecked(array $data): bool
     {

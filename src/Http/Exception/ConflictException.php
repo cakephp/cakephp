@@ -38,6 +38,7 @@ class ConflictException extends HttpException
         if (!$message) {
             $message = 'Conflict';
         }
+
         parent::__construct($message, $code, $previous);
     }
 }

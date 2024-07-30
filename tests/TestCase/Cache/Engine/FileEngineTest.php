@@ -30,7 +30,7 @@ class FileEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::enable();
@@ -41,7 +41,7 @@ class FileEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Cache::drop('file_test');
         Cache::drop('file_groups');
@@ -262,8 +262,9 @@ class FileEngineTest extends TestCase
             'prefix' => 'prefix_two_',
             'duration' => 3600,
         ]);
-
-        $dataOne = $dataTwo = $expected = 'content to cache';
+        $dataOne = 'content to cache';
+        $dataTwo = 'content to cache';
+        $expected = 'content to cache';
         $FileOne->set('prefix_one_key_one', $dataOne);
         $FileTwo->set('prefix_two_key_two', $dataTwo);
 
@@ -375,7 +376,7 @@ class FileEngineTest extends TestCase
         Cache::write('test_dir_map', $expected, 'windows_test');
         $data = Cache::read('test_dir_map', 'windows_test');
         Cache::delete('test_dir_map', 'windows_test');
-        $this->assertEquals($expected, $data);
+        $this->assertSame($expected, $data);
 
         Cache::drop('windows_test');
     }
@@ -454,6 +455,7 @@ class FileEngineTest extends TestCase
         if (DS === '\\') {
             $this->markTestSkipped('File permission testing does not work on Windows.');
         }
+
         Cache::setConfig('mask_test', ['engine' => 'File', 'path' => TMP . 'tests']);
         $data = 'This is some test content';
         Cache::write('masking_test', $data, 'mask_test');

@@ -66,15 +66,12 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Fallback class to use
      *
-     * @var string
      * @psalm-var class-string<\Cake\ORM\Table>
      */
     protected string $fallbackClassName = Table::class;
 
     /**
      * Whether fallback class should be used if a table class could not be found.
-     *
-     * @var bool
      */
     protected bool $allowFallbackClass = true;
 
@@ -110,7 +107,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param bool $allow Flag to enable or disable fallback
      * @return $this
      */
-    public function allowFallbackClass(bool $allow)
+    public function allowFallbackClass(bool $allow): static
     {
         $this->allowFallbackClass = $allow;
 
@@ -128,7 +125,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return $this
      * @psalm-param class-string<\Cake\ORM\Table> $className
      */
-    public function setFallbackClassName(string $className)
+    public function setFallbackClassName(string $className): static
     {
         $this->fallbackClassName = $className;
 
@@ -138,7 +135,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function setConfig(array|string $alias, ?array $options = null)
+    public function setConfig(array|string $alias, ?array $options = null): static
     {
         if (!is_string($alias)) {
             $this->_config = $alias;
@@ -203,7 +200,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
      * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the options will be ignored.
-     * @return \Cake\ORM\Table
      * @throws \RuntimeException When you try to configure an alias that already exists.
      */
     public function get(string $alias, array $options = []): Table
@@ -236,10 +232,12 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             if (empty($options['className'])) {
                 $options['className'] = $alias;
             }
-            if (!isset($options['table']) && !str_contains($options['className'], '\\')) {
+
+            if (!isset($options['table']) && !str_contains((string) $options['className'], '\\')) {
                 [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
+
             $options['className'] = $this->fallbackClassName;
         } else {
             $message = $options['className'] ?? $alias;
@@ -247,6 +245,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             if (!str_contains($message, '\\')) {
                 $message = 'for alias ' . $message;
             }
+
             throw new MissingTableClassException([$message]);
         }
 
@@ -258,12 +257,15 @@ class TableLocator extends AbstractLocator implements LocatorInterface
                 $className = $options['className'];
                 $connectionName = $className::defaultConnectionName();
             }
+
             $options['connection'] = ConnectionManager::get($connectionName);
         }
+
         if (empty($options['associations'])) {
             $associations = new AssociationCollection($this);
             $options['associations'] = $associations;
         }
+
         if (empty($options['queryFactory'])) {
             $options['queryFactory'] = $this->queryFactory;
         }
@@ -283,7 +285,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @param string $alias The alias name you want to get. Should be in CamelCase format.
      * @param array<string, mixed> $options Table options array.
-     * @return string|null
      */
     protected function _getClassName(string $alias, array $options = []): ?string
     {
@@ -291,7 +292,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options['className'] = $alias;
         }
 
-        if (str_contains($options['className'], '\\') && class_exists($options['className'])) {
+        if (str_contains((string) $options['className'], '\\') && class_exists($options['className'])) {
             return $options['className'];
         }
 
@@ -309,7 +310,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Wrapper for creating table instances
      *
      * @param array<string, mixed> $options The alias to check for.
-     * @return \Cake\ORM\Table
      */
     protected function _create(array $options): Table
     {
@@ -324,7 +324,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $repository The Table to set.
-     * @return \Cake\ORM\Table
      * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function set(string $alias, RepositoryInterface $repository): Table
@@ -373,7 +372,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return $this
      * @since 3.8.0
      */
-    public function addLocation(string $location)
+    public function addLocation(string $location): static
     {
         $location = str_replace('\\', '/', $location);
         $this->locations[] = trim($location, '/');

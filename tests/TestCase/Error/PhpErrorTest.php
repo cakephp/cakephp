@@ -21,54 +21,52 @@ use Cake\TestSuite\TestCase;
 
 class PhpErrorTest extends TestCase
 {
-    public function testBasicGetters()
+    public function testBasicGetters(): void
     {
         $error = new PhpError(E_ERROR, 'something bad');
-        $this->assertEquals(E_ERROR, $error->getCode());
-        $this->assertEquals('something bad', $error->getMessage());
+        $this->assertSame(E_ERROR, $error->getCode());
+        $this->assertSame('something bad', $error->getMessage());
         $this->assertNull($error->getFile());
         $this->assertNull($error->getLine());
-        $this->assertEquals([], $error->getTrace());
-        $this->assertEquals('', $error->getTraceAsString());
+        $this->assertSame([], $error->getTrace());
+        $this->assertSame('', $error->getTraceAsString());
     }
 
-    public static function errorCodeProvider(): array
+    public static function errorCodeProvider(): \Iterator
     {
         // [php error code, label, log-level]
-        return [
-            [E_ERROR, 'error', LOG_ERR],
-            [E_WARNING, 'warning', LOG_WARNING],
-            [E_NOTICE, 'notice', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
-            [E_USER_DEPRECATED, 'deprecated', LOG_NOTICE],
-        ];
+        yield [E_ERROR, 'error', LOG_ERR];
+        yield [E_WARNING, 'warning', LOG_WARNING];
+        yield [E_NOTICE, 'notice', LOG_NOTICE];
+        yield [E_STRICT, 'strict', LOG_NOTICE];
+        yield [E_STRICT, 'strict', LOG_NOTICE];
+        yield [E_USER_DEPRECATED, 'deprecated', LOG_NOTICE];
     }
 
     /**
      * @dataProvider errorCodeProvider
      */
-    public function testMappings($phpCode, $label, $logLevel)
+    public function testMappings(int $phpCode, string $label, int $logLevel): void
     {
         $error = new PhpError($phpCode, 'something bad');
-        $this->assertEquals($phpCode, $error->getCode());
-        $this->assertEquals($label, $error->getLabel());
-        $this->assertEquals($logLevel, $error->getLogLevel());
+        $this->assertSame($phpCode, $error->getCode());
+        $this->assertSame($label, $error->getLabel());
+        $this->assertSame($logLevel, $error->getLogLevel());
     }
 
-    public function testGetTraceAsString()
+    public function testGetTraceAsString(): void
     {
         $trace = [
             ['file' => 'a.php', 'line' => 10, 'reference' => 'TestObject::a()'],
             ['file' => 'b.php', 'line' => 5, 'reference' => '[main]'],
         ];
         $error = new PhpError(E_ERROR, 'something bad', __FILE__, __LINE__, $trace);
-        $this->assertEquals($trace, $error->getTrace());
+        $this->assertSame($trace, $error->getTrace());
         $expected = [
             'TestObject::a() a.php, line 10',
             '[main] b.php, line 5',
         ];
-        $this->assertEquals(implode("\n", $expected), $error->getTraceAsString());
-        $this->assertEquals('error', $error->getLabel());
+        $this->assertSame(implode("\n", $expected), $error->getTraceAsString());
+        $this->assertSame('error', $error->getLabel());
     }
 }

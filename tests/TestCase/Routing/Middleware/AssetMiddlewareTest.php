@@ -29,7 +29,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -38,7 +38,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         parent::tearDown();
@@ -84,29 +84,27 @@ class AssetMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function assetProvider(): array
+    public static function assetProvider(): \Iterator
     {
-        return [
-            // In plugin root.
-            [
-                '/test_plugin/root.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/root.js',
-            ],
-            // Subdirectory
-            [
-                '/test_plugin/js/alert.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js',
-            ],
-            // In path that matches the plugin name
-            [
-                '/test_plugin/js/test_plugin/test.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js',
-            ],
-            // In vendored plugin
-            [
-                '/company/test_plugin_three/css/company.css',
-                TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css',
-            ],
+        // In plugin root.
+        yield [
+            '/test_plugin/root.js',
+            TEST_APP . 'Plugin/TestPlugin/webroot/root.js',
+        ];
+        // Subdirectory
+        yield [
+            '/test_plugin/js/alert.js',
+            TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js',
+        ];
+        // In path that matches the plugin name
+        yield [
+            '/test_plugin/js/test_plugin/test.js',
+            TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js',
+        ];
+        // In vendored plugin
+        yield [
+            '/company/test_plugin_three/css/company.css',
+            TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css',
         ];
     }
 

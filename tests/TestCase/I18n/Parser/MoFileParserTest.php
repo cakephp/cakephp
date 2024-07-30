@@ -35,7 +35,7 @@ class MoFileParserTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -71,7 +71,7 @@ class MoFileParserTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $messages);
+        $this->assertSame($expected, $messages);
     }
 
     /**
@@ -107,7 +107,7 @@ class MoFileParserTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $messages);
+        $this->assertSame($expected, $messages);
     }
 
     /**
@@ -140,7 +140,7 @@ class MoFileParserTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $messages);
+        $this->assertSame($expected, $messages);
     }
 
     /**
@@ -186,6 +186,6 @@ class MoFileParserTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $messages);
+        $this->assertSame($expected, $messages);
     }
 }

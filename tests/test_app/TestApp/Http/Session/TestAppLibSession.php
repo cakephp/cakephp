@@ -10,6 +10,9 @@ use SessionHandlerInterface;
  */
 class TestAppLibSession implements SessionHandlerInterface
 {
+    /**
+     * @var mixed[]
+     */
     public $options = [];
 
     public function __construct(array $options = [])

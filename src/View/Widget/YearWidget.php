@@ -45,21 +45,16 @@ class YearWidget extends BasicWidget
     ];
 
     /**
-     * Select box widget.
-     *
-     * @var \Cake\View\Widget\SelectBoxWidget
-     */
-    protected SelectBoxWidget $_select;
-
-    /**
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
-     * @param \Cake\View\Widget\SelectBoxWidget $selectBox Selectbox widget instance.
+     * @param \Cake\View\Widget\SelectBoxWidget $_select Selectbox widget instance.
      */
-    public function __construct(StringTemplate $templates, SelectBoxWidget $selectBox)
+    public function __construct(StringTemplate $templates, /**
+     * Select box widget.
+     */
+    protected SelectBoxWidget $_select)
     {
-        $this->_select = $selectBox;
         $this->_templates = $templates;
     }
 
@@ -101,11 +96,8 @@ class YearWidget extends BasicWidget
             throw new InvalidArgumentException('Max year cannot be less than min year');
         }
 
-        if ($data['order'] === 'desc') {
-            $data['options'] = range($data['max'], $data['min']);
-        } else {
-            $data['options'] = range($data['min'], $data['max']);
-        }
+        $data['options'] = $data['order'] === 'desc' ? range($data['max'], $data['min']) : range($data['min'], $data['max']);
+
         $data['options'] = array_combine($data['options'], $data['options']);
 
         unset($data['order'], $data['min'], $data['max']);

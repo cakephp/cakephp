@@ -33,7 +33,7 @@ class EventDispatcherTraitTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -60,6 +60,6 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertInstanceOf(Event::class, $event);
         $this->assertSame($this->subject, $event->getSubject());
         $this->assertSame('some.event', $event->getName());
-        $this->assertEquals(['foo' => 'bar'], $event->getData());
+        $this->assertSame(['foo' => 'bar'], $event->getData());
     }
 }

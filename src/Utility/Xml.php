@@ -139,7 +139,6 @@ class Xml
      *
      * @param string $input The input to load.
      * @param array<string, mixed> $options The options to use. See Xml::build()
-     * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
     protected static function _loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
@@ -147,7 +146,7 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, $options, $flags) {
+            function ($input, array $options, $flags): \DOMDocument|\SimpleXMLElement {
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
                     $flags |= LIBXML_NOCDATA;
                     $xml = new SimpleXMLElement($input, $flags);
@@ -166,7 +165,6 @@ class Xml
      *
      * @param string $input The input html string to load.
      * @param array<string, mixed> $options The options to use. See Xml::build()
-     * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
     public static function loadHtml(string $input, array $options = []): SimpleXMLElement|DOMDocument
@@ -180,12 +178,12 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, $options, $flags) {
+            function ($input, array $options, $flags): \DOMDocument|\SimpleXMLElement|null {
                 $xml = new DOMDocument();
                 $xml->loadHTML($input, $flags);
 
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                    $xml = simplexml_import_dom($xml);
+                    return simplexml_import_dom($xml);
                 }
 
                 return $xml;
@@ -199,7 +197,6 @@ class Xml
      * @param string $input The input to load.
      * @param array<string, mixed> $options The options to use. See Xml::build()
      * @param \Closure $callable Closure that should return SimpleXMLElement or DOMDocument instance.
-     * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
     protected static function load(string $input, array $options, Closure $callable): SimpleXMLElement|DOMDocument
@@ -216,8 +213,8 @@ class Xml
 
         try {
             return $callable($input, $options, $flags);
-        } catch (Exception $e) {
-            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } catch (Exception $exception) {
+            throw new XmlException('Xml cannot be read. ' . $exception->getMessage(), null, $exception);
         } finally {
             libxml_use_internal_errors($internalErrors);
         }
@@ -268,9 +265,11 @@ class Xml
         if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
             $input = $input->toArray();
         }
+
         if (!is_array($input) || count($input) !== 1) {
             throw new XmlException('Invalid input.');
         }
+
         $key = key($input);
         if (is_int($key)) {
             throw new XmlException('The key of input must be alphanumeric');
@@ -289,9 +288,10 @@ class Xml
         if ($options['pretty']) {
             $dom->formatOutput = true;
         }
+
         self::_fromArray($dom, $dom, $input, $options['format']);
 
-        $options['return'] = strtolower($options['return']);
+        $options['return'] = strtolower((string) $options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
             return new SimpleXMLElement((string)$dom->saveXML());
         }
@@ -306,7 +306,6 @@ class Xml
      * @param \DOMDocument|\DOMElement $node Handler to DOMElement (child)
      * @param mixed $data Array of data to append to the $node.
      * @param string $format Either 'attributes' or 'tags'. This determines where nested keys go.
-     * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
     protected static function _fromArray(
@@ -318,6 +317,7 @@ class Xml
         if (!$data || !is_array($data)) {
             return;
         }
+
         foreach ($data as $key => $value) {
             if (is_string($key)) {
                 if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
@@ -330,11 +330,13 @@ class Xml
                     } elseif ($value === null) {
                         $value = '';
                     }
+
                     if (str_contains($key, 'xmlns:')) {
                         assert($node instanceof DOMElement);
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, (string)$value);
                         continue;
                     }
+
                     if ($key[0] !== '@' && $format === 'tags') {
                         if (!is_numeric($value)) {
                             // Escape special characters
@@ -345,11 +347,13 @@ class Xml
                         } else {
                             $child = $dom->createElement($key, (string)$value);
                         }
+
                         $node->appendChild($child);
                     } else {
                         if ($key[0] === '@') {
                             $key = substr($key, 1);
                         }
+
                         $attribute = $dom->createAttribute($key);
                         $attribute->appendChild($dom->createTextNode((string)$value));
                         $node->appendChild($attribute);
@@ -358,16 +362,17 @@ class Xml
                     if ($key[0] === '@') {
                         throw new XmlException('Invalid array');
                     }
+
                     if (is_numeric(implode('', array_keys($value)))) {
 // List
                         foreach ($value as $item) {
-                            $itemData = compact('dom', 'node', 'key', 'format');
+                            $itemData = ['dom' => $dom, 'node' => $node, 'key' => $key, 'format' => $format];
                             $itemData['value'] = $item;
                             static::_createChild($itemData);
                         }
                     } else {
 // Struct
-                        static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+                        static::_createChild(['dom' => $dom, 'node' => $node, 'key' => $key, 'value' => $value, 'format' => $format]);
                     }
                 }
             } else {
@@ -380,7 +385,6 @@ class Xml
      * Helper to _fromArray(). It will create children of arrays
      *
      * @param array<string, mixed> $data Array with information to create children
-     * @return void
      * @psalm-param {dom: \DOMDocument, node: \DOMDocument|\DOMElement, key: string, format: string, ?value: mixed} $data
      */
     protected static function _createChild(array $data): void
@@ -396,16 +400,18 @@ class Xml
         $dom = $data['dom'];
         /** @var \DOMNode $node */
         $node = $data['node'];
-
-        $childNS = $childValue = null;
+        $childNS = null;
+        $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
             $value = $value->toArray();
         }
+
         if (is_array($value)) {
             if (isset($value['@'])) {
                 $childValue = (string)$value['@'];
                 unset($value['@']);
             }
+
             if (isset($value['xmlns:'])) {
                 $childNS = $value['xmlns:'];
                 unset($value['xmlns:']);
@@ -418,6 +424,7 @@ class Xml
         if ($childValue !== null) {
             $child->appendChild($dom->createTextNode($childValue));
         }
+
         if ($childNS) {
             $child->setAttribute('xmlns', $childNS);
         }
@@ -439,7 +446,7 @@ class Xml
             $obj = simplexml_import_dom($obj);
         }
 
-        if ($obj === null) {
+        if (!$obj instanceof \SimpleXMLElement) {
             throw new XmlException('Failed converting DOMNode to SimpleXMLElement');
         }
 
@@ -457,7 +464,6 @@ class Xml
      * @param array<string, mixed> $parentData Parent array with data
      * @param string $ns Namespace of current child
      * @param list<string> $namespaces List of namespaces in XML
-     * @return void
      */
     protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
     {
@@ -471,6 +477,7 @@ class Xml
                 if ($namespace) {
                     $key = $namespace . ':' . $key;
                 }
+
                 $data['@' . $key] = (string)$value;
             }
 
@@ -489,11 +496,13 @@ class Xml
         if ($ns) {
             $ns .= ':';
         }
+
         $name = $ns . $xml->getName();
         if (isset($parentData[$name])) {
             if (!is_array($parentData[$name]) || !isset($parentData[$name][0])) {
                 $parentData[$name] = [$parentData[$name]];
             }
+
             $parentData[$name][] = $data;
         } else {
             $parentData[$name] = $data;

@@ -43,7 +43,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
     protected static string|int $_toStringFormat = IntlDateFormatter::SHORT;
@@ -55,7 +54,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var \Closure|string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
     protected static Closure|string|int $_jsonEncodeFormat = 'yyyy-MM-dd';
@@ -64,7 +62,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
-     * @var string|int
      * @see \Cake\I18n\Date::parseDate()
      */
     public static string|int $wordFormat = IntlDateFormatter::SHORT;
@@ -76,7 +73,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var string|int
      * @see \Cake\I18n\Date::nice()
      */
     public static string|int $niceFormat = IntlDateFormatter::MEDIUM;
@@ -101,7 +97,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
     /**
      * The end of relative time telling
      *
-     * @var string
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static string $wordEnd = '+1 month';
@@ -114,7 +109,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
      * @param string|int $format Format.
-     * @return void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public static function setToStringFormat($format): void
@@ -134,7 +128,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      *
      * @see \Cake\I18n\Date::i18nFormat()
      * @param \Closure|string|int $format Format.
-     * @return void
      */
     public static function setJsonEncodeFormat(Closure|string|int $format): void
     {
@@ -161,7 +154,6 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      *
      * @param string $date The date string to parse.
      * @param string|int|null $format Any format accepted by IntlDateFormatter.
-     * @return static|null
      */
     public static function parseDate(string $date, string|int|null $format = null): ?static
     {
@@ -177,11 +169,10 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * Get the difference formatter instance.
      *
      * @param \Cake\Chronos\DifferenceFormatterInterface|null $formatter Difference formatter
-     * @return \Cake\I18n\RelativeTimeFormatter
      */
     public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter
     {
-        if ($formatter) {
+        if ($formatter instanceof \Cake\Chronos\DifferenceFormatterInterface) {
             if (!$formatter instanceof RelativeTimeFormatter) {
                 throw new InvalidArgumentException('Formatter for I18n must extend RelativeTimeFormatter.');
             }
@@ -327,5 +318,5 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
 }
 
 // phpcs:disable
-class_alias('Cake\I18n\Date', 'Cake\I18n\FrozenDate');
+class_alias(\Cake\I18n\Date::class, 'Cake\I18n\FrozenDate');
 // phpcs:enable

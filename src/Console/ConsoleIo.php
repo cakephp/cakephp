@@ -54,57 +54,40 @@ class ConsoleIo
 
     /**
      * The output stream
-     *
-     * @var \Cake\Console\ConsoleOutput
      */
     protected ConsoleOutput $_out;
 
     /**
      * The error stream
-     *
-     * @var \Cake\Console\ConsoleOutput
      */
     protected ConsoleOutput $_err;
 
     /**
      * The input stream
-     *
-     * @var \Cake\Console\ConsoleInput
      */
     protected ConsoleInput $_in;
 
     /**
      * The helper registry.
-     *
-     * @var \Cake\Console\HelperRegistry
      */
     protected HelperRegistry $_helpers;
 
     /**
      * The current output level.
-     *
-     * @var int
      */
     protected int $_level = self::NORMAL;
 
     /**
      * The number of bytes last written to the output stream
      * used when overwriting the previous message.
-     *
-     * @var int
      */
     protected int $_lastWritten = 0;
 
     /**
      * Whether files should be overwritten
-     *
-     * @var bool
      */
     protected bool $forceOverwrite = false;
 
-    /**
-     * @var bool
-     */
     protected bool $interactive = true;
 
     /**
@@ -130,7 +113,6 @@ class ConsoleIo
 
     /**
      * @param bool $value Value
-     * @return void
      */
     public function setInteractive(bool $value): void
     {
@@ -297,7 +279,6 @@ class ConsoleIo
      *
      * @param string $message Error message.
      * @param int $code Error code.
-     * @return never
      * @throws \Cake\Console\Exception\StopException
      */
     public function abort(string $message, int $code = CommandInterface::CODE_ERROR): never
@@ -318,10 +299,10 @@ class ConsoleIo
     {
         if (is_array($message)) {
             foreach ($message as $k => $v) {
-                $message[$k] = "<{$messageType}>{$v}</{$messageType}>";
+                $message[$k] = sprintf('<%s>%s</%s>', $messageType, $v, $messageType);
             }
         } else {
-            $message = "<{$messageType}>{$message}</{$messageType}>";
+            $message = sprintf('<%s>%s</%s>', $messageType, $message, $messageType);
         }
 
         return $message;
@@ -339,7 +320,6 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append.
      * @param int|null $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
-     * @return void
      */
     public function overwrite(array|string $message, int $newlines = 1, ?int $size = null): void
     {
@@ -355,6 +335,7 @@ class ConsoleIo
         if ($fill > 0) {
             $this->out(str_repeat(' ', $fill), 0);
         }
+
         if ($newlines) {
             $this->out($this->nl($newlines), 0);
         }
@@ -384,7 +365,6 @@ class ConsoleIo
      * Returns a single or multiple linefeeds sequences.
      *
      * @param int $multiplier Number of times the linefeed sequence should be repeated
-     * @return string
      */
     public function nl(int $multiplier = 1): string
     {
@@ -396,7 +376,6 @@ class ConsoleIo
      *
      * @param int $newlines Number of newlines to pre- and append
      * @param int $width Width of the line, defaults to 79
-     * @return void
      */
     public function hr(int $newlines = 0, int $width = 79): void
     {
@@ -421,7 +400,6 @@ class ConsoleIo
      * Change the output mode of the stdout stream
      *
      * @param int $mode The output mode.
-     * @return void
      * @see \Cake\Console\ConsoleOutput::setOutputAs()
      */
     public function setOutputAs(int $mode): void
@@ -432,7 +410,6 @@ class ConsoleIo
     /**
      * Gets defined styles.
      *
-     * @return array
      * @see \Cake\Console\ConsoleOutput::styles()
      */
     public function styles(): array
@@ -444,7 +421,6 @@ class ConsoleIo
      * Get defined style.
      *
      * @param string $style The style to get.
-     * @return array
      * @see \Cake\Console\ConsoleOutput::getStyle()
      */
     public function getStyle(string $style): array
@@ -457,7 +433,6 @@ class ConsoleIo
      *
      * @param string $style The style to set.
      * @param array $definition The array definition of the style to change or create.
-     * @return void
      * @see \Cake\Console\ConsoleOutput::setStyle()
      */
     public function setStyle(string $style, array $definition): void
@@ -515,14 +490,15 @@ class ConsoleIo
 
         $optionsText = '';
         if ($options !== null) {
-            $optionsText = " $options ";
+            $optionsText = sprintf(' %s ', $options);
         }
 
         $defaultText = '';
         if ($default !== null) {
-            $defaultText = "[$default] ";
+            $defaultText = sprintf('[%s] ', $default);
         }
-        $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
+
+        $this->_out->write('<question>' . $prompt . sprintf('</question>%s%s%s> ', $optionsText, PHP_EOL, $defaultText), 0);
         $result = $this->_in->read();
 
         $result = $result === null ? '' : trim($result);
@@ -548,7 +524,6 @@ class ConsoleIo
      *   one of the verbosity constants (self::VERBOSE, self::QUIET, self::NORMAL)
      *   to control logging levels. VERBOSE enables debug logs, NORMAL does not include debug logs,
      *   QUIET disables notice, info and debug logs.
-     * @return void
      */
     public function setLoggers(int|bool $enable): void
     {
@@ -557,6 +532,7 @@ class ConsoleIo
         if ($enable === false) {
             return;
         }
+
         // If the application has configured a console logger
         // we don't add a redundant one.
         foreach (Log::configured() as $loggerName) {
@@ -570,6 +546,7 @@ class ConsoleIo
         if ($enable === static::VERBOSE || $enable === true) {
             $outLevels[] = 'debug';
         }
+
         if ($enable !== static::QUIET) {
             $stdout = new ConsoleLog([
                 'types' => $outLevels,
@@ -577,6 +554,7 @@ class ConsoleIo
             ]);
             Log::setConfig('stdout', ['engine' => $stdout]);
         }
+
         $stderr = new ConsoleLog([
             'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
             'stream' => $this->_err,
@@ -626,7 +604,7 @@ class ConsoleIo
         $forceOverwrite = $forceOverwrite || $this->forceOverwrite;
 
         if (file_exists($path) && $forceOverwrite === false) {
-            $this->warning("File `{$path}` exists");
+            $this->warning(sprintf('File `%s` exists', $path));
             $key = $this->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
             $key = strtolower($key);
 
@@ -634,17 +612,19 @@ class ConsoleIo
                 $this->error('Quitting.', 2);
                 throw new StopException('Not creating file. Quitting.');
             }
+
             if ($key === 'a') {
                 $this->forceOverwrite = true;
                 $key = 'y';
             }
+
             if ($key !== 'y') {
-                $this->out("Skip `{$path}`", 2);
+                $this->out(sprintf('Skip `%s`', $path), 2);
 
                 return false;
             }
         } else {
-            $this->out("Creating file {$path}");
+            $this->out('Creating file ' . $path);
         }
 
         try {
@@ -656,7 +636,7 @@ class ConsoleIo
 
             $file = new SplFileObject($path, 'w');
         } catch (RuntimeException) {
-            $this->error("Could not write to `{$path}`. Permission denied.", 2);
+            $this->error(sprintf('Could not write to `%s`. Permission denied.', $path), 2);
 
             return false;
         }
@@ -664,11 +644,12 @@ class ConsoleIo
         $file->rewind();
         $file->fwrite($contents);
         if (file_exists($path)) {
-            $this->out("<success>Wrote</success> `{$path}`");
+            $this->out(sprintf('<success>Wrote</success> `%s`', $path));
 
             return true;
         }
-        $this->error("Could not write to `{$path}`.", 2);
+
+        $this->error(sprintf('Could not write to `%s`.', $path), 2);
 
         return false;
     }

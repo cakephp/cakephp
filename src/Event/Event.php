@@ -27,40 +27,14 @@ use Cake\Core\Exception\CakeException;
 class Event implements EventInterface
 {
     /**
-     * Name of the event
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
-     * The object this event applies to (usually the same object that generates the event)
-     *
-     * @var object|null
-     * @psalm-var TSubject|null
-     */
-    protected ?object $_subject = null;
-
-    /**
-     * Custom data for the method that receives the event
-     *
-     * @var array
-     */
-    protected array $_data;
-
-    /**
      * Property used to retain the result value of the event listeners
      *
      * Use setResult() and getResult() to set and get the result.
-     *
-     * @var mixed
      */
     protected mixed $result = null;
 
     /**
      * Flags an event as stopped or not, default is false
-     *
-     * @var bool
      */
     protected bool $_stopped = false;
 
@@ -74,24 +48,34 @@ class Event implements EventInterface
      *  $event = new Event('User.afterRegister', $userModel);
      * ```
      *
-     * @param string $name Name of the event
-     * @param object|null $subject the object that this event applies to
+     * @param string $_name Name of the event
+     * @param object|null $_subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param array $data any value you wish to be transported
+     * @param array $_data any value you wish to be transported
      *   with this event to it can be read by listeners.
-     * @psalm-param TSubject|null $subject
+     * @psalm-param TSubject|null $_subject
      */
-    public function __construct(string $name, ?object $subject = null, array $data = [])
+    public function __construct(
+        /**
+         * Name of the event
+         */
+        protected string $_name,
+        /**
+         * The object this event applies to (usually the same object that generates the event)
+         *
+         * @psalm-var TSubject|null
+         */
+        protected ?object $_subject = null,
+        /**
+         * Custom data for the method that receives the event
+         */
+        protected array $_data = []
+    )
     {
-        $this->_name = $name;
-        $this->_subject = $subject;
-        $this->_data = $data;
     }
 
     /**
      * Returns the name of this event. This is usually used as the event identifier
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -103,7 +87,6 @@ class Event implements EventInterface
      *
      * If the event has no subject an exception will be raised.
      *
-     * @return object
      * @throws \Cake\Core\Exception\CakeException
      * @psalm-return TSubject
      */
@@ -118,8 +101,6 @@ class Event implements EventInterface
 
     /**
      * Stops the event from being used anymore
-     *
-     * @return void
      */
     public function stopPropagation(): void
     {
@@ -138,8 +119,6 @@ class Event implements EventInterface
 
     /**
      * The result value of the event listeners
-     *
-     * @return mixed
      */
     public function getResult(): mixed
     {
@@ -152,7 +131,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult(mixed $value = null)
+    public function setResult(mixed $value = null): static
     {
         $this->result = $value;
 
@@ -174,7 +153,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    public function setData(array|string $key, $value = null)
+    public function setData(array|string $key, $value = null): static
     {
         if (is_array($key)) {
             $this->_data = $key;

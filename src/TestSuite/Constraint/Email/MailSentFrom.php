@@ -23,15 +23,10 @@ namespace Cake\TestSuite\Constraint\Email;
  */
 class MailSentFrom extends MailSentWith
 {
-    /**
-     * @var string
-     */
     protected string $method = 'from';
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -57,7 +57,6 @@ class TestExceptionRenderer implements ExceptionRendererInterface
      * Part of upcoming interface requirements
      *
      * @param \Psr\Http\Message\ResponseInterface|string $output The output or response to send.
-     * @return void
      */
     public function write(ResponseInterface|string $output): void
     {

@@ -26,9 +26,11 @@ if (empty($plugin)) {
     $filePath = APP_DIR . DIRECTORY_SEPARATOR;
     $namespace = str_replace('/', '\\', $plugin);
 }
+
 if (!empty($plugin) && Plugin::isLoaded($plugin)) {
     $filePath = Plugin::classPath($plugin);
 }
+
 if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
     $filePath = $pluginPath . h($plugin) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
 }

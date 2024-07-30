@@ -53,7 +53,7 @@ class PhpConfigTest extends TestCase
     /**
      * Setup.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->path = CONFIG;
@@ -154,6 +154,7 @@ class PhpConfigTest extends TestCase
     {
         $engine = new PhpConfig(TMP);
         $engine->dump('test', $this->testData);
+
         $result = $engine->read('test');
         unlink(TMP . 'test.php');
 

@@ -26,27 +26,20 @@ use PHPUnit\Framework\Constraint\Constraint;
 class SessionEquals extends Constraint
 {
     /**
-     * @var string
-     */
-    protected string $path;
-
-    /**
      * Constructor
      *
      * @param string $path Session Path
      */
-    public function __construct(string $path)
+    public function __construct(protected string $path)
     {
-        $this->path = $path;
     }
 
     /**
      * Compare session value
      *
      * @param mixed $other Value to compare with
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
@@ -57,11 +50,9 @@ class SessionEquals extends Constraint
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {
-        return sprintf('is in session path \'%s\'', $this->path);
+        return sprintf("is in session path '%s'", $this->path);
     }
 }

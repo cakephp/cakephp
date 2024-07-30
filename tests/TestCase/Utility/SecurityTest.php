@@ -101,8 +101,8 @@ class SecurityTest extends TestCase
         $txt = 'The quick brown fox';
         $key = 'This key is longer than 32 bytes long.';
         $result = Security::encrypt($txt, $key);
-        $this->assertNotEquals($txt, $result, 'Should be encrypted.');
-        $this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
+        $this->assertNotSame($txt, $result, 'Should be encrypted.');
+        $this->assertNotSame($result, Security::encrypt($txt, $key), 'Each result is unique.');
         $this->assertSame($txt, Security::decrypt($result, $key));
     }
 

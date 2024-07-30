@@ -41,7 +41,7 @@ class SqlserverTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->missingExtension = !defined('PDO::SQLSRV_ENCODING_UTF8');
@@ -52,44 +52,42 @@ class SqlserverTest extends TestCase
      *
      * @return array
      */
-    public static function dnsStringDataProvider(): array
+    public static function dnsStringDataProvider(): \Iterator
     {
-        return [
+        yield [
             [
-                [
-                    'app' => 'CakePHP-Testapp',
-                    'encoding' => '',
-                    'connectionPooling' => true,
-                    'failoverPartner' => 'failover.local',
-                    'loginTimeout' => 10,
-                    'multiSubnetFailover' => 'failover.local',
-                ],
-                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;ConnectionPooling=1;Failover_Partner=failover.local;LoginTimeout=10;MultiSubnetFailover=failover.local',
+                'app' => 'CakePHP-Testapp',
+                'encoding' => '',
+                'connectionPooling' => true,
+                'failoverPartner' => 'failover.local',
+                'loginTimeout' => 10,
+                'multiSubnetFailover' => 'failover.local',
             ],
+            'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;ConnectionPooling=1;Failover_Partner=failover.local;LoginTimeout=10;MultiSubnetFailover=failover.local',
+        ];
+        yield [
             [
-                [
-                    'app' => 'CakePHP-Testapp',
-                    'encoding' => '',
-                    'failoverPartner' => 'failover.local',
-                    'multiSubnetFailover' => 'failover.local',
-                ],
-                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;Failover_Partner=failover.local;MultiSubnetFailover=failover.local',
+                'app' => 'CakePHP-Testapp',
+                'encoding' => '',
+                'failoverPartner' => 'failover.local',
+                'multiSubnetFailover' => 'failover.local',
             ],
+            'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp;Failover_Partner=failover.local;MultiSubnetFailover=failover.local',
+        ];
+        yield [
             [
-                [
-                    'encoding' => '',
-                ],
-                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false',
+                'encoding' => '',
             ],
+            'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false',
+        ];
+        yield [
             [
-                [
-                    'app' => 'CakePHP-Testapp',
-                    'encoding' => '',
-                    'host' => 'localhost\SQLEXPRESS',
-                    'port' => 9001,
-                ],
-                'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
+                'app' => 'CakePHP-Testapp',
+                'encoding' => '',
+                'host' => 'localhost\SQLEXPRESS',
+                'port' => 9001,
             ],
+            'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
         ];
     }
 
@@ -97,18 +95,16 @@ class SqlserverTest extends TestCase
      * Test if all options in dns string are set
      *
      * @dataProvider dnsStringDataProvider
-     * @param array $constructorArgs
-     * @param string $dnsString
      */
-    public function testDnsString($constructorArgs, $dnsString): void
+    public function testDnsString(array $constructorArgs, string $dnsString): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
         $driver->method('createPdo')
-            ->with($this->callback(function ($dns) use ($dnsString) {
+            ->with($this->callback(function ($dns) use ($dnsString): bool {
                 $this->assertSame($dns, $dnsString);
 
                 return true;
@@ -133,7 +129,7 @@ class SqlserverTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -159,7 +155,7 @@ class SqlserverTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['exec', 'quote'])
             ->getMock();
-        $connection->expects($this->any())
+        $connection
             ->method('quote')
             ->willReturnArgument(0);
 
@@ -230,7 +226,7 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitVersion12(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -274,11 +270,11 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitOldServer(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
+        $driver
             ->method('version')
             ->willReturn('8');
         $driver->method('enabled')
@@ -301,6 +297,7 @@ class SqlserverTest extends TestCase
         if ($connection->getDriver()->isAutoQuotingEnabled()) {
             $identifier = $connection->getDriver()->quoteIdentifier($identifier);
         }
+
         $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS ' . $identifier . ' ' .
             'FROM articles) _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10';
@@ -397,7 +394,7 @@ class SqlserverTest extends TestCase
      */
     public function testInsertUsesOutput(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -417,11 +414,11 @@ class SqlserverTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
+        $driver
             ->method('version')
             ->willReturn('8');
         $driver->method('enabled')
@@ -448,11 +445,11 @@ class SqlserverTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
+        $driver
             ->method('version')
             ->willReturn('8');
         $driver->method('enabled')

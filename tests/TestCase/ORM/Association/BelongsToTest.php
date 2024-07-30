@@ -59,7 +59,7 @@ class BelongsToTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->company = $this->getTableLocator()->get('Companies', [
@@ -191,7 +191,7 @@ class BelongsToTest extends TestCase
             'Companies__id' => 'Companies.id',
             'Companies__company_name' => 'Companies.company_name',
         ];
-        $this->assertEquals($expected, $query->clause('select'));
+        $this->assertSame($expected, $query->clause('select'));
         $expected = [
             'Companies' => [
                 'alias' => 'Companies',
@@ -250,7 +250,7 @@ class BelongsToTest extends TestCase
             'Companies__id' => 'Companies.id',
             'Companies__company_name' => 'Companies.company_name',
         ];
-        $this->assertEquals($expected, $query->clause('select'));
+        $this->assertSame($expected, $query->clause('select'));
 
         $field1 = new IdentifierExpression('Clients.company_id');
         $field2 = new IdentifierExpression('Clients.company_tenant_id');
@@ -293,7 +293,7 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -315,7 +315,7 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(\Cake\ORM\Table::class)
             ->shouldAllowMockingMethod('saveAssociated')
             ->makePartial();
         $config = [
@@ -351,7 +351,7 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(\Cake\ORM\Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -395,15 +395,13 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, array $options) use (&$called): void {
             $this->assertSame('more', $options['something']);
             $called = true;
         });
         $association = new BelongsTo('Companies', $config);
         $query = $this->client->selectQuery();
-        $association->attachTo($query, ['queryBuilder' => function ($q) {
-            return $q->applyOptions(['something' => 'more']);
-        }]);
+        $association->attachTo($query, ['queryBuilder' => fn($q) => $q->applyOptions(['something' => 'more'])]);
         $this->assertTrue($called, 'Listener should be called.');
     }
 

@@ -42,6 +42,6 @@ class PackageTest extends TestCase
         $package->setMessages(['string' => $messages['string']]);
         $package->addMessage('string2', $messages['string2']);
 
-        $this->assertEquals($messages, $package->getMessages());
+        $this->assertSame($messages, $package->getMessages());
     }
 }

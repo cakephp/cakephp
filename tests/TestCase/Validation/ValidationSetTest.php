@@ -34,8 +34,9 @@ class ValidationSetTest extends TestCase
     {
         $field = new ValidationSet();
         $field->add('notBlank', ['rule' => 'notBlank', 'message' => 'Can not be empty']);
+
         $result = $field->rule('notBlank');
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $result);
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $result);
         $expected = new ValidationRule(['rule' => 'notBlank', 'message' => 'Can not be empty']);
         $this->assertEquals($expected, $result);
     }
@@ -49,8 +50,8 @@ class ValidationSetTest extends TestCase
         $field->add('notBlank', ['rule' => 'notBlank', 'message' => 'Can not be empty']);
 
         $result = $field->rules();
-        $this->assertEquals(['notBlank'], array_keys($result));
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $result['notBlank']);
+        $this->assertSame(['notBlank'], array_keys($result));
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $result['notBlank']);
     }
 
     /**
@@ -64,15 +65,15 @@ class ValidationSetTest extends TestCase
             ->add('other', ['rule' => 'email']);
 
         $rule = $set['notBlank'];
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
         $this->assertEquals(new ValidationRule(['rule' => 'notBlank']), $rule);
 
         $rule = $set['numeric'];
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
         $this->assertEquals(new ValidationRule(['rule' => 'numeric']), $rule);
 
         $rule = $set['other'];
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
         $this->assertEquals(new ValidationRule(['rule' => 'email']), $rule);
     }
 
@@ -103,7 +104,7 @@ class ValidationSetTest extends TestCase
         $this->assertArrayNotHasKey('other', $set);
         $set['other'] = ['rule' => 'email'];
         $rule = $set['other'];
-        $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
+        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
         $this->assertEquals(new ValidationRule(['rule' => 'email']), $rule);
     }
 
@@ -142,15 +143,19 @@ class ValidationSetTest extends TestCase
             if ($i === 0) {
                 $this->assertSame('notBlank', $name);
             }
+
             if ($i === 1) {
                 $this->assertSame('numeric', $name);
             }
+
             if ($i === 2) {
                 $this->assertSame('other', $name);
             }
-            $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
+
+            $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
             $i++;
         }
+
         $this->assertSame(3, $i);
     }
 

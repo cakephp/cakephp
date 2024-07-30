@@ -134,7 +134,7 @@ class InsertIteratorTest extends TestCase
         $values = [20, 21];
         $iterator = new InsertIterator($items, 'age', $values);
         $iterator->next();
-        $this->assertEquals(['name' => 'Derpina', 'age' => 21], $iterator->current());
+        $this->assertSame(['name' => 'Derpina', 'age' => 21], $iterator->current());
         $iterator->rewind();
 
         $result = $iterator->toArray();

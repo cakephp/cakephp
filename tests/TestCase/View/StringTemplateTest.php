@@ -32,7 +32,7 @@ class StringTemplateTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->template = new StringTemplate();
@@ -183,7 +183,7 @@ class StringTemplateTest extends TestCase
     {
         $this->template->remove('attribute');
         $this->template->remove('compactAttribute');
-        $this->assertEquals([], $this->template->get());
+        $this->assertSame([], $this->template->get());
         $this->template->load('test_templates');
         $this->assertSame('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
     }

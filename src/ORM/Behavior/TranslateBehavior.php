@@ -72,15 +72,12 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Default strategy class name.
      *
-     * @var string
      * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     protected static string $defaultStrategyClass = ShadowTableStrategy::class;
 
     /**
      * Translation strategy instance.
-     *
-     * @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface|null
      */
     protected ?TranslateStrategyInterface $strategy = null;
 
@@ -125,7 +122,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Initialize hook
      *
      * @param array<string, mixed> $config The config for this behavior.
-     * @return void
      */
     public function initialize(array $config): void
     {
@@ -136,7 +132,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Set default strategy class name.
      *
      * @param string $class Class name.
-     * @return void
      * @since 4.0.0
      * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
@@ -148,7 +143,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Get default strategy class name.
      *
-     * @return string
      * @since 4.0.0
      * @psalm-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
@@ -160,12 +154,11 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Get strategy class instance.
      *
-     * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
      * @since 4.0.0
      */
     public function getStrategy(): TranslateStrategyInterface
     {
-        if ($this->strategy !== null) {
+        if ($this->strategy instanceof \Cake\ORM\Behavior\Translate\TranslateStrategyInterface) {
             return $this->strategy;
         }
 
@@ -175,7 +168,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Create strategy instance.
      *
-     * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
      * @since 4.0.0
      */
     protected function createStrategy(): TranslateStrategyInterface
@@ -197,7 +189,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @return $this
      * @since 4.0.0
      */
-    public function setStrategy(TranslateStrategyInterface $strategy)
+    public function setStrategy(TranslateStrategyInterface $strategy): static
     {
         $this->strategy = $strategy;
 
@@ -225,11 +217,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * This allows `_translations.{locale}.field_name` type naming even for the
      * default locale in forms.
-     *
-     * @param \Cake\Event\EventInterface $event
-     * @param \ArrayObject $data
-     * @param \ArrayObject $options
-     * @return void
      */
     public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
     {
@@ -286,7 +273,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @link https://book.cakephp.org/5/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
      * @link https://book.cakephp.org/5/en/orm/behaviors/translate.html#saving-in-another-language
      */
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): static
     {
         $this->getStrategy()->setLocale($locale);
 
@@ -299,7 +286,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * If no locale has been explicitly set via `setLocale()`, this method will return
      * the currently configured global locale.
      *
-     * @return string
      * @see \Cake\I18n\I18n::getLocale()
      * @see \Cake\ORM\Behavior\TranslateBehavior::setLocale()
      */
@@ -316,7 +302,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * field name is returned for all other fields.
      *
      * @param string $field Field name to be aliased.
-     * @return string
      */
     public function translationField(string $field): string
     {
@@ -343,16 +328,15 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
      * @param list<string> $locales A list of locales or options with the `locales` key defined
-     * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery
     {
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
 
         return $query
-            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
+            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias): \Cake\Datasource\QueryInterface {
                 if ($locales) {
-                    $query->where(["$targetAlias.locale IN" => $locales]);
+                    $query->where([$targetAlias . '.locale IN' => $locales]);
                 }
 
                 return $query;
@@ -365,7 +349,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param string $method Method name.
      * @param array $args Method arguments.
-     * @return mixed
      */
     public function __call(string $method, array $args): mixed
     {
@@ -381,7 +364,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * of the autotable instance.
      *
      * @param \Cake\ORM\Table $table The table class to get a reference name for.
-     * @return string
      */
     protected function referenceName(Table $table): string
     {

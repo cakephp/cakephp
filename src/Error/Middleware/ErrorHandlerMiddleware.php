@@ -68,15 +68,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
     /**
      * ExceptionTrap instance
-     *
-     * @var \Cake\Error\ExceptionTrap|null
      */
     protected ?ExceptionTrap $exceptionTrap = null;
-
-    /**
-     * @var \Cake\Routing\RoutingApplicationInterface|null
-     */
-    protected ?RoutingApplicationInterface $app = null;
 
     /**
      * Constructor
@@ -85,10 +78,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *  or config array.
      * @param \Cake\Routing\RoutingApplicationInterface|null $app Application instance.
      */
-    public function __construct(ExceptionTrap|array $config = [], ?RoutingApplicationInterface $app = null)
+    public function __construct(ExceptionTrap|array $config = [], protected ?RoutingApplicationInterface $app = null)
     {
-        $this->app = $app;
-
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
         }
@@ -154,8 +145,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return $response instanceof ResponseInterface
                 ? $response
                 : new Response(['body' => $response, 'status' => 500]);
-        } catch (Throwable $internalException) {
-            $trap->logException($internalException, $request);
+        } catch (Throwable $throwable) {
+            $trap->logException($throwable, $request);
 
             return $this->handleInternalError();
         }
@@ -196,7 +187,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     protected function getExceptionTrap(): ExceptionTrap
     {
-        if ($this->exceptionTrap === null) {
+        if (!$this->exceptionTrap instanceof \Cake\Error\ExceptionTrap) {
             /** @var class-string<\Cake\Error\ExceptionTrap> $className */
             $className = App::className('ExceptionTrap', 'Error');
             $this->exceptionTrap = new $className($this->getConfig());
@@ -207,8 +198,6 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
     /**
      * Ensure that the application's routes are loaded.
-     *
-     * @return void
      */
     protected function loadRoutes(): void
     {
@@ -226,11 +215,11 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             if ($this->app instanceof PluginApplicationInterface) {
                 $this->app->pluginRoutes($builder);
             }
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             triggerWarning(sprintf(
                 "Exception loading routes when rendering an error page: \n %s - %s",
-                get_class($e),
-                $e->getMessage()
+                $throwable::class,
+                $throwable->getMessage()
             ));
         }
     }

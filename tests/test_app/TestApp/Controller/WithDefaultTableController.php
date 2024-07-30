@@ -19,8 +19,5 @@ use Cake\Controller\Controller;
 
 class WithDefaultTableController extends Controller
 {
-    /**
-     * @var string|null
-     */
     protected ?string $defaultTable = 'Posts';
 }

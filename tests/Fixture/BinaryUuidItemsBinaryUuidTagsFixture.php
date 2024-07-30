@@ -23,8 +23,6 @@ class BinaryUuidItemsBinaryUuidTagsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [];
 }

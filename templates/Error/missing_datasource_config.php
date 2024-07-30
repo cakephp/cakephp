@@ -27,5 +27,6 @@ $this->start('subheading');
         The datasource configuration <em><?= h($name) ?></em> was not found in config<?= DIRECTORY_SEPARATOR . 'app.php' ?>.
     <?php else: ?>
         <?= h($message) ?>
-    <?php endif; ?>
+    <?php endif;
+ ?>
 <?php $this->end() ?>

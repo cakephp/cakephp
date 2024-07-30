@@ -40,8 +40,6 @@ class ServerRequest implements ServerRequestInterface
 {
     /**
      * Array of parameters parsed from the URL.
-     *
-     * @var array
      */
     protected array $params = [
         'plugin' => null,
@@ -55,15 +53,11 @@ class ServerRequest implements ServerRequestInterface
      * Array of POST data. Will contain form data as well as uploaded files.
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
-     *
-     * @var object|array|null
      */
     protected object|array|null $data = [];
 
     /**
      * Array of query string arguments
-     *
-     * @var array
      */
     protected array $query = [];
 
@@ -83,15 +77,11 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Base URL path.
-     *
-     * @var string
      */
     protected string $base;
 
     /**
      * webroot path segment for the request.
-     *
-     * @var string
      */
     protected string $webroot = '/';
 
@@ -99,8 +89,6 @@ class ServerRequest implements ServerRequestInterface
      * Whether to trust HTTP_X headers set by most load balancers.
      * Only set to true if your application runs behind load balancers/proxies
      * that you control.
-     *
-     * @var bool
      */
     public bool $trustProxy = false;
 
@@ -147,29 +135,21 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Request body stream. Contains php://input unless `input` constructor option is used.
-     *
-     * @var \Psr\Http\Message\StreamInterface
      */
     protected StreamInterface $stream;
 
     /**
      * Uri instance
-     *
-     * @var \Psr\Http\Message\UriInterface
      */
     protected UriInterface $uri;
 
     /**
      * Instance of a Session object relative to this request
-     *
-     * @var \Cake\Http\Session
      */
     protected Session $session;
 
     /**
      * Instance of a FlashMessage object relative to this request
-     *
-     * @var \Cake\Http\FlashMessage
      */
     protected FlashMessage $flash;
 
@@ -189,22 +169,16 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
-     *
-     * @var array
      */
     protected array $uploadedFiles = [];
 
     /**
      * The HTTP protocol version used.
-     *
-     * @var string|null
      */
     protected ?string $protocol = null;
 
     /**
      * The request target if overridden
-     *
-     * @var string|null
      */
     protected ?string $requestTarget = null;
 
@@ -253,7 +227,6 @@ class ServerRequest implements ServerRequestInterface
      * Process the config/settings data into properties.
      *
      * @param array<string, mixed> $config The config data to use.
-     * @return void
      */
     protected function _setConfig(array $config): void
     {
@@ -273,11 +246,13 @@ class ServerRequest implements ServerRequestInterface
             if (!$config['uri'] instanceof UriInterface) {
                 throw new CakeException('The `uri` key must be an instance of ' . UriInterface::class);
             }
+
             $uri = $config['uri'];
         } else {
             if ($config['url'] !== '') {
                 $config = $this->processUrlOption($config);
             }
+
             ['uri' => $uri] = UriFactory::marshalUriAndBaseFromSapi($config['environment']);
         }
 
@@ -294,6 +269,7 @@ class ServerRequest implements ServerRequestInterface
         } else {
             $stream = new Stream('php://input');
         }
+
         $this->stream = $stream;
 
         $post = $config['post'];
@@ -304,6 +280,7 @@ class ServerRequest implements ServerRequestInterface
                 get_debug_type($post)
             ));
         }
+
         $this->data = $post;
         $this->uploadedFiles = $config['files'];
         $this->query = $config['query'];
@@ -326,8 +303,8 @@ class ServerRequest implements ServerRequestInterface
             $config['url'] = '/' . $config['url'];
         }
 
-        if (str_contains($config['url'], '?')) {
-            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
+        if (str_contains((string) $config['url'], '?')) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', (string) $config['url']);
 
             parse_str($config['environment']['QUERY_STRING'], $queryArgs);
             $config['query'] += $queryArgs;
@@ -340,8 +317,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Get the content type used in this request.
-     *
-     * @return string|null
      */
     public function contentType(): ?string
     {
@@ -350,8 +325,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Returns the instance of the Session object for this request
-     *
-     * @return \Cake\Http\Session
      */
     public function getSession(): Session
     {
@@ -360,8 +333,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Returns the instance of the FlashMessage object for this request
-     *
-     * @return \Cake\Http\FlashMessage
      */
     public function getFlash(): FlashMessage
     {
@@ -376,8 +347,8 @@ class ServerRequest implements ServerRequestInterface
     public function clientIp(): string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = (count($this->trustedProxies) > 0);
+            $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
+            $trusted = ($this->trustedProxies !== []);
             $n = count($addresses);
 
             if ($trusted) {
@@ -407,7 +378,6 @@ class ServerRequest implements ServerRequestInterface
      * register trusted proxies
      *
      * @param list<string> $proxies ips list of trusted proxies
-     * @return void
      */
     public function setTrustedProxies(array $proxies): void
     {
@@ -447,8 +417,9 @@ class ServerRequest implements ServerRequestInterface
             if ($ref === '' || str_starts_with($ref, '//')) {
                 $ref = '/';
             }
+
             if ($ref[0] !== '/') {
-                $ref = '/' . $ref;
+                return '/' . $ref;
             }
 
             return $ref;
@@ -466,7 +437,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The method called
      * @param array $params Array of parameters for the method call
-     * @return bool
      * @throws \BadMethodCallException when an invalid method is called.
      */
     public function __call(string $name, array $params): bool
@@ -478,6 +448,7 @@ class ServerRequest implements ServerRequestInterface
 
             return $this->is(...$params);
         }
+
         throw new BadMethodCallException(sprintf('Method `%s()` does not exist.', $name));
     }
 
@@ -510,17 +481,16 @@ class ServerRequest implements ServerRequestInterface
         if (!isset(static::$_detectors[$type])) {
             throw new InvalidArgumentException(sprintf('No detector set for type `%s`.', $type));
         }
+
         if ($args) {
             return $this->_is($type, $args);
         }
 
-        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
+        return $this->_detectorCache[$type] ??= $this->_is($type, $args);
     }
 
     /**
      * Clears the instance detector cache, used by the is() function
-     *
-     * @return void
      */
     public function clearDetectorCache(): void
     {
@@ -542,20 +512,21 @@ class ServerRequest implements ServerRequestInterface
 
             return $detect(...$args);
         }
+
         if (isset($detect['env']) && $this->_environmentDetector($detect)) {
             return true;
         }
+
         if (isset($detect['header']) && $this->_headerDetector($detect)) {
             return true;
         }
+
         if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
             return true;
         }
-        if (isset($detect['param']) && $this->_paramDetector($detect)) {
-            return true;
-        }
 
-        return false;
+
+        return isset($detect['param']) && $this->_paramDetector($detect);
     }
 
     /**
@@ -581,11 +552,9 @@ class ServerRequest implements ServerRequestInterface
         if ($accepted === null) {
             return false;
         }
-        if ($exclude && in_array($accepted, $exclude, true)) {
-            return false;
-        }
 
-        return true;
+
+        return !($exclude && in_array($accepted, $exclude, true));
     }
 
     /**
@@ -622,10 +591,11 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+            return isset($this->params[$key]) && $this->params[$key] == $value;
         }
+
         if (isset($detect['options'])) {
-            return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+            return isset($this->params[$key]) && in_array($this->params[$key], $detect['options']);
         }
 
         return false;
@@ -643,9 +613,11 @@ class ServerRequest implements ServerRequestInterface
             if (isset($detect['value'])) {
                 return $this->getEnv($detect['env']) == $detect['value'];
             }
+
             if (isset($detect['pattern'])) {
                 return (bool)preg_match($detect['pattern'], (string)$this->getEnv($detect['env']));
             }
+
             if (isset($detect['options'])) {
                 $pattern = '/' . implode('|', $detect['options']) . '/i';
 
@@ -752,7 +724,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The name of the detector.
      * @param \Closure|array $detector A Closure or options array for the detector definition.
-     * @return void
      */
     public static function addDetector(string $name, Closure|array $detector): void
     {
@@ -768,6 +739,7 @@ class ServerRequest implements ServerRequestInterface
             $data = static::$_detectors[$name];
             $detector = Hash::merge($data, $detector);
         }
+
         static::$_detectors[$name] = $detector;
     }
 
@@ -781,7 +753,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = str_replace('-', '_', strtoupper($name));
         if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
-            $name = 'HTTP_' . $name;
+            return 'HTTP_' . $name;
         }
 
         return $name;
@@ -807,9 +779,11 @@ class ServerRequest implements ServerRequestInterface
             if (str_starts_with($key, 'HTTP_')) {
                 $name = substr($key, 5);
             }
+
             if (str_starts_with($key, 'CONTENT_')) {
                 $name = $key;
             }
+
             if ($name !== null) {
                 $name = str_replace('_', ' ', strtolower($name));
                 $name = str_replace(' ', '-', ucwords($name));
@@ -874,7 +848,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The header name.
      * @param array|string $value The header value
-     * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
@@ -895,7 +868,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The header name.
      * @param array|string $value The header value
-     * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
@@ -907,6 +879,7 @@ class ServerRequest implements ServerRequestInterface
         if (isset($new->_environment[$name])) {
             $existing = (array)$new->_environment[$name];
         }
+
         $existing = array_merge($existing, (array)$value);
         $new->_environment[$name] = $existing;
 
@@ -917,7 +890,6 @@ class ServerRequest implements ServerRequestInterface
      * Get a modified request without a provided header.
      *
      * @param string $name The header name to remove.
-     * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function withoutHeader(string $name): static
@@ -965,6 +937,7 @@ class ServerRequest implements ServerRequestInterface
                 $method
             ));
         }
+
         $new->_environment['REQUEST_METHOD'] = $method;
 
         return $new;
@@ -976,7 +949,6 @@ class ServerRequest implements ServerRequestInterface
      * Read all of the 'environment' or 'server' data that was
      * used to create this request.
      *
-     * @return array
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getServerParams(): array
@@ -988,7 +960,6 @@ class ServerRequest implements ServerRequestInterface
      * Get all the query parameters in accordance to the PSR-7 specifications. To read specific query values
      * use the alternative getQuery() method.
      *
-     * @return array
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getQueryParams(): array
@@ -1013,8 +984,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Get the host that the request was handled on.
-     *
-     * @return string|null
      */
     public function host(): ?string
     {
@@ -1027,8 +996,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Get the port the request was handled on.
-     *
-     * @return string|null
      */
     public function port(): ?string
     {
@@ -1049,7 +1016,7 @@ class ServerRequest implements ServerRequestInterface
     public function scheme(): string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PROTO')) {
-            return (string)$this->getEnv('HTTP_X_FORWARDED_PROTO');
+            return $this->getEnv('HTTP_X_FORWARDED_PROTO');
         }
 
         return $this->getEnv('HTTPS') ? 'https' : 'http';
@@ -1219,6 +1186,7 @@ class ServerRequest implements ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
+
         if (!is_array($this->data)) {
             return $default;
         }
@@ -1250,8 +1218,6 @@ class ServerRequest implements ServerRequestInterface
      * the more complex CookieCollection is needed. In general you should prefer
      * `getCookie()` and `getCookieParams()` over this method. Using a CookieCollection
      * is ideal if your cookies contain complex JSON encoded data.
-     *
-     * @return \Cake\Http\Cookie\CookieCollection
      */
     public function getCookieCollection(): CookieCollection
     {
@@ -1263,7 +1229,6 @@ class ServerRequest implements ServerRequestInterface
      * the provided CookieCollection.
      *
      * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
-     * @return static
      */
     public function withCookieCollection(CookieCollection $cookies): static
     {
@@ -1272,6 +1237,7 @@ class ServerRequest implements ServerRequestInterface
         foreach ($cookies as $cookie) {
             $values[$cookie->getName()] = $cookie->getValue();
         }
+
         $new->cookies = $values;
 
         return $new;
@@ -1291,7 +1257,6 @@ class ServerRequest implements ServerRequestInterface
      * Replace the cookies and get a new request instance.
      *
      * @param array $cookies The new cookie data to use.
-     * @return static
      */
     public function withCookieParams(array $cookies): static
     {
@@ -1322,7 +1287,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param object|array|null $data The deserialized body data. This will
      *     typically be in an array or object.
-     * @return static
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function withParsedBody($data): static
@@ -1350,6 +1314,7 @@ class ServerRequest implements ServerRequestInterface
         if (isset($match[1])) {
             $protocol = $match[1];
         }
+
         $this->protocol = $protocol;
 
         return $this->protocol;
@@ -1362,13 +1327,13 @@ class ServerRequest implements ServerRequestInterface
      * "1.1", "1.0").
      *
      * @param string $version HTTP protocol version
-     * @return static
      */
     public function withProtocolVersion(string $version): static
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
             throw new InvalidArgumentException(sprintf('Unsupported protocol version `%s` provided.', $version));
         }
+
         $new = clone $this;
         $new->protocol = $version;
 
@@ -1402,7 +1367,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $key The key you want to write to.
      * @param string $value Value to set
-     * @return static
      */
     public function withEnv(string $key, string $value): static
     {
@@ -1438,6 +1402,7 @@ class ServerRequest implements ServerRequestInterface
                 return true;
             }
         }
+
         $allowed = strtoupper(implode(', ', $methods));
         $e = new MethodNotAllowedException();
         $e->setHeader('Allow', $allowed);
@@ -1454,7 +1419,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
-     * @return static
      */
     public function withData(string $name, mixed $value): static
     {
@@ -1474,7 +1438,6 @@ class ServerRequest implements ServerRequestInterface
      * a *new* request object and does not mutate the request in-place.
      *
      * @param string $name The dot separated path to remove.
-     * @return static
      */
     public function withoutData(string $name): static
     {
@@ -1495,7 +1458,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the the request parameters.
-     * @return static
      */
     public function withParam(string $name, mixed $value): static
     {
@@ -1510,7 +1472,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The name or dotted path to parameter.
      * @param mixed $default The default value if `$name` is not set. Default `null`.
-     * @return mixed
      */
     public function getParam(string $name, mixed $default = null): mixed
     {
@@ -1522,7 +1483,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
-     * @return static
      */
     public function withAttribute(string $name, mixed $value): static
     {
@@ -1540,7 +1500,6 @@ class ServerRequest implements ServerRequestInterface
      * Return an instance without the specified request attribute.
      *
      * @param string $name The attribute name.
-     * @return static
      * @throws \InvalidArgumentException
      */
     public function withoutAttribute(string $name): static
@@ -1548,9 +1507,10 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '$name'. It is a required CakePHP attribute."
+                sprintf("You cannot unset '%s'. It is a required CakePHP attribute.", $name)
             );
         }
+
         unset($new->attributes[$name]);
 
         return $new;
@@ -1561,7 +1521,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
-     * @return mixed
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
@@ -1572,6 +1531,7 @@ class ServerRequest implements ServerRequestInterface
 
             return $this->{$name};
         }
+
         if (array_key_exists($name, $this->attributes)) {
             return $this->attributes[$name];
         }
@@ -1603,7 +1563,6 @@ class ServerRequest implements ServerRequestInterface
      * Get the uploaded file from a dotted path.
      *
      * @param string $path The dot separated path to the file you want.
-     * @return \Psr\Http\Message\UploadedFileInterface|null
      */
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
@@ -1617,8 +1576,6 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Get the array of uploaded files from the request.
-     *
-     * @return array
      */
     public function getUploadedFiles(): array
     {
@@ -1629,7 +1586,6 @@ class ServerRequest implements ServerRequestInterface
      * Update the request replacing the files, and creating a new instance.
      *
      * @param array $uploadedFiles An array of uploaded file objects.
-     * @return static
      * @throws \InvalidArgumentException when $files contains an invalid object.
      */
     public function withUploadedFiles(array $uploadedFiles): static
@@ -1646,7 +1602,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param array $uploadedFiles The new files array to validate.
      * @param string $path The path thus far.
-     * @return void
      * @throws \InvalidArgumentException If any leaf elements are not valid files.
      */
     protected function validateUploadedFiles(array $uploadedFiles, string $path): void
@@ -1677,7 +1632,6 @@ class ServerRequest implements ServerRequestInterface
      * Return an instance with the specified message body.
      *
      * @param \Psr\Http\Message\StreamInterface $body The new request body
-     * @return static
      */
     public function withBody(StreamInterface $body): static
     {
@@ -1706,7 +1660,6 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param \Psr\Http\Message\UriInterface $uri The new request uri
      * @param bool $preserveHost Whether the host should be retained.
-     * @return static
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
@@ -1721,10 +1674,12 @@ class ServerRequest implements ServerRequestInterface
         if (!$host) {
             return $new;
         }
+
         $port = $uri->getPort();
         if ($port) {
             $host .= ':' . $port;
         }
+
         $new->_environment['HTTP_HOST'] = $host;
 
         return $new;
@@ -1740,7 +1695,6 @@ class ServerRequest implements ServerRequestInterface
      * @link https://tools.ietf.org/html/rfc7230#section-2.7 (for the various
      *   request-target forms allowed in request messages)
      * @param string $requestTarget The request target.
-     * @return static
      */
     public function withRequestTarget(string $requestTarget): static
     {
@@ -1757,8 +1711,6 @@ class ServerRequest implements ServerRequestInterface
      * or as set with `withRequestTarget()`. By default this will return the
      * application relative path without base directory, and the query string
      * defined in the SERVER environment.
-     *
-     * @return string
      */
     public function getRequestTarget(): string
     {
@@ -1772,7 +1724,7 @@ class ServerRequest implements ServerRequestInterface
         }
 
         if (!$target) {
-            $target = '/';
+            return '/';
         }
 
         return $target;
@@ -1781,7 +1733,6 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get the path of current request.
      *
-     * @return string
      * @since 3.6.1
      */
     public function getPath(): string

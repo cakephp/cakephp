@@ -13,4 +13,4 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-class_alias('Cake\ORM\Query\SelectQuery', 'Cake\ORM\Query');
+class_alias(\Cake\ORM\Query\SelectQuery::class, \Cake\ORM\Query::class);

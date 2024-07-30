@@ -27,8 +27,6 @@ interface ConsoleApplicationInterface
      * Load all the application configuration and bootstrap logic.
      *
      * Override this method to add additional bootstrap logic for your application.
-     *
-     * @return void
      */
     public function bootstrap(): void;
 

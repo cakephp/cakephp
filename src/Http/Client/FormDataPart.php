@@ -31,29 +31,21 @@ class FormDataPart implements Stringable
 {
     /**
      * Content type to use
-     *
-     * @var string|null
      */
     protected ?string $type = null;
 
     /**
      * Filename to send if using files.
-     *
-     * @var string|null
      */
     protected ?string $filename = null;
 
     /**
      * The encoding used in this part.
-     *
-     * @var string|null
      */
     protected ?string $transferEncoding = null;
 
     /**
      * The contentId for the part
-     *
-     * @var string|null
      */
     protected ?string $contentId = null;
 
@@ -80,7 +72,6 @@ class FormDataPart implements Stringable
      * header from being added.
      *
      * @param string|null $disposition Use null to get/string to set.
-     * @return string
      */
     public function disposition(?string $disposition = null): string
     {
@@ -95,7 +86,6 @@ class FormDataPart implements Stringable
      * Get/set the contentId for a part.
      *
      * @param string|null $id The content id.
-     * @return string|null
      */
     public function contentId(?string $id = null): ?string
     {
@@ -113,7 +103,6 @@ class FormDataPart implements Stringable
      * generated output.
      *
      * @param string|null $filename Use null to get/string to set.
-     * @return string|null
      */
     public function filename(?string $filename = null): ?string
     {
@@ -128,7 +117,6 @@ class FormDataPart implements Stringable
      * Get/set the content type.
      *
      * @param string|null $type Use null to get/string to set.
-     * @return string|null
      */
     public function type(?string $type): ?string
     {
@@ -145,7 +133,6 @@ class FormDataPart implements Stringable
      * Useful when content bodies are in encodings like base64.
      *
      * @param string|null $type The type of encoding the value has.
-     * @return string|null
      */
     public function transferEncoding(?string $type): ?string
     {
@@ -158,8 +145,6 @@ class FormDataPart implements Stringable
 
     /**
      * Get the part name.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -168,8 +153,6 @@ class FormDataPart implements Stringable
 
     /**
      * Get the value.
-     *
-     * @return string
      */
     public function value(): string
     {
@@ -180,8 +163,6 @@ class FormDataPart implements Stringable
      * Convert the part into a string.
      *
      * Creates a string suitable for use in HTTP requests.
-     *
-     * @return string
      */
     public function __toString(): string
     {
@@ -191,24 +172,29 @@ class FormDataPart implements Stringable
             if ($this->name) {
                 $out .= '; ' . $this->_headerParameterToString('name', $this->name);
             }
+
             if ($this->filename) {
                 $out .= '; ' . $this->_headerParameterToString('filename', $this->filename);
             }
+
             $out .= "\r\n";
         }
+
         if ($this->type) {
             $out .= 'Content-Type: ' . $this->type . "\r\n";
         }
+
         if ($this->transferEncoding) {
             $out .= 'Content-Transfer-Encoding: ' . $this->transferEncoding . "\r\n";
         }
+
         if ($this->contentId) {
             $out .= 'Content-ID: <' . $this->contentId . ">\r\n";
         }
-        $out .= "\r\n";
-        $out .= $this->value;
 
-        return $out;
+        $out .= "\r\n";
+
+        return $out . $this->value;
     }
 
     /**
@@ -219,7 +205,6 @@ class FormDataPart implements Stringable
      *
      * @param string $name The name of the header parameter
      * @param string $value The value of the header parameter
-     * @return string
      */
     protected function _headerParameterToString(string $name, string $value): string
     {

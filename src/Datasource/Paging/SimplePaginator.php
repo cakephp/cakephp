@@ -35,7 +35,6 @@ class SimplePaginator extends NumericPaginator
      *
      * @param \Cake\Datasource\QueryInterface $query Query to fetch items.
      * @param array $data Paging data.
-     * @return \Cake\Datasource\ResultSetInterface
      */
     protected function getItems(QueryInterface $query, array $data): ResultSetInterface
     {
@@ -65,10 +64,6 @@ class SimplePaginator extends NumericPaginator
      *
      * Since the query fetches an extra record, drop the last record if records
      * fetched exceeds the limit/per page.
-     *
-     * @param \Cake\Datasource\ResultSetInterface $items
-     * @param array $pagingParams
-     * @return \Cake\Datasource\Paging\PaginatedInterface
      */
     protected function buildPaginated(ResultSetInterface $items, array $pagingParams): PaginatedInterface
     {
@@ -84,7 +79,6 @@ class SimplePaginator extends NumericPaginator
      *
      * @param \Cake\Datasource\QueryInterface $query Query instance.
      * @param array $data Pagination data.
-     * @return int|null
      */
     protected function getCount(QueryInterface $query, array $data): ?int
     {

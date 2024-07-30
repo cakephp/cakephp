@@ -51,7 +51,6 @@ class CacheRegistry extends ObjectRegistry
      *
      * @param string $class The classname that is missing.
      * @param string|null $plugin The plugin the cache is missing in.
-     * @return void
      * @throws \BadMethodCallException
      */
     protected function _throwMissingClassError(string $class, ?string $plugin): void
@@ -72,11 +71,8 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _create(object|string $class, string $alias, array $config): CacheEngine
     {
-        if (is_object($class)) {
-            $instance = $class;
-        } else {
-            $instance = new $class($config);
-        }
+        $instance = is_object($class) ? $class : new $class($config);
+
         unset($config['className']);
 
         assert($instance instanceof CacheEngine, 'Cache engines must extend `' . CacheEngine::class . '`.');
@@ -99,7 +95,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
         unset($this->_loaded[$name]);
 

@@ -47,5 +47,6 @@ Remove duplicate route names in your route configuration.</p>
         <td><div class="cake-debug" data-open-all="true"><?= Debugger::exportVar($other->options) ?></div></td>
     </tr>
     </table>
-<?php endif; ?>
+<?php endif;
+ ?>
 <?php $this->end() ?>

@@ -31,20 +31,17 @@ use Psr\Http\Message\ResponseInterface;
 class ResponseEmitter
 {
     /**
-     * Maximum output buffering size for each iteration.
-     *
-     * @var int
-     */
-    protected int $maxBufferLength;
-
-    /**
      * Constructor
      *
      * @param int $maxBufferLength Maximum output buffering size for each iteration.
      */
-    public function __construct(int $maxBufferLength = 8192)
+    public function __construct(
+        /**
+         * Maximum output buffering size for each iteration.
+         */
+        protected int $maxBufferLength = 8192
+    )
     {
-        $this->maxBufferLength = $maxBufferLength;
     }
 
     /**
@@ -54,14 +51,13 @@ class ResponseEmitter
      * according to the environment.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit.
-     * @return bool
      */
     public function emit(ResponseInterface $response): bool
     {
         $file = '';
         $line = 0;
         if (headers_sent($file, $line)) {
-            $message = "Unable to emit headers. Headers sent in file=$file line=$line";
+            $message = sprintf('Unable to emit headers. Headers sent in file=%s line=%s', $file, $line);
             trigger_error($message, E_USER_WARNING);
         }
 
@@ -87,13 +83,13 @@ class ResponseEmitter
      * Emit the message body.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @return void
      */
     protected function emitBody(ResponseInterface $response): void
     {
         if (in_array($response->getStatusCode(), [204, 304], true)) {
             return;
         }
+
         $body = $response->getBody();
 
         if (!$body->isSeekable()) {
@@ -113,7 +109,6 @@ class ResponseEmitter
      *
      * @param array $range The range data to emit
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @return void
      */
     protected function emitBodyRange(array $range, ResponseInterface $response): void
     {
@@ -130,6 +125,7 @@ class ResponseEmitter
 
         $body = new RelativeStream($body, $first);
         $body->rewind();
+
         $pos = 0;
         /** @var int $length */
         $length = $last - $first + 1;
@@ -151,7 +147,6 @@ class ResponseEmitter
      * the response; if a reason phrase is available, it, too, is emitted.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @return void
      */
     protected function emitStatusLine(ResponseInterface $response): void
     {
@@ -173,7 +168,6 @@ class ResponseEmitter
      * the previous).
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
-     * @return void
      */
     protected function emitHeaders(ResponseInterface $response): void
     {
@@ -187,6 +181,7 @@ class ResponseEmitter
                 $cookies = array_merge($cookies, $values);
                 continue;
             }
+
             $first = true;
             foreach ($values as $value) {
                 header(sprintf(
@@ -205,7 +200,6 @@ class ResponseEmitter
      * Emit cookies using setcookie()
      *
      * @param array<\Cake\Http\Cookie\CookieInterface|string> $cookies An array of cookies.
-     * @return void
      */
     protected function emitCookies(array $cookies): void
     {
@@ -218,7 +212,6 @@ class ResponseEmitter
      * Helper methods to set cookie.
      *
      * @param \Cake\Http\Cookie\CookieInterface|string $cookie Cookie.
-     * @return bool
      */
     protected function setCookie(CookieInterface|string $cookie): bool
     {
@@ -234,7 +227,6 @@ class ResponseEmitter
      * the response.
      *
      * @param int|null $maxBufferLevel Flush up to this buffer level.
-     * @return void
      */
     protected function flush(?int $maxBufferLevel = null): void
     {

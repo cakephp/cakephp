@@ -64,12 +64,11 @@ class PluginAssetsSymlinkCommand extends Command
      * Get the option parser.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'Symlink (copy as fallback) plugin assets to app\'s webroot.',
+            "Symlink (copy as fallback) plugin assets to app's webroot.",
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'required' => false,

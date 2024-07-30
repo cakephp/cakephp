@@ -35,8 +35,6 @@ class MemcachedEngine extends CacheEngine
 {
     /**
      * memcached wrapper.
-     *
-     * @var \Memcached
      */
     protected Memcached $_Memcached;
 
@@ -120,11 +118,7 @@ class MemcachedEngine extends CacheEngine
         parent::init($config);
 
         if (!empty($config['host'])) {
-            if (empty($config['port'])) {
-                $config['servers'] = [$config['host']];
-            } else {
-                $config['servers'] = [sprintf('%s:%d', $config['host'], $config['port'])];
-            }
+            $config['servers'] = empty($config['port']) ? [$config['host']] : [sprintf('%s:%d', $config['host'], $config['port'])];
         }
 
         if (isset($config['servers'])) {
@@ -139,11 +133,8 @@ class MemcachedEngine extends CacheEngine
             return true;
         }
 
-        if ($this->_config['persistent']) {
-            $this->_Memcached = new Memcached($this->_config['persistent']);
-        } else {
-            $this->_Memcached = new Memcached();
-        }
+        $this->_Memcached = $this->_config['persistent'] ? new Memcached($this->_config['persistent']) : new Memcached();
+
         $this->_setOptions();
 
         $serverList = $this->_Memcached->getServerList();
@@ -190,6 +181,7 @@ class MemcachedEngine extends CacheEngine
                     'Memcached extension is not built with SASL support'
                 );
             }
+
             $this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
             $this->_Memcached->setSaslAuthData(
                 $this->_config['username'],
@@ -203,7 +195,6 @@ class MemcachedEngine extends CacheEngine
     /**
      * Settings the memcached instance
      *
-     * @return void
      * @throws \Cake\Cache\Exception\InvalidArgumentException When the Memcached extension is not built
      *   with the desired serializer engine.
      */
@@ -211,7 +202,7 @@ class MemcachedEngine extends CacheEngine
     {
         $this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-        $serializer = strtolower($this->_config['serialize']);
+        $serializer = strtolower((string) $this->_config['serialize']);
         if (!isset($this->_serializers[$serializer])) {
             throw new InvalidArgumentException(
                 sprintf('`%s` is not a valid serializer engine for Memcached.', $serializer)
@@ -259,6 +250,7 @@ class MemcachedEngine extends CacheEngine
         if (str_starts_with($server, $socketTransport)) {
             return [substr($server, strlen($socketTransport)), 0];
         }
+
         if (str_starts_with($server, '[')) {
             $position = strpos($server, ']:');
             if ($position !== false) {
@@ -267,6 +259,7 @@ class MemcachedEngine extends CacheEngine
         } else {
             $position = strpos($server, ':');
         }
+
         $port = 11211;
         $host = $server;
         if ($position !== false) {
@@ -281,7 +274,6 @@ class MemcachedEngine extends CacheEngine
      * Read an option value from the memcached connection.
      *
      * @param int $name The option name to read.
-     * @return string|int|bool|null
      * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
     public function getOption(int $name): string|int|bool|null
@@ -325,6 +317,7 @@ class MemcachedEngine extends CacheEngine
         foreach ($values as $key => $value) {
             $cacheData[$this->_key($key)] = $value;
         }
+
         $duration = $this->duration($ttl);
 
         return $this->_Memcached->setMulti($cacheData, $duration);
@@ -439,7 +432,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         foreach ($keys as $key) {
-            if (str_starts_with($key, $this->_config['prefix'])) {
+            if (str_starts_with((string) $key, (string) $this->_config['prefix'])) {
                 $this->_Memcached->delete($key);
             }
         }
@@ -485,6 +478,7 @@ class MemcachedEngine extends CacheEngine
                     $groups[$group] = 1;
                 }
             }
+
             ksort($groups);
         }
 

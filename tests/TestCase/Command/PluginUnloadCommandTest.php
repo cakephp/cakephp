@@ -39,7 +39,7 @@ class PluginUnloadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -63,7 +63,7 @@ class PluginUnloadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -75,7 +75,7 @@ class PluginUnloadCommandTest extends TestCase
      *
      * @dataProvider pluginNameProvider
      */
-    public function testUnload($plugin): void
+    public function testUnload(string $plugin): void
     {
         $this->exec('plugin unload ' . $plugin);
 
@@ -86,12 +86,10 @@ class PluginUnloadCommandTest extends TestCase
         $this->assertStringContainsString("'Company/TestPluginThree'", $contents);
     }
 
-    public static function pluginNameProvider()
+    public static function pluginNameProvider(): \Iterator
     {
-        return [
-            ['TestPlugin'],
-            ['TestPluginTwo'],
-        ];
+        yield ['TestPlugin'];
+        yield ['TestPluginTwo'];
     }
 
     public function testUnloadNoConfigFile(): void

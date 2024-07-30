@@ -84,8 +84,6 @@ class Debugger
 
     /**
      * Holds current output data when outputFormat is false.
-     *
-     * @var array
      */
     protected array $_data = [];
 
@@ -98,6 +96,7 @@ class Debugger
         if (!$docRef && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
+
         if (!defined('E_RECOVERABLE_ERROR')) {
             define('E_RECOVERABLE_ERROR', 4096);
         }
@@ -110,17 +109,15 @@ class Debugger
      * Returns a reference to the Debugger singleton object instance.
      *
      * @param class-string<\Cake\Error\Debugger>|null $class Class name.
-     * @return static
      */
     public static function getInstance(?string $class = null): static
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower($instance[0]::class))) {
+            $instance[0] = new $class();
         }
+
         if (!$instance) {
             $instance[0] = new Debugger();
         }
@@ -170,7 +167,6 @@ class Debugger
      *
      * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
-     * @return void
      */
     public static function setOutputMask(array $value, bool $merge = true): void
     {
@@ -186,7 +182,6 @@ class Debugger
      *
      * @param string $name The name of the editor.
      * @param \Closure|string $template The string template or closure
-     * @return void
      */
     public static function addEditor(string $name, Closure|string $template): void
     {
@@ -198,7 +193,6 @@ class Debugger
      * Choose the editor link style you want to use.
      *
      * @param string $name The editor name.
-     * @return void
      */
     public static function setEditor(string $name): void
     {
@@ -211,6 +205,7 @@ class Debugger
                 $known
             ));
         }
+
         $instance->setConfig('editor', $name);
     }
 
@@ -245,7 +240,6 @@ class Debugger
      *
      * @param mixed $var The variable to dump.
      * @param int $maxDepth The depth to output to. Defaults to 3.
-     * @return void
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/5/en/development/debugging.html#outputting-values
      */
@@ -261,7 +255,6 @@ class Debugger
      * @param mixed $var Variable or content to log.
      * @param string|int $level Type of log to use. Defaults to 'debug'.
      * @param int $maxDepth The depth to output to. Defaults to 3.
-     * @return void
      */
     public static function log(mixed $var, string|int $level = 'debug', int $maxDepth = 3): void
     {
@@ -284,9 +277,10 @@ class Debugger
      */
     public static function getUniqueFrames(Throwable $exception, ?Throwable $parent): array
     {
-        if ($parent === null) {
+        if (!$parent instanceof \Throwable) {
             return $exception->getTrace();
         }
+
         $parentFrames = $parent->getTrace();
         $frames = $exception->getTrace();
 
@@ -386,7 +380,8 @@ class Debugger
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
 
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';
@@ -395,19 +390,24 @@ class Debugger
                     foreach ($frame['args'] as $arg) {
                         $args[] = Debugger::exportVar($arg);
                     }
+
                     $reference .= implode(', ', $args);
                 }
+
                 $reference .= ')';
             }
+
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
+
             if ($options['format'] === 'points') {
                 $back[] = ['file' => $frame['file'], 'line' => $frame['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 if (!$options['args']) {
                     unset($frame['args']);
                 }
+
                 $back[] = $frame;
             } elseif ($options['format'] === 'text') {
                 $path = static::trimPath($frame['file']);
@@ -415,10 +415,11 @@ class Debugger
             } else {
                 debug($options);
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `{$options['format']}` chosen. Must be one of `array`, `points` or `text`."
+                    sprintf('Invalid trace format of `%s` chosen. Must be one of `array`, `points` or `text`.', $options['format'])
                 );
             }
         }
+
         if ($options['format'] === 'array' || $options['format'] === 'points') {
             return $back;
         }
@@ -442,10 +443,12 @@ class Debugger
         if (defined('APP') && str_starts_with($path, APP)) {
             return str_replace(APP, 'APP/', $path);
         }
-        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, CAKE_CORE_INCLUDE_PATH)) {
+
+        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, (string) CAKE_CORE_INCLUDE_PATH)) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
-        if (defined('ROOT') && str_starts_with($path, ROOT)) {
+
+        if (defined('ROOT') && str_starts_with($path, (string) ROOT)) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 
@@ -479,27 +482,28 @@ class Debugger
         if (!file_exists($file)) {
             return [];
         }
+
         $data = file_get_contents($file);
         if (!$data) {
             return $lines;
         }
+
         if (str_contains($data, "\n")) {
             $data = explode("\n", $data);
         }
+
         $line--;
         if (!isset($data[$line])) {
             return $lines;
         }
+
         for ($i = $line - $context; $i < $line + $context + 1; $i++) {
             if (!isset($data[$i])) {
                 continue;
             }
+
             $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
-            if ($i === $line) {
-                $lines[] = '<span class="code-highlight">' . $string . '</span>';
-            } else {
-                $lines[] = $string;
-            }
+            $lines[] = $i === $line ? '<span class="code-highlight">' . $string . '</span>' : $string;
         }
 
         return $lines;
@@ -510,7 +514,6 @@ class Debugger
      * implement the function as it is the case of the HipHop interpreter
      *
      * @param string $str The string to convert.
-     * @return string
      */
     protected static function _highlight(string $str): string
     {
@@ -519,9 +522,10 @@ class Debugger
             $added = true;
             $str = "<?php \n" . $str;
         }
+
         $highlight = highlight_string($str, true);
         if ($added) {
-            $highlight = str_replace(
+            return str_replace(
                 ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
                 $highlight
@@ -534,7 +538,6 @@ class Debugger
     /**
      * Get the configured export formatter or infer one based on the environment.
      *
-     * @return \Cake\Error\Debug\FormatterInterface
      * @unstable This method is not stable and may change in the future.
      * @since 4.1.0
      */
@@ -551,6 +554,7 @@ class Debugger
                 $class = TextFormatter::class;
             }
         }
+
         $instance = new $class();
         if (!$instance instanceof FormatterInterface) {
             throw new CakeException(sprintf(
@@ -680,6 +684,7 @@ class Debugger
                     // Likely recursion, so we increase depth.
                     $node = static::export($val, $context->withAddedDepth());
                 }
+
                 $items[] = new ArrayItemNode(static::export($key, $context), $node);
             }
         } else {
@@ -697,7 +702,6 @@ class Debugger
      *
      * @param object $var Object to convert.
      * @param \Cake\Error\Debug\DebugContext $context The dump context.
-     * @return \Cake\Error\Debug\NodeInterface
      * @see \Cake\Error\Debugger::exportVar()
      */
     protected static function exportObject(object $var, DebugContext $context): NodeInterface
@@ -709,6 +713,7 @@ class Debugger
         if ($isRef) {
             return new ReferenceNode($className, $refNum);
         }
+
         $node = new ClassNode($className, $refNum);
 
         $remaining = $context->remainingDepth();
@@ -716,12 +721,12 @@ class Debugger
             if (method_exists($var, '__debugInfo')) {
                 try {
                     foreach ((array)$var->__debugInfo() as $key => $val) {
-                        $node->addProperty(new PropertyNode("'{$key}'", null, static::export($val, $context)));
+                        $node->addProperty(new PropertyNode(sprintf("'%s'", $key), null, static::export($val, $context)));
                     }
 
                     return $node;
                 } catch (Exception $e) {
-                    return new SpecialNode("(unable to export object: {$e->getMessage()})");
+                    return new SpecialNode(sprintf('(unable to export object: %s)', $e->getMessage()));
                 }
             }
 
@@ -731,8 +736,9 @@ class Debugger
                 if (array_key_exists($key, $outputMask)) {
                     $value = $outputMask[$key];
                 }
+
                 $node->addProperty(
-                    new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
+                    new PropertyNode($key, 'public', static::export($value, $context->withAddedDepth()))
                 );
             }
 
@@ -755,6 +761,7 @@ class Debugger
                     } else {
                         $value = static::export($reflectionProperty->getValue($var), $context->withAddedDepth());
                     }
+
                     $node->addProperty(
                         new PropertyNode(
                             $reflectionProperty->getName(),
@@ -801,7 +808,6 @@ class Debugger
      *    data encoded as HTML. If false, plain text formatting will be used.
      *    If null, the format will be chosen based on the configured exportFormatter, or
      *    environment conditions.
-     * @return void
      */
     public static function printVar(mixed $var, array $location = [], ?bool $showHtml = null): void
     {
@@ -816,12 +822,14 @@ class Debugger
             $restore = $debugger->getConfig('exportFormatter');
             $debugger->setConfig('exportFormatter', $showHtml ? HtmlFormatter::class : TextFormatter::class);
         }
+
         $contents = static::exportVar($var, 25);
         $formatter = $debugger->getExportFormatter();
 
         if ($restore) {
             $debugger->setConfig('exportFormatter', $restore);
         }
+
         echo $formatter->formatWrapper($contents, $location);
     }
 
@@ -847,8 +855,6 @@ class Debugger
 
     /**
      * Verifies that the application's salt and cipher seed value has been changed from the default value.
-     *
-     * @return void
      */
     public static function checkSecurityKeys(): void
     {

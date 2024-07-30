@@ -42,8 +42,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
     /**
      * The name of this command.
-     *
-     * @var string
      */
     protected string $name = 'cake unknown';
 
@@ -54,7 +52,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     {
         assert(
             str_contains($name, ' ') && !str_starts_with($name, ' '),
-            "The name '{$name}' is missing a space. Names should look like `cake routes`"
+            sprintf("The name '%s' is missing a space. Names should look like `cake routes`", $name)
         );
         $this->name = $name;
 
@@ -63,8 +61,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
     /**
      * Get the command name.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -73,8 +69,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
     /**
      * Get the command description.
-     *
-     * @return string
      */
     public static function getDescription(): string
     {
@@ -83,8 +77,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
     /**
      * Get the root command name.
-     *
-     * @return string
      */
     public function getRootName(): string
     {
@@ -99,8 +91,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Returns the command name based on class name.
      * For e.g. for a command with class name `UpdateTableCommand` the default
      * name returned would be `'update_table'`.
-     *
-     * @return string
      */
     public static function defaultName(): string
     {
@@ -116,7 +106,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * You can override buildOptionParser() to define your options & arguments.
      *
-     * @return \Cake\Console\ConsoleOptionParser
      * @throws \Cake\Core\Exception\CakeException When the parser is invalid
      */
     public function getOptionParser(): ConsoleOptionParser
@@ -148,8 +137,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Override this method and implement expensive/important setup steps that
      * should not run on every command run. This method will be called *before*
      * the options and arguments are validated and processed.
-     *
-     * @return void
      */
     public function initialize(): void
     {
@@ -170,11 +157,12 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
                 $options,
                 $parser->argumentNames()
             );
-        } catch (ConsoleException $e) {
-            $io->err('Error: ' . $e->getMessage());
+        } catch (ConsoleException $consoleException) {
+            $io->err('Error: ' . $consoleException->getMessage());
 
             return static::CODE_ERROR;
         }
+
         $this->setOutputLevel($args, $io);
 
         if ($args->getOption('help')) {
@@ -201,7 +189,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser.
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void
      */
     protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io): void
     {
@@ -219,7 +206,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void
      */
     protected function setOutputLevel(Arguments $args, ConsoleIo $io): void
     {
@@ -228,6 +214,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
             $io->level(ConsoleIo::QUIET);
             $io->setLoggers(ConsoleIo::QUIET);
         }
+
         if ($args->getOption('verbose')) {
             $io->level(ConsoleIo::VERBOSE);
             $io->setLoggers(ConsoleIo::VERBOSE);
@@ -249,7 +236,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @param int $code The exit code to use.
      * @throws \Cake\Console\Exception\StopException
-     * @return never
      */
     public function abort(int $code = self::CODE_ERROR): never
     {
@@ -278,12 +264,13 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
             $command = new $command();
         }
+
         $io = $io ?: new ConsoleIo();
 
         try {
             return $command->run($args, $io);
-        } catch (StopException $e) {
-            return $e->getCode();
+        } catch (StopException $stopException) {
+            return $stopException->getCode();
         }
     }
 }

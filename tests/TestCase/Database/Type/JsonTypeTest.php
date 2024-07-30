@@ -35,16 +35,16 @@ class JsonTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('json');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
     }
 
     /**
@@ -54,7 +54,7 @@ class JsonTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertSame('word', $this->type->toPHP(json_encode('word'), $this->driver));
-        $this->assertSame(2.123, $this->type->toPHP(json_encode(2.123), $this->driver));
+        $this->assertEqualsWithDelta(2.123, $this->type->toPHP(json_encode(2.123), $this->driver), PHP_FLOAT_EPSILON);
     }
 
     /**
@@ -109,7 +109,7 @@ class JsonTypeTest extends TestCase
         $this->assertNull($this->type->marshal(null));
         $this->assertSame('', $this->type->marshal(''));
         $this->assertSame('word', $this->type->marshal('word'));
-        $this->assertSame(2.123, $this->type->marshal(2.123));
+        $this->assertEqualsWithDelta(2.123, $this->type->marshal(2.123), PHP_FLOAT_EPSILON);
         $this->assertSame([1, 2, 3], $this->type->marshal([1, 2, 3]));
         $this->assertSame(['a' => 1, 2, 3], $this->type->marshal(['a' => 1, 2, 3]));
     }
@@ -124,10 +124,8 @@ class JsonTypeTest extends TestCase
 
     /**
      * Test encoding options
-     *
-     * @return void
      */
-    public function testEncodingOptions()
+    public function testEncodingOptions(): void
     {
         // New instance to prevent others tests breaking
         $instance = new JsonType();

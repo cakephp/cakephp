@@ -29,16 +29,7 @@ use function Cake\Core\h;
 class LabelWidget implements WidgetInterface
 {
     /**
-     * Templates
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $_templates;
-
-    /**
      * The template to use.
-     *
-     * @var string
      */
     protected string $_labelTemplate = 'label';
 
@@ -50,11 +41,15 @@ class LabelWidget implements WidgetInterface
      * - `label` Used to generate the label for a radio button.
      *   Can use the following variables `attrs`, `text` and `input`.
      *
-     * @param \Cake\View\StringTemplate $templates Templates list.
+     * @param \Cake\View\StringTemplate $_templates Templates list.
      */
-    public function __construct(StringTemplate $templates)
+    public function __construct(
+        /**
+         * Templates
+         */
+        protected StringTemplate $_templates
+    )
     {
-        $this->_templates = $templates;
     }
 
     /**
@@ -70,7 +65,6 @@ class LabelWidget implements WidgetInterface
      *
      * @param array<string, mixed> $data Data array.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return string
      */
     public function render(array $data, ContextInterface $context): string
     {

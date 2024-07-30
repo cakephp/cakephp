@@ -50,7 +50,7 @@ class QueryTest extends TestCase
 
     protected Query $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -58,7 +58,7 @@ class QueryTest extends TestCase
         $this->query = $this->newQuery();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -84,7 +84,7 @@ class QueryTest extends TestCase
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
-    protected function newQuery()
+    protected function newQuery(): \Cake\Database\Query
     {
         return new class ($this->connection) extends Query
         {
@@ -152,11 +152,9 @@ class QueryTest extends TestCase
                     $this->newQuery()
                 )
             )
-            ->with(function (CommonTableExpression $cte, Query $query) {
-                return $cte
-                    ->name('cte2')
-                    ->query($query);
-            });
+            ->with(fn(CommonTableExpression $cte, Query $query): \Cake\Database\Expression\CommonTableExpression => $cte
+                ->name('cte2')
+                ->query($query));
 
         $clause = $this->query->clause('with');
         $clauseClone = (clone $this->query)->clause('with');
@@ -304,7 +302,7 @@ class QueryTest extends TestCase
      */
     public function testGetValueBinder(): void
     {
-        $this->assertInstanceOf('Cake\Database\ValueBinder', $this->query->getValueBinder());
+        $this->assertInstanceOf(\Cake\Database\ValueBinder::class, $this->query->getValueBinder());
     }
 
     /**

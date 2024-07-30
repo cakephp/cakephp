@@ -29,13 +29,6 @@ use Cake\Database\Exception\DatabaseException;
 class EagerLoadable
 {
     /**
-     * The name of the association to load.
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
      * A list of other associations to load from this level.
      *
      * @var array<\Cake\ORM\EagerLoadable>
@@ -44,8 +37,6 @@ class EagerLoadable
 
     /**
      * The Association class instance to use for loading the records.
-     *
-     * @var \Cake\ORM\Association|null
      */
     protected ?Association $_instance = null;
 
@@ -60,8 +51,6 @@ class EagerLoadable
     /**
      * A dotted separated string representing the path of associations
      * that should be followed to fetch this level.
-     *
-     * @var string
      */
     protected string $_aliasPath;
 
@@ -76,23 +65,17 @@ class EagerLoadable
      * ```
      *
      * The property path of `country` will be `author.company`
-     *
-     * @var string|null
      */
     protected ?string $_propertyPath = null;
 
     /**
      * Whether this level can be fetched using a join.
-     *
-     * @var bool
      */
     protected bool $_canBeJoined = false;
 
     /**
      * Whether this level was meant for a "matching" fetch
      * operation
-     *
-     * @var bool|null
      */
     protected ?bool $_forMatching = null;
 
@@ -107,8 +90,6 @@ class EagerLoadable
      * ```
      *
      * The target property of `country` will be just `country`
-     *
-     * @var string|null
      */
     protected ?string $_targetProperty = null;
 
@@ -127,12 +108,14 @@ class EagerLoadable
      *
      * The keys maps to the settable properties in this class.
      *
-     * @param string $name The Association name.
+     * @param string $_name The Association name.
      * @param array<string, mixed> $config The list of properties to set.
      */
-    public function __construct(string $name, array $config = [])
+    public function __construct(/**
+     * The name of the association to load.
+     */
+    protected string $_name, array $config = [])
     {
-        $this->_name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
             'aliasPath', 'propertyPath', 'forMatching', 'targetProperty',
@@ -149,7 +132,6 @@ class EagerLoadable
      *
      * @param string $name The association name.
      * @param \Cake\ORM\EagerLoadable $association The association to load.
-     * @return void
      */
     public function addAssociation(string $name, EagerLoadable $association): void
     {
@@ -169,12 +151,11 @@ class EagerLoadable
     /**
      * Gets the Association class instance to use for loading the records.
      *
-     * @return \Cake\ORM\Association
      * @throws \Cake\Database\Exception\DatabaseException
      */
     public function instance(): Association
     {
-        if ($this->_instance === null) {
+        if (!$this->_instance instanceof \Cake\ORM\Association) {
             throw new DatabaseException('No instance set.');
         }
 
@@ -184,8 +165,6 @@ class EagerLoadable
     /**
      * Gets a dot separated string representing the path of associations
      * that should be followed to fetch this level.
-     *
-     * @return string
      */
     public function aliasPath(): string
     {
@@ -203,8 +182,6 @@ class EagerLoadable
      * ```
      *
      * The property path of `country` will be `author.company`
-     *
-     * @return string|null
      */
     public function propertyPath(): ?string
     {
@@ -217,7 +194,7 @@ class EagerLoadable
      * @param bool $possible The value to set.
      * @return $this
      */
-    public function setCanBeJoined(bool $possible)
+    public function setCanBeJoined(bool $possible): static
     {
         $this->_canBeJoined = $possible;
 
@@ -226,8 +203,6 @@ class EagerLoadable
 
     /**
      * Gets whether this level can be fetched using a join.
-     *
-     * @return bool
      */
     public function canBeJoined(): bool
     {
@@ -241,7 +216,7 @@ class EagerLoadable
      * @param array<string, mixed> $config The value to set.
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): static
     {
         $this->_config = $config;
 
@@ -262,8 +237,6 @@ class EagerLoadable
     /**
      * Gets whether this level was meant for a
      * "matching" fetch operation.
-     *
-     * @return bool|null
      */
     public function forMatching(): ?bool
     {
@@ -281,8 +254,6 @@ class EagerLoadable
      * ```
      *
      * The target property of `country` will be just `country`
-     *
-     * @return string|null
      */
     public function targetProperty(): ?string
     {
@@ -301,6 +272,7 @@ class EagerLoadable
         foreach ($this->_associations as $assoc) {
             $associations += $assoc->asContainArray();
         }
+
         $config = $this->_config;
         if ($this->_forMatching !== null) {
             $config = ['matching' => $this->_forMatching] + $config;

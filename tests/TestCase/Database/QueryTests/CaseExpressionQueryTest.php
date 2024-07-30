@@ -47,7 +47,7 @@ class CaseExpressionQueryTest extends TestCase
      */
     protected $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -55,7 +55,7 @@ class CaseExpressionQueryTest extends TestCase
         $this->query = new SelectQuery($this->connection);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -66,18 +66,16 @@ class CaseExpressionQueryTest extends TestCase
     public function testSimpleCase(): void
     {
         $query = $this->query
-            ->select(function (Query $query) {
-                return [
-                    'name',
-                    'category_name' => $query->newExpr()
-                        ->case($query->identifier('products.category'))
-                        ->when(1)
-                        ->then('Touring')
-                        ->when(2)
-                        ->then('Urban')
-                        ->else('Other'),
-                ];
-            })
+            ->select(fn(Query $query): array => [
+                'name',
+                'category_name' => $query->newExpr()
+                    ->case($query->identifier('products.category'))
+                    ->when(1)
+                    ->then('Touring')
+                    ->when(2)
+                    ->then('Urban')
+                    ->else('Other'),
+            ])
             ->from('products')
             ->orderByAsc('category')
             ->orderByAsc('name');
@@ -106,19 +104,17 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
-                return [
-                    'name',
-                    'price',
-                    'price_range' => $query->newExpr()
-                        ->case()
-                        ->when(['price <' => 20])
-                        ->then('Under $20')
-                        ->when(['price >=' => 20, 'price <' => 30])
-                        ->then('Under $30')
-                        ->else('$30 and above'),
-                ];
-            })
+            ->select(fn(Query $query): array => [
+                'name',
+                'price',
+                'price_range' => $query->newExpr()
+                    ->case()
+                    ->when(['price <' => 20])
+                    ->then('Under $20')
+                    ->when(['price >=' => 20, 'price <' => 30])
+                    ->then('Under $30')
+                    ->else('$30 and above'),
+            ])
             ->from('products')
             ->orderByAsc('price')
             ->orderByAsc('name')
@@ -155,18 +151,14 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['article_id', 'user_id'])
             ->from('comments')
             ->orderByAsc('comments.article_id')
-            ->orderByDesc(function (QueryExpression $exp, Query $query) {
-                return $query->newExpr()
-                    ->case($query->identifier('comments.article_id'))
-                    ->when(1)
-                    ->then($query->identifier('comments.user_id'));
-            })
-            ->orderByAsc(function (QueryExpression $exp, Query $query) {
-                return $query->newExpr()
-                    ->case($query->identifier('comments.article_id'))
-                    ->when(2)
-                    ->then($query->identifier('comments.user_id'));
-            })
+            ->orderByDesc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $query->newExpr()
+                ->case($query->identifier('comments.article_id'))
+                ->when(1)
+                ->then($query->identifier('comments.user_id')))
+            ->orderByAsc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $query->newExpr()
+                ->case($query->identifier('comments.article_id'))
+                ->when(2)
+                ->then($query->identifier('comments.user_id')))
             ->setSelectTypeMap($typeMap);
 
         $expected = [
@@ -205,7 +197,7 @@ class CaseExpressionQueryTest extends TestCase
             ->from('articles')
             ->leftJoin('comments', ['comments.article_id = articles.id'])
             ->groupBy(['articles.id', 'articles.title'])
-            ->having(function (QueryExpression $exp, Query $query) {
+            ->having(function (QueryExpression $exp, Query $query): \Cake\Database\Expression\QueryExpression {
                 $expression = $query->newExpr()
                     ->case()
                     ->when(['comments.published' => 'Y'])
@@ -267,12 +259,10 @@ class CaseExpressionQueryTest extends TestCase
         $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
-    public static function bindingValueDataProvider(): array
+    public static function bindingValueDataProvider(): \Iterator
     {
-        return [
-            ['1', 3],
-            ['2', 4],
-        ];
+        yield ['1', 3];
+        yield ['2', 4];
     }
 
     /**
@@ -291,15 +281,13 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
-                return [
-                    'val' => $query->newExpr()
-                        ->case($query->newExpr(':value'))
-                        ->when($query->newExpr(':when'))
-                        ->then($query->newExpr(':then'))
-                        ->else($query->newExpr(':else')),
-                ];
-            })
+            ->select(fn(Query $query): array => [
+                'val' => $query->newExpr()
+                    ->case($query->newExpr(':value'))
+                    ->when($query->newExpr(':when'))
+                    ->then($query->newExpr(':then'))
+                    ->else($query->newExpr(':else')),
+            ])
             ->from('products')
             ->bind(':value', $value, 'integer')
             ->bind(':when', $when, 'integer')

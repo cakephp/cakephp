@@ -8,7 +8,7 @@ namespace TestApp\View\Object;
  *
  * An object with the magic method __toString() for testing with view blocks.
  */
-class TestObjectWithToString
+class TestObjectWithToString implements \Stringable
 {
     /**
      * Return string value.

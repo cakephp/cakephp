@@ -23,8 +23,6 @@ class SectionsFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['title' => 'foo'],

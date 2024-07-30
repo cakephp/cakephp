@@ -89,17 +89,15 @@ class SyslogLogTest extends TestCase
      *
      * @return array
      */
-    public static function typesProvider(): array
+    public static function typesProvider(): \Iterator
     {
-        return [
-            ['emergency', LOG_EMERG],
-            ['alert', LOG_ALERT],
-            ['critical', LOG_CRIT],
-            ['error', LOG_ERR],
-            ['warning', LOG_WARNING],
-            ['notice', LOG_NOTICE],
-            ['info', LOG_INFO],
-            ['debug', LOG_DEBUG],
-        ];
+        yield ['emergency', LOG_EMERG];
+        yield ['alert', LOG_ALERT];
+        yield ['critical', LOG_CRIT];
+        yield ['error', LOG_ERR];
+        yield ['warning', LOG_WARNING];
+        yield ['notice', LOG_NOTICE];
+        yield ['info', LOG_INFO];
+        yield ['debug', LOG_DEBUG];
     }
 }

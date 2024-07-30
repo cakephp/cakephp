@@ -31,12 +31,12 @@ class ConsoleOutputTest extends TestCase
     /**
      * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $output;
+    protected \PHPUnit\Framework\MockObject\MockObject $output;
 
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->output = $this->getMockBuilder(ConsoleOutput::class)
@@ -48,7 +48,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->output);
@@ -114,7 +114,7 @@ class ConsoleOutputTest extends TestCase
     {
         $result = $this->output->getStyle('error');
         $expected = ['text' => 'red'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->assertSame([], $this->output->getStyle('made_up_goop'));
 
@@ -131,7 +131,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->setStyle('test', ['text' => 'red', 'background' => 'black']);
         $result = $this->output->getStyle('test');
         $expected = ['text' => 'red', 'background' => 'black'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->output->setStyle('test', []);
         $this->assertSame([], $this->output->getStyle('test'), 'Removed styles should be empty.');

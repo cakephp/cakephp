@@ -51,8 +51,7 @@ class TestAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * @param array $user
-     * @return array|void
+     * @return mixed[]|null
      */
     public function afterIdentify(EventInterface $event, array $user)
     {
@@ -62,11 +61,10 @@ class TestAuthenticate extends BaseAuthenticate
         if ($this->modifiedUser) {
             return $user + ['extra' => 'foo'];
         }
+
+        return null;
     }
 
-    /**
-     * @param array $user
-     */
     public function logout(EventInterface $event, array $user): void
     {
         $this->callStack[] = __FUNCTION__;

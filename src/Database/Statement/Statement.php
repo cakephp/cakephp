@@ -37,19 +37,6 @@ class Statement implements StatementInterface
         self::FETCH_TYPE_OBJ => PDO::FETCH_OBJ,
     ];
 
-    /**
-     * @var \Cake\Database\Driver
-     */
-    protected Driver $_driver;
-
-    /**
-     * @var \PDOStatement
-     */
-    protected PDOStatement $statement;
-
-    /**
-     * @var \Cake\Database\FieldTypeConverter|null
-     */
     protected ?FieldTypeConverter $typeConverter;
 
     /**
@@ -61,17 +48,15 @@ class Statement implements StatementInterface
 
     /**
      * @param \PDOStatement $statement PDO statement
-     * @param \Cake\Database\Driver $driver Database driver
+     * @param \Cake\Database\Driver $_driver Database driver
      * @param \Cake\Database\TypeMap|null $typeMap Results type map
      */
     public function __construct(
-        PDOStatement $statement,
-        Driver $driver,
+        protected PDOStatement $statement,
+        protected Driver $_driver,
         ?TypeMap $typeMap = null,
     ) {
-        $this->_driver = $driver;
-        $this->statement = $statement;
-        $this->typeConverter = $typeMap !== null ? new FieldTypeConverter($typeMap, $driver) : null;
+        $this->typeConverter = $typeMap instanceof \Cake\Database\TypeMap ? new FieldTypeConverter($typeMap, $this->_driver) : null;
     }
 
     /**
@@ -91,6 +76,7 @@ class Statement implements StatementInterface
                 /** @psalm-suppress InvalidOperand */
                 $index += $offset;
             }
+
             /** @psalm-suppress PossiblyInvalidArgument */
             $this->bindValue($index, $value, $type);
         }
@@ -124,6 +110,7 @@ class Statement implements StatementInterface
         if (is_string($type)) {
             $type = TypeFactory::build($type);
         }
+
         if ($type instanceof TypeInterface) {
             $value = $type->toDatabase($value, $this->_driver);
             $type = $type->toStatement($value, $this->_driver);
@@ -140,12 +127,6 @@ class Statement implements StatementInterface
         return $this->params;
     }
 
-    /**
-     * @param string|int $column
-     * @param mixed $value
-     * @param int $type
-     * @return void
-     */
     protected function performBind(string|int $column, mixed $value, int $type): void
     {
         $this->statement->bindValue($column, $value, $type);
@@ -170,7 +151,7 @@ class Statement implements StatementInterface
             return false;
         }
 
-        if ($this->typeConverter !== null) {
+        if ($this->typeConverter instanceof \Cake\Database\FieldTypeConverter) {
             return ($this->typeConverter)($row);
         }
 
@@ -206,7 +187,7 @@ class Statement implements StatementInterface
         $mode = $this->convertMode($mode);
         $rows = $this->statement->fetchAll($mode);
 
-        if ($this->typeConverter !== null) {
+        if ($this->typeConverter instanceof \Cake\Database\FieldTypeConverter) {
             return array_map($this->typeConverter, $rows);
         }
 
@@ -217,7 +198,6 @@ class Statement implements StatementInterface
      * Converts mode name to PDO constant.
      *
      * @param string|int $mode Mode name or PDO constant
-     * @return int
      * @throws \InvalidArgumentException
      */
     protected function convertMode(string|int $mode): int
@@ -229,7 +209,7 @@ class Statement implements StatementInterface
 
         return static::MODE_NAME_MAP[$mode]
             ??
-            throw new InvalidArgumentException('Invalid fetch mode requested. Expected \'assoc\', \'num\' or \'obj\'.');
+            throw new InvalidArgumentException("Invalid fetch mode requested. Expected 'assoc', 'num' or 'obj'.");
     }
 
     /**
@@ -290,8 +270,6 @@ class Statement implements StatementInterface
 
     /**
      * Returns prepared query string stored in PDOStatement.
-     *
-     * @return string
      */
     public function queryString(): string
     {

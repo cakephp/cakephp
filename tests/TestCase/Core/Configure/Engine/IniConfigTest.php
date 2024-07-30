@@ -53,7 +53,7 @@ class IniConfigTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->path = CONFIG;
@@ -68,7 +68,7 @@ class IniConfigTest extends TestCase
         $config = $engine->read('acl');
 
         $this->assertArrayHasKey('admin', $config);
-        $this->assertTrue(isset($config['paul']['groups']));
+        $this->assertArrayHasKey('groups', $config['paul']);
         $this->assertSame('ads', $config['admin']['deny']);
     }
 
@@ -120,11 +120,11 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path);
         $config = $engine->read('nested');
 
-        $this->assertTrue(isset($config['database']['db']['username']));
+        $this->assertArrayHasKey('username', $config['database']['db']);
         $this->assertSame('mark', $config['database']['db']['username']);
         $this->assertSame('3', $config['nesting']['one']['two']['three']);
-        $this->assertFalse(isset($config['database.db.username']));
-        $this->assertFalse(isset($config['database']['db.username']));
+        $this->assertArrayNotHasKey('database.db.username', $config);
+        $this->assertArrayNotHasKey('db.username', $config['database']);
     }
 
     /**
@@ -174,7 +174,7 @@ class IniConfigTest extends TestCase
     {
         $engine = new IniConfig($this->path);
         $config = $engine->read('empty');
-        $this->assertEquals([], $config);
+        $this->assertSame([], $config);
     }
 
     /**
@@ -196,10 +196,10 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path);
         $result = $engine->read('TestPlugin.nested');
 
-        $this->assertTrue(isset($result['database']['db']['username']));
+        $this->assertArrayHasKey('username', $result['database']['db']);
         $this->assertSame('bar', $result['database']['db']['username']);
-        $this->assertFalse(isset($result['database.db.username']));
-        $this->assertFalse(isset($result['database']['db.username']));
+        $this->assertArrayNotHasKey('database.db.username', $result);
+        $this->assertArrayNotHasKey('db.username', $result['database']);
 
         $result = $engine->read('TestPlugin.nested');
         $this->assertSame('foo', $result['database']['db']['password']);
@@ -247,6 +247,7 @@ INI;
     {
         $engine = new IniConfig(TMP);
         $engine->dump('test', $this->testData);
+
         $result = $engine->read('test');
         unlink(TMP . 'test.ini');
 

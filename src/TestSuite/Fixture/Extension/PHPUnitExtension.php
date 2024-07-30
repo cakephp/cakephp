@@ -26,12 +26,6 @@ use PHPUnit\TextUI\Configuration\Configuration;
  */
 class PHPUnitExtension implements Extension
 {
-    /**
-     * @param \PHPUnit\TextUI\Configuration\Configuration $configuration
-     * @param \PHPUnit\Runner\Extension\Facade $facade
-     * @param \PHPUnit\Runner\Extension\ParameterCollection $parameters
-     * @return void
-     */
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $facade->registerSubscriber(

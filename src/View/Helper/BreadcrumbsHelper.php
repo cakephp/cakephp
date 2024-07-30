@@ -31,8 +31,6 @@ class BreadcrumbsHelper extends Helper
 
     /**
      * Other helpers used by BreadcrumbsHelper.
-     *
-     * @var array
      */
     protected array $helpers = ['Url'];
 
@@ -52,8 +50,6 @@ class BreadcrumbsHelper extends Helper
 
     /**
      * The crumb list.
-     *
-     * @var array
      */
     protected array $crumbs = [];
 
@@ -78,7 +74,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function add(array|string $title, array|string|null $url = null, array $options = [])
+    public function add(array|string $title, array|string|null $url = null, array $options = []): static
     {
         if (is_array($title)) {
             foreach ($title as $crumb) {
@@ -88,7 +84,7 @@ class BreadcrumbsHelper extends Helper
             return $this;
         }
 
-        $this->crumbs[] = compact('title', 'url', 'options');
+        $this->crumbs[] = ['title' => $title, 'url' => $url, 'options' => $options];
 
         return $this;
     }
@@ -114,7 +110,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function prepend(array|string $title, array|string|null $url = null, array $options = [])
+    public function prepend(array|string $title, array|string|null $url = null, array $options = []): static
     {
         if (is_array($title)) {
             $crumbs = [];
@@ -127,7 +123,7 @@ class BreadcrumbsHelper extends Helper
             return $this;
         }
 
-        array_unshift($this->crumbs, compact('title', 'url', 'options'));
+        array_unshift($this->crumbs, ['title' => $title, 'url' => $url, 'options' => $options]);
 
         return $this;
     }
@@ -154,13 +150,13 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the index is out of bound
      */
-    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = [])
+    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = []): static
     {
         if (!isset($this->crumbs[$index]) && $index !== count($this->crumbs)) {
             throw new LogicException(sprintf('No crumb could be found at index `%s`.', $index));
         }
 
-        array_splice($this->crumbs, $index, 0, [compact('title', 'url', 'options')]);
+        array_splice($this->crumbs, $index, 0, [['title' => $title, 'url' => $url, 'options' => $options]]);
 
         return $this;
     }
@@ -189,7 +185,7 @@ class BreadcrumbsHelper extends Helper
         string $title,
         array|string|null $url = null,
         array $options = []
-    ) {
+    ): static {
         $key = $this->findCrumb($matchingTitle);
 
         if ($key === null) {
@@ -223,7 +219,7 @@ class BreadcrumbsHelper extends Helper
         string $title,
         array|string|null $url = null,
         array $options = []
-    ) {
+    ): static {
         $key = $this->findCrumb($matchingTitle);
 
         if ($key === null) {
@@ -235,8 +231,6 @@ class BreadcrumbsHelper extends Helper
 
     /**
      * Returns the crumb list.
-     *
-     * @return array
      */
     public function getCrumbs(): array
     {
@@ -248,7 +242,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->crumbs = [];
 

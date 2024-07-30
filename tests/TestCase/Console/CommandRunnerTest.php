@@ -58,7 +58,7 @@ class CommandRunnerTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
@@ -301,6 +301,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'widget');
         $runner->run(['widget', 'sample', '-h'], $this->getMockIo($output));
+
         $result = implode("\n", $output->messages());
         $this->assertStringContainsString('widget sample [-h]', $result);
         $this->assertStringNotContainsString('cake sample [-h]', $result);
@@ -453,8 +454,8 @@ class CommandRunnerTest extends TestCase
 
         $output = new StubConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
-
-        $startedEventTriggered = $finishedEventTriggered = false;
+        $startedEventTriggered = false;
+        $finishedEventTriggered = false;
         $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
@@ -463,7 +464,7 @@ class CommandRunnerTest extends TestCase
         $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $result) use (&$finishedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
-            $this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+            $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
             $finishedEventTriggered = true;
         });
         $runner->run(['cake', '--version'], $this->getMockIo($output));
@@ -490,9 +491,7 @@ class CommandRunnerTest extends TestCase
         $app->expects($this->once())
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
-            ->willReturnCallback(function ($commands) {
-                return $commands;
-            });
+            ->willReturnCallback(fn($commands) => $commands);
         $app->expects($this->once())->method('routes');
         $app->expects($this->once())->method('pluginRoutes');
 

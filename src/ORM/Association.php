@@ -97,15 +97,11 @@ abstract class Association
     /**
      * Name given to the association, it usually represents the alias
      * assigned to the target associated table
-     *
-     * @var string
      */
     protected string $_name;
 
     /**
      * The class name of the target table object
-     *
-     * @var string
      */
     protected string $_className;
 
@@ -126,8 +122,6 @@ abstract class Association
     /**
      * A list of conditions to be always included when fetching records from
      * the target association
-     *
-     * @var \Closure|array
      */
     protected Closure|array $_conditions = [];
 
@@ -135,60 +129,44 @@ abstract class Association
      * Whether the records on the target table are dependent on the source table,
      * often used to indicate that records should be removed if the owning record in
      * the source table is deleted.
-     *
-     * @var bool
      */
     protected bool $_dependent = false;
 
     /**
      * Whether cascaded deletes should also fire callbacks.
-     *
-     * @var bool
      */
     protected bool $_cascadeCallbacks = false;
 
     /**
      * Source table instance
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $_sourceTable;
 
     /**
      * Target table instance
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $_targetTable;
 
     /**
      * The type of join to be used when adding the association to a query
-     *
-     * @var string
      */
     protected string $_joinType = SelectQuery::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
      * in the source table record.
-     *
-     * @var string
      */
     protected string $_propertyName;
 
     /**
      * The strategy name to be used to fetch associated records. Some association
      * types might not implement but one strategy to fetch records.
-     *
-     * @var string
      */
     protected string $_strategy = self::STRATEGY_JOIN;
 
     /**
      * The default finder name to use for fetching rows from the target table
      * With array value, finder name and default options are allowed.
-     *
-     * @var array|string
      */
     protected array|string $_finder = 'all';
 
@@ -249,8 +227,6 @@ abstract class Association
     /**
      * Gets the name for this association, usually the alias
      * assigned to the target associated table
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -272,8 +248,6 @@ abstract class Association
 
     /**
      * Gets whether cascaded deletes should also fire callbacks.
-     *
-     * @return bool
      */
     public function getCascadeCallbacks(): bool
     {
@@ -292,12 +266,12 @@ abstract class Association
     {
         if (
             isset($this->_targetTable) &&
-            get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
+            $this->_targetTable::class !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The class name `%s` doesn\'t match the target table class name of `%s`.',
+                "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
-                get_class($this->_targetTable)
+                $this->_targetTable::class
             ));
         }
 
@@ -308,8 +282,6 @@ abstract class Association
 
     /**
      * Gets the class name of the target table object.
-     *
-     * @return string
      */
     public function getClassName(): string
     {
@@ -331,8 +303,6 @@ abstract class Association
 
     /**
      * Gets the table instance for the source side of the association.
-     *
-     * @return \Cake\ORM\Table
      */
     public function getSource(): Table
     {
@@ -354,15 +324,13 @@ abstract class Association
 
     /**
      * Gets the table instance for the target side of the association.
-     *
-     * @return \Cake\ORM\Table
      */
     public function getTarget(): Table
     {
         if (!isset($this->_targetTable)) {
             if (str_contains($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
-                $registryAlias = (string)$plugin . $this->_name;
+                $registryAlias = $plugin . $this->_name;
             } else {
                 $registryAlias = $this->_name;
             }
@@ -374,22 +342,23 @@ abstract class Association
             if (!$exists) {
                 $config = ['className' => $this->_className];
             }
+
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
                 $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
-                    $msg = '`%s` association `%s` of type `%s` to `%s` doesn\'t match the expected class `%s`. ';
-                    $msg .= 'You can\'t have an association of the same name with a different target ';
+                    $msg = "`%s` association `%s` of type `%s` to `%s` doesn't match the expected class `%s`. ";
+                    $msg .= "You can't have an association of the same name with a different target ";
                     $msg .= '"className" option anywhere in your app.';
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
+                        isset($this->_sourceTable) ? $this->_sourceTable::class : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
+                        $this->_targetTable::class,
                         $className
                     ));
                 }
@@ -419,7 +388,6 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return \Closure|array
      */
     public function getConditions(): Closure|array
     {
@@ -503,8 +471,6 @@ abstract class Association
      *
      * This is primarily used to indicate that records should be removed if the owning record in
      * the source table is deleted.
-     *
-     * @return bool
      */
     public function getDependent(): bool
     {
@@ -515,7 +481,6 @@ abstract class Association
      * Whether this association can be expressed directly in a query join
      *
      * @param array<string, mixed> $options custom options key that could alter the return value
-     * @return bool
      */
     public function canBeJoined(array $options = []): bool
     {
@@ -539,8 +504,6 @@ abstract class Association
 
     /**
      * Gets the type of join to be used when adding the association to a query.
-     *
-     * @return string
      */
     public function getJoinType(): string
     {
@@ -564,8 +527,6 @@ abstract class Association
     /**
      * Gets the property name that should be filled with data from the target table
      * in the source table record.
-     *
-     * @return string
      */
     public function getProperty(): string
     {
@@ -586,8 +547,6 @@ abstract class Association
 
     /**
      * Returns default property name based on association name.
-     *
-     * @return string
      */
     protected function _propertyName(): string
     {
@@ -614,6 +573,7 @@ abstract class Association
                 implode(', ', $this->_validStrategies)
             ));
         }
+
         $this->_strategy = $name;
 
         return $this;
@@ -623,8 +583,6 @@ abstract class Association
      * Gets the strategy name to be used to fetch associated records. Keep in mind
      * that some association types might not implement but a default strategy,
      * rendering any changes to this setting void.
-     *
-     * @return string
      */
     public function getStrategy(): string
     {
@@ -633,8 +591,6 @@ abstract class Association
 
     /**
      * Gets the default finder to use for fetching rows from the target table.
-     *
-     * @return array|string
      */
     public function getFinder(): array|string
     {
@@ -659,7 +615,6 @@ abstract class Association
      * get passed the original list of options used in the constructor
      *
      * @param array<string, mixed> $options List of options used for initialization
-     * @return void
      */
     protected function _options(array $options): void
     {
@@ -688,7 +643,6 @@ abstract class Association
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
-     * @return void
      * @throws \RuntimeException Unable to build the query or associations.
      */
     public function attachTo(SelectQuery $query, array $options = []): void
@@ -766,7 +720,6 @@ abstract class Association
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query to modify
      * @param array<string, mixed> $options Options array containing the `negateMatch` key.
-     * @return void
      */
     protected function _appendNotMatching(SelectQuery $query, array $options): void
     {
@@ -794,7 +747,6 @@ abstract class Association
      *   with this association
      * @param string|null $targetProperty The property name in the source results where the association
      * data shuld be nested in. Will use the default one if not provided.
-     * @return array
      */
     public function transformRow(array $row, string $nestKey, bool $joined, ?string $targetProperty = null): array
     {
@@ -838,7 +790,6 @@ abstract class Association
      *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query\SelectQuery
      */
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
@@ -859,7 +810,6 @@ abstract class Association
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to use
      * for checking if any record matches.
      * @see \Cake\ORM\Table::exists()
-     * @return bool
      */
     public function exists(ExpressionInterface|Closure|array|string|null $conditions): bool
     {
@@ -925,7 +875,6 @@ abstract class Association
      * attaching to
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
-     * @return void
      */
     protected function _dispatchBeforeFind(SelectQuery $query): void
     {
@@ -939,7 +888,6 @@ abstract class Association
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the fields appended to
      * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the fields to be copied from
      * @param array<string, mixed> $options options passed to the method `attachTo`
-     * @return void
      */
     protected function _appendFields(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
@@ -971,7 +919,6 @@ abstract class Association
      * @param \Cake\ORM\Query\SelectQuery $surrogate the query having formatters for the associated
      * target table.
      * @param array<string, mixed> $options options passed to the method `attachTo`
-     * @return void
      */
     protected function _formatAssociationResults(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
@@ -982,9 +929,9 @@ abstract class Association
         }
 
         $property = $options['propertyPath'];
-        $propertyPath = explode('.', $property);
+        $propertyPath = explode('.', (string) $property);
         $query->formatResults(
-            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath) {
+            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath): \Cake\Collection\CollectionInterface {
                 $extracted = [];
                 foreach ($results as $result) {
                     foreach ($propertyPath as $propertyPathItem) {
@@ -992,10 +939,13 @@ abstract class Association
                             $result = null;
                             break;
                         }
+
                         $result = $result[$propertyPathItem];
                     }
+
                     $extracted[] = $result;
                 }
+
                 $extracted = new Collection($extracted);
                 foreach ($formatters as $callable) {
                     $extracted = $callable($extracted, $query);
@@ -1006,7 +956,7 @@ abstract class Association
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    $results = $results->map(function (EntityInterface $result) {
+                    return $results->map(function (EntityInterface $result): \Cake\Datasource\EntityInterface {
                         $result->clean();
 
                         return $result;
@@ -1030,7 +980,6 @@ abstract class Association
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the associations attached to
      * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the containments to be attached
      * @param array<string, mixed> $options options passed to the method `attachTo`
-     * @return void
      */
     protected function _bindNewAssociations(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
@@ -1066,7 +1015,6 @@ abstract class Association
      * clause for getting the results on the target table.
      *
      * @param array<string, mixed> $options list of options passed to attachTo method
-     * @return array
      * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
@@ -1084,6 +1032,7 @@ abstract class Association
                 if ($this->isOwningSide($this->getSource())) {
                     $table = $this->getSource()->getTable();
                 }
+
                 $msg = 'The `%s` table does not define a primary key, and cannot have join conditions generated.';
                 throw new DatabaseException(sprintf($msg, $table));
             }
@@ -1120,7 +1069,6 @@ abstract class Association
      *
      * @param array|string $finderData The finder name or an array having the name as key
      * and options as value.
-     * @return array
      */
     protected function _extractFinder(array|string $finderData): array
     {
@@ -1138,7 +1086,6 @@ abstract class Association
      * association's associations
      *
      * @param string $property the property name
-     * @return self
      * @throws \RuntimeException if no association with such name exists
      */
     public function __get(string $property): Association
@@ -1163,7 +1110,6 @@ abstract class Association
      *
      * @param string $method name of the method to be invoked
      * @param array $argument List of arguments passed to the function
-     * @return mixed
      * @throws \BadMethodCallException
      */
     public function __call(string $method, array $argument): mixed
@@ -1206,7 +1152,6 @@ abstract class Association
      * - nestKey: The array key under which results will be found when transforming the row
      *
      * @param array<string, mixed> $options The options for eager loading.
-     * @return \Closure
      */
     abstract public function eagerLoader(array $options): Closure;
 
@@ -1228,7 +1173,6 @@ abstract class Association
      * or required information if the row in 'source' did not exist.
      *
      * @param \Cake\ORM\Table $side The potential Table with ownership
-     * @return bool
      */
     abstract public function isOwningSide(Table $side): bool;
 

@@ -36,7 +36,7 @@ class FormProtectorTest extends TestCase
      */
     protected $sessionId = 'cli';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -77,7 +77,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -93,7 +93,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields'),
+            '_Token' => ['fields' => $fields],
         ];
 
         $this->validate($data, '`_Token.unlocked` was not found in request data.');
@@ -110,7 +110,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('unlocked'),
+            '_Token' => ['unlocked' => $unlocked],
         ];
 
         $this->validate($data, '`_Token.fields` was not found in request data.');
@@ -165,7 +165,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => 'mark', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $protector = new FormProtector();
@@ -190,13 +190,13 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['multi_field' => ['1', '3']],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
         $data = [
             'Model' => ['multi_field' => [12 => '1', 20 => '3']],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -218,7 +218,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             1 => 'value,',
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -234,7 +234,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'anything' => 'some_data',
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data);
@@ -253,7 +253,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => '', 'password' => ''],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data);
@@ -281,7 +281,7 @@ class FormProtectorTest extends TestCase
                     'address' => '', 'city' => '', 'phone' => '', 'primary' => '',
                 ],
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -299,19 +299,19 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Tag' => ['Tag' => [1, 2]],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
         $data = [
             'Tag' => ['Tag' => [1, 2, 3]],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
         $data = [
             'Tag' => ['Tag' => [1, 2, 3, 4]],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
@@ -319,7 +319,7 @@ class FormProtectorTest extends TestCase
         $data = [
             'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
             'Tag' => ['Tag' => [1]],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -338,7 +338,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
@@ -346,13 +346,13 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
         $data = [
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -371,7 +371,7 @@ class FormProtectorTest extends TestCase
                 'username' => '', 'password' => '', 'hidden' => '0',
                 'other_hidden' => 'some hidden value',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -396,7 +396,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data);
@@ -418,7 +418,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields'),
+            '_Token' => ['fields' => $fields],
         ];
 
         $this->validate($data, '`_Token.unlocked` was not found in request data.');
@@ -433,6 +433,7 @@ class FormProtectorTest extends TestCase
     {
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
         $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
+
         $unlocked = '';
 
         $data = [
@@ -441,7 +442,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields', 'unlocked'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked],
         ];
 
         $this->validate($data, '`_Token.debug` was not found in request data.');
@@ -456,6 +457,7 @@ class FormProtectorTest extends TestCase
     {
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
         $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
+
         $unlocked = '';
 
         $data = [
@@ -464,7 +466,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields', 'unlocked'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked],
         ];
         Configure::write('debug', false);
         $protector = new FormProtector();
@@ -482,6 +484,7 @@ class FormProtectorTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
+
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -497,7 +500,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data, 'Missing field `Model.password` in POST data, Unexpected unlocked field `Model.password` in POST data');
@@ -516,7 +519,7 @@ class FormProtectorTest extends TestCase
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
             'Model2' => ['valid' => '0'],
             'Model3' => ['valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
     }
@@ -542,7 +545,7 @@ class FormProtectorTest extends TestCase
                     'hidden' => 'value', 'valid' => '0',
                 ],
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data);
@@ -581,7 +584,7 @@ class FormProtectorTest extends TestCase
                     'primary' => '1',
                 ],
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data);
@@ -643,7 +646,7 @@ class FormProtectorTest extends TestCase
                     'primary' => '1',
                 ],
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $protector = new FormProtector();
@@ -669,26 +672,26 @@ class FormProtectorTest extends TestCase
         ]));
 
         $data = [
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $protector = new FormProtector();
         $result = $protector->validate($data, $this->url, $this->sessionId);
         $this->assertFalse($result);
 
         $data = [
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
             'Test' => ['test' => ''],
         ];
         $this->validate($data);
 
         $data = [
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
             'Test' => ['test' => '1'],
         ];
         $this->validate($data);
 
         $data = [
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
             'Test' => ['test' => '2'],
         ];
         $this->validate($data);
@@ -711,7 +714,7 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => ['username' => '', 'password' => ''],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         $this->validate($data);
 
@@ -738,6 +741,7 @@ class FormProtectorTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
+
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -751,7 +755,7 @@ class FormProtectorTest extends TestCase
                 'password' => 'sekret',
                 'hidden' => '0',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data, 'Invalid form protection debug token.');
@@ -778,7 +782,7 @@ class FormProtectorTest extends TestCase
                 'hidden' => 'tampered',
                 'id' => '1',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate($data, 'Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
@@ -805,7 +809,7 @@ class FormProtectorTest extends TestCase
                 'hidden' => ['some-key' => 'some-value'],
                 'id' => '1',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
 
         $this->validate(
@@ -835,7 +839,7 @@ class FormProtectorTest extends TestCase
                 'hidden' => ['some-key' => 'some-value'],
                 'id' => '1',
             ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
+            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
         ];
         Configure::write('debug', false);
         $this->validate($data, 'Unexpected `_Token.debug` found in request data');

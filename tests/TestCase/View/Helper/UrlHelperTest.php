@@ -50,7 +50,7 @@ class UrlHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -70,7 +70,7 @@ class UrlHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -336,13 +336,13 @@ class UrlHelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
-        $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+        $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?\d+$#', $result, 'Missing timestamp plugin');
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
         $this->assertMatchesRegularExpression('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
-        $this->assertMatchesRegularExpression('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
+        $this->assertMatchesRegularExpression('#/test_theme/js/theme.js\?\d+$#', $result, 'Missing timestamp theme');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/nonexistent.js');
         $this->assertMatchesRegularExpression('#/test_theme/js/nonexistent.js$#', $result, 'No error on missing file');

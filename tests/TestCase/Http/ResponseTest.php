@@ -48,7 +48,7 @@ class ResponseTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -57,7 +57,7 @@ class ResponseTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -208,8 +208,6 @@ class ResponseTest extends TestCase
 
     /**
      * Data provider for content type tests.
-     *
-     * @return array
      */
     public static function charsetTypeProvider(): array
     {
@@ -284,7 +282,7 @@ class ResponseTest extends TestCase
         $new = $response->withDisabledCache();
         $this->assertFalse($response->hasHeader('Expires'), 'Old instance not mutated.');
 
-        $this->assertEquals($expected, $new->getHeaders());
+        $this->assertSame($expected, $new->getHeaders());
     }
 
     /**
@@ -293,7 +291,8 @@ class ResponseTest extends TestCase
     public function testWithCache(): void
     {
         $response = new Response();
-        $since = $time = time();
+        $since = time();
+        $time = $since;
 
         $new = $response->withCache($since, $time);
         $this->assertFalse($response->hasHeader('Date'));
@@ -354,7 +353,7 @@ class ResponseTest extends TestCase
         $this->assertSame('csv', $response->mapType('application/vnd.ms-excel'));
         $expected = ['json', 'xhtml', 'css'];
         $result = $response->mapType(['application/json', 'application/xhtml+xml', 'text/css']);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -379,6 +378,7 @@ class ResponseTest extends TestCase
         if (ini_get('zlib.output_compression') !== '1') {
             ob_start('ob_gzhandler');
         }
+
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->outputCompressed();
         $this->assertTrue($result);
@@ -734,10 +734,10 @@ class ResponseTest extends TestCase
         $this->assertSame('abc123', $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', 0.99));
-        $this->assertEquals(0.99, $new->getCookie('testing')['value']);
+        $this->assertEqualsWithDelta(0.99, $new->getCookie('testing')['value'], PHP_FLOAT_EPSILON);
 
         $new = $response->withCookie(new Cookie('testing', 99));
-        $this->assertEquals(99, $new->getCookie('testing')['value']);
+        $this->assertSame(99, $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', false));
         $this->assertSame('', $new->getCookie('testing')['value']);
@@ -859,7 +859,7 @@ class ResponseTest extends TestCase
         $this->assertSame(1, $new->getCookie('yay')['expires']);
     }
 
-    public function testWithExpiredCookieNotUtc()
+    public function testWithExpiredCookieNotUtc(): void
     {
         date_default_timezone_set('Europe/Paris');
 
@@ -1005,14 +1005,12 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function invalidFileProvider(): array
+    public static function invalidFileProvider(): \Iterator
     {
-        return [
-            ['my/../cat.gif', 'The requested file contains `..` and will not be read.'],
-            ['my\..\cat.gif', 'The requested file contains `..` and will not be read.'],
-            ['my/ca..t.gif', 'my/ca..t.gif was not found or not readable'],
-            ['my/ca..t/image.gif', 'my/ca..t/image.gif was not found or not readable'],
-        ];
+        yield ['my/../cat.gif', 'The requested file contains `..` and will not be read.'];
+        yield ['my\..\cat.gif', 'The requested file contains `..` and will not be read.'];
+        yield ['my/ca..t.gif', 'my/ca..t.gif was not found or not readable'];
+        yield ['my/ca..t/image.gif', 'my/ca..t/image.gif was not found or not readable'];
     }
 
     /**
@@ -1058,7 +1056,7 @@ class ResponseTest extends TestCase
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
-        $this->assertInstanceOf('Laminas\Diactoros\Stream', $body);
+        $this->assertInstanceOf(\Laminas\Diactoros\Stream::class, $body);
 
         $expected = '/* this is the test asset css file */';
         $this->assertSame($expected, trim($body->getContents()));
@@ -1144,30 +1142,24 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function rangeProvider(): array
+    public static function rangeProvider(): \Iterator
     {
-        return [
-            // suffix-byte-range
-            [
-                'bytes=-25', 25, 'bytes 13-37/38',
-            ],
-
-            [
-                'bytes=0-', 38, 'bytes 0-37/38',
-            ],
-
-            [
-                'bytes=10-', 28, 'bytes 10-37/38',
-            ],
-
-            [
-                'bytes=10-20', 11, 'bytes 10-20/38',
-            ],
-
-            // Spaced out
-            [
-                'bytes = 10 - 20', 11, 'bytes 10-20/38',
-            ],
+        // suffix-byte-range
+        yield [
+            'bytes=-25', 25, 'bytes 13-37/38',
+        ];
+        yield [
+            'bytes=0-', 38, 'bytes 0-37/38',
+        ];
+        yield [
+            'bytes=10-', 28, 'bytes 10-37/38',
+        ];
+        yield [
+            'bytes=10-20', 11, 'bytes 10-20/38',
+        ];
+        // Spaced out
+        yield [
+            'bytes = 10 - 20', 11, 'bytes 10-20/38',
         ];
     }
 
@@ -1190,8 +1182,8 @@ class ResponseTest extends TestCase
         );
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
-        $this->assertEquals($length, $new->getHeaderLine('Content-Length'));
-        $this->assertEquals($offsetResponse, $new->getHeaderLine('Content-Range'));
+        $this->assertSame($length, $new->getHeaderLine('Content-Length'));
+        $this->assertSame($offsetResponse, $new->getHeaderLine('Content-Range'));
     }
 
     /**
@@ -1222,18 +1214,15 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function invalidFileRangeProvider(): array
+    public static function invalidFileRangeProvider(): \Iterator
     {
-        return [
-            // malformed range
-            [
-                'bytes=0,38',
-            ],
-
-            // malformed punctuation
-            [
-                'bytes: 0 - 38',
-            ],
+        // malformed range
+        yield [
+            'bytes=0,38',
+        ];
+        // malformed punctuation
+        yield [
+            'bytes: 0 - 38',
         ];
     }
 
@@ -1379,6 +1368,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $body = $response->getBody();
         $body->rewind();
+
         $result = $body->getContents();
         $this->assertSame('', $result);
 
@@ -1388,11 +1378,13 @@ class ResponseTest extends TestCase
         $response2 = $response->withBody($stream);
         $body = $response2->getBody();
         $body->rewind();
+
         $result = $body->getContents();
         $this->assertSame('test1', $result);
 
         $body = $response->getBody();
         $body->rewind();
+
         $result = $body->getContents();
         $this->assertSame('', $result);
     }
@@ -1434,7 +1426,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $stream = $response->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $stream);
+        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
     }
 
     /**
@@ -1449,7 +1441,7 @@ class ResponseTest extends TestCase
             'Content-Type' => ['text/html; charset=UTF-8'],
             'Accept' => ['application/json'],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $this->assertFalse($response->hasHeader('Accept'));
     }
@@ -1464,6 +1456,7 @@ class ResponseTest extends TestCase
 
         $response = $response->withAddedHeader('Location', 'localhost');
         $response = $response->withAddedHeader('Accept', 'application/json');
+
         $headers = $response->getHeaders();
 
         $expected = [
@@ -1472,7 +1465,7 @@ class ResponseTest extends TestCase
             'Accept' => ['application/json'],
         ];
 
-        $this->assertEquals($expected, $headers);
+        $this->assertSame($expected, $headers);
     }
 
     /**
@@ -1492,7 +1485,7 @@ class ResponseTest extends TestCase
             'Accept' => ['application/json'],
         ];
 
-        $this->assertEquals($expected, $headers);
+        $this->assertSame($expected, $headers);
     }
 
     /**
@@ -1504,13 +1497,13 @@ class ResponseTest extends TestCase
         $response = $response->withAddedHeader('Location', 'localhost');
 
         $result = $response->getHeader('Location');
-        $this->assertEquals(['localhost'], $result);
+        $this->assertSame(['localhost'], $result);
 
         $result = $response->getHeader('location');
-        $this->assertEquals(['localhost'], $result);
+        $this->assertSame(['localhost'], $result);
 
         $result = $response->getHeader('does-not-exist');
-        $this->assertEquals([], $result);
+        $this->assertSame([], $result);
     }
 
     /**
@@ -1555,6 +1548,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $response = $response->withStringBody('Foo');
+
         $result = $response->__debugInfo();
 
         $expected = [

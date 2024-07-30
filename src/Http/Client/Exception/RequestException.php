@@ -31,20 +31,14 @@ use Throwable;
 class RequestException extends RuntimeException implements RequestExceptionInterface
 {
     /**
-     * @var \Psr\Http\Message\RequestInterface
-     */
-    protected RequestInterface $request;
-
-    /**
      * Constructor.
      *
      * @param string $message Exeception message.
      * @param \Psr\Http\Message\RequestInterface $request Request instance.
      * @param \Throwable|null $previous Previous Exception
      */
-    public function __construct(string $message, RequestInterface $request, ?Throwable $previous = null)
+    public function __construct(string $message, protected RequestInterface $request, ?Throwable $previous = null)
     {
-        $this->request = $request;
         parent::__construct($message, 0, $previous);
     }
 
@@ -52,8 +46,6 @@ class RequestException extends RuntimeException implements RequestExceptionInter
      * Returns the request.
      *
      * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
-     *
-     * @return \Psr\Http\Message\RequestInterface
      */
     public function getRequest(): RequestInterface
     {

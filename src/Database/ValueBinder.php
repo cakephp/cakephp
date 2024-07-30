@@ -27,15 +27,11 @@ class ValueBinder
      * Array containing a list of bound values to the conditions on this
      * object. Each array entry is another array structure containing the actual
      * bound value, its type and the placeholder it is bound to.
-     *
-     * @var array
      */
     protected array $_bindings = [];
 
     /**
      * A counter of the number of parameters bound in this expression object
-     *
-     * @var int
      */
     protected int $_bindingsCount = 0;
 
@@ -47,11 +43,10 @@ class ValueBinder
      * @param mixed $value The value to be bound
      * @param string|int|null $type the mapped type name, used for casting when sending
      * to database
-     * @return void
      */
     public function bind(string|int $param, mixed $value, string|int|null $type = null): void
     {
-        $this->_bindings[$param] = compact('value', 'type') + [
+        $this->_bindings[$param] = ['value' => $value, 'type' => $type] + [
             'placeholder' => is_int($param) ? $param : substr($param, 1),
         ];
     }
@@ -69,7 +64,7 @@ class ValueBinder
     {
         $number = $this->_bindingsCount++;
         if ($token[0] !== ':' && $token !== '?') {
-            $token = sprintf(':%s%s', $token, $number);
+            return sprintf(':%s%s', $token, $number);
         }
 
         return $token;
@@ -102,8 +97,6 @@ class ValueBinder
     /**
      * Returns all values bound to this expression object at this nesting level.
      * Subexpression bound values will not be returned with this function.
-     *
-     * @return array
      */
     public function bindings(): array
     {
@@ -112,8 +105,6 @@ class ValueBinder
 
     /**
      * Clears any bindings that were previously registered
-     *
-     * @return void
      */
     public function reset(): void
     {
@@ -123,8 +114,6 @@ class ValueBinder
 
     /**
      * Resets the bindings count without clearing previously bound values
-     *
-     * @return void
      */
     public function resetCount(): void
     {
@@ -135,7 +124,6 @@ class ValueBinder
      * Binds all the stored values in this object to the passed statement.
      *
      * @param \Cake\Database\StatementInterface $statement The statement to add parameters to.
-     * @return void
      */
     public function attachTo(StatementInterface $statement): void
     {
@@ -151,8 +139,6 @@ class ValueBinder
 
     /**
      * Get verbose debugging data.
-     *
-     * @return array
      */
     public function __debugInfo(): array
     {

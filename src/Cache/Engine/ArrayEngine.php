@@ -73,6 +73,7 @@ class ArrayEngine extends CacheEngine
         if (!isset($this->data[$key])) {
             return $default;
         }
+
         $data = $this->data[$key];
 
         // Check expiration
@@ -98,6 +99,7 @@ class ArrayEngine extends CacheEngine
         if ($this->get($key) === null) {
             $this->set($key, 0);
         }
+
         $key = $this->_key($key);
         $this->data[$key]['val'] += $offset;
 
@@ -116,6 +118,7 @@ class ArrayEngine extends CacheEngine
         if ($this->get($key) === null) {
             $this->set($key, 0);
         }
+
         $key = $this->_key($key);
         $this->data[$key]['val'] -= $offset;
 
@@ -163,6 +166,7 @@ class ArrayEngine extends CacheEngine
             if (!isset($this->data[$key])) {
                 $this->data[$key] = ['exp' => PHP_INT_MAX, 'val' => 1];
             }
+
             $value = $this->data[$key]['val'];
             $result[] = $group . $value;
         }

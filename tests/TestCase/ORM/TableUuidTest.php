@@ -38,7 +38,7 @@ class TableUuidTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -49,9 +49,10 @@ class TableUuidTest extends TestCase
      *
      * @return array
      */
-    public static function uuidTableProvider(): array
+    public static function uuidTableProvider(): \Iterator
     {
-        return [['uuid_items'], ['binary_uuid_items']];
+        yield ['uuid_items'];
+        yield ['binary_uuid_items'];
     }
 
     /**

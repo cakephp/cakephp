@@ -37,7 +37,7 @@ class DateTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected $driver;
+    protected \PHPUnit\Framework\MockObject\MockObject $driver;
 
     /**
      * @var string
@@ -47,11 +47,11 @@ class DateTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
 
         $this->originalTimeZone = date_default_timezone_get();
     }
@@ -59,7 +59,7 @@ class DateTypeTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         date_default_timezone_set($this->originalTimeZone);
@@ -131,96 +131,84 @@ class DateTypeTest extends TestCase
 
     /**
      * Data provider for marshal()
-     *
-     * @return array
      */
-    public static function marshalProvider(): array
+    public static function marshalProvider(): \Iterator
     {
         $date = new Date('@1392387900');
-        $data = [
-            // invalid types.
-            [null, null],
-            [false, null],
-            [true, null],
-            ['', null],
-            ['derpy', null],
-            ['2013-nope!', null],
-            ['2014-02-14 13:14:15', null],
-
-            // valid string types
-            ['1392387900', $date],
-            [1392387900, $date],
-            ['2014-02-14', new Date('2014-02-14')],
-
-            [new Date('2014-02-14'), new Date('2014-02-14')],
-            [new NativeDateTime('2014-02-14'), new Date('2014-02-14')],
-            [new DateTimeImmutable('2014-02-14'), new Date('2014-02-14')],
-
-            // valid array types
-            [
-                ['year' => '', 'month' => '', 'day' => ''],
-                null,
-            ],
-            [
-                ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Date('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am',
-                ],
-                new Date('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm',
-                ],
-                new Date('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                ],
-                new Date('2014-02-14'),
-            ],
-            [
-                [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts',
-                ],
-                new Date('2014-02-14'),
-            ],
-            // [
-            //     new ChronosDate('2023-04-26'),
-            //     new ChronosDate('2023-04-26'),
-            // ],
-
-            // Invalid array types
-            [
-                ['year' => 'farts', 'month' => 'derp'],
-                null,
-            ],
-            [
-                ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                null,
-            ],
+        // invalid types.
+        yield [null, null];
+        yield [false, null];
+        yield [true, null];
+        yield ['', null];
+        yield ['derpy', null];
+        yield ['2013-nope!', null];
+        yield ['2014-02-14 13:14:15', null];
+        // valid string types
+        yield ['1392387900', $date];
+        yield [1392387900, $date];
+        yield ['2014-02-14', new Date('2014-02-14')];
+        yield [new Date('2014-02-14'), new Date('2014-02-14')];
+        yield [new NativeDateTime('2014-02-14'), new Date('2014-02-14')];
+        yield [new DateTimeImmutable('2014-02-14'), new Date('2014-02-14')];
+        // valid array types
+        yield [
+            ['year' => '', 'month' => '', 'day' => ''],
+            null,
         ];
-
-        return $data;
+        yield [
+            ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+            new Date('2014-02-14'),
+        ];
+        yield [
+            [
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'am',
+            ],
+            new Date('2014-02-14'),
+        ];
+        yield [
+            [
+                'year' => 2014, 'month' => 2, 'day' => 14,
+                'hour' => 1, 'minute' => 14, 'second' => 15,
+                'meridian' => 'pm',
+            ],
+            new Date('2014-02-14'),
+        ];
+        yield [
+            [
+                'year' => 2014, 'month' => 2, 'day' => 14,
+            ],
+            new Date('2014-02-14'),
+        ];
+        yield [
+            [
+                'year' => '2014', 'month' => '02', 'day' => '14',
+                'hour' => 'farts', 'minute' => 'farts',
+            ],
+            new Date('2014-02-14'),
+        ];
+        // [
+        //     new ChronosDate('2023-04-26'),
+        //     new ChronosDate('2023-04-26'),
+        // ],
+        // Invalid array types
+        yield [
+            ['year' => 'farts', 'month' => 'derp'],
+            null,
+        ];
+        yield [
+            ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+            null,
+        ];
     }
 
     /**
      * test marshaling data.
      *
      * @dataProvider marshalProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testMarshal($value, $expected): void
+    public function testMarshal(mixed $value, mixed $expected): void
     {
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);

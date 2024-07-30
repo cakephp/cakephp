@@ -35,7 +35,7 @@ class QueryCacherTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('queryCache', ['className' => 'Array']);
@@ -46,7 +46,7 @@ class QueryCacherTest extends TestCase
     /**
      * Teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('queryCache');
@@ -60,7 +60,7 @@ class QueryCacherTest extends TestCase
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 
-        $cacher = new QueryCacher(function ($q) use ($query) {
+        $cacher = new QueryCacher(function ($q) use ($query): string {
             $this->assertSame($query, $q);
 
             return 'my_key';
@@ -80,9 +80,7 @@ class QueryCacherTest extends TestCase
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 
-        $cacher = new QueryCacher(function ($q) {
-            return false;
-        }, 'queryCache');
+        $cacher = new QueryCacher(fn($q): bool => false, 'queryCache');
 
         $cacher->fetch($query);
     }

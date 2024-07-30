@@ -28,8 +28,6 @@ class InsertQuery extends Query
 {
     /**
      * Type of this query.
-     *
-     * @var string
      */
     protected string $_type = self::TYPE_INSERT;
 
@@ -58,11 +56,12 @@ class InsertQuery extends Query
      * @return $this
      * @throws \InvalidArgumentException When there are 0 columns.
      */
-    public function insert(array $columns, array $types = [])
+    public function insert(array $columns, array $types = []): static
     {
         if (!$columns) {
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
+
         $this->_dirty();
         $this->_parts['insert'][1] = $columns;
         if (!$this->_parts['values']) {
@@ -82,7 +81,7 @@ class InsertQuery extends Query
      * @param string $table The table name to insert into.
      * @return $this
      */
-    public function into(string $table)
+    public function into(string $table): static
     {
         $this->_dirty();
         $this->_parts['insert'][0] = $table;
@@ -102,7 +101,7 @@ class InsertQuery extends Query
      * @throws \Cake\Database\Exception\DatabaseException if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
      */
-    public function values(ValuesExpression|Query|array $data)
+    public function values(ValuesExpression|Query|array $data): static
     {
         if (empty($this->_parts['insert'])) {
             throw new DatabaseException(

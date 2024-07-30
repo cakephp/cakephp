@@ -37,7 +37,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
      */
     protected $connection;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -70,6 +70,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->setDefaultTypes(['id' => 'ordered_uuid']);
 
         $query->setSelectTypeMap($query->getTypeMap());
+
         $results = $query->execute()->fetchAll('assoc');
 
         $this->assertEquals(new UuidValue('419a8da0482b7756b21f27da40cf8569'), $results[0]['id']);
@@ -136,14 +137,12 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         $this->_insert();
         $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
-            ->where(function (QueryExpression $exp) {
-                return $exp->between(
-                    'id',
-                    '482b7756-8da0-419a-b21f-27da40cf8569',
-                    '48298a29-81c0-4c26-a7fb-413140cf8569',
-                    'ordered_uuid'
-                );
-            })
+            ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->between(
+                'id',
+                '482b7756-8da0-419a-b21f-27da40cf8569',
+                '48298a29-81c0-4c26-a7fb-413140cf8569',
+                'ordered_uuid'
+            ))
             ->execute()
             ->fetchAll('assoc');
 
@@ -157,13 +156,11 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         $this->_insert();
         $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
-            ->where(function (QueryExpression $exp, Query $q) {
-                return $exp->eq(
-                    'id',
-                    $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),
-                    'ordered_uuid'
-                );
-            })
+            ->where(fn(QueryExpression $exp, Query $q): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                'id',
+                $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),
+                'ordered_uuid'
+            ))
             ->execute()
             ->fetchAll('assoc');
 

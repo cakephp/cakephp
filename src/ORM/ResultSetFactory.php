@@ -53,7 +53,6 @@ class ResultSetFactory
      * entity hydration.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query from where to derive the data.
-     * @return array
      */
     protected function collectData(SelectQuery $query): array
     {
@@ -80,7 +79,7 @@ class ResultSetFactory
 
         $fields = [];
         foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
+            $key = trim((string) $key, '"`[]');
 
             if (strpos($key, '__') <= 0) {
                 $fields[$data['primaryAlias']][$key] = $key;
@@ -91,10 +90,11 @@ class ResultSetFactory
             $fields[$parts[0]][$key] = $parts[1];
         }
 
-        foreach ($data['matchingAssoc'] as $alias => $assoc) {
+        foreach (array_keys($data['matchingAssoc']) as $alias) {
             if (!isset($fields[$alias])) {
                 continue;
             }
+
             $data['matchingColumns'][$alias] = $fields[$alias];
             unset($fields[$alias]);
         }
@@ -111,11 +111,11 @@ class ResultSetFactory
      *
      * @param array $row Array containing columns and values.
      * @param array $data Array containing table and query metadata
-     * @return \Cake\Datasource\EntityInterface|array
      */
     protected function groupResult(array $row, array $data): EntityInterface|array
     {
-        $results = $presentAliases = [];
+        $results = [];
+        $presentAliases = [];
         $options = [
             'useSetters' => false,
             'markClean' => true,
@@ -199,10 +199,11 @@ class ResultSetFactory
             $results = $instance->transformRow($results, $alias, $assoc['canBeJoined'], $assoc['targetProperty']);
         }
 
-        foreach ($presentAliases as $alias => $present) {
+        foreach (array_keys($presentAliases) as $alias) {
             if (!isset($results[$alias])) {
                 continue;
             }
+
             $results[$data['primaryAlias']][$alias] = $results[$alias];
         }
 
@@ -214,6 +215,7 @@ class ResultSetFactory
         if (isset($results[$data['primaryAlias']])) {
             $results = $results[$data['primaryAlias']];
         }
+
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
             $results = new $data['entityClass']($results, $options);
         }

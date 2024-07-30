@@ -26,8 +26,6 @@ trait CommonQueryTrait
 {
     /**
      * Instance of a repository/table object this query is bound to.
-     *
-     * @var \Cake\ORM\Table
      */
     protected Table $_repository;
 
@@ -50,6 +48,7 @@ trait CommonQueryTrait
         foreach ($map as $f => $type) {
             $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
         }
+
         $this->getTypeMap()->addDefaults($fields);
 
         return $this;
@@ -77,8 +76,6 @@ trait CommonQueryTrait
     /**
      * Returns the default repository object that will be used by this query,
      * that is, the table that will appear in the from clause.
-     *
-     * @return \Cake\ORM\Table
      */
     public function getRepository(): Table
     {

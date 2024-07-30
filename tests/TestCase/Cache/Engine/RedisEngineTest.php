@@ -35,7 +35,7 @@ class RedisEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
@@ -55,7 +55,7 @@ class RedisEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('redis');
@@ -222,7 +222,7 @@ class RedisEngineTest extends TestCase
 
         $data = [1, 2, 3];
         $this->assertTrue(Cache::write('array_data', $data, 'redis'));
-        $this->assertEquals($data, Cache::read('array_data', 'redis'));
+        $this->assertSame($data, Cache::read('array_data', 'redis'));
 
         $result = Cache::write('test', false, 'redis');
         $this->assertTrue($result);

@@ -29,29 +29,20 @@ class ConfiguredComponent extends Component
     public $configCopy;
 
     /**
-     * components property
-     *
-     * @var array
-     */
-    protected array $components = [];
-
-    /**
      * Constructor
      *
      * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
      * @param array $config Array of configuration settings.
      * @param array $components Array of child components.
      */
-    public function __construct(ComponentRegistry $registry, array $config, array $components = [])
+    public function __construct(ComponentRegistry $registry, array $config, /**
+     * components property
+     */
+    protected array $components = [])
     {
-        $this->components = $components;
-
         parent::__construct($registry, $config);
     }
 
-    /**
-     * @param array $config
-     */
     public function initialize(array $config): void
     {
         $this->configCopy = $config;

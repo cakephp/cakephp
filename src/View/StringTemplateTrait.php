@@ -28,8 +28,6 @@ trait StringTemplateTrait
 {
     /**
      * StringTemplate instance.
-     *
-     * @var \Cake\View\StringTemplate|null
      */
     protected ?StringTemplate $_templater = null;
 
@@ -50,7 +48,6 @@ trait StringTemplateTrait
      * Gets templates to use or a specific template.
      *
      * @param string|null $template String for reading a specific template, null for all.
-     * @return array|string
      */
     public function getTemplates(?string $template = null): array|string
     {
@@ -62,7 +59,6 @@ trait StringTemplateTrait
      *
      * @param string $name The template name.
      * @param array<string, mixed> $data The data to insert.
-     * @return string
      */
     public function formatTemplate(string $name, array $data): string
     {
@@ -71,8 +67,6 @@ trait StringTemplateTrait
 
     /**
      * Returns the templater instance.
-     *
-     * @return \Cake\View\StringTemplate
      */
     public function templater(): StringTemplate
     {

@@ -10,22 +10,17 @@ use RuntimeException;
 
 class FakeConnection implements ConnectionInterface
 {
-    protected $_config = [];
-
     /**
      * Constructor.
      *
-     * @param array $config configuration for connecting to database
+     * @param array $_config configuration for connecting to database
      */
-    public function __construct($config = [])
+    public function __construct(protected $_config = [])
     {
-        $this->_config = $config;
     }
 
     /**
      * Returns the set config
-     *
-     * @return array
      */
     public function config(): array
     {
@@ -58,7 +53,7 @@ class FakeConnection implements ConnectionInterface
     {
     }
 
-    public function setCacher(CacheInterface $cacher)
+    public function setCacher(CacheInterface $cacher): never
     {
         throw new RuntimeException('Not implemented');
     }
@@ -68,12 +63,12 @@ class FakeConnection implements ConnectionInterface
         throw new RuntimeException('Not implemented');
     }
 
-    public function enableQueryLogging(bool $enable = true)
+    public function enableQueryLogging(bool $enable = true): static
     {
         return $this;
     }
 
-    public function disableQueryLogging()
+    public function disableQueryLogging(): static
     {
         return $this;
     }

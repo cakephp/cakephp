@@ -29,7 +29,7 @@ class FormContextTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -40,7 +40,7 @@ class FormContextTest extends TestCase
     public function testGetRequiredMessage(): void
     {
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
 
         $form = new Form();
         $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
@@ -50,7 +50,7 @@ class FormContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**
@@ -59,7 +59,7 @@ class FormContextTest extends TestCase
     public function testPrimaryKey(): void
     {
         $context = new FormContext(['entity' => new Form()]);
-        $this->assertEquals([], $context->getPrimaryKey());
+        $this->assertSame([], $context->getPrimaryKey());
     }
 
     /**
@@ -188,7 +188,7 @@ class FormContextTest extends TestCase
         ]);
         $expected = [];
         $result = $context->fieldNames();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $form->getSchema()
             ->addField('email', 'string')
@@ -199,7 +199,7 @@ class FormContextTest extends TestCase
 
         $expected = ['email', 'password'];
         $result = $context->fieldNames();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -221,7 +221,7 @@ class FormContextTest extends TestCase
         $context = new FormContext([
             'entity' => $form,
         ]);
-        $this->assertEquals([], $context->attributes('id'));
+        $this->assertSame([], $context->attributes('id'));
         $this->assertEquals(
             ['length' => 10, 'precision' => null, 'default' => null],
             $context->attributes('email')
@@ -256,19 +256,21 @@ class FormContextTest extends TestCase
         ]);
 
         $context = new FormContext(['entity' => $form]);
-        $this->assertEquals([], $context->error('empty'));
-        $this->assertEquals(['format' => 'The provided value is invalid'], $context->error('email'));
-        $this->assertEquals(['length' => 'The provided value is invalid'], $context->error('name'));
-        $this->assertEquals(['length' => 'The provided value is invalid'], $context->error('pass.password'));
-        $this->assertEquals([], $context->error('Alias.name'));
-        $this->assertEquals([], $context->error('nope.nope'));
+        $this->assertSame([], $context->error('empty'));
+        $this->assertSame(['format' => 'The provided value is invalid'], $context->error('email'));
+        $this->assertSame(['length' => 'The provided value is invalid'], $context->error('name'));
+        $this->assertSame(['length' => 'The provided value is invalid'], $context->error('pass.password'));
+        $this->assertSame([], $context->error('Alias.name'));
+        $this->assertSame([], $context->error('nope.nope'));
 
         $validator = new Validator();
         $validator->requirePresence('key', true, 'should be an array, not a string');
+
         $form->setValidator('default', $validator);
         $form->validate([]);
+
         $context = new FormContext(['entity' => $form]);
-        $this->assertEquals(
+        $this->assertSame(
             ['_required' => 'should be an array, not a string'],
             $context->error('key'),
             'This test should not produce a PHP warning from array_values().'

@@ -47,8 +47,6 @@ interface PluginApplicationInterface extends EventDispatcherInterface
 
     /**
      * Run bootstrap logic for loaded plugins.
-     *
-     * @return void
      */
     public function pluginBootstrap(): void;
 
@@ -56,7 +54,6 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * Run routes hooks for loaded plugins
      *
      * @param \Cake\Routing\RouteBuilder $routes The route builder to use.
-     * @return \Cake\Routing\RouteBuilder
      */
     public function pluginRoutes(RouteBuilder $routes): RouteBuilder;
 
@@ -64,7 +61,6 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * Run middleware hooks for plugins
      *
      * @param \Cake\Http\MiddlewareQueue $middleware The MiddlewareQueue to use.
-     * @return \Cake\Http\MiddlewareQueue
      */
     public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
@@ -72,7 +68,6 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * Run console hooks for plugins
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to use.
-     * @return \Cake\Console\CommandCollection
      */
     public function pluginConsole(CommandCollection $commands): CommandCollection;
 }

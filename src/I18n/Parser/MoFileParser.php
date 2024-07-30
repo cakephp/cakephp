@@ -69,6 +69,7 @@ class MoFileParser
         if ($stat === false || $stat['size'] < self::MO_HEADER_SIZE) {
             throw new CakeException('Invalid format for MO translations file');
         }
+
         /** @var array $magic */
         $magic = unpack('V1', (string)fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
@@ -139,6 +140,7 @@ class MoFileParser
                 if ($pluralId !== null) {
                     $messages[$pluralId]['_context'][$context] = $plurals;
                 }
+
                 continue;
             }
 
@@ -158,7 +160,6 @@ class MoFileParser
      *
      * @param resource $stream The File being read.
      * @param bool $isBigEndian Whether the current platform is Big Endian
-     * @return int
      */
     protected function _readLong($stream, bool $isBigEndian): int
     {

@@ -47,7 +47,6 @@ trait TupleComparisonTranslatorTrait
      *
      * @param \Cake\Database\Expression\TupleComparison $expression The expression to transform
      * @param \Cake\Database\Query $query The query to update.
-     * @return void
      */
     protected function _transformTupleComparison(TupleComparison $expression, Query $query): void
     {
@@ -76,6 +75,7 @@ trait TupleComparisonTranslatorTrait
             foreach ($fields as $i => $field) {
                 $value->andWhere([$field => new IdentifierExpression($selected[$i])]);
             }
+
             $value->select($true, true);
             $expression->setField($true);
             $expression->setOperator('=');
@@ -105,8 +105,10 @@ trait TupleComparisonTranslatorTrait
             foreach (array_values($tuple) as $i => $value2) {
                 $item[] = [$fields[$i] => $value2];
             }
+
             $conditions['OR'][] = $item;
         }
+
         $surrogate->where($conditions, $typeMap);
 
         $expression->setField($true);

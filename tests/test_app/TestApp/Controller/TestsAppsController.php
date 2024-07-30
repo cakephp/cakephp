@@ -26,24 +26,22 @@ use RuntimeException;
 
 class TestsAppsController extends AppController
 {
-    public function index()
+    public function index(): void
     {
         $var = '';
         if ($this->request->getQuery('var')) {
             $var = $this->request->getQuery('var');
         }
+
         $this->set('var', $var);
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function some_method()
+    public function some_method(): \Cake\Http\Response
     {
         return $this->response->withStringBody('5');
     }
 
-    public function set_action()
+    public function set_action(): void
     {
         $this->set('var', 'string');
         $this->render('index');
@@ -52,7 +50,7 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to()
+    public function redirect_to(): ?\Cake\Http\Response
     {
         return $this->redirect('http://cakephp.org');
     }
@@ -60,20 +58,17 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to_permanent()
+    public function redirect_to_permanent(): ?\Cake\Http\Response
     {
         return $this->redirect('http://cakephp.org', 301);
     }
 
-    /**
-     * @return \Cake\Http\Response
-     */
-    public function set_type()
+    public function set_type(): \Cake\Http\Response
     {
         return $this->response->withType('json');
     }
 
-    public function throw_exception()
+    public function throw_exception(): never
     {
         throw new RuntimeException('Foo');
     }

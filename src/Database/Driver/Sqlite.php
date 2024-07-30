@@ -62,22 +62,16 @@ class Sqlite extends Driver
 
     /**
      * Whether the connected server supports window functions.
-     *
-     * @var bool|null
      */
     protected ?bool $_supportsWindowFunctions = null;
 
     /**
      * String used to start a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_startQuote = '"';
 
     /**
      * String used to end a database identifier quoting to make it safe
-     *
-     * @var string
      */
     protected string $_endQuote = '"';
 
@@ -111,9 +105,10 @@ class Sqlite extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             return;
         }
+
         $config = $this->_config;
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
@@ -123,7 +118,7 @@ class Sqlite extends Driver
         if (!is_string($config['database']) || $config['database'] === '') {
             $name = $config['name'] ?? 'unknown';
             throw new InvalidArgumentException(
-                "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."
+                sprintf('The `database` key for the `%s` SQLite connection needs to be a non-empty string.', $name)
             );
         }
 
@@ -136,15 +131,12 @@ class Sqlite extends Driver
         if ($config['cache']) {
             $params[] = 'cache=' . $config['cache'];
         }
+
         if ($config['mode']) {
             $params[] = 'mode=' . $config['mode'];
         }
 
-        if ($params) {
-            $dsn = 'sqlite:file:' . $config['database'] . '?' . implode('&', $params);
-        } else {
-            $dsn = 'sqlite:' . $config['database'];
-        }
+        $dsn = $params ? 'sqlite:file:' . $config['database'] . '?' . implode('&', $params) : 'sqlite:' . $config['database'];
 
         $this->pdo = $this->createPdo($dsn, $config);
         if ($chmodFile) {
@@ -172,8 +164,6 @@ class Sqlite extends Driver
 
     /**
      * Get the SQL for disabling foreign keys.
-     *
-     * @return string
      */
     public function disableForeignKeySQL(): string
     {
@@ -214,11 +204,7 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new SqliteSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new SqliteSchemaDialect($this));
     }
 
     /**
@@ -245,7 +231,6 @@ class Sqlite extends Driver
      * SQL dialect.
      *
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
-     * @return void
      */
     protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
@@ -258,9 +243,7 @@ class Sqlite extends Driver
                 $expression
                     ->setName('ROUND')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
-                        return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
-                    });
+                    ->iterateParts(fn($p): \Cake\Database\Expression\FunctionExpression => new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]));
                 break;
             case 'NOW':
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);
@@ -297,7 +280,7 @@ class Sqlite extends Driver
                     ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = ['value' => $p, 'type' => null];
+                            return ['value' => $p, 'type' => null];
                         }
 
                         return $p;

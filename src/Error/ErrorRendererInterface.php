@@ -37,7 +37,6 @@ interface ErrorRendererInterface
      * Write output to the renderer's output stream
      *
      * @param string $out The content to output.
-     * @return void
      */
     public function write(string $out): void;
 }

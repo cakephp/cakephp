@@ -35,11 +35,11 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
-        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+        $io = $this->getMockBuilder(\Cake\Console\ConsoleIo::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->helpers = new HelperRegistry();
@@ -49,7 +49,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->helpers);
         parent::tearDown();
@@ -65,7 +65,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(SimpleHelper::class, $this->helpers->Simple);
 
         $result = $this->helpers->loaded();
-        $this->assertEquals(['Simple'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Simple'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -78,7 +78,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(CommandHelper::class, $this->helpers->Command);
 
         $result = $this->helpers->loaded();
-        $this->assertEquals(['Command'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['Command'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -111,14 +111,14 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(SimpleHelper::class, $this->helpers->SimpleAliased);
 
         $result = $this->helpers->loaded();
-        $this->assertEquals(['SimpleAliased'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['SimpleAliased'], $result, 'loaded() results are wrong.');
 
         $result = $this->helpers->load('SomeHelper', ['className' => 'TestPlugin.Example']);
         $this->assertInstanceOf(ExampleHelper::class, $result);
         $this->assertInstanceOf(ExampleHelper::class, $this->helpers->SomeHelper);
 
         $result = $this->helpers->loaded();
-        $this->assertEquals(['SimpleAliased', 'SomeHelper'], $result, 'loaded() results are wrong.');
+        $this->assertSame(['SimpleAliased', 'SomeHelper'], $result, 'loaded() results are wrong.');
         $this->clearPlugins();
     }
 }

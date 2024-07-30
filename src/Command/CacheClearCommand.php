@@ -43,7 +43,7 @@ class CacheClearCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
         $parser
@@ -69,18 +69,18 @@ class CacheClearCommand extends Command
     {
         $name = (string)$args->getArgument('engine');
         try {
-            $io->out("Clearing {$name}");
+            $io->out('Clearing ' . $name);
 
             $engine = Cache::pool($name);
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
-                $io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
-                    "but {$name} web cache must be cleared separately.");
+                $io->warning(sprintf('ApcuEngine detected: Cleared %s CLI cache successfully ', $name) .
+                    sprintf('but %s web cache must be cleared separately.', $name));
             } else {
-                $io->out("<success>Cleared {$name} cache</success>");
+                $io->out(sprintf('<success>Cleared %s cache</success>', $name));
             }
-        } catch (InvalidArgumentException $e) {
-            $io->error($e->getMessage());
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            $io->error($invalidArgumentException->getMessage());
             $this->abort();
         }
 

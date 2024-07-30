@@ -31,29 +31,21 @@ class SelectWithPivotLoader extends SelectLoader
 {
     /**
      * The name of the junction association
-     *
-     * @var string
      */
     protected string $junctionAssociationName;
 
     /**
      * The property name for the junction association, where its results should be nested at.
-     *
-     * @var string
      */
     protected string $junctionProperty;
 
     /**
      * The junction association instance
-     *
-     * @var \Cake\ORM\Association\HasMany
      */
     protected HasMany $junctionAssoc;
 
     /**
      * Custom conditions for the junction association
-     *
-     * @var \Cake\Database\ExpressionInterface|\Closure|array|string|null
      */
     protected ExpressionInterface|Closure|array|string|null $junctionConditions = null;
 
@@ -77,7 +69,6 @@ class SelectWithPivotLoader extends SelectLoader
      * This is used for eager loading records on the target table based on conditions.
      *
      * @param array<string, mixed> $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery(array $options): SelectQuery
@@ -107,11 +98,12 @@ class SelectWithPivotLoader extends SelectLoader
 
         $tempName = $this->alias . '_CJoin';
         $schema = $assoc->getSchema();
-        $joinFields = $types = [];
+        $joinFields = [];
+        $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;
-            $joinFields[$key] = "$name.$f";
+            $joinFields[$key] = sprintf('%s.%s', $name, $f);
             $types[$key] = $type;
         }
 
@@ -190,6 +182,7 @@ class SelectWithPivotLoader extends SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$this->junctionProperty][$k];
             }
+
             $resultMap[implode(';', $values)][] = $result;
         }
 

@@ -42,37 +42,24 @@ class WidgetLocator
 {
     /**
      * Array of widgets + widget configuration.
-     *
-     * @var array
      */
     protected array $_widgets = [];
 
     /**
-     * Templates to use.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $_templates;
-
-    /**
-     * View instance.
-     *
-     * @var \Cake\View\View
-     */
-    protected View $_view;
-
-    /**
      * Constructor
      *
-     * @param \Cake\View\StringTemplate $templates Templates instance to use.
-     * @param \Cake\View\View $view The view instance to set as a widget.
+     * @param \Cake\View\StringTemplate $_templates Templates instance to use.
+     * @param \Cake\View\View $_view The view instance to set as a widget.
      * @param array $widgets See add() method for more information.
      */
-    public function __construct(StringTemplate $templates, View $view, array $widgets = [])
+    public function __construct(/**
+     * Templates to use.
+     */
+    protected StringTemplate $_templates, /**
+     * View instance.
+     */
+    protected View $_view, array $widgets = [])
     {
-        $this->_templates = $templates;
-        $this->_view = $view;
-
         $this->add($widgets);
     }
 
@@ -84,7 +71,6 @@ class WidgetLocator
      * widgets.
      *
      * @param string $file The file to load
-     * @return void
      */
     public function load(string $file): void
     {
@@ -110,7 +96,6 @@ class WidgetLocator
      * with plugin notation, or fully namespaced class names.
      *
      * @param array $widgets Array of widgets to use.
-     * @return void
      */
     public function add(array $widgets): void
     {
@@ -172,8 +157,6 @@ class WidgetLocator
 
     /**
      * Clear the registry and reset the widgets.
-     *
-     * @return void
      */
     public function clear(): void
     {
@@ -198,22 +181,21 @@ class WidgetLocator
         if ($className === null) {
             throw new InvalidArgumentException(sprintf('Unable to locate widget class `%s`.', $class));
         }
-        if (count($config)) {
+
+        if ($config !== []) {
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
             foreach ($config as $requirement) {
-                if ($requirement === '_view') {
-                    $arguments[] = $this->_view;
-                } else {
-                    $arguments[] = $this->get($requirement);
-                }
+                $arguments[] = $requirement === '_view' ? $this->_view : $this->get($requirement);
             }
+
+            /** @var \Cake\View\Widget\WidgetInterface $instance */
             $instance = $reflection->newInstanceArgs($arguments);
-        } else {
-            $instance = new $className($this->_templates);
+            return $instance;
         }
 
-        /** @var \Cake\View\Widget\WidgetInterface */
+        /** @var \Cake\View\Widget\WidgetInterface $instance */
+        $instance = new $className($this->_templates);
         return $instance;
     }
 }

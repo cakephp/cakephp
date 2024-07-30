@@ -43,38 +43,27 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     use CookieCryptTrait;
 
     /**
-     * The list of cookies to encrypt/decrypt
-     *
-     * @var list<string>
-     */
-    protected array $cookieNames;
-
-    /**
-     * Encryption key to use.
-     *
-     * @var string
-     */
-    protected string $key;
-
-    /**
-     * Encryption type.
-     *
-     * @var string
-     */
-    protected string $cipherType;
-
-    /**
      * Constructor
      *
      * @param list<string> $cookieNames The list of cookie names that should have their values encrypted.
      * @param string $key The encryption key to use.
      * @param string $cipherType The cipher type to use. Defaults to 'aes'.
      */
-    public function __construct(array $cookieNames, string $key, string $cipherType = 'aes')
+    public function __construct(
+        /**
+         * The list of cookies to encrypt/decrypt
+         */
+        protected array $cookieNames,
+        /**
+         * Encryption key to use.
+         */
+        protected string $key,
+        /**
+         * Encryption type.
+         */
+        protected string $cipherType = 'aes'
+    )
     {
-        $this->cookieNames = $cookieNames;
-        $this->key = $key;
-        $this->cipherType = $cipherType;
     }
 
     /**
@@ -94,8 +83,9 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
         if ($response->hasHeader('Set-Cookie')) {
             $response = $this->encodeSetCookieHeader($response);
         }
+
         if ($response instanceof Response) {
-            $response = $this->encodeCookies($response);
+            return $this->encodeCookies($response);
         }
 
         return $response;
@@ -105,8 +95,6 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      * Fetch the cookie encryption key.
      *
      * Part of the CookieCryptTrait implementation.
-     *
-     * @return string
      */
     protected function _getCookieEncryptionKey(): string
     {
@@ -164,6 +152,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
                 $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $cookie = $cookie->withValue($value);
             }
+
             $header[] = $cookie->toHeaderValue();
         }
 

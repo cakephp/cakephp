@@ -21,17 +21,13 @@ class ViewPostsController extends Controller
 {
     /**
      * name property
-     *
-     * @var string
      */
     protected string $name = 'Posts';
 
     /**
      * index method
-     *
-     * @return void
      */
-    public function index()
+    public function index(): void
     {
         $this->set([
             'testData' => 'Some test data',
@@ -42,10 +38,8 @@ class ViewPostsController extends Controller
 
     /**
      * nocache_tags_with_element method
-     *
-     * @return void
      */
-    public function nocache_multiple_element()
+    public function nocache_multiple_element(): void
     {
         $this->set('foo', 'this is foo var');
         $this->set('bar', 'this is bar var');

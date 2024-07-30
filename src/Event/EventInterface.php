@@ -27,23 +27,18 @@ interface EventInterface
 {
     /**
      * Returns the name of this event. This is usually used as the event identifier.
-     *
-     * @return string
      */
     public function getName(): string;
 
     /**
      * Returns the subject of this event.
      *
-     * @return object
      * @psalm-return TSubject
      */
     public function getSubject(): object;
 
     /**
      * Stops the event from being used anymore.
-     *
-     * @return void
      */
     public function stopPropagation(): void;
 
@@ -56,8 +51,6 @@ interface EventInterface
 
     /**
      * The result value of the event listeners.
-     *
-     * @return mixed
      */
     public function getResult(): mixed;
 

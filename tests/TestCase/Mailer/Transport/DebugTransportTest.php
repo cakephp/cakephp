@@ -35,7 +35,7 @@ class DebugTransportTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->DebugTransport = new DebugTransport();
@@ -53,6 +53,7 @@ class DebugTransportTest extends TestCase
         $message->setBcc('phpnut@cakephp.org');
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
         $message->setSubject('Testing Message');
+
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date, 'o:tag' => ['foo', 'bar']]);
         $message->setBody(['text' => "First Line\nSecond Line\n.Third Line\n"]);

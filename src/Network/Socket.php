@@ -55,8 +55,6 @@ class Socket
 
     /**
      * This boolean contains the current state of the Socket class
-     *
-     * @var bool
      */
     protected bool $connected = false;
 
@@ -69,8 +67,6 @@ class Socket
 
     /**
      * True if the socket stream is encrypted after a {@link \Cake\Network\Socket::enableCrypto()} call
-     *
-     * @var bool
      */
     protected bool $encrypted = false;
 
@@ -123,9 +119,10 @@ class Socket
             $this->disconnect();
         }
 
-        if (str_contains($this->_config['host'], '://')) {
-            [$this->_config['protocol'], $this->_config['host']] = explode('://', $this->_config['host']);
+        if (str_contains((string) $this->_config['host'], '://')) {
+            [$this->_config['protocol'], $this->_config['host']] = explode('://', (string) $this->_config['host']);
         }
+
         $scheme = null;
         if (!empty($this->_config['protocol'])) {
             $scheme = $this->_config['protocol'] . '://';
@@ -188,8 +185,6 @@ class Socket
 
     /**
      * Check the connection status after calling `connect()`.
-     *
-     * @return bool
      */
     public function isConnected(): bool
     {
@@ -235,7 +230,6 @@ class Socket
      * Configure the SSL context options.
      *
      * @param string $host The host name being connected to.
-     * @return void
      */
     protected function _setSslContext(string $host): void
     {
@@ -243,24 +237,31 @@ class Socket
             if (!str_starts_with($key, 'ssl_')) {
                 continue;
             }
+
             $contextKey = substr($key, 4);
             if (empty($this->_config['context']['ssl'][$contextKey])) {
                 $this->_config['context']['ssl'][$contextKey] = $value;
             }
+
             unset($this->_config[$key]);
         }
+
         if (!isset($this->_config['context']['ssl']['SNI_enabled'])) {
             $this->_config['context']['ssl']['SNI_enabled'] = true;
         }
+
         if (empty($this->_config['context']['ssl']['peer_name'])) {
             $this->_config['context']['ssl']['peer_name'] = $host;
         }
+
         if (empty($this->_config['context']['ssl']['cafile'])) {
             $this->_config['context']['ssl']['cafile'] = CaBundle::getBundledCaBundlePath();
         }
+
         if (!empty($this->_config['context']['ssl']['verify_host'])) {
             $this->_config['context']['ssl']['CN_match'] = $host;
         }
+
         unset($this->_config['context']['ssl']['verify_host']);
     }
 
@@ -272,7 +273,6 @@ class Socket
      *
      * @param int $code Code number.
      * @param string $message Message.
-     * @return void
      */
     protected function _connectionErrorHandler(int $code, string $message): void
     {
@@ -354,7 +354,6 @@ class Socket
      *
      * @param int|null $errNum Error code
      * @param string $errStr Error string
-     * @return void
      */
     public function setLastError(?int $errNum, string $errStr): void
     {
@@ -372,6 +371,7 @@ class Socket
         if (!$this->connected && !$this->connect()) {
             return 0;
         }
+
         $totalBytes = strlen($data);
         $written = 0;
         while ($written < $totalBytes) {
@@ -381,6 +381,7 @@ class Socket
             if ($rv === false || $rv === 0) {
                 return $written;
             }
+
             $written += $rv;
         }
 
@@ -432,6 +433,7 @@ class Socket
 
             return true;
         }
+
         /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->connected = !fclose($this->connection);
 
@@ -454,7 +456,6 @@ class Socket
      * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
      *
      * @param array|null $state Array with key and values to reset
-     * @return void
      */
     public function reset(?array $state = null): void
     {
@@ -463,6 +464,7 @@ class Socket
             if (!$initialState) {
                 $initialState = get_class_vars(self::class);
             }
+
             $state = $initialState;
         }
 
@@ -477,7 +479,6 @@ class Socket
      * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
      * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
      * @param bool $enable enable or disable encryption. Default is true (enable)
-     * @return void
      * @throws \InvalidArgumentException When an invalid encryption scheme is chosen.
      * @throws \Cake\Network\Exception\SocketException When attempting to enable SSL/TLS fails
      * @see stream_socket_enable_crypto
@@ -487,11 +488,13 @@ class Socket
         if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
             throw new InvalidArgumentException('Invalid encryption scheme chosen');
         }
+
         $method = $this->_encryptMethods[$type . '_' . $clientOrServer];
 
         if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
             $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
         }
+
         if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
             $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
         }
@@ -500,10 +503,11 @@ class Socket
             if ($this->connection === null) {
                 throw new CakeException('You must call connect() first.');
             }
+
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
-        } catch (Exception $e) {
-            $this->setLastError(null, $e->getMessage());
-            throw new SocketException($e->getMessage(), null, $e);
+        } catch (Exception $exception) {
+            $this->setLastError(null, $exception->getMessage());
+            throw new SocketException($exception->getMessage(), null, $exception);
         }
 
         if ($enableCryptoResult === true) {
@@ -519,8 +523,6 @@ class Socket
 
     /**
      * Check the encryption status after calling `enableCrypto()`.
-     *
-     * @return bool
      */
     public function isEncrypted(): bool
     {

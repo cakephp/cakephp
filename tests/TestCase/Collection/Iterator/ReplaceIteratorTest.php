@@ -40,6 +40,6 @@ class ReplaceIteratorTest extends TestCase
         };
 
         $map = new ReplaceIterator($items, $callable);
-        $this->assertEquals([1, 4, 9], iterator_to_array($map));
+        $this->assertSame([1, 4, 9], iterator_to_array($map));
     }
 }

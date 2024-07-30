@@ -69,7 +69,7 @@ class HeaderUtilityTest extends TestCase
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
 
-        $encodedLinkHeader = '</extended-attr-example>; rel=start; title*=UTF-8\'en\'%E2%91%A0%E2%93%AB%E2%85%93%E3%8F%A8%E2%99%B3%F0%9D%84%9E%CE%BB';
+        $encodedLinkHeader = "</extended-attr-example>; rel=start; title*=UTF-8'en'%E2%91%A0%E2%93%AB%E2%85%93%E3%8F%A8%E2%99%B3%F0%9D%84%9E%CE%BB";
         $new = $response
             ->withHeader('Link', $encodedLinkHeader);
         $this->assertSame($encodedLinkHeader, $new->getHeaderLine('Link'));
@@ -101,7 +101,7 @@ class HeaderUtilityTest extends TestCase
             '0.5' => ['application/json'],
             '0.3' => ['application/pdf'],
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testParseWwwAuthenticate(): void
@@ -111,7 +111,7 @@ class HeaderUtilityTest extends TestCase
             'realm' => 'The batcave',
             'nonce' => '4cded326c6c51',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testWwwAuthenticateWithAlgo(): void
@@ -123,6 +123,6 @@ class HeaderUtilityTest extends TestCase
             'nonce' => '63f8c86f',
             'algorithm' => 'SHA-256',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

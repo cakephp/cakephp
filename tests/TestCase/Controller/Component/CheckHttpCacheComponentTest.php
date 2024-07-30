@@ -40,7 +40,7 @@ class CheckHttpCacheComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -51,7 +51,7 @@ class CheckHttpCacheComponentTest extends TestCase
         $this->Component = new CheckHttpCacheComponent($this->Controller->components());
     }
 
-    public function testBeforeRenderSuccess()
+    public function testBeforeRenderSuccess(): void
     {
         $response = $this->Controller->getResponse()
             ->withEtag('something', true);
@@ -65,7 +65,7 @@ class CheckHttpCacheComponentTest extends TestCase
         $this->assertSame(304, $response->getStatusCode());
     }
 
-    public function testBeforeRenderNoOp()
+    public function testBeforeRenderNoOp(): void
     {
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->Component->beforeRender($event);

@@ -44,6 +44,7 @@ class MergeVariablesTraitTest extends TestCase
     {
         $object = new Grandchild();
         $object->mergeVars(['assocProperty'], ['associative' => ['assocProperty']]);
+
         $expected = [
             'Red' => null,
             'Orange' => null,
@@ -80,6 +81,7 @@ class MergeVariablesTraitTest extends TestCase
     {
         $object = new Grandchild();
         $object->mergeVars(['assocProperty', 'listProperty'], ['associative' => ['assocProperty']]);
+
         $expected = [
             'Red' => null,
             'Orange' => null,
@@ -89,7 +91,7 @@ class MergeVariablesTraitTest extends TestCase
         $this->assertEquals($expected, $object->assocProperty);
 
         $expected = ['One', 'Two', 'Three', 'Four', 'Five'];
-        $this->assertEquals($expected, $object->listProperty);
+        $this->assertSame($expected, $object->listProperty);
     }
 
     /**

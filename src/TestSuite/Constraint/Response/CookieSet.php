@@ -33,10 +33,9 @@ class CookieSet extends ResponseBase
      * Checks assertion
      *
      * @param mixed $other Expected content
-     * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    protected function matches($other): bool
     {
         $cookie = $this->readCookie($other);
 
@@ -45,8 +44,6 @@ class CookieSet extends ResponseBase
 
     /**
      * Assertion message
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -47,7 +47,7 @@ class RequestTest extends TestCase
      * @param string $method The HTTP method to use.
      * @dataProvider additionProvider
      */
-    public function testMethods(array $headers, $data, $method): void
+    public function testMethods(array $headers, array $data, string $method): void
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 
@@ -60,20 +60,17 @@ class RequestTest extends TestCase
     /**
      * @dataProvider additionProvider
      */
-    public static function additionProvider(): array
+    public static function additionProvider(): \Iterator
     {
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer valid-token',
         ];
         $data = ['a' => 'b', 'c' => 'd'];
-
-        return [
-            [$headers, $data, Request::METHOD_POST],
-            [$headers, $data, Request::METHOD_GET],
-            [$headers, $data, Request::METHOD_PUT],
-            [$headers, $data, Request::METHOD_DELETE],
-        ];
+        yield [$headers, $data, Request::METHOD_POST];
+        yield [$headers, $data, Request::METHOD_GET];
+        yield [$headers, $data, Request::METHOD_PUT];
+        yield [$headers, $data, Request::METHOD_DELETE];
     }
 
     /**

@@ -23,6 +23,8 @@ use Exception;
  */
 class FixturizedTestCase extends TestCase
 {
+    public $fixtureManager;
+
     /**
      * Fixtures to use in this test
      *

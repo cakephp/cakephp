@@ -138,8 +138,8 @@ class ValidationRuleTest extends TestCase
 
         $Rule = new ValidationRule([
             'rule' => 'willFail',
-            'on' => function ($context) use ($providers) {
-                $expected = compact('providers') + ['newRecord' => true, 'data' => []];
+            'on' => function ($context) use ($providers): bool {
+                $expected = ['providers' => $providers] + ['newRecord' => true, 'data' => []];
                 $this->assertEquals($expected, $context);
 
                 return true;
@@ -149,8 +149,8 @@ class ValidationRuleTest extends TestCase
 
         $Rule = new ValidationRule([
             'rule' => 'willFail',
-            'on' => function ($context) use ($providers) {
-                $expected = compact('providers') + ['newRecord' => true, 'data' => []];
+            'on' => function ($context) use ($providers): bool {
+                $expected = ['providers' => $providers] + ['newRecord' => true, 'data' => []];
                 $this->assertEquals($expected, $context);
 
                 return false;
@@ -169,13 +169,13 @@ class ValidationRuleTest extends TestCase
         $this->assertSame('willFail', $Rule->get('rule'));
         $this->assertSame('foo', $Rule->get('message'));
         $this->assertSame('default', $Rule->get('provider'));
-        $this->assertEquals([], $Rule->get('pass'));
+        $this->assertSame([], $Rule->get('pass'));
         $this->assertNull($Rule->get('nonexistent'));
 
         $Rule = new ValidationRule(['rule' => ['willPass', 'param'], 'message' => 'bar']);
 
         $this->assertSame('willPass', $Rule->get('rule'));
         $this->assertSame('bar', $Rule->get('message'));
-        $this->assertEquals(['param'], $Rule->get('pass'));
+        $this->assertSame(['param'], $Rule->get('pass'));
     }
 }

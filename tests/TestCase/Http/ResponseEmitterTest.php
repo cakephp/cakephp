@@ -32,12 +32,12 @@ class ResponseEmitterTest extends TestCase
     /**
      * @var \Cake\Http\ResponseEmitter
      */
-    protected $emitter;
+    protected \PHPUnit\Framework\MockObject\MockObject $emitter;
 
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,9 +48,9 @@ class ResponseEmitterTest extends TestCase
             ->onlyMethods(['setCookie'])
             ->getMock();
 
-        $this->emitter->expects($this->any())
+        $this->emitter
             ->method('setCookie')
-            ->willReturnCallback(function ($cookie) {
+            ->willReturnCallback(function ($cookie): bool {
                 if (is_string($cookie)) {
                     $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
                 }
@@ -65,7 +65,7 @@ class ResponseEmitterTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($GLOBALS['mockedHeadersSent']);
@@ -92,7 +92,7 @@ class ResponseEmitterTest extends TestCase
             'Content-Type: text/html',
             'Location: http://example.com/cake/1',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
     }
 
     /**
@@ -114,7 +114,7 @@ class ResponseEmitterTest extends TestCase
             'HTTP/1.1 204 No Content',
             'X-testing: value',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
     }
 
     /**
@@ -137,7 +137,7 @@ class ResponseEmitterTest extends TestCase
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
         $expected = [
             [
                 'name' => 'simple',
@@ -184,7 +184,7 @@ class ResponseEmitterTest extends TestCase
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
         $expected = [
             [
                 'name' => 'simple',
@@ -260,7 +260,7 @@ class ResponseEmitterTest extends TestCase
             'HTTP/1.1 201 Created',
             'Content-Type: text/plain',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
     }
 
     /**
@@ -283,7 +283,7 @@ class ResponseEmitterTest extends TestCase
             'Content-Type: text/plain',
             'Content-Range: bytes 1-4/9',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
     }
 
     /**
@@ -342,9 +342,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeCallbackStream(): void
     {
-        $stream = new CallbackStream(function () {
-            return 'It worked';
-        });
+        $stream = new CallbackStream(fn(): string => 'It worked');
         $response = (new Response())
             ->withStatus(201)
             ->withBody($stream)
@@ -361,6 +359,6 @@ class ResponseEmitterTest extends TestCase
             'Content-Range: bytes 1-4/9',
             'Content-Type: text/plain',
         ];
-        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+        $this->assertSame($expected, $GLOBALS['mockedHeaders']);
     }
 }

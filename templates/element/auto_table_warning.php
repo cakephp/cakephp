@@ -38,6 +38,7 @@ instead of any other specific subclass.
 <ul>
 <?php foreach ($autoTables as $alias => $table) : ?>
     <li><strong><?= $alias ?></strong></li>
-<?php endforeach; ?>
+<?php endforeach;
+ ?>
 </ul>
 <br>

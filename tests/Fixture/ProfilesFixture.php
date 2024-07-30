@@ -23,8 +23,6 @@ class ProfilesFixture extends TestFixture
 {
     /**
      * records property
-     *
-     * @var array
      */
     public array $records = [
         ['user_id' => 1, 'first_name' => 'mariano', 'last_name' => 'iglesias', 'is_active' => false],

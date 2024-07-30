@@ -27,17 +27,14 @@ class MailCount extends MailConstraintBase
      * Checks constraint
      *
      * @param mixed $other Constraint check
-     * @return bool
      */
-    public function matches(mixed $other): bool
+    protected function matches(mixed $other): bool
     {
         return count($this->getMessages()) === $other;
     }
 
     /**
      * Assertion message string
-     *
-     * @return string
      */
     public function toString(): string
     {

@@ -33,7 +33,7 @@ class StringTemplateTraitTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Template = new TestStringTemplate();
@@ -49,7 +49,7 @@ class StringTemplateTraitTest extends TestCase
         ];
         $this->Template->setTemplates($templates);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'text' => '<p>{{text}}</p>',
             ],
@@ -68,7 +68,7 @@ class StringTemplateTraitTest extends TestCase
             '<p>{{text}}</p>'
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'text' => '<p>{{text}}</p>',
             ],
