@@ -249,7 +249,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function sql(?ValueBinder $binder = null): string
     {
-        if (!$binder instanceof \Cake\Database\ValueBinder) {
+        if (!$binder instanceof ValueBinder) {
             $binder = $this->getValueBinder();
             $binder->resetCount();
         }
@@ -1726,7 +1726,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         $this->_dirty = true;
 
-        if ($this->_statement instanceof \Cake\Database\StatementInterface && $this->_valueBinder instanceof \Cake\Database\ValueBinder) {
+        if ($this->_statement instanceof StatementInterface && $this->_valueBinder instanceof ValueBinder) {
             $this->getValueBinder()->reset();
         }
     }
@@ -1739,7 +1739,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function __clone()
     {
         $this->_statement = null;
-        if ($this->_valueBinder instanceof \Cake\Database\ValueBinder) {
+        if ($this->_valueBinder instanceof ValueBinder) {
             $this->_valueBinder = clone $this->_valueBinder;
         }
 

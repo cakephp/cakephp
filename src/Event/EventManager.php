@@ -75,7 +75,7 @@ class EventManager implements EventManagerInterface
             static::$_generalManager = $manager;
         }
 
-        if (!static::$_generalManager instanceof \Cake\Event\EventManager) {
+        if (!static::$_generalManager instanceof EventManager) {
             static::$_generalManager = new static();
         }
 
@@ -422,7 +422,7 @@ class EventManager implements EventManagerInterface
      */
     public function isTrackingEvents(): bool
     {
-        return $this->_trackEvents && $this->_eventList instanceof \Cake\Event\EventList;
+        return $this->_trackEvents && $this->_eventList instanceof EventList;
     }
 
     /**
@@ -471,7 +471,7 @@ class EventManager implements EventManagerInterface
             $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
         }
 
-        if ($this->_eventList instanceof \Cake\Event\EventList) {
+        if ($this->_eventList instanceof EventList) {
             $count = count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
                 assert(!empty($this->_eventList[$i]), 'Given event item not present');

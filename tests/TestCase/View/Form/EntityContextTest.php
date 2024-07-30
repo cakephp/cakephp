@@ -24,6 +24,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use Iterator;
 use stdClass;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
@@ -129,7 +130,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testIsCreateCollection(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testIsCreateCollection(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -226,7 +227,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testCollectionOperationsNoTableArg(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testCollectionOperationsNoTableArg(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -246,7 +247,7 @@ class EntityContextTest extends TestCase
      *
      * @return array
      */
-    public static function collectionProvider(): \Iterator
+    public static function collectionProvider(): Iterator
     {
         $one = new Article([
             'title' => 'First post',
@@ -273,7 +274,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testValOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -303,7 +304,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValOnCollectionsWithRootName(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testValOnCollectionsWithRootName(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -331,7 +332,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testErrorsOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testErrorsOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -356,7 +357,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testSchemaOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testSchemaOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $this->_setupTables();
         $context = new EntityContext([
@@ -384,7 +385,7 @@ class EntityContextTest extends TestCase
      * @dataProvider collectionProvider
      * @param mixed $collection
      */
-    public function testValidatorsOnCollections(\ArrayObject|\ArrayIterator|\Cake\Collection\Collection|array $collection): void
+    public function testValidatorsOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $this->_setupTables();
 

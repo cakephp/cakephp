@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Psr\Http\Message\UploadedFileInterface;
 use function Cake\Collection\collection;
@@ -33,7 +34,7 @@ class RequestActionController extends AppController
     /**
      * test_request_action method
      */
-    public function test_request_action(): \Cake\Http\Response
+    public function test_request_action(): Response
     {
         return $this->response->withStringBody('This is a test');
     }
@@ -41,7 +42,7 @@ class RequestActionController extends AppController
     /**
      * another_ra_test method
      */
-    public function another_ra_test(mixed $id, mixed $other): \Cake\Http\Response
+    public function another_ra_test(mixed $id, mixed $other): Response
     {
         return $this->response->withStringBody($id + $other);
     }
@@ -49,7 +50,7 @@ class RequestActionController extends AppController
     /**
      * normal_request_action method
      */
-    public function normal_request_action(): \Cake\Http\Response
+    public function normal_request_action(): Response
     {
         return $this->response->withStringBody('Hello World');
     }
@@ -57,7 +58,7 @@ class RequestActionController extends AppController
     /**
      * returns $this->here as body
      */
-    public function return_here(): \Cake\Http\Response
+    public function return_here(): Response
     {
         return $this->response->withStringBody($this->here);
     }
@@ -65,7 +66,7 @@ class RequestActionController extends AppController
     /**
      * post pass, testing post passing
      */
-    public function post_pass(): \Cake\Http\Response
+    public function post_pass(): Response
     {
         return $this->response->withStringBody(json_encode($this->request->getData()));
     }
@@ -73,7 +74,7 @@ class RequestActionController extends AppController
     /**
      * query pass, testing query passing
      */
-    public function query_pass(): \Cake\Http\Response
+    public function query_pass(): Response
     {
         return $this->response->withStringBody(json_encode($this->request->getQueryParams()));
     }
@@ -81,7 +82,7 @@ class RequestActionController extends AppController
     /**
      * cookie pass, testing cookie passing
      */
-    public function cookie_pass(): \Cake\Http\Response
+    public function cookie_pass(): Response
     {
         return $this->response->withStringBody(json_encode($this->request->getCookieParams()));
     }
@@ -89,7 +90,7 @@ class RequestActionController extends AppController
     /**
      * test param passing and parsing.
      */
-    public function params_pass(): \Cake\Http\Response
+    public function params_pass(): Response
     {
         return $this->response->withStringBody(json_encode([
             'params' => $this->request->getAttribute('params'),
@@ -105,7 +106,7 @@ class RequestActionController extends AppController
     /**
      * param check method.
      */
-    public function param_check(): \Cake\Http\Response
+    public function param_check(): Response
     {
         $this->autoRender = false;
         $content = '';
@@ -119,7 +120,7 @@ class RequestActionController extends AppController
     /**
      * Tests session transmission
      */
-    public function session_test(): \Cake\Http\Response
+    public function session_test(): Response
     {
         return $this->response->withStringBody($this->request->getSession()->read('foo'));
     }
@@ -127,7 +128,7 @@ class RequestActionController extends AppController
     /**
      * Tests input data transmission
      */
-    public function input_test(): \Cake\Http\Response
+    public function input_test(): Response
     {
         $text = json_decode((string)$this->request->getBody())->hello;
 
@@ -147,7 +148,7 @@ class RequestActionController extends AppController
     /**
      * Tests uploaded files
      */
-    public function uploaded_files(): \Cake\Http\Response
+    public function uploaded_files(): Response
     {
         $files = Hash::flatten($this->request->getUploadedFiles());
         $names = collection($files)->map(fn(UploadedFileInterface $file): ?string => $file->getClientFilename());

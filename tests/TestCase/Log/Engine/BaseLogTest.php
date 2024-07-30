@@ -29,7 +29,7 @@ class BaseLogTest extends TestCase
 {
     private array $testData = ['ä', 'ö', 'ü'];
 
-    private \TestApp\Log\Engine\TestBaseLog $logger;
+    private TestBaseLog $logger;
 
     /**
      * Setting up the test case.

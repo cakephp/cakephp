@@ -140,7 +140,7 @@ class I18nTest extends TestCase
      */
     public function testCreateCustomTranslationPackage(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le moo',
@@ -231,7 +231,7 @@ class I18nTest extends TestCase
      */
     public function testGetTranslatorByDefaultLocale(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le moo',
@@ -331,7 +331,7 @@ class I18nTest extends TestCase
      */
     public function testBasicDomainFunction(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le moo',
@@ -370,7 +370,7 @@ class I18nTest extends TestCase
      */
     public function testBasicDomainPluralFunction(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le Moo',
@@ -397,7 +397,7 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunction(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -453,7 +453,7 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunctionNoString(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -475,7 +475,7 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunctionInvalidContext(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -497,7 +497,7 @@ class I18nTest extends TestCase
      */
     public function testPluralContextFunction(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -549,7 +549,7 @@ class I18nTest extends TestCase
      */
     public function testDomainContextFunction(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -602,7 +602,7 @@ class I18nTest extends TestCase
      */
     public function testDomainPluralContextFunction(): void
     {
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'letter' => [
@@ -680,7 +680,7 @@ class I18nTest extends TestCase
      */
     public function testLoaderFactory(): void
     {
-        I18n::config('custom', function (string $name, string $locale): \Cake\I18n\Package {
+        I18n::config('custom', function (string $name, string $locale): Package {
             $this->assertSame('custom', $name);
             $package = new Package('default');
 
@@ -724,7 +724,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackLoaderFactory(): void
     {
-        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function (string $name, string $locale): \Cake\I18n\Package {
+        I18n::config(TranslatorRegistry::FALLBACK_LOADER, function (string $name, string $locale): Package {
             $package = new Package('default');
 
             if ($name === 'custom') {
@@ -752,7 +752,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslator(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Dog' => 'Le bark',
@@ -761,7 +761,7 @@ class I18nTest extends TestCase
             return $package;
         }, 'fr_FR');
 
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Cow' => 'Le moo',
@@ -782,14 +782,14 @@ class I18nTest extends TestCase
     {
         I18n::useFallback(false);
 
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages(['Dog' => 'Le bark']);
 
             return $package;
         }, 'fr_FR');
 
-        I18n::setTranslator('custom', function (): \Cake\I18n\Package {
+        I18n::setTranslator('custom', function (): Package {
             $package = new Package('default');
             $package->setMessages(['Cow' => 'Le moo']);
 
@@ -807,7 +807,7 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslatorWithFactory(): void
     {
-        I18n::setTranslator('default', function (): \Cake\I18n\Package {
+        I18n::setTranslator('default', function (): Package {
             $package = new Package('default');
             $package->setMessages([
                 'Dog' => 'Le bark',
@@ -815,7 +815,7 @@ class I18nTest extends TestCase
 
             return $package;
         }, 'fr_FR');
-        I18n::config('custom', function ($name, $locale): \Cake\I18n\Package {
+        I18n::config('custom', function ($name, $locale): Package {
             $this->assertSame('custom', $name);
             $package = new Package('default');
             $package->setMessages([

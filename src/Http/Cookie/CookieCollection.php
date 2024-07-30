@@ -130,7 +130,7 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $cookie = $this->__get($name);
 
-        if (!$cookie instanceof \Cake\Http\Cookie\CookieInterface) {
+        if (!$cookie instanceof CookieInterface) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Cookie `%s` not found. Use `has()` to check first for existence.',
@@ -150,7 +150,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has(string $name): bool
     {
-        return $this->__get($name) instanceof \Cake\Http\Cookie\CookieInterface;
+        return $this->__get($name) instanceof CookieInterface;
     }
 
     /**
@@ -178,7 +178,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function __isset(string $name): bool
     {
-        return $this->__get($name) instanceof \Cake\Http\Cookie\CookieInterface;
+        return $this->__get($name) instanceof CookieInterface;
     }
 
     /**
@@ -257,7 +257,7 @@ class CookieCollection implements IteratorAggregate, Countable
 
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookie = sprintf('%s=%s', rawurlencode((string)$key), rawurlencode((string) $value));
+            $cookie = sprintf('%s=%s', rawurlencode((string)$key), rawurlencode((string)$value));
             $size = strlen($cookie);
             if ($size > 4096) {
                 triggerWarning(sprintf(

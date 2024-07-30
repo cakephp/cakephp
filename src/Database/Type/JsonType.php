@@ -75,7 +75,7 @@ class JsonType extends BaseType implements BatchCastingInterface
                 continue;
             }
 
-            $values[$field] = json_decode((string) $values[$field], true);
+            $values[$field] = json_decode((string)$values[$field], true);
         }
 
         return $values;

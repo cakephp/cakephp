@@ -25,6 +25,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use Laminas\Diactoros\Request as LaminasRequest;
 
 /**
@@ -77,7 +78,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function urlProvider(): \Iterator
+    public static function urlProvider(): Iterator
     {
         yield [
             'http://example.com/test.html',
@@ -233,7 +234,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($headers): bool {
-                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('2', $request->getProtocolVersion());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
@@ -448,7 +449,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): \Iterator
+    public static function methodProvider(): Iterator
     {
         yield [Request::METHOD_GET];
         yield [Request::METHOD_POST];
@@ -474,7 +475,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($method): bool {
-                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame($method, $request->getMethod());
                 $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
 
@@ -495,7 +496,7 @@ class ClientTest extends TestCase
      *
      * @return array
      */
-    public static function typeProvider(): \Iterator
+    public static function typeProvider(): Iterator
     {
         yield ['application/json', 'application/json'];
         yield ['json', 'application/json'];
@@ -691,7 +692,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request): bool {
-                $this->assertInstanceOf(\Cake\Http\Client\Request::class, $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
 

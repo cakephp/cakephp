@@ -23,6 +23,7 @@ use Cake\Event\EventInterface;
 use Closure;
 use League\Container\Exception\NotFoundException;
 use LogicException;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * A set of methods used for defining container services
@@ -153,7 +154,7 @@ trait ContainerStubTrait
      * Clears any mocks that were defined and cleans
      * up application class configuration.
      */
-    #[\PHPUnit\Framework\Attributes\After]
+    #[After]
     public function cleanupContainer(): void
     {
         $this->_appArgs = null;

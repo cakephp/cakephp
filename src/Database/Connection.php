@@ -93,12 +93,9 @@ class Connection implements ConnectionInterface
      *    If set to a string it will be used as the name of cache config to use.
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      *
-     * @param array<string, mixed> $_config Configuration array.
+     * @param array<string, mixed> $_config Contains the configuration params for this connection.
      */
-    public function __construct(/**
-     * Contains the configuration params for this connection.
-     */
-    protected array $_config)
+    public function __construct(protected array $_config)
     {
         [self::ROLE_READ => $this->readDriver, self::ROLE_WRITE => $this->writeDriver] = $this->createDrivers($this->_config);
     }
@@ -223,7 +220,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn (): \Cake\Database\StatementInterface => $this->getDriver()->execute($sql, $params, $types));
+        return $this->getDisconnectRetry()->run(fn (): StatementInterface => $this->getDriver()->execute($sql, $params, $types));
     }
 
     /**
@@ -235,7 +232,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn (): \Cake\Database\StatementInterface => $this->getDriver($query->getConnectionRole())->run($query));
+        return $this->getDisconnectRetry()->run(fn (): StatementInterface => $this->getDriver($query->getConnectionRole())->run($query));
     }
 
     /**
@@ -321,7 +318,7 @@ class Connection implements ConnectionInterface
      */
     public function getSchemaCollection(): SchemaCollectionInterface
     {
-        if ($this->_schemaCollection instanceof \Cake\Database\Schema\CollectionInterface) {
+        if ($this->_schemaCollection instanceof SchemaCollectionInterface) {
             return $this->_schemaCollection;
         }
 
@@ -410,7 +407,7 @@ class Connection implements ConnectionInterface
         if ($this->_transactionLevel === 0) {
             if ($this->wasNestedTransactionRolledback()) {
                 $e = $this->nestedTransactionRollbackException;
-                assert($e instanceof \Cake\Database\Exception\NestedTransactionRollbackException);
+                assert($e instanceof NestedTransactionRollbackException);
                 $this->nestedTransactionRollbackException = null;
                 throw $e;
             }
@@ -690,7 +687,7 @@ class Connection implements ConnectionInterface
      */
     public function getCacher(): CacheInterface
     {
-        if ($this->cacher instanceof \Psr\SimpleCache\CacheInterface) {
+        if ($this->cacher instanceof CacheInterface) {
             return $this->cacher;
         }
 

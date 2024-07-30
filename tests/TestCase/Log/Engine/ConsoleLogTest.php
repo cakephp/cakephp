@@ -30,7 +30,7 @@ class ConsoleLogTest extends TestCase
      */
     public function testConsoleOutputlogs(): void
     {
-        $output = $this->getMockBuilder(\Cake\Console\ConsoleOutput::class)->getMock();
+        $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
         $message = ' Error: oh noes</error>';
         $output->expects($this->once())

@@ -116,9 +116,13 @@ class HtmlFormatter implements FormatterInterface
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
                 'string' => $this->style('string', "'" . $var->getValue() . "'"),
-                'int', 'float' => $this->style('visibility', sprintf('(%s)', $var->getType())) .
-                        ' ' . $this->style('number', $var->getValue() /** @phpstan-ignore argument.type */),
-                default => sprintf('(%s) %s', $var->getType(), is_resource($var->getValue()) ? '(resource)' : $var->getValue()),
+                'int', 'float' => $this->style('visibility', sprintf('(%s)', $var->getType())) . ' ' .
+                                  $this->style('number', $var->getValue()), // @phpstan-ignore argument.type
+                default => sprintf(
+                    '(%s) %s',
+                    $var->getType(),
+                    is_resource($var->getValue()) ? '(resource)' : $var->getValue()
+                ),
             };
         }
 

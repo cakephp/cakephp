@@ -277,7 +277,7 @@ class HtmlHelper extends Helper
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
             /** @psalm-suppress PossiblyInvalidArgument */
-            $title = htmlentities((string) $title, ENT_QUOTES, $escapeTitle);
+            $title = htmlentities((string)$title, ENT_QUOTES, $escapeTitle);
         }
 
         $templater = $this->templater();
@@ -1015,7 +1015,7 @@ class HtmlHelper extends Helper
                 }
 
                 if (!isset($source['type'])) {
-                    $ext = pathinfo((string) $source['src'], PATHINFO_EXTENSION);
+                    $ext = pathinfo((string)$source['src'], PATHINFO_EXTENSION);
                     $source['type'] = $this->_View->getResponse()->getMimeType($ext);
                 }
 
@@ -1042,11 +1042,11 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo((string) $path, PATHINFO_EXTENSION));
+                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo((string)$path, PATHINFO_EXTENSION));
                 assert(is_string($mimeType));
             }
 
-            $tag = str_starts_with((string) $mimeType, 'video/') ? 'video' : 'audio';
+            $tag = str_starts_with((string)$mimeType, 'video/') ? 'video' : 'audio';
         }
 
         if (isset($options['poster'])) {

@@ -21,6 +21,7 @@ use Cake\Http\Cookie\SameSiteEnum;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
 use InvalidArgumentException;
+use Iterator;
 use ValueError;
 
 /**
@@ -33,7 +34,7 @@ class CookieTest extends TestCase
      *
      * @return array
      */
-    public static function invalidNameProvider(): \Iterator
+    public static function invalidNameProvider(): Iterator
     {
         yield ['no='];
         yield ["no\rnewline"];

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
@@ -25,6 +26,8 @@ use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Time type.
@@ -39,7 +42,7 @@ class TimeTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup
@@ -48,7 +51,7 @@ class TimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -130,7 +133,7 @@ class TimeTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): \Iterator
+    public static function marshalProvider(): Iterator
     {
         // invalid types.
         yield [null, null];
@@ -209,7 +212,7 @@ class TimeTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal(bool|string|\Cake\Chronos\ChronosTime|NativeDateTime|\DateTimeImmutable|array|null $value, ?\Cake\I18n\Time $expected): void
+    public function testMarshal(bool|string|ChronosTime|NativeDateTime|DateTimeImmutable|array|null $value, ?Time $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

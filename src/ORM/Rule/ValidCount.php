@@ -31,12 +31,8 @@ class ValidCount
      * @param string $_field The field to check the count on.
      */
     public function __construct(
-        /**
-         * The field to check
-         */
         protected string $_field
-    )
-    {
+    ) {
     }
 
     /**

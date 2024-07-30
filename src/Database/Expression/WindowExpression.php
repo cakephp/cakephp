@@ -224,7 +224,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $clauses[] = 'PARTITION BY ' . implode(', ', $expressions);
         }
 
-        if ($this->order instanceof \Cake\Database\Expression\OrderByExpression) {
+        if ($this->order instanceof OrderByExpression) {
             $clauses[] = $this->order->sql($binder);
         }
 
@@ -263,7 +263,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $partition->traverse($callback);
         }
 
-        if ($this->order instanceof \Cake\Database\Expression\OrderByExpression) {
+        if ($this->order instanceof OrderByExpression) {
             $callback($this->order);
             $this->order->traverse($callback);
         }
@@ -324,7 +324,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $this->partitions[$i] = clone $partition;
         }
 
-        if ($this->order instanceof \Cake\Database\Expression\OrderByExpression) {
+        if ($this->order instanceof OrderByExpression) {
             $this->order = clone $this->order;
         }
     }

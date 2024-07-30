@@ -44,9 +44,6 @@ class EnumType extends BaseType
      */
     public function __construct(
         string $name,
-        /**
-         * The enum classname which is associated to the type instance
-         */
         protected string $enumClassName
     ) {
         parent::__construct($name);

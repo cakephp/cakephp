@@ -393,7 +393,7 @@ class PaginatorHelper extends Helper
             $title = __(Inflector::humanize((string)preg_replace('/_id$/', '', $title)));
         }
 
-        $defaultDir = isset($options['direction']) ? strtolower((string) $options['direction']) : 'asc';
+        $defaultDir = isset($options['direction']) ? strtolower((string)$options['direction']) : 'asc';
         unset($options['direction']);
 
         $locked = $options['lock'] ?? false;
@@ -484,7 +484,7 @@ class PaginatorHelper extends Helper
         if (
             !empty($paging['sort'])
             && !empty($options['sort'])
-            && !str_contains((string) $options['sort'], '.')
+            && !str_contains((string)$options['sort'], '.')
         ) {
             $paging['sort'] = $this->_removeAlias($paging['sort']);
         }
@@ -492,7 +492,7 @@ class PaginatorHelper extends Helper
         if (
             !empty($paging['sortDefault'])
             && !empty($options['sort'])
-            && !str_contains((string) $options['sort'], '.')
+            && !str_contains((string)$options['sort'], '.')
         ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $this->param('alias'));
         }
@@ -509,7 +509,7 @@ class PaginatorHelper extends Helper
         if (
             isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction'])
             && $options['sort'] === $paging['sortDefault']
-            && strtolower((string) $options['direction']) === strtolower((string) $paging['directionDefault'])
+            && strtolower((string)$options['direction']) === strtolower((string)$paging['directionDefault'])
         ) {
             $options['sort'] = $options['direction'] = null;
         }
@@ -904,7 +904,6 @@ class PaginatorHelper extends Helper
                 $out .= $templater->format('number', $vars);
             }
         }
-
 
         return $out . $options['after'];
     }

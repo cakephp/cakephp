@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Error\PhpError;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 class PhpErrorTest extends TestCase
 {
@@ -32,7 +33,7 @@ class PhpErrorTest extends TestCase
         $this->assertSame('', $error->getTraceAsString());
     }
 
-    public static function errorCodeProvider(): \Iterator
+    public static function errorCodeProvider(): Iterator
     {
         // [php error code, label, log-level]
         yield [E_ERROR, 'error', LOG_ERR];

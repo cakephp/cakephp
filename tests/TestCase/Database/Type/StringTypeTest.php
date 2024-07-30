@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the String type.
@@ -36,7 +37,7 @@ class StringTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup

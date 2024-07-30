@@ -56,7 +56,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function __construct(?LocatorInterface $tableLocator = null)
     {
-        if ($tableLocator instanceof \Cake\ORM\Locator\LocatorInterface) {
+        if ($tableLocator instanceof LocatorInterface) {
             $this->_tableLocator = $tableLocator;
         }
     }
@@ -268,7 +268,7 @@ class AssociationCollection implements IteratorAggregate
             }
 
             $relation = $this->get($alias);
-            if (!$relation instanceof \Cake\ORM\Association) {
+            if (!$relation instanceof Association) {
                 $msg = sprintf(
                     'Cannot save `%s`, it is not associated to `%s`.',
                     $alias,

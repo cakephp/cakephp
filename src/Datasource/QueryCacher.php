@@ -40,16 +40,9 @@ class QueryCacher
      * @throws \RuntimeException
      */
     public function __construct(
-        /**
-         * The key or function to generate a key.
-         */
         protected Closure|string $_key,
-        /**
-         * Config for cache engine.
-         */
         protected CacheInterface|string $_config
-    )
-    {
+    ) {
     }
 
     /**

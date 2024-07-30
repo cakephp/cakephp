@@ -29,6 +29,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use Iterator;
 use RuntimeException;
 use Throwable;
 
@@ -68,7 +69,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFactory(): void
     {
-        $trap = new ExceptionTrap(['exceptionRenderer' => fn($err, $req): \Cake\Error\Renderer\WebExceptionRenderer => new WebExceptionRenderer($err, $req)]);
+        $trap = new ExceptionTrap(['exceptionRenderer' => fn($err, $req): WebExceptionRenderer => new WebExceptionRenderer($err, $req)]);
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(WebExceptionRenderer::class, $trap->renderer($error));
     }
@@ -387,7 +388,7 @@ class ExceptionTrapTest extends TestCase
     /**
      * Data provider for memory limit increase
      */
-    public static function initialMemoryProvider(): \Iterator
+    public static function initialMemoryProvider(): Iterator
     {
         yield ['256M'];
         yield ['1G'];

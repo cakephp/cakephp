@@ -35,6 +35,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Error;
 use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Application;
@@ -96,7 +97,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception): \PHPUnit\Framework\MockObject\MockObject {
+        $factory = function ($exception): MockObject {
             $this->assertInstanceOf('LogicException', $exception);
             $response = new Response();
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
@@ -127,7 +128,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -145,7 +146,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -207,7 +208,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
@@ -298,7 +299,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
-            'skipLog' => [\Cake\Http\Exception\NotFoundException::class],
+            'skipLog' => [NotFoundException::class],
         ]);
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('Kaboom!');
@@ -360,7 +361,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception): \PHPUnit\Framework\MockObject\MockObject {
+        $factory = function ($exception): MockObject {
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->getMock();
             $mock->expects($this->once())

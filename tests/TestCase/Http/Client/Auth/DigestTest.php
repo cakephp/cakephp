@@ -21,6 +21,8 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Digest authentication test
@@ -30,12 +32,12 @@ class DigestTest extends TestCase
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $client;
+    protected MockObject $client;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client\Auth\Digest
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $auth;
+    protected MockObject $auth;
 
     /**
      * Setup
@@ -51,7 +53,7 @@ class DigestTest extends TestCase
     /**
      * @return Digest|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function getDigestMock(): \PHPUnit\Framework\MockObject\MockObject
+    protected function getDigestMock(): MockObject
     {
         $digest = $this->getMockBuilder(Digest::class)
             ->onlyMethods(['generateCnonce'])
@@ -67,7 +69,7 @@ class DigestTest extends TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
      */
-    protected function getClientMock(): \PHPUnit\Framework\MockObject\MockObject
+    protected function getClientMock(): MockObject
     {
         return $this->getMockBuilder(Client::class)
             ->onlyMethods(['send'])
@@ -199,7 +201,7 @@ class DigestTest extends TestCase
      *
      * @return array[]
      */
-    public static function algorithmsProvider(): \Iterator
+    public static function algorithmsProvider(): Iterator
     {
         yield [
             'ALGORITHM: MD5 QOP: none',

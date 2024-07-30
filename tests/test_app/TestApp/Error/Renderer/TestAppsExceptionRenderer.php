@@ -18,7 +18,7 @@ class TestAppsExceptionRenderer extends WebExceptionRenderer
     protected function _getController(): Controller
     {
         $request = $this->request ?: Router::getRequest();
-        if (!$request instanceof \Cake\Http\ServerRequest) {
+        if (!$request instanceof ServerRequest) {
             $request = new ServerRequest();
         }
 

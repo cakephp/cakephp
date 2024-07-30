@@ -32,7 +32,7 @@ use LogicException;
  */
 class ConsoleOptionParserTest extends TestCase
 {
-    private \Cake\Console\ConsoleIo $io;
+    private ConsoleIo $io;
 
     protected function setUp(): void
     {
@@ -841,7 +841,7 @@ TEXT;
     public function testCreateFactory(): void
     {
         $parser = ConsoleOptionParser::create('factory', false);
-        $this->assertInstanceOf(\Cake\Console\ConsoleOptionParser::class, $parser);
+        $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('factory', $parser->getCommand());
     }
 

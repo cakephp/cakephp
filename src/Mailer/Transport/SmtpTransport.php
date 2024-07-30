@@ -243,7 +243,7 @@ class SmtpTransport extends AbstractTransport
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if ((string) $line['message'] === '' || str_starts_with((string) $line['message'], 'AUTH ')) {
+            if ((string)$line['message'] === '' || str_starts_with((string)$line['message'], 'AUTH ')) {
                 $auth = $line['message'];
                 break;
             }
@@ -254,14 +254,14 @@ class SmtpTransport extends AbstractTransport
         }
 
         foreach (self::SUPPORTED_AUTH_TYPES as $type) {
-            if (str_contains((string) $auth, $type)) {
+            if (str_contains((string)$auth, $type)) {
                 $this->authType = $type;
 
                 return;
             }
         }
 
-        throw new CakeException('Unsupported auth type: ' . substr((string) $auth, 5));
+        throw new CakeException('Unsupported auth type: ' . substr((string)$auth, 5));
     }
 
     /**
@@ -483,7 +483,7 @@ class SmtpTransport extends AbstractTransport
         $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
-            $messages[] = str_starts_with((string) $line, '.') ? '.' . $line : $line;
+            $messages[] = str_starts_with((string)$line, '.') ? '.' . $line : $line;
         }
 
         return implode("\r\n", $messages);

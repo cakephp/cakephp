@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -24,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use PDO;
 
 /**
@@ -37,7 +39,7 @@ class SqlserverSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string) $config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
+        $this->skipIf(!str_contains((string)$config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
     }
 
     /**
@@ -98,7 +100,7 @@ SQL;
      *
      * @return array
      */
-    public static function convertColumnProvider(): \Iterator
+    public static function convertColumnProvider(): Iterator
     {
         yield [
             'DATETIME',
@@ -322,7 +324,7 @@ SQL;
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlserver::class)->getMock();
+        $driver = $this->getMockBuilder(Sqlserver::class)->getMock();
         $dialect = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -549,7 +551,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
 
-        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
@@ -597,7 +599,7 @@ SQL;
      *
      * @return array
      */
-    public static function columnSqlProvider(): \Iterator
+    public static function columnSqlProvider(): Iterator
     {
         // strings
         yield [
@@ -845,7 +847,7 @@ SQL;
      *
      * @return array
      */
-    public static function constraintSqlProvider(): \Iterator
+    public static function constraintSqlProvider(): Iterator
     {
         yield [
             'primary',
@@ -915,7 +917,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -964,7 +966,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1013,7 +1015,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1087,7 +1089,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1105,7 +1107,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')

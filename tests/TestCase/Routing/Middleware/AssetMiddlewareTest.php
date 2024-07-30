@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -84,7 +85,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function assetProvider(): \Iterator
+    public static function assetProvider(): Iterator
     {
         // In plugin root.
         yield [

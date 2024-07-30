@@ -544,7 +544,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if (
             isset($data['default']) &&
             in_array($data['type'], $dateTimeTypes) &&
-            str_contains(strtolower((string) $data['default']), 'current_timestamp')
+            str_contains(strtolower((string)$data['default']), 'current_timestamp')
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
             if (isset($data['precision'])) {

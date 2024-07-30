@@ -18,6 +18,7 @@ namespace Cake\TestSuite;
 use Cake\Database\Connection;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
 use Closure;
 
@@ -95,7 +96,7 @@ class ConnectionHelper
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table): \Cake\Database\Schema\TableSchemaInterface => $collection->describe($table), $tables);
+        $schemas = array_map(fn ($table): TableSchemaInterface => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
         foreach ($schemas as $schema) {
@@ -126,7 +127,7 @@ class ConnectionHelper
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table): \Cake\Database\Schema\TableSchemaInterface => $collection->describe($table), $tables);
+        $schemas = array_map(fn ($table): TableSchemaInterface => $collection->describe($table), $tables);
 
         $this->runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();

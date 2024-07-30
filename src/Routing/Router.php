@@ -664,10 +664,10 @@ class Router
 
         $request = static::getRequest();
 
-        if ($request instanceof \Cake\Http\ServerRequest) {
+        if ($request instanceof ServerRequest) {
             $base = $request->getAttribute('base', '');
-            if ($base !== '' && stristr($url, (string) $base)) {
-                $url = (string)preg_replace('/^' . preg_quote((string) $base, '/') . '/', '', $url, 1);
+            if ($base !== '' && stristr($url, (string)$base)) {
+                $url = (string)preg_replace('/^' . preg_quote((string)$base, '/') . '/', '', $url, 1);
             }
         }
 

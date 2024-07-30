@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 class TableGetWithCustomFinderTest extends TestCase
 {
@@ -32,7 +33,7 @@ class TableGetWithCustomFinderTest extends TestCase
         static::setAppNamespace();
     }
 
-    public static function providerForTestGetWithCustomFinder(): \Iterator
+    public static function providerForTestGetWithCustomFinder(): Iterator
     {
         yield [['fields' => ['id'], 'finder' => 'custom']];
     }

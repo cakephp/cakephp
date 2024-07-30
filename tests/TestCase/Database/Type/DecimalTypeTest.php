@@ -23,6 +23,7 @@ use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Decimal type.
@@ -37,7 +38,7 @@ class DecimalTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * @var string

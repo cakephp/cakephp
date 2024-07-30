@@ -35,6 +35,7 @@ use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 use Closure;
@@ -209,7 +210,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->setRequest($request);
         $this->response = new Response();
 
-        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
+        if ($eventManager instanceof EventManagerInterface) {
             $this->setEventManager($eventManager);
         }
 
@@ -486,7 +487,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $result = $this->render();
         }
 
-        if ($result instanceof \Cake\Http\Response) {
+        if ($result instanceof Response) {
             $this->response = $result;
         }
     }
@@ -777,8 +778,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $templatePath = $this->name;
         if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
-                \Cake\Utility\Inflector::class . '::camelize',
-                explode('/', (string) $this->request->getParam('prefix'))
+                Inflector::class . '::camelize',
+                explode('/', (string)$this->request->getParam('prefix'))
             );
             $templatePath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $templatePath;
         }
@@ -803,8 +804,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $url = Router::url($default, !$local);
         $base = $this->request->getAttribute('base');
-        if ($local && $base && str_starts_with($url, (string) $base)) {
-            $url = substr($url, strlen((string) $base));
+        if ($local && $base && str_starts_with($url, (string)$base)) {
+            $url = substr($url, strlen((string)$base));
             if ($url[0] !== '/') {
                 return '/' . $url;
             }

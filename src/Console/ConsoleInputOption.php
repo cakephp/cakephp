@@ -47,38 +47,14 @@ class ConsoleInputOption
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        /**
-         * Name of the option
-         */
         protected string $_name,
-        /**
-         * Short (1 character) alias for the option.
-         */
         protected string $_short = '',
-        /**
-         * Help text for the option.
-         */
         protected string $_help = '',
-        /**
-         * Is the option a boolean option. Boolean options do not consume a parameter.
-         */
         protected bool $_boolean = false,
         string|bool|null $default = null,
-        /**
-         * An array of choices for the option.
-         */
         protected array $_choices = [],
-        /**
-         * Can the option accept multiple value definition.
-         */
         protected bool $_multiple = false,
-        /**
-         * Is the option required.
-         */
         protected bool $required = false,
-        /**
-         * The prompt string
-         */
         protected ?string $prompt = null
     ) {
         if ($this->_boolean) {

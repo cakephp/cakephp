@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
+use Iterator;
 use RuntimeException;
 use function Cake\Routing\url;
 use function Cake\Routing\urlArray;
@@ -56,7 +57,7 @@ class RouterTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        Router::defaultRouteClass(\Cake\Routing\Route\Route::class);
+        Router::defaultRouteClass(Route::class);
     }
 
     /**
@@ -1710,7 +1711,7 @@ class RouterTest extends TestCase
      *
      * @return array
      */
-    public static function parseReverseSymmetryData(): \Iterator
+    public static function parseReverseSymmetryData(): Iterator
     {
         yield ['/controller/action'];
         yield ['/controller/action/param'];
@@ -2257,7 +2258,7 @@ class RouterTest extends TestCase
         Router::parseRequest($this->makeRequest('/blog/foobar', 'GET'));
     }
 
-    public static function routePathProvider(): \Iterator
+    public static function routePathProvider(): Iterator
     {
         // Input path, output route data.
         // Controller + action
@@ -2428,7 +2429,7 @@ class RouterTest extends TestCase
     /**
      * @return array
      */
-    public static function invalidRoutePathProvider(): \Iterator
+    public static function invalidRoutePathProvider(): Iterator
     {
         yield ['view'];
         yield ['Bookmarks:view'];
@@ -3013,7 +3014,7 @@ class RouterTest extends TestCase
     {
         $url = 'http://example.com/posts/view/1';
 
-        $route = $this->getMockBuilder(\Cake\Routing\Route\Route::class)
+        $route = $this->getMockBuilder(Route::class)
             ->onlyMethods(['match'])
             ->setConstructorArgs(['/{controller}/{action}/*'])
             ->getMock();
@@ -3475,7 +3476,7 @@ class RouterTest extends TestCase
     /**
      * @return array
      */
-    public static function invalidRoutePathParametersArrayProvider(): \Iterator
+    public static function invalidRoutePathParametersArrayProvider(): Iterator
     {
         yield [['plugin' => false]];
         yield [['plugin' => 'Cms']];

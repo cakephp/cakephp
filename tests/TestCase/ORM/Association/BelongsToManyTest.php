@@ -38,6 +38,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 use TestApp\Model\Entity\ArticlesTag;
 use function Cake\Collection\collection;
 
@@ -67,12 +69,12 @@ class BelongsToManyTest extends TestCase
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $tag;
+    protected MockObject $tag;
 
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $article;
+    protected MockObject $article;
 
     /**
      * Set up
@@ -698,7 +700,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (EntityInterface $e): \Cake\Datasource\EntityInterface {
+            ->willReturnCallback(function (EntityInterface $e): EntityInterface {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
@@ -1181,7 +1183,7 @@ class BelongsToManyTest extends TestCase
      *
      * @return array
      */
-    public static function emptyProvider(): \Iterator
+    public static function emptyProvider(): Iterator
     {
         yield [''];
         yield [false];
@@ -1487,7 +1489,7 @@ class BelongsToManyTest extends TestCase
 
         $result = $table
             ->find()
-            ->contain(['Tags' => fn(SelectQuery $q): \Cake\ORM\Query\SelectQuery => $q->select(['id'])])
+            ->contain(['Tags' => fn(SelectQuery $q): SelectQuery => $q->select(['id'])])
             ->first();
 
         $this->assertNotEmpty($result->tags[0]->id);
@@ -1519,7 +1521,7 @@ class BelongsToManyTest extends TestCase
 
         $result = $table
             ->find()
-            ->contain(['Tags' => fn(SelectQuery $q): \Cake\ORM\Query\SelectQuery => $q->select(['two' => $q->newExpr('1 + 1')])->enableAutoFields()])
+            ->contain(['Tags' => fn(SelectQuery $q): SelectQuery => $q->select(['two' => $q->newExpr('1 + 1')])->enableAutoFields()])
             ->first();
 
         $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');

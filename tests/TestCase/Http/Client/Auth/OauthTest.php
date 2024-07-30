@@ -572,7 +572,7 @@ class OauthTest extends TestCase
     {
         $this->assertMatchesRegularExpression(
             '/oauth_signature="[a-zA-Z0-9\/=+]+"/',
-            urldecode((string) $result)
+            urldecode((string)$result)
         );
     }
 }

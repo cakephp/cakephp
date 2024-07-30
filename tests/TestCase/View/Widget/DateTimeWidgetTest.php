@@ -21,6 +21,7 @@ use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
 use DateTime;
+use Iterator;
 
 /**
  * DateTimeWidget test case
@@ -59,7 +60,7 @@ class DateTimeWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function selectedValuesProvider(): \Iterator
+    public static function selectedValuesProvider(): Iterator
     {
         $date = new DateTime('2014-01-20 12:30:45');
         yield 'DateTime' => [$date];
@@ -74,7 +75,7 @@ class DateTimeWidgetTest extends TestCase
      * @dataProvider selectedValuesProvider
      * @param mixed $selected
      */
-    public function testRenderValid(\DateTime|string|int $selected): void
+    public function testRenderValid(DateTime|string|int $selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [

@@ -223,7 +223,7 @@ class MailerTest extends TestCase
         $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
-        $this->assertInstanceOf(\Cake\Mailer\Transport\DebugTransport::class, $result);
+        $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->deliver('This is the message');
 
@@ -1247,7 +1247,7 @@ class MailerTest extends TestCase
     public function testMissingActionThrowsException(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Mail ' . \Cake\Mailer\Mailer::class . '::test() could not be found, or is not accessible.');
+        $this->expectExceptionMessage('Mail ' . Mailer::class . '::test() could not be found, or is not accessible.');
         (new Mailer())->send('test');
     }
 
@@ -1300,12 +1300,12 @@ class MailerTest extends TestCase
             if ($message[$i] === $boundary) {
                 $flag = false;
                 $type = '';
-                while (!preg_match('/^$/', (string) $message[$i])) {
-                    if (preg_match('/^Content-Type: text\/plain/', (string) $message[$i])) {
+                while (!preg_match('/^$/', (string)$message[$i])) {
+                    if (preg_match('/^Content-Type: text\/plain/', (string)$message[$i])) {
                         $type = 'text';
                     }
 
-                    if (preg_match('/^Content-Type: text\/html/', (string) $message[$i])) {
+                    if (preg_match('/^Content-Type: text\/html/', (string)$message[$i])) {
                         $type = 'html';
                     }
 

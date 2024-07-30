@@ -81,19 +81,13 @@ class TranslatorRegistry
      * @param string $locale The default locale code to use.
      */
     public function __construct(
-        /**
-         * A package locator.
-         */
         protected PackageLocator $packages,
-        /**
-         * A formatter locator.
-         */
         protected FormatterLocator $formatters,
         string $locale
     ) {
         $this->setLocale($locale);
 
-        $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale): \Cake\I18n\Package {
+        $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale): Package {
             $loader = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po'),

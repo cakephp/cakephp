@@ -47,20 +47,10 @@ class UnaryExpression implements ExpressionInterface
      * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
     public function __construct(
-        /**
-         * The operator this unary expression represents
-         */
         protected string $_operator,
-        /**
-         * Holds the value which the unary expression operates
-         */
         protected mixed $_value,
-        /**
-         * Where to place the operator
-         */
         protected int $position = self::PREFIX
-    )
-    {
+    ) {
     }
 
     /**

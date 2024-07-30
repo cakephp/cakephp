@@ -404,7 +404,7 @@ class EventManagerTest extends TestCase
      */
     public function testGlobalDispatcherGetter(): void
     {
-        $this->assertInstanceOf(\Cake\Event\EventManager::class, EventManager::instance());
+        $this->assertInstanceOf(EventManager::class, EventManager::instance());
         $manager = new EventManager();
 
         EventManager::instance($manager);
@@ -418,7 +418,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchWithGlobal(): void
     {
-        $generalManager = $this->getMockBuilder(\Cake\Event\EventManager::class)
+        $generalManager = $this->getMockBuilder(EventManager::class)
             ->onlyMethods(['prioritisedListeners'])
             ->getMock();
         $manager = new EventManager();
@@ -437,7 +437,7 @@ class EventManagerTest extends TestCase
      */
     public function testStopPropagation(): void
     {
-        $generalManager = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
+        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
         $manager = new EventManager();
         $listener = new EventTestListener();
 
@@ -466,7 +466,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchPrioritizedWithGlobal(): void
     {
-        $generalManager = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
+        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
         $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
         $event = new Event('fake.event');
@@ -498,7 +498,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchGlobalBeforeLocal(): void
     {
-        $generalManager = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
+        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
         $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
         $event = new Event('fake.event');
@@ -583,7 +583,7 @@ class EventManagerTest extends TestCase
         $manager->dispatch($event2);
 
         $result = $manager->getEventList();
-        $this->assertInstanceOf(\Cake\Event\EventList::class, $result);
+        $this->assertInstanceOf(EventList::class, $result);
         $this->assertCount(2, $result);
         $this->assertEquals($result[0], $event);
         $this->assertEquals($result[1], $event2);

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Exception\CakeException;
+use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Helper\FormHelper;
@@ -284,7 +285,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMultipleTimesDefaultConfigValuesWorks(): void
     {
-        $this->Helpers->load('Number', ['engine' => \Cake\I18n\Number::class]);
+        $this->Helpers->load('Number', ['engine' => Number::class]);
         $this->Helpers->load('Number');
         $this->addToAssertionCount(1);
     }

@@ -63,11 +63,10 @@ class RadioWidget extends BasicWidget
      * @param \Cake\View\StringTemplate $templates Templates list.
      * @param \Cake\View\Widget\LabelWidget $_label Label widget instance.
      */
-    public function __construct(StringTemplate $templates, /**
-     * Label instance.
-     */
-    protected LabelWidget $_label)
-    {
+    public function __construct(
+        StringTemplate $templates,
+        protected LabelWidget $_label
+    ) {
         $this->_templates = $templates;
     }
 
@@ -212,7 +211,7 @@ class RadioWidget extends BasicWidget
 
         if (
             $label === false &&
-            !str_contains((string) $this->_templates->get('radioWrapper'), '{{input}}')
+            !str_contains((string)$this->_templates->get('radioWrapper'), '{{input}}')
         ) {
             $label = $input;
         }

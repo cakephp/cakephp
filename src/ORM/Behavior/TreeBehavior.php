@@ -18,6 +18,7 @@ namespace Cake\ORM\Behavior;
 
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
+use Cake\Collection\Iterator\TreePrinter;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -230,7 +231,7 @@ class TreeBehavior extends Behavior
             if ($this->getConfig('cascadeCallbacks')) {
                 $query = $this->_scope($this->_table->query())
                     ->where(
-                        fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp
+                        fn (QueryExpression $exp): QueryExpression => $exp
                             ->gte($config['leftField'], $left + 1)
                             ->lte($config['leftField'], $right - 1)
                     );
@@ -242,7 +243,7 @@ class TreeBehavior extends Behavior
             } else {
                 $this->_scope($this->_table->deleteQuery())
                     ->where(
-                        fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp
+                        fn (QueryExpression $exp): QueryExpression => $exp
                             ->gte($config['leftField'], $left + 1)
                             ->lte($config['leftField'], $right - 1)
                     )
@@ -356,7 +357,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $this->_table->updateAll(
-            function (QueryExpression $exp) use ($config): \Cake\Database\Expression\QueryExpression {
+            function (QueryExpression $exp) use ($config): QueryExpression {
                 $leftInverse = clone $exp;
                 $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
@@ -365,7 +366,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->lt($config['leftField'], 0)
+            fn (QueryExpression $exp): QueryExpression => $exp->lt($config['leftField'], 0)
         );
     }
 
@@ -502,7 +503,7 @@ class TreeBehavior extends Behavior
         ?string $spacer = null
     ): SelectQuery {
         return $query->formatResults(
-            function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer): \Cake\Collection\Iterator\TreePrinter {
+            function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer): TreePrinter {
                 $keyPath ??= $this->_getPrimaryKey();
                 $valuePath ??= $this->_table->getDisplayField();
                 $spacer ??= '_';
@@ -529,7 +530,7 @@ class TreeBehavior extends Behavior
      */
     public function removeFromTree(EntityInterface $node): EntityInterface|false
     {
-        return $this->_table->getConnection()->transactional(function () use ($node): \Cake\Datasource\EntityInterface|false {
+        return $this->_table->getConnection()->transactional(function () use ($node): EntityInterface|false {
             $this->_ensureFields($node);
 
             return $this->_removeFromTree($node);
@@ -595,7 +596,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->getConnection()->transactional(function () use ($node, $number): \Cake\Datasource\EntityInterface {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number): EntityInterface {
             $this->_ensureFields($node);
 
             return $this->_moveUp($node, $number);
@@ -622,7 +623,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where([$parent . ' IS' => $nodeParent])
-                ->where(fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn (QueryExpression $exp): QueryExpression => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -634,7 +635,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where([$parent . ' IS' => $nodeParent])
-                ->where(fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn (QueryExpression $exp): QueryExpression => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -684,7 +685,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->getConnection()->transactional(function () use ($node, $number): \Cake\Datasource\EntityInterface {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number): EntityInterface {
             $this->_ensureFields($node);
 
             return $this->_moveDown($node, $number);
@@ -712,7 +713,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where([$parent . ' IS' => $nodeParent])
-                ->where(fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn (QueryExpression $exp): QueryExpression => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -724,7 +725,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where([$parent . ' IS' => $nodeParent])
-                ->where(fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn (QueryExpression $exp): QueryExpression => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
                 ->first();

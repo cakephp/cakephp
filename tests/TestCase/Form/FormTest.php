@@ -36,7 +36,7 @@ class FormTest extends TestCase
         $form = new Form();
         $schema = $form->getSchema();
 
-        $this->assertInstanceOf(\Cake\Form\Schema::class, $schema);
+        $this->assertInstanceOf(Schema::class, $schema);
         $this->assertSame($schema, $form->getSchema(), 'Same instance each time');
 
         $schema = new Schema();
@@ -164,7 +164,7 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid(): void
     {
-        $form = $this->getMockBuilder(\Cake\Form\Form::class)
+        $form = $this->getMockBuilder(Form::class)
             ->onlyMethods(['_execute'])
             ->getMock();
         $form->getValidator()

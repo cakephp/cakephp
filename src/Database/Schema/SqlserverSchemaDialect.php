@@ -550,9 +550,9 @@ class SqlserverSchemaDialect extends SchemaDialect
         if (
             isset($data['default']) &&
             in_array($data['type'], $dateTimeTypes, true) &&
-            in_array(strtolower((string) $data['default']), $dateTimeDefaults, true)
+            in_array(strtolower((string)$data['default']), $dateTimeDefaults, true)
         ) {
-            $out .= ' DEFAULT ' . strtoupper((string) $data['default']);
+            $out .= ' DEFAULT ' . strtoupper((string)$data['default']);
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default'])
                 ? (int)$data['default']

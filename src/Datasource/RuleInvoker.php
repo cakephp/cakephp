@@ -50,14 +50,11 @@ class RuleInvoker
      * @param string|null $name The name of the rule. Used in error messages.
      * @param array<string, mixed> $options The options for the rule. See above.
      */
-    public function __construct(callable $rule, /**
-     * The rule name
-     */
-    protected ?string $name, /**
-     * Rule options
-     */
-    protected array $options = [])
-    {
+    public function __construct(
+        callable $rule,
+        protected ?string $name,
+        protected array $options = []
+    ) {
         $this->rule = $rule;
     }
 

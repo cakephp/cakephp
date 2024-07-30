@@ -64,7 +64,7 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->partition(fn(QueryExpression $expr): \Cake\Database\Expression\QueryExpression => $expr->add(new AggregateExpression('MyAggregate', ['param'])));
+        $w = (new WindowExpression())->partition(fn(QueryExpression $expr): QueryExpression => $expr->add(new AggregateExpression('MyAggregate', ['param'])));
         $this->assertEqualsSql(
             'PARTITION BY MyAggregate(:param0)',
             $w->sql(new ValueBinder())

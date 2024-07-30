@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
+use Cake\Command\PluginAssetsSymlinkCommand;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -117,7 +118,7 @@ class PluginAssetsCommandsTest extends TestCase
         $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
-        $command = $this->getMockBuilder(\Cake\Command\PluginAssetsSymlinkCommand::class)
+        $command = $this->getMockBuilder(PluginAssetsSymlinkCommand::class)
             ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->willReturn($parser);

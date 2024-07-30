@@ -25,26 +25,16 @@ class Package
     /**
      * Constructor.
      *
-     * @param string $formatter The name of the formatter to use.
-     * @param string|null $fallback The name of the fallback package to use.
+     * @param string $formatter The name of the formatter to use when formatting translated messages.
+     * @param string|null $fallback The name of a fallback package to use when a message key does not
+     *   exist.
      * @param array<array|string> $messages The messages in this package.
      */
     public function __construct(
-        /**
-         * The name of the formatter to use when formatting translated messages.
-         */
         protected string $formatter = 'default',
-        /**
-         * The name of a fallback package to use when a message key does not
-         * exist.
-         */
         protected ?string $fallback = null,
-        /**
-         * Message keys and translations in this package.
-         */
         protected array $messages = []
-    )
-    {
+    ) {
     }
 
     /**

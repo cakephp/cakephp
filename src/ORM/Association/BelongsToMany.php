@@ -483,7 +483,7 @@ class BelongsToMany extends Association
         $subquery = $this->_appendJunctionJoin($subquery);
 
         $query
-            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds): \Cake\Database\Expression\QueryExpression {
+            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds): QueryExpression {
                 $identifiers = [];
                 foreach (array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
@@ -537,7 +537,7 @@ class BelongsToMany extends Association
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
-            'finder' => fn(): \Cake\ORM\Query\SelectQuery => $this->_appendJunctionJoin($this->find(), []),
+            'finder' => fn(): SelectQuery => $this->_appendJunctionJoin($this->find(), []),
         ]);
 
         return $loader->buildEagerLoader($options);
@@ -1447,7 +1447,7 @@ class BelongsToMany extends Association
     {
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
-                $tablesNames = array_map(\Cake\Utility\Inflector::class . '::underscore', [
+                $tablesNames = array_map(Inflector::class . '::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable(),
                 ]);

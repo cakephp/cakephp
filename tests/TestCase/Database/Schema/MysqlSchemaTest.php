@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
@@ -25,6 +26,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
+use Iterator;
 use PDO;
 
 /**
@@ -40,7 +42,7 @@ class MysqlSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string) $config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains((string)$config['driver'], 'Mysql'), 'Not using Mysql for test config');
     }
 
     /**
@@ -48,7 +50,7 @@ class MysqlSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function convertColumnProvider(): \Iterator
+    public static function convertColumnProvider(): Iterator
     {
         yield [
             'DATETIME',
@@ -240,7 +242,7 @@ class MysqlSchemaTest extends TestCase
             'default' => 'Default value',
             'comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder(\Cake\Database\Driver\Mysql::class)->getMock();
+        $driver = $this->getMockBuilder(Mysql::class)->getMock();
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -342,7 +344,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -447,7 +449,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
         $expected = [
@@ -614,7 +616,7 @@ SQL;
      *
      * @return array
      */
-    public static function columnSqlProvider(): \Iterator
+    public static function columnSqlProvider(): Iterator
     {
         // strings
         yield [
@@ -922,7 +924,7 @@ SQL;
      *
      * @return array
      */
-    public static function constraintSqlProvider(): \Iterator
+    public static function constraintSqlProvider(): Iterator
     {
         yield [
             'primary',
@@ -1000,7 +1002,7 @@ SQL;
      *
      * @return array
      */
-    public static function indexSqlProvider(): \Iterator
+    public static function indexSqlProvider(): Iterator
     {
         yield [
             'key_key',
@@ -1040,7 +1042,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1089,7 +1091,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1171,7 +1173,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1237,7 +1239,7 @@ SQL;
     public function testCreateSqlJson(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection
@@ -1283,7 +1285,7 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1304,7 +1306,7 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1368,7 +1370,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1386,7 +1388,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(\Cake\Database\Connection::class)
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('getDriver')
@@ -1403,7 +1405,7 @@ SQL;
      */
     public function testConstructConnectsDriver(): void
     {
-        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
             ->method('connect');
         new MysqlSchemaDialect($driver);
@@ -1421,7 +1423,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
-        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'type' => 'json',
             'null' => false,

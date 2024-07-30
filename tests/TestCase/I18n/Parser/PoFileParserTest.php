@@ -167,7 +167,7 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages): \Cake\I18n\Package {
+        I18n::setTranslator('default', function () use ($messages): Package {
             $package = new Package('default');
             $package->setMessages($messages);
 
@@ -201,7 +201,7 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages): \Cake\I18n\Package {
+        I18n::setTranslator('default', function () use ($messages): Package {
             $package = new Package('default');
             $package->setMessages($messages);
 

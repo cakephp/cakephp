@@ -28,6 +28,9 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
+use Iterator;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
 
 /**
@@ -231,7 +234,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => \TestApp\Model\Table\TagsTable::class,
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
@@ -294,7 +297,7 @@ class QueryRegressionTest extends TestCase
      *
      * @return array
      */
-    public static function strategyProvider(): \Iterator
+    public static function strategyProvider(): Iterator
     {
         yield ['append'];
         yield ['replace'];
@@ -313,7 +316,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => \TestApp\Model\Table\TagsTable::class,
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
             'saveStrategy' => $strategy,
@@ -402,12 +405,12 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => \TestApp\Model\Table\TagsTable::class,
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $articles->Highlights->hasMany('TopArticles', [
-            'className' => \TestApp\Model\Table\ArticlesTable::class,
+            'className' => ArticlesTable::class,
             'foreignKey' => 'author_id',
         ]);
         $entity = $articles->get(2, ...['contain' => ['Highlights']]);
@@ -929,8 +932,8 @@ class QueryRegressionTest extends TestCase
             ->matching('Users', fn($q) => $q->where(['Users.id >=' => 1]))
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->article);
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->user);
+        $this->assertInstanceOf(Entity::class, $result->article);
+        $this->assertInstanceOf(Entity::class, $result->user);
         $this->assertSame(2, $result->user->id);
         $this->assertSame(1, $result->article->id);
     }
@@ -1497,7 +1500,7 @@ class QueryRegressionTest extends TestCase
 
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->getTarget()->getEventManager()->on('Model.beforeFind', fn($e, $query) => $query->formatResults(fn($results) => $results->map(function (Entity $tag): \Cake\ORM\Entity {
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', fn($e, $query) => $query->formatResults(fn($results) => $results->map(function (Entity $tag): Entity {
             $tag->name .= ' - visited';
 
             return $tag;
@@ -1557,7 +1560,7 @@ class QueryRegressionTest extends TestCase
                         ->getAssociation('Authors')
                         ->find()
                         ->select(['Authors.name'])
-                        ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
+                        ->where(fn(QueryExpression $exp): QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
                 ]),
             ]);
 
@@ -1614,7 +1617,7 @@ class QueryRegressionTest extends TestCase
                         ->getAssociation('Authors')
                         ->find()
                         ->select(['Authors.name'])
-                        ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
+                        ->where(fn(QueryExpression $exp): QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
                     '1',
                 ]),
             ]);
@@ -1664,7 +1667,7 @@ class QueryRegressionTest extends TestCase
                         ->getAssociation('Authors')
                         ->find()
                         ->select(['Authors.name'])
-                        ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
+                        ->where(fn(QueryExpression $exp): QueryExpression => $exp->equalFields('Authors.id', 'Articles.author_id')),
                     ' appended',
                 ]),
             ]);

@@ -54,11 +54,11 @@ class ExistsIn
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
      *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
-    public function __construct(array|string $fields, /**
-     * The repository where the field will be looked for
-     */
-    protected Table|Association|string $_repository, array $options = [])
-    {
+    public function __construct(
+        array|string $fields,
+        protected Table|Association|string $_repository,
+        array $options = []
+    ) {
         $options += ['allowNullableNulls' => false];
         $this->_options = $options;
 

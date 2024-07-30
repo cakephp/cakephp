@@ -158,7 +158,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function getStrategy(): TranslateStrategyInterface
     {
-        if ($this->strategy instanceof \Cake\ORM\Behavior\Translate\TranslateStrategyInterface) {
+        if ($this->strategy instanceof TranslateStrategyInterface) {
             return $this->strategy;
         }
 
@@ -334,7 +334,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
 
         return $query
-            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias): \Cake\Datasource\QueryInterface {
+            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias): QueryInterface {
                 if ($locales) {
                     $query->where([$targetAlias . '.locale IN' => $locales]);
                 }

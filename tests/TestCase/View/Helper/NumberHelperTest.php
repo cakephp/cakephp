@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
+use Iterator;
 
 /**
  * NumberHelperTest class
@@ -58,7 +59,7 @@ class NumberHelperTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): \Iterator
+    public static function methodProvider(): Iterator
     {
         yield ['precision', 1.23];
         yield ['toReadableSize', 1.23];

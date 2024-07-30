@@ -39,12 +39,8 @@ class MiddlewareDispatcher
      * @param \Cake\Core\HttpApplicationInterface $app The test case to run.
      */
     public function __construct(
-        /**
-         * The application that is being dispatched.
-         */
         protected HttpApplicationInterface $app
-    )
-    {
+    ) {
     }
 
     /**
@@ -108,7 +104,7 @@ class MiddlewareDispatcher
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
             $spec['environment']
         );
-        if (str_contains((string) $environment['PHP_SELF'], 'phpunit')) {
+        if (str_contains((string)$environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
         }
 

@@ -277,7 +277,7 @@ class Debugger
      */
     public static function getUniqueFrames(Throwable $exception, ?Throwable $parent): array
     {
-        if (!$parent instanceof \Throwable) {
+        if (!$parent instanceof Throwable) {
             return $exception->getTrace();
         }
 
@@ -444,11 +444,11 @@ class Debugger
             return str_replace(APP, 'APP/', $path);
         }
 
-        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, (string) CAKE_CORE_INCLUDE_PATH)) {
+        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, (string)CAKE_CORE_INCLUDE_PATH)) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
 
-        if (defined('ROOT') && str_starts_with($path, (string) ROOT)) {
+        if (defined('ROOT') && str_starts_with($path, (string)ROOT)) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 

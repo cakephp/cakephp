@@ -36,13 +36,9 @@ class CommandRetry
      * @param int $maxRetries The maximum number of retry attempts allowed
      */
     public function __construct(
-        /**
-         * The strategy to follow should the executed action fail.
-         */
         protected RetryStrategyInterface $strategy,
         protected int $maxRetries = 1
-    )
-    {
+    ) {
     }
 
     /**

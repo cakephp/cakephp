@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * Integration tests for using the bindingKey in associations
@@ -39,7 +40,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderJoinable(): \Iterator
+    public static function strategiesProviderJoinable(): Iterator
     {
         yield ['join'];
         yield ['select'];
@@ -50,7 +51,7 @@ class BindingKeyTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderExternal(): \Iterator
+    public static function strategiesProviderExternal(): Iterator
     {
         yield ['subquery'];
         yield ['select'];

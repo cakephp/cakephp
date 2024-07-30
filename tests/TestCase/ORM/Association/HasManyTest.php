@@ -29,10 +29,14 @@ use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use Mockery;
+use PHPUnit\Framework\MockObject\MockObject;
 use function Cake\I18n\__;
 
 /**
@@ -62,7 +66,7 @@ class HasManyTest extends TestCase
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $article;
+    protected MockObject $article;
 
     /**
      * @var \Cake\Database\TypeMap
@@ -92,7 +96,7 @@ class HasManyTest extends TestCase
             ],
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMockBuilder(\Cake\ORM\Table::class)
+        $this->article = $this->getMockBuilder(Table::class)
             ->onlyMethods(['find', 'deleteAll', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
             ->getMock();
@@ -455,7 +459,7 @@ class HasManyTest extends TestCase
         $this->author->setPrimaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['all', 'andWhere', 'getRepository'])
             ->setConstructorArgs([$this->article])
             ->getMock();
@@ -628,7 +632,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock(\Cake\ORM\Table::class)
+        $mock = Mockery::mock(Table::class)
             ->shouldAllowMockingMethod('saveAssociated')
             ->makePartial();
         $config = [
@@ -688,7 +692,7 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder(\Cake\ORM\Table::class)
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -945,7 +949,7 @@ class HasManyTest extends TestCase
      *
      * @return array
      */
-    public static function emptySetDataProvider(): \Iterator
+    public static function emptySetDataProvider(): Iterator
     {
         yield [''];
         yield [false];

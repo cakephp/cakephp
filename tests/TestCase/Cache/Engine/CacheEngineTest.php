@@ -5,11 +5,12 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use Iterator;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
 class CacheEngineTest extends TestCase
 {
-    public static function durationProvider(): \Iterator
+    public static function durationProvider(): Iterator
     {
         yield [null, 10];
         yield [2, 2];
@@ -22,7 +23,7 @@ class CacheEngineTest extends TestCase
      *
      * @dataProvider durationProvider
      */
-    public function testDuration(int|\DateInterval|null $ttl, int $expected): void
+    public function testDuration(int|DateInterval|null $ttl, int $expected): void
     {
         $engine = new TestAppCacheEngine();
         $engine->setConfig(['duration' => 10]);

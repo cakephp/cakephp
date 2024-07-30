@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Binary type.
@@ -34,7 +36,7 @@ class BinaryTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup
@@ -43,7 +45,7 @@ class BinaryTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('binary');
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**

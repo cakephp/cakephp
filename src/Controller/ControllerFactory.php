@@ -114,7 +114,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();
-        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 
@@ -126,7 +126,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
-        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 
@@ -267,15 +267,15 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             $namespace .= '/' . $prefix;
         }
 
-        $firstChar = substr((string) $controller, 0, 1);
+        $firstChar = substr((string)$controller, 0, 1);
 
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
         if (
-            str_contains((string) $controller, '\\') ||
-            str_contains((string) $controller, '/') ||
-            str_contains((string) $controller, '.') ||
+            str_contains((string)$controller, '\\') ||
+            str_contains((string)$controller, '/') ||
+            str_contains((string)$controller, '.') ||
             $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);

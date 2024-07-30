@@ -20,6 +20,9 @@ use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
+use Cake\Collection\Iterator\ExtractIterator;
+use Cake\Collection\Iterator\InsertIterator;
+use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use CallbackFilterIterator;
@@ -29,6 +32,7 @@ use DateTime;
 use Exception;
 use Generator;
 use InvalidArgumentException;
+use Iterator;
 use LogicException;
 use NoRewindIterator;
 use stdClass;
@@ -61,7 +65,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function avgProvider(): \Iterator
+    public static function avgProvider(): Iterator
     {
         $items = [1, 2, 3];
         yield 'array' => [$items];
@@ -100,7 +104,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function avgWithMatcherProvider(): \Iterator
+    public static function avgWithMatcherProvider(): Iterator
     {
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
         yield 'array' => [$items];
@@ -123,7 +127,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function medianProvider(): \Iterator
+    public static function medianProvider(): Iterator
     {
         $items = [5, 2, 4];
         yield 'array' => [$items];
@@ -169,7 +173,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function medianWithMatcherProvider(): \Iterator
+    public static function medianWithMatcherProvider(): Iterator
     {
         $items = [
             ['invoice' => ['total' => 400]],
@@ -217,7 +221,7 @@ class CollectionTest extends TestCase
         $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
     }
 
-    public static function filterProvider(): \Iterator
+    public static function filterProvider(): Iterator
     {
         $items = [1, 2, 0, 3, false, 4, null, 5, ''];
         yield 'array' => [$items];
@@ -263,7 +267,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([]);
         $result = $collection->reject(fn($v): bool => false);
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $collection = new Collection(['a' => null, 'b' => 2, 'c' => false]);
         $result = $collection->reject();
@@ -284,7 +288,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([]);
         $result = $collection->unique();
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -396,7 +400,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function simpleProvider(): \Iterator
+    public static function simpleProvider(): Iterator
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
         yield 'array' => [$items];
@@ -416,7 +420,7 @@ class CollectionTest extends TestCase
 
             return $v * $v;
         });
-        $this->assertInstanceOf(\Cake\Collection\Iterator\ReplaceIterator::class, $map);
+        $this->assertInstanceOf(ReplaceIterator::class, $map);
         $this->assertSame(['a' => 1, 'b' => 4, 'c' => 9, 'd' => 16], iterator_to_array($map));
     }
 
@@ -447,7 +451,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function extractProvider(): \Iterator
+    public static function extractProvider(): Iterator
     {
         $items = [['a' => ['b' => ['c' => 1]]], 2];
         yield 'array' => [$items];
@@ -463,7 +467,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->extract('a.b.c');
-        $this->assertInstanceOf(\Cake\Collection\Iterator\ExtractIterator::class, $map);
+        $this->assertInstanceOf(ExtractIterator::class, $map);
         $this->assertEquals([1, null], iterator_to_array($map));
     }
 
@@ -472,7 +476,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function sortProvider(): \Iterator
+    public static function sortProvider(): Iterator
     {
         $items = [
             ['a' => ['b' => ['c' => 4]]],
@@ -492,7 +496,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->sortBy('a.b.c');
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $map);
+        $this->assertInstanceOf(Collection::class, $map);
         $expected = [
             ['a' => ['b' => ['c' => 10]]],
             ['a' => ['b' => ['c' => 6]]],
@@ -587,7 +591,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function groupByProvider(): \Iterator
+    public static function groupByProvider(): Iterator
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -617,7 +621,7 @@ class CollectionTest extends TestCase
             ],
         ];
         $this->assertSame($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -736,7 +740,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function indexByProvider(): \Iterator
+    public static function indexByProvider(): Iterator
     {
         $items = [
             ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -762,7 +766,7 @@ class CollectionTest extends TestCase
             2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
         ];
         $this->assertSame($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -887,7 +891,7 @@ class CollectionTest extends TestCase
             11 => 1,
         ];
         $result = iterator_to_array($grouped);
-        $this->assertInstanceOf(\Cake\Collection\Collection::class, $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
         $this->assertSame($expected, $result);
     }
 
@@ -1684,7 +1688,7 @@ class CollectionTest extends TestCase
         $items = [['a' => 1], ['b' => 2]];
         $collection = new Collection($items);
         $iterator = $collection->insert('c', [3, 4]);
-        $this->assertInstanceOf(\Cake\Collection\Iterator\InsertIterator::class, $iterator);
+        $this->assertInstanceOf(InsertIterator::class, $iterator);
         $this->assertSame(
             [['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
             iterator_to_array($iterator)
@@ -1696,7 +1700,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function nestedListProvider(): \Iterator
+    public static function nestedListProvider(): Iterator
     {
         yield ['desc', [1, 2, 3, 5, 7, 4, 8, 6, 9, 10]];
         yield ['asc', [5, 7, 3, 8, 4, 2, 1, 9, 10, 6]];
@@ -1782,7 +1786,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function sumOfProvider(): \Iterator
+    public static function sumOfProvider(): Iterator
     {
         $items = [
             ['invoice' => ['total' => 100]],
@@ -2165,7 +2169,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      * @covers ::takeLast
      */
-    public function testLastN(\Generator|array $data): void
+    public function testLastN(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->takeLast(3)->toArray();
@@ -2180,7 +2184,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      * @covers ::takeLast
      */
-    public function testLastNtWithOverflow(\Generator|array $data): void
+    public function testLastNtWithOverflow(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->takeLast(10)->toArray();
@@ -2195,7 +2199,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      * @covers ::takeLast
      */
-    public function testLastNtWithOddData(\Generator|array $data): void
+    public function testLastNtWithOddData(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->take(3)->takeLast(2)->toArray();
@@ -2228,7 +2232,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      * @covers ::takeLast
      */
-    public function testLastNtWithNegative(\Generator|array $data): void
+    public function testLastNtWithNegative(Generator|array $data): void
     {
         $collection = new Collection($data);
 
@@ -2361,7 +2365,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public static function chunkProvider(): \Iterator
+    public static function chunkProvider(): Iterator
     {
         $items = range(1, 10);
         yield 'array' => [$items];

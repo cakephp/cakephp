@@ -233,7 +233,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
                 $options['className'] = $alias;
             }
 
-            if (!isset($options['table']) && !str_contains((string) $options['className'], '\\')) {
+            if (!isset($options['table']) && !str_contains((string)$options['className'], '\\')) {
                 [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
@@ -292,7 +292,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             $options['className'] = $alias;
         }
 
-        if (str_contains((string) $options['className'], '\\') && class_exists($options['className'])) {
+        if (str_contains((string)$options['className'], '\\') && class_exists($options['className'])) {
             return $options['className'];
         }
 

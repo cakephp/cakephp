@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeZone;
 use IntlDateFormatter;
+use Iterator;
 
 /**
  * DateTimeTest class
@@ -83,7 +84,7 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider(): \Iterator
+    public static function timeAgoProvider(): Iterator
     {
         yield ['-12 seconds', '12 seconds ago'];
         yield ['-12 minutes', '12 minutes ago'];
@@ -117,7 +118,7 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoEndProvider(): \Iterator
+    public static function timeAgoEndProvider(): Iterator
     {
         yield [
             '+4 months +2 weeks +3 days',
@@ -526,7 +527,7 @@ class DateTimeTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider(): \Iterator
+    public static function invalidDataProvider(): Iterator
     {
         yield [null];
         yield [''];

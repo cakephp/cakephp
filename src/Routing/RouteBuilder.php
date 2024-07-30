@@ -99,16 +99,7 @@ class RouteBuilder
      * @param array $_params The scope's routing parameters.
      * @param array<string, mixed> $options Options list.
      */
-    public function __construct(/**
-     * The route collection routes should be added to.
-     */
-    protected RouteCollection $_collection, /**
-     * The path prefix scope that this collection uses.
-     */
-    protected string $_path, /**
-     * The scope parameters if there are any.
-     */
-    protected array $_params = [], array $options = [])
+    public function __construct(protected RouteCollection $_collection, protected string $_path, protected array $_params = [], array $options = [])
     {
         if (isset($options['routeClass'])) {
             $this->_routeClass = $options['routeClass'];
@@ -402,7 +393,7 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if ($callback instanceof \Closure) {
+        if ($callback instanceof Closure) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/{' . $idName . '}';
             $this->scope($path, [], $callback);
@@ -896,7 +887,7 @@ class RouteBuilder
             $params = [];
         }
 
-        if (!$callback instanceof \Closure) {
+        if (!$callback instanceof Closure) {
             throw new InvalidArgumentException('Need a valid Closure to connect routes.');
         }
 

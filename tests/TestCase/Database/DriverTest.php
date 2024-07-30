@@ -29,9 +29,11 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use Exception;
+use Iterator;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\MockObject\MockObject;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
 
@@ -43,7 +45,7 @@ class DriverTest extends TestCase
     /**
      * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup.
@@ -283,7 +285,7 @@ class DriverTest extends TestCase
      *
      * @return array
      */
-    public static function schemaValueProvider(): \Iterator
+    public static function schemaValueProvider(): Iterator
     {
         yield [null, 'NULL'];
         yield [false, 'FALSE'];

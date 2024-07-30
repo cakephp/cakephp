@@ -33,20 +33,10 @@ class Arguments
      *  the same as $args.
      */
     public function __construct(
-        /**
-         * Positional arguments.
-         */
         protected array $args,
-        /**
-         * Named options
-         */
         protected array $options,
-        /**
-         * Positional argument name map
-         */
         protected array $argNames
-    )
-    {
+    ) {
     }
 
     /**

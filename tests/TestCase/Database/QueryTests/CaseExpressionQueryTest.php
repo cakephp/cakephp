@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
@@ -28,6 +29,7 @@ use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -151,11 +153,11 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['article_id', 'user_id'])
             ->from('comments')
             ->orderByAsc('comments.article_id')
-            ->orderByDesc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $query->newExpr()
+            ->orderByDesc(fn(QueryExpression $exp, Query $query): CaseStatementExpression => $query->newExpr()
                 ->case($query->identifier('comments.article_id'))
                 ->when(1)
                 ->then($query->identifier('comments.user_id')))
-            ->orderByAsc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $query->newExpr()
+            ->orderByAsc(fn(QueryExpression $exp, Query $query): CaseStatementExpression => $query->newExpr()
                 ->case($query->identifier('comments.article_id'))
                 ->when(2)
                 ->then($query->identifier('comments.user_id')))
@@ -197,7 +199,7 @@ class CaseExpressionQueryTest extends TestCase
             ->from('articles')
             ->leftJoin('comments', ['comments.article_id = articles.id'])
             ->groupBy(['articles.id', 'articles.title'])
-            ->having(function (QueryExpression $exp, Query $query): \Cake\Database\Expression\QueryExpression {
+            ->having(function (QueryExpression $exp, Query $query): QueryExpression {
                 $expression = $query->newExpr()
                     ->case()
                     ->when(['comments.published' => 'Y'])
@@ -259,7 +261,7 @@ class CaseExpressionQueryTest extends TestCase
         $this->assertSame(5, (int)$query->execute()->fetch()[0]);
     }
 
-    public static function bindingValueDataProvider(): \Iterator
+    public static function bindingValueDataProvider(): Iterator
     {
         yield ['1', 3];
         yield ['2', 4];

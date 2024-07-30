@@ -29,7 +29,7 @@ class UnionDependenciesController extends Controller
         $this->inject = $inject;
     }
 
-    public function typedUnion(string|int $one): \Cake\Http\Response
+    public function typedUnion(string|int $one): Response
     {
         return $this->response->withStringBody(json_encode(['one' => $one]));
     }

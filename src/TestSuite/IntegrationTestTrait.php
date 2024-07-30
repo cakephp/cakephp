@@ -64,6 +64,7 @@ use Cake\Utility\Security;
 use Exception;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Exception as PHPUnitException;
+use PHPUnit\Framework\Attributes\After;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -168,7 +169,7 @@ trait IntegrationTestTrait
      *
      * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
-    #[\PHPUnit\Framework\Attributes\After]
+    #[After]
     public function cleanup(): void
     {
         $this->_request = [];
@@ -480,7 +481,7 @@ trait IntegrationTestTrait
      */
     public function controllerSpy(EventInterface $event, ?Controller $controller = null): void
     {
-        if (!$controller instanceof \Cake\Controller\Controller) {
+        if (!$controller instanceof Controller) {
             $controller = $event->getSubject();
             assert($controller instanceof Controller);
         }
@@ -551,7 +552,7 @@ trait IntegrationTestTrait
             $tokenUrl .= '?' . $query;
         }
 
-        parse_str((string) $query, $queryData);
+        parse_str((string)$query, $queryData);
 
         $env = [
             'REQUEST_METHOD' => $method,

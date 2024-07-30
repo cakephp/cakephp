@@ -404,7 +404,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getXml(): ?SimpleXMLElement
     {
-        if ($this->_xml instanceof \SimpleXMLElement) {
+        if ($this->_xml instanceof SimpleXMLElement) {
             return $this->_xml;
         }
 

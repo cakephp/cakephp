@@ -40,10 +40,7 @@ class RulesProvider
      * @throws \ReflectionException
      * @psalm-param object|class-string $_class
      */
-    public function __construct(/**
-     * The class/object to proxy.
-     */
-    protected object|string $_class = Validation::class)
+    public function __construct(protected object|string $_class = Validation::class)
     {
         $this->_reflection = new ReflectionClass($this->_class);
     }

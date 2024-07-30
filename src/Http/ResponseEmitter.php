@@ -36,12 +36,8 @@ class ResponseEmitter
      * @param int $maxBufferLength Maximum output buffering size for each iteration.
      */
     public function __construct(
-        /**
-         * Maximum output buffering size for each iteration.
-         */
         protected int $maxBufferLength = 8192
-    )
-    {
+    ) {
     }
 
     /**

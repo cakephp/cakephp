@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -19,7 +20,7 @@ class CakesController extends Controller
     /**
      * index method
      */
-    public function index(): \Cake\Http\Response
+    public function index(): Response
     {
         return $this->response->withStringBody('Hello Jane');
     }

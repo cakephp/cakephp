@@ -306,7 +306,7 @@ class View implements EventDispatcherInterface
         ?EventManagerInterface $eventManager = null,
         array $viewOptions = []
     ) {
-        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
+        if ($eventManager instanceof EventManagerInterface) {
             // Set the event manager before accessing the helper registry below
             // to ensure that helpers are registered as listeners with the manager when loaded.
             $this->setEventManager($eventManager);
@@ -1498,7 +1498,7 @@ class View implements EventDispatcherInterface
     {
         $paths = [$basePath];
         if ($this->request->getParam('prefix')) {
-            $prefixPath = explode('/', (string) $this->request->getParam('prefix'));
+            $prefixPath = explode('/', (string)$this->request->getParam('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

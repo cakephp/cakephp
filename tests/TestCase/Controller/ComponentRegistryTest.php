@@ -21,6 +21,7 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -101,7 +102,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse(): void
     {
-        $mock = $this->getMockBuilder(\Cake\Event\EventManager::class)->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->never())
             ->method('on');
 
@@ -152,7 +153,7 @@ class ComponentRegistryTest extends TestCase
     public function testGetController(): void
     {
         $result = $this->Components->getController();
-        $this->assertInstanceOf(\Cake\Controller\Controller::class, $result);
+        $this->assertInstanceOf(Controller::class, $result);
     }
 
     /**
@@ -241,7 +242,7 @@ class ComponentRegistryTest extends TestCase
         $formProtection = new FormProtectionComponent($this->Components);
         $this->Components->FormProtection = $formProtection;
 
-        $this->assertTrue(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection instanceof \Cake\Controller\Component\FormProtectionComponent, 'Should be present');
+        $this->assertTrue(property_exists($this->Components, 'FormProtection') && $this->Components->FormProtection instanceof FormProtectionComponent, 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
     }
 

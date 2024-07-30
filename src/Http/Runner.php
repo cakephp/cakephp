@@ -79,7 +79,7 @@ class Runner implements RequestHandlerInterface
             return $middleware->process($request, $this);
         }
 
-        if ($this->fallbackHandler instanceof \Psr\Http\Server\RequestHandlerInterface) {
+        if ($this->fallbackHandler instanceof RequestHandlerInterface) {
             return $this->fallbackHandler->handle($request);
         }
 

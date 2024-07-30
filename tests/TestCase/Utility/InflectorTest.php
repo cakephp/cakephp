@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
+use Iterator;
 
 /**
  * Short description for class.
@@ -103,7 +104,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public static function singularizeProvider(): \Iterator
+    public static function singularizeProvider(): Iterator
     {
         yield ['categoria', 'categorias'];
         yield ['menu', 'menus'];
@@ -236,7 +237,7 @@ class InflectorTest extends TestCase
      *
      * @return array
      */
-    public static function pluralizeProvider(): \Iterator
+    public static function pluralizeProvider(): Iterator
     {
         yield ['axmen', 'axman'];
         yield ['men', 'man'];

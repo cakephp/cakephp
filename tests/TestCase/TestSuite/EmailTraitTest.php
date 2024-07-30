@@ -24,6 +24,7 @@ use Cake\TestSuite\Constraint\Email\MailSentFrom;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
+use Iterator;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\LogicalNot;
 
@@ -211,7 +212,7 @@ class EmailTraitTest extends TestCase
      *
      * @return array
      */
-    public static function failureMessageDataProvider(): \Iterator
+    public static function failureMessageDataProvider(): Iterator
     {
         yield 'assertMailCount' => ['assertMailCount', 'Failed asserting that 2 emails were sent.', [2]];
         yield 'assertMailSentTo' => ['assertMailSentTo', "Failed asserting that 'missing@example.com' was sent an email.", ['missing@example.com']];

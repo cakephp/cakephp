@@ -19,8 +19,10 @@ namespace TestApp\Controller;
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 use OutOfBoundsException;
+use Psr\Http\Message\MessageInterface;
 use RuntimeException;
 
 /**
@@ -72,7 +74,7 @@ class PostsController extends AppController
         $this->viewBuilder()->setLayout($layout);
     }
 
-    public function someRedirect(): ?\Cake\Http\Response
+    public function someRedirect(): ?Response
     {
         $this->Flash->success('A success message');
 
@@ -84,7 +86,7 @@ class PostsController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function flashNoRender(): ?\Cake\Http\Response
+    public function flashNoRender(): ?Response
     {
         $this->Flash->error('An error message');
 
@@ -113,7 +115,7 @@ class PostsController extends AppController
     /**
      * Post endpoint for integration testing with security component.
      */
-    public function securePost(): \Cake\Http\Response
+    public function securePost(): Response
     {
         return $this->response->withStringBody('Request was accepted');
     }
@@ -121,7 +123,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function file(): \Psr\Http\Message\MessageInterface|\Cake\Http\Response
+    public function file(): MessageInterface|Response
     {
         $filename = $this->request->getQuery('file');
         if ($filename) {
@@ -137,12 +139,12 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function header(): \Psr\Http\Message\MessageInterface
+    public function header(): MessageInterface
     {
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
     }
 
-    public function hostData(): \Cake\Http\Response
+    public function hostData(): Response
     {
         $data = [
             'host' => $this->request->host(),
@@ -152,12 +154,12 @@ class PostsController extends AppController
         return $this->getResponse()->withStringBody(json_encode($data));
     }
 
-    public function empty_response(): \Cake\Http\Response
+    public function empty_response(): Response
     {
         return $this->getResponse()->withStringBody('');
     }
 
-    public function secretCookie(): \Cake\Http\Response
+    public function secretCookie(): Response
     {
         return $this->response
             ->withCookie(new Cookie('secrets', 'name'))
@@ -180,7 +182,7 @@ class PostsController extends AppController
         throw new RedirectException('/posts', 302, $headers);
     }
 
-    public function stacked_flash(): \Cake\Http\Response
+    public function stacked_flash(): Response
     {
         $this->Flash->error('Error 1');
         $this->Flash->error('Error 2');

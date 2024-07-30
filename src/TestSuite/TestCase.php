@@ -239,7 +239,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function teardownFixtures(): void
     {
-        if ($this->fixtureStrategy instanceof \Cake\TestSuite\Fixture\FixtureStrategyInterface) {
+        if ($this->fixtureStrategy instanceof FixtureStrategyInterface) {
             $this->fixtureStrategy->teardownTest();
             $this->fixtureStrategy = null;
         }
@@ -351,7 +351,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertEventFired(string $name, ?EventManager $eventManager = null, string $message = ''): void
     {
-        if (!$eventManager instanceof \Cake\Event\EventManager) {
+        if (!$eventManager instanceof EventManager) {
             $eventManager = EventManager::instance();
         }
 
@@ -376,7 +376,7 @@ abstract class TestCase extends BaseTestCase
         ?EventManager $eventManager = null,
         string $message = ''
     ): void {
-        if (!$eventManager instanceof \Cake\Event\EventManager) {
+        if (!$eventManager instanceof EventManager) {
             $eventManager = EventManager::instance();
         }
 
@@ -695,7 +695,7 @@ abstract class TestCase extends BaseTestCase
                         $val = preg_quote($val, '/');
                     }
 
-                    $attrs[] = '[\s]+' . preg_quote((string) $attr, '/') . '=' . $quotes . $val . $quotes;
+                    $attrs[] = '[\s]+' . preg_quote((string)$attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
 
@@ -888,6 +888,7 @@ abstract class TestCase extends BaseTestCase
     }
 
 // phpcs:enable
+
     /**
      * Mock a model, maintain fixtures and table association
      *

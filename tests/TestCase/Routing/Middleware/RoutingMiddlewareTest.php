@@ -26,6 +26,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use Laminas\Diactoros\Response;
 use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
@@ -84,7 +85,7 @@ class RoutingMiddlewareTest extends TestCase
     {
         $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn($request): \Laminas\Diactoros\Response => new Response());
+        $handler = new TestRequestHandler(fn($request): Response => new Response());
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
@@ -99,7 +100,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testRouterSetParams(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -122,7 +123,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testRouterSetRoute(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertInstanceOf(Route::class, $req->getAttribute('route'));
             $this->assertSame('/articles', $req->getAttribute('route')->staticPath());
 
@@ -140,7 +141,7 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['_csrfToken' => 'i-am-groot']);
 
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -165,7 +166,7 @@ class RoutingMiddlewareTest extends TestCase
         Router::reload();
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -212,7 +213,7 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['controller' => 'Articles']);
 
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame(['controller' => 'Articles'], $req->getAttribute('params'));
 
             return new Response();
@@ -250,7 +251,7 @@ class RoutingMiddlewareTest extends TestCase
             null,
             ['_method' => 'PATCH']
         );
-        $handler = new TestRequestHandler(function ($req): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -297,7 +298,7 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/ping',
         ]);
-        $app = $this->app(function ($req): \Laminas\Diactoros\Response {
+        $app = $this->app(function ($req): Response {
             $this->log[] = 'last';
 
             return new Response();
@@ -320,7 +321,7 @@ class RoutingMiddlewareTest extends TestCase
 
             return $handler->handle($request);
         });
-        $this->builder->registerMiddleware('second', function ($request, $handler): \Laminas\Diactoros\Response {
+        $this->builder->registerMiddleware('second', function ($request, $handler): Response {
             $this->log[] = 'second';
 
             return new Response();
@@ -352,7 +353,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareReturnResponseMainScope(): void
     {
-        $this->builder->registerMiddleware('first', function ($request, $handler): \Laminas\Diactoros\Response {
+        $this->builder->registerMiddleware('first', function ($request, $handler): Response {
             $this->log[] = 'first';
 
             return new Response();
@@ -419,7 +420,7 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => $url,
         ]);
-        $app = $this->app(function ($req): \Laminas\Diactoros\Response {
+        $app = $this->app(function ($req): Response {
             $this->log[] = 'last';
 
             return new Response();
@@ -434,7 +435,7 @@ class RoutingMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function scopedMiddlewareUrlProvider(): \Iterator
+    public static function scopedMiddlewareUrlProvider(): Iterator
     {
         yield ['/api/ping', ['first', 'last']];
         yield ['/api/version', ['second', 'last']];
@@ -451,7 +452,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn($request): \Laminas\Diactoros\Response => new Response('php://memory', 200));
+        $handler = new TestRequestHandler(fn($request): Response => new Response('php://memory', 200));
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());
@@ -467,7 +468,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn($request): \Laminas\Diactoros\Response => new Response('php://memory', 200));
+        $handler = new TestRequestHandler(fn($request): Response => new Response('php://memory', 200));
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());
@@ -482,7 +483,7 @@ class RoutingMiddlewareTest extends TestCase
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')
-            ->willReturnCallback(fn(RouteBuilder $routes): \Cake\Routing\RouteBuilder => $routes);
+            ->willReturnCallback(fn(RouteBuilder $routes): RouteBuilder => $routes);
 
         if ($handleCallback) {
             $mock->method('handle')

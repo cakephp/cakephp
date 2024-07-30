@@ -95,7 +95,7 @@ class Stream implements AdapterInterface
         $indexes = [];
         $responses = [];
         foreach ($headers as $i => $header) {
-            if (strtoupper(substr((string) $header, 0, 5)) === 'HTTP/') {
+            if (strtoupper(substr((string)$header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;
             }
         }

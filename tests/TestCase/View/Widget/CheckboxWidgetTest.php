@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\CheckboxWidget;
+use Iterator;
 
 /**
  * Checkbox test case
@@ -161,7 +162,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function checkedProvider(): \Iterator
+    public static function checkedProvider(): Iterator
     {
         yield ['checked'];
         yield ['1'];
@@ -200,7 +201,7 @@ class CheckboxWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function uncheckedProvider(): \Iterator
+    public static function uncheckedProvider(): Iterator
     {
         yield [''];
         yield ['0'];

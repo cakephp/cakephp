@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\View\View;
+use Cake\View\ViewBuilder;
 use Cake\View\ViewVarsTrait;
 use function Cake\Core\pluginSplit;
 
@@ -114,7 +115,7 @@ class Renderer
      */
     public function __clone()
     {
-        if ($this->_viewBuilder instanceof \Cake\View\ViewBuilder) {
+        if ($this->_viewBuilder instanceof ViewBuilder) {
             $this->_viewBuilder = clone $this->_viewBuilder;
         }
     }

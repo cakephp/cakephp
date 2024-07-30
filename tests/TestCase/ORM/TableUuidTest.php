@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
+use Iterator;
 
 /**
  * Integration tests for Table class with uuid primary keys.
@@ -49,7 +50,7 @@ class TableUuidTest extends TestCase
      *
      * @return array
      */
-    public static function uuidTableProvider(): \Iterator
+    public static function uuidTableProvider(): Iterator
     {
         yield ['uuid_items'];
         yield ['binary_uuid_items'];

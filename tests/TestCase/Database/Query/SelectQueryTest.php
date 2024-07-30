@@ -22,6 +22,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -36,6 +37,7 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debugger;
 use Cake\I18n\DateTime;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
@@ -1251,8 +1253,8 @@ class SelectQueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->where([
-                'id' => \Cake\Error\Debugger::class . '::dump',
-                'title' => \Cake\Error\Debugger::dump(...),
+                'id' => Debugger::class . '::dump',
+                'title' => Debugger::dump(...),
                 'author_id' => fn(ExpressionInterface $exp): int => 1,
             ]);
         $this->assertQuotedQuery(
@@ -1856,7 +1858,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderByAsc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $exp
+            ->orderByAsc(fn(QueryExpression $exp, Query $query): CaseStatementExpression => $exp
                 ->case()
                 ->when(['author_id' => 1])
                 ->then(1)
@@ -1916,7 +1918,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->orderByDesc(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\CaseStatementExpression => $exp
+            ->orderByDesc(fn(QueryExpression $exp, Query $query): CaseStatementExpression => $exp
                 ->case()
                 ->when(['author_id' => 1])
                 ->then(1)
@@ -2835,8 +2837,8 @@ class SelectQueryTest extends TestCase
             ->execute()
             ->fetchAll('assoc');
 
-        $result[0]['addDays'] = substr((string) $result[0]['addDays'], 0, 10);
-        $result[0]['substractYears'] = substr((string) $result[0]['substractYears'], 0, 10);
+        $result[0]['addDays'] = substr((string)$result[0]['addDays'], 0, 10);
+        $result[0]['substractYears'] = substr((string)$result[0]['substractYears'], 0, 10);
 
         $expected = [
             'd' => 18,
@@ -3330,7 +3332,7 @@ class SelectQueryTest extends TestCase
                     new SelectQuery($this->connection)
                 )
             )
-            ->with(fn(CommonTableExpression $cte, Query $query): \Cake\Database\Expression\CommonTableExpression => $cte
+            ->with(fn(CommonTableExpression $cte, Query $query): CommonTableExpression => $cte
                 ->name('cte2')
                 ->query($query));
 
@@ -3491,7 +3493,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query
             ->window('window1', new WindowExpression())
-            ->window('window2', fn(WindowExpression $window): \Cake\Database\Expression\WindowExpression => $window);
+            ->window('window2', fn(WindowExpression $window): WindowExpression => $window);
 
         $clause = $query->clause('window');
         $clauseClone = (clone $query)->clause('window');

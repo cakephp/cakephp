@@ -110,7 +110,7 @@ class QueryCompiler
         if ($query->getValueBinder() !== $binder) {
             foreach ($query->getValueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
-                if (preg_match('/' . $placeholder . '(?:\W|$)/', (string) $sql) > 0) {
+                if (preg_match('/' . $placeholder . '(?:\W|$)/', (string)$sql) > 0) {
                     $binder->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }
@@ -330,7 +330,7 @@ class QueryCompiler
             }
 
             if ($part[0] === '(') {
-                $part = substr((string) $part, 1, -1);
+                $part = substr((string)$part, 1, -1);
             }
 
             $set[] = $part;

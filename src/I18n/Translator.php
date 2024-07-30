@@ -37,24 +37,11 @@ class Translator
      * @param \Cake\I18n\Translator|null $fallback A fallback translator.
      */
     public function __construct(
-        /**
-         * The locale being used for translations.
-         */
         protected string $locale,
-        /**
-         * The Package containing keys and translations.
-         */
         protected Package $package,
-        /**
-         * The formatter to use when translating messages.
-         */
         protected FormatterInterface $formatter,
-        /**
-         * A fallback translator.
-         */
         protected ?Translator $fallback = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -70,7 +57,7 @@ class Translator
             return $message;
         }
 
-        if ($this->fallback instanceof \Cake\I18n\Translator) {
+        if ($this->fallback instanceof Translator) {
             $message = $this->fallback->getMessage($key);
             if ($message) {
                 $this->package->addMessage($key, $message);

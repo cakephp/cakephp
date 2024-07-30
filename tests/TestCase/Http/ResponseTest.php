@@ -31,7 +31,9 @@ use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
+use Iterator;
 use Laminas\Diactoros\Stream;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ResponseTest
@@ -1005,7 +1007,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function invalidFileProvider(): \Iterator
+    public static function invalidFileProvider(): Iterator
     {
         yield ['my/../cat.gif', 'The requested file contains `..` and will not be read.'];
         yield ['my\..\cat.gif', 'The requested file contains `..` and will not be read.'];
@@ -1056,7 +1058,7 @@ class ResponseTest extends TestCase
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
-        $this->assertInstanceOf(\Laminas\Diactoros\Stream::class, $body);
+        $this->assertInstanceOf(Stream::class, $body);
 
         $expected = '/* this is the test asset css file */';
         $this->assertSame($expected, trim($body->getContents()));
@@ -1142,7 +1144,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function rangeProvider(): \Iterator
+    public static function rangeProvider(): Iterator
     {
         // suffix-byte-range
         yield [
@@ -1214,7 +1216,7 @@ class ResponseTest extends TestCase
      *
      * @return array
      */
-    public static function invalidFileRangeProvider(): \Iterator
+    public static function invalidFileRangeProvider(): Iterator
     {
         // malformed range
         yield [
@@ -1426,7 +1428,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $stream = $response->getBody();
-        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
+        $this->assertInstanceOf(StreamInterface::class, $stream);
     }
 
     /**

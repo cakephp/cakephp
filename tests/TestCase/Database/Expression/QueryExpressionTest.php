@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * Tests QueryExpression class
@@ -94,7 +95,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
-        $expected = \Cake\Database\Expression\QueryExpression::class;
+        $expected = QueryExpression::class;
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -191,7 +192,7 @@ class QueryExpressionTest extends TestCase
      *
      * @return array
      */
-    public static function methodsProvider(): \Iterator
+    public static function methodsProvider(): Iterator
     {
         yield ['eq'];
         yield ['notEq'];

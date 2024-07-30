@@ -29,7 +29,7 @@ class ContentsContain extends ContentsBase
      */
     protected function matches(mixed $other): bool
     {
-        return mb_strpos($this->contents, (string) $other) !== false;
+        return mb_strpos($this->contents, (string)$other) !== false;
     }
 
     /**

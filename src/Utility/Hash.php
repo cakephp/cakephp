@@ -255,7 +255,7 @@ class Hash
 
             // Pattern matches and other operators.
             if ($op === '=' && $val && $val[0] === '/') {
-                if (!preg_match($val, (string) $prop)) {
+                if (!preg_match($val, (string)$prop)) {
                     return false;
                 }
 
@@ -1026,7 +1026,7 @@ class Hash
             $type = $type['type'];
         }
 
-        $type = strtolower((string) $type);
+        $type = strtolower((string)$type);
 
         if ($type === 'numeric') {
             $type = SORT_NUMERIC;

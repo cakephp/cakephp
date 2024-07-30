@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\PluralRules;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * PluralRules tests
@@ -30,7 +31,7 @@ class PluralRulesTest extends TestCase
      *
      * @return array
      */
-    public static function localesProvider(): \Iterator
+    public static function localesProvider(): Iterator
     {
         yield ['jp', 0, 0];
         yield ['jp', 1, 0];

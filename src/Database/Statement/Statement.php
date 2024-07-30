@@ -56,7 +56,7 @@ class Statement implements StatementInterface
         protected Driver $_driver,
         ?TypeMap $typeMap = null,
     ) {
-        $this->typeConverter = $typeMap instanceof \Cake\Database\TypeMap ? new FieldTypeConverter($typeMap, $this->_driver) : null;
+        $this->typeConverter = $typeMap instanceof TypeMap ? new FieldTypeConverter($typeMap, $this->_driver) : null;
     }
 
     /**
@@ -151,7 +151,7 @@ class Statement implements StatementInterface
             return false;
         }
 
-        if ($this->typeConverter instanceof \Cake\Database\FieldTypeConverter) {
+        if ($this->typeConverter instanceof FieldTypeConverter) {
             return ($this->typeConverter)($row);
         }
 
@@ -187,7 +187,7 @@ class Statement implements StatementInterface
         $mode = $this->convertMode($mode);
         $rows = $this->statement->fetchAll($mode);
 
-        if ($this->typeConverter instanceof \Cake\Database\FieldTypeConverter) {
+        if ($this->typeConverter instanceof FieldTypeConverter) {
             return array_map($this->typeConverter, $rows);
         }
 

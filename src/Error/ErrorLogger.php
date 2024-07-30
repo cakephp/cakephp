@@ -58,7 +58,7 @@ class ErrorLogger implements ErrorLoggerInterface
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
         $message = $error->getMessage();
-        if ($request instanceof \Psr\Http\Message\ServerRequestInterface) {
+        if ($request instanceof ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
 
@@ -86,7 +86,7 @@ class ErrorLogger implements ErrorLoggerInterface
     ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
-        if ($request instanceof \Psr\Http\Message\ServerRequestInterface) {
+        if ($request instanceof ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
 
@@ -134,7 +134,7 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         $previous = $exception->getPrevious();
-        if ($previous instanceof \Throwable) {
+        if ($previous instanceof Throwable) {
             $message .= $this->getMessage($previous, true, $includeTrace);
         }
 

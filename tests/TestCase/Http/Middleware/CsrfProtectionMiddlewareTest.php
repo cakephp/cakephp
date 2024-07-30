@@ -25,6 +25,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Iterator;
 use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ServerRequestInterface;
@@ -51,7 +52,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider(): \Iterator
+    public static function safeHttpMethodProvider(): Iterator
     {
         yield ['GET'];
         yield ['HEAD'];
@@ -62,7 +63,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider(): \Iterator
+    public static function httpMethodProvider(): Iterator
     {
         yield ['OPTIONS'];
         yield ['PATCH'];
@@ -78,7 +79,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(fn(): \Cake\Http\Response => new Response());
+        return new TestRequestHandler(fn(): Response => new Response());
     }
 
     /**
@@ -93,7 +94,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -112,7 +113,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
 
         $this->assertNotEquals($cookie['value'], $requestAttr);
-        $this->assertSame(strlen((string) $cookie['value']) * 2, strlen((string) $requestAttr));
+        $this->assertSame(strlen((string)$cookie['value']) * 2, strlen((string)$requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
@@ -125,7 +126,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -161,7 +162,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -210,7 +211,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         /** @var \Cake\Http\Response $response */
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertGreaterThan(32, strlen((string) $response->getCookie('csrfToken')['value']));
+        $this->assertGreaterThan(32, strlen((string)$response->getCookie('csrfToken')['value']));
     }
 
     /**
@@ -221,7 +222,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(fn(): \Laminas\Diactoros\Response\RedirectResponse => new RedirectResponse('/'));
+        $handler = new TestRequestHandler(fn(): RedirectResponse => new RedirectResponse('/'));
 
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
@@ -238,7 +239,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
         $request = $request->withAttribute('csrfToken', 'not-good');
 
-        $handler = new TestRequestHandler(fn(): \Laminas\Diactoros\Response\RedirectResponse => new RedirectResponse('/'));
+        $handler = new TestRequestHandler(fn(): RedirectResponse => new RedirectResponse('/'));
 
         $middleware = new CsrfProtectionMiddleware();
         $this->expectException(CakeException::class);
@@ -360,7 +361,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -389,7 +390,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -619,7 +620,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             return true;
         });
 
-        $handler = new TestRequestHandler(function ($request): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertEmpty($request->getParsedBody());
 
             return new Response();

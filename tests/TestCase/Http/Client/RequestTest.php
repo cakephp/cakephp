@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * HTTP request test.
@@ -60,7 +61,7 @@ class RequestTest extends TestCase
     /**
      * @dataProvider additionProvider
      */
-    public static function additionProvider(): \Iterator
+    public static function additionProvider(): Iterator
     {
         $headers = [
             'Content-Type' => 'application/json',

@@ -18,6 +18,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
+use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -122,7 +123,7 @@ class QueryCompilerTest extends TestCase
         }
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 
@@ -143,7 +144,7 @@ class QueryCompilerTest extends TestCase
         }
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 
@@ -158,7 +159,7 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('UPDATE articles SET title = :c0 WHERE id = :c1', $result);
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 
@@ -174,7 +175,7 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('/* This is a test */ UPDATE articles SET title = :c0 WHERE id = :c1', $result);
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 
@@ -189,7 +190,7 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 
@@ -205,7 +206,7 @@ class QueryCompilerTest extends TestCase
         $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
 
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
     }
 }

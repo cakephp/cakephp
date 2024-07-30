@@ -18,6 +18,7 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use function Cake\Core\pluginSplit;
 
@@ -171,7 +172,7 @@ class Asset
         if (
             !empty($options['ext']) &&
             !str_contains($path, '?') &&
-            !str_ends_with($path, (string) $options['ext'])
+            !str_ends_with($path, (string)$options['ext'])
         ) {
             $path .= $options['ext'];
         }
@@ -343,7 +344,7 @@ class Asset
     protected static function requestWebroot(): string
     {
         $request = Router::getRequest();
-        if (!$request instanceof \Cake\Http\ServerRequest) {
+        if (!$request instanceof ServerRequest) {
             return '/';
         }
 

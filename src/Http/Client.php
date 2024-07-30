@@ -512,7 +512,7 @@ class Client implements ClientInterface
      */
     public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
     {
-        if (!static::$_mockAdapter instanceof \Cake\Http\Client\Adapter\Mock) {
+        if (!static::$_mockAdapter instanceof MockAdapter) {
             static::$_mockAdapter = new MockAdapter();
         }
 
@@ -529,7 +529,7 @@ class Client implements ClientInterface
     protected function _sendRequest(RequestInterface $request, array $options): Response
     {
         $responses = [];
-        if (static::$_mockAdapter instanceof \Cake\Http\Client\Adapter\Mock) {
+        if (static::$_mockAdapter instanceof MockAdapter) {
             $responses = static::$_mockAdapter->send($request, $options);
         }
 
@@ -592,11 +592,10 @@ class Client implements ClientInterface
         }
 
         if (!empty($options['basePath'])) {
-            $out .= '/' . trim((string) $options['basePath'], '/');
+            $out .= '/' . trim((string)$options['basePath'], '/');
         }
 
-
-        return $out . ('/' . ltrim($url, '/'));
+        return $out . '/' . ltrim($url, '/');
     }
 
     /**
@@ -727,7 +726,7 @@ class Client implements ClientInterface
             $auth['type'] = 'basic';
         }
 
-        $name = ucfirst((string) $auth['type']);
+        $name = ucfirst((string)$auth['type']);
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new CakeException(

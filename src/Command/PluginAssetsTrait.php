@@ -181,6 +181,7 @@ trait PluginAssetsTrait
             }
 
             $this->io->err('Failed to unlink  ' . $dest);
+
             return false;
         }
 
@@ -192,6 +193,7 @@ trait PluginAssetsTrait
         }
 
         $this->io->err('Failed to delete ' . $dest);
+
         return false;
     }
 

@@ -52,10 +52,10 @@ class InflectedRoute extends Route
         }
 
         if (!empty($params['plugin'])) {
-            if (!str_contains((string) $params['plugin'], '/')) {
+            if (!str_contains((string)$params['plugin'], '/')) {
                 $params['plugin'] = Inflector::camelize($params['plugin']);
             } else {
-                [$vendor, $plugin] = explode('/', (string) $params['plugin'], 2);
+                [$vendor, $plugin] = explode('/', (string)$params['plugin'], 2);
                 $params['plugin'] = Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
             }
         }

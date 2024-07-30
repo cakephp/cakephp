@@ -41,12 +41,9 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Constructor.
      *
-     * @param \Cake\Controller\Controller $_Controller Controller instance.
+     * @param \Cake\Controller\Controller $_Controller The controller that this collection is associated with.
      */
-    public function __construct(/**
-     * The controller that this collection is associated with.
-     */
-    protected Controller $_Controller)
+    public function __construct(protected Controller $_Controller)
     {
         $this->setEventManager($this->_Controller->getEventManager());
     }

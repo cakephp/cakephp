@@ -252,7 +252,6 @@ class FormData implements Countable, Stringable
                 $out .= "\r\n";
             }
 
-
             return $out . "--{$boundary}--\r\n";
         }
 

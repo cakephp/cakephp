@@ -21,6 +21,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests BelongsToManySaveAssociatedOnlyEntitiesAppendTest class
@@ -30,12 +31,12 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $tag;
+    protected MockObject $tag;
 
     /**
      * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $article;
+    protected MockObject $article;
 
     /**
      * Set up

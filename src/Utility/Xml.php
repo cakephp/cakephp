@@ -146,7 +146,7 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, array $options, $flags): \DOMDocument|\SimpleXMLElement {
+            function ($input, array $options, $flags): DOMDocument|SimpleXMLElement {
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
                     $flags |= LIBXML_NOCDATA;
                     $xml = new SimpleXMLElement($input, $flags);
@@ -178,7 +178,7 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, array $options, $flags): \DOMDocument|\SimpleXMLElement|null {
+            function ($input, array $options, $flags): DOMDocument|SimpleXMLElement|null {
                 $xml = new DOMDocument();
                 $xml->loadHTML($input, $flags);
 
@@ -291,7 +291,7 @@ class Xml
 
         self::_fromArray($dom, $dom, $input, $options['format']);
 
-        $options['return'] = strtolower((string) $options['return']);
+        $options['return'] = strtolower((string)$options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
             return new SimpleXMLElement((string)$dom->saveXML());
         }
@@ -446,7 +446,7 @@ class Xml
             $obj = simplexml_import_dom($obj);
         }
 
-        if (!$obj instanceof \SimpleXMLElement) {
+        if (!$obj instanceof SimpleXMLElement) {
             throw new XmlException('Failed converting DOMNode to SimpleXMLElement');
         }
 

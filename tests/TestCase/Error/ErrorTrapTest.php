@@ -28,6 +28,7 @@ use Cake\Error\Renderer\TextErrorRenderer;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 class ErrorTrapTest extends TestCase
 {
@@ -98,7 +99,7 @@ class ErrorTrapTest extends TestCase
         }
     }
 
-    public static function logLevelProvider(): \Iterator
+    public static function logLevelProvider(): Iterator
     {
         // PHP error level, expected log level
         yield [E_USER_WARNING, 'warning'];

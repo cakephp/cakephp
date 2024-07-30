@@ -39,9 +39,6 @@ class PersistenceFailedException extends CakeException
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
-        /**
-         * The entity on which the persistence operation failed
-         */
         protected EntityInterface $_entity,
         array|string $message,
         ?int $code = null,

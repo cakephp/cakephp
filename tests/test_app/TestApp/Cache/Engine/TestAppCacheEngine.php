@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace TestApp\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 
 class TestAppCacheEngine extends CacheEngine
 {
@@ -81,7 +82,7 @@ class TestAppCacheEngine extends CacheEngine
      *
      * @param mixed $ttl
      */
-    public function getDuration(\DateInterval|int|null $ttl): int
+    public function getDuration(DateInterval|int|null $ttl): int
     {
         return $this->duration($ttl);
     }

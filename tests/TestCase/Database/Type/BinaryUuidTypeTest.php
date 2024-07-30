@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Type\BinaryUuidType;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Binary uuid type.
@@ -35,7 +37,7 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup
@@ -44,7 +46,7 @@ class BinaryUuidTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new BinaryUuidType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -94,7 +96,7 @@ class BinaryUuidTypeTest extends TestCase
 
         $value = Text::uuid();
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertSame(str_replace('-', '', $value), unpack('H*', (string) $result)[1]);
+        $this->assertSame(str_replace('-', '', $value), unpack('H*', (string)$result)[1]);
     }
 
     /**

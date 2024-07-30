@@ -205,7 +205,7 @@ class CommonTableExpression implements ExpressionInterface
             $field->traverse($callback);
         }
 
-        if ($this->query instanceof \Cake\Database\ExpressionInterface) {
+        if ($this->query instanceof ExpressionInterface) {
             $callback($this->query);
             $this->query->traverse($callback);
         }
@@ -221,7 +221,7 @@ class CommonTableExpression implements ExpressionInterface
     public function __clone()
     {
         $this->name = clone $this->name;
-        if ($this->query instanceof \Cake\Database\ExpressionInterface) {
+        if ($this->query instanceof ExpressionInterface) {
             $this->query = clone $this->query;
         }
 

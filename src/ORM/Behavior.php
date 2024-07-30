@@ -143,10 +143,7 @@ class Behavior implements EventListenerInterface
      * @param \Cake\ORM\Table $_table The table this behavior is attached to.
      * @param array<string, mixed> $config The config for this behavior.
      */
-    public function __construct(/**
-     * Table instance.
-     */
-    protected Table $_table, array $config = [])
+    public function __construct(protected Table $_table, array $config = [])
     {
         $config = $this->_resolveMethodAliases(
             'implementedFinders',

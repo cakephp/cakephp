@@ -91,7 +91,7 @@ trait DateFormatTrait
                 $pattern
             );
 
-            if (!$formatter instanceof \IntlDateFormatter) {
+            if (!$formatter instanceof IntlDateFormatter) {
                 throw new CakeException(
                     'Your version of icu does not support creating a date formatter for ' .
                     sprintf('`%s`. You should try to upgrade libicu and the intl extension.', $key)
@@ -152,7 +152,7 @@ trait DateFormatTrait
             null,
             $pattern
         );
-        if (!$formatter instanceof \IntlDateFormatter) {
+        if (!$formatter instanceof IntlDateFormatter) {
             throw new CakeException('Unable to create IntlDateFormatter instance');
         }
 

@@ -28,6 +28,7 @@ class BridgeCommand extends Command
         }
 
         $io->out('You may pass.');
+
         return null;
     }
 }

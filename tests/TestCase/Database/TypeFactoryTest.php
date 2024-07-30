@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use PDO;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
@@ -73,7 +75,7 @@ class TypeFactoryTest extends TestCase
      *
      * @return array
      */
-    public static function basicTypesProvider(): \Iterator
+    public static function basicTypesProvider(): Iterator
     {
         yield ['string'];
         yield ['text'];
@@ -186,7 +188,7 @@ class TypeFactoryTest extends TestCase
         );
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
         $this->assertSame($integer, $type->toPHP('' . $integer, $driver));
         $this->assertSame(3, $type->toPHP(3.57, $driver));
@@ -199,7 +201,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->assertSame(PDO::PARAM_INT, $type->toStatement($integer, $driver));
     }
 
@@ -209,7 +211,7 @@ class TypeFactoryTest extends TestCase
     public function testDecimalToPHP(): void
     {
         $type = TypeFactory::build('decimal');
-        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
 
         $this->assertSame('3.14159', $type->toPHP('3.14159', $driver));
         $this->assertSame('3.14159', $type->toPHP(3.14159, $driver));
@@ -223,7 +225,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('decimal');
         $string = '12.55';
-        $driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->assertSame(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 

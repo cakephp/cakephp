@@ -63,11 +63,10 @@ class MultiCheckboxWidget extends BasicWidget
      * @param \Cake\View\StringTemplate $templates Templates list.
      * @param \Cake\View\Widget\LabelWidget $_label Label widget instance.
      */
-    public function __construct(StringTemplate $templates, /**
-     * Label widget instance.
-     */
-    protected LabelWidget $_label)
-    {
+    public function __construct(
+        StringTemplate $templates,
+        protected LabelWidget $_label
+    ) {
         $this->_templates = $templates;
     }
 
@@ -203,7 +202,7 @@ class MultiCheckboxWidget extends BasicWidget
             ),
         ]);
 
-        if ($checkbox['label'] === false && !str_contains((string) $this->_templates->get('checkboxWrapper'), '{{input}}')) {
+        if ($checkbox['label'] === false && !str_contains((string)$this->_templates->get('checkboxWrapper'), '{{input}}')) {
             $label = $input;
         } else {
             $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];

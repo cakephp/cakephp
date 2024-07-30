@@ -47,20 +47,10 @@ class CorsBuilder
      * @param bool $_isSsl Whether the request was over SSL.
      */
     public function __construct(
-        /**
-         * The response object this builder is attached to.
-         */
         protected ResponseInterface $_response,
-        /**
-         * The request's Origin header value
-         */
         protected string $_origin,
-        /**
-         * Whether the request was over SSL.
-         */
         protected bool $_isSsl = false
-    )
-    {
+    ) {
     }
 
     /**

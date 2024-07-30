@@ -6,9 +6,7 @@ namespace TestApp\Collection;
 use ArrayIterator;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
-use InvalidArgumentException;
 use IteratorIterator;
-use Traversable;
 
 class TestCollection extends IteratorIterator implements CollectionInterface
 {

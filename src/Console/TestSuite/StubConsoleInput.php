@@ -34,12 +34,9 @@ class StubConsoleInput extends ConsoleInput
     /**
      * Constructor
      *
-     * @param array<string> $replies A list of replies for read()
+     * @param array<string> $replies Reply values for ask() and askChoice()
      */
-    public function __construct(/**
-     * Reply values for ask() and askChoice()
-     */
-    protected array $replies)
+    public function __construct(protected array $replies)
     {
         parent::__construct();
 

@@ -21,6 +21,7 @@ use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use Laminas\Diactoros\UploadedFile;
 use ReflectionClass;
 use TestApp\Mailer\TestMessage;
@@ -488,7 +489,7 @@ x
      *
      * @return array
      */
-    public static function invalidEmails(): \Iterator
+    public static function invalidEmails(): Iterator
     {
         yield [''];
         yield ['string'];

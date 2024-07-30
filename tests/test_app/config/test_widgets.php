@@ -1,7 +1,9 @@
 <?php
-/*
+
+use Cake\View\Widget\LabelWidget;/*
  * Widgets list for testing.
  */
+
 return [
-    'text' => [\Cake\View\Widget\LabelWidget::class],
+    'text' => [LabelWidget::class],
 ];

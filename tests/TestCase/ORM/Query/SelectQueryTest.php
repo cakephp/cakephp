@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
@@ -33,15 +35,20 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use ReflectionProperty;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\AuthorsTable;
 
 /**
  * Tests SelectQuery class
@@ -129,7 +136,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderHasMany(): \Iterator
+    public static function strategiesProviderHasMany(): Iterator
     {
         yield ['subquery'];
         yield ['select'];
@@ -140,7 +147,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsTo(): \Iterator
+    public static function strategiesProviderBelongsTo(): Iterator
     {
         yield ['join'];
         yield ['select'];
@@ -151,7 +158,7 @@ class SelectQueryTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsToMany(): \Iterator
+    public static function strategiesProviderBelongsToMany(): Iterator
     {
         yield ['subquery'];
         yield ['select'];
@@ -773,8 +780,8 @@ class SelectQueryTest extends TestCase
         $result = $query->setRepository($table)
             ->matching('Comments', fn($q) => $q->where(['Comments.user_id' => 4]))
             ->first();
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result);
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->_matchingData['Comments']);
+        $this->assertInstanceOf(Entity::class, $result);
+        $this->assertInstanceOf(Entity::class, $result->_matchingData['Comments']);
         $this->assertIsInt($result->_matchingData['Comments']->id);
         $this->assertInstanceOf(DateTime::class, $result->_matchingData['Comments']->created);
     }
@@ -1268,7 +1275,7 @@ class SelectQueryTest extends TestCase
         $results = $query->select()->toArray();
 
         $this->assertCount(3, $results);
-        $this->assertContainsOnlyInstancesOf(\Cake\ORM\Entity::class, $results);
+        $this->assertContainsOnlyInstancesOf(Entity::class, $results);
 
         $first = $results[0];
         $this->assertSame(1, $first->id);
@@ -1294,7 +1301,7 @@ class SelectQueryTest extends TestCase
             ->toArray();
 
         $first = $results[0];
-        $this->assertContainsOnlyInstancesOf(\Cake\ORM\Entity::class, $first->articles);
+        $this->assertContainsOnlyInstancesOf(Entity::class, $first->articles);
 
         $this->assertCount(2, $first->articles);
         $expected = [
@@ -1334,7 +1341,7 @@ class SelectQueryTest extends TestCase
             ->toArray();
 
         $first = $results[0];
-        $this->assertContainsOnlyInstancesOf(\Cake\ORM\Entity::class, $first->tags);
+        $this->assertContainsOnlyInstancesOf(Entity::class, $first->tags);
 
         $this->assertCount(2, $first->tags);
         $expected = [
@@ -1390,7 +1397,7 @@ class SelectQueryTest extends TestCase
             ->toArray();
 
         $first = $results[0];
-        $this->assertContainsOnlyInstancesOf(\Cake\ORM\Entity::class, $first->tags);
+        $this->assertContainsOnlyInstancesOf(Entity::class, $first->tags);
 
         $this->assertCount(2, $first->tags);
         $expected = [
@@ -1441,7 +1448,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertCount(3, $results);
         $first = $results[0];
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $first->author);
+        $this->assertInstanceOf(Entity::class, $first->author);
         $expected = ['id' => 1, 'name' => 'mariano'];
         $this->assertSame($expected, $first->author->toArray());
     }
@@ -1467,7 +1474,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertCount(4, $results);
         $first = $results[0];
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $first->articles[0]->author);
+        $this->assertInstanceOf(Entity::class, $first->articles[0]->author);
         $expected = ['id' => 1, 'name' => 'mariano'];
         $this->assertSame($expected, $first->articles[0]->author->toArray());
         $this->assertTrue(isset($results[3]->articles));
@@ -1542,7 +1549,7 @@ class SelectQueryTest extends TestCase
      */
     public function testHydrateBelongsToCustomEntity(): void
     {
-        $authorEntity = $this->createMock(\Cake\ORM\Entity::class)::class;
+        $authorEntity = $this->createMock(Entity::class)::class;
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
@@ -1810,7 +1817,7 @@ class SelectQueryTest extends TestCase
     public function testClearContain(): void
     {
         /** @var \Cake\ORM\Query\SelectQuery $query */
-        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['all'])
             ->setConstructorArgs([$this->table])
             ->getMock();
@@ -1836,7 +1843,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCacheReadIntegration(): void
     {
-        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->table])
             ->getMock();
@@ -1845,7 +1852,7 @@ class SelectQueryTest extends TestCase
         $query->expects($this->never())
             ->method('execute');
 
-        $cacher = $this->getMockBuilder(\Cake\Cache\CacheEngine::class)->getMock();
+        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
         $cacher->expects($this->once())
             ->method('get')
             ->with('my_key')
@@ -1868,12 +1875,12 @@ class SelectQueryTest extends TestCase
 
         $query->select(['id', 'title']);
 
-        $cacher = $this->getMockBuilder(\Cake\Cache\CacheEngine::class)->getMock();
+        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
         $cacher->expects($this->once())
             ->method('set')
             ->with(
                 'my_key',
-                $this->isInstanceOf(\Cake\Datasource\ResultSetInterface::class)
+                $this->isInstanceOf(ResultSetInterface::class)
             );
 
         $query->cache('my_key', $cacher)
@@ -2157,7 +2164,7 @@ class SelectQueryTest extends TestCase
             ->contain('Authors', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery
-            ): \Cake\ORM\Query\SelectQuery {
+            ): SelectQuery {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2229,7 +2236,7 @@ class SelectQueryTest extends TestCase
             ->contain('Tags', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery
-            ): \Cake\ORM\Query\SelectQuery {
+            ): SelectQuery {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 return $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2253,8 +2260,8 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results): \Cake\Collection\CollectionInterface {
-            $this->assertInstanceOf(\Cake\ORM\ResultSet::class, $results);
+        $query->select()->formatResults(function ($results): CollectionInterface {
+            $this->assertInstanceOf(ResultSet::class, $results);
 
             return $results->indexBy('id');
         });
@@ -2268,8 +2275,8 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results): \Cake\Collection\CollectionInterface {
-            $this->assertInstanceOf(\Cake\ORM\ResultSet::class, $results);
+        $query->select()->formatResults(function ($results): CollectionInterface {
+            $this->assertInstanceOf(ResultSet::class, $results);
 
             return $results->indexBy('id');
         });
@@ -2311,7 +2318,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCache(): void
     {
-        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['_performCount'])
             ->getMock();
@@ -2333,7 +2340,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCacheDirty(): void
     {
-        $query = $this->getMockBuilder(\Cake\ORM\Query::class)
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['_performCount'])
             ->getMock();
@@ -2460,7 +2467,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', [
-            'className' => \TestApp\Model\Table\ArticlesTable::class,
+            'className' => ArticlesTable::class,
             'finder' => 'published',
         ]);
         $result = $table->find()->contain('Articles');
@@ -2897,7 +2904,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo(
             'Authors',
-            ['className' => \TestApp\Model\Table\AuthorsTable::class]
+            ['className' => AuthorsTable::class]
         );
         $authorId = 1;
 
@@ -2929,7 +2936,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => \TestApp\Model\Table\ArticlesTable::class]
+            ['className' => ArticlesTable::class]
         );
 
         $newArticle = $table->newEntity([
@@ -3000,7 +3007,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => \TestApp\Model\Table\ArticlesTable::class]
+            ['className' => ArticlesTable::class]
         );
 
         $newArticle = $table->newEntity([
@@ -3608,7 +3615,7 @@ class SelectQueryTest extends TestCase
 
         $results = $table->find()
             ->enableHydration(false)
-            ->matching('articles', fn(SelectQuery $q): \Cake\ORM\Query\SelectQuery => $q->notMatching('tags', fn(SelectQuery $q) => $q->where(['tags.name' => 'tag3'])))
+            ->matching('articles', fn(SelectQuery $q): SelectQuery => $q->notMatching('tags', fn(SelectQuery $q) => $q->where(['tags.name' => 'tag3'])))
             ->orderBy(['authors.id' => 'ASC', 'articles.id' => 'ASC']);
 
         $expected = [
@@ -3659,7 +3666,7 @@ class SelectQueryTest extends TestCase
         $result = $table
             ->find()
             ->contain([
-                'Comments' => fn(SelectQuery $query): \Cake\ORM\Query\SelectQuery => $query->selectAllExcept($table->Comments, ['published']),
+                'Comments' => fn(SelectQuery $query): SelectQuery => $query->selectAllExcept($table->Comments, ['published']),
             ])
             ->selectAllExcept($table, ['body'])
             ->first();
@@ -3784,7 +3791,7 @@ class SelectQueryTest extends TestCase
 
         $query = $table
             ->find()
-            ->with(fn(CommonTableExpression $cte): \Cake\Database\Expression\CommonTableExpression => $cte
+            ->with(fn(CommonTableExpression $cte): CommonTableExpression => $cte
                 ->name('cte')
                 ->query($cteQuery))
             ->select(['row_num'])
@@ -3834,19 +3841,19 @@ class SelectQueryTest extends TestCase
 
         $articles
             ->find()
-            ->contain('Comments', function (SelectQuery $query): \Cake\ORM\Query\SelectQuery {
+            ->contain('Comments', function (SelectQuery $query): SelectQuery {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles', function (SelectQuery $query): \Cake\ORM\Query\SelectQuery {
+            ->contain('Comments.Articles', function (SelectQuery $query): SelectQuery {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles.Tags', function (SelectQuery $query): \Cake\ORM\Query\SelectQuery {
+            ->contain('Comments.Articles.Tags', function (SelectQuery $query): SelectQuery {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
@@ -3854,7 +3861,7 @@ class SelectQueryTest extends TestCase
                     ->enableHydration()
                     ->enableResultsCasting();
             })
-            ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query): \Cake\ORM\Query\SelectQuery {
+            ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query): SelectQuery {
                 $this->assertTrue($query->isHydrationEnabled());
                 $this->assertTrue($query->isResultsCastingEnabled());
 

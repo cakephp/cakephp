@@ -43,10 +43,7 @@ class IsUnique
      * @param list<string> $_fields The list of fields to check uniqueness for
      * @param array<string, mixed> $options The options for unique checks.
      */
-    public function __construct(/**
-     * The list of fields to check
-     */
-    protected array $_fields, array $options = [])
+    public function __construct(protected array $_fields, array $options = [])
     {
         $this->_options = $options + $this->_options;
     }

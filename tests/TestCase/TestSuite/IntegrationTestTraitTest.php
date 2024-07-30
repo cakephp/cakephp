@@ -32,10 +32,12 @@ use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Iterator;
 use Laminas\Diactoros\UploadedFile;
 use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
+use Psr\Http\Message\ResponseInterface;
 use stdClass;
 use TestApp\ReflectionDependency;
 
@@ -335,8 +337,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->head('/request_action/test_request_action');
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
+        $this->assertInstanceOf(ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -357,8 +359,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->options('/request_action/test_request_action');
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
+        $this->assertInstanceOf(ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -400,8 +402,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNull($this->_response);
 
         $this->get('/request_action/test_request_action');
-        $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $this->_response);
-        $this->assertInstanceOf(\Cake\Http\Response::class, $this->_response);
+        $this->assertInstanceOf(ResponseInterface::class, $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -573,7 +575,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf(\Cake\Controller\Controller::class, $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -590,7 +592,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf(\Cake\Controller\Controller::class, $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -1393,7 +1395,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf(\Cake\Event\EventManager::class, $eventManager);
+        $this->assertInstanceOf(EventManager::class, $eventManager);
 
         return $eventManager;
     }
@@ -1405,7 +1407,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
-        $this->assertInstanceOf(\Cake\Event\EventManager::class, $prevEventManager);
+        $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
@@ -1568,7 +1570,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureMessagesProvider(): \Iterator
+    public static function assertionFailureMessagesProvider(): Iterator
     {
         $templateDir = TEST_APP . 'templates' . DS;
         yield 'assertContentType' => ['assertContentType', "Failed asserting that 'test' is set as the Content-Type (`text/html`).", '/posts/index', 'test'];
@@ -1628,7 +1630,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function methodsProvider(): \Iterator
+    public static function methodsProvider(): Iterator
     {
         yield 'GET' => ['get'];
         yield 'POST' => ['post'];
@@ -1715,7 +1717,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureSessionVerboseProvider(): \Iterator
+    public static function assertionFailureSessionVerboseProvider(): Iterator
     {
         yield 'assertFlashMessageVerbose' => ['assertFlashMessage', 'notfound'];
         yield 'assertFlashMessageAtVerbose' => ['assertFlashMessageAt', 2, 'notfound'];
@@ -1758,7 +1760,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, fn(): \TestApp\ReflectionDependency => new ReflectionDependency());
+        $this->mockService(ReflectionDependency::class, fn(): ReflectionDependency => new ReflectionDependency());
         $this->get('/dependencies/reflectionDep');
         $this->assertResponseOk();
         $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');

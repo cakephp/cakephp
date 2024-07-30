@@ -44,12 +44,8 @@ class LabelWidget implements WidgetInterface
      * @param \Cake\View\StringTemplate $_templates Templates list.
      */
     public function __construct(
-        /**
-         * Templates
-         */
         protected StringTemplate $_templates
-    )
-    {
+    ) {
     }
 
     /**

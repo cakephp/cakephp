@@ -21,6 +21,9 @@ use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
+use TestApp\Log\Engine\TestAppLog;
+use TestPlugin\Log\Engine\TestPluginLog;
 
 /**
  * LogTest class
@@ -55,11 +58,11 @@ class LogTest extends TestCase
         ]);
 
         $result = Log::engine('libtest');
-        $this->assertInstanceOf(\TestApp\Log\Engine\TestAppLog::class, $result);
+        $this->assertInstanceOf(TestAppLog::class, $result);
         $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
-        $this->assertInstanceOf(\TestPlugin\Log\Engine\TestPluginLog::class, $result);
+        $this->assertInstanceOf(TestPluginLog::class, $result);
         $this->assertContains('libtest', Log::configured());
         $this->assertContains('plugintest', Log::configured());
 
@@ -135,7 +138,7 @@ class LogTest extends TestCase
      *
      * @return array
      */
-    public static function configProvider(): \Iterator
+    public static function configProvider(): Iterator
     {
         yield 'Array of data using engine key.' => [[
             'engine' => 'File',
@@ -154,7 +157,7 @@ class LogTest extends TestCase
      * @dataProvider configProvider
      * @param mixed $settings
      */
-    public function testConfigVariants(\Cake\Log\Engine\FileLog|array $settings): void
+    public function testConfigVariants(FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -168,7 +171,7 @@ class LogTest extends TestCase
      * @dataProvider configProvider
      * @param mixed $settings
      */
-    public function testSetConfigVariants(\Cake\Log\Engine\FileLog|array $settings): void
+    public function testSetConfigVariants(FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -672,7 +675,7 @@ class LogTest extends TestCase
     public function testCreateLoggerWithCallable(): void
     {
         $instance = new FileLog();
-        Log::setConfig('default', function ($alias) use ($instance): \Cake\Log\Engine\FileLog {
+        Log::setConfig('default', function ($alias) use ($instance): FileLog {
             $this->assertSame('default', $alias);
 
             return $instance;

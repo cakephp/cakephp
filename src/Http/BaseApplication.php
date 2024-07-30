@@ -93,9 +93,6 @@ abstract class BaseApplication implements
     public function __construct(
         string $configDir,
         ?EventManagerInterface $eventManager = null,
-        /**
-         * Controller factory
-         */
         protected ?ControllerFactoryInterface $controllerFactory = null
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

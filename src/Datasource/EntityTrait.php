@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -445,6 +444,7 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
+
         return $value === null ||
         (
             is_array($value) &&

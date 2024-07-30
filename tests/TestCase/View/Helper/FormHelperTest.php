@@ -32,11 +32,19 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
+use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\FormContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
@@ -160,12 +168,12 @@ class FormHelperTest extends TestCase
     {
         $config = [
             'widgets' => [
-                'datetime' => [\Cake\View\Widget\LabelWidget::class, 'select'],
+                'datetime' => [LabelWidget::class, 'select'],
             ],
         ];
         $helper = new FormHelper($this->View, $config);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf(\Cake\View\Widget\LabelWidget::class, $locator->get('datetime'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('datetime'));
     }
 
     /**
@@ -176,7 +184,7 @@ class FormHelperTest extends TestCase
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf(\Cake\View\Widget\LabelWidget::class, $locator->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('text'));
     }
 
     /**
@@ -213,7 +221,7 @@ class FormHelperTest extends TestCase
         $data = [
             'val' => 1,
         ];
-        $mock = $this->getMockBuilder(\Cake\View\Widget\WidgetInterface::class)->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
         $mock->expects($this->once())
             ->method('render')
@@ -237,7 +245,7 @@ class FormHelperTest extends TestCase
             'val' => 1,
             'name' => 'test',
         ];
-        $mock = $this->getMockBuilder(\Cake\View\Widget\WidgetInterface::class)->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
 
         $mock->expects($this->once())
@@ -281,9 +289,9 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider(): void
     {
         $context = 'My data';
-        $stub = $this->getMockBuilder(\Cake\View\Form\ContextInterface::class)->getMock();
-        $this->Form->addContextProvider('test', function ($request, array $data) use ($context, $stub): \PHPUnit\Framework\MockObject\MockObject {
-            $this->assertInstanceOf(\Cake\Http\ServerRequest::class, $request);
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
+        $this->Form->addContextProvider('test', function ($request, array $data) use ($context, $stub): MockObject {
+            $this->assertInstanceOf(ServerRequest::class, $request);
             $this->assertSame($context, $data['entity']);
 
             return $stub;
@@ -300,8 +308,8 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder(\Cake\View\Form\ContextInterface::class)->getMock();
-        $this->Form->addContextProvider('orm', fn($request, $data): \PHPUnit\Framework\MockObject\MockObject => $stub);
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
+        $this->Form->addContextProvider('orm', fn($request, $data): MockObject => $stub);
         $this->Form->create($entity);
 
         $result = $this->Form->context();
@@ -314,7 +322,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder(\Cake\View\Form\ContextInterface::class)->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('newshiny', function ($request, array $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -331,7 +339,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public static function contextSelectionProvider(): \Iterator
+    public static function contextSelectionProvider(): Iterator
     {
         $entity = new Article();
         $collection = new Collection([$entity]);
@@ -343,12 +351,12 @@ class FormHelperTest extends TestCase
         ];
         $form = new Form();
         $custom = new StubContext();
-        yield 'entity' => [$entity, \Cake\View\Form\EntityContext::class];
-        yield 'collection' => [$collection, \Cake\View\Form\EntityContext::class];
-        yield 'empty_collection' => [$emptyCollection, \Cake\View\Form\NullContext::class];
-        yield 'array' => [$data, \Cake\View\Form\ArrayContext::class];
-        yield 'form' => [$form, \Cake\View\Form\FormContext::class];
-        yield 'none' => [null, \Cake\View\Form\NullContext::class];
+        yield 'entity' => [$entity, EntityContext::class];
+        yield 'collection' => [$collection, EntityContext::class];
+        yield 'empty_collection' => [$emptyCollection, NullContext::class];
+        yield 'array' => [$data, ArrayContext::class];
+        yield 'form' => [$form, FormContext::class];
+        yield 'none' => [null, NullContext::class];
         yield 'custom' => [$custom, $custom::class];
     }
 
@@ -358,7 +366,7 @@ class FormHelperTest extends TestCase
      * @dataProvider contextSelectionProvider
      * @param mixed $data
      */
-    public function testCreateContextSelectionBuiltIn(\TestApp\Model\Entity\Article|\Cake\Collection\Collection|\Cake\Form\Form|\TestApp\View\Form\StubContext|array|null $data, string $class): void
+    public function testCreateContextSelectionBuiltIn(Article|Collection|Form|StubContext|array|null $data, string $class): void
     {
         $this->Form->create($data);
         $this->assertInstanceOf($class, $this->Form->context());
@@ -369,7 +377,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public static function requestTypeProvider(): \Iterator
+    public static function requestTypeProvider(): Iterator
     {
         // type, method, override
         yield ['post', 'post', 'POST'];
@@ -383,7 +391,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateFile(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => 'file']);
         $expected = [
             'form' => [
@@ -402,7 +410,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateGet(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => 'get']);
         $expected = ['form' => [
             'method' => 'get', 'action' => '/articles/add',
@@ -418,7 +426,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateExplicitMethodEnctype(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create(null, [
             'type' => 'get',
             'method' => 'put',
@@ -598,7 +606,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateTypeOptions(string $type, string $method, string $override): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => $type]);
         $expected = [
             'form' => [
@@ -649,7 +657,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateUpdateForm(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/edit/1')
@@ -676,7 +684,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateAutoUrl(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/delete/10')
@@ -755,7 +763,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post',
-                'accept-charset' => strtolower((string) Configure::read('App.encoding')),
+                'accept-charset' => strtolower((string)Configure::read('App.encoding')),
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -769,7 +777,7 @@ class FormHelperTest extends TestCase
         $builder = Router::createRouteBuilder('/');
         $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
 
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('controller', 'Users'));
@@ -823,7 +831,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateQueryStringRequest(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'type' => 'post',
             'escape' => false,
@@ -859,7 +867,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateWithMultipleIdInData(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()->withData('Article.id', [1, 2]));
         $result = $this->Form->create($this->article);
@@ -878,7 +886,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreatePassedArgs(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $this->View->setRequest($this->View->getRequest()->withData('Article.id', 1));
         $result = $this->Form->create($this->article, [
             'type' => 'post',
@@ -903,7 +911,7 @@ class FormHelperTest extends TestCase
      */
     public function testGetFormCreate(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, ['type' => 'get']);
         $expected = ['form' => [
             'method' => 'get', 'action' => '/articles/add',
@@ -936,7 +944,7 @@ class FormHelperTest extends TestCase
      */
     public function testGetFormWithFalseModel(): void
     {
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $this->View->setRequest($this->View->getRequest()->withParam('controller', 'ContactTest'));
         $result = $this->Form->create(null, [
             'type' => 'get', 'url' => ['controller' => 'ContactTest'],
@@ -963,7 +971,7 @@ class FormHelperTest extends TestCase
     public function testCreateWithSecurity(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'url' => '/articles/publish',
         ]);
@@ -1896,7 +1904,7 @@ class FormHelperTest extends TestCase
         ];
 
         $result = $this->Form->create($this->article, ['url' => '/articles/add']);
-        $encoding = strtolower((string) Configure::read('App.encoding'));
+        $encoding = strtolower((string)Configure::read('App.encoding'));
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding],
             'div' => ['style' => 'display:none;'],
@@ -7464,7 +7472,7 @@ class FormHelperTest extends TestCase
      *
      * @return array
      */
-    public static function fractionalTypeProvider(): \Iterator
+    public static function fractionalTypeProvider(): Iterator
     {
         yield ['datetimefractional'];
         yield ['timestampfractional'];
@@ -8259,9 +8267,9 @@ class FormHelperTest extends TestCase
     public function testContext(): void
     {
         $result = $this->Form->context();
-        $this->assertInstanceOf(\Cake\View\Form\ContextInterface::class, $result);
+        $this->assertInstanceOf(ContextInterface::class, $result);
 
-        $mock = $this->getMockBuilder(\Cake\View\Form\ContextInterface::class)->getMock();
+        $mock = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
     }

@@ -352,13 +352,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         $results = null;
-        if ($this->_cache instanceof \Cake\Datasource\QueryCacher) {
+        if ($this->_cache instanceof QueryCacher) {
             $results = $this->_cache->fetch($this);
         }
 
         if ($results === null) {
             $results = $this->_decorateResults($this->_execute());
-            if ($this->_cache instanceof \Cake\Datasource\QueryCacher) {
+            if ($this->_cache instanceof QueryCacher) {
                 $this->_cache->store($this, $results);
             }
         }
@@ -397,7 +397,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $this->_mapReduce = [];
         }
 
-        if (!$mapper instanceof \Closure) {
+        if (!$mapper instanceof Closure) {
             if (!$overwrite) {
                 throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
             }
@@ -516,7 +516,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $this->_formatters = [];
         }
 
-        if (!$formatter instanceof \Closure) {
+        if (!$formatter instanceof Closure) {
             if ($mode !== self::OVERWRITE) {
                 throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
             }
@@ -1361,7 +1361,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function __clone()
     {
         parent::__clone();
-        if ($this->_eagerLoader instanceof \Cake\ORM\EagerLoader) {
+        if ($this->_eagerLoader instanceof EagerLoader) {
             $this->_eagerLoader = clone $this->_eagerLoader;
         }
     }
@@ -1385,7 +1385,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
-        if ($counter instanceof \Closure) {
+        if ($counter instanceof Closure) {
             $query->counter(null);
 
             return (int)$counter($query);
@@ -1408,10 +1408,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
         }
 
-        if (!$complex && $this->_valueBinder instanceof \Cake\Database\ValueBinder) {
+        if (!$complex && $this->_valueBinder instanceof ValueBinder) {
             $order = $this->clause('order');
             assert($order === null || $order instanceof QueryExpression);
-            $complex = $order instanceof \Cake\Database\Expression\QueryExpression && $order->hasNestedExpression();
+            $complex = $order instanceof QueryExpression && $order->hasNestedExpression();
         }
 
         $count = ['count' => $query->func()->count('*')];

@@ -53,14 +53,11 @@ class LinkConstraint
      * @param string $requiredLinkStatus The link status that is required to be present in order for the check to
      *  succeed.
      */
-    public function __construct(/**
-     * The association that should be checked.
-     */
-    protected Association|string $_association, string $requiredLinkStatus)
+    public function __construct(protected Association|string $_association, string $requiredLinkStatus)
     {
         if (!in_array($requiredLinkStatus, [static::STATUS_LINKED, static::STATUS_NOT_LINKED], true)) {
             throw new InvalidArgumentException(
-                'Argument 2 is expected to match one of the `' . \Cake\ORM\Rule\LinkConstraint::class . '::STATUS_*` constants.'
+                'Argument 2 is expected to match one of the `' . LinkConstraint::class . '::STATUS_*` constants.'
             );
         }
 

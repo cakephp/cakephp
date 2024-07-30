@@ -26,6 +26,7 @@ use Cake\Utility\Xml;
 use DateTime;
 use DOMDocument;
 use Exception;
+use Iterator;
 use SimpleXMLElement;
 use TypeError;
 
@@ -169,7 +170,7 @@ class XmlTest extends TestCase
      *
      * @return array
      */
-    public static function invalidDataProvider(): \Iterator
+    public static function invalidDataProvider(): Iterator
     {
         yield [''];
         yield ['http://localhost/notthere.xml'];
@@ -561,7 +562,7 @@ XML;
      *
      * @return array
      */
-    public static function invalidArrayDataProvider(): \Iterator
+    public static function invalidArrayDataProvider(): Iterator
     {
         yield [[]];
         yield [['numeric key as root']];
@@ -601,7 +602,7 @@ XML;
      * @dataProvider invalidArrayDataProvider
      * @param mixed $value
      */
-    public function testFromArrayFail(\DateTime|array $value): void
+    public function testFromArrayFail(DateTime|array $value): void
     {
         $this->expectException(Exception::class);
         Xml::fromArray($value);

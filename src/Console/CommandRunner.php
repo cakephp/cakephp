@@ -62,20 +62,10 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
     public function __construct(
-        /**
-         * The application console commands are being run for.
-         */
         protected ConsoleApplicationInterface $app,
-        /**
-         * The root command name. Defaults to `cake`.
-         */
         protected string $root = 'cake',
-        /**
-         * The application console commands are being run for.
-         */
         protected ?CommandFactoryInterface $factory = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -323,7 +313,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function createCommand(string $className): CommandInterface
     {
-        if (!$this->factory instanceof \Cake\Console\CommandFactoryInterface) {
+        if (!$this->factory instanceof CommandFactoryInterface) {
             $container = null;
             if ($this->app instanceof ContainerApplicationInterface) {
                 $container = $this->app->getContainer();

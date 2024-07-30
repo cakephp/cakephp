@@ -85,13 +85,9 @@ class Digest
      * @param array|null $options Options list.
      */
     public function __construct(
-        /**
-         * Instance of Cake\Http\Client
-         */
         protected Client $_client,
         ?array $options = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -108,7 +104,7 @@ class Digest
         }
 
         $this->algorithm = $algorithm;
-        $this->isSessAlgorithm = str_contains((string) $this->algorithm, '-sess');
+        $this->isSessAlgorithm = str_contains((string)$this->algorithm, '-sess');
         $this->hashType = Hash::get(self::HASH_ALGORITHMS, $this->algorithm);
     }
 

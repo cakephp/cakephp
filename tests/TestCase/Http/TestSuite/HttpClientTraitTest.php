@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http\TestSuite;
 use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 class HttpClientTraitTest extends TestCase
 {
@@ -29,7 +30,7 @@ class HttpClientTraitTest extends TestCase
      *
      * @return array<array>
      */
-    public static function methodProvider(): \Iterator
+    public static function methodProvider(): Iterator
     {
         yield ['Get'];
         yield ['Post'];

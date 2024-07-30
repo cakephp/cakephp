@@ -19,6 +19,10 @@ namespace Cake\Test\TestCase\View\Widget;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
+use Cake\View\Widget\BasicWidget;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\MultiCheckboxWidget;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use TestApp\View\Widget\TestUsingViewWidget;
@@ -54,15 +58,15 @@ class WidgetLocatorTest extends TestCase
     public function testAddInConstructor(): void
     {
         $widgets = [
-            'text' => [\Cake\View\Widget\BasicWidget::class],
+            'text' => [BasicWidget::class],
             'label' => ['Label'],
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $result = $inputs->get('text');
-        $this->assertInstanceOf(\Cake\View\Widget\BasicWidget::class, $result);
+        $this->assertInstanceOf(BasicWidget::class, $result);
 
         $result = $inputs->get('label');
-        $this->assertInstanceOf(\Cake\View\Widget\LabelWidget::class, $result);
+        $this->assertInstanceOf(LabelWidget::class, $result);
     }
 
     /**
@@ -87,11 +91,11 @@ class WidgetLocatorTest extends TestCase
     public function testAddWidgetsFromConfigInConstructor(): void
     {
         $widgets = [
-            'text' => [\Cake\View\Widget\BasicWidget::class],
+            'text' => [BasicWidget::class],
             'test_widgets',
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
-        $this->assertInstanceOf(\Cake\View\Widget\LabelWidget::class, $inputs->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $inputs->get('text'));
     }
 
     /**
@@ -101,11 +105,11 @@ class WidgetLocatorTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         $widgets = [
-            'text' => [\Cake\View\Widget\BasicWidget::class],
+            'text' => [BasicWidget::class],
             'TestPlugin.test_widgets',
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
-        $this->assertInstanceOf(\Cake\View\Widget\LabelWidget::class, $inputs->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $inputs->get('text'));
         $this->clearPlugins();
     }
 
@@ -116,17 +120,17 @@ class WidgetLocatorTest extends TestCase
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => [\Cake\View\Widget\BasicWidget::class],
+            'text' => [BasicWidget::class],
         ]);
         $result = $inputs->get('text');
-        $this->assertInstanceOf(\Cake\View\Widget\WidgetInterface::class, $result);
+        $this->assertInstanceOf(WidgetInterface::class, $result);
 
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'hidden' => \Cake\View\Widget\BasicWidget::class,
+            'hidden' => BasicWidget::class,
         ]);
         $result = $inputs->get('hidden');
-        $this->assertInstanceOf(\Cake\View\Widget\WidgetInterface::class, $result);
+        $this->assertInstanceOf(WidgetInterface::class, $result);
     }
 
     /**
@@ -136,10 +140,10 @@ class WidgetLocatorTest extends TestCase
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => [\Cake\View\Widget\BasicWidget::class],
+            'text' => [BasicWidget::class],
         ]);
         $result = $inputs->get('text');
-        $this->assertInstanceOf(\Cake\View\Widget\BasicWidget::class, $result);
+        $this->assertInstanceOf(BasicWidget::class, $result);
         $this->assertSame($result, $inputs->get('text'));
     }
 
@@ -150,10 +154,10 @@ class WidgetLocatorTest extends TestCase
     {
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            '_default' => [\Cake\View\Widget\BasicWidget::class],
+            '_default' => [BasicWidget::class],
         ]);
         $result = $inputs->get('text');
-        $this->assertInstanceOf(\Cake\View\Widget\BasicWidget::class, $result);
+        $this->assertInstanceOf(BasicWidget::class, $result);
 
         $result2 = $inputs->get('hidden');
         $this->assertSame($result, $result2);
@@ -179,11 +183,11 @@ class WidgetLocatorTest extends TestCase
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->add([
-            'label' => [\Cake\View\Widget\LabelWidget::class],
-            'multicheckbox' => [\Cake\View\Widget\MultiCheckboxWidget::class, 'label'],
+            'label' => [LabelWidget::class],
+            'multicheckbox' => [MultiCheckboxWidget::class, 'label'],
         ]);
         $result = $inputs->get('multicheckbox');
-        $this->assertInstanceOf(\Cake\View\Widget\MultiCheckboxWidget::class, $result);
+        $this->assertInstanceOf(MultiCheckboxWidget::class, $result);
     }
 
     /**
@@ -207,7 +211,7 @@ class WidgetLocatorTest extends TestCase
         $this->expectExceptionMessage('Unknown widget `label`');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
-        $inputs->add(['multicheckbox' => [\Cake\View\Widget\MultiCheckboxWidget::class, 'label']]);
+        $inputs->add(['multicheckbox' => [MultiCheckboxWidget::class, 'label']]);
         $inputs->get('multicheckbox');
     }
 }

@@ -36,7 +36,7 @@ abstract class ResponseBase extends Constraint
      */
     public function __construct(?ResponseInterface $response)
     {
-        if (!$response instanceof \Psr\Http\Message\ResponseInterface) {
+        if (!$response instanceof ResponseInterface) {
             throw new AssertionFailedError('No response set, cannot assert content.');
         }
 

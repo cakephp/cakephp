@@ -28,15 +28,11 @@ class ChainMessagesLoader
      * Receives a list of callable functions or objects that will be executed
      * one after another until one of them returns a non-empty translations package
      *
-     * @param array<callable> $_loaders List of callables to execute
+     * @param array<callable> $_loaders The list of callables to execute one after another for loading messages
      */
     public function __construct(
-        /**
-         * The list of callables to execute one after another for loading messages
-         */
         protected array $_loaders
-    )
-    {
+    ) {
     }
 
     /**

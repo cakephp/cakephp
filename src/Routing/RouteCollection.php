@@ -190,16 +190,16 @@ class RouteCollection
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
-            $plugin = strtolower((string) $url['plugin']);
+            $plugin = strtolower((string)$url['plugin']);
         }
 
         $prefix = false;
         if (isset($url['prefix']) && $url['prefix'] !== false) {
-            $prefix = strtolower((string) $url['prefix']);
+            $prefix = strtolower((string)$url['prefix']);
         }
 
-        $controller = isset($url['controller']) ? strtolower((string) $url['controller']) : null;
-        $action = strtolower((string) $url['action']);
+        $controller = isset($url['controller']) ? strtolower((string)$url['controller']) : null;
+        $action = strtolower((string)$url['action']);
 
         $names = [
             sprintf('%s:%s', $controller, $action),

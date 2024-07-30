@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Float type.
@@ -35,7 +37,7 @@ class FloatTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * @var string
@@ -49,7 +51,7 @@ class FloatTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new FloatType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->numberClass = FloatType::$numberClass;
     }
 

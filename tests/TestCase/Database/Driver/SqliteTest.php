@@ -21,6 +21,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use Mockery;
 use PDO;
 
@@ -41,7 +42,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder(\Cake\Database\Driver\Sqlite::class)
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
@@ -149,7 +150,7 @@ class SqliteTest extends TestCase
      *
      * @return array
      */
-    public static function schemaValueProvider(): \Iterator
+    public static function schemaValueProvider(): Iterator
     {
         yield [null, 'NULL'];
         yield [false, 'FALSE'];

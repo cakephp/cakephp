@@ -40,12 +40,12 @@ trait AssociationsNormalizerTrait
                 $options = [];
             }
 
-            if (!str_contains((string) $table, '.')) {
+            if (!str_contains((string)$table, '.')) {
                 $result[$table] = $options;
                 continue;
             }
 
-            $path = explode('.', (string) $table);
+            $path = explode('.', (string)$table);
             $table = array_pop($path);
             $first = array_shift($path);
             assert(is_string($first));

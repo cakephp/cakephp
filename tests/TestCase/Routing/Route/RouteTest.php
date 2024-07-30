@@ -23,6 +23,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -273,7 +274,7 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public static function provideMatchParseExtension(): \Iterator
+    public static function provideMatchParseExtension(): Iterator
     {
         yield ['/foo/bar.xml', ['/foo/bar', 'xml'], ['xml', 'json', 'xml.gz']];
         yield ['/foo/bar.json', ['/foo/bar', 'json'], ['xml', 'json', 'xml.gz']];
@@ -299,7 +300,7 @@ class RouteTest extends TestCase
     /**
      * @return array
      */
-    public static function provideNoMatchParseExtension(): \Iterator
+    public static function provideNoMatchParseExtension(): Iterator
     {
         yield ['/foo/bar', ['xml']];
         yield ['/foo/bar.zip', ['xml']];
@@ -1029,7 +1030,7 @@ class RouteTest extends TestCase
     public function testParseRequestDelegates(): void
     {
         /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder(\Cake\Routing\Route\Route::class)
+        $route = $this->getMockBuilder(Route::class)
             ->onlyMethods(['parse'])
             ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
             ->getMock();
@@ -1670,7 +1671,7 @@ class RouteTest extends TestCase
             '_greedy' => false,
             '_compiledRoute' => null,
         ]);
-        $this->assertInstanceOf(\Cake\Routing\Route\Route::class, $route);
+        $this->assertInstanceOf(Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));
         $this->assertNull($route->match(['controller' => 'Pages', 'action' => 'display', 'about']));
         $expected = [

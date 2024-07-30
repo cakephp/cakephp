@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosDate;
+use Cake\Database\Driver;
 use Cake\Database\Type\DateTimeType;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -24,6 +25,8 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeZone;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the DateTime type.
@@ -38,7 +41,7 @@ class DateTimeTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Original type map
@@ -59,7 +62,7 @@ class DateTimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
 
         $this->originalTimeZone = date_default_timezone_get();
     }
@@ -210,7 +213,7 @@ class DateTimeTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): \Iterator
+    public static function marshalProvider(): Iterator
     {
         // invalid types.
         yield [null, null];
@@ -303,7 +306,7 @@ class DateTimeTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal(bool|string|int|NativeDateTime|\DateTimeImmutable|array|null $value, NativeDateTime|\DateTimeImmutable|null $expected): void
+    public function testMarshal(bool|string|int|NativeDateTime|DateTimeImmutable|array|null $value, NativeDateTime|DateTimeImmutable|null $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

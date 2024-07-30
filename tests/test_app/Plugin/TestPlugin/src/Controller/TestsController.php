@@ -20,6 +20,8 @@ declare(strict_types=1);
  */
 namespace TestPlugin\Controller;
 
+use Cake\Http\Response;
+
 class TestsController extends TestPluginAppController
 {
     public function index(): void
@@ -27,7 +29,7 @@ class TestsController extends TestPluginAppController
         $this->set('test_value', 'It is a variable');
     }
 
-    public function some_method(): \Cake\Http\Response
+    public function some_method(): Response
     {
         $this->response->body(25);
 

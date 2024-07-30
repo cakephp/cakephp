@@ -17,12 +17,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosDate;
+use Cake\Database\Driver;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the Date type.
@@ -37,7 +40,7 @@ class DateTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * @var string
@@ -51,7 +54,7 @@ class DateTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
 
         $this->originalTimeZone = date_default_timezone_get();
     }
@@ -132,7 +135,7 @@ class DateTypeTest extends TestCase
     /**
      * Data provider for marshal()
      */
-    public static function marshalProvider(): \Iterator
+    public static function marshalProvider(): Iterator
     {
         $date = new Date('@1392387900');
         // invalid types.

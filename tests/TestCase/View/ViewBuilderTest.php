@@ -20,9 +20,15 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\AjaxView;
 use Cake\View\Exception\MissingViewException;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\JsonView;
 use Cake\View\View;
 use Cake\View\ViewBuilder;
+use Iterator;
+use TestApp\View\AppView;
 
 /**
  * View builder test case.
@@ -78,7 +84,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function stringPropertyProvider(): \Iterator
+    public static function stringPropertyProvider(): Iterator
     {
         yield ['layoutPath', 'Admin/'];
         yield ['templatePath', 'Admin/'];
@@ -87,7 +93,7 @@ class ViewBuilderTest extends TestCase
         yield ['theme', 'TestPlugin'];
         yield ['template', 'edit'];
         yield ['name', 'Articles'];
-        yield ['className', \Cake\View\JsonView::class];
+        yield ['className', JsonView::class];
     }
 
     /**
@@ -96,7 +102,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function boolPropertyProvider(): \Iterator
+    public static function boolPropertyProvider(): Iterator
     {
         yield ['autoLayout', true, false];
     }
@@ -106,7 +112,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public static function arrayPropertyProvider(): \Iterator
+    public static function arrayPropertyProvider(): Iterator
     {
         yield ['options', ['key' => 'value']];
     }
@@ -222,7 +228,7 @@ class ViewBuilderTest extends TestCase
             $response,
             $events
         );
-        $this->assertInstanceOf(\Cake\View\AjaxView::class, $view);
+        $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertSame('edit', $view->getTemplate());
         $this->assertSame('default', $view->getLayout());
         $this->assertSame('Articles/', $view->getTemplatePath());
@@ -234,8 +240,8 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['foo', 'x'], $view->getVars());
         $this->assertSame('bar', $view->get('foo'));
-        $this->assertInstanceOf(\Cake\View\Helper\HtmlHelper::class, $view->Html);
-        $this->assertInstanceOf(\Cake\View\Helper\FormHelper::class, $view->Form);
+        $this->assertInstanceOf(HtmlHelper::class, $view->Html);
+        $this->assertInstanceOf(FormHelper::class, $view->Form);
     }
 
     /**
@@ -257,7 +263,7 @@ class ViewBuilderTest extends TestCase
         static::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
-        $this->assertInstanceOf(\TestApp\View\AppView::class, $view);
+        $this->assertInstanceOf(AppView::class, $view);
     }
 
     /**

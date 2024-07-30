@@ -149,7 +149,7 @@ class Cookie implements CookieInterface
         $this->secure = $secure ?? static::$defaults['secure'];
         $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
 
-        if ($expiresAt instanceof \DateTimeInterface) {
+        if ($expiresAt instanceof DateTimeInterface) {
             if ($expiresAt instanceof DateTime) {
                 $expiresAt = clone $expiresAt;
             }
@@ -326,7 +326,7 @@ class Cookie implements CookieInterface
         /** @var string $value */
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
 
-        if ($this->expiresAt instanceof \DateTimeInterface) {
+        if ($this->expiresAt instanceof DateTimeInterface) {
             $headerValue[] = sprintf('expires=%s', $this->getFormattedExpires());
         }
 
@@ -338,7 +338,7 @@ class Cookie implements CookieInterface
             $headerValue[] = sprintf('domain=%s', $this->domain);
         }
 
-        if ($this->sameSite instanceof \Cake\Http\Cookie\SameSiteEnum) {
+        if ($this->sameSite instanceof SameSiteEnum) {
             $headerValue[] = sprintf('samesite=%s', $this->sameSite->value);
         }
 
@@ -551,7 +551,7 @@ class Cookie implements CookieInterface
      */
     public function getExpiresTimestamp(): ?int
     {
-        if (!$this->expiresAt instanceof \DateTimeInterface) {
+        if (!$this->expiresAt instanceof DateTimeInterface) {
             return null;
         }
 
@@ -563,7 +563,7 @@ class Cookie implements CookieInterface
      */
     public function getFormattedExpires(): string
     {
-        if (!$this->expiresAt instanceof \DateTimeInterface) {
+        if (!$this->expiresAt instanceof DateTimeInterface) {
             return '';
         }
 
@@ -580,7 +580,7 @@ class Cookie implements CookieInterface
             $time = clone $time;
         }
 
-        if (!$this->expiresAt instanceof \DateTimeInterface) {
+        if (!$this->expiresAt instanceof DateTimeInterface) {
             return false;
         }
 
@@ -748,7 +748,7 @@ class Cookie implements CookieInterface
             'httponly' => $this->httpOnly,
         ];
 
-        if ($this->sameSite instanceof \Cake\Http\Cookie\SameSiteEnum) {
+        if ($this->sameSite instanceof SameSiteEnum) {
             $options['samesite'] = $this->sameSite->value;
         }
 

@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 
 class RouteCollectionTest extends TestCase
 {
@@ -401,7 +402,7 @@ class RouteCollectionTest extends TestCase
      *
      * @return array
      */
-    public static function hostProvider(): \Iterator
+    public static function hostProvider(): Iterator
     {
         yield ['wrong.example'];
         yield ['example.com'];
@@ -716,7 +717,7 @@ class RouteCollectionTest extends TestCase
 
         $all = $this->collection->named();
         $this->assertCount(1, $all);
-        $this->assertInstanceOf(\Cake\Routing\Route\Route::class, $all['cntrl']);
+        $this->assertInstanceOf(Route::class, $all['cntrl']);
         $this->assertSame('/l/{controller}', $all['cntrl']->template);
     }
 

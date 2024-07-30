@@ -31,20 +31,10 @@ class CachedCollection implements CollectionInterface
      * @param \Psr\SimpleCache\CacheInterface $cacher Cacher instance.
      */
     public function __construct(
-        /**
-         * The decorated schema collection
-         */
         protected CollectionInterface $collection,
-        /**
-         * The cache key prefix
-         */
         protected string $prefix,
-        /**
-         * Cacher instance.
-         */
         protected CacheInterface $cacher
-    )
-    {
+    ) {
     }
 
     /**

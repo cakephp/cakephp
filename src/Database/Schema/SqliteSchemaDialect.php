@@ -382,7 +382,7 @@ class SqliteSchemaDialect extends SchemaDialect
                     );
 
                     $regex = sprintf('/CONSTRAINT\s*([\'"`\[ ].+?[\'"`\] ])\s*UNIQUE\s*\(\s*(?:%s)\s*\)/i', $columnsPattern);
-                    if (preg_match($regex, (string) $tableSql, $matches)) {
+                    if (preg_match($regex, (string)$tableSql, $matches)) {
                         $row['name'] = $this->normalizePossiblyQuotedIdentifier($matches[1]);
                     }
                 }

@@ -115,7 +115,7 @@ class ConnectionManager
         $config = static::_parseDsn($dsn);
 
         if (isset($config['path']) && empty($config['database'])) {
-            $config['database'] = substr((string) $config['path'], 1);
+            $config['database'] = substr((string)$config['path'], 1);
         }
 
         if (empty($config['driver'])) {

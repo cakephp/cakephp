@@ -15,11 +15,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Cache\Engine\FileEngine;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\TestSuite\TestCase;
+use Iterator;
+use TestApp\Controller\PagesController;
 use TestApp\Core\TestApp;
 
 /**
@@ -48,7 +51,7 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider classNameProvider
      */
-    public function testClassName(string $class, string $type, string $suffix = '', bool $existsInBase = false, string $expected = false): void
+    public function testClassName(string $class, string $type, string $suffix = '', bool $existsInBase = false, ?string $expected = false): void
     {
         static::setAppNamespace();
         $i = 0;
@@ -94,7 +97,7 @@ class AppTest extends TestCase
      * @param mixed $expected Expected value.
      * @dataProvider shortNameProvider
      */
-    public function testShortName(string $class, string $type, string $suffix = '', string $expected = false): void
+    public function testShortName(string $class, string $type, string $suffix = '', ?string $expected = false): void
     {
         static::setAppNamespace();
 
@@ -142,7 +145,7 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public static function classNameProvider(): \Iterator
+    public static function classNameProvider(): Iterator
     {
         yield ['Does', 'Not', 'Exist'];
         yield ['Exists', 'In', 'App', true, 'TestApp\In\ExistsApp'];
@@ -170,12 +173,12 @@ class AppTest extends TestCase
         yield ['Auth', 'Controller/Component'];
         yield ['Unknown', 'Controller', 'Controller'];
         // Real examples returning class names
-        yield ['App', 'Core', '', false, \Cake\Core\App::class];
+        yield ['App', 'Core', '', false, App::class];
         yield ['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'];
-        yield ['File', 'Cache/Engine', 'Engine', false, \Cake\Cache\Engine\FileEngine::class];
+        yield ['File', 'Cache/Engine', 'Engine', false, FileEngine::class];
         yield ['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'];
         yield ['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'];
-        yield ['Pages', 'Controller', 'Controller', true, \TestApp\Controller\PagesController::class];
+        yield ['Pages', 'Controller', 'Controller', true, PagesController::class];
     }
 
     /**
@@ -189,7 +192,7 @@ class AppTest extends TestCase
      *
      * @return array
      */
-    public static function shortNameProvider(): \Iterator
+    public static function shortNameProvider(): Iterator
     {
         yield ['TestApp\In\ExistsApp', 'In', 'App', 'Exists'];
         yield ['TestApp\In\Also\ExistsApp', 'In', 'App', 'Also/Exists'];
@@ -213,12 +216,12 @@ class AppTest extends TestCase
         yield ['Cake\Suffix\No', 'Suffix', '', 'No'];
         yield ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'];
         // Real examples returning class names
-        yield [\Cake\Core\App::class, 'Core', '', 'App'];
+        yield [App::class, 'Core', '', 'App'];
         yield ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'];
-        yield [\Cake\Cache\Engine\FileEngine::class, 'Cache/Engine', 'Engine', 'File'];
+        yield [FileEngine::class, 'Cache/Engine', 'Engine', 'File'];
         yield ['Cake\Shell\Task\CommandTask', 'Shell/Task', 'Task', 'Command'];
         yield ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'];
-        yield [\TestApp\Controller\PagesController::class, 'Controller', 'Controller', 'Pages'];
+        yield [PagesController::class, 'Controller', 'Controller', 'Pages'];
     }
 
     /**

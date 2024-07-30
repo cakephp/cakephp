@@ -21,6 +21,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use Laminas\Diactoros\Exception\InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\UploadedFileInterface;
@@ -504,7 +505,7 @@ class ServerRequestFactoryTest extends TestCase
      *
      * @return array Environment array
      */
-    public static function environmentGenerator(): \Iterator
+    public static function environmentGenerator(): Iterator
     {
         yield [
             'IIS - No rewrite base path',

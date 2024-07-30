@@ -47,12 +47,8 @@ class Marshaller
      * @param \Cake\ORM\Table $_table The table this marshaller is for.
      */
     public function __construct(
-        /**
-         * The table instance this marshaller is for.
-         */
         protected Table $_table
-    )
-    {
+    ) {
     }
 
     /**
@@ -106,13 +102,13 @@ class Marshaller
             }
 
             if (isset($options['isMerge'])) {
-                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested): array|\Cake\Datasource\EntityInterface|null {
+                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
                 };
             } else {
-                $callback = function ($value, $entity) use ($assoc, $nested): array|\Cake\Datasource\EntityInterface|null {
+                $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => []];
 
                     return $this->_marshalAssociation($assoc, $value, $options);
@@ -422,7 +418,7 @@ class Marshaller
         if ($conditions) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
             $results = $target->find()
-                ->andWhere(fn (QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->or($conditions))
+                ->andWhere(fn (QueryExpression $exp): QueryExpression => $exp->or($conditions))
                 ->all();
 
             $keyFields = array_keys($primaryKey);
@@ -592,19 +588,25 @@ class Marshaller
                 // change. Arrays will always be marked as dirty because
                 // the original/updated list could contain references to the
                 // same objects, even though those objects may have changed internally.
-                if (is_scalar($value)
-                && $original === $value) {
+                if (
+                    is_scalar($value)
+                    && $original === $value
+                ) {
                     continue;
                 }
 
-                if ($value === null
-                && $original === $value) {
+                if (
+                    $value === null
+                    && $original === $value
+                ) {
                     continue;
                 }
 
-                if (is_object($value)
-                && !($value instanceof EntityInterface)
-                && $original == $value) {
+                if (
+                    is_object($value)
+                    && !($value instanceof EntityInterface)
+                    && $original == $value
+                ) {
                     continue;
                 }
             }

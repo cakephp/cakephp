@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * PluginUnloadCommandTest class
@@ -86,7 +87,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->assertStringContainsString("'Company/TestPluginThree'", $contents);
     }
 
-    public static function pluginNameProvider(): \Iterator
+    public static function pluginNameProvider(): Iterator
     {
         yield ['TestPlugin'];
         yield ['TestPluginTwo'];

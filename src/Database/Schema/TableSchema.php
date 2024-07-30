@@ -285,10 +285,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @param string $_table The table name.
      * @param array<string, array|string> $columns The list of columns for the schema.
      */
-    public function __construct(/**
-     * The name of the table
-     */
-    protected string $_table, array $columns = [])
+    public function __construct(protected string $_table, array $columns = [])
     {
         foreach ($columns as $field => $definition) {
             $this->addColumn($field, $definition);

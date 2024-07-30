@@ -172,7 +172,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      */
     public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter
     {
-        if ($formatter instanceof \Cake\Chronos\DifferenceFormatterInterface) {
+        if ($formatter instanceof DifferenceFormatterInterface) {
             if (!$formatter instanceof RelativeTimeFormatter) {
                 throw new InvalidArgumentException('Formatter for I18n must extend RelativeTimeFormatter.');
             }

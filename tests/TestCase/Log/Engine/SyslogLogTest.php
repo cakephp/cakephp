@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\SyslogLog;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * SyslogLogTest class
@@ -89,7 +90,7 @@ class SyslogLogTest extends TestCase
      *
      * @return array
      */
-    public static function typesProvider(): \Iterator
+    public static function typesProvider(): Iterator
     {
         yield ['emergency', LOG_EMERG];
         yield ['alert', LOG_ALERT];

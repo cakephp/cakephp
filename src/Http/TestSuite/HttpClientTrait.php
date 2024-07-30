@@ -18,6 +18,7 @@ namespace Cake\Http\TestSuite;
 
 use Cake\Http\Client;
 use Cake\Http\Client\Response;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * Define mock responses and have mocks automatically cleared.
@@ -27,7 +28,7 @@ trait HttpClientTrait
     /**
      * Resets mocked responses
      */
-    #[\PHPUnit\Framework\Attributes\After]
+    #[After]
     public function cleanupMockResponses(): void
     {
         Client::clearMockResponses();

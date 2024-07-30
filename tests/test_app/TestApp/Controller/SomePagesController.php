@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 
 /**
  * SomePagesController class
@@ -42,7 +43,7 @@ class SomePagesController extends Controller
     /**
      * Test method for returning responses.
      */
-    public function responseGenerator(): \Cake\Http\Response
+    public function responseGenerator(): Response
     {
         return $this->response->withStringBody('new response');
     }

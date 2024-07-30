@@ -323,7 +323,7 @@ class FormHelper extends Helper
      */
     public function contextFactory(?ContextFactory $instance = null, array $contexts = []): ContextFactory
     {
-        if (!$instance instanceof \Cake\View\Form\ContextFactory) {
+        if (!$instance instanceof ContextFactory) {
             return $this->_contextFactory ??= ContextFactory::createWithDefaults($contexts);
         }
 
@@ -381,7 +381,7 @@ class FormHelper extends Helper
         $options += [
             'type' => $isCreate ? 'post' : 'put',
             'url' => null,
-            'encoding' => strtolower((string) Configure::read('App.encoding')),
+            'encoding' => strtolower((string)Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
             'valueSources' => null,
@@ -418,7 +418,7 @@ class FormHelper extends Helper
         unset($options['url'], $options['idPrefix']);
 
         $htmlAttributes = [];
-        switch (strtolower((string) $options['type'])) {
+        switch (strtolower((string)$options['type'])) {
             case 'get':
                 $htmlAttributes['method'] = 'get';
                 break;
@@ -434,7 +434,7 @@ class FormHelper extends Helper
             case 'patch':
                 $append .= $this->hidden('_method', [
                     'name' => '_method',
-                    'value' => strtoupper((string) $options['type']),
+                    'value' => strtoupper((string)$options['type']),
                     'secure' => static::SECURE_SKIP,
                 ]);
             // Default to post method
@@ -443,14 +443,14 @@ class FormHelper extends Helper
         }
 
         if (isset($options['method'])) {
-            $htmlAttributes['method'] = strtolower((string) $options['method']);
+            $htmlAttributes['method'] = strtolower((string)$options['method']);
         }
 
         if (isset($options['enctype'])) {
-            $htmlAttributes['enctype'] = strtolower((string) $options['enctype']);
+            $htmlAttributes['enctype'] = strtolower((string)$options['enctype']);
         }
 
-        $this->requestType = strtolower((string) $options['type']);
+        $this->requestType = strtolower((string)$options['type']);
 
         if (!empty($options['encoding'])) {
             $htmlAttributes['accept-charset'] = $options['encoding'];
@@ -595,7 +595,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = []): string
     {
-        if (!$this->formProtector instanceof \Cake\Form\FormProtector) {
+        if (!$this->formProtector instanceof FormProtector) {
             return '';
         }
 
@@ -689,7 +689,7 @@ class FormHelper extends Helper
      */
     public function getFormProtector(): FormProtector
     {
-        if (!$this->formProtector instanceof \Cake\Form\FormProtector) {
+        if (!$this->formProtector instanceof FormProtector) {
             throw new CakeException(
                 '`FormProtector` instance has not been created. Ensure you have loaded the `FormProtectionComponent`'
                 . ' in your controller and called `FormHelper::create()` before calling `FormHelper::unlockField()`.'
@@ -1084,8 +1084,8 @@ class FormHelper extends Helper
             // Don't include aria-describedby unless we have a good chance of
             // having error message show up.
             if (
-                str_contains((string) $templater->get('error'), '{{id}}') &&
-                str_contains((string) $templater->get('inputContainerError'), '{{error}}')
+                str_contains((string)$templater->get('error'), '{{id}}') &&
+                str_contains((string)$templater->get('inputContainerError'), '{{error}}')
             ) {
                 $options += [
                    'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
@@ -1223,7 +1223,7 @@ class FormHelper extends Helper
     {
         $label = $options['labelOptions'];
         unset($options['labelOptions']);
-        switch (strtolower((string) $options['type'])) {
+        switch (strtolower((string)$options['type'])) {
             case 'select':
             case 'radio':
             case 'multicheckbox':
@@ -1728,7 +1728,7 @@ class FormHelper extends Helper
             ['secure' => static::SECURE_SKIP]
         ));
 
-        if ($secure === true && $this->formProtector instanceof \Cake\Form\FormProtector) {
+        if ($secure === true && $this->formProtector instanceof FormProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 true,
@@ -1882,7 +1882,7 @@ class FormHelper extends Helper
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
-            $requestMethod = strtoupper((string) $options['method']);
+            $requestMethod = strtoupper((string)$options['method']);
             unset($options['method']);
         }
 
@@ -2000,7 +2000,7 @@ class FormHelper extends Helper
             'templateVars' => [],
         ];
 
-        if (isset($options['name']) && $this->formProtector instanceof \Cake\Form\FormProtector) {
+        if (isset($options['name']) && $this->formProtector instanceof FormProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 $options['secure']
@@ -2018,7 +2018,7 @@ class FormHelper extends Helper
         if ($isUrl || $isImage) {
             $type = 'image';
 
-            if ($this->formProtector instanceof \Cake\Form\FormProtector) {
+            if ($this->formProtector instanceof FormProtector) {
                 $unlockFields = ['x', 'y'];
                 if (isset($options['name'])) {
                     $unlockFields = [
@@ -2523,7 +2523,7 @@ class FormHelper extends Helper
      */
     protected function _getContext(mixed $data = []): ContextInterface
     {
-        if ($this->_context instanceof \Cake\View\Form\ContextInterface && !$data) {
+        if ($this->_context instanceof ContextInterface && !$data) {
             return $this->_context;
         }
 
@@ -2569,7 +2569,7 @@ class FormHelper extends Helper
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
         if (
-            $this->formProtector instanceof \Cake\Form\FormProtector &&
+            $this->formProtector instanceof FormProtector &&
             isset($data['name']) &&
             $secure !== null &&
             $secure !== self::SECURE_SKIP

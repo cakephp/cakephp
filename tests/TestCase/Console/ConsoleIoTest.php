@@ -16,11 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
+use Cake\Console\Helper;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 /**
  * ConsoleIo test.
@@ -35,17 +41,17 @@ class ConsoleIoTest extends TestCase
     /**
      * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $out;
+    protected MockObject $out;
 
     /**
      * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $err;
+    protected MockObject $err;
 
     /**
      * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $in;
+    protected MockObject $in;
 
     /**
      * setUp method
@@ -55,13 +61,13 @@ class ConsoleIoTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->out = $this->getMockBuilder(\Cake\Console\ConsoleOutput::class)
+        $this->out = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->err = $this->getMockBuilder(\Cake\Console\ConsoleOutput::class)
+        $this->err = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->in = $this->getMockBuilder(\Cake\Console\ConsoleInput::class)
+        $this->in = $this->getMockBuilder(ConsoleInput::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
@@ -86,7 +92,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public static function choiceProvider(): \Iterator
+    public static function choiceProvider(): Iterator
     {
         yield [['y', 'n']];
         yield ['y,n'];
@@ -455,8 +461,8 @@ class ConsoleIoTest extends TestCase
         Log::drop('stdout');
         Log::drop('stderr');
         $this->io->setLoggers(true);
-        $this->assertInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stdout'));
-        $this->assertInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stderr'));
+        $this->assertInstanceOf(LoggerInterface::class, Log::engine('stdout'));
+        $this->assertInstanceOf(LoggerInterface::class, Log::engine('stderr'));
 
         $this->io->setLoggers(false);
         $this->assertNull(Log::engine('stdout'));
@@ -479,9 +485,9 @@ class ConsoleIoTest extends TestCase
             'types' => ['error', 'warning'],
         ]);
         $this->io->setLoggers(true);
-        $this->assertNotInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stdout'));
-        $this->assertNotInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stderr'));
-        $this->assertInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('console-logger'));
+        $this->assertNotInstanceOf(LoggerInterface::class, Log::engine('stdout'));
+        $this->assertNotInstanceOf(LoggerInterface::class, Log::engine('stderr'));
+        $this->assertInstanceOf(LoggerInterface::class, Log::engine('console-logger'));
 
         $this->io->setLoggers(false);
         $this->assertNull(Log::engine('stdout'));
@@ -497,8 +503,8 @@ class ConsoleIoTest extends TestCase
         Log::drop('stdout');
         Log::drop('stderr');
         $this->io->setLoggers(ConsoleIo::QUIET);
-        $this->assertNotInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stdout'));
-        $this->assertInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stderr'));
+        $this->assertNotInstanceOf(LoggerInterface::class, Log::engine('stdout'));
+        $this->assertInstanceOf(LoggerInterface::class, Log::engine('stderr'));
     }
 
     /**
@@ -510,7 +516,7 @@ class ConsoleIoTest extends TestCase
         Log::drop('stderr');
         $this->io->setLoggers(ConsoleIo::VERBOSE);
 
-        $this->assertInstanceOf(\Psr\Log\LoggerInterface::class, Log::engine('stderr'));
+        $this->assertInstanceOf(LoggerInterface::class, Log::engine('stderr'));
         /** @var \Cake\Log\Log $engine */
         $engine = Log::engine('stdout');
         $this->assertSame(['notice', 'info', 'debug'], $engine->getConfig('levels'));
@@ -557,7 +563,7 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->with('It works!well ish');
         $helper = $this->io->helper('simple');
-        $this->assertInstanceOf(\Cake\Console\Helper::class, $helper);
+        $this->assertInstanceOf(Helper::class, $helper);
         $helper->output(['well', 'ish']);
     }
 
@@ -566,7 +572,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public static function outHelperProvider(): \Iterator
+    public static function outHelperProvider(): Iterator
     {
         yield ['info'];
         yield ['success'];
@@ -578,7 +584,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return array
      */
-    public static function errHelperProvider(): \Iterator
+    public static function errHelperProvider(): Iterator
     {
         yield ['warning'];
         yield ['error'];

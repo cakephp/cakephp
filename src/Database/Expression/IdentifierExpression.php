@@ -37,13 +37,9 @@ class IdentifierExpression implements ExpressionInterface
      * @param string|null $collation The identifier collation
      */
     public function __construct(
-        /**
-         * Holds the identifier string
-         */
         protected string $_identifier,
         protected ?string $collation = null
-    )
-    {
+    ) {
     }
 
     /**

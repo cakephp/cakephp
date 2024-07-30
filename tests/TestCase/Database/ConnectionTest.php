@@ -27,6 +27,7 @@ use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\Schema\Collection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -36,10 +37,13 @@ use Error;
 use Exception;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\AbstractLogger;
 use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\TestDriver;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -106,7 +110,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
      */
-    public function getMockFormDriver(): \PHPUnit\Framework\MockObject\MockObject
+    public function getMockFormDriver(): MockObject
     {
         $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
@@ -168,7 +172,7 @@ class ConnectionTest extends TestCase
     public function testDriverOptionClassNameSupport(): void
     {
         $connection = new Connection(['driver' => 'TestDriver']);
-        $this->assertInstanceOf(\TestApp\Database\Driver\TestDriver::class, $connection->getDriver());
+        $this->assertInstanceOf(TestDriver::class, $connection->getDriver());
 
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
         $this->assertInstanceOf(\TestPlugin\Database\Driver\TestDriver::class, $connection->getDriver());
@@ -361,7 +365,7 @@ class ConnectionTest extends TestCase
             ['id' => 'integer', 'title' => 'string', 'body' => 'string']
         );
         $result = $query->execute();
-        $this->assertInstanceOf(\Cake\Database\StatementInterface::class, $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
 
         $result = $this->connection->execute('SELECT * from things where id = 3');
@@ -617,7 +621,7 @@ class ConnectionTest extends TestCase
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
 
-        $logger = $this->createMock(\Psr\Log\AbstractLogger::class);
+        $logger = $this->createMock(AbstractLogger::class);
         $logger->expects($this->once())
             ->method('log')
             ->with('warning', $this->stringContains('The connection is going to be closed'));
@@ -903,9 +907,9 @@ class ConnectionTest extends TestCase
         $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
-        $this->assertInstanceOf(\Cake\Database\Schema\Collection::class, $schema);
+        $this->assertInstanceOf(Collection::class, $schema);
 
-        $schema = $this->getMockBuilder(\Cake\Database\Schema\Collection::class)
+        $schema = $this->getMockBuilder(Collection::class)
             ->setConstructorArgs([$connection])
             ->getMock();
         $connection->setSchemaCollection($schema);

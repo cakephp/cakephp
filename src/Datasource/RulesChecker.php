@@ -98,12 +98,9 @@ class RulesChecker
     /**
      * Constructor. Takes the options to be passed to all rules.
      *
-     * @param array<string, mixed> $_options The options to pass to every rule
+     * @param array<string, mixed> $_options List of options to pass to every callable rule
      */
-    public function __construct(/**
-     * List of options to pass to every callable rule
-     */
-    protected array $_options = [])
+    public function __construct(protected array $_options = [])
     {
         $this->_useI18n = function_exists('\Cake\I18n\__d');
     }

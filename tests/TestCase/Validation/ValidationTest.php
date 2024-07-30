@@ -28,6 +28,7 @@ use Cake\Validation\Validation;
 use DateTime;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Iterator;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
 use stdClass;
@@ -2693,7 +2694,7 @@ class ValidationTest extends TestCase
      *
      * @return array
      */
-    public static function uploadedFileProvider(): \Iterator
+    public static function uploadedFileProvider(): Iterator
     {
         yield 'minSize fail' => [false, ['minSize' => 500]];
         yield 'minSize pass' => [true, ['minSize' => 190]];

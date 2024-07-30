@@ -164,10 +164,10 @@ class MiddlewareQueueTest extends TestCase
     {
         $queue = new MiddlewareQueue();
         $queue->add('Sample');
-        $queue->prepend(\TestApp\Middleware\SampleMiddleware::class);
+        $queue->prepend(SampleMiddleware::class);
 
-        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
-        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
     }
 
     /**
@@ -180,9 +180,9 @@ class MiddlewareQueueTest extends TestCase
 
         $queue = new MiddlewareQueue();
         $queue->add([$one]);
-        $queue->prepend([\TestApp\Middleware\SampleMiddleware::class]);
+        $queue->prepend([SampleMiddleware::class]);
 
-        $this->assertInstanceOf(\TestApp\Middleware\SampleMiddleware::class, $queue->current());
+        $this->assertInstanceOf(SampleMiddleware::class, $queue->current());
         $queue->next();
         $this->assertSame($one, $queue->current()->getCallable());
     }

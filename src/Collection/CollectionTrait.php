@@ -39,7 +39,6 @@ use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
-use Traversable;
 use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -691,7 +690,7 @@ trait CollectionTrait
             if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     /** @psalm-suppress PossiblyInvalidArgument */
-                    $parentValue = isset($parents[$id]) ? $parents[$id] : [];
+                    $parentValue = $parents[$id] ?? [];
                     if (!is_array($parentValue)) {
                         $parentValue = (array)$parentValue;
                     }

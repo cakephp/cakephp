@@ -22,6 +22,7 @@ use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * ConsoleOutputTest
@@ -31,7 +32,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $output;
+    protected MockObject $output;
 
     /**
      * setup

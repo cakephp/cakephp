@@ -57,7 +57,7 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCascadingEvents(): void
     {
-        $callable = function (EventInterface $event): \Cake\Event\EventInterface {
+        $callable = function (EventInterface $event): EventInterface {
             $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;
@@ -67,7 +67,7 @@ class ConditionDecoratorTest extends TestCase
             'if' => fn(EventInterface $event): bool => false,
         ]);
 
-        $listener2 = function (EventInterface $event): \Cake\Event\EventInterface {
+        $listener2 = function (EventInterface $event): EventInterface {
             $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;

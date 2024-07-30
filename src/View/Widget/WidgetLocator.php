@@ -52,13 +52,7 @@ class WidgetLocator
      * @param \Cake\View\View $_view The view instance to set as a widget.
      * @param array $widgets See add() method for more information.
      */
-    public function __construct(/**
-     * Templates to use.
-     */
-    protected StringTemplate $_templates, /**
-     * View instance.
-     */
-    protected View $_view, array $widgets = [])
+    public function __construct(protected StringTemplate $_templates, protected View $_view, array $widgets = [])
     {
         $this->add($widgets);
     }
@@ -191,11 +185,13 @@ class WidgetLocator
 
             /** @var \Cake\View\Widget\WidgetInterface $instance */
             $instance = $reflection->newInstanceArgs($arguments);
+
             return $instance;
         }
 
         /** @var \Cake\View\Widget\WidgetInterface $instance */
         $instance = new $className($this->_templates);
+
         return $instance;
     }
 }

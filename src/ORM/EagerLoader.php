@@ -125,7 +125,7 @@ class EagerLoader
      */
     public function contain(array|string $associations, ?Closure $queryBuilder = null): array
     {
-        if ($queryBuilder instanceof \Closure) {
+        if ($queryBuilder instanceof Closure) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
                     'Cannot set containments. To use $queryBuilder, $associations must be a string'
@@ -335,8 +335,8 @@ class EagerLoader
                 continue;
             }
 
-            if (str_contains((string) $table, '.')) {
-                $path = explode('.', (string) $table);
+            if (str_contains((string)$table, '.')) {
+                $path = explode('.', (string)$table);
                 $table = array_pop($path);
                 foreach ($path as $t) {
                     $pointer += [$t => []];
@@ -391,7 +391,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (!$this->_containments && !$this->_matching instanceof \Cake\ORM\EagerLoader) {
+        if (!$this->_containments && !$this->_matching instanceof EagerLoader) {
             return;
         }
 
@@ -678,7 +678,7 @@ class EagerLoader
             return $map;
         }
 
-        assert($this->_matching instanceof \Cake\ORM\EagerLoader, 'EagerLoader not available');
+        assert($this->_matching instanceof EagerLoader, 'EagerLoader not available');
 
         $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
         $map = $this->_buildAssociationsMap($map, $this->normalized($table));
@@ -836,7 +836,7 @@ class EagerLoader
      */
     public function __clone()
     {
-        if ($this->_matching instanceof \Cake\ORM\EagerLoader) {
+        if ($this->_matching instanceof EagerLoader) {
             $this->_matching = clone $this->_matching;
         }
     }

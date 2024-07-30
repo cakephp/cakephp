@@ -20,6 +20,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use PDO;
 
 /**
@@ -34,7 +35,7 @@ class MysqlTest extends TestCase
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string) $config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains((string)$config['driver'], 'Mysql'), 'Not using Mysql for test config');
     }
 
     /**
@@ -42,7 +43,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder(\Cake\Database\Driver\Mysql::class)
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -93,7 +94,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder(\Cake\Database\Driver\Mysql::class)
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -193,7 +194,7 @@ class MysqlTest extends TestCase
         $this->assertSame($expectedVersion, $result);
     }
 
-    public static function versionStringProvider(): \Iterator
+    public static function versionStringProvider(): Iterator
     {
         yield ['10.2.23-MariaDB', '10.2.23-MariaDB'];
         yield ['5.5.5-10.2.23-MariaDB', '10.2.23-MariaDB'];

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http\Client;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
+use Iterator;
 
 /**
  * HTTP response test.
@@ -223,7 +224,7 @@ XML;
      *
      * @return array
      */
-    public static function isSuccessProvider(): \Iterator
+    public static function isSuccessProvider(): Iterator
     {
         yield [
             true,

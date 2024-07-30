@@ -549,7 +549,7 @@ class PostgresSchemaDialect extends SchemaDialect
         if (
             isset($data['default']) &&
             in_array($data['type'], $datetimeTypes) &&
-            strtolower((string) $data['default']) === 'current_timestamp'
+            strtolower((string)$data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {

@@ -22,6 +22,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 
 /**
@@ -32,7 +33,7 @@ class StreamTest extends TestCase
     /**
      * @var \Cake\Http\Client\Adapter\Stream|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $stream;
+    protected MockObject $stream;
 
     protected function setUp(): void
     {

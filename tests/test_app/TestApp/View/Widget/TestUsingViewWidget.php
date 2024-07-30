@@ -22,7 +22,7 @@ use Cake\View\Widget\WidgetInterface;
 
 class TestUsingViewWidget implements WidgetInterface
 {
-    public function __construct(protected \Cake\View\StringTemplate $_templates, protected \Cake\View\View $_view)
+    public function __construct(protected StringTemplate $_templates, protected View $_view)
     {
     }
 

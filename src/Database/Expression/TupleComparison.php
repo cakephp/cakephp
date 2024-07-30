@@ -40,8 +40,6 @@ class TupleComparison extends ComparisonExpression
         ExpressionInterface|array|string $fields,
         ExpressionInterface|array $values,
         /**
-         * The type to be used for casting the value to a database representation
-         *
          * @psalm-suppress NonInvariantDocblockPropertyType
          */
         protected array $types = [],

@@ -35,10 +35,7 @@ class ConfiguredComponent extends Component
      * @param array $config Array of configuration settings.
      * @param array $components Array of child components.
      */
-    public function __construct(ComponentRegistry $registry, array $config, /**
-     * components property
-     */
-    protected array $components = [])
+    public function __construct(ComponentRegistry $registry, array $config, protected array $components = [])
     {
         parent::__construct($registry, $config);
     }

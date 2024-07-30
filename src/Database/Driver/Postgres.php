@@ -73,7 +73,7 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo instanceof \PDO) {
+        if ($this->pdo instanceof PDO) {
             return;
         }
 
@@ -244,7 +244,7 @@ class Postgres extends Driver
                 $expression
                     ->setName('')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p): \Cake\Database\Expression\FunctionExpression {
+                    ->iterateParts(function ($p): FunctionExpression {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
                         } else {

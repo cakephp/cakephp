@@ -205,7 +205,7 @@ class NumericPaginator implements PaginatorInterface
         if ($target instanceof QueryInterface) {
             $query = $target;
             $target = $query->getRepository();
-            if (!$target instanceof \Cake\Datasource\RepositoryInterface) {
+            if (!$target instanceof RepositoryInterface) {
                 throw new CakeException('No repository set for query.');
             }
         }
@@ -257,7 +257,7 @@ class NumericPaginator implements PaginatorInterface
             ['order' => null, 'page' => null, 'limit' => null],
         );
 
-        if (!$query instanceof \Cake\Datasource\QueryInterface) {
+        if (!$query instanceof QueryInterface) {
             $args = [];
             $type = empty($options['finder']) ? 'all' : $options['finder'];
             if (is_array($type)) {
@@ -525,7 +525,7 @@ class NumericPaginator implements PaginatorInterface
         if (isset($options['sort'])) {
             $direction = null;
             if (isset($options['direction'])) {
-                $direction = strtolower((string) $options['direction']);
+                $direction = strtolower((string)$options['direction']);
             }
 
             if (!in_array($direction, ['asc', 'desc'], true)) {
@@ -533,7 +533,7 @@ class NumericPaginator implements PaginatorInterface
             }
 
             $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-            if ($order && $options['sort'] && !str_contains((string) $options['sort'], '.')) {
+            if ($order && $options['sort'] && !str_contains((string)$options['sort'], '.')) {
                 $order = $this->_removeAliases($order, $object->getAlias());
             }
 

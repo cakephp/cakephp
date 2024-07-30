@@ -175,7 +175,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         $table = $this->_getTable($parts);
-        if (!$table instanceof \Cake\ORM\Table) {
+        if (!$table instanceof Table) {
             return false;
         }
 
@@ -285,7 +285,7 @@ class EntityContext implements ContextInterface
     protected function _schemaDefault(array $parts): mixed
     {
         $table = $this->_getTable($parts);
-        if (!$table instanceof \Cake\ORM\Table) {
+        if (!$table instanceof Table) {
             return null;
         }
 
@@ -357,7 +357,7 @@ class EntityContext implements ContextInterface
             $isLast = ($i === $last);
             if (!$isLast && $next === null && $prop !== '_ids') {
                 $table = $this->_getTable($path);
-                if ($table instanceof \Cake\ORM\Table) {
+                if ($table instanceof Table) {
                     return $table->newEmptyEntity();
                 }
             }
@@ -564,7 +564,7 @@ class EntityContext implements ContextInterface
     public function fieldNames(): array
     {
         $table = $this->_getTable('0');
-        if (!$table instanceof \Cake\ORM\Table) {
+        if (!$table instanceof Table) {
             return [];
         }
 
@@ -593,7 +593,7 @@ class EntityContext implements ContextInterface
         }
 
         $table = $this->_getTable($parts);
-        if (!$table instanceof \Cake\ORM\Table) {
+        if (!$table instanceof Table) {
             throw new InvalidArgumentException(sprintf('Validator not found: `%s`.', $key));
         }
 
@@ -694,7 +694,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         $table = $this->_getTable($parts);
-        if (!$table instanceof \Cake\ORM\Table) {
+        if (!$table instanceof Table) {
             return [];
         }
 

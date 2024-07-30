@@ -21,6 +21,7 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -35,7 +36,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function safeHttpMethodProvider(): \Iterator
+    public static function safeHttpMethodProvider(): Iterator
     {
         yield ['GET'];
         yield ['HEAD'];
@@ -46,7 +47,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function httpMethodProvider(): \Iterator
+    public static function httpMethodProvider(): Iterator
     {
         yield ['PATCH'];
         yield ['PUT'];
@@ -59,7 +60,7 @@ class BodyParserMiddlewareTest extends TestCase
      *
      * @return array
      */
-    public static function jsonScalarValues(): \Iterator
+    public static function jsonScalarValues(): Iterator
     {
         yield ['', []];
         // Requests without body
@@ -166,7 +167,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => 'a,b,c',
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame([], $req->getParsedBody());
 
             return new Response();
@@ -190,7 +191,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -214,7 +215,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -236,7 +237,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -260,7 +261,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame([], $req->getParsedBody());
 
             return new Response();
@@ -287,7 +288,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'article' => ['title' => 'yay'],
             ];
@@ -318,7 +319,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'article' => [
                     'id' => 1,
@@ -362,7 +363,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame([], $req->getParsedBody());
 
             return new Response();
@@ -388,7 +389,7 @@ XML;
                 ],
                 'input' => $body,
         ]);
-        $handler = new TestRequestHandler(function ($req) use ($expected): \Cake\Http\Response {
+        $handler = new TestRequestHandler(function ($req) use ($expected): Response {
             $this->assertSame($expected, $req->getParsedBody());
 
             return new Response();
@@ -408,7 +409,7 @@ XML;
             ],
             'input' => 'lol',
         ]);
-        $handler = new TestRequestHandler(fn($req): \Cake\Http\Response => new Response());
+        $handler = new TestRequestHandler(fn($req): Response => new Response());
         $this->expectException(BadRequestException::class);
         $parser = new BodyParserMiddleware();
         $parser->process($request, $handler);

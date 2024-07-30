@@ -21,6 +21,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -32,7 +33,7 @@ class ResponseEmitterTest extends TestCase
     /**
      * @var \Cake\Http\ResponseEmitter
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $emitter;
+    protected MockObject $emitter;
 
     /**
      * setup

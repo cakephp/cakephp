@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,4 +16,4 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-class_alias(\Cake\ORM\Query\SelectQuery::class, \Cake\ORM\Query::class);
+class_alias(SelectQuery::class, Query::class);

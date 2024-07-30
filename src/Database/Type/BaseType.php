@@ -31,12 +31,8 @@ abstract class BaseType implements TypeInterface
      * @param string|null $_name The name identifying this type
      */
     public function __construct(
-        /**
-         * Identifier name for this type
-         */
         protected ?string $_name = null
-    )
-    {
+    ) {
     }
 
     /**

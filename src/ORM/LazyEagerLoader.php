@@ -79,7 +79,7 @@ class LazyEagerLoader
         $query = $source
             ->find()
             ->select((array)$primaryKey)
-            ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source): \Cake\Database\Expression\QueryExpression|\Cake\Database\Expression\TupleComparison {
+            ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source): QueryExpression|TupleComparison {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }

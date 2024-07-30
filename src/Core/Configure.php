@@ -320,7 +320,7 @@ class Configure
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
         $engine = static::_getEngine($config);
-        if (!$engine instanceof \Cake\Core\Configure\ConfigEngineInterface) {
+        if (!$engine instanceof ConfigEngineInterface) {
             throw new CakeException(
                 sprintf(
                     'Config %s engine not found when attempting to load %s.',
@@ -373,7 +373,7 @@ class Configure
     public static function dump(string $key, string $config = 'default', array $keys = []): bool
     {
         $engine = static::_getEngine($config);
-        if (!$engine instanceof \Cake\Core\Configure\ConfigEngineInterface) {
+        if (!$engine instanceof ConfigEngineInterface) {
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
 

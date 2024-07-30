@@ -25,6 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
+use Iterator;
 
 /**
  * PaginatorHelperTest class
@@ -706,7 +707,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public static function urlGenerationResetsToPage1Provider(): \Iterator
+    public static function urlGenerationResetsToPage1Provider(): Iterator
     {
         yield 'Sorting the field currently sorted asc, asc' => [
             'name',
@@ -2626,7 +2627,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return array
      */
-    public static function dataMetaProvider(): \Iterator
+    public static function dataMetaProvider(): Iterator
     {
         // Verifies that no next and prev links are created for single page results.
         yield [1, false, false, 1, [], ''];

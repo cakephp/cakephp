@@ -145,13 +145,13 @@ class TimestampBehavior extends Behavior
      */
     public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTime
     {
-        if ($ts instanceof \DateTimeInterface) {
+        if ($ts instanceof DateTimeInterface) {
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
 
             $this->_ts = new DateTime($ts);
-        } elseif (!$this->_ts instanceof \Cake\I18n\DateTime || $refreshTimestamp) {
+        } elseif (!$this->_ts instanceof DateTime || $refreshTimestamp) {
             $this->_ts = new DateTime();
         }
 

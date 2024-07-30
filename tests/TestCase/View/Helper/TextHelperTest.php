@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
+use Iterator;
 
 /**
  * TextHelperTest class
@@ -60,7 +61,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function methodProvider(): \Iterator
+    public static function methodProvider(): Iterator
     {
         yield ['highlight', ['this is a test', 'test']];
         yield ['slug', ['test']];
@@ -203,7 +204,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function autoLinkProvider(): \Iterator
+    public static function autoLinkProvider(): Iterator
     {
         yield [
             'This is a test text',
@@ -405,7 +406,7 @@ class TextHelperTest extends TestCase
      *
      * @return array
      */
-    public static function autoLinkEmailProvider(): \Iterator
+    public static function autoLinkEmailProvider(): Iterator
     {
         yield [
             'This is a test text',

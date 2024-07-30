@@ -105,7 +105,7 @@ class Sqlite extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo instanceof \PDO) {
+        if ($this->pdo instanceof PDO) {
             return;
         }
 
@@ -243,7 +243,7 @@ class Sqlite extends Driver
                 $expression
                     ->setName('ROUND')
                     ->setConjunction('-')
-                    ->iterateParts(fn($p): \Cake\Database\Expression\FunctionExpression => new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]));
+                    ->iterateParts(fn($p): FunctionExpression => new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]));
                 break;
             case 'NOW':
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);

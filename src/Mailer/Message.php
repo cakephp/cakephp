@@ -917,7 +917,7 @@ class Message implements JsonSerializable
     {
         $lines = $this->getHeaders($include);
 
-        if ($callback instanceof \Closure) {
+        if ($callback instanceof Closure) {
             $lines = array_map($callback, $lines);
         }
 
@@ -1127,7 +1127,7 @@ class Message implements JsonSerializable
                     throw new InvalidArgumentException('No filename specified.');
                 }
 
-                $fileInfo['data'] = chunk_split(base64_encode((string) $fileInfo['data']), 76, "\r\n");
+                $fileInfo['data'] = chunk_split(base64_encode((string)$fileInfo['data']), 76, "\r\n");
             } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
                 $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
                 if (is_int($name)) {
@@ -1810,7 +1810,7 @@ class Message implements JsonSerializable
             }
         });
 
-        return array_filter($array, fn($i): bool => $i !== null && !is_array($i) && !is_bool($i) && strlen((string) $i) || !empty($i));
+        return array_filter($array, fn($i): bool => $i !== null && !is_array($i) && !is_bool($i) && strlen((string)$i) || !empty($i));
     }
 
     /**

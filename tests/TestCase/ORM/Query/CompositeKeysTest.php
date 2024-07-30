@@ -26,6 +26,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
@@ -65,7 +66,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderHasOne(): \Iterator
+    public static function strategiesProviderHasOne(): Iterator
     {
         yield ['join'];
         yield ['select'];
@@ -76,7 +77,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderHasMany(): \Iterator
+    public static function strategiesProviderHasMany(): Iterator
     {
         yield ['subquery'];
         yield ['select'];
@@ -87,7 +88,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsTo(): \Iterator
+    public static function strategiesProviderBelongsTo(): Iterator
     {
         yield ['join'];
         yield ['select'];
@@ -98,7 +99,7 @@ class CompositeKeysTest extends TestCase
      *
      * @return array
      */
-    public static function strategiesProviderBelongsToMany(): \Iterator
+    public static function strategiesProviderBelongsToMany(): Iterator
     {
         yield ['subquery'];
         yield ['select'];
@@ -502,9 +503,9 @@ class CompositeKeysTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[0]);
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[1]);
-        $this->assertInstanceOf(\Cake\ORM\Entity::class, $result->tags[2]);
+        $this->assertInstanceOf(Entity::class, $result->tags[0]);
+        $this->assertInstanceOf(Entity::class, $result->tags[1]);
+        $this->assertInstanceOf(Entity::class, $result->tags[2]);
 
         $data = [
             'title' => 'Haz tags',

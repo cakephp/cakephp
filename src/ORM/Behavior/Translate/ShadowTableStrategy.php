@@ -146,7 +146,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $query->contain([$config['hasOneAlias']]);
 
         $query->formatResults(
-            fn (CollectionInterface $results): \Cake\Collection\CollectionInterface => $this->rowMapper($results, $locale),
+            fn (CollectionInterface $results): CollectionInterface => $this->rowMapper($results, $locale),
             $query::PREPEND
         );
     }
@@ -248,7 +248,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $clause = $query->clause($name);
         assert($clause === null || $clause instanceof QueryExpression);
-        if (!$clause instanceof \Cake\Database\Expression\QueryExpression || !$clause->count()) {
+        if (!$clause instanceof QueryExpression || !$clause->count()) {
             return false;
         }
 

@@ -19,8 +19,10 @@ namespace Cake\Test\TestCase\Command;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * SchemaCacheCommands test.
@@ -44,7 +46,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * @var \Cake\Cache\Engine\NullEngine|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $cache;
+    protected MockObject $cache;
 
     /**
      * setup method
@@ -84,7 +86,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf(\Cake\Database\Schema\CachedCollection::class, $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**
@@ -96,7 +98,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache build --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf(\Cake\Database\Schema\CachedCollection::class, $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**

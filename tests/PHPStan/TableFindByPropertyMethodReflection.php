@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\PHPStan;
 
+use Cake\ORM\Query\SelectQuery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ObjectType;
@@ -59,6 +60,6 @@ class TableFindByPropertyMethodReflection implements MethodReflection
 
     public function getReturnType(): Type
     {
-        return new ObjectType(\Cake\ORM\Query\SelectQuery::class);
+        return new ObjectType(SelectQuery::class);
     }
 }

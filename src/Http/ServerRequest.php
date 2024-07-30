@@ -303,8 +303,8 @@ class ServerRequest implements ServerRequestInterface
             $config['url'] = '/' . $config['url'];
         }
 
-        if (str_contains((string) $config['url'], '?')) {
-            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', (string) $config['url']);
+        if (str_contains((string)$config['url'], '?')) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', (string)$config['url']);
 
             parse_str($config['environment']['QUERY_STRING'], $queryArgs);
             $config['query'] += $queryArgs;
@@ -525,7 +525,6 @@ class ServerRequest implements ServerRequestInterface
             return true;
         }
 
-
         return isset($detect['param']) && $this->_paramDetector($detect);
     }
 
@@ -552,7 +551,6 @@ class ServerRequest implements ServerRequestInterface
         if ($accepted === null) {
             return false;
         }
-
 
         return !($exclude && in_array($accepted, $exclude, true));
     }

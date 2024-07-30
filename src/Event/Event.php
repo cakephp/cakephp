@@ -56,22 +56,13 @@ class Event implements EventInterface
      * @psalm-param TSubject|null $_subject
      */
     public function __construct(
-        /**
-         * Name of the event
-         */
         protected string $_name,
         /**
-         * The object this event applies to (usually the same object that generates the event)
-         *
          * @psalm-var TSubject|null
          */
         protected ?object $_subject = null,
-        /**
-         * Custom data for the method that receives the event
-         */
         protected array $_data = []
-    )
-    {
+    ) {
     }
 
     /**

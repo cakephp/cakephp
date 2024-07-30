@@ -66,9 +66,6 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
         RecursiveIterator $items,
         callable|string $valuePath,
         callable|string $keyPath,
-        /**
-         * The string to use for prefixing the values according to their depth in the tree.
-         */
         protected string $_spacer,
         int $mode = RecursiveIteratorIterator::SELF_FIRST
     ) {

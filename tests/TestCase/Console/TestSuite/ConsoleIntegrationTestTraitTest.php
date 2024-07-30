@@ -19,6 +19,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\MissingConsoleInputException;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use PHPUnit\Framework\AssertionFailedError;
 use stdClass;
 
@@ -222,7 +223,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      *
      * @return array
      */
-    public static function assertionFailureMessagesProvider(): \Iterator
+    public static function assertionFailureMessagesProvider(): Iterator
     {
         yield 'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR];
         yield 'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'];

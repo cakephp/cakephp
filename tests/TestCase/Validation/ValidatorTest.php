@@ -2952,7 +2952,7 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
-        $this->assertInstanceOf(\Cake\Validation\ValidationRule::class, $rule);
+        $this->assertInstanceOf(ValidationRule::class, $rule);
         $this->assertNotNull($rule->get('message'), 'Message is not present when it should be');
         $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
         $this->assertSame($name, $rule->get('rule'), 'Rule name does not match');

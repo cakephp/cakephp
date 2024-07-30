@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\MissingHelperException;
 use Cake\Console\HelperRegistry;
 use Cake\TestSuite\TestCase;
@@ -39,7 +40,7 @@ class HelperRegistryTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $io = $this->getMockBuilder(\Cake\Console\ConsoleIo::class)
+        $io = $this->getMockBuilder(ConsoleIo::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->helpers = new HelperRegistry();

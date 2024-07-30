@@ -92,7 +92,7 @@ class MapReduce implements IteratorAggregate
      *  ['odd' => [1, 3, 5], 'even' => [2, 4]]
      * ```
      *
-     * @param iterable $_data The original data to be processed.
+     * @param iterable $_data Holds the original data that needs to be processed.
      * @param callable $mapper the mapper callback. This function will receive 3 arguments.
      * The first one is the current value, second the current results key and third is
      * this class instance so you can call the result emitters.
@@ -101,11 +101,11 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(/**
-     * Holds the original data that needs to be processed
-     */
-    protected iterable $_data, callable $mapper, ?callable $reducer = null)
-    {
+    public function __construct(
+        protected iterable $_data,
+        callable $mapper,
+        ?callable $reducer = null
+    ) {
         $this->_mapper = $mapper;
         $this->_reducer = $reducer;
     }

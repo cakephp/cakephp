@@ -22,8 +22,10 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
+use TestPlugin\Command\ExampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -102,7 +104,7 @@ class CommandCollectionTest extends TestCase
      *
      * @return array
      */
-    public static function invalidNameProvider(): \Iterator
+    public static function invalidNameProvider(): Iterator
     {
         // Empty
         yield [''];
@@ -177,8 +179,8 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('sample'));
 
-        $this->assertSame(\TestApp\Command\DemoCommand::class, $collection->get('demo'));
-        $this->assertSame(\TestApp\Command\SampleCommand::class, $collection->get('sample'));
+        $this->assertSame(DemoCommand::class, $collection->get('demo'));
+        $this->assertSame(SampleCommand::class, $collection->get('sample'));
     }
 
     /**
@@ -242,7 +244,7 @@ class CommandCollectionTest extends TestCase
             $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertSame(\TestPlugin\Command\ExampleCommand::class, $result['example']);
+        $this->assertSame(ExampleCommand::class, $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
         $this->assertSame(\TestPlugin\Command\SampleCommand::class, $result['test_plugin.sample']);
 

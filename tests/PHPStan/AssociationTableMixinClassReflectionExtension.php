@@ -15,7 +15,7 @@ use PHPStan\Reflection\PropertyReflection;
 
 class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareExtension
 {
-    private ?\PHPStan\Broker\Broker $broker = null;
+    private ?Broker $broker = null;
 
     /**
      * @param Broker $broker Class reflection broker

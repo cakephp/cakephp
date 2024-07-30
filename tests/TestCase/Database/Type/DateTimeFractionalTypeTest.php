@@ -16,10 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\DateTimeFractionalType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for the DateTime type.
@@ -34,7 +37,7 @@ class DateTimeFractionalTypeTest extends TestCase
     /**
      * @var \Cake\Database\Driver
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $driver;
+    protected MockObject $driver;
 
     /**
      * Setup
@@ -43,7 +46,7 @@ class DateTimeFractionalTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeFractionalType();
-        $this->driver = $this->getMockBuilder(\Cake\Database\Driver::class)->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -210,7 +213,7 @@ class DateTimeFractionalTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProvider(): \Iterator
+    public static function marshalProvider(): Iterator
     {
         // invalid types.
         yield [null, null];
@@ -278,7 +281,7 @@ class DateTimeFractionalTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshal(bool|string|array|null $value, ?\Cake\I18n\DateTime $expected): void
+    public function testMarshal(bool|string|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -293,7 +296,7 @@ class DateTimeFractionalTypeTest extends TestCase
      *
      * @return array
      */
-    public static function marshalProviderWithoutMicroseconds(): \Iterator
+    public static function marshalProviderWithoutMicroseconds(): Iterator
     {
         // invalid types.
         yield [null, null];
@@ -379,7 +382,7 @@ class DateTimeFractionalTypeTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testMarshalWithoutMicroseconds(bool|string|int|array|null $value, ?\Cake\I18n\DateTime $expected): void
+    public function testMarshalWithoutMicroseconds(bool|string|int|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

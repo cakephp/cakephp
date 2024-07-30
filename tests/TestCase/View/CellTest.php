@@ -27,6 +27,7 @@ use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
+use TestApp\View\Cell\CelloCell;
 use TestApp\View\CustomJsonView;
 
 /**
@@ -79,7 +80,7 @@ class CellTest extends TestCase
         $this->assertStringContainsString('<h2>Suspendisse gravida neque</h2>', $render);
 
         $cell = $this->View->cell('Cello');
-        $this->assertInstanceOf(\TestApp\View\Cell\CelloCell::class, $cell);
+        $this->assertInstanceOf(CelloCell::class, $cell);
         $this->assertSame("Cellos\n", $cell->render());
     }
 
@@ -347,7 +348,7 @@ class CellTest extends TestCase
         $view->setTheme('Pretty');
 
         $cell = $view->cell('Articles');
-        $this->assertSame(\TestApp\View\CustomJsonView::class, $cell->viewBuilder()->getClassName());
+        $this->assertSame(CustomJsonView::class, $cell->viewBuilder()->getClassName());
         $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
 

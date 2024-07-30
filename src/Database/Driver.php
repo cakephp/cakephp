@@ -163,7 +163,7 @@ abstract class Driver
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn (): \PDO => new PDO(
+        $action = fn (): PDO => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,
@@ -216,11 +216,11 @@ abstract class Driver
      */
     protected function getPdo(): PDO
     {
-        if (!$this->pdo instanceof \PDO) {
+        if (!$this->pdo instanceof PDO) {
             $this->connect();
         }
 
-        assert($this->pdo instanceof \PDO);
+        assert($this->pdo instanceof PDO);
 
         return $this->pdo;
     }
@@ -288,7 +288,7 @@ abstract class Driver
      */
     protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
-        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
+        if (!$this->logger instanceof LoggerInterface) {
             $statement->execute($params);
 
             return;
@@ -310,14 +310,14 @@ abstract class Driver
             'error' => $exception,
             'params' => $params ?? $statement->getBoundParams(),
         ];
-        if (!$exception instanceof \PDOException) {
+        if (!$exception instanceof PDOException) {
             $logContext['numRows'] = $statement->rowCount();
             $logContext['took'] = $took;
         }
 
         $this->log($statement->queryString(), $logContext);
 
-        if ($exception instanceof \PDOException) {
+        if ($exception instanceof PDOException) {
             throw $exception;
         }
     }
@@ -589,7 +589,7 @@ abstract class Driver
 
         $conditions = $query->clause('where');
         assert($conditions === null || $conditions instanceof ExpressionInterface);
-        if ($conditions instanceof \Cake\Database\ExpressionInterface) {
+        if ($conditions instanceof ExpressionInterface) {
             $conditions->traverse(function ($expression) {
                 if ($expression instanceof ComparisonExpression) {
                     $field = $expression->getField();
@@ -728,7 +728,7 @@ abstract class Driver
      */
     public function isConnected(): bool
     {
-        if ($this->pdo instanceof \PDO) {
+        if ($this->pdo instanceof PDO) {
             try {
                 $connected = (bool)$this->pdo->query('SELECT 1');
             } catch (PDOException) {
@@ -870,7 +870,7 @@ abstract class Driver
      */
     public function log(Stringable|string $message, array $context = []): bool
     {
-        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
+        if (!$this->logger instanceof LoggerInterface) {
             return false;
         }
 
@@ -908,7 +908,7 @@ abstract class Driver
     public function __debugInfo(): array
     {
         return [
-            'connected' => $this->pdo instanceof \PDO,
+            'connected' => $this->pdo instanceof PDO,
             'role' => $this->getRole(),
         ];
     }

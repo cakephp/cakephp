@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\ORM\Table;
 
 /**
@@ -58,7 +59,7 @@ class TestController extends ControllerTestAppController
     {
     }
 
-    public function returner(): \Cake\Http\Response
+    public function returner(): Response
     {
         return $this->response->withStringBody('I am from the controller.');
     }

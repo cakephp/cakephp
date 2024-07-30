@@ -22,6 +22,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\I18n\I18n;
+use Cake\ORM\Association;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
@@ -743,7 +744,7 @@ class TranslateBehaviorEavTest extends TestCase
         $results = $table->find()
             ->select(['title', 'body'])
             ->orderBy(['title' => 'asc'])
-            ->contain(['Authors' => fn(SelectQuery $q): \Cake\ORM\Query\SelectQuery => $q->select(['id', 'name'])]);
+            ->contain(['Authors' => fn(SelectQuery $q): SelectQuery => $q->select(['id', 'name'])]);
 
         $expected = [
             [
@@ -1299,7 +1300,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $found = false;
         foreach ($association->getConditions() as $key => $value) {
-            if (str_contains((string) $key, 'comment_translation.model')) {
+            if (str_contains((string)$key, 'comment_translation.model')) {
                 $found = true;
                 $this->assertSame('Comments', $value);
                 break;
@@ -1323,7 +1324,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $items = $table->associations();
         $association = $items->getByProperty('body_translation');
-        $this->assertInstanceOf(\Cake\ORM\Association::class, $association);
+        $this->assertInstanceOf(Association::class, $association);
 
         $found = false;
         foreach ($association->getConditions() as $key => $value) {

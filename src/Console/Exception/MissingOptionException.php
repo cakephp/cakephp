@@ -33,13 +33,7 @@ class MissingOptionException extends ConsoleException
      */
     public function __construct(
         string $message,
-        /**
-         * The requested thing that was not found.
-         */
         protected string $requested = '',
-        /**
-         * The valid suggestions.
-         */
         protected array $suggestions = [],
         ?int $code = null,
         ?Throwable $previous = null

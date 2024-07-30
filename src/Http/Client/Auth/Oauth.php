@@ -50,7 +50,7 @@ class Oauth
             $credentials['method'] = 'hmac-sha1';
         }
 
-        $credentials['method'] = strtoupper((string) $credentials['method']);
+        $credentials['method'] = strtoupper((string)$credentials['method']);
 
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
@@ -233,7 +233,7 @@ class Oauth
         openssl_sign($baseString, $signature, $privateKey);
         $this->checkSslError();
 
-        $values['oauth_signature'] = base64_encode((string) $signature);
+        $values['oauth_signature'] = base64_encode((string)$signature);
 
         return $this->_buildAuth($values);
     }
@@ -354,7 +354,6 @@ class Oauth
         foreach ($data as $key => $value) {
             $params[] = $key . '="' . $this->_encode((string)$value) . '"';
         }
-
 
         return $out . implode(',', $params);
     }

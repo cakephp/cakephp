@@ -31,7 +31,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
             $value = $value->value;
         }
 
-        $substr = fn($start, $length = null): \Cake\Database\Expression\FunctionExpression => new FunctionExpression(
+        $substr = fn($start, $length = null): FunctionExpression => new FunctionExpression(
             'SUBSTR',
             $length === null ? [$value, $start] : [$value, $start, $length],
             ['string', 'integer', 'integer']

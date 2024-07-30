@@ -23,6 +23,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use TestApp\Database\Type\IntType;
 
 /**
@@ -351,7 +352,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addConstraintErrorProvider(): \Iterator
+    public static function addConstraintErrorProvider(): Iterator
     {
         // No properties
         yield [[]];
@@ -400,7 +401,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function addIndexErrorProvider(): \Iterator
+    public static function addIndexErrorProvider(): Iterator
     {
         // Empty
         yield [[]];
@@ -483,7 +484,7 @@ class TableSchemaTest extends TestCase
             'engine' => 'InnoDB',
         ];
         $return = $table->setOptions($options);
-        $this->assertInstanceOf(\Cake\Database\Schema\TableSchema::class, $return);
+        $this->assertInstanceOf(TableSchema::class, $return);
         $this->assertSame($options, $table->getOptions());
     }
 
@@ -577,7 +578,7 @@ class TableSchemaTest extends TestCase
      *
      * @return array
      */
-    public static function badForeignKeyProvider(): \Iterator
+    public static function badForeignKeyProvider(): Iterator
     {
         yield 'references is bad' => [[
             'type' => TableSchema::CONSTRAINT_FOREIGN,

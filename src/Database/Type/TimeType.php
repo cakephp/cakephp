@@ -112,7 +112,7 @@ class TimeType extends BaseType implements BatchCastingInterface
         }
 
         if (isset($value['meridian'])) {
-            $value['hour'] = strtolower((string) $value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+            $value['hour'] = strtolower((string)$value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
 
         $format = sprintf(

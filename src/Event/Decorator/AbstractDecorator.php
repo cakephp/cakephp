@@ -34,11 +34,10 @@ abstract class AbstractDecorator
      * @param callable $callable Callable.
      * @param array<string, mixed> $_options Decorator options.
      */
-    public function __construct(callable $callable, /**
-     * Decorator options
-     */
-    protected array $_options = [])
-    {
+    public function __construct(
+        callable $callable,
+        protected array $_options = []
+    ) {
         $this->_callable = $callable;
     }
 

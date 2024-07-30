@@ -107,18 +107,11 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     /**
      * Creates the controller to perform rendering on the error response.
      *
-     * @param \Throwable $error Exception.
+     * @param \Throwable $error The exception being handled.
      * @param \Cake\Http\ServerRequest|null $request The request if this is set it will be used
      *   instead of creating a new one.
      */
-    public function __construct(/**
-     * The exception being handled.
-     */
-    protected Throwable $error, /**
-     * If set, this will be request used to create the controller that will render
-     * the error.
-     */
-    protected ?ServerRequest $request = null)
+    public function __construct(protected Throwable $error, protected ?ServerRequest $request = null)
     {
         $this->controller = $this->_getController();
     }
@@ -141,7 +134,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         // If the current request doesn't have routing data, but we
         // found a request in the router context copy the params over
-        if ($request->getParam('controller') === null && $routerRequest instanceof \Cake\Http\ServerRequest) {
+        if ($request->getParam('controller') === null && $routerRequest instanceof ServerRequest) {
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
@@ -172,16 +165,16 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         } catch (Throwable $throwable) {
             Log::warning(
                 sprintf('Failed to construct or call startup() on the resolved controller class of `%s`. ', $class) .
-                    ('Using Fallback Controller instead. Error ' . $throwable->getMessage()) .
-                    ('
+                    'Using Fallback Controller instead. Error ' . $throwable->getMessage() .
+                    '
 Stack Trace
-: ' . $throwable->getTraceAsString()),
+: ' . $throwable->getTraceAsString(),
                 'cake.error'
             );
             $controller = null;
         }
 
-        if (!$controller instanceof \Cake\Controller\Controller) {
+        if (!$controller instanceof Controller) {
             return new Controller($request);
         }
 
@@ -340,8 +333,10 @@ Stack Trace
      */
     protected function _message(Throwable $exception, int $code): string
     {
-        if (!Configure::read('debug') &&
-        !($exception instanceof HttpException)) {
+        if (
+            !Configure::read('debug') &&
+            !($exception instanceof HttpException)
+        ) {
             return $code < 500 ? __d('cake', 'Not Found') : __d('cake', 'An Internal Error Has Occurred.');
         }
 
@@ -399,9 +394,9 @@ Stack Trace
         } catch (MissingTemplateException $e) {
             Log::warning(
                 sprintf('MissingTemplateException - Failed to render error template `%s` . Error: %s', $template, $e->getMessage()) .
-                    ('
+                    '
 Stack Trace
-: ' . $e->getTraceAsString()),
+: ' . $e->getTraceAsString(),
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -416,9 +411,9 @@ Stack Trace
         } catch (MissingPluginException $e) {
             Log::warning(
                 sprintf('MissingPluginException - Failed to render error template `%s`. Error: %s', $template, $e->getMessage()) .
-                    ('
+                    '
 Stack Trace
-: ' . $e->getTraceAsString()),
+: ' . $e->getTraceAsString(),
                 'cake.error'
             );
             $attributes = $e->getAttributes();
@@ -430,9 +425,9 @@ Stack Trace
         } catch (Throwable $outer) {
             Log::warning(
                 sprintf('Throwable - Failed to render error template `%s`. Error: %s', $template, $outer->getMessage()) .
-                    ('
+                    '
 Stack Trace
-: ' . $outer->getTraceAsString()),
+: ' . $outer->getTraceAsString(),
                 'cake.error'
             );
             try {

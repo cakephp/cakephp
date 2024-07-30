@@ -44,12 +44,8 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
      * @param \Closure $callable A closure.
      */
     public function __construct(
-        /**
-         * A Closure.
-         */
         protected Closure $callable
-    )
-    {
+    ) {
     }
 
     /**

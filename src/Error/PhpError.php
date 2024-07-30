@@ -59,19 +59,15 @@ class PhpError
      * @param string $message The error message.
      * @param string|null $file The filename of the error.
      * @param int|null $line The line number for the error.
-     * @param array $trace The backtrace for the error.
+     * @param array $trace Stack trace data. Each item should have a `reference`, `file` and `line` keys.
      */
     public function __construct(
         private readonly int $code,
         private readonly string $message,
         private readonly ?string $file = null,
         private readonly ?int $line = null,
-        /**
-         * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
-         */
         private readonly array $trace = []
-    )
-    {
+    ) {
     }
 
     /**

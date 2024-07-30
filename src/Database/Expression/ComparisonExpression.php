@@ -61,13 +61,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     public function __construct(
         ExpressionInterface|string $field,
         mixed $value,
-        /**
-         * The type to be used for casting the value to a database representation
-         */
         protected ?string $_type = null,
-        /**
-         * The operator used for comparing field and value
-         */
         protected string $_operator = '='
     ) {
         $this->setField($field);

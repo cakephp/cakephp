@@ -47,13 +47,9 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param \Cake\Core\ContainerInterface $container Container instance.
      */
     public function __construct(
-        /**
-         * The queue of middlewares.
-         */
         protected array $queue = [],
         protected ?ContainerInterface $container = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -65,7 +61,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected function resolve(MiddlewareInterface|Closure|string $middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
-            if ($this->container instanceof \Cake\Core\ContainerInterface && $this->container->has($middleware)) {
+            if ($this->container instanceof ContainerInterface && $this->container->has($middleware)) {
                 $middleware = $this->container->get($middleware);
             } else {
                 /** @var class-string<\Psr\Http\Server\MiddlewareInterface>|null $className */

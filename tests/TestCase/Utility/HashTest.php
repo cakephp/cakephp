@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Iterator;
 use stdClass;
 
 /**
@@ -268,7 +269,7 @@ class HashTest extends TestCase
      *
      * @return array
      */
-    public static function articleDataSets(): \Iterator
+    public static function articleDataSets(): Iterator
     {
         yield [static::articleData()];
         yield [static::articleDataObject()];
@@ -901,7 +902,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractSingleValueWithFilteringByAnotherField(\ArrayObject|array $data): void
+    public function testExtractSingleValueWithFilteringByAnotherField(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{*}.Article[id=1].title');
         $this->assertSame([0 => 'First Article'], $result);
@@ -916,7 +917,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractBasic(\ArrayObject|array $data): void
+    public function testExtractBasic(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '');
         $this->assertSame($data, $result);
@@ -937,7 +938,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractNumericKey(\ArrayObject|array $data): void
+    public function testExtractNumericKey(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article.title');
         $expected = [
@@ -1070,7 +1071,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractStringKey(\ArrayObject|array $data): void
+    public function testExtractStringKey(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.{s}.user');
         $expected = [
@@ -1136,7 +1137,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributePresence(\ArrayObject|array $data): void
+    public function testExtractAttributePresence(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[published]');
         $expected = [$data[1]['Article']];
@@ -1153,7 +1154,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeEquality(\ArrayObject|array $data): void
+    public function testExtractAttributeEquality(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[id=3]');
         $expected = [$data[2]['Article']];
@@ -1266,7 +1267,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeComparison(\ArrayObject|array $data): void
+    public function testExtractAttributeComparison(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
         $expected = [$data[0]['Comment'][1]];
@@ -1295,7 +1296,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributeMultiple(\ArrayObject|array $data): void
+    public function testExtractAttributeMultiple(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
         $this->assertEmpty($result);
@@ -1312,7 +1313,7 @@ class HashTest extends TestCase
      * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
-    public function testExtractAttributePattern(\ArrayObject|array $data): void
+    public function testExtractAttributePattern(ArrayObject|array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');
         $expected = [$data[0]['Article']];

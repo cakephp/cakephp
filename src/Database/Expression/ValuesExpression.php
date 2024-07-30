@@ -58,10 +58,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $_columns The list of columns that are going to be part of the values.
      * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
      */
-    public function __construct(/**
-     * List of columns to ensure are part of the insert.
-     */
-    protected array $_columns, TypeMap $typeMap)
+    public function __construct(protected array $_columns, TypeMap $typeMap)
     {
         $this->setTypeMap($typeMap);
     }
@@ -81,7 +78,7 @@ class ValuesExpression implements ExpressionInterface
                 $values instanceof Query
             ) ||
             (
-                $this->_query instanceof \Cake\Database\Query &&
+                $this->_query instanceof Query &&
                 is_array($values)
             )
         ) {
@@ -196,7 +193,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if (!$this->_values && !$this->_query instanceof \Cake\Database\Query) {
+        if (!$this->_values && !$this->_query instanceof Query) {
             return '';
         }
 
@@ -235,7 +232,7 @@ class ValuesExpression implements ExpressionInterface
         }
 
         $query = $this->getQuery();
-        if ($query instanceof \Cake\Database\Query) {
+        if ($query instanceof Query) {
             return ' ' . $query->sql($binder);
         }
 
@@ -247,7 +244,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function traverse(Closure $callback): static
     {
-        if ($this->_query instanceof \Cake\Database\Query) {
+        if ($this->_query instanceof Query) {
             return $this;
         }
 

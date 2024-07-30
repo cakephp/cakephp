@@ -24,7 +24,7 @@ use Cake\Utility\Crypto\OpenSsl;
  */
 class OpenSslTest extends TestCase
 {
-    private \Cake\Utility\Crypto\OpenSsl $crypt;
+    private OpenSsl $crypt;
 
     /**
      * Setup function.

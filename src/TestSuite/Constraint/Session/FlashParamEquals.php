@@ -39,7 +39,7 @@ class FlashParamEquals extends Constraint
      */
     public function __construct(?Session $session, protected string $key, protected string $param, protected ?int $at = null)
     {
-        if (!$session instanceof \Cake\Http\Session) {
+        if (!$session instanceof Session) {
             $message = 'There is no stored session data. Perhaps you need to run a request?';
             $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';
             throw new AssertionFailedError($message);

@@ -36,7 +36,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/',
         ]);
-        $handler = new TestRequestHandler(fn($req): \Laminas\Diactoros\Response => new Response());
+        $handler = new TestRequestHandler(fn($req): Response => new Response());
 
         $middleware = new SecurityHeadersMiddleware();
         $middleware

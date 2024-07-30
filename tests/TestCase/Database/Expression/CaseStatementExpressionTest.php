@@ -35,6 +35,7 @@ use Cake\Test\test_app\TestApp\Stub\CaseStatementExpressionStub;
 use Cake\Test\test_app\TestApp\Stub\WhenThenExpressionStub;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use LogicException;
 use stdClass;
 use TestApp\Database\Type\CustomExpressionType;
@@ -206,7 +207,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame('float', $expression->getReturnType());
     }
 
-    public static function valueTypeInferenceDataProvider(): \Iterator
+    public static function valueTypeInferenceDataProvider(): Iterator
     {
         // Values that should have their type inferred because
         // they will be bound by the case expression.
@@ -231,7 +232,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferValueType(string|int|float|bool|\Cake\Chronos\ChronosDate|\Cake\Chronos\Chronos|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\FunctionExpression|\stdClass|null $value, ?string $type): void
+    public function testInferValueType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -245,7 +246,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame($type, $expression->getValueType());
     }
 
-    public static function whenTypeInferenceDataProvider(): \Iterator
+    public static function whenTypeInferenceDataProvider(): Iterator
     {
         // Values that should have their type inferred because
         // they will be bound by the case expression.
@@ -270,7 +271,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferWhenType(string|int|float|bool|\Cake\Chronos\ChronosDate|\Cake\Chronos\Chronos|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\FunctionExpression|\stdClass|array $value, ?string $type): void
+    public function testInferWhenType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|array $value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']));
@@ -285,7 +286,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
     }
 
-    public static function resultTypeInferenceDataProvider(): \Iterator
+    public static function resultTypeInferenceDataProvider(): Iterator
     {
         // Unless a result type has been set manually, values
         // should have their type inferred when possible.
@@ -306,11 +307,11 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferResultType(string|int|float|bool|\Cake\Chronos\ChronosDate|\Cake\Chronos\Chronos|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\FunctionExpression|\stdClass|null $value, ?string $type): void
+    public function testInferResultType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen);
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen);
 
         $this->assertNull($expression->clause('when')[0]->getResultType());
 
@@ -326,7 +327,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferElseType(string|int|float|bool|\Cake\Chronos\ChronosDate|\Cake\Chronos\Chronos|\Cake\Database\Expression\IdentifierExpression|\Cake\Database\Expression\FunctionExpression|\stdClass|null $value, ?string $type): void
+    public function testInferElseType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -457,10 +458,10 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when(['Table.column_a' => true])
                 ->then(1))
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when(['Table.column_b' => 'foo'])
                 ->then(2))
             ->else(3);
@@ -512,10 +513,10 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
                 ->then(1))
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when(['Table.column_b' => 'foo'])
                 ->then(2))
             ->else(3);
@@ -1015,7 +1016,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen);
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen);
 
         $this->assertNull($expression->clause('when')[0]->clause('then'));
 
@@ -1099,13 +1100,13 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenCallables(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when([
                     'Table.column_a' => true,
                     'Table.column_b IS' => null,
                 ])
                 ->then(1))
-            ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen
+            ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen
                 ->when([
                     'Table.column_c' => true,
                     'Table.column_d IS NOT' => null,
@@ -1128,13 +1129,13 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenCallablesWithCustomWhenThenExpressions(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(fn(): \Cake\Test\test_app\TestApp\Database\Expression\CustomWhenThenExpression => (new CustomWhenThenExpression())
+            ->when(fn(): CustomWhenThenExpression => (new CustomWhenThenExpression())
                 ->when([
                     'Table.column_a' => true,
                     'Table.column_b IS' => null,
                 ])
                 ->then(1))
-            ->when(fn(): \Cake\Test\test_app\TestApp\Database\Expression\CustomWhenThenExpression => (new CustomWhenThenExpression())
+            ->when(fn(): CustomWhenThenExpression => (new CustomWhenThenExpression())
                 ->when([
                     'Table.column_c' => true,
                     'Table.column_d IS NOT' => null,
@@ -1271,7 +1272,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->deprecated(function (): void {
             (new CaseStatementExpression())
-                ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen->then(1))
+                ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen->then(1))
                 ->sql(new ValueBinder());
         });
     }
@@ -1283,7 +1284,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->deprecated(function (): void {
             (new CaseStatementExpression())
-                ->when(fn(WhenThenExpression $whenThen): \Cake\Database\Expression\WhenThenExpression => $whenThen->when(1))
+                ->when(fn(WhenThenExpression $whenThen): WhenThenExpression => $whenThen->when(1))
                 ->sql(new ValueBinder());
         });
     }
@@ -1292,7 +1293,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Valid values
 
-    public static function validCaseValuesDataProvider(): \Iterator
+    public static function validCaseValuesDataProvider(): Iterator
     {
         yield [null, 'NULL', null];
         yield ['0', null, 'string'];
@@ -1376,7 +1377,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public static function validWhenValuesSimpleCaseDataProvider(): \Iterator
+    public static function validWhenValuesSimpleCaseDataProvider(): Iterator
     {
         yield ['0', null, 'string'];
         yield [0, null, 'integer'];
@@ -1516,7 +1517,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public static function validWhenValuesSearchedCaseDataProvider(): \Iterator
+    public static function validWhenValuesSearchedCaseDataProvider(): Iterator
     {
         yield ['0', null, 'string'];
         yield [0, null, 'integer'];
@@ -1631,7 +1632,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public static function validThenValuesDataProvider(): \Iterator
+    public static function validThenValuesDataProvider(): Iterator
     {
         yield [null, 'NULL', null];
         yield ['0', null, 'string'];
@@ -1705,7 +1706,7 @@ class CaseStatementExpressionTest extends TestCase
         }
     }
 
-    public static function validElseValuesDataProvider(): \Iterator
+    public static function validElseValuesDataProvider(): Iterator
     {
         yield [null, 'NULL', null];
         yield ['0', null, 'string'];
@@ -1794,7 +1795,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Invalid values
 
-    public static function invalidCaseValuesDataProvider(): \Iterator
+    public static function invalidCaseValuesDataProvider(): Iterator
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1835,7 +1836,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1);
     }
 
-    public static function invalidThenValueDataProvider(): \Iterator
+    public static function invalidThenValueDataProvider(): Iterator
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1866,7 +1867,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then($value);
     }
 
-    public static function invalidThenTypeDataProvider(): \Iterator
+    public static function invalidThenTypeDataProvider(): Iterator
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1893,7 +1894,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1, $type);
     }
 
-    public static function invalidElseValueDataProvider(): \Iterator
+    public static function invalidElseValueDataProvider(): Iterator
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);
@@ -1925,7 +1926,7 @@ class CaseStatementExpressionTest extends TestCase
             ->else($value);
     }
 
-    public static function invalidElseTypeDataProvider(): \Iterator
+    public static function invalidElseTypeDataProvider(): Iterator
     {
         $res = fopen('data:text/plain,123', 'rb');
         fclose($res);

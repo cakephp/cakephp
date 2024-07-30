@@ -929,9 +929,9 @@ abstract class Association
         }
 
         $property = $options['propertyPath'];
-        $propertyPath = explode('.', (string) $property);
+        $propertyPath = explode('.', (string)$property);
         $query->formatResults(
-            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath): \Cake\Collection\CollectionInterface {
+            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath): CollectionInterface {
                 $extracted = [];
                 foreach ($results as $result) {
                     foreach ($propertyPath as $propertyPathItem) {
@@ -956,7 +956,7 @@ abstract class Association
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    return $results->map(function (EntityInterface $result): \Cake\Datasource\EntityInterface {
+                    return $results->map(function (EntityInterface $result): EntityInterface {
                         $result->clean();
 
                         return $result;

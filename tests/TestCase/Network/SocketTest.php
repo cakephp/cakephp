@@ -20,6 +20,7 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 
 /**
  * SocketTest class
@@ -129,7 +130,7 @@ class SocketTest extends TestCase
      *
      * @return array
      */
-    public static function invalidConnections(): \Iterator
+    public static function invalidConnections(): Iterator
     {
         yield [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]];
         yield [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]];

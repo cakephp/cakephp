@@ -69,10 +69,7 @@ class Helper implements EventListenerInterface
      * @param \Cake\View\View $_View The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
-    public function __construct(/**
-     * The View instance this helper is attached to
-     */
-    protected View $_View, array $config = [])
+    public function __construct(protected View $_View, array $config = [])
     {
         $this->setConfig($config);
 
@@ -138,7 +135,7 @@ class Helper implements EventListenerInterface
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
-        } elseif (isset($options[$key]) && trim((string) $options[$key])) {
+        } elseif (isset($options[$key]) && trim((string)$options[$key])) {
             $options[$key] .= ' ' . $class;
         } else {
             $options[$key] = $class;

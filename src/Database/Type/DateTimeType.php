@@ -133,7 +133,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
 
         if (
-            $this->dbTimezone instanceof \DateTimeZone
+            $this->dbTimezone instanceof DateTimeZone
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
             if (!$value instanceof DateTimeImmutable) {
@@ -201,15 +201,17 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         $class = $this->_className;
         if (is_int($value)) {
             $instance = new $class('@' . $value);
-        } elseif (str_starts_with((string) $value, '0000-00-00')) {
+        } elseif (str_starts_with((string)$value, '0000-00-00')) {
             return null;
         } else {
             $instance = new $class($value, $this->dbTimezone);
         }
 
-        if (!$this->keepDatabaseTimezone
-        && $instance->getTimezone() instanceof \DateTimeZone
-        && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()) {
+        if (
+            !$this->keepDatabaseTimezone
+            && $instance->getTimezone() instanceof DateTimeZone
+            && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+        ) {
             return $instance->setTimezone($this->defaultTimezone);
         }
 
@@ -252,7 +254,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $class = $this->_className;
             if (is_int($value)) {
                 $instance = new $class('@' . $value);
-            } elseif (str_starts_with((string) $value, '0000-00-00')) {
+            } elseif (str_starts_with((string)$value, '0000-00-00')) {
                 $values[$field] = null;
                 continue;
             } else {
@@ -261,7 +263,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
 
             if (
                 !$this->keepDatabaseTimezone
-                && $instance->getTimezone() instanceof \DateTimeZone
+                && $instance->getTimezone() instanceof DateTimeZone
                 && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
             ) {
                 $instance = $instance->setTimezone($this->defaultTimezone);
@@ -304,7 +306,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             if (is_string($value)) {
                 $dateTime = $this->_useLocaleMarshal ? $this->_parseLocaleValue($value) : $this->_parseValue($value);
 
-                if ($dateTime instanceof \DateTimeImmutable) {
+                if ($dateTime instanceof DateTimeImmutable) {
                     return $dateTime->setTimezone($this->defaultTimezone);
                 }
 
@@ -335,7 +337,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
 
         if (isset($value['meridian'])) {
-            $value['hour'] = strtolower((string) $value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+            $value['hour'] = strtolower((string)$value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
 
         $format = sprintf(

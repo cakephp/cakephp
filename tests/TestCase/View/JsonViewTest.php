@@ -25,6 +25,7 @@ use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\SerializationFailureException;
+use Iterator;
 
 /**
  * JsonViewTest
@@ -44,7 +45,7 @@ class JsonViewTest extends TestCase
      *
      * @return array
      */
-    public static function renderWithoutViewProvider(): \Iterator
+    public static function renderWithoutViewProvider(): Iterator
     {
         // Test render with a valid string in _serialize.
         yield [

@@ -34,11 +34,10 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
      * @param \Traversable<T> $results Resultset instance.
      * @param array $params Paging params.
      */
-    public function __construct(Traversable $results, /**
-     * Paging params.
-     */
-    protected array $params)
-    {
+    public function __construct(
+        Traversable $results,
+        protected array $params
+    ) {
         parent::__construct($results);
     }
 

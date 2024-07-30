@@ -108,13 +108,10 @@ class EagerLoadable
      *
      * The keys maps to the settable properties in this class.
      *
-     * @param string $_name The Association name.
+     * @param string $_name The name of the association to load.
      * @param array<string, mixed> $config The list of properties to set.
      */
-    public function __construct(/**
-     * The name of the association to load.
-     */
-    protected string $_name, array $config = [])
+    public function __construct(protected string $_name, array $config = [])
     {
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
@@ -155,7 +152,7 @@ class EagerLoadable
      */
     public function instance(): Association
     {
-        if (!$this->_instance instanceof \Cake\ORM\Association) {
+        if (!$this->_instance instanceof Association) {
             throw new DatabaseException('No instance set.');
         }
 

@@ -105,13 +105,7 @@ class Route
      * @param array<string, mixed> $options Array of additional options for the Route
      * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
-    public function __construct(/**
-     * The routes template string.
-     */
-    public string $template, /**
-     * Default parameters for a Route
-     */
-    public array $defaults = [], array $options = [])
+    public function __construct(public string $template, public array $defaults = [], array $options = [])
     {
         $this->options = $options + ['_ext' => [], '_middleware' => []];
         $this->setExtensions((array)$this->options['_ext']);
@@ -437,10 +431,10 @@ class Route
 
         $urldecode = $this->options['_urldecode'] ?? true;
         if ($urldecode) {
-            $url = urldecode((string) $url);
+            $url = urldecode((string)$url);
         }
 
-        if (!preg_match($compiledRoute, (string) $url, $route)) {
+        if (!preg_match($compiledRoute, (string)$url, $route)) {
             return null;
         }
 
@@ -522,7 +516,7 @@ class Route
      */
     public function hostMatches(string $host): bool
     {
-        $pattern = '@^' . str_replace('\*', '.*', preg_quote((string) $this->options['_host'], '@')) . '$@';
+        $pattern = '@^' . str_replace('\*', '.*', preg_quote((string)$this->options['_host'], '@')) . '$@';
 
         return preg_match($pattern, $host) !== 0;
     }
@@ -629,7 +623,7 @@ class Route
 
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
-            if (!isset($hostOptions['_host']) && !str_contains((string) $this->options['_host'], '*')) {
+            if (!isset($hostOptions['_host']) && !str_contains((string)$this->options['_host'], '*')) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
 

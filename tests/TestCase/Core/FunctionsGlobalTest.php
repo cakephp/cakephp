@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use Iterator;
 use stdClass;
 use function env;
 
@@ -129,13 +130,13 @@ class FunctionsGlobalTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testH(string|int|float|\stdClass|\Cake\Http\Response|array|null $value, string|int|float|array|null $expected): void
+    public function testH(string|int|float|stdClass|Response|array|null $value, string|int|float|array|null $expected): void
     {
         $result = h($value);
         $this->assertSame($expected, $result);
     }
 
-    public static function hInputProvider(): \Iterator
+    public static function hInputProvider(): Iterator
     {
         yield ['i am clean', 'i am clean'];
         yield ['i "need" escaping', 'i &quot;need&quot; escaping'];

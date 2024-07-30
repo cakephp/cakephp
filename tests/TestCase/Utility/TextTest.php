@@ -19,6 +19,7 @@ use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use Iterator;
 use ReflectionMethod;
 use Transliterator;
 
@@ -354,7 +355,7 @@ class TextTest extends TestCase
      *
      * @return array
      */
-    public static function wordWrapProvider(): \Iterator
+    public static function wordWrapProvider(): Iterator
     {
         yield [
             'The quick brown fox jumped over the lazy dog.',
@@ -1555,7 +1556,7 @@ HTML_WRAP;
      *
      * @return array
      */
-    public static function filesizes(): \Iterator
+    public static function filesizes(): Iterator
     {
         yield [['size' => '512B', 'default' => false], 512];
         yield [['size' => '1KB', 'default' => false], 1024];
@@ -1616,7 +1617,7 @@ HTML_WRAP;
      *
      * @return array
      */
-    public static function transliterateInputProvider(): \Iterator
+    public static function transliterateInputProvider(): Iterator
     {
         yield [
             'Foo Bar: Not just for breakfast any-more', null,
@@ -1679,7 +1680,7 @@ HTML_WRAP;
      * @param String $expected Expected string
      * @dataProvider transliterateInputProvider
      */
-    public function testTransliterate(string $string, ?\Transliterator $transliterator, string $expected): void
+    public function testTransliterate(string $string, ?Transliterator $transliterator, string $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
         $this->assertSame($expected, $result);
@@ -1688,7 +1689,7 @@ HTML_WRAP;
     /**
      * @return array
      */
-    public static function slugInputProvider(): \Iterator
+    public static function slugInputProvider(): Iterator
     {
         yield [
             'Foo Bar: Not just for breakfast any-more', [],
@@ -1816,7 +1817,7 @@ HTML_WRAP;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod(\Cake\Utility\Text::class, '_strlen');
+        $method = new ReflectionMethod(Text::class, '_strlen');
         $strlen = fn(): mixed => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';
@@ -1837,7 +1838,7 @@ HTML_WRAP;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod(\Cake\Utility\Text::class, '_substr');
+        $method = new ReflectionMethod(Text::class, '_substr');
         $substr = fn(): mixed => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';

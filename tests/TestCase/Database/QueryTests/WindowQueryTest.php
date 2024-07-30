@@ -99,7 +99,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new SelectQuery($this->connection))->window('name', fn(): \Cake\Database\Expression\QueryExpression => new QueryExpression());
+        (new SelectQuery($this->connection))->window('name', fn(): QueryExpression => new QueryExpression());
     }
 
     public function testPartitions(): void

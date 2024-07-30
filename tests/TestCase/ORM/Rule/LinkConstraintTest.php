@@ -27,6 +27,7 @@ use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Iterator;
 use stdClass;
 
 /**
@@ -84,7 +85,7 @@ class LinkConstraintTest extends TestCase
     public function testInvalidConstructorArgumentTwo(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 2 is expected to match one of the `' . \Cake\ORM\Rule\LinkConstraint::class . '::STATUS_*` constants.');
+        $this->expectExceptionMessage('Argument 2 is expected to match one of the `' . LinkConstraint::class . '::STATUS_*` constants.');
 
         new LinkConstraint('Association', 'invalid');
     }
@@ -172,7 +173,7 @@ class LinkConstraintTest extends TestCase
      *
      * @return array
      */
-    public static function invalidRepositoryOptionsDataProvider(): \Iterator
+    public static function invalidRepositoryOptionsDataProvider(): Iterator
     {
         yield [['repository' => null]];
         yield [['repository' => new stdClass()]];
@@ -604,12 +605,12 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query): \Cake\Database\Expression\QueryExpression {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query): QueryExpression {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                    ->where(fn(QueryExpression $exp): QueryExpression => $exp->eq(
                         new IdentifierExpression('Articles.id'),
                         new IdentifierExpression('RecentComments.article_id')
                     ))
@@ -638,12 +639,12 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query): \Cake\Database\Expression\QueryExpression {
+            'conditions' => function (QueryExpression $exp, SelectQuery $query): QueryExpression {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+                    ->where(fn(QueryExpression $exp): QueryExpression => $exp->eq(
                         new IdentifierExpression('Articles.id'),
                         new IdentifierExpression('RecentComments.article_id')
                     ))
@@ -735,7 +736,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->notEq(
+            'conditions' => fn(QueryExpression $exp): QueryExpression => $exp->notEq(
                 new IdentifierExpression('Comments.published'),
                 new IdentifierExpression('Articles.published')
             ),
@@ -769,7 +770,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => fn(QueryExpression $exp): \Cake\Database\Expression\QueryExpression => $exp->eq(
+            'conditions' => fn(QueryExpression $exp): QueryExpression => $exp->eq(
                 new IdentifierExpression('Comments.published'),
                 new IdentifierExpression('Articles.published')
             ),

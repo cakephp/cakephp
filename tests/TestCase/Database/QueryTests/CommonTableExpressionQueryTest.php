@@ -122,11 +122,11 @@ class CommonTableExpressionQueryTest extends TestCase
     public function testWithRecursiveCte(): void
     {
         $query = $this->connection->selectQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query): \Cake\Database\Expression\CommonTableExpression {
+            ->with(function (CommonTableExpression $cte, SelectQuery $query): CommonTableExpression {
                 $anchorQuery = $query->select(1);
 
                 $recursiveQuery = $query->getConnection()
-                    ->selectQuery(fn(Query $query): \Cake\Database\Expression\QueryExpression => $query->newExpr('col + 1'), 'cte')
+                    ->selectQuery(fn(Query $query): QueryExpression => $query->newExpr('col + 1'), 'cte')
                     ->where(['col !=' => 3], ['col' => 'integer']);
 
                 $cteQuery = $anchorQuery->unionAll($recursiveQuery);
@@ -198,7 +198,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
         $query = $this->connection
             ->insertQuery()
-            ->with(fn(CommonTableExpression $cte, SelectQuery $query): \Cake\Database\Expression\CommonTableExpression => $cte
+            ->with(fn(CommonTableExpression $cte, SelectQuery $query): CommonTableExpression => $cte
                 ->name('cte')
                 ->field(['title', 'body'])
                 ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'")))
@@ -249,7 +249,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->insert(['title', 'body'])
             ->values(
                 $this->connection->selectQuery()
-                    ->with(fn(CommonTableExpression $cte, SelectQuery $query): \Cake\Database\Expression\CommonTableExpression => $cte
+                    ->with(fn(CommonTableExpression $cte, SelectQuery $query): CommonTableExpression => $cte
                         ->name('cte')
                         ->field(['title', 'body'])
                         ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'")))
@@ -301,7 +301,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $result->closeCursor();
 
         $query = $this->connection->updateQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query): \Cake\Database\Expression\CommonTableExpression {
+            ->with(function (CommonTableExpression $cte, SelectQuery $query): CommonTableExpression {
                 $cteQuery = $query
                     ->select('articles.id')
                     ->from('articles')
@@ -313,7 +313,7 @@ class CommonTableExpressionQueryTest extends TestCase
             })
             ->update('articles')
             ->set('published', 'N')
-            ->where(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\QueryExpression => $exp->in(
+            ->where(fn(QueryExpression $exp, Query $query): QueryExpression => $exp->in(
                 'articles.id',
                 $query
                     ->getConnection()
@@ -355,7 +355,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $result->closeCursor();
 
         $query = $this->connection->deleteQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query): \Cake\Database\Expression\CommonTableExpression {
+            ->with(function (CommonTableExpression $cte, SelectQuery $query): CommonTableExpression {
                 $query->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
@@ -365,7 +365,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->query($query);
             })
             ->from(['a' => 'articles'])
-            ->where(fn(QueryExpression $exp, Query $query): \Cake\Database\Expression\QueryExpression => $exp->in(
+            ->where(fn(QueryExpression $exp, Query $query): QueryExpression => $exp->in(
                 'a.id',
                 $query
                     ->getConnection()

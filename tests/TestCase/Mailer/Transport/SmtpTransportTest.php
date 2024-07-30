@@ -23,6 +23,7 @@ use Cake\Mailer\Transport\SmtpTransport;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
@@ -38,7 +39,7 @@ class SmtpTransportTest extends TestCase
     /**
      * @var \Cake\Network\Socket&\PHPUnit\Framework\MockObject\MockObject
      */
-    protected \PHPUnit\Framework\MockObject\MockObject $socket;
+    protected MockObject $socket;
 
     /**
      * @var array<string, string>

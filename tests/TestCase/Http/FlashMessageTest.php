@@ -20,6 +20,7 @@ use Cake\Http\FlashMessage;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
+use Iterator;
 
 /**
  * FlashMessageTest class
@@ -304,7 +305,7 @@ class FlashMessageTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public static function convenienceMethods(): \Iterator
+    public static function convenienceMethods(): Iterator
     {
         yield ['success'];
         yield ['error'];

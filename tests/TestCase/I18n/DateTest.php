@@ -23,6 +23,7 @@ use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
 use IntlDateFormatter;
+use Iterator;
 
 /**
  * DateTest class
@@ -37,7 +38,7 @@ class DateTest extends TestCase
         parent::setUp();
 
         Cache::clear('_cake_core_');
-        I18n::setTranslator('cake', function (): \Cake\I18n\Package {
+        I18n::setTranslator('cake', function (): Package {
             $package = new Package();
             $package->setMessages([
                 '{0} ago' => '{0} ago (translated)',
@@ -187,7 +188,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoProvider(): \Iterator
+    public static function timeAgoProvider(): Iterator
     {
         yield ['-1 day', '1 day ago'];
         yield ['-2 days', '2 days ago'];
@@ -235,7 +236,7 @@ class DateTest extends TestCase
      *
      * @return array
      */
-    public static function timeAgoEndProvider(): \Iterator
+    public static function timeAgoEndProvider(): Iterator
     {
         yield [
             '+4 months +2 weeks +3 days',
