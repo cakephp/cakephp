@@ -835,7 +835,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $base = $this->request->getAttribute('base');
         if ($local && $base && str_starts_with($url, $base)) {
             $url = substr($url, strlen($base));
-            if ($url[0] !== '/') {
+            if (!str_starts_with($url, '/')) {
                 $url = '/' . $url;
             }
 

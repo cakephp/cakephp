@@ -717,7 +717,7 @@ trait EntityTrait
 
         foreach (get_class_methods($class) as $method) {
             $prefix = substr($method, 1, 3);
-            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+            if (!str_starts_with($method, '_') || ($prefix !== 'get' && $prefix !== 'set')) {
                 continue;
             }
             $field = lcfirst(substr($method, 4));

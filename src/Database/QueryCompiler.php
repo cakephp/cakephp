@@ -334,7 +334,7 @@ class QueryCompiler
             if ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);
             }
-            if ($part[0] === '(') {
+            if (str_starts_with($part, '(')) {
                 $part = substr($part, 1, -1);
             }
             $set[] = $part;
@@ -359,7 +359,7 @@ class QueryCompiler
             /** @var \Cake\Database\Expression\IdentifierExpression $expr */
             $expr = $p['query'];
             $p['query'] = $expr->sql($binder);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+            $p['query'] = str_starts_with($p['query'], '(') ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";

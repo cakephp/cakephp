@@ -1998,7 +1998,7 @@ class FormHelper extends Helper
         if ($isUrl) {
             $options['src'] = $caption;
         } elseif ($isImage) {
-            if ($caption[0] !== '/') {
+            if (!str_starts_with($caption, '/')) {
                 $url = $this->Url->webroot(Configure::read('App.imageBaseUrl') . $caption);
             } else {
                 $url = $this->Url->webroot(trim($caption, '/'));

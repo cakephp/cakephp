@@ -158,7 +158,7 @@ class Asset
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             [$plugin, $path] = static::pluginSplit($path);
         }
-        if (!empty($options['pathPrefix']) && $path[0] !== '/') {
+        if (!empty($options['pathPrefix']) && !str_starts_with($path, '/')) {
             $pathPrefix = $options['pathPrefix'];
             $placeHolderVal = '';
             if (!empty($options['theme'])) {

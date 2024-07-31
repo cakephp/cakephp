@@ -822,7 +822,7 @@ class I18nExtractCommand extends Command
         if ($this->_exclude) {
             $exclude = [];
             foreach ($this->_exclude as $e) {
-                if (DIRECTORY_SEPARATOR !== '\\' && $e[0] !== DIRECTORY_SEPARATOR) {
+                if (DIRECTORY_SEPARATOR !== '\\' && !str_starts_with($e, DIRECTORY_SEPARATOR)) {
                     $e = DIRECTORY_SEPARATOR . $e;
                 }
                 $exclude[] = preg_quote($e, '/');

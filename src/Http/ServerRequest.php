@@ -322,7 +322,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function processUrlOption(array $config): array
     {
-        if ($config['url'][0] !== '/') {
+        if (!str_starts_with($config['url'], '/')) {
             $config['url'] = '/' . $config['url'];
         }
 
@@ -447,7 +447,7 @@ class ServerRequest implements ServerRequestInterface
             if ($ref === '' || str_starts_with($ref, '//')) {
                 $ref = '/';
             }
-            if ($ref[0] !== '/') {
+            if (!str_starts_with($ref, '/')) {
                 $ref = '/' . $ref;
             }
 

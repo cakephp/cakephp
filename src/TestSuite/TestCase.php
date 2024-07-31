@@ -664,7 +664,7 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags[0] === '<') {
+            if (is_string($tags) && str_starts_with($tags, '<')) {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);

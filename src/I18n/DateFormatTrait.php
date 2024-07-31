@@ -78,7 +78,7 @@ trait DateFormatTrait
         if (!isset(static::$formatters[$key])) {
             if ($timezone === '+00:00' || $timezone === 'Z') {
                 $timezone = 'UTC';
-            } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
+            } elseif (str_starts_with($timezone, '+') || str_starts_with($timezone, '-')) {
                 $timezone = 'GMT' . $timezone;
             }
 

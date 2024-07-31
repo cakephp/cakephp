@@ -774,7 +774,7 @@ class ConsoleOptionParser
         if (str_starts_with($name, '--')) {
             return isset($this->_options[substr($name, 2)]);
         }
-        if ($name[0] === '-' && $name[1] !== '-') {
+        if (str_starts_with($name, '-')) {
             return isset($this->_shortOptions[$name[1]]);
         }
 
