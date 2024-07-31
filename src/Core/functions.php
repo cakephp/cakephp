@@ -16,12 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use Cake\I18n\Date;
-use Cake\I18n\DateTime;
-use DateTimeInterface;
 use JsonException;
 use Stringable;
-use Throwable;
 
 if (!defined('DS')) {
     /**
@@ -526,94 +522,6 @@ function toBool(mixed $value): ?bool
     }
     if ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
         return false;
-    }
-
-    return null;
-}
-
-/**
- * Converts a value to a native DateTime object.
- *
- *  integer - value is treated as a Unix timestamp
- *  float - value is treated as a Unix timestamp with microseconds
- *  string - value is treated as an Atom-formatted timestamp, unless otherwise specified
- *  Other values returns as null.
- *
- * @param mixed $value The value to convert to DateTime.
- * @param string $format The datetime format the value is in. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
- * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
- * @since 5.1.0
- */
-function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?DateTime
-{
-    if ($value instanceof DateTime) {
-        return $value;
-    }
-
-    if ($value instanceof DateTimeInterface) {
-        return DateTime::parse($value);
-    }
-
-    if (is_numeric($value)) {
-        try {
-            return DateTime::createFromTimestamp((float)$value);
-        } catch (Throwable) {
-            return null;
-        }
-    }
-
-    if (is_string($value)) {
-        try {
-            return DateTime::createFromFormat($format, $value);
-        } catch (Throwable) {
-            return null;
-        }
-    }
-
-    return null;
-}
-
-/**
- * Converts a value to a native Date object.
- *
- *  integer - value is treated as a Unix timestamp
- *  float - value is treated as a Unix timestamp with microseconds
- *  string - value is treated as a I18N short formatted date, unless otherwise specified
- *  Other values returns as null.
- *
- * @param mixed $value The value to convert to Date.
- * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
- * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
- * @since 5.1.0
- *
- * @see https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details
- */
-function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
-{
-    if ($value instanceof Date) {
-        return $value;
-    }
-
-    if ($value instanceof DateTimeInterface) {
-        return Date::parse($value);
-    }
-
-    if (is_numeric($value)) {
-        try {
-            $datetime = DateTime::createFromTimestamp((float)$value);
-            return Date::create($datetime->year, $datetime->month, $datetime->day);
-        } catch (Throwable) {
-            return null;
-        }
-    }
-
-    if (is_string($value)) {
-        try {
-            $datetime = DateTime::createFromFormat($format, $value);
-            return Date::parse($datetime);
-        } catch (Throwable) {
-            return null;
-        }
     }
 
     return null;
