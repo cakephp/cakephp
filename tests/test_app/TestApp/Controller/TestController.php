@@ -39,7 +39,7 @@ class TestController extends ControllerTestAppController
      *
      * @return void
      */
-    public function index($testId, mixed $testTwoId): void
+    public function index($testId, $testTwoId): void
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
@@ -52,7 +52,7 @@ class TestController extends ControllerTestAppController
      *
      * @return void
      */
-    public function view($testId, mixed $testTwoId): void
+    public function view($testId, $testTwoId): void
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,

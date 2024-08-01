@@ -99,10 +99,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     ): TreePrinter {
         if (!$keyPath) {
             $counter = 0;
-            $keyPath = /**
-             * @psalm-return int<0, max>
-             */
-            function () use (&$counter): int {
+            $keyPath = function () use (&$counter): int {
                 return $counter++;
             };
         }

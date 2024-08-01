@@ -2765,10 +2765,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $hasOr = str_contains($fields, '_or_');
         $hasAnd = str_contains($fields, '_and_');
 
-        $makeConditions = /**
-         * @psalm-return array<string, mixed>
-         */
-        function ($fields, $args): array {
+        $makeConditions = function ($fields, $args): array {
             $conditions = [];
             if (count($args) < count($fields)) {
                 throw new BadMethodCallException(sprintf(

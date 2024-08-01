@@ -85,7 +85,7 @@ class DependenciesController extends Controller
     /**
      * @return \Cake\Http\Response
      */
-    public function requiredDep(stdClass $dep, mixed $any = null, ?string $str = null)
+    public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }

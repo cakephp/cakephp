@@ -47,7 +47,7 @@ class RequestActionController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function another_ra_test($id, mixed $other)
+    public function another_ra_test($id, $other)
     {
         return $this->response->withStringBody($id + $other);
     }

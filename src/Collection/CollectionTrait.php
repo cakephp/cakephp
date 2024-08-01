@@ -33,6 +33,7 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\UniqueIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
+use Generator;
 use InvalidArgumentException;
 use Iterator;
 use LimitIterator;
@@ -469,10 +470,7 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = /**
-         * @psalm-return \Generator<mixed, mixed, mixed, void>
-         */
-        function ($iterator, $length): \Generator {
+        $generator = function ($iterator, $length): Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -772,10 +770,7 @@ trait CollectionTrait
      */
     public function lazy(): CollectionInterface
     {
-        $generator = /**
-         * @psalm-return \Generator<mixed, mixed, mixed, void>
-         */
-        function (): \Generator {
+        $generator = function (): Generator {
             foreach ($this->unwrap() as $k => $v) {
                 yield $k => $v;
             }
