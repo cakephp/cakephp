@@ -80,9 +80,7 @@ class QueryCacherTest extends TestCase
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 
-        $cacher = new QueryCacher(function ($q) {
-            return false;
-        }, 'queryCache');
+        $cacher = new QueryCacher(fn ($q)=> false, 'queryCache');
 
         $cacher->fetch($query);
     }

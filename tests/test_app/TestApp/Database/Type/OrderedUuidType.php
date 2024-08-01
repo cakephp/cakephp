@@ -30,13 +30,11 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
         if ($value instanceof UuidValue) {
             $value = $value->value;
         }
-        $substr = function ($start, $length = null) use ($value) {
-            return new FunctionExpression(
-                'SUBSTR',
-                $length === null ? [$value, $start] : [$value, $start, $length],
-                ['string', 'integer', 'integer']
-            );
-        };
+        $substr = fn ($start, $length = null)=> new FunctionExpression(
+            'SUBSTR',
+            $length === null ? [$value, $start] : [$value, $start, $length],
+            ['string', 'integer', 'integer']
+        );
 
         return new FunctionExpression(
             'CONCAT',

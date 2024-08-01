@@ -74,9 +74,7 @@ class RoutesCommand extends Command
         }
 
         if ($args->getOption('sort')) {
-            usort($output, function ($a, $b) {
-                return strcasecmp($a[0], $b[0]);
-            });
+            usort($output, fn ($a, $b)=> strcasecmp((string)$a[0], (string)$b[0]));
         }
 
         array_unshift($output, $header);

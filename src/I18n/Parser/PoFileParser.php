@@ -155,7 +155,7 @@ class PoFileParser
             return;
         }
 
-        $singular = stripcslashes($item['ids']['singular']);
+        $singular = stripcslashes((string)$item['ids']['singular']);
         $context = $item['context'] ?? null;
         $translation = $item['translated'];
 
@@ -175,10 +175,7 @@ class PoFileParser
             $plurals = $item['translated'];
             // PO are by definition indexed so sort by index.
             ksort($plurals);
-
-            // Make sure every index is filled.
-            end($plurals);
-            $count = (int)key($plurals);
+            $count = (int)array_key_last($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');
@@ -186,7 +183,7 @@ class PoFileParser
             ksort($plurals);
 
             $plurals = array_map('stripcslashes', $plurals);
-            $key = stripcslashes($item['ids']['plural']);
+            $key = stripcslashes((string)$item['ids']['plural']);
 
             if ($context !== null) {
                 $messages[Translator::PLURAL_PREFIX . $key]['_context'][$context] = $plurals;

@@ -111,7 +111,7 @@ abstract class SchemaDialect
         }
 
         return implode(', ', array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $references
         ));
     }

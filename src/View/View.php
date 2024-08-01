@@ -392,7 +392,7 @@ class View implements EventDispatcherInterface
      */
     protected function setContentType(): void
     {
-        $viewContentType = $this->contentType();
+        $viewContentType = static::contentType();
         if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
             return;
         }
@@ -1545,7 +1545,7 @@ class View implements EventDispatcherInterface
     {
         $paths = [$basePath];
         if ($this->request->getParam('prefix')) {
-            $prefixPath = explode('/', $this->request->getParam('prefix'));
+            $prefixPath = explode('/', (string)$this->request->getParam('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;

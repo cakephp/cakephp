@@ -322,7 +322,7 @@ trait ConsoleIntegrationTestTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\ConsoleIntegrationTestTrait',
+    \Cake\Console\TestSuite\ConsoleIntegrationTestTrait::class,
     'Cake\TestSuite\ConsoleIntegrationTestTrait'
 );
 // phpcs:enable

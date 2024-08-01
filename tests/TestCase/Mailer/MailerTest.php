@@ -223,7 +223,7 @@ class MailerTest extends TestCase
         $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
-        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
+        $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->deliver('This is the message');
 
@@ -922,7 +922,7 @@ class MailerTest extends TestCase
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTemplate('image');
         $this->mailer->setEmailFormat('html');
-        $server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+        $server = env('SERVER_NAME') ?: 'localhost';
 
         if (env('SERVER_PORT') && env('SERVER_PORT') !== 80) {
             $server .= ':' . env('SERVER_PORT');
@@ -1285,11 +1285,11 @@ class MailerTest extends TestCase
             if ($message[$i] === $boundary) {
                 $flag = false;
                 $type = '';
-                while (!preg_match('/^$/', $message[$i])) {
-                    if (preg_match('/^Content-Type: text\/plain/', $message[$i])) {
+                while (!preg_match('/^$/', (string)$message[$i])) {
+                    if (preg_match('/^Content-Type: text\/plain/', (string)$message[$i])) {
                         $type = 'text';
                     }
-                    if (preg_match('/^Content-Type: text\/html/', $message[$i])) {
+                    if (preg_match('/^Content-Type: text\/html/', (string)$message[$i])) {
                         $type = 'html';
                     }
                     if ($message[$i] === 'Content-Transfer-Encoding: ' . $charset) {

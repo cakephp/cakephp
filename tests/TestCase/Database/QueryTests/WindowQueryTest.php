@@ -90,9 +90,7 @@ class WindowQueryTest extends TestCase
         $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\), <name2> AS \(<name>\)', $sql, !$this->autoQuote);
 
         $sql = $query
-            ->window('name', function ($window, $query) {
-                return $window->name('name3');
-            }, true)
+            ->window('name', fn ($window, $query)=> $window->name('name3'), true)
             ->sql();
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
     }
@@ -101,9 +99,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new SelectQuery($this->connection))->window('name', function () {
-            return new QueryExpression();
-        });
+        (new SelectQuery($this->connection))->window('name', fn () => new QueryExpression());
     }
 
     public function testPartitions(): void

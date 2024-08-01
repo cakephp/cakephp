@@ -496,9 +496,9 @@ class CompositeKeysTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+        $this->assertInstanceOf(Entity::class, $result->tags[0]);
+        $this->assertInstanceOf(Entity::class, $result->tags[1]);
+        $this->assertInstanceOf(Entity::class, $result->tags[2]);
 
         $data = [
             'title' => 'Haz tags',

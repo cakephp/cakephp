@@ -28,6 +28,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Routing\Route\DashedRoute;
 
 /**
  * RouteBuilder test case
@@ -119,12 +120,12 @@ class RouteBuilderTest extends TestCase
 
         $this->collection = new RouteCollection();
         $routes = new RouteBuilder($this->collection, '/l');
-        $this->assertSame($routes, $routes->setRouteClass('TestApp\Routing\Route\DashedRoute'));
-        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
+        $this->assertSame($routes, $routes->setRouteClass(DashedRoute::class));
+        $this->assertSame(DashedRoute::class, $routes->getRouteClass());
 
         $routes->connect('/{controller}', ['action' => 'index']);
         $all = $this->collection->routes();
-        $this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
+        $this->assertInstanceOf(DashedRoute::class, $all[0]);
     }
 
     /**
@@ -884,11 +885,11 @@ class RouteBuilderTest extends TestCase
     public function testDefaultRouteClassFallbacks(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->setRouteClass('TestApp\Routing\Route\DashedRoute');
+        $routes->setRouteClass(DashedRoute::class);
         $routes->fallbacks();
 
         $all = $this->collection->routes();
-        $this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
+        $this->assertInstanceOf(DashedRoute::class, $all[0]);
     }
 
     /**

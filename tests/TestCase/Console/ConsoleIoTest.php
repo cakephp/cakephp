@@ -16,8 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
+use Cake\Console\Helper;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
@@ -55,13 +58,13 @@ class ConsoleIoTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->out = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+        $this->out = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->err = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+        $this->err = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->in = $this->getMockBuilder('Cake\Console\ConsoleInput')
+        $this->in = $this->getMockBuilder(ConsoleInput::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
@@ -559,7 +562,7 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->with('It works!well ish');
         $helper = $this->io->helper('simple');
-        $this->assertInstanceOf('Cake\Console\Helper', $helper);
+        $this->assertInstanceOf(Helper::class, $helper);
         $helper->output(['well', 'ish']);
     }
 

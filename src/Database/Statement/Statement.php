@@ -142,7 +142,6 @@ class Statement implements StatementInterface
 
     /**
      * @param string|int $column
-     * @param mixed $value
      * @param int $type
      * @return void
      */

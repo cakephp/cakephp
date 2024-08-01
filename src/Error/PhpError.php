@@ -24,29 +24,29 @@ class PhpError
     /**
      * @var int
      */
-    private int $code;
+    private readonly int $code;
 
     /**
      * @var string
      */
-    private string $message;
+    private readonly string $message;
 
     /**
      * @var string|null
      */
-    private ?string $file;
+    private readonly ?string $file;
 
     /**
      * @var int|null
      */
-    private ?int $line;
+    private readonly ?int $line;
 
     /**
      * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
      *
      * @var array<array<string, int>>
      */
-    private array $trace;
+    private readonly array $trace;
 
     /**
      * @var array<int, string>

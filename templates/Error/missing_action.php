@@ -23,9 +23,9 @@ if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
 $prefixNs = '';
-$prefix = $prefix ?? '';
+$prefix ??= '';
 if ($prefix) {
-    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', (string) $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefix = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }
@@ -39,7 +39,7 @@ if (isset($controller)) {
 }
 // Mailer MissingActionException support
 if (isset($mailer)) {
-    $baseClass = 'Cake\Mailer\Mailer';
+    $baseClass = \Cake\Mailer\Mailer::class;
     $type = $extends = 'Mailer';
     $class = Inflector::camelize($mailer);
 }

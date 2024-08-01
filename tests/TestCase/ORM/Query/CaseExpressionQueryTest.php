@@ -30,18 +30,16 @@ class CaseExpressionQueryTest extends TestCase
     {
         $query = $this->getTableLocator()->get('Products')
             ->find()
-            ->select(function (SelectQuery $query) {
-                return [
-                    'name',
-                    'price',
-                    'is_cheap' => $query->newExpr()
-                        ->case()
-                        ->when(['price <' => 20])
-                        ->then(1)
-                        ->else(0)
-                        ->setReturnType('boolean'),
-                ];
-            })
+            ->select(fn (SelectQuery $query)=> [
+                'name',
+                'price',
+                'is_cheap' => $query->newExpr()
+                    ->case()
+                    ->when(['price <' => 20])
+                    ->then(1)
+                    ->else(0)
+                    ->setReturnType('boolean'),
+            ])
             ->orderByAsc('price')
             ->orderByAsc('name')
             ->disableHydration();

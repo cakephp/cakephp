@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
+use TestPlugin\Http\Session\TestPluginSession;
 
 /**
  * SessionTest class
@@ -485,7 +486,7 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestApp\Http\Session\TestAppLibSession', $session->engine());
+        $this->assertInstanceOf(TestAppLibSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
         $this->assertEquals(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
     }
@@ -509,7 +510,7 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestPlugin\Http\Session\TestPluginSession', $session->engine());
+        $this->assertInstanceOf(TestPluginSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
     }
 

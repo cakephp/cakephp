@@ -336,7 +336,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->head('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -358,7 +358,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->options('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -401,7 +401,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -572,7 +572,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -589,7 +589,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -1392,7 +1392,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+        $this->assertInstanceOf(EventManager::class, $eventManager);
 
         return $eventManager;
     }
@@ -1404,7 +1404,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
-        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
+        $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
@@ -1536,10 +1536,9 @@ class IntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $url URL to test
-     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
+    public function testAssertionFailureMessages($assertion, $message, $url, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
@@ -1709,9 +1708,8 @@ class IntegrationTestTraitTest extends TestCase
      * Test the assertion generates a verbose message for session related checks.
      *
      * @dataProvider assertionFailureSessionVerboseProvider
-     * @param mixed ...$rest
      */
-    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
+    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `OutOfBoundsException`: "oh no!"');
@@ -1759,9 +1757,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServices(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"mock":true}');
-        });
+        $this->mockService(stdClass::class, fn () => json_decode('{"mock":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
@@ -1772,9 +1768,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, function () {
-            return new ReflectionDependency();
-        });
+        $this->mockService(ReflectionDependency::class, fn () => new ReflectionDependency());
         $this->get('/dependencies/reflectionDep');
         $this->assertResponseOk();
         $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');
@@ -1785,12 +1779,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesOverwrite(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"second":true}');
-        });
+        $this->mockService(stdClass::class, fn () => json_decode('{"first":true}'));
+        $this->mockService(stdClass::class, fn () => json_decode('{"second":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"second":true', 'Contains the data from the stdClass mock container.');
@@ -1801,9 +1791,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesUnset(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
+        $this->mockService(stdClass::class, fn () => json_decode('{"first":true}'));
         $this->removeMockService(stdClass::class);
 
         $this->get('/dependencies/requiredDep');

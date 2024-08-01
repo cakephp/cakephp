@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -43,7 +44,7 @@ class IntegerTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('integer');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -153,7 +154,7 @@ class IntegerTypeTest extends TestCase
      * @dataProvider invalidIntegerProvider
      * @param  mixed $value Invalid value to test against the database type.
      */
-    public function testToDatabaseInvalid($value): void
+    public function testToDatabaseInvalid(mixed $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase($value, $this->driver);

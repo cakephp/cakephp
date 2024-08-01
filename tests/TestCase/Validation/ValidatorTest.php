@@ -745,9 +745,7 @@ class ValidatorTest extends TestCase
         $validator->allowEmptyString(
             'title',
             'very required',
-            function ($context) {
-                return $context['data']['otherField'] === true;
-            }
+            fn ($context)=> $context['data']['otherField'] === true
         )
             ->scalar('title');
 
@@ -2928,11 +2926,10 @@ class ValidatorTest extends TestCase
      *
      * @param Validator $validator
      * @param string $method
-     * @param mixed $extra
      * @param array $pass
      * @param string|null $name
      */
-    protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null): void
+    protected function assertProxyMethod($validator, $method, mixed $extra = null, $pass = [], $name = null): void
     {
         $name = $name ?: $method;
         if ($extra !== null) {

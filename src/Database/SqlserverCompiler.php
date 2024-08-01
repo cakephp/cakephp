@@ -150,7 +150,7 @@ class SqlserverCompiler extends QueryCompiler
                     continue;
                 }
                 preg_match_all(
-                    '/\b' . trim($selectKey, '[]') . '\b/i',
+                    '/\b' . trim((string)$selectKey, '[]') . '\b/i',
                     $p,
                     $matches
                 );
@@ -160,7 +160,7 @@ class SqlserverCompiler extends QueryCompiler
                 }
 
                 $parts[$k] = preg_replace(
-                    ['/\[|\]/', '/\b' . trim($selectKey, '[]') . '\b/i'],
+                    ['/\[|\]/', '/\b' . trim((string)$selectKey, '[]') . '\b/i'],
                     ['', $selectPart->sql($binder)],
                     $p
                 );

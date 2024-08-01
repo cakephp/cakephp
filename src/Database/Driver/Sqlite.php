@@ -214,11 +214,7 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new SqliteSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new SqliteSchemaDialect($this));
     }
 
     /**
@@ -258,9 +254,7 @@ class Sqlite extends Driver
                 $expression
                     ->setName('ROUND')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
-                        return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
-                    });
+                    ->iterateParts(fn ($p)=> new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]));
                 break;
             case 'NOW':
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);

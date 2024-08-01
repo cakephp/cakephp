@@ -518,7 +518,7 @@ class BelongsToMany extends Association
                 return $exp
                     ->or([
                         $exp->notIn($identifiers, $subquery),
-                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                        $nullExp->and(array_map($nullExp->isNull(...), array_keys($conds))),
                     ]);
             });
     }
@@ -563,9 +563,7 @@ class BelongsToMany extends Association
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
-            'finder' => function () {
-                return $this->_appendJunctionJoin($this->find(), []);
-            },
+            'finder' => fn () => $this->_appendJunctionJoin($this->find(), []),
         ]);
 
         return $loader->buildEagerLoader($options);
@@ -874,9 +872,7 @@ class BelongsToMany extends Association
         $sourceEntity->set($property, $links);
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options) {
-                return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            }
+            fn () => $this->_saveLinks($sourceEntity, $targetEntities, $options)
         );
     }
 
@@ -1197,7 +1193,7 @@ class BelongsToMany extends Association
                 /** @var array<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
-                $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
+                $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
 
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
                 $junctionQueryAlias = $junction->getAlias() . '__matches';
@@ -1418,13 +1414,9 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function ($key) {
-            return $key . ' IS';
-        }, $foreignKey);
+        $foreignKey = array_map(fn ($key)=> $key . ' IS', $foreignKey);
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function ($key) {
-            return $key . ' IS';
-        }, $assocForeignKey);
+        $assocForeignKey = array_map(fn ($key)=> $key . ' IS', $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
         $unions = [];

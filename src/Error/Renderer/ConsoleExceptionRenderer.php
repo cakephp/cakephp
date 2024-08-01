@@ -35,17 +35,17 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
     /**
      * @var \Throwable
      */
-    private Throwable $error;
+    private readonly Throwable $error;
 
     /**
      * @var \Cake\Console\ConsoleOutput
      */
-    private ConsoleOutput $output;
+    private readonly ConsoleOutput $output;
 
     /**
      * @var bool
      */
-    private bool $trace;
+    private readonly bool $trace;
 
     /**
      * Constructor.

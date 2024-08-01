@@ -202,9 +202,7 @@ class ResultSetFactoryTest extends TestCase
         $this->assertSame('TestPlugin.Comments', $result->getSource());
         $this->assertSame('TestPlugin.Authors', $result->author->getSource());
 
-        $result = $comments->find()->matching('Authors', function ($q) {
-            return $q->where(['Authors.id' => 1]);
-        })->first();
+        $result = $comments->find()->matching('Authors', fn ($q)=> $q->where(['Authors.id' => 1]))->first();
         $this->assertSame('TestPlugin.Comments', $result->getSource());
         $this->assertSame('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
         $this->clearPlugins();

@@ -30,7 +30,7 @@ class ContentsNotContain extends ContentsBase
      */
     public function matches(mixed $other): bool
     {
-        return mb_strpos($this->contents, $other) === false;
+        return mb_strpos($this->contents, (string)$other) === false;
     }
 
     /**
@@ -46,7 +46,7 @@ class ContentsNotContain extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsNotContain',
+    \Cake\Console\TestSuite\Constraint\ContentsNotContain::class,
     'Cake\TestSuite\Constraint\Console\ContentsNotContain'
 );
 // phpcs:enable

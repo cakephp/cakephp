@@ -125,10 +125,8 @@ class FunctionsGlobalTest extends TestCase
      * Test cases for h()
      *
      * @dataProvider hInputProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testH($value, $expected): void
+    public function testH(mixed $value, mixed $expected): void
     {
         $result = h($value);
         $this->assertSame($expected, $result);

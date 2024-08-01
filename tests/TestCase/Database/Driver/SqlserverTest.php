@@ -102,7 +102,7 @@ class SqlserverTest extends TestCase
      */
     public function testDnsString($constructorArgs, $dnsString): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
@@ -133,7 +133,7 @@ class SqlserverTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -230,7 +230,7 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitVersion12(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -274,7 +274,7 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitOldServer(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -397,7 +397,7 @@ class SqlserverTest extends TestCase
      */
     public function testInsertUsesOutput(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -417,7 +417,7 @@ class SqlserverTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -448,7 +448,7 @@ class SqlserverTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();

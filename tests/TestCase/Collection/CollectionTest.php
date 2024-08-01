@@ -20,6 +20,9 @@ use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
+use Cake\Collection\Iterator\ExtractIterator;
+use Cake\Collection\Iterator\InsertIterator;
+use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use CallbackFilterIterator;
@@ -260,9 +263,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
 
-        $filtered = $collection->filter(function ($value, $key, $iterator) {
-            return $value > 2;
-        });
+        $filtered = $collection->filter(fn ($value, $key, $iterator)=> $value > 2);
         $this->assertInstanceOf(Collection::class, $filtered);
 
         $results = [];
@@ -278,11 +279,9 @@ class CollectionTest extends TestCase
     public function testReject(): void
     {
         $collection = new Collection([]);
-        $result = $collection->reject(function ($v) {
-            return false;
-        });
+        $result = $collection->reject(fn ($v)=> false);
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $collection = new Collection(['a' => null, 'b' => 2, 'c' => false]);
         $result = $collection->reject();
@@ -303,7 +302,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([]);
         $result = $collection->unique();
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -362,9 +361,7 @@ class CollectionTest extends TestCase
     public function testSomeReturnTrue(): void
     {
         $collection = new Collection([]);
-        $result = $collection->some(function ($v) {
-            return true;
-        });
+        $result = $collection->some(fn ($v)=> true);
         $this->assertFalse($result);
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
@@ -440,7 +437,7 @@ class CollectionTest extends TestCase
 
             return $v * $v;
         });
-        $this->assertInstanceOf('Cake\Collection\Iterator\ReplaceIterator', $map);
+        $this->assertInstanceOf(ReplaceIterator::class, $map);
         $this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9, 'd' => 16], iterator_to_array($map));
     }
 
@@ -452,9 +449,7 @@ class CollectionTest extends TestCase
     public function testReduceWithInitialValue(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertSame(20, $collection->reduce(function ($reduction, $value, $key) {
-            return $value + $reduction;
-        }, 10));
+        $this->assertSame(20, $collection->reduce(fn ($reduction, $value, $key)=> $value + $reduction, 10));
     }
 
     /**
@@ -465,9 +460,7 @@ class CollectionTest extends TestCase
     public function testReduceWithoutInitialValue(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertSame(10, $collection->reduce(function ($reduction, $value, $key) {
-            return $value + $reduction;
-        }));
+        $this->assertSame(10, $collection->reduce(fn ($reduction, $value, $key)=> $value + $reduction));
     }
 
     /**
@@ -494,7 +487,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->extract('a.b.c');
-        $this->assertInstanceOf('Cake\Collection\Iterator\ExtractIterator', $map);
+        $this->assertInstanceOf(ExtractIterator::class, $map);
         $this->assertEquals([1, null], iterator_to_array($map));
     }
 
@@ -526,7 +519,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->sortBy('a.b.c');
-        $this->assertInstanceOf('Cake\Collection\Collection', $map);
+        $this->assertInstanceOf(Collection::class, $map);
         $expected = [
             ['a' => ['b' => ['c' => 10]]],
             ['a' => ['b' => ['c' => 6]]],
@@ -554,9 +547,7 @@ class CollectionTest extends TestCase
     public function testMaxCallback(iterable $items): void
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
-            return $e['a']['b']['c'] * -1;
-        };
+        $callback = fn ($e)=> $e['a']['b']['c'] * -1;
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
     }
 
@@ -568,9 +559,7 @@ class CollectionTest extends TestCase
     public function testMaxCallable(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
-            return $e['a']['b']['c'] * -1;
-        }));
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(fn ($e)=> $e['a']['b']['c'] * -1));
     }
 
     /**
@@ -658,7 +647,7 @@ class CollectionTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -678,9 +667,7 @@ class CollectionTest extends TestCase
                 ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
             ],
         ];
-        $grouped = $collection->groupBy(function ($element) {
-            return $element['parent_id'];
-        });
+        $grouped = $collection->groupBy(fn ($element)=> $element['parent_id']);
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
 
@@ -808,7 +795,7 @@ class CollectionTest extends TestCase
             2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -819,9 +806,7 @@ class CollectionTest extends TestCase
     public function testIndexByCallback(iterable $items): void
     {
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
-            return $element['id'];
-        });
+        $grouped = $collection->indexBy(fn ($element)=> $element['id']);
         $expected = [
             1 => ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
             3 => ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
@@ -840,9 +825,7 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
         ];
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
-            return $element['thing'];
-        });
+        $grouped = $collection->indexBy(fn ($element)=> $element['thing']);
         $expected = [
             NonBacked::Basic->name => ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
             NonBacked::Advanced->name => ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
@@ -860,9 +843,7 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
         ];
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
-            return $element['thing'];
-        });
+        $grouped = $collection->indexBy(fn ($element)=> $element['thing']);
         $expected = [
             Priority::Medium->value => ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
             Priority::High->value => ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
@@ -922,9 +903,7 @@ class CollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
 
-        $collection->indexBy(function ($e) {
-            return null;
-        });
+        $collection->indexBy(fn ($e)=> null);
     }
 
     /**
@@ -941,7 +920,7 @@ class CollectionTest extends TestCase
             11 => 1,
         ];
         $result = iterator_to_array($grouped);
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
         $this->assertEquals($expected, $result);
     }
 
@@ -957,9 +936,7 @@ class CollectionTest extends TestCase
             11 => 1,
         ];
         $collection = new Collection($items);
-        $grouped = $collection->countBy(function ($element) {
-            return $element['parent_id'];
-        });
+        $grouped = $collection->countBy(fn ($element)=> $element['parent_id']);
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
 
@@ -1347,15 +1324,9 @@ class CollectionTest extends TestCase
             '2-3' => ['baz-2-3' => '2-3-baz'],
         ];
         $collection = (new Collection($items))->combine(
-            function ($value, $key) {
-                return $value['name'] . '-' . $key;
-            },
-            function ($value, $key) {
-                return $key . '-' . $value['name'];
-            },
-            function ($value, $key) {
-                return $key . '-' . $value['id'];
-            }
+            fn ($value, $key)=> $value['name'] . '-' . $key,
+            fn ($value, $key)=> $key . '-' . $value['name'],
+            fn ($value, $key)=> $key . '-' . $value['id']
         );
         $this->assertEquals($expected, $collection->toArray());
 
@@ -1746,7 +1717,7 @@ class CollectionTest extends TestCase
         $items = [['a' => 1], ['b' => 2]];
         $collection = new Collection($items);
         $iterator = $collection->insert('c', [3, 4]);
-        $this->assertInstanceOf('Cake\Collection\Iterator\InsertIterator', $iterator);
+        $this->assertInstanceOf(InsertIterator::class, $iterator);
         $this->assertEquals(
             [['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
             iterator_to_array($iterator)
@@ -1837,9 +1808,7 @@ class CollectionTest extends TestCase
             ['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
             ['id' => 4, 'stuff' => [['id' => 5]]],
         ];
-        $collection = (new Collection($items))->listNested('desc', function ($item) {
-            return $item['stuff'] ?? [];
-        });
+        $collection = (new Collection($items))->listNested('desc', fn ($item)=> $item['stuff'] ?? []);
         $this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
     }
 
@@ -1887,9 +1856,7 @@ class CollectionTest extends TestCase
      */
     public function testSumOfCallable(iterable $items, $expected): void
     {
-        $sum = (new Collection($items))->sumOf(function ($v) {
-            return $v['invoice']['total'];
-        });
+        $sum = (new Collection($items))->sumOf(fn ($v)=> $v['invoice']['total']);
         $this->assertEquals($expected, $sum);
     }
 
@@ -1900,9 +1867,7 @@ class CollectionTest extends TestCase
      */
     public function testStopWhenCallable(iterable $items): void
     {
-        $collection = (new Collection($items))->stopWhen(function ($v) {
-            return $v > 3;
-        });
+        $collection = (new Collection($items))->stopWhen(fn ($v)=> $v > 3);
         $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3], $collection->toArray());
     }
 
@@ -1962,9 +1927,7 @@ class CollectionTest extends TestCase
     public function testUnfoldWithCallable(): void
     {
         $items = [1, 2, 3];
-        $collection = (new Collection($items))->unfold(function ($item) {
-            return range($item, $item * 2);
-        });
+        $collection = (new Collection($items))->unfold(fn ($item)=> range($item, $item * 2));
         $expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
         $this->assertEquals($expected, $collection->toArray(false));
     }
@@ -1975,9 +1938,7 @@ class CollectionTest extends TestCase
     public function testThrough(): void
     {
         $items = [1, 2, 3];
-        $collection = (new Collection($items))->through(function ($collection) {
-            return $collection->append($collection->toList());
-        });
+        $collection = (new Collection($items))->through(fn ($collection)=> $collection->append($collection->toList()));
 
         $this->assertEquals([1, 2, 3, 1, 2, 3], $collection->toList());
     }
@@ -2004,12 +1965,10 @@ class CollectionTest extends TestCase
     public function testComplexSortBy(): void
     {
         $results = collection([3, 7])
-            ->unfold(function ($value) {
-                return [
-                    ['sorting' => $value * 2],
-                    ['sorting' => $value * 2],
-                ];
-            })
+            ->unfold(fn ($value)=> [
+                ['sorting' => $value * 2],
+                ['sorting' => $value * 2],
+            ])
             ->sortBy('sorting')
             ->extract('sorting')
             ->toList();
@@ -2076,9 +2035,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([1, 2, 3]);
         $this->assertFalse($collection->isEmpty());
 
-        $collection = $collection->map(function () {
-            return null;
-        });
+        $collection = $collection->map(fn () => null);
         $this->assertFalse($collection->isEmpty());
 
         $collection = $collection->filter();
@@ -2125,14 +2082,10 @@ class CollectionTest extends TestCase
     public function testZipWith(): void
     {
         $collection = new Collection([1, 2]);
-        $zipped = $collection->zipWith([3, 4], function ($a, $b) {
-            return $a * $b;
-        });
+        $zipped = $collection->zipWith([3, 4], fn ($a, $b)=> $a * $b);
         $this->assertEquals([3, 8], $zipped->toList());
 
-        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args) {
-            return array_sum($args);
-        });
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], fn (...$args)=> array_sum($args));
         $this->assertEquals([9, 12], $zipped->toList());
     }
 
@@ -2193,9 +2146,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([1, 2, 3]);
         $this->assertSame(3, $collection->last());
 
-        $collection = $collection->map(function ($e) {
-            return $e * 2;
-        });
+        $collection = $collection->map(fn ($e)=> $e * 2);
         $this->assertSame(6, $collection->last());
     }
 
@@ -2421,13 +2372,9 @@ class CollectionTest extends TestCase
     public function testSerializeWithNestedIterators(): void
     {
         $collection = new Collection([1, 2, 3]);
-        $collection = $collection->map(function ($e) {
-            return $e * 3;
-        });
+        $collection = $collection->map(fn ($e)=> $e * 3);
 
-        $collection = $collection->groupBy(function ($e) {
-            return $e % 2;
-        });
+        $collection = $collection->groupBy(fn ($e)=> $e % 2);
 
         $serialized = serialize($collection);
         $unserialized = unserialize($serialized);
@@ -2574,11 +2521,7 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([[1, 2, 3], ['A', 'B', 'C'], ['a', 'b', 'c']]);
 
-        $result = $collection->cartesianProduct(function ($value) {
-            return [strval($value[0]) . $value[1] . $value[2]];
-        }, function ($value) {
-            return $value[0] >= 2;
-        });
+        $result = $collection->cartesianProduct(fn ($value)=> [strval($value[0]) . $value[1] . $value[2]], fn ($value)=> $value[0] >= 2);
 
         $expected = [
             ['2Aa'],
@@ -2605,11 +2548,7 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([['1', '2', '3', '4'], ['A', 'B', 'C'], ['name', 'surname', 'telephone']]);
 
-        $result = $collection->cartesianProduct(function ($value) {
-            return [$value[0] => [$value[1] => $value[2]]];
-        }, function ($value) {
-            return $value[2] !== 'surname';
-        });
+        $result = $collection->cartesianProduct(fn ($value)=> [$value[0] => [$value[1] => $value[2]]], fn ($value)=> $value[2] !== 'surname');
 
         $expected = [
             [1 => ['A' => 'name']],

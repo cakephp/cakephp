@@ -803,7 +803,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->getParam('prefix'))
+                explode('/', (string)$this->request->getParam('prefix'))
             );
             $templatePath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $templatePath;
         }
@@ -828,8 +828,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $url = Router::url($default, !$local);
         $base = $this->request->getAttribute('base');
-        if ($local && $base && str_starts_with($url, $base)) {
-            $url = substr($url, strlen($base));
+        if ($local && $base && str_starts_with($url, (string)$base)) {
+            $url = substr($url, strlen((string)$base));
             if ($url[0] !== '/') {
                 $url = '/' . $url;
             }

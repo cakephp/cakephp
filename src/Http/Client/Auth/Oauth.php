@@ -49,7 +49,7 @@ class Oauth
             $credentials['method'] = 'hmac-sha1';
         }
 
-        $credentials['method'] = strtoupper($credentials['method']);
+        $credentials['method'] = strtoupper((string)$credentials['method']);
 
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
@@ -225,7 +225,7 @@ class Oauth
         openssl_sign($baseString, $signature, $privateKey);
         $this->checkSslError();
 
-        $values['oauth_signature'] = base64_encode($signature);
+        $values['oauth_signature'] = base64_encode((string)$signature);
 
         return $this->_buildAuth($values);
     }

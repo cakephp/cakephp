@@ -656,11 +656,11 @@ TEXT;
         $this->assertSame('<p>はしこい<font color="brown">茶色</font>の狐はのろまな犬を...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => false, 'html' => true]));
         $this->assertSame('<p>はしこい<font color="brown">茶色</font>の...</p>', Text::truncate($text, 18, ['ellipsis' => '...', 'trimWidth' => true, 'html' => true]));
 
-        $text = <<<HTML
+        $text = <<<HTML_WRAP
 <IMG src="mypic.jpg">このimageタグはXHTMLに準拠していない！<br>
 <hr/><b>でも次のimageタグは準拠しているはず <img src="mypic.jpg" alt="私の、私自身そして私" /></b><br />
 素晴らしい、でしょ?
-HTML;
+HTML_WRAP;
         $this->assertSame("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠していない！<br>\n<hr/><b>でも次の…</b>", Text::truncate($text, 30, ['html' => true]));
         $this->assertSame('<IMG src="mypic.jpg">このimageタグはXHTMLに準拠し…', Text::truncate($text, 30, ['html' => true, 'trimWidth' => true]));
     }
@@ -1535,9 +1535,8 @@ HTML;
      * testparseFileSize
      *
      * @dataProvider filesizes
-     * @param mixed $expected
      */
-    public function testParseFileSize(array $params, $expected): void
+    public function testParseFileSize(array $params, mixed $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
         $this->assertSame($expected, $result);
@@ -1824,10 +1823,8 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
-        $strlen = function () use ($method) {
-            return $method->invokeArgs(null, func_get_args());
-        };
+        $method = new ReflectionMethod(Text::class, '_strlen');
+        $strlen = fn () => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame(20, $strlen($text, []));
@@ -1847,10 +1844,8 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
-        $substr = function () use ($method) {
-            return $method->invokeArgs(null, func_get_args());
-        };
+        $method = new ReflectionMethod(Text::class, '_substr');
+        $substr = fn () => $method->invokeArgs(null, func_get_args());
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame('アクセス', $substr($text, 6, 4, []));

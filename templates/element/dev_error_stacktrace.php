@@ -31,7 +31,7 @@ foreach ($exceptions as $level => $exc):
         <div class="stack-exception-header">
             <span class="stack-exception-caused">Caused by</span>
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
-            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
+            <span class="stack-exception-type"><?= h($exc::class); ?></span>
         </div>
     <?php endif; ?>
 
@@ -89,7 +89,7 @@ foreach ($exceptions as $level => $exc):
 
         $frameId = "{$level}-{$i}";
         $activeFrame = $i == 0;
-        $vendorFrame = isset($stack['file']) && str_starts_with($stack['file'], ROOT . DS . 'vendor') ? 'vendor-frame' : '';
+        $vendorFrame = isset($stack['file']) && str_starts_with((string) $stack['file'], ROOT . DS . 'vendor') ? 'vendor-frame' : '';
     ?>
         <li id="stack-frame-<?= $frameId ?>" class="stack-frame <?= $vendorFrame ?>">
             <div class="stack-frame-header">

@@ -1183,7 +1183,7 @@ class Message implements JsonSerializable
                 if (is_int($name)) {
                     throw new InvalidArgumentException('No filename specified.');
                 }
-                $fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
+                $fileInfo['data'] = chunk_split(base64_encode((string)$fileInfo['data']), 76, "\r\n");
             } elseif ($fileInfo['file'] instanceof UploadedFileInterface) {
                 $fileInfo['mimetype'] = $fileInfo['file']->getClientMediaType();
                 if (is_int($name)) {
@@ -1861,9 +1861,10 @@ class Message implements JsonSerializable
             }
         });
 
-        return array_filter($array, function ($i) {
-            return $i !== null && !is_array($i) && !is_bool($i) && strlen($i) || !empty($i);
-        });
+        return array_filter(
+            $array,
+            fn ($i)=> $i !== null && !is_array($i) && !is_bool($i) && strlen((string)$i) || !empty($i)
+        );
     }
 
     /**

@@ -18,10 +18,12 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RepositoryInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
+use TestPlugin\Model\Table\CommentsTable;
 use UnexpectedValueException;
 
 /**
@@ -55,11 +57,11 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel();
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertNull($stub->Articles);
 
         $result = $stub->fetchModel('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertNull($stub->Comments);
 
         $result = $stub->fetchModel(PaginatorPostsTable::class);
@@ -108,7 +110,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel('TestPlugin.Comments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf(CommentsTable::class, $result);
         $this->assertNull($stub->Comments);
     }
 

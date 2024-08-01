@@ -21,6 +21,7 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -101,7 +102,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse(): void
     {
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->never())
             ->method('on');
 
@@ -152,7 +153,7 @@ class ComponentRegistryTest extends TestCase
     public function testGetController(): void
     {
         $result = $this->Components->getController();
-        $this->assertInstanceOf('Cake\Controller\Controller', $result);
+        $this->assertInstanceOf(Controller::class, $result);
     }
 
     /**

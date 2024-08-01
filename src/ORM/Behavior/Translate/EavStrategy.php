@@ -173,21 +173,29 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $conditions = function (string $field, string $locale, SelectQuery $query, array $select) {
-            return function (SelectQuery $q) use ($field, $locale, $query, $select) {
-                $table = $q->getRepository();
-                $q->where([$table->aliasField('locale') => $locale]);
+        $conditions = fn (
+            string $field,
+            string $locale,
+            SelectQuery $query,
+            array $select
+        )=> function (SelectQuery $q) use (
+            $field,
+            $locale,
+            $query,
+            $select
+        ) {
+            $table = $q->getRepository();
+            $q->where([$table->aliasField('locale') => $locale]);
 
-                if (
-                    $query->isAutoFieldsEnabled() ||
-                    in_array($field, $select, true) ||
-                    in_array($this->table->aliasField($field), $select, true)
-                ) {
-                    $q->select(['id', 'content']);
-                }
+            if (
+                $query->isAutoFieldsEnabled() ||
+                in_array($field, $select, true) ||
+                in_array($this->table->aliasField($field), $select, true)
+            ) {
+                $q->select(['id', 'content']);
+            }
 
-                return $q;
-            };
+            return $q;
         };
 
         $contain = [];

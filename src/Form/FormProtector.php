@@ -172,9 +172,7 @@ class FormProtector
             return Hash::filter(explode('.', $name));
         }
         $parts = explode('[', $name);
-        $parts = array_map(function ($el) {
-            return trim($el, ']');
-        }, $parts);
+        $parts = array_map(fn ($el)=> trim((string)$el, ']'), $parts);
 
         return Hash::filter($parts, 'strlen');
     }
@@ -293,8 +291,8 @@ class FormProtector
     protected function extractFields(array $formData): array
     {
         $locked = '';
-        $token = urldecode($formData['_Token']['fields']);
-        $unlocked = urldecode($formData['_Token']['unlocked']);
+        $token = urldecode((string)$formData['_Token']['fields']);
+        $unlocked = urldecode((string)$formData['_Token']['unlocked']);
 
         if (str_contains($token, ':')) {
             [, $locked] = explode(':', $token, 2);
@@ -365,7 +363,7 @@ class FormProtector
      */
     protected function sortedUnlockedFields(array $formData): array
     {
-        $unlocked = urldecode($formData['_Token']['unlocked']);
+        $unlocked = urldecode((string)$formData['_Token']['unlocked']);
         if (!$unlocked) {
             return [];
         }
@@ -454,7 +452,7 @@ class FormProtector
             return 'Form protection debug token not found.';
         }
 
-        $expectedParts = json_decode(urldecode($formData['_Token']['debug']), true);
+        $expectedParts = json_decode(urldecode((string)$formData['_Token']['debug']), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid form protection debug token.';
         }

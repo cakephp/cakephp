@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -37,7 +38,7 @@ class SqlserverSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
+        $this->skipIf(!str_contains((string)$config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
     }
 
     /**
@@ -324,7 +325,7 @@ SQL;
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
+        $driver = $this->getMockBuilder(Sqlserver::class)->getMock();
         $dialect = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -551,7 +552,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
 
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
@@ -921,7 +922,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -970,7 +971,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1019,7 +1020,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1093,7 +1094,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1111,7 +1112,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1146,9 +1147,7 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->willReturnCallback(function ($value) {
-                return "'$value'";
-            });
+            ->willReturnCallback(fn ($value)=> "'$value'");
 
         $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])

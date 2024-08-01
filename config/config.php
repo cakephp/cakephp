@@ -17,5 +17,5 @@
 $versionFile = file(dirname(__DIR__) . '/VERSION.txt');
 
 return [
-    'Cake.version' => trim(array_pop($versionFile)),
+    'Cake.version' => trim((string)array_pop($versionFile)),
 ];

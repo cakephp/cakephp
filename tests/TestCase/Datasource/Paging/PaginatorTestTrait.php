@@ -23,6 +23,8 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\ResultSet;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 trait PaginatorTestTrait
 {
@@ -165,11 +167,7 @@ trait PaginatorTestTrait
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
-                return $q->matching('Authors', function ($q) {
-                    return $q->where(['Authors.name' => 'larry']);
-                });
-            });
+            $query ->matching('Tags', fn ($q)=> $q->matching('Authors', fn ($q)=> $q->where(['Authors.name' => 'larry'])));
         });
         $results = $this->Paginator->paginate($articles);
         $result = $results->first();
@@ -1206,7 +1204,7 @@ trait PaginatorTestTrait
     public function testPaginateQueryWithBindValue(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(str_contains($config['driver'], 'Sqlserver'), 'Test temporarily broken in SQLServer');
+        $this->skipIf(str_contains((string)$config['driver'], 'Sqlserver'), 'Test temporarily broken in SQLServer');
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
@@ -1257,7 +1255,7 @@ trait PaginatorTestTrait
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+        return $this->getMockBuilder(PaginatorPostsTable::class)
             ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
@@ -1288,7 +1286,7 @@ trait PaginatorTestTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+        $results = $this->getMockBuilder(ResultSet::class)
             ->disableOriginalConstructor()
             ->getMock();
 

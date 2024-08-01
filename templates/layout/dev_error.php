@@ -331,7 +331,7 @@ use function Cake\Core\h;
 <body>
     <header>
         <?php
-        $title = explode("\n", trim($this->fetch('title')));
+        $title = explode("\n", trim((string) $this->fetch('title')));
         $errorTitle = array_shift($title);
         $errorDescription = implode("\n", $title);
         ?>
@@ -342,7 +342,7 @@ use function Cake\Core\h;
         <?php if (strlen($errorDescription)) : ?>
             <span class="header-description"><?= Debugger::formatHtmlMessage($errorDescription) ?></span>
         <?php endif ?>
-        <span class="header-type"><?= get_class($error) ?></span>
+        <span class="header-type"><?= $error::class ?></span>
     </header>
     <div class="error-content">
         <?php if ($this->fetch('subheading')): ?>

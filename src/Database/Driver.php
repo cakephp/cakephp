@@ -766,7 +766,7 @@ abstract class Driver
         if ($this->pdo !== null) {
             try {
                 $connected = (bool)$this->pdo->query('SELECT 1');
-            } catch (PDOException $e) {
+            } catch (PDOException) {
                 $connected = false;
             }
         } else {

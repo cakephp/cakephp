@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Connection;
 use Cake\Database\Query\InsertQuery;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
@@ -73,7 +74,7 @@ class TestFixtureTest extends TestCase
         $this->assertSame('articles', $Fixture->table);
 
         $schema = $Fixture->getTableSchema();
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
+        $this->assertInstanceOf(TableSchema::class, $schema);
     }
 
     /**
@@ -166,7 +167,7 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMockBuilder('Cake\Database\Connection')
+        $db = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $query = $this->getMockBuilder(InsertQuery::class)

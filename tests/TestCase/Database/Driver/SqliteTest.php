@@ -41,7 +41,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
@@ -83,7 +83,7 @@ class SqliteTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'mask' => 0666,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -168,18 +168,14 @@ class SqliteTest extends TestCase
      * Test the schemaValue method on Driver.
      *
      * @dataProvider schemaValueProvider
-     * @param mixed $input
-     * @param mixed $expected
      */
-    public function testSchemaValue($input, $expected): void
+    public function testSchemaValue(mixed $input, mixed $expected): void
     {
         $mock = Mockery::mock(PDO::class)
             ->shouldAllowMockingMethod('quoteIdentifier')
             ->makePartial();
         $mock->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
-                return '"' . $value . '"';
-            });
+            ->andReturnUsing(fn ($value)=> '"' . $value . '"');
 
         $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])

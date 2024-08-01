@@ -32,6 +32,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ResponseTest
@@ -1058,7 +1059,7 @@ class ResponseTest extends TestCase
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
-        $this->assertInstanceOf('Laminas\Diactoros\Stream', $body);
+        $this->assertInstanceOf(Stream::class, $body);
 
         $expected = '/* this is the test asset css file */';
         $this->assertSame($expected, trim($body->getContents()));
@@ -1434,7 +1435,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $stream = $response->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $stream);
+        $this->assertInstanceOf(StreamInterface::class, $stream);
     }
 
     /**

@@ -28,6 +28,8 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
 
 /**
@@ -161,11 +163,7 @@ class QueryRegressionTest extends TestCase
         $tags->belongsToMany('Authors');
 
         $query = $articles->find()
-            ->matching('Tags', function ($q) {
-                return $q->matching('Authors', function ($q) {
-                    return $q->where(['Authors.name' => 'larry']);
-                });
-            });
+            ->matching('Tags', fn ($q)=> $q->matching('Authors', fn ($q)=> $q->where(['Authors.name' => 'larry'])));
         $this->assertSame(3, $query->count());
 
         $result = $query->first();
@@ -232,7 +230,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
@@ -284,9 +282,7 @@ class QueryRegressionTest extends TestCase
         $articles->belongsToMany('Tags');
         $tags->belongsToMany('Articles');
 
-        $sub = $articles->Tags->find()->select(['Tags.id'])->matching('Articles', function ($q) {
-            return $q->where(['Articles.id' => 1]);
-        });
+        $sub = $articles->Tags->find()->select(['Tags.id'])->matching('Articles', fn ($q)=> $q->where(['Articles.id' => 1]));
 
         $query = $articles->Tags->find()->where(['Tags.id NOT IN' => $sub]);
         $this->assertSame(1, $query->count());
@@ -319,7 +315,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
             'saveStrategy' => $strategy,
@@ -378,9 +374,7 @@ class QueryRegressionTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
-            return $query->contain('Authors');
-        });
+        $articles->getEventManager()->on('Model.beforeFind', fn (EventInterface $event, $query)=> $query->contain('Authors'));
 
         $article = $articles->newEmptyEntity();
         $article->title = 'Foo';
@@ -410,12 +404,12 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $articles->Highlights->hasMany('TopArticles', [
-            'className' => 'TestApp\Model\Table\ArticlesTable',
+            'className' => ArticlesTable::class,
             'foreignKey' => 'author_id',
         ]);
         $entity = $articles->get(2, ...['contain' => ['Highlights']]);
@@ -636,9 +630,7 @@ class QueryRegressionTest extends TestCase
         $table->belongsTo('Authors', ['joinType' => 'inner']);
         $count = $table
             ->find()
-            ->contain(['Authors' => function ($q) {
-                return $q->where(['Authors.id' => 1]);
-            }])
+            ->contain(['Authors' => fn ($q)=> $q->where(['Authors.id' => 1])])
             ->count();
         $this->assertSame(2, $count);
     }
@@ -829,9 +821,7 @@ class QueryRegressionTest extends TestCase
         $table->belongsTo('Authors');
         $article = $table->find()
             ->contain('Authors')
-            ->matching('Authors', function ($q) {
-                return $q->where(['Authors.id' => 1]);
-            })
+            ->matching('Authors', fn ($q)=> $q->where(['Authors.id' => 1]))
             ->first();
         $this->assertNotNull($article->author);
         $this->assertEquals($article->author, $article->_matchingData['Authors']);
@@ -849,9 +839,7 @@ class QueryRegressionTest extends TestCase
         $table->articles->belongsToMany('tags');
 
         $result = $table->find()
-            ->matching('articles.tags', function ($q) {
-                return $q->where(['tags.id' => 2]);
-            })
+            ->matching('articles.tags', fn ($q)=> $q->where(['tags.id' => 2]))
             ->contain('articles');
 
         $this->assertCount(2, $result->first()->articles);
@@ -872,9 +860,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $comments
             ->find()
-            ->matching('Articles.Tags', function ($q) {
-                return $q->where(['Tags.id' => 2]);
-            })
+            ->matching('Articles.Tags', fn ($q)=> $q->where(['Tags.id' => 2]))
             ->contain('Articles')
             ->first();
 
@@ -901,9 +887,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $comments
             ->find()
-            ->matching('Articles.Tags', function ($q) {
-                return $q->where(['Tags.id' => 2]);
-            })
+            ->matching('Articles.Tags', fn ($q)=> $q->where(['Tags.id' => 2]))
             ->contain('Articles.Authors')
             ->first();
 
@@ -935,16 +919,12 @@ class QueryRegressionTest extends TestCase
 
         $result = $comments->find()
             ->contain(['Articles', 'Users'])
-            ->matching('Articles', function ($q) {
-                return $q->where(['Articles.id >=' => 1]);
-            })
-            ->matching('Users', function ($q) {
-                return $q->where(['Users.id >=' => 1]);
-            })
+            ->matching('Articles', fn ($q)=> $q->where(['Articles.id >=' => 1]))
+            ->matching('Users', fn ($q)=> $q->where(['Users.id >=' => 1]))
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertInstanceOf(Entity::class, $result->article);
+        $this->assertInstanceOf(Entity::class, $result->user);
         $this->assertSame(2, $result->user->id);
         $this->assertSame(1, $result->article->id);
     }
@@ -1002,12 +982,10 @@ class QueryRegressionTest extends TestCase
         $table->hasMany('Comments');
 
         $query = $table->find()->contain([
-            'Comments' => function ($q) {
-                return $q->select([
-                    'concat' => $q->func()->concat(['red', 'blue']),
-                    'user_id',
-                ]);
-            }])
+            'Comments' => fn ($q)=> $q->select([
+                'concat' => $q->func()->concat(['red', 'blue']),
+                'user_id',
+            ])])
             ->where(['Users.id' => 2]);
 
         $results = $query->toArray();
@@ -1027,9 +1005,7 @@ class QueryRegressionTest extends TestCase
         $table->hasMany('Comments');
         $results = $table->find()
             ->select(['Users.id'])
-            ->matching('Comments', function ($q) {
-                return $q->where(['Comments.id' => 1]);
-            })
+            ->matching('Comments', fn ($q)=> $q->where(['Comments.id' => 1]))
             ->all()
             ->extract('id')
             ->toList();
@@ -1045,16 +1021,12 @@ class QueryRegressionTest extends TestCase
         $table->belongsToMany('Tags');
 
         $rows = $table->find()
-            ->matching('Tags', function ($q) {
-                return $q->where([]);
-            })
+            ->matching('Tags', fn ($q)=> $q->where([]))
             ->all();
         $this->assertNotEmpty($rows);
 
         $rows = $table->find()
-            ->matching('Tags', function ($q) {
-                return $q->where(null);
-            })
+            ->matching('Tags', fn ($q)=> $q->where(null))
             ->all();
         $this->assertNotEmpty($rows);
     }
@@ -1095,11 +1067,7 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsTo('Authors');
         $table->Articles->Authors->belongsToMany('Tags');
 
-        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => function ($q) {
-            return $q->contain(['Authors' => function ($q) {
-                return $q->contain('Tags');
-            }]);
-        }]);
+        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => fn ($q)=> $q->contain(['Authors' => fn ($q)=> $q->contain('Tags')])]);
         $this->assertCount(2, $query->first()->article->author->tags);
     }
 
@@ -1174,9 +1142,7 @@ class QueryRegressionTest extends TestCase
             'through' => 'SpecialTags',
         ]);
         $query = $table->find()
-            ->contain(['Tags' => function ($q) {
-                return $q->where(['SpecialTags.highlighted_time >' => new DateTime('2014-06-01 00:00:00')]);
-            }])
+            ->contain(['Tags' => fn ($q)=> $q->where(['SpecialTags.highlighted_time >' => new DateTime('2014-06-01 00:00:00')])])
             ->where(['Articles.id' => 2]);
 
         $result = $query->first();
@@ -1268,9 +1234,7 @@ class QueryRegressionTest extends TestCase
         $Tags->belongsToMany('Articles');
 
         $query = $Tags->find()
-            ->notMatching('Articles', function ($q) {
-                return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
-            })
+            ->notMatching('Articles', fn ($q)=> $q ->where(['ArticlesTags.tag_id !=' => 3 ]))
             ->where([
                 'Tags.created <' => new NativeDateTime('2016-01-02 00:00:00'),
             ]);
@@ -1393,9 +1357,7 @@ class QueryRegressionTest extends TestCase
             ->find()
             ->select(['name' => 'Authors.name', 'tag' => 'Tags.name'])
             ->matching('Articles.SpecialTags.Tags')
-            ->matching('Articles.SpecialTags.Authors', function ($q) {
-                return $q->where(['Authors.id' => 2]);
-            })
+            ->matching('Articles.SpecialTags.Authors', fn ($q)=> $q->where(['Authors.id' => 2]))
             ->distinct()
             ->enableHydration(false)
             ->toArray();
@@ -1518,15 +1480,11 @@ class QueryRegressionTest extends TestCase
         $articles->hasMany('articlesTags');
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
-            return $query->formatResults(function ($results) {
-                return $results->map(function (Entity $tag) {
-                    $tag->name .= ' - visited';
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', fn ($e, $query)=> $query->formatResults(fn ($results)=> $results->map(function (Entity $tag) {
+            $tag->name .= ' - visited';
 
-                    return $tag;
-                });
-            });
-        });
+            return $tag;
+        })));
 
         $query = $table->find()->contain(['articles.articlesTags.tags']);
 
@@ -1551,18 +1509,16 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q
-                        ->func()
-                        ->ABS([
-                            $table
-                                ->getConnection()
-                                ->selectQuery(-1),
-                        ])
-                        ->setReturnType('integer'),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q
+                    ->func()
+                    ->ABS([
+                        $table
+                            ->getConnection()
+                            ->selectQuery(-1),
+                    ])
+                    ->setReturnType('integer'),
+            ]);
 
         $result = $query->first()->get('value');
         $this->assertSame(1, $result);
@@ -1578,19 +1534,15 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q->func()->UPPER([
-                        $table
-                            ->getAssociation('Authors')
-                            ->find()
-                            ->select(['Authors.name'])
-                            ->where(function (QueryExpression $exp) {
-                                return $exp->equalFields('Authors.id', 'Articles.author_id');
-                            }),
-                    ]),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q->func()->UPPER([
+                    $table
+                        ->getAssociation('Authors')
+                        ->find()
+                        ->select(['Authors.name'])
+                        ->where(fn (QueryExpression $exp)=> $exp->equalFields('Authors.id', 'Articles.author_id')),
+                ]),
+            ]);
 
         $result = $query->first()->get('value');
         $this->assertSame('MARIANO', $result);
@@ -1605,22 +1557,20 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q
-                        ->func()
-                        ->ROUND(
-                            [
-                                $table
-                                    ->getConnection()
-                                    ->selectQuery(1.23456),
-                                2,
-                            ],
-                            [null, 'integer']
-                        )
-                        ->setReturnType('float'),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q
+                    ->func()
+                    ->ROUND(
+                        [
+                            $table
+                                ->getConnection()
+                                ->selectQuery(1.23456),
+                            2,
+                        ],
+                        [null, 'integer']
+                    )
+                    ->setReturnType('float'),
+            ]);
 
         $result = $query->first()->get('value');
         $this->assertSame(1.23, $result);
@@ -1641,20 +1591,16 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q->func()->coalesce([
-                        $table
-                            ->getAssociation('Authors')
-                            ->find()
-                            ->select(['Authors.name'])
-                            ->where(function (QueryExpression $exp) {
-                                return $exp->equalFields('Authors.id', 'Articles.author_id');
-                            }),
-                        '1',
-                    ]),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q->func()->coalesce([
+                    $table
+                        ->getAssociation('Authors')
+                        ->find()
+                        ->select(['Authors.name'])
+                        ->where(fn (QueryExpression $exp)=> $exp->equalFields('Authors.id', 'Articles.author_id')),
+                    '1',
+                ]),
+            ]);
 
         $results = $query->all()->extract('value')->toArray();
         $this->assertEquals(['mariano', '1', 'mariano'], $results);
@@ -1670,18 +1616,16 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q->func()->concat([
-                        $table
-                            ->getAssociation('Authors')
-                            ->find()
-                            ->select(['Authors.name'])
-                            ->where(['Authors.id' => 1]),
-                        ' appended',
-                    ]),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q->func()->concat([
+                    $table
+                        ->getAssociation('Authors')
+                        ->find()
+                        ->select(['Authors.name'])
+                        ->where(['Authors.id' => 1]),
+                    ' appended',
+                ]),
+            ]);
 
         $result = $query->first()->get('value');
         $this->assertSame('mariano appended', $result);
@@ -1697,20 +1641,16 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
-                return [
-                    'value' => $q->func()->concat([
-                        $table
-                            ->getAssociation('Authors')
-                            ->find()
-                            ->select(['Authors.name'])
-                            ->where(function (QueryExpression $exp) {
-                                return $exp->equalFields('Authors.id', 'Articles.author_id');
-                            }),
-                        ' appended',
-                    ]),
-                ];
-            });
+            ->select(fn (SelectQuery $q)=> [
+                'value' => $q->func()->concat([
+                    $table
+                        ->getAssociation('Authors')
+                        ->find()
+                        ->select(['Authors.name'])
+                        ->where(fn (QueryExpression $exp)=> $exp->equalFields('Authors.id', 'Articles.author_id')),
+                    ' appended',
+                ]),
+            ]);
 
         $result = $query->first()->get('value');
         $this->assertSame('mariano appended', $result);

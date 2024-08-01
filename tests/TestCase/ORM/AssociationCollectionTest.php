@@ -18,9 +18,12 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -125,7 +128,7 @@ class AssociationCollectionTest extends TestCase
      */
     public function testGetByProperty(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->getMock();
         $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', [
@@ -213,10 +216,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockOne = $this->getMockBuilder(BelongsTo::class)
             ->setConstructorArgs([''])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $mockTwo = $this->getMockBuilder(HasMany::class)
             ->setConstructorArgs([''])
             ->getMock();
 
@@ -244,16 +247,16 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParents(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockOne = $this->getMockBuilder(BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parent', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $mockTwo = $this->getMockBuilder(HasMany::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Child', [
                 'sourceTable' => $table,
@@ -291,16 +294,16 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParentsFiltered(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockOne = $this->getMockBuilder(BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Parents', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
+        $mockTwo = $this->getMockBuilder(BelongsTo::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Categories', [
                 'sourceTable' => $table,
@@ -338,16 +341,16 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveChildrenFiltered(): void
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->getMock();
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $mockOne = $this->getMockBuilder(HasMany::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Comments', [
                 'sourceTable' => $table,
             ]])
             ->getMock();
-        $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasOne')
+        $mockTwo = $this->getMockBuilder(HasOne::class)
             ->onlyMethods(['saveAssociated'])
             ->setConstructorArgs(['Profiles', [
                 'sourceTable' => $table,
@@ -387,7 +390,7 @@ class AssociationCollectionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot save `Profiles`, it is not associated to `Users`');
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['save'])
             ->setConstructorArgs([['alias' => 'Users']])
             ->getMock();

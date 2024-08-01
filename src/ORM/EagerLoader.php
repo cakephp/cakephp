@@ -343,8 +343,8 @@ class EagerLoader
                 continue;
             }
 
-            if (str_contains($table, '.')) {
-                $path = explode('.', $table);
+            if (str_contains((string)$table, '.')) {
+                $path = explode('.', (string)$table);
                 $table = array_pop($path);
                 foreach ($path as $t) {
                     $pointer += [$t => []];

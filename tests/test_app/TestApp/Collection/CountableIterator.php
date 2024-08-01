@@ -8,10 +8,7 @@ use IteratorIterator;
 
 class CountableIterator extends IteratorIterator implements Countable
 {
-    /**
-     * @param mixed $items
-     */
-    public function __construct($items)
+    public function __construct(mixed $items)
     {
         $f = function () use ($items) {
             foreach ($items as $e) {

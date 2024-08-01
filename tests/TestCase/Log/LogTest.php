@@ -21,6 +21,8 @@ use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Log\Engine\TestAppLog;
+use TestPlugin\Log\Engine\TestPluginLog;
 
 /**
  * LogTest class
@@ -55,11 +57,11 @@ class LogTest extends TestCase
         ]);
 
         $result = Log::engine('libtest');
-        $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
+        $this->assertInstanceOf(TestAppLog::class, $result);
         $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
-        $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
+        $this->assertInstanceOf(TestPluginLog::class, $result);
         $this->assertContains('libtest', Log::configured());
         $this->assertContains('plugintest', Log::configured());
 
@@ -154,9 +156,8 @@ class LogTest extends TestCase
      * Test the various config call signatures.
      *
      * @dataProvider configProvider
-     * @param mixed $settings
      */
-    public function testConfigVariants($settings): void
+    public function testConfigVariants(mixed $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -168,9 +169,8 @@ class LogTest extends TestCase
      * Test the various setConfig call signatures.
      *
      * @dataProvider configProvider
-     * @param mixed $settings
      */
-    public function testSetConfigVariants($settings): void
+    public function testSetConfigVariants(mixed $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());

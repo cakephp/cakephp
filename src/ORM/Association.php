@@ -292,12 +292,12 @@ abstract class Association
     {
         if (
             isset($this->_targetTable) &&
-            get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
+            $this->_targetTable::class !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
                 'The class name `%s` doesn\'t match the target table class name of `%s`.',
                 $className,
-                get_class($this->_targetTable)
+                $this->_targetTable::class
             ));
         }
 
@@ -386,10 +386,10 @@ abstract class Association
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
+                        isset($this->_sourceTable) ? $this->_sourceTable::class : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
+                        $this->_targetTable::class,
                         $className
                     ));
                 }
@@ -982,7 +982,7 @@ abstract class Association
         }
 
         $property = $options['propertyPath'];
-        $propertyPath = explode('.', $property);
+        $propertyPath = explode('.', (string)$property);
         $query->formatResults(
             function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath) {
                 $extracted = [];

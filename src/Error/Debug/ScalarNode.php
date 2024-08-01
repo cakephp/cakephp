@@ -24,7 +24,7 @@ class ScalarNode implements NodeInterface
     /**
      * @var string
      */
-    private string $type;
+    private readonly string $type;
 
     /**
      * @var resource|string|float|int|bool|null

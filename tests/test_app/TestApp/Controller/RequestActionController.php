@@ -45,11 +45,9 @@ class RequestActionController extends AppController
     /**
      * another_ra_test method
      *
-     * @param mixed $id
-     * @param mixed $other
      * @return \Cake\Http\Response
      */
-    public function another_ra_test($id, $other)
+    public function another_ra_test(mixed $id, mixed $other)
     {
         return $this->response->withStringBody($id + $other);
     }
@@ -179,9 +177,7 @@ class RequestActionController extends AppController
     public function uploaded_files()
     {
         $files = Hash::flatten($this->request->getUploadedFiles());
-        $names = collection($files)->map(function (UploadedFileInterface $file) {
-            return $file->getClientFilename();
-        });
+        $names = collection($files)->map(fn (UploadedFileInterface $file)=> $file->getClientFilename());
 
         return $this->response->withStringBody(json_encode($names));
     }

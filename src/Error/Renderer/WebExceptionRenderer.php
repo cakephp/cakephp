@@ -454,7 +454,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             );
             try {
                 return $this->_outputMessageSafe('error500');
-            } catch (Throwable $inner) {
+            } catch (Throwable) {
                 throw $outer;
             }
         }

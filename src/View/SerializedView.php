@@ -99,9 +99,7 @@ abstract class SerializedView extends View
 
         if ($serialize === true) {
             $options = array_map(
-                function ($v) {
-                    return '_' . $v;
-                },
+                fn ($v)=> '_' . $v,
                 array_keys($this->_defaultConfig)
             );
 

@@ -62,9 +62,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
-            return new Response();
-        });
+        return new TestRequestHandler(fn () => new Response());
     }
 
     /**
@@ -94,7 +92,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertMatchesRegularExpression('/^[A-Z0-9+\/]+=*$/i', $token, 'Should look like base64 data.');
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
         $this->assertNotEquals($token, $requestAttr);
-        $this->assertEquals(strlen($token) * 2, strlen($requestAttr));
+        $this->assertEquals(strlen((string)$token) * 2, strlen((string)$requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
@@ -192,7 +190,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertSame('testing123', $token, 'session token should not change.');
         }
@@ -321,7 +319,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertNotEmpty($token, 'Should set a token in the session on failure.');
         }

@@ -74,7 +74,7 @@ class ExitCode extends Constraint
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ExitCode',
+    \Cake\Console\TestSuite\Constraint\ExitCode::class,
     'Cake\TestSuite\Constraint\Console\ExitCode'
 );
 // phpcs:enable

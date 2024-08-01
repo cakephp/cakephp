@@ -264,7 +264,7 @@ class Hash
 
             // Pattern matches and other operators.
             if ($op === '=' && $val && $val[0] === '/') {
-                if (!preg_match($val, $prop)) {
+                if (!preg_match($val, (string)$prop)) {
                     return false;
                 }
                 // phpcs:disable
@@ -651,7 +651,7 @@ class Hash
         }
 
         /** @psalm-suppress InvalidArgument */
-        return array_filter($data, $callback ?? [static::class, '_filter']);
+        return array_filter($data, $callback ?? static::_filter(...));
     }
 
     /**
@@ -680,10 +680,8 @@ class Hash
         $result = [];
         $stack = [];
         $path = '';
-
-        reset($data);
         while (!empty($data)) {
-            $key = key($data);
+            $key = array_key_first($data);
             $element = $data[$key];
             unset($data[$key]);
 
@@ -1028,7 +1026,7 @@ class Hash
             $ignoreCase = $type['ignoreCase'];
             $type = $type['type'];
         }
-        $type = strtolower($type);
+        $type = strtolower((string)$type);
 
         if ($type === 'numeric') {
             $type = SORT_NUMERIC;

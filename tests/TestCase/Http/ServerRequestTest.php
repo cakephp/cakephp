@@ -28,6 +28,8 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * ServerRequest Test
@@ -40,9 +42,7 @@ class ServerRequestTest extends TestCase
     public function testCustomArgsDetector(): void
     {
         $request = new ServerRequest();
-        $request->addDetector('controller', function ($request, $name) {
-            return $request->getParam('controller') === $name;
-        });
+        $request->addDetector('controller', fn ($request, $name)=> $request->getParam('controller') === $name);
 
         $request = $request->withParam('controller', 'cake');
         $this->assertTrue($request->is('controller', 'cake'));
@@ -745,14 +745,10 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        ServerRequest::addDetector('closure', function ($request) {
-            return true;
-        });
+        ServerRequest::addDetector('closure', fn ($request)=> true);
         $this->assertTrue($request->is('closure'));
 
-        ServerRequest::addDetector('get', function ($request) {
-            return $request->getEnv('REQUEST_METHOD') === 'GET';
-        });
+        ServerRequest::addDetector('get', fn ($request)=> $request->getEnv('REQUEST_METHOD') === 'GET');
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -815,9 +811,7 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
 
-        ServerRequest::addDetector('callme', function ($request) {
-            return $request->getAttribute('return');
-        });
+        ServerRequest::addDetector('callme', fn ($request)=> $request->getAttribute('return'));
         $request = $request->withAttribute('return', true);
         $request->clearDetectorCache();
         $this->assertTrue($request->isCallMe());
@@ -1200,9 +1194,8 @@ class ServerRequestTest extends TestCase
      * Test reading params
      *
      * @dataProvider paramReadingDataProvider
-     * @param mixed $expected
      */
-    public function testGetParam(string $toRead, $expected): void
+    public function testGetParam(string $toRead, mixed $expected): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -1291,7 +1284,7 @@ class ServerRequestTest extends TestCase
         $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
-            'Cake\Http\ServerRequest',
+            ServerRequest::class,
             $request->withParam('some', 'thing'),
             'Method has not returned $this'
         );
@@ -1365,7 +1358,7 @@ class ServerRequestTest extends TestCase
             'input' => 'key=val&some=data',
         ]);
         $result = $request->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertInstanceOf(StreamInterface::class, $result);
         $this->assertSame('key=val&some=data', $result->getContents());
     }
 
@@ -1377,7 +1370,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
         ]);
-        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $new = $request->withBody($body);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($body, $request->getBody());
@@ -1391,7 +1384,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
-        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertInstanceOf(UriInterface::class, $result);
         $this->assertSame('/articles/view/3', $result->getPath());
     }
 
@@ -1406,7 +1399,7 @@ class ServerRequestTest extends TestCase
             ],
             'url' => 'articles/view/3',
         ]);
-        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $uri = $this->getMockBuilder(UriInterface::class)->getMock();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());

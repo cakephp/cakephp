@@ -29,7 +29,7 @@ $originalClass = $controller;
 $class = Inflector::camelize($controller);
 
 if (!empty($prefix)) {
-    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', (string) $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefixPath = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }

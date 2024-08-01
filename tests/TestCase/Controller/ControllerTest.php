@@ -17,12 +17,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use AssertionError;
+use Cake\Controller\Component\FormProtectionComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -45,7 +48,10 @@ use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\PostsTable;
 use TestApp\View\PlainTextView;
 use TestPlugin\Controller\Admin\CommentsController;
+use TestPlugin\Controller\Component\OtherComponent;
 use TestPlugin\Controller\TestPluginController;
+use TestPlugin\Model\Table\CommentsTable;
+use TestPlugin\Model\Table\TestPluginCommentsTable;
 
 /**
  * ControllerTest class
@@ -91,7 +97,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, 'Articles');
 
         $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
+            ArticlesTable::class,
             $Controller->Articles
         );
     }
@@ -119,7 +125,7 @@ class ControllerTest extends TestCase
 
         $result = $Controller->fetchTable('Articles');
         $this->assertInstanceOf(
-            'TestApp\Model\Table\ArticlesTable',
+            ArticlesTable::class,
             $result
         );
     }
@@ -158,7 +164,7 @@ class ControllerTest extends TestCase
 
         $result = $Controller->fetchTable('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
+            TestPluginCommentsTable::class,
             $result
         );
     }
@@ -179,7 +185,7 @@ class ControllerTest extends TestCase
 
         $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new CommentsController($request);
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->fetchTable());
+        $this->assertInstanceOf(CommentsTable::class, $controller->fetchTable());
     }
 
     /**
@@ -192,7 +198,7 @@ class ControllerTest extends TestCase
         $Controller = new TestPluginController(new ServerRequest());
         $Controller->loadComponent('TestPlugin.Other');
 
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
+        $this->assertInstanceOf(OtherComponent::class, $Controller->Other);
     }
 
     /**
@@ -437,12 +443,10 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
-            return false;
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $event)=> false);
 
         $result = $Controller->render('index');
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
     }
 
     public function testControllerRedirect(): void
@@ -532,9 +536,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
-            return $newResponse;
-        });
+        $Controller->getEventManager()->on('Controller.beforeRedirect', fn (EventInterface $event, $url, Response $response)=> $newResponse);
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
@@ -568,7 +570,7 @@ class ControllerTest extends TestCase
         $result = $Controller->referer(['controller' => 'Posts', 'action' => 'index'], true);
         $this->assertSame('/posts/index', $result);
 
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
+        $request = $this->getMockBuilder(ServerRequest::class)
             ->onlyMethods(['referer'])
             ->getMock();
 
@@ -609,7 +611,7 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
+        $eventManager = $this->getMockBuilder(EventManagerInterface::class)->getMock();
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
         $eventManager
@@ -617,12 +619,8 @@ class ControllerTest extends TestCase
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.initialize';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.startup';
-                    })]
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.initialize')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.startup')]
                 )
             )
             ->willReturn(new Event('stub'));
@@ -635,14 +633,12 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
+        $eventManager = $this->getMockBuilder(EventManagerInterface::class)->getMock();
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
         $eventManager->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.shutdown';
-            }))
+            ->with($this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.shutdown'))
             ->willReturn(new Event('stub'));
 
         $controller->shutdownProcess();
@@ -904,17 +900,13 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
@@ -925,9 +917,7 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
-        });
+        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());
     }
@@ -940,7 +930,7 @@ class ControllerTest extends TestCase
         $request = new ServerRequest(['url' => '/']);
 
         $controller = new TestController($request);
-        $this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
+        $this->assertInstanceOf(ComponentRegistry::class, $controller->components());
 
         $result = $controller->components();
         $this->assertSame($result, $controller->components());
@@ -955,7 +945,7 @@ class ControllerTest extends TestCase
 
         $controller = new TestController($request);
         $result = $controller->loadComponent('FormProtection');
-        $this->assertInstanceOf('Cake\Controller\Component\FormProtectionComponent', $result);
+        $this->assertInstanceOf(FormProtectionComponent::class, $result);
         $this->assertSame($result, $controller->FormProtection);
 
         $registry = $controller->components();

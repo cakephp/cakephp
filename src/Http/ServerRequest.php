@@ -326,8 +326,8 @@ class ServerRequest implements ServerRequestInterface
             $config['url'] = '/' . $config['url'];
         }
 
-        if (str_contains($config['url'], '?')) {
-            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
+        if (str_contains((string)$config['url'], '?')) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', (string)$config['url']);
 
             parse_str($config['environment']['QUERY_STRING'], $queryArgs);
             $config['query'] += $queryArgs;
@@ -514,7 +514,7 @@ class ServerRequest implements ServerRequestInterface
             return $this->_is($type, $args);
         }
 
-        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
+        return $this->_detectorCache[$type] ??= $this->_is($type, $args);
     }
 
     /**

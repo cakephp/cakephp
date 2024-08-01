@@ -723,7 +723,7 @@ abstract class TestCase extends BaseTestCase
                         $explanations[] = sprintf('Attribute `%s` == `%s`', $attr, $val);
                         $val = preg_quote($val, '/');
                     }
-                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
+                    $attrs[] = '[\s]+' . preg_quote((string)$attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
                 if ($attrs) {
@@ -930,9 +930,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(function ($method) {
-            return $method->name;
-        }, $reflection->getMethods());
+        $classMethods = array_map(fn ($method)=> $method->name, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
         $nonExistingMethods = array_diff($methods, $existingMethods);

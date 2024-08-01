@@ -29,7 +29,9 @@ use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
@@ -92,7 +94,7 @@ class HasManyTest extends TestCase
             ],
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMockBuilder('Cake\ORM\Table')
+        $this->article = $this->getMockBuilder(Table::class)
             ->onlyMethods(['find', 'deleteAll', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
             ->getMock();
@@ -174,9 +176,7 @@ class HasManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = function () {
-            return ['id' => 'ASC'];
-        };
+        $closure = fn () => ['id' => 'ASC'];
         $assoc->setSort($closure);
         $this->assertSame($closure, $assoc->getSort());
 
@@ -207,9 +207,7 @@ class HasManyTest extends TestCase
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
-        $assoc->setSort(function () {
-            return ['Articles.id' => 'DESC'];
-        });
+        $assoc->setSort(fn () => ['Articles.id' => 'DESC']);
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
@@ -416,9 +414,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $queryBuilder = function ($query) {
-            return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
-        };
+        $queryBuilder = fn ($query)=> $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 
         $expected = [
@@ -461,7 +457,7 @@ class HasManyTest extends TestCase
         $this->author->setPrimaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['all', 'andWhere', 'getRepository'])
             ->setConstructorArgs([$this->article])
             ->getMock();
@@ -618,9 +614,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $articles = $association->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
-                return false;
-            });
+            $rules->addDelete(fn () => false);
         });
 
         $author = new Entity(['id' => 1, 'name' => 'mark']);
@@ -636,7 +630,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(Table::class)
             ->shouldAllowMockingMethod('saveAssociated')
             ->makePartial();
         $config = [
@@ -696,7 +690,7 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -966,7 +960,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate(mixed $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -991,7 +985,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate(mixed $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1021,7 +1015,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate(mixed $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1046,7 +1040,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate(mixed $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1173,9 +1167,7 @@ class HasManyTest extends TestCase
         $authors->hasMany('Articles')
             ->setDependent(true)
             ->setSaveStrategy('replace')
-            ->setConditions(function () {
-                return ['published' => 'Y'];
-            });
+            ->setConditions(fn () => ['published' => 'Y']);
 
         $entity = $authors->newEntity([
             'name' => 'mylux',

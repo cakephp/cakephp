@@ -23,12 +23,16 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\HelperRegistry;
 use Cake\View\View;
 use Error;
 use Exception;
@@ -807,7 +811,7 @@ class ViewTest extends TestCase
         $this->assertSame($expected, trim($result));
 
         $result = Cache::read('element__subfolder_test_element', 'test_view');
-        $this->assertSame($expected, trim($result));
+        $this->assertSame($expected, trim((string)$result));
     }
 
     /**
@@ -840,7 +844,7 @@ class ViewTest extends TestCase
     public function testAddHelper(): void
     {
         $View = new TestView();
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('myval', $config['mykey']);
@@ -854,7 +858,7 @@ class ViewTest extends TestCase
         $View = new View();
 
         $View->loadHelper('Html', ['foo' => 'bar']);
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -888,8 +892,8 @@ class ViewTest extends TestCase
         $result = $View->loadHelpers();
         $this->assertSame($View, $result);
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(FormHelper::class, $View->Form, 'Object type is wrong.');
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -905,8 +909,8 @@ class ViewTest extends TestCase
     {
         $View = new View();
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(FormHelper::class, $View->Form, 'Object type is wrong.');
     }
 
     /**
@@ -938,37 +942,21 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
 
-        $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $manager = $this->getMockBuilder(EventManager::class)->getMock();
         $View->setEventManager($manager);
 
         $manager->expects($this->exactly(8))
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeLayout';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterLayout';
-                    })]
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.beforeRender')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.beforeRenderFile')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.afterRenderFile')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.afterRender')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.beforeLayout')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.beforeRenderFile')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.afterRenderFile')],
+                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'View.afterLayout')]
                 )
             );
 
@@ -1363,7 +1351,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockAppend($value): void
+    public function testBlockAppend(mixed $value): void
     {
         $this->View->assign('testBlock', 'Block');
         $this->View->append('testBlock', $value);
@@ -1392,7 +1380,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockPrepend($value): void
+    public function testBlockPrepend(mixed $value): void
     {
         $this->View->assign('test', 'Block');
         $result = $this->View->prepend('test', $value);
@@ -1475,7 +1463,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (CakeException $e) {
+        } catch (CakeException) {
             ob_end_clean();
             $this->assertTrue(true);
         }
@@ -1727,7 +1715,7 @@ TEXT;
      */
     public function testHelpers(): void
     {
-        $this->assertInstanceOf('Cake\View\HelperRegistry', $this->View->helpers());
+        $this->assertInstanceOf(HelperRegistry::class, $this->View->helpers());
 
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());

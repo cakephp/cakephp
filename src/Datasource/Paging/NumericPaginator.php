@@ -538,14 +538,14 @@ class NumericPaginator implements PaginatorInterface
         if (isset($options['sort'])) {
             $direction = null;
             if (isset($options['direction'])) {
-                $direction = strtolower($options['direction']);
+                $direction = strtolower((string)$options['direction']);
             }
             if (!in_array($direction, ['asc', 'desc'], true)) {
                 $direction = 'asc';
             }
 
             $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-            if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
+            if ($order && $options['sort'] && !str_contains((string)$options['sort'], '.')) {
                 $order = $this->_removeAliases($order, $object->getAlias());
             }
 

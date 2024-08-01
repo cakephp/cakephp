@@ -1038,7 +1038,7 @@ class RouteTest extends TestCase
     public function testParseRequestDelegates(): void
     {
         /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
+        $route = $this->getMockBuilder(Route::class)
             ->onlyMethods(['parse'])
             ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
             ->getMock();
@@ -1677,7 +1677,7 @@ class RouteTest extends TestCase
             '_greedy' => false,
             '_compiledRoute' => null,
         ]);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
+        $this->assertInstanceOf(Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));
         $this->assertNull($route->match(['controller' => 'Pages', 'action' => 'display', 'about']));
         $expected = [

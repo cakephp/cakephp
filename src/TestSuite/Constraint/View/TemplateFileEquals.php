@@ -47,7 +47,7 @@ class TemplateFileEquals extends Constraint
      */
     public function matches(mixed $other): bool
     {
-        return str_contains($this->filename, $other);
+        return str_contains($this->filename, (string)$other);
     }
 
     /**

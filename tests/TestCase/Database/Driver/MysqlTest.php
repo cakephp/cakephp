@@ -34,7 +34,7 @@ class MysqlTest extends TestCase
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains((string)$config['driver'], 'Mysql'), 'Not using Mysql for test config');
     }
 
     /**
@@ -42,7 +42,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -93,7 +93,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();

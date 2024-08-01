@@ -160,9 +160,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     public function testExecWithMockServiceDependencies(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"console-mock":true}');
-        });
+        $this->mockService(stdClass::class, fn () => json_decode('{"console-mock":true}'));
         $this->exec('dependency');
 
         $this->assertOutputContains('constructor inject: {"console-mock":true}');
@@ -207,10 +205,9 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $command Command to test
-     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
+    public function testAssertionFailureMessages($assertion, $message, $command, mixed ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessageMatches('#' . $message . '.?#');

@@ -24,6 +24,8 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
+use TestPlugin\Command\ExampleCommand;
+use TestPlugin\Command\SampleCommand as PluginSampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -178,8 +180,8 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('sample'));
 
-        $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
-        $this->assertSame('TestApp\Command\SampleCommand', $collection->get('sample'));
+        $this->assertSame(DemoCommand::class, $collection->get('demo'));
+        $this->assertSame(SampleCommand::class, $collection->get('sample'));
     }
 
     /**
@@ -243,9 +245,9 @@ class CommandCollectionTest extends TestCase
             $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertSame('TestPlugin\Command\ExampleCommand', $result['example']);
+        $this->assertSame(ExampleCommand::class, $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
-        $this->assertSame('TestPlugin\Command\SampleCommand', $result['test_plugin.sample']);
+        $this->assertSame(PluginSampleCommand::class, $result['test_plugin.sample']);
 
         $result = $collection->discoverPlugin('Company/TestPluginThree');
         $this->assertArrayHasKey(

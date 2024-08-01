@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\DateTimeTimezoneType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
@@ -43,7 +44,7 @@ class DateTimeTimezoneTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeTimezoneType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -317,10 +318,8 @@ class DateTimeTimezoneTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testMarshal($value, $expected): void
+    public function testMarshal(mixed $value, mixed $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -423,10 +422,8 @@ class DateTimeTimezoneTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProviderWithoutMicroseconds
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testMarshalWithoutMicroseconds($value, $expected): void
+    public function testMarshalWithoutMicroseconds(mixed $value, mixed $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

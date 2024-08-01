@@ -538,9 +538,8 @@ class DateTimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
-     * @param mixed $value
      */
-    public function testToStringInvalid($value): void
+    public function testToStringInvalid(mixed $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -551,9 +550,8 @@ class DateTimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
-     * @param mixed $value
      */
-    public function testToStringInvalidFrozen($value): void
+    public function testToStringInvalidFrozen(mixed $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -685,9 +683,7 @@ class DateTimeTest extends TestCase
     {
         $time = new DateTime('2014-04-20 10:10:10');
 
-        DateTime::setJsonEncodeFormat(static function ($t) {
-            return $t->format(DATE_ATOM);
-        });
+        DateTime::setJsonEncodeFormat(static fn ($t)=> $t->format(DATE_ATOM));
         $this->assertSame('"2014-04-20T10:10:10+00:00"', json_encode($time));
 
         DateTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssZZZZZ");

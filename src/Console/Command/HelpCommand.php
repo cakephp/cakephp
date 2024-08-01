@@ -149,12 +149,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $paths = [];
         if (Configure::check('App.dir')) {
-            $appPath = rtrim(Configure::read('App.dir'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $appPath = rtrim((string)Configure::read('App.dir'), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             // Extra space is to align output
             $paths['app'] = ' ' . $appPath;
         }
         if (defined('ROOT')) {
-            $paths['root'] = rtrim(ROOT, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $paths['root'] = rtrim((string)ROOT, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
         if (defined('CORE_PATH')) {
             $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -179,9 +179,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return (string)array_shift($names);
         }
 
-        usort($names, function ($a, $b) {
-            return strlen($a) - strlen($b);
-        });
+        usort($names, fn ($a, $b)=> strlen((string)$a) - strlen((string)$b));
 
         return array_shift($names);
     }

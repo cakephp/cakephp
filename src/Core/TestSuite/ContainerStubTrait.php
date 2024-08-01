@@ -149,7 +149,7 @@ trait ContainerStubTrait
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException) {
                     $container->add($key, $factory);
                 }
             } else {
@@ -177,7 +177,7 @@ trait ContainerStubTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Core\TestSuite\ContainerStubTrait',
+    \Cake\Core\TestSuite\ContainerStubTrait::class,
     'Cake\TestSuite\ContainerStubTrait'
 );
 // phpcs:enable

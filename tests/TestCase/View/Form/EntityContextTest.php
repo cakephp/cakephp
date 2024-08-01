@@ -127,9 +127,8 @@ class EntityContextTest extends TestCase
      * Test isCreate on a collection.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testIsCreateCollection($collection): void
+    public function testIsCreateCollection(mixed $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -223,9 +222,8 @@ class EntityContextTest extends TestCase
      * Test collection operations that lack a table argument.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testCollectionOperationsNoTableArg($collection): void
+    public function testCollectionOperationsNoTableArg(mixed $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -273,9 +271,8 @@ class EntityContextTest extends TestCase
      * Test operations on a collection of entities.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testValOnCollections($collection): void
+    public function testValOnCollections(mixed $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -303,9 +300,8 @@ class EntityContextTest extends TestCase
      * table name
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testValOnCollectionsWithRootName($collection): void
+    public function testValOnCollectionsWithRootName(mixed $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -331,9 +327,8 @@ class EntityContextTest extends TestCase
      * Test error operations on a collection of entities.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testErrorsOnCollections($collection): void
+    public function testErrorsOnCollections(mixed $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -356,9 +351,8 @@ class EntityContextTest extends TestCase
      * Test schema operations on a collection of entities.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testSchemaOnCollections($collection): void
+    public function testSchemaOnCollections(mixed $collection): void
     {
         $this->_setupTables();
         $context = new EntityContext([
@@ -384,9 +378,8 @@ class EntityContextTest extends TestCase
      * Test validation operations on a collection of entities.
      *
      * @dataProvider collectionProvider
-     * @param mixed $collection
      */
-    public function testValidatorsOnCollections($collection): void
+    public function testValidatorsOnCollections(mixed $collection): void
     {
         $this->_setupTables();
 
@@ -816,9 +809,7 @@ class EntityContextTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
-        $validator->notEmptyString('title', 'nope', function ($context) {
-            return $context['providers']['entity']->isRequired();
-        });
+        $validator->notEmptyString('title', 'nope', fn ($context)=> $context['providers']['entity']->isRequired());
         $articles->setValidator('default', $validator);
 
         $row = new Entity([
@@ -842,9 +833,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
-        $validator->allowEmptyString('comment', null, function ($context) {
-            return $context['providers']['entity']->isNew();
-        });
+        $validator->allowEmptyString('comment', null, fn ($context)=> $context['providers']['entity']->isNew());
 
         $row = new Article([
             'title' => 'My title',

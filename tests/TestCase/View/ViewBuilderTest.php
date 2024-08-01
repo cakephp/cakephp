@@ -20,9 +20,14 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\View\AjaxView;
 use Cake\View\Exception\MissingViewException;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\JsonView;
 use Cake\View\View;
 use Cake\View\ViewBuilder;
+use TestApp\View\AppView;
 
 /**
  * View builder test case.
@@ -88,7 +93,7 @@ class ViewBuilderTest extends TestCase
             ['theme', 'TestPlugin'],
             ['template', 'edit'],
             ['name', 'Articles'],
-            ['className', 'Cake\View\JsonView'],
+            ['className', JsonView::class],
         ];
     }
 
@@ -230,7 +235,7 @@ class ViewBuilderTest extends TestCase
             $response,
             $events
         );
-        $this->assertInstanceOf('Cake\View\AjaxView', $view);
+        $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertSame('edit', $view->getTemplate());
         $this->assertSame('default', $view->getLayout());
         $this->assertSame('Articles/', $view->getTemplatePath());
@@ -242,8 +247,8 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['foo', 'x'], $view->getVars());
         $this->assertSame('bar', $view->get('foo'));
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
+        $this->assertInstanceOf(HtmlHelper::class, $view->Html);
+        $this->assertInstanceOf(FormHelper::class, $view->Form);
     }
 
     /**
@@ -265,7 +270,7 @@ class ViewBuilderTest extends TestCase
         static::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
-        $this->assertInstanceOf('TestApp\View\AppView', $view);
+        $this->assertInstanceOf(AppView::class, $view);
     }
 
     /**

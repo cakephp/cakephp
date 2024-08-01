@@ -182,9 +182,8 @@ class LinkConstraintTest extends TestCase
      * Tests that an exception is thrown when the `repository` option holds an invalid value.
      *
      * @dataProvider invalidRepositoryOptionsDataProvider
-     * @param mixed $options
      */
-    public function testInvalidRepository($options): void
+    public function testInvalidRepository(mixed $options): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');
@@ -608,12 +607,10 @@ class LinkConstraintTest extends TestCase
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
-                            new IdentifierExpression('Articles.id'),
-                            new IdentifierExpression('RecentComments.article_id')
-                        );
-                    })
+                    ->where(fn (QueryExpression $exp)=> $exp->eq(
+                        new IdentifierExpression('Articles.id'),
+                        new IdentifierExpression('RecentComments.article_id')
+                    ))
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -644,12 +641,10 @@ class LinkConstraintTest extends TestCase
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
-                            new IdentifierExpression('Articles.id'),
-                            new IdentifierExpression('RecentComments.article_id')
-                        );
-                    })
+                    ->where(fn (QueryExpression $exp)=> $exp->eq(
+                        new IdentifierExpression('Articles.id'),
+                        new IdentifierExpression('RecentComments.article_id')
+                    ))
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -738,12 +733,10 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
-                return $exp->notEq(
-                    new IdentifierExpression('Comments.published'),
-                    new IdentifierExpression('Articles.published')
-                );
-            },
+            'conditions' => fn (QueryExpression $exp)=> $exp->notEq(
+                new IdentifierExpression('Comments.published'),
+                new IdentifierExpression('Articles.published')
+            ),
         ]);
 
         $article = $Articles->save($Articles->newEntity([
@@ -774,12 +767,10 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
-                return $exp->eq(
-                    new IdentifierExpression('Comments.published'),
-                    new IdentifierExpression('Articles.published')
-                );
-            },
+            'conditions' => fn (QueryExpression $exp)=> $exp->eq(
+                new IdentifierExpression('Comments.published'),
+                new IdentifierExpression('Articles.published')
+            ),
         ]);
 
         $rulesChecker = $Articles->rulesChecker();

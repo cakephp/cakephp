@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
+use Cake\Controller\ErrorController;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
@@ -237,7 +238,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
+            ErrorController::class,
             $ExceptionRenderer->__debugInfo()['controller']
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
@@ -253,7 +254,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
+            ErrorController::class,
             $ExceptionRenderer->__debugInfo()['controller']
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
@@ -695,7 +696,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -724,7 +725,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(Controller::class)
             ->onlyMethods(['beforeRender'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -806,7 +807,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();
@@ -837,7 +838,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        $controller = $this->getMockBuilder(Controller::class)
             ->onlyMethods(['render'])
             ->setConstructorArgs([new ServerRequest()])
             ->getMock();

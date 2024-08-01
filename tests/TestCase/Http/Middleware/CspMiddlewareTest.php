@@ -35,9 +35,7 @@ class CspMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function ($request) {
-            return new Response();
-        });
+        return new TestRequestHandler(fn ($request)=> new Response());
     }
 
     /**

@@ -796,7 +796,7 @@ HTML;
     public function testDomain(): void
     {
         $result = $this->message->getDomain();
-        $expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+        $expected = env('HTTP_HOST') ?: php_uname('n');
         $this->assertSame($expected, $result);
 
         $this->message->setDomain('example.org');
@@ -1242,11 +1242,7 @@ HTML;
         $this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
     }
 
-    /**
-     * @param mixed $charset
-     * @param mixed $headerCharset
-     */
-    protected function _getEmailByOldStyleCharset($charset, $headerCharset): Message
+    protected function _getEmailByOldStyleCharset(mixed $charset, mixed $headerCharset): Message
     {
         $message = new Message(['transport' => 'debug']);
 
@@ -1266,11 +1262,7 @@ HTML;
         return $message;
     }
 
-    /**
-     * @param mixed $charset
-     * @param mixed $headerCharset
-     */
-    protected function _getEmailByNewStyleCharset($charset, $headerCharset): Message
+    protected function _getEmailByNewStyleCharset(mixed $charset, mixed $headerCharset): Message
     {
         $message = new Message();
 

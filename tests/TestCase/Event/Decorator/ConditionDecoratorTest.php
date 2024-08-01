@@ -33,14 +33,10 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCanTriggerIf(): void
     {
-        $callable = function (EventInterface $event) {
-            return 'success';
-        };
+        $callable = fn (EventInterface $event)=> 'success';
 
         $decorator = new ConditionDecorator($callable, [
-            'if' => function (EventInterface $event) {
-                return $event->getData('canTrigger');
-            },
+            'if' => fn (EventInterface $event)=> $event->getData('canTrigger'),
         ]);
 
         $event = new Event('decorator.test', $this);
@@ -68,9 +64,7 @@ class ConditionDecoratorTest extends TestCase
         };
 
         $listener1 = new ConditionDecorator($callable, [
-            'if' => function (EventInterface $event) {
-                return false;
-            },
+            'if' => fn (EventInterface $event)=> false,
         ]);
 
         $listener2 = function (EventInterface $event) {
@@ -97,9 +91,7 @@ class ConditionDecoratorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!');
-        $callable = function (EventInterface $event) {
-            return 'success';
-        };
+        $callable = fn (EventInterface $event)=> 'success';
 
         $decorator = new ConditionDecorator($callable, [
             'if' => 'not a callable',

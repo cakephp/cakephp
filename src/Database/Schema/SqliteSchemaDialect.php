@@ -375,7 +375,7 @@ class SqliteSchemaDialect extends SchemaDialect
                     );
 
                     $regex = "/CONSTRAINT\s*(['\"`\[ ].+?['\"`\] ])\s*UNIQUE\s*\(\s*(?:{$columnsPattern})\s*\)/i";
-                    if (preg_match($regex, $tableSql, $matches)) {
+                    if (preg_match($regex, (string)$tableSql, $matches)) {
                         $row['name'] = $this->normalizePossiblyQuotedIdentifier($matches[1]);
                     }
                 }
@@ -638,7 +638,7 @@ class SqliteSchemaDialect extends SchemaDialect
             );
         }
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -687,7 +687,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 

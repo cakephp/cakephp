@@ -40,9 +40,7 @@ class SortIteratorTest extends TestCase
     public function testSortNumbersIdentity(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
-        $identity = function ($a) {
-            return $a;
-        };
+        $identity = fn ($a)=> $a;
         $sorted = new SortIterator($items, $identity);
         $expected = range(5, 1);
         $this->assertEquals($expected, $sorted->toList());
@@ -58,9 +56,7 @@ class SortIteratorTest extends TestCase
     public function testSortNumbersCustom(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
-        $callback = function ($a) {
-            return $a * -1;
-        };
+        $callback = fn ($a)=> $a * -1;
         $sorted = new SortIterator($items, $callback);
         $expected = range(1, 5);
         $this->assertEquals($expected, $sorted->toList());
@@ -81,9 +77,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 2, 'bar' => 'a'],
             ['foo' => 13, 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
-            return $a['foo'];
-        };
+        $callback = fn ($a)=> $a['foo'];
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
         $expected = [
             ['foo' => 13, 'bar' => 'a'],
@@ -114,9 +108,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_2', 'bar' => 'a'],
             ['foo' => 'foo_13', 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
-            return $a['foo'];
-        };
+        $callback = fn ($a)=> $a['foo'];
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NATURAL);
         $expected = [
             ['foo' => 'foo_13', 'bar' => 'a'],
@@ -200,9 +192,7 @@ class SortIteratorTest extends TestCase
             new DateTimeImmutable('2013-08-12'),
         ]);
 
-        $callback = function ($a) {
-            return $a->add(new DateInterval('P1Y'));
-        };
+        $callback = fn ($a)=> $a->add(new DateInterval('P1Y'));
         $sorted = new SortIterator($items, $callback);
         $expected = [
             new DateTime('2016-06-30'),

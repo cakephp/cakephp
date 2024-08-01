@@ -718,7 +718,7 @@ class RouteCollectionTest extends TestCase
 
         $all = $this->collection->named();
         $this->assertCount(1, $all);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
+        $this->assertInstanceOf(Route::class, $all['cntrl']);
         $this->assertSame('/l/{controller}', $all['cntrl']->template);
     }
 

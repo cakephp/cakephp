@@ -127,7 +127,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -145,7 +145,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -207,7 +207,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
@@ -298,7 +298,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
+            'skipLog' => [NotFoundException::class],
         ]);
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('Kaboom!');
@@ -345,9 +345,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         EventManager::instance()->on(
             'Exception.beforeRender',
-            function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
-                return 'Response string from event';
-            }
+            fn (EventInterface $event, Throwable $e, ServerRequestInterface $req)=> 'Response string from event'
         );
 
         $result = $middleware->process($request, $handler);

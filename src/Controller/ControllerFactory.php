@@ -279,15 +279,15 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             $prefix = $request->getParam('prefix');
             $namespace .= '/' . $prefix;
         }
-        $firstChar = substr($controller, 0, 1);
+        $firstChar = substr((string)$controller, 0, 1);
 
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
         if (
-            str_contains($controller, '\\') ||
-            str_contains($controller, '/') ||
-            str_contains($controller, '.') ||
+            str_contains((string)$controller, '\\') ||
+            str_contains((string)$controller, '/') ||
+            str_contains((string)$controller, '.') ||
             $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);
@@ -316,7 +316,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
 // phpcs:disable
 class_alias(
-    'Cake\Controller\ControllerFactory',
+    \Cake\Controller\ControllerFactory::class,
     'Cake\Http\ControllerFactory'
 );
 // phpcs:enable

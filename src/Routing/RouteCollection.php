@@ -160,7 +160,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 
@@ -191,14 +191,14 @@ class RouteCollection
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
-            $plugin = strtolower($url['plugin']);
+            $plugin = strtolower((string)$url['plugin']);
         }
         $prefix = false;
         if (isset($url['prefix']) && $url['prefix'] !== false) {
-            $prefix = strtolower($url['prefix']);
+            $prefix = strtolower((string)$url['prefix']);
         }
-        $controller = isset($url['controller']) ? strtolower($url['controller']) : null;
-        $action = strtolower($url['action']);
+        $controller = isset($url['controller']) ? strtolower((string)$url['controller']) : null;
+        $action = strtolower((string)$url['action']);
 
         $names = [
             "{$controller}:{$action}",

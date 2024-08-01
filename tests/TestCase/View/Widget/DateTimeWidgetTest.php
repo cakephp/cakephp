@@ -74,9 +74,8 @@ class DateTimeWidgetTest extends TestCase
      * test rendering selected values.
      *
      * @dataProvider selectedValuesProvider
-     * @param mixed $selected
      */
-    public function testRenderValid($selected): void
+    public function testRenderValid(mixed $selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [

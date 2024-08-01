@@ -137,7 +137,7 @@ class TextHelper extends Helper
         if (isset($matches['url_bare'])) {
             $match = $matches['url_bare'];
         }
-        $key = hash_hmac('sha1', $match, Security::getSalt());
+        $key = hash_hmac('sha1', (string)$match, Security::getSalt());
         $this->_placeholders[$key] = [
             'content' => $match,
             'envelope' => $envelope,
@@ -159,7 +159,7 @@ class TextHelper extends Helper
         foreach ($this->_placeholders as $hash => $content) {
             $link = $url = $content['content'];
             $envelope = $content['envelope'];
-            if (!preg_match('#^[a-z]+\://#i', $url)) {
+            if (!preg_match('#^[a-z]+\://#i', (string)$url)) {
                 $url = 'http://' . $url;
             }
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];

@@ -47,7 +47,7 @@ class ResultSet implements ResultSetInterface
      * @var \Cake\Datasource\EntityInterface|array|null
      * @psalm-var T|null
      */
-    protected EntityInterface|array|null $_current;
+    protected EntityInterface|array|null $_current = null;
 
     /**
      * Holds the count of records in this result set

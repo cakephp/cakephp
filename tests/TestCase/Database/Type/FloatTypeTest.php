@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
@@ -49,7 +50,7 @@ class FloatTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new FloatType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->numberClass = FloatType::$numberClass;
     }
 
