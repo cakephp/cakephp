@@ -139,7 +139,7 @@ class Connection implements ConnectionInterface
         if (!is_string($driver)) {
             assert($driver instanceof Driver);
             if (!$driver->enabled()) {
-                throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $this->configName()]);
+                throw new MissingExtensionException(['driver' => $driver::class, 'name' => $this->configName()]);
             }
 
             // Legacy support for setting instance instead of driver class
@@ -172,7 +172,7 @@ class Connection implements ConnectionInterface
         }
 
         if (!$writeDriver->enabled()) {
-            throw new MissingExtensionException(['driver' => get_class($writeDriver), 'name' => $this->configName()]);
+            throw new MissingExtensionException(['driver' => $writeDriver::class, 'name' => $this->configName()]);
         }
 
         return [self::ROLE_READ => $readDriver, self::ROLE_WRITE => $writeDriver];

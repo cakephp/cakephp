@@ -650,7 +650,7 @@ class SqliteSchemaDialect extends SchemaDialect
             );
         }
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -699,7 +699,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 

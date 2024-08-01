@@ -853,7 +853,7 @@ class Router
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             foreach ($paramsArray as $param) {
-                if (strpos($param, '=') !== false) {
+                if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
                             "Could not parse a key=value from `{$param}` in route path `{$url}`."

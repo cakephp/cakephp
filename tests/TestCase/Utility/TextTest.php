@@ -1824,7 +1824,7 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
+        $method = new ReflectionMethod(Text::class, '_strlen');
         $strlen = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
@@ -1847,7 +1847,7 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
+        $method = new ReflectionMethod(Text::class, '_substr');
         $substr = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };

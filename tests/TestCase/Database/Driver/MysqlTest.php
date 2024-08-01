@@ -43,7 +43,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -94,7 +94,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();

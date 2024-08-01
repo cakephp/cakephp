@@ -160,7 +160,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 

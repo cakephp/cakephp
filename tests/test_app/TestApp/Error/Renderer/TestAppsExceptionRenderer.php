@@ -24,7 +24,7 @@ class TestAppsExceptionRenderer extends WebExceptionRenderer
         try {
             $controller = new TestAppsErrorController($request);
             $controller->viewBuilder()->setLayout('banana');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $controller = new Controller($request);
             $controller->viewBuilder()->setTemplatePath('Error');
         }

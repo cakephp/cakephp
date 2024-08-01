@@ -518,7 +518,7 @@ class BelongsToMany extends Association
                 return $exp
                     ->or([
                         $exp->notIn($identifiers, $subquery),
-                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                        $nullExp->and(array_map($nullExp->isNull(...), array_keys($conds))),
                     ]);
             });
     }
@@ -1197,7 +1197,7 @@ class BelongsToMany extends Association
                 /** @var list<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
-                $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
+                $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
 
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
                 $junctionQueryAlias = $junction->getAlias() . '__matches';

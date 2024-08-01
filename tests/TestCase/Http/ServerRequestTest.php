@@ -29,6 +29,8 @@ use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * ServerRequest Test
@@ -1292,7 +1294,7 @@ class ServerRequestTest extends TestCase
         $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
-            'Cake\Http\ServerRequest',
+            ServerRequest::class,
             $request->withParam('some', 'thing'),
             'Method has not returned $this'
         );
@@ -1366,7 +1368,7 @@ class ServerRequestTest extends TestCase
             'input' => 'key=val&some=data',
         ]);
         $result = $request->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertInstanceOf(StreamInterface::class, $result);
         $this->assertSame('key=val&some=data', $result->getContents());
     }
 
@@ -1378,7 +1380,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
         ]);
-        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $new = $request->withBody($body);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($body, $request->getBody());
@@ -1392,7 +1394,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
-        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertInstanceOf(UriInterface::class, $result);
         $this->assertSame('/articles/view/3', $result->getPath());
     }
 
@@ -1407,7 +1409,7 @@ class ServerRequestTest extends TestCase
             ],
             'url' => 'articles/view/3',
         ]);
-        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $uri = $this->getMockBuilder(UriInterface::class)->getMock();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());

@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
+use Cake\View\HelperRegistry;
 
 /**
  * XmlViewTest
@@ -304,7 +305,7 @@ class XmlViewTest extends TestCase
         $expected = Xml::build($expected)->asXML();
         $this->assertSame($expected, $output);
         $this->assertSame('application/xml', $View->getResponse()->getType());
-        $this->assertInstanceOf('Cake\View\HelperRegistry', $View->helpers());
+        $this->assertInstanceOf(HelperRegistry::class, $View->helpers());
     }
 
     public function testSerializingResultSet(): void

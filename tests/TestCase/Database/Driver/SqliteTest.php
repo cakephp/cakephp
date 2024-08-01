@@ -42,7 +42,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
@@ -84,7 +84,7 @@ class SqliteTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'mask' => 0666,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();

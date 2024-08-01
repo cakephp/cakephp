@@ -632,7 +632,7 @@ class PaginatorHelper extends Helper
                 $template = 'counterCustom';
                 $this->templater()->add([$template => $format]);
         }
-        $map = array_map([$this->Number, 'format'], [
+        $map = array_map($this->Number->format(...), [
             'page' => (int)$paging['currentPage'],
             'pages' => (int)$paging['pageCount'],
             'current' => (int)$paging['count'],

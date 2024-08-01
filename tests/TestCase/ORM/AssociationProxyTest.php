@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
 
@@ -160,7 +161,7 @@ class AssociationProxyTest extends TestCase
     public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(Table::class)
             ->shouldAllowMockingMethod('crazy');
         $articles->belongsTo('authors', [
             'targetTable' => $mock,

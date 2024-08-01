@@ -25,8 +25,14 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Company\TestPluginThree\Controller\OvensController;
 use stdClass;
+use TestApp\Controller\Admin\PostsController;
+use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
+use TestApp\Controller\CakesController;
 use TestApp\Controller\DependenciesController;
+use TestPlugin\Controller\Admin\CommentsController;
+use TestPlugin\Controller\TestPluginController;
 
 /**
  * Test case for ControllerFactory.
@@ -67,7 +73,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->create($request);
-        $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
+        $this->assertInstanceOf(CakesController::class, $result);
         $this->assertSame($request, $result->getRequest());
     }
 
@@ -86,7 +92,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\PostsController',
+            PostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -107,7 +113,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\Sub\PostsController',
+            SubPostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -128,7 +134,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\TestPluginController',
+            TestPluginController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -149,7 +155,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'Company\TestPluginThree\Controller\OvensController',
+            OvensController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -171,7 +177,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\Admin\CommentsController',
+            CommentsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -240,7 +246,7 @@ class ControllerFactoryTest extends TestCase
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
-                'controller' => 'TestApp\Controller\CakesController',
+                'controller' => CakesController::class,
                 'action' => 'index',
             ],
         ]);
@@ -306,7 +312,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->getControllerClass($request);
-        $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
+        $this->assertSame(OvensController::class, $result);
     }
 
     /**

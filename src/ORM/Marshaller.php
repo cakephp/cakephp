@@ -81,7 +81,7 @@ class Marshaller
         }
 
         // Map associations
-        $options['associated'] = $options['associated'] ?? [];
+        $options['associated'] ??= [];
         $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {
@@ -483,7 +483,7 @@ class Marshaller
         $target = $assoc->getTarget();
         $primaryKey = (array)$target->getPrimaryKey();
         $multi = count($primaryKey) > 1;
-        $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
+        $primaryKey = array_map($target->aliasField(...), $primaryKey);
 
         if ($multi) {
             $first = current($ids);
@@ -713,7 +713,7 @@ class Marshaller
             })
             ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
-                $fields = array_map([$this->_table, 'aliasField'], $primary);
+                $fields = array_map($this->_table->aliasField(...), $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);
 
                 return $conditions;

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\DateTimeFractionalType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
@@ -44,7 +45,7 @@ class DateTimeFractionalTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeFractionalType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**

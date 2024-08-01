@@ -40,7 +40,6 @@ use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
-use Traversable;
 use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -197,7 +196,7 @@ trait CollectionTrait
         if (is_string($path) && str_contains($path, '{*}')) {
             $extractor = $extractor
                 ->filter(function ($data) {
-                    return $data !== null && ($data instanceof Traversable || is_array($data));
+                    return $data !== null && (is_iterable($data));
                 })
                 ->unfold();
         }

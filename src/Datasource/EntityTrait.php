@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -1135,8 +1134,7 @@ trait EntityTrait
             }
 
             if (
-                is_array($val) ||
-                $val instanceof Traversable ||
+                is_iterable($val) ||
                 $val instanceof EntityInterface
             ) {
                 $entity = $val;

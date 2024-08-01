@@ -428,8 +428,7 @@ class EntityContext implements ContextInterface
             // If we are at the end of traversable elements
             // return the last entity found.
             $isTraversable = (
-                is_array($next) ||
-                $next instanceof Traversable ||
+                is_iterable($next) ||
                 $next instanceof EntityInterface
             );
             if (!$isTraversable) {

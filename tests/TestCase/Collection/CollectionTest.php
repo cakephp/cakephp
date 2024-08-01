@@ -20,6 +20,9 @@ use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
+use Cake\Collection\Iterator\ExtractIterator;
+use Cake\Collection\Iterator\InsertIterator;
+use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use CallbackFilterIterator;
@@ -275,7 +278,7 @@ class CollectionTest extends TestCase
             return false;
         });
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $collection = new Collection(['a' => null, 'b' => 2, 'c' => false]);
         $result = $collection->reject();
@@ -296,7 +299,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([]);
         $result = $collection->unique();
         $this->assertSame([], iterator_to_array($result));
-        $this->assertInstanceOf('Cake\Collection\Collection', $result);
+        $this->assertInstanceOf(Collection::class, $result);
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
@@ -432,7 +435,7 @@ class CollectionTest extends TestCase
 
             return $v * $v;
         });
-        $this->assertInstanceOf('Cake\Collection\Iterator\ReplaceIterator', $map);
+        $this->assertInstanceOf(ReplaceIterator::class, $map);
         $this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9, 'd' => 16], iterator_to_array($map));
     }
 
@@ -483,7 +486,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->extract('a.b.c');
-        $this->assertInstanceOf('Cake\Collection\Iterator\ExtractIterator', $map);
+        $this->assertInstanceOf(ExtractIterator::class, $map);
         $this->assertEquals([1, null], iterator_to_array($map));
     }
 
@@ -514,7 +517,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $map = $collection->sortBy('a.b.c');
-        $this->assertInstanceOf('Cake\Collection\Collection', $map);
+        $this->assertInstanceOf(Collection::class, $map);
         $expected = [
             ['a' => ['b' => ['c' => 10]]],
             ['a' => ['b' => ['c' => 6]]],
@@ -641,7 +644,7 @@ class CollectionTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -789,7 +792,7 @@ class CollectionTest extends TestCase
             2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
         ];
         $this->assertEquals($expected, iterator_to_array($grouped));
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
     }
 
     /**
@@ -920,7 +923,7 @@ class CollectionTest extends TestCase
             11 => 1,
         ];
         $result = iterator_to_array($grouped);
-        $this->assertInstanceOf('Cake\Collection\Collection', $grouped);
+        $this->assertInstanceOf(Collection::class, $grouped);
         $this->assertEquals($expected, $result);
     }
 
@@ -1719,7 +1722,7 @@ class CollectionTest extends TestCase
         $items = [['a' => 1], ['b' => 2]];
         $collection = new Collection($items);
         $iterator = $collection->insert('c', [3, 4]);
-        $this->assertInstanceOf('Cake\Collection\Iterator\InsertIterator', $iterator);
+        $this->assertInstanceOf(InsertIterator::class, $iterator);
         $this->assertEquals(
             [['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
             iterator_to_array($iterator)

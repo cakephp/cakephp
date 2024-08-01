@@ -229,7 +229,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         } catch (Throwable $e) {
             triggerWarning(sprintf(
                 "Exception loading routes when rendering an error page: \n %s - %s",
-                get_class($e),
+                $e::class,
                 $e->getMessage()
             ));
         }

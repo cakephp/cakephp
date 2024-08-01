@@ -270,7 +270,7 @@ class SelectLoader
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->getConnection()->getDriver();
-            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $quoted = array_map($driver->quoteIdentifier(...), $key);
             $missingFields = $missingKey($select, $quoted);
         }
 

@@ -148,7 +148,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         if (is_string($cookieData) && $cookieData !== '') {
             try {
                 $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 $cookieData = null;
             }
         }

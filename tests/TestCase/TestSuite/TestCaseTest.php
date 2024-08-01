@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventList;
@@ -32,7 +33,12 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
+use TestApp\Model\Entity\Tag;
+use TestApp\Model\Table\PostsTable;
 use TestApp\Model\Table\SecondaryPostsTable;
+use TestPlugin\Model\Entity\Author;
+use TestPlugin\Model\Table\AuthorsTable;
+use TestPlugin\Model\Table\TestPluginCommentsTable;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -373,7 +379,7 @@ class TestCaseTest extends TestCase
         $Posts = $this->getMockForModel('Posts');
         $entity = new Entity([]);
 
-        $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
+        $this->assertInstanceOf(PostsTable::class, $Posts);
         $this->assertSame('posts', $Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
@@ -381,12 +387,12 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->willReturn(false);
         $this->assertSame(false, $Posts->save($entity));
-        $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
-        $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
+        $this->assertSame(Entity::class, $Posts->getEntityClass());
+        $this->assertInstanceOf(Connection::class, $Posts->getConnection());
         $this->assertSame('test', $Posts->getConnection()->configName());
 
         $Tags = $this->getMockForModel('Tags', ['save']);
-        $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
+        $this->assertSame(Tag::class, $Tags->getEntityClass());
 
         $this->deprecated(function () {
             $SluggedPosts = $this->getMockForModel('SluggedPosts', ['slugify']);
@@ -426,13 +432,13 @@ class TestCaseTest extends TestCase
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
         $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
+        $this->assertInstanceOf(TestPluginCommentsTable::class, $result);
         $this->assertSame($TestPluginComment, $result);
 
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
-        $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
-        $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
+        $this->assertInstanceOf(TestPluginCommentsTable::class, $TestPluginComment);
+        $this->assertSame(Entity::class, $TestPluginComment->getEntityClass());
         $TestPluginComment->expects($this->exactly(1))
             ->method('save')
             ->willReturn(false);
@@ -441,8 +447,8 @@ class TestCaseTest extends TestCase
         $this->assertFalse($TestPluginComment->save($entity));
 
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['save']);
-        $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
-        $this->assertSame('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        $this->assertInstanceOf(AuthorsTable::class, $TestPluginAuthors);
+        $this->assertSame(Author::class, $TestPluginAuthors->getEntityClass());
         $this->clearPlugins();
     }
 
@@ -503,7 +509,7 @@ class TestCaseTest extends TestCase
         try {
             Router::url($url);
             $this->fail('Missing URL should throw an exception');
-        } catch (MissingRouteException $e) {
+        } catch (MissingRouteException) {
         }
         Configure::write('App.namespace', 'TestApp');
         $this->loadRoutes();

@@ -886,7 +886,7 @@ TEXT;
     public function testCreateFactory(): void
     {
         $parser = ConsoleOptionParser::create('factory', false);
-        $this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
+        $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('factory', $parser->getCommand());
     }
 

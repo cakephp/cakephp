@@ -31,7 +31,7 @@ foreach ($exceptions as $level => $exc):
         <div class="stack-exception-header">
             <span class="stack-exception-caused">Caused by</span>
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
-            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
+            <span class="stack-exception-type"><?= h($exc::class); ?></span>
         </div>
     <?php endif; ?>
 

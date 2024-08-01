@@ -28,6 +28,7 @@ use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\Schema\Collection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -37,10 +38,13 @@ use Error;
 use Exception;
 use InvalidArgumentException;
 use PDO;
+use Psr\Log\AbstractLogger;
 use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\TestDriver;
+use TestPlugin\Database\Driver\TestDriver as PluginTestDriver;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -169,14 +173,14 @@ class ConnectionTest extends TestCase
     public function testDriverOptionClassNameSupport(): void
     {
         $connection = new Connection(['driver' => 'TestDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(TestDriver::class, $connection->getDriver());
 
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
-        $this->assertInstanceOf('TestPlugin\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(PluginTestDriver::class, $connection->getDriver());
 
-        [, $name] = namespaceSplit(get_class($this->connection->getDriver()));
+        [, $name] = namespaceSplit($this->connection->getDriver()::class);
         $connection = new Connection(['driver' => $name]);
-        $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
+        $this->assertInstanceOf($this->connection->getDriver()::class, $connection->getDriver());
     }
 
     /**
@@ -285,7 +289,7 @@ class ConnectionTest extends TestCase
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
-                App::shortName(get_class($connection->getDriver()), 'Database/Driver')
+                App::shortName($connection->getDriver()::class, 'Database/Driver')
             ),
             $e->getMessage()
         );
@@ -301,7 +305,7 @@ class ConnectionTest extends TestCase
 
         try {
             $connection->execute('SELECT 1');
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException) {
             $this->assertSame(4, $connection->getDriver()->getConnectRetries());
         }
     }
@@ -400,7 +404,7 @@ class ConnectionTest extends TestCase
             ['id' => 'integer', 'title' => 'string', 'body' => 'string']
         );
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
 
         $result = $this->connection->execute('SELECT * from things where id = 3');
@@ -654,7 +658,7 @@ class ConnectionTest extends TestCase
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
 
-        $logger = $this->createMock('Psr\Log\AbstractLogger');
+        $logger = $this->createMock(AbstractLogger::class);
         $logger->expects($this->once())
             ->method('log')
             ->with('warning', $this->stringContains('The connection is going to be closed'));
@@ -936,9 +940,9 @@ class ConnectionTest extends TestCase
         $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
-        $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
+        $this->assertInstanceOf(Collection::class, $schema);
 
-        $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
+        $schema = $this->getMockBuilder(Collection::class)
             ->setConstructorArgs([$connection])
             ->getMock();
         $connection->setSchemaCollection($schema);

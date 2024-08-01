@@ -189,7 +189,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertSame('testing123', $token, 'session token should not change.');
         }
@@ -314,7 +314,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
+        } catch (InvalidCsrfTokenException) {
             $token = $request->getSession()->read('csrfToken');
             $this->assertNotEmpty($token, 'Should set a token in the session on failure.');
         }

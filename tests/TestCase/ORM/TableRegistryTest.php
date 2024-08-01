@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -57,7 +59,7 @@ class TableRegistryTest extends TestCase
      */
     protected function _setMockLocator()
     {
-        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
+        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         TableRegistry::setTableLocator($locator);
 
         return $locator;
@@ -78,7 +80,7 @@ class TableRegistryTest extends TestCase
      */
     public function testGetLocator(): void
     {
-        $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', TableRegistry::getTableLocator());
+        $this->assertInstanceOf(LocatorInterface::class, TableRegistry::getTableLocator());
     }
 
     /**
@@ -87,6 +89,6 @@ class TableRegistryTest extends TestCase
     public function testLocatorDefault(): void
     {
         $locator = TableRegistry::getTableLocator();
-        $this->assertInstanceOf('Cake\ORM\Locator\TableLocator', $locator);
+        $this->assertInstanceOf(TableLocator::class, $locator);
     }
 }

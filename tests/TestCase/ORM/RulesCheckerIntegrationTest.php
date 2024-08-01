@@ -854,7 +854,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
         ]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -936,7 +936,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => true]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -955,7 +955,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => false]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -976,7 +976,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
             'message' => 'will not error']));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**

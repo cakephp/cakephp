@@ -565,7 +565,7 @@ class MysqlSchemaDialect extends SchemaDialect
         assert($data !== null);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
-                [$this->_driver, 'quoteIdentifier'],
+                $this->_driver->quoteIdentifier(...),
                 $data['columns']
             );
 
@@ -654,7 +654,7 @@ class MysqlSchemaDialect extends SchemaDialect
     protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
         foreach ($data['columns'] as $i => $column) {

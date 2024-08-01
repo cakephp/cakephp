@@ -208,7 +208,7 @@ class XmlTest extends TestCase
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }

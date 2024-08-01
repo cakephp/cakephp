@@ -392,7 +392,7 @@ class View implements EventDispatcherInterface
      */
     protected function setContentType(): void
     {
-        $viewContentType = $this->contentType();
+        $viewContentType = static::contentType();
         if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
             return;
         }
