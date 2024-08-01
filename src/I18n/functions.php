@@ -231,7 +231,7 @@ function __dxn(
 }
 
 /**
- * Converts a value to a native DateTime object.
+ * Converts a value to a DateTime object.
  *
  *  integer - value is treated as a Unix timestamp
  *  float - value is treated as a Unix timestamp with microseconds
@@ -273,7 +273,7 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
 }
 
 /**
- * Converts a value to a native Date object.
+ * Converts a value to a Date object.
  *
  *  integer - value is treated as a Unix timestamp
  *  float - value is treated as a Unix timestamp with microseconds
@@ -284,8 +284,6 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
  * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
  * @return Date|null Returns a Date object if parsing is successful, or NULL otherwise.
  * @since 5.1.0
- *
- * @see https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details
  */
 function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
 {
