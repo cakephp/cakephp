@@ -68,7 +68,7 @@ class DependenciesController extends Controller
     /**
      * @return \Cake\Http\Response
      */
-    public function optionalDep(mixed $any = null, ?string $str = null, ?stdClass $dep = null)
+    public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
     }
@@ -109,7 +109,7 @@ class DependenciesController extends Controller
     /**
      * @return \Cake\Http\Response
      */
-    public function requiredParam(mixed $one)
+    public function requiredParam($one)
     {
         return $this->response->withStringBody(json_encode(compact('one')));
     }

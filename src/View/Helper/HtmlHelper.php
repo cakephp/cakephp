@@ -274,7 +274,6 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $title = htmlentities((string)$title, ENT_QUOTES, $escapeTitle);
         }
 

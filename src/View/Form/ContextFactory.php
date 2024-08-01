@@ -59,7 +59,10 @@ class ContextFactory
         $providers = [
             [
                 'type' => 'orm',
-                'callable' => function ($request, $data) {
+                'callable' => /**
+                 * @return EntityContext|NullContext|null
+                 */
+                function ($request, $data) {
                     if ($data['entity'] instanceof EntityInterface) {
                         return new EntityContext($data);
                     }
@@ -78,7 +81,10 @@ class ContextFactory
             ],
             [
                 'type' => 'form',
-                'callable' => function ($request, $data) {
+                'callable' => /**
+                 * @return FormContext|null
+                 */
+                function ($request, $data) {
                     if ($data['entity'] instanceof Form) {
                         return new FormContext($data);
                     }
@@ -86,7 +92,10 @@ class ContextFactory
             ],
             [
                 'type' => 'array',
-                'callable' => function ($request, $data) {
+                'callable' => /**
+                 * @return ArrayContext|null
+                 */
+                function ($request, $data) {
                     if (is_array($data['entity']) && isset($data['entity']['schema'])) {
                         return new ArrayContext($data['entity']);
                     }
@@ -94,7 +103,10 @@ class ContextFactory
             ],
             [
                 'type' => 'null',
-                'callable' => function ($request, $data) {
+                'callable' => /**
+                 * @return NullContext|null
+                 */
+                function ($request, $data) {
                     if ($data['entity'] === null) {
                         return new NullContext($data);
                     }

@@ -27,7 +27,7 @@ class SomePagesController extends Controller
      *
      * @return void
      */
-    public function display(mixed $page = null)
+    public function display($page = null)
     {
     }
 

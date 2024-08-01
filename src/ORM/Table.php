@@ -1478,7 +1478,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             $fields = $options[$field];
             $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
-            $options[$field] = function ($row) use ($fields, $glue) {
+            $options[$field] = function ($row) use ($fields, $glue): string {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
@@ -2765,7 +2765,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $hasOr = str_contains($fields, '_or_');
         $hasAnd = str_contains($fields, '_and_');
 
-        $makeConditions = function ($fields, $args) {
+        $makeConditions = /**
+         * @psalm-return array<string, mixed>
+         */
+        function ($fields, $args): array {
             $conditions = [];
             if (count($args) < count($fields)) {
                 throw new BadMethodCallException(sprintf(

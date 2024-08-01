@@ -175,7 +175,10 @@ class PoFileParser
             $plurals = $item['translated'];
             // PO are by definition indexed so sort by index.
             ksort($plurals);
-            $count = (int)array_key_last($plurals);
+
+            // Make sure every index is filled.
+            end($plurals);
+            $count = (int)key($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');

@@ -257,7 +257,7 @@ class SelectLoader
         if (!$select) {
             return;
         }
-        $missingKey = function ($fieldList, $key) {
+        $missingKey = function ($fieldList, $key): bool {
             foreach ($key as $keyField) {
                 if (!in_array($keyField, $fieldList, true)) {
                     return true;

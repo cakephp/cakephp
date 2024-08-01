@@ -168,7 +168,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $cache = $this->_cacheConfig($this->action, $template);
         }
 
-        $render = function () use ($template) {
+        $render = function () use ($template): string {
             try {
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);

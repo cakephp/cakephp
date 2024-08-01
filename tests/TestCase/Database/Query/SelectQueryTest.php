@@ -1251,7 +1251,7 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->where([
                 'id' => 'Cake\Error\Debugger::dump',
-                'title' => Debugger::dump(...),
+                'title' => ['Cake\Error\Debugger', 'dump'],
                 'author_id' => fn (ExpressionInterface $exp)=> 1,
             ]);
         $this->assertQuotedQuery(

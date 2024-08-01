@@ -316,7 +316,7 @@ class EagerLoader
      * in the array. This function merges the original associations array with
      * the new associations provided.
      *
-     * @param array $associations User provided containments array.
+     * @param array<string, mixed> $associations User provided containments array.
      * @param array $original The original containments array to merge
      * with the new one.
      * @return array
@@ -343,8 +343,8 @@ class EagerLoader
                 continue;
             }
 
-            if (str_contains((string)$table, '.')) {
-                $path = explode('.', (string)$table);
+            if (str_contains($table, '.')) {
+                $path = explode('.', $table);
                 $table = array_pop($path);
                 foreach ($path as $t) {
                     $pointer += [$t => []];

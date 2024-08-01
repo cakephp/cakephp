@@ -173,12 +173,15 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $conditions = fn (
+        $conditions = /**
+         * @psalm-return \Closure(\Cake\ORM\Query\SelectQuery):\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+         */
+        fn (
             string $field,
             string $locale,
             SelectQuery $query,
             array $select
-        )=> function (SelectQuery $q) use (
+        ): \Closure=> function (SelectQuery $q) use (
             $field,
             $locale,
             $query,

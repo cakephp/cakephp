@@ -82,7 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v)=> (bool)$v;
+        $callback ??= fn ($v): bool=> (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -92,7 +92,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v, $k, $i)=> (bool)$v;
+        $callback ??= fn ($v, $k, $i): bool=> (bool)$v;
 
         return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
     }
@@ -469,7 +469,10 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $length) {
+        $generator = /**
+         * @psalm-return \Generator<mixed, mixed, mixed, void>
+         */
+        function ($iterator, $length): \Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -769,7 +772,10 @@ trait CollectionTrait
      */
     public function lazy(): CollectionInterface
     {
-        $generator = function () {
+        $generator = /**
+         * @psalm-return \Generator<mixed, mixed, mixed, void>
+         */
+        function (): \Generator {
             foreach ($this->unwrap() as $k => $v) {
                 yield $k => $v;
             }
