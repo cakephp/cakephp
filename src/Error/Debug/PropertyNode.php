@@ -24,7 +24,7 @@ class PropertyNode implements NodeInterface
     /**
      * @var string
      */
-    private readonly string $name;
+    private string $name;
 
     /**
      * @var string|null
@@ -34,7 +34,7 @@ class PropertyNode implements NodeInterface
     /**
      * @var \Cake\Error\Debug\NodeInterface
      */
-    private readonly NodeInterface $value;
+    private NodeInterface $value;
 
     /**
      * Constructor

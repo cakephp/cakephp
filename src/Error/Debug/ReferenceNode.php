@@ -28,12 +28,12 @@ class ReferenceNode implements NodeInterface
     /**
      * @var string
      */
-    private readonly string $class;
+    private string $class;
 
     /**
      * @var int
      */
-    private readonly int $id;
+    private int $id;
 
     /**
      * Constructor

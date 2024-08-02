@@ -270,38 +270,38 @@ xml;
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
-        $expected = <<<xml_WRAP
+        $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <command>mycommand</command>
 <description />
 <options>
-\t<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-\t\t<default>false</default>
-\t\t<choices></choices>
-\t</option>
-\t<option name="--test" short="" help="A test option." boolean="0" required="0">
-\t\t<default></default>
-\t\t<choices>
-\t\t\t<choice>one</choice>
-\t\t\t<choice>two</choice>
-\t\t</choices>
-\t</option>
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+		<default>false</default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
+		<default></default>
+		<choices>
+			<choice>one</choice>
+			<choice>two</choice>
+		</choices>
+	</option>
 </options>
 <arguments>
-\t<argument name="type" help="Resource type." required="1">
-\t\t<choices>
-\t\t\t<choice>aco</choice>
-\t\t\t<choice>aro</choice>
-\t\t</choices>
-\t</argument>
-\t<argument name="other_longer" help="Another argument." required="0">
-\t\t<choices></choices>
-\t</argument>
+	<argument name="type" help="Resource type." required="1">
+		<choices>
+			<choice>aco</choice>
+			<choice>aro</choice>
+		</choices>
+	</argument>
+	<argument name="other_longer" help="Another argument." required="0">
+		<choices></choices>
+	</argument>
 </arguments>
 <epilog />
 </shell>
-xml_WRAP;
+xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -318,29 +318,29 @@ xml_WRAP;
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
-        $expected = <<<xml_WRAP
+        $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <command>mycommand</command>
 <description>Description text</description>
 <options>
-\t<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-\t\t<default>false</default>
-\t\t<choices></choices>
-\t</option>
-\t<option name="--test" short="" help="A test option." boolean="0" required="0">
-\t\t<default></default>
-\t\t<choices></choices>
-\t</option>
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+		<default>false</default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
+		<default></default>
+		<choices></choices>
+	</option>
 </options>
 <arguments>
-\t<argument name="model" help="The model to make." required="1">
-\t\t<choices></choices>
-\t</argument>
+	<argument name="model" help="The model to make." required="1">
+		<choices></choices>
+	</argument>
 </arguments>
 <epilog>epilog text</epilog>
 </shell>
-xml_WRAP;
+xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -357,29 +357,29 @@ xml_WRAP;
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
-        $expected = <<<xml_WRAP
+        $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <command>mycommand</command>
 <description/>
 <options>
-\t<option name="--connection" short="-c" help="The connection to use." boolean="0" required="0">
-\t\t<default>default</default>
-\t\t<choices></choices>
-\t</option>
-\t<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-\t\t<default>false</default>
-\t\t<choices></choices>
-\t</option>
-\t<option name="--test" short="" help="A test option." boolean="0" required="0">
-\t\t<default></default>
-\t\t<choices></choices>
-\t</option>
+	<option name="--connection" short="-c" help="The connection to use." boolean="0" required="0">
+		<default>default</default>
+		<choices></choices>
+	</option>
+	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+		<default>false</default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0" required="0">
+		<default></default>
+		<choices></choices>
+	</option>
 </options>
 <arguments/>
 <epilog/>
 </shell>
-xml_WRAP;
+xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -395,32 +395,32 @@ xml_WRAP;
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
-        $expected = <<<xml_WRAP
+        $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-\t<command>mycommand</command>
-\t<description/>
-\t<options>
-\t\t<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-\t\t\t<default>false</default>
-\t\t\t<choices></choices>
-\t\t</option>
-\t\t<option name="--test" short="" help="A test option." boolean="0" required="0">
-\t\t\t<default></default>
-\t\t\t<choices></choices>
-\t\t</option>
-\t</options>
-\t<arguments>
-\t\t<argument name="model" help="The model to make." required="1">
-\t\t\t<choices></choices>
-\t\t</argument>
-\t\t<argument name="other_longer" help="Another argument." required="0">
-\t\t\t<choices></choices>
-\t\t</argument>
-\t</arguments>
-\t<epilog/>
+	<command>mycommand</command>
+	<description/>
+	<options>
+		<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+			<default>false</default>
+			<choices></choices>
+		</option>
+		<option name="--test" short="" help="A test option." boolean="0" required="0">
+			<default></default>
+			<choices></choices>
+		</option>
+	</options>
+	<arguments>
+		<argument name="model" help="The model to make." required="1">
+			<choices></choices>
+		</argument>
+		<argument name="other_longer" help="Another argument." required="0">
+			<choices></choices>
+		</argument>
+	</arguments>
+	<epilog/>
 </shell>
-xml_WRAP;
+xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
