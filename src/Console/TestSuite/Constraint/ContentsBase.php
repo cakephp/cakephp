@@ -49,7 +49,7 @@ abstract class ContentsBase extends Constraint
 
 // phpcs:disable
 class_alias(
-    \Cake\Console\TestSuite\Constraint\ContentsBase::class,
+    'Cake\Console\TestSuite\Constraint\ContentsBase',
     'Cake\TestSuite\Constraint\Console\ContentsBase'
 );
 // phpcs:enable

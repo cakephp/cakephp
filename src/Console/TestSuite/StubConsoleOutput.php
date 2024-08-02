@@ -85,7 +85,7 @@ class StubConsoleOutput extends ConsoleOutput
 
 // phpcs:disable
 class_alias(
-    \Cake\Console\TestSuite\StubConsoleOutput::class,
+    'Cake\Console\TestSuite\StubConsoleOutput',
     'Cake\TestSuite\Stub\ConsoleOutput'
 );
 // phpcs:enable

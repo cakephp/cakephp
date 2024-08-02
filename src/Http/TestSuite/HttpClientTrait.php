@@ -118,7 +118,7 @@ trait HttpClientTrait
 
 // phpcs:disable
 class_alias(
-    \Cake\Http\TestSuite\HttpClientTrait::class,
+    'Cake\Http\TestSuite\HttpClientTrait',
     'Cake\TestSuite\HttpClientTrait'
 );
 // phpcs:enable

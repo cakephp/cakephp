@@ -59,7 +59,7 @@ class ContentsContainRow extends ContentsRegExp
 
 // phpcs:disable
 class_alias(
-    \Cake\Console\TestSuite\Constraint\ContentsContainRow::class,
+    'Cake\Console\TestSuite\Constraint\ContentsContainRow',
     'Cake\TestSuite\Constraint\Console\ContentsContainRow'
 );
 // phpcs:enable
