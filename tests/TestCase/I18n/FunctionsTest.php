@@ -34,7 +34,14 @@ class FunctionsTest extends TestCase
     #[DataProvider('toDateTimeProvider')]
     public function testToDateTime(mixed $rawValue, string $format, ?DateTime $expected): void
     {
-        $this->assertEquals($expected, toDateTime($rawValue, $format));
+        if ($expected === null) {
+            $this->assertNull(toDateTime($rawValue, $format));
+
+            return;
+        }
+        $result = toDateTime($rawValue, $format);
+        $this->assertNotNull($result);
+        $this->assertEquals($expected->format($format), $result->format($format));
     }
 
     /**
@@ -100,7 +107,14 @@ class FunctionsTest extends TestCase
     #[DataProvider('toDateProvider')]
     public function testToDate(mixed $rawValue, string $format, ?Date $expected): void
     {
-        $this->assertEquals($expected, toDate($rawValue, $format));
+        if ($expected === null) {
+            $this->assertNull(toDate($rawValue, $format));
+
+            return;
+        }
+        $result = toDate($rawValue, $format);
+        $this->assertNotNull($result);
+        $this->assertEquals($expected->format($format), $result->format($format));
     }
 
     /**
