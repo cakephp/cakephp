@@ -1018,7 +1018,7 @@ class Text
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);
 
-            return (int)($size * (1024 ** ($i + 1)));
+            return (int)($size * pow(1024, $i + 1));
         }
 
         if (str_ends_with($size, 'B') && ctype_digit(substr($size, 0, -1))) {
