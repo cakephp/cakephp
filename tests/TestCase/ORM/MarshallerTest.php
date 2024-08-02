@@ -1324,8 +1324,9 @@ class MarshallerTest extends TestCase
      * Test merging empty values into an entity.
      *
      * @dataProvider emptyProvider
+     * @param mixed $value
      */
-    public function testMergeFalseyValues(mixed $value): void
+    public function testMergeFalseyValues($value): void
     {
         $marshall = new Marshaller($this->articles);
         $entity = new Entity();

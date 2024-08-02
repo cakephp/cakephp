@@ -182,8 +182,9 @@ class LinkConstraintTest extends TestCase
      * Tests that an exception is thrown when the `repository` option holds an invalid value.
      *
      * @dataProvider invalidRepositoryOptionsDataProvider
+     * @param mixed $options
      */
-    public function testInvalidRepository(mixed $options): void
+    public function testInvalidRepository($options): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');

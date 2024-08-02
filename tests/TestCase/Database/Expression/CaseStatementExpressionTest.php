@@ -234,7 +234,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferValueType(mixed $value, ?string $type): void
+    public function testInferValueType($value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -276,7 +276,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferWhenType(mixed $value, ?string $type): void
+    public function testInferWhenType($value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']));
@@ -314,7 +314,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferResultType(mixed $value, ?string $type): void
+    public function testInferResultType($value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
@@ -334,7 +334,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The value from which to infer the type.
      * @param string|null $type The expected type.
      */
-    public function testInferElseType(mixed $value, ?string $type): void
+    public function testInferElseType($value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -1327,7 +1327,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
-    public function testValidCaseValue(mixed $value, ?string $sqlValue, ?string $type): void
+    public function testValidCaseValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression($value))
             ->when(1)
@@ -1486,7 +1486,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
-    public function testValidWhenValueSimpleCase(mixed $value, ?string $expectedSql, $typeOrBindings = null): void
+    public function testValidWhenValueSimpleCase($value, ?string $expectedSql, $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
             'Table.column_a' => 'integer',
@@ -1608,7 +1608,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $expectedSql The expected SQL string.
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
-    public function testValidWhenValueSearchedCase(mixed $value, ?string $expectedSql, $typeOrBindings = null): void
+    public function testValidWhenValueSearchedCase($value, ?string $expectedSql, $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
             'Table.column_a' => 'integer',
@@ -1672,7 +1672,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
-    public function testValidThenValue(mixed $value, ?string $sqlValue, ?string $type): void
+    public function testValidThenValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
             ->when(1)
@@ -1748,7 +1748,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $sqlValue The expected SQL string value.
      * @param string|null $type The expected bound type.
      */
-    public function testValidElseValue(mixed $value, ?string $sqlValue, ?string $type): void
+    public function testValidElseValue($value, ?string $sqlValue, ?string $type): void
     {
         $expression = (new CaseStatementExpression())
             ->when(1)
@@ -1833,7 +1833,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The case value.
      * @param string $typeName The expected error type name.
      */
-    public function testInvalidCaseValue(mixed $value, string $typeName): void
+    public function testInvalidCaseValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -1877,7 +1877,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The then value.
      * @param string $typeName The expected error type name.
      */
-    public function testInvalidThenValue(mixed $value, string $typeName): void
+    public function testInvalidThenValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -1911,7 +1911,7 @@ class CaseStatementExpressionTest extends TestCase
      * @dataProvider invalidThenTypeDataProvider
      * @param mixed $type The then type.
      */
-    public function testInvalidThenType(mixed $type): void
+    public function testInvalidThenType($type): void
     {
         $this->expectException(TypeError::class);
 
@@ -1941,7 +1941,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $value The else value.
      * @param string $typeName The expected error type name.
      */
-    public function testInvalidElseValue(mixed $value, string $typeName): void
+    public function testInvalidElseValue($value, string $typeName): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -1977,7 +1977,7 @@ class CaseStatementExpressionTest extends TestCase
      * @dataProvider invalidElseTypeDataProvider
      * @param mixed $type The else type.
      */
-    public function testInvalidElseType(mixed $type): void
+    public function testInvalidElseType($type): void
     {
         $this->expectException(TypeError::class);
 

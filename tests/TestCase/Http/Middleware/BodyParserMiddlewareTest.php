@@ -377,8 +377,9 @@ XML;
      * test parsing non array/object values on JSON
      *
      * @dataProvider jsonScalarValues
+     * @param mixed $expected
      */
-    public function testInvokeParseNoArray(string $body, mixed $expected): void
+    public function testInvokeParseNoArray(string $body, $expected): void
     {
         $parser = new BodyParserMiddleware();
 

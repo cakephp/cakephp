@@ -213,8 +213,10 @@ class TimeTypeTest extends TestCase
      * test marshalling data.
      *
      * @dataProvider marshalProvider
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testMarshal(mixed $value, mixed $expected): void
+    public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

@@ -1536,9 +1536,10 @@ class IntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $url URL to test
+     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $url, mixed ...$rest): void
+    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
@@ -1708,8 +1709,9 @@ class IntegrationTestTraitTest extends TestCase
      * Test the assertion generates a verbose message for session related checks.
      *
      * @dataProvider assertionFailureSessionVerboseProvider
+     * @param mixed ...$rest
      */
-    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, mixed ...$rest): void
+    public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `OutOfBoundsException`: "oh no!"');

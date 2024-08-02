@@ -5450,8 +5450,9 @@ class TableTest extends TestCase
      * @param array $options
      * @param string $cacheKey
      * @param string $cacheConfig
+     * @param mixed $primaryKey
      */
-    public function testGetWithCache($options, $cacheKey, $cacheConfig, mixed $primaryKey): void
+    public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['selectQuery'])

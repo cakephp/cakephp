@@ -10,7 +10,10 @@ class UuidValue
 {
     public $value;
 
-    public function __construct(mixed $value)
+    /**
+     * @param mixed $value
+     */
+    public function __construct($value)
     {
         $this->value = $value;
     }

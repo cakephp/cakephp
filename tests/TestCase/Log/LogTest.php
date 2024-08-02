@@ -156,8 +156,9 @@ class LogTest extends TestCase
      * Test the various config call signatures.
      *
      * @dataProvider configProvider
+     * @param mixed $settings
      */
-    public function testConfigVariants(mixed $settings): void
+    public function testConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -169,8 +170,9 @@ class LogTest extends TestCase
      * Test the various setConfig call signatures.
      *
      * @dataProvider configProvider
+     * @param mixed $settings
      */
-    public function testSetConfigVariants(mixed $settings): void
+    public function testSetConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());

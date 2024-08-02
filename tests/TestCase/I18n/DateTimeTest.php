@@ -538,8 +538,9 @@ class DateTimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
+     * @param mixed $value
      */
-    public function testToStringInvalid(mixed $value): void
+    public function testToStringInvalid($value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -550,8 +551,9 @@ class DateTimeTest extends TestCase
      * Test that invalid datetime values do not trigger errors.
      *
      * @dataProvider invalidDataProvider
+     * @param mixed $value
      */
-    public function testToStringInvalidFrozen(mixed $value): void
+    public function testToStringInvalidFrozen($value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);

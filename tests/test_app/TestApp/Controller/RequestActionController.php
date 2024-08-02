@@ -45,6 +45,8 @@ class RequestActionController extends AppController
     /**
      * another_ra_test method
      *
+     * @param mixed $id
+     * @param mixed $other
      * @return \Cake\Http\Response
      */
     public function another_ra_test($id, $other)

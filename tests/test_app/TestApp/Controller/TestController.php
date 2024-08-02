@@ -37,6 +37,8 @@ class TestController extends ControllerTestAppController
     /**
      * index method
      *
+     * @param mixed $testId
+     * @param mixed $testTwoId
      * @return void
      */
     public function index($testId, $testTwoId): void
@@ -50,6 +52,8 @@ class TestController extends ControllerTestAppController
     /**
      * view method
      *
+     * @param mixed $testId
+     * @param mixed $testTwoId
      * @return void
      */
     public function view($testId, $testTwoId): void
@@ -60,6 +64,9 @@ class TestController extends ControllerTestAppController
         ]);
     }
 
+    /**
+     * @param mixed $passed
+     */
     public function reflection($passed, Table $table)
     {
     }

@@ -1192,8 +1192,9 @@ class BelongsToManyTest extends TestCase
      * Test that saving an empty set on create works.
      *
      * @dataProvider emptyProvider
+     * @param mixed $value
      */
-    public function testSaveAssociatedEmptySetSuccess(mixed $value): void
+    public function testSaveAssociatedEmptySetSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1221,8 +1222,9 @@ class BelongsToManyTest extends TestCase
      * Test that saving an empty set on update works.
      *
      * @dataProvider emptyProvider
+     * @param mixed $value
      */
-    public function testSaveAssociatedEmptySetUpdateSuccess(mixed $value): void
+    public function testSaveAssociatedEmptySetUpdateSuccess($value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)

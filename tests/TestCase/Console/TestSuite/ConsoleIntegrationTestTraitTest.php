@@ -205,9 +205,10 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param string $assertion Assertion method
      * @param string $message Expected failure message
      * @param string $command Command to test
+     * @param mixed ...$rest
      * @dataProvider assertionFailureMessagesProvider
      */
-    public function testAssertionFailureMessages($assertion, $message, $command, mixed ...$rest): void
+    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessageMatches('#' . $message . '.?#');

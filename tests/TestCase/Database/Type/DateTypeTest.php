@@ -218,8 +218,10 @@ class DateTypeTest extends TestCase
      * test marshaling data.
      *
      * @dataProvider marshalProvider
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testMarshal(mixed $value, mixed $expected): void
+    public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
         $this->assertEquals($expected, $result);

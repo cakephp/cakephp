@@ -168,8 +168,10 @@ class SqliteTest extends TestCase
      * Test the schemaValue method on Driver.
      *
      * @dataProvider schemaValueProvider
+     * @param mixed $input
+     * @param mixed $expected
      */
-    public function testSchemaValue(mixed $input, mixed $expected): void
+    public function testSchemaValue($input, $expected): void
     {
         $mock = Mockery::mock(PDO::class)
             ->shouldAllowMockingMethod('quoteIdentifier')

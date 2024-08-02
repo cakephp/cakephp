@@ -1194,8 +1194,9 @@ class ServerRequestTest extends TestCase
      * Test reading params
      *
      * @dataProvider paramReadingDataProvider
+     * @param mixed $expected
      */
-    public function testGetParam(string $toRead, mixed $expected): void
+    public function testGetParam(string $toRead, $expected): void
     {
         $request = new ServerRequest([
             'url' => '/',

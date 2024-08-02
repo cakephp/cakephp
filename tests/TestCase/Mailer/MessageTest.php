@@ -1242,7 +1242,11 @@ HTML;
         $this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
     }
 
-    protected function _getEmailByOldStyleCharset(mixed $charset, mixed $headerCharset): Message
+    /**
+     * @param mixed $charset
+     * @param mixed $headerCharset
+     */
+    protected function _getEmailByOldStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message(['transport' => 'debug']);
 
@@ -1262,7 +1266,11 @@ HTML;
         return $message;
     }
 
-    protected function _getEmailByNewStyleCharset(mixed $charset, mixed $headerCharset): Message
+    /**
+     * @param mixed $charset
+     * @param mixed $headerCharset
+     */
+    protected function _getEmailByNewStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message();
 

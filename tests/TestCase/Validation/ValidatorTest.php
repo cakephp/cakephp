@@ -2926,10 +2926,11 @@ class ValidatorTest extends TestCase
      *
      * @param Validator $validator
      * @param string $method
+     * @param mixed $extra
      * @param array $pass
      * @param string|null $name
      */
-    protected function assertProxyMethod($validator, $method, mixed $extra = null, $pass = [], $name = null): void
+    protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null): void
     {
         $name = $name ?: $method;
         if ($extra !== null) {

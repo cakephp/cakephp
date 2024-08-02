@@ -127,8 +127,9 @@ class EntityContextTest extends TestCase
      * Test isCreate on a collection.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testIsCreateCollection(mixed $collection): void
+    public function testIsCreateCollection($collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -222,8 +223,9 @@ class EntityContextTest extends TestCase
      * Test collection operations that lack a table argument.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testCollectionOperationsNoTableArg(mixed $collection): void
+    public function testCollectionOperationsNoTableArg($collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -271,8 +273,9 @@ class EntityContextTest extends TestCase
      * Test operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testValOnCollections(mixed $collection): void
+    public function testValOnCollections($collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -300,8 +303,9 @@ class EntityContextTest extends TestCase
      * table name
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testValOnCollectionsWithRootName(mixed $collection): void
+    public function testValOnCollectionsWithRootName($collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -327,8 +331,9 @@ class EntityContextTest extends TestCase
      * Test error operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testErrorsOnCollections(mixed $collection): void
+    public function testErrorsOnCollections($collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -351,8 +356,9 @@ class EntityContextTest extends TestCase
      * Test schema operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testSchemaOnCollections(mixed $collection): void
+    public function testSchemaOnCollections($collection): void
     {
         $this->_setupTables();
         $context = new EntityContext([
@@ -378,8 +384,9 @@ class EntityContextTest extends TestCase
      * Test validation operations on a collection of entities.
      *
      * @dataProvider collectionProvider
+     * @param mixed $collection
      */
-    public function testValidatorsOnCollections(mixed $collection): void
+    public function testValidatorsOnCollections($collection): void
     {
         $this->_setupTables();
 

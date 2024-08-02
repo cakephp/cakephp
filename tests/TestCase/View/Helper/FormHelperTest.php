@@ -362,8 +362,9 @@ class FormHelperTest extends TestCase
      * Test default context selection in create()
      *
      * @dataProvider contextSelectionProvider
+     * @param mixed $data
      */
-    public function testCreateContextSelectionBuiltIn(mixed $data, string $class): void
+    public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
         $this->Form->create($data);
         $this->assertInstanceOf($class, $this->Form->context());

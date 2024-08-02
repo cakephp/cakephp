@@ -66,6 +66,7 @@ class DependenciesController extends Controller
     }
 
     /**
+     * @param mixed $any
      * @return \Cake\Http\Response
      */
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
@@ -83,6 +84,7 @@ class DependenciesController extends Controller
     }
 
     /**
+     * @param mixed $any
      * @return \Cake\Http\Response
      */
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
@@ -107,6 +109,7 @@ class DependenciesController extends Controller
     }
 
     /**
+     * @param mixed $one
      * @return \Cake\Http\Response
      */
     public function requiredParam($one)

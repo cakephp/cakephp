@@ -1535,8 +1535,9 @@ HTML_WRAP;
      * testparseFileSize
      *
      * @dataProvider filesizes
+     * @param mixed $expected
      */
-    public function testParseFileSize(array $params, mixed $expected): void
+    public function testParseFileSize(array $params, $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
         $this->assertSame($expected, $result);

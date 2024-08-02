@@ -1351,7 +1351,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockAppend(mixed $value): void
+    public function testBlockAppend($value): void
     {
         $this->View->assign('testBlock', 'Block');
         $this->View->append('testBlock', $value);
@@ -1380,7 +1380,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      * @dataProvider blockValueProvider
      */
-    public function testBlockPrepend(mixed $value): void
+    public function testBlockPrepend($value): void
     {
         $this->View->assign('test', 'Block');
         $result = $this->View->prepend('test', $value);

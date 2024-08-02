@@ -960,7 +960,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate(mixed $value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -985,7 +985,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate(mixed $value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1015,7 +1015,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate(mixed $value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1040,7 +1040,7 @@ class HasManyTest extends TestCase
      * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
-    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate(mixed $value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [

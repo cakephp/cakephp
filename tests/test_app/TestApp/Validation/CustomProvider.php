@@ -18,7 +18,11 @@ namespace TestApp\Validation;
 
 class CustomProvider
 {
-    public function validate(mixed $value, mixed $context): bool
+    /**
+     * @param mixed $value
+     * @param mixed $context
+     */
+    public function validate($value, $context): bool
     {
         return is_bool($value);
     }
