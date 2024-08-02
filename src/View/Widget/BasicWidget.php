@@ -187,7 +187,7 @@ class BasicWidget implements WidgetInterface
 
         if ($dbType === 'decimal' && isset($fieldDef['precision'])) {
             $decimalPlaces = $fieldDef['precision'];
-            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+            $data['step'] = sprintf('%.' . $decimalPlaces . 'F', 10 ** (-1 * $decimalPlaces));
         } elseif ($dbType === 'float') {
             $data['step'] = 'any';
         }
