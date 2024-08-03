@@ -146,6 +146,7 @@ class PluralRules
     {
         $locale = Locale::canonicalize($locale);
 
+        /** @psalm-suppress TypeDoesNotContainNull */
         if ($locale === null) {
             throw new InvalidArgumentException('Invalid locale provided');
         }
