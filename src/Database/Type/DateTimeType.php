@@ -213,7 +213,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         $class = $this->_className;
         if (is_int($value)) {
             $instance = new $class('@' . $value);
-        } elseif (str_starts_with((string)$value, '0000-00-00')) {
+        } elseif (str_starts_with($value, '0000-00-00')) {
             return null;
         } else {
             $instance = new $class($value, $this->dbTimezone);
@@ -266,7 +266,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $class = $this->_className;
             if (is_int($value)) {
                 $instance = new $class('@' . $value);
-            } elseif (str_starts_with((string)$value, '0000-00-00')) {
+            } elseif (str_starts_with($value, '0000-00-00')) {
                 $values[$field] = null;
                 continue;
             } else {
@@ -352,7 +352,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value['hour'] = 0;
         }
         if (isset($value['meridian'])) {
-            $value['hour'] = strtolower((string)$value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+            $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
         $format = sprintf(
             '%d-%02d-%02d %02d:%02d:%02d.%06d',

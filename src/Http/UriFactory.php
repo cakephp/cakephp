@@ -131,7 +131,7 @@ class UriFactory implements UriFactoryInterface
                 return ['base' => '', 'webroot' => '/'];
             }
 
-            $base = dirname((string)($server['PHP_SELF'] ?? DIRECTORY_SEPARATOR));
+            $base = dirname($server['PHP_SELF'] ?? DIRECTORY_SEPARATOR);
             // Clean up additional / which cause following code to fail..
             $base = (string)preg_replace('#/+#', '/', $base);
 
@@ -151,8 +151,8 @@ class UriFactory implements UriFactoryInterface
             return ['base' => $base, 'webroot' => $base . '/'];
         }
 
-        $file = '/' . basename((string)$baseUrl);
-        $base = dirname((string)$baseUrl);
+        $file = '/' . basename($baseUrl);
+        $base = dirname($baseUrl);
 
         if ($base === DIRECTORY_SEPARATOR || $base === '.') {
             $base = '';
@@ -161,7 +161,7 @@ class UriFactory implements UriFactoryInterface
 
         $docRoot = $server['DOCUMENT_ROOT'] ?? null;
         if (
-            (!empty($base) || !str_contains((string)$docRoot, $webroot))
+            (!empty($base) || !str_contains($docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

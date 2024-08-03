@@ -41,7 +41,7 @@ class MysqlSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string)$config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains($config['driver'], 'Mysql'), 'Not using Mysql for test config');
     }
 
     /**

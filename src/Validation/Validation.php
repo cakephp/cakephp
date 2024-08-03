@@ -547,7 +547,7 @@ class Validation
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
-        $parts = preg_split('/[\sT]+/', (string)$check);
+        $parts = preg_split('/[\sT]+/', $check);
         if ($parts && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
@@ -881,7 +881,7 @@ class Validation
             return false;
         }
 
-        $extension = strtolower(pathinfo((string)$check, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
         foreach ($extensions as $value) {
             if ($extension === strtolower($value)) {
                 return true;
@@ -1257,7 +1257,7 @@ class Validation
         }
 
         foreach ($mimeTypes as $key => $val) {
-            $mimeTypes[$key] = strtolower((string)$val);
+            $mimeTypes[$key] = strtolower($val);
         }
 
         return in_array(strtolower($mime), $mimeTypes, true);
@@ -1738,7 +1738,7 @@ class Validation
                 $value['hour'] = 0;
             }
             if (isset($value['meridian'])) {
-                $value['hour'] = strtolower((string)$value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+                $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0, 'microsecond' => 0];
             if (

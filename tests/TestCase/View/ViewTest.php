@@ -811,7 +811,7 @@ class ViewTest extends TestCase
         $this->assertSame($expected, trim($result));
 
         $result = Cache::read('element__subfolder_test_element', 'test_view');
-        $this->assertSame($expected, trim((string)$result));
+        $this->assertSame($expected, trim($result));
     }
 
     /**

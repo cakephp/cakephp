@@ -450,10 +450,10 @@ class Route
 
         $urldecode = $this->options['_urldecode'] ?? true;
         if ($urldecode) {
-            $url = urldecode((string)$url);
+            $url = urldecode($url);
         }
 
-        if (!preg_match($compiledRoute, (string)$url, $route)) {
+        if (!preg_match($compiledRoute, $url, $route)) {
             return null;
         }
 
@@ -532,7 +532,7 @@ class Route
      */
     public function hostMatches(string $host): bool
     {
-        $pattern = '@^' . str_replace('\*', '.*', preg_quote((string)$this->options['_host'], '@')) . '$@';
+        $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
 
         return preg_match($pattern, $host) !== 0;
     }
@@ -636,7 +636,7 @@ class Route
 
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
-            if (!isset($hostOptions['_host']) && !str_contains((string)$this->options['_host'], '*')) {
+            if (!isset($hostOptions['_host']) && !str_contains($this->options['_host'], '*')) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
             $hostOptions['_host'] ??= $context['_host'];

@@ -2832,8 +2832,8 @@ class SelectQueryTest extends TestCase
             ->execute()
             ->fetchAll('assoc');
 
-        $result[0]['addDays'] = substr((string)$result[0]['addDays'], 0, 10);
-        $result[0]['substractYears'] = substr((string)$result[0]['substractYears'], 0, 10);
+        $result[0]['addDays'] = substr($result[0]['addDays'], 0, 10);
+        $result[0]['substractYears'] = substr($result[0]['substractYears'], 0, 10);
 
         $expected = [
             'd' => 18,

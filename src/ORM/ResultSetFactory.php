@@ -80,7 +80,7 @@ class ResultSetFactory
 
         $fields = [];
         foreach ($query->clause('select') as $key => $field) {
-            $key = trim((string)$key, '"`[]');
+            $key = trim($key, '"`[]');
 
             if (strpos($key, '__') <= 0) {
                 $fields[$data['primaryAlias']][$key] = $key;

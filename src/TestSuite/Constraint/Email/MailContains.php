@@ -38,13 +38,13 @@ class MailContains extends MailConstraintBase
      */
     public function matches(mixed $other): bool
     {
-        $other = preg_quote((string)$other, '/');
+        $other = preg_quote($other, '/');
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             $method = $this->getTypeMethod();
             $message = $message->$method();
 
-            if (preg_match("/$other/", (string)$message) > 0) {
+            if (preg_match("/$other/", $message) > 0) {
                 return true;
             }
         }

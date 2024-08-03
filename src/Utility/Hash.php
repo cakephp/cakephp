@@ -264,7 +264,7 @@ class Hash
 
             // Pattern matches and other operators.
             if ($op === '=' && $val && $val[0] === '/') {
-                if (!preg_match($val, (string)$prop)) {
+                if (!preg_match($val, $prop)) {
                     return false;
                 }
                 // phpcs:disable
@@ -1025,7 +1025,7 @@ class Hash
             $ignoreCase = $type['ignoreCase'];
             $type = $type['type'];
         }
-        $type = strtolower((string)$type);
+        $type = strtolower($type);
 
         if ($type === 'numeric') {
             $type = SORT_NUMERIC;

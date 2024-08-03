@@ -629,7 +629,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
         $this->assertHtml($expected, $result);
 
-        $result = explode("\n", trim((string)$this->Html->css(['cake', 'vendor.generic'])));
+        $result = explode("\n", trim($this->Html->css(['cake', 'vendor.generic'])));
         $expected['link']['href'] = 'preg:/.*css\/cake\.css/';
         $this->assertHtml($expected, $result[0]);
         $expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
@@ -737,7 +737,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
         $this->assertHtml($expected, $result);
 
-        $result = explode("\n", trim((string)$this->Html->css(
+        $result = explode("\n", trim($this->Html->css(
             ['TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'],
             ['once' => false]
         )));

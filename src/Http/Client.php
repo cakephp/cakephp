@@ -607,7 +607,7 @@ class Client implements ClientInterface
             $out .= ':' . $options['port'];
         }
         if (!empty($options['basePath'])) {
-            $out .= '/' . trim((string)$options['basePath'], '/');
+            $out .= '/' . trim($options['basePath'], '/');
         }
         $out .= '/' . ltrim($url, '/');
 
@@ -738,7 +738,7 @@ class Client implements ClientInterface
         if (empty($auth['type'])) {
             $auth['type'] = 'basic';
         }
-        $name = ucfirst((string)$auth['type']);
+        $name = ucfirst($auth['type']);
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new CakeException(

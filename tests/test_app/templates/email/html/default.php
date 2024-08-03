@@ -1,5 +1,5 @@
 <?php
-$content = explode("\n", (string) $content);
+$content = explode("\n", $content);
 
 foreach ($content as $line):
     echo '<p> ' . $line . '</p>';

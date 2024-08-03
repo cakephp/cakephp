@@ -1285,11 +1285,11 @@ class MailerTest extends TestCase
             if ($message[$i] === $boundary) {
                 $flag = false;
                 $type = '';
-                while (!preg_match('/^$/', (string)$message[$i])) {
-                    if (preg_match('/^Content-Type: text\/plain/', (string)$message[$i])) {
+                while (!preg_match('/^$/', $message[$i])) {
+                    if (preg_match('/^Content-Type: text\/plain/', $message[$i])) {
                         $type = 'text';
                     }
-                    if (preg_match('/^Content-Type: text\/html/', (string)$message[$i])) {
+                    if (preg_match('/^Content-Type: text\/html/', $message[$i])) {
                         $type = 'html';
                     }
                     if ($message[$i] === 'Content-Transfer-Encoding: ' . $charset) {

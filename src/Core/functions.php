@@ -65,7 +65,7 @@ if (!function_exists('Cake\Core\h')) {
             $defaultCharset = mb_internal_encoding() ?: 'UTF-8';
         }
 
-        return htmlspecialchars((string)$text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
+        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
     }
 }
 
@@ -290,7 +290,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
             if (defined('ROOT')) {
                 $root = ROOT;
             }
-            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen((string)$root) + 1));
+            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen($root) + 1));
             $patterns = (array)Configure::read('Error.ignoredDeprecationPaths');
             foreach ($patterns as $pattern) {
                 $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);

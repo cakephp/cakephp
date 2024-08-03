@@ -723,7 +723,7 @@ abstract class TestCase extends BaseTestCase
                         $explanations[] = sprintf('Attribute `%s` == `%s`', $attr, $val);
                         $val = preg_quote($val, '/');
                     }
-                    $attrs[] = '[\s]+' . preg_quote((string)$attr, '/') . '=' . $quotes . $val . $quotes;
+                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
                 if ($attrs) {

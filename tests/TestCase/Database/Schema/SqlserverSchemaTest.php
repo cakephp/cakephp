@@ -38,7 +38,7 @@ class SqlserverSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string)$config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
+        $this->skipIf(!str_contains($config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
     }
 
     /**

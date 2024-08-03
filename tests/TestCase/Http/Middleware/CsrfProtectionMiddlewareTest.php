@@ -110,7 +110,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
 
         $this->assertNotEquals($cookie['value'], $requestAttr);
-        $this->assertEquals(strlen((string)$cookie['value']) * 2, strlen((string)$requestAttr));
+        $this->assertEquals(strlen($cookie['value']) * 2, strlen($requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 
@@ -210,7 +210,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         /** @var \Cake\Http\Response $response */
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertGreaterThan(32, strlen((string)$response->getCookie('csrfToken')['value']));
+        $this->assertGreaterThan(32, strlen($response->getCookie('csrfToken')['value']));
     }
 
     /**

@@ -603,7 +603,7 @@ trait IntegrationTestTrait
             $tokenUrl .= '?' . $query;
         }
 
-        parse_str((string)$query, $queryData);
+        parse_str($query, $queryData);
 
         $env = [
             'REQUEST_METHOD' => $method,

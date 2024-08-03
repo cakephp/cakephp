@@ -206,9 +206,9 @@ class Text
         $format = $options['format'];
         $format ??= sprintf(
             '/(?<!%s)%s%%s%s/',
-            preg_quote((string)$options['escape'], '/'),
-            str_replace('%', '%%', preg_quote((string)$options['before'], '/')),
-            str_replace('%', '%%', preg_quote((string)$options['after'], '/'))
+            preg_quote($options['escape'], '/'),
+            str_replace('%', '%%', preg_quote($options['before'], '/')),
+            str_replace('%', '%%', preg_quote($options['after'], '/'))
         );
 
         $dataKeys = array_keys($data);
@@ -267,9 +267,9 @@ class Text
                 ];
                 $kleenex = sprintf(
                     '/[\s]*[a-z]+=(")(%s%s%s[\s]*)+\\1/i',
-                    preg_quote((string)$options['before'], '/'),
+                    preg_quote($options['before'], '/'),
                     $clean['word'],
-                    preg_quote((string)$options['after'], '/')
+                    preg_quote($options['after'], '/')
                 );
                 $str = (string)preg_replace($kleenex, $clean['replacement'], $str);
                 if ($clean['andText']) {
@@ -286,14 +286,14 @@ class Text
 
                 $kleenex = sprintf(
                     '/(%s%s%s%s|%s%s%s%s)/',
-                    preg_quote((string)$options['before'], '/'),
+                    preg_quote($options['before'], '/'),
                     $clean['word'],
-                    preg_quote((string)$options['after'], '/'),
+                    preg_quote($options['after'], '/'),
                     $clean['gap'],
                     $clean['gap'],
-                    preg_quote((string)$options['before'], '/'),
+                    preg_quote($options['before'], '/'),
                     $clean['word'],
-                    preg_quote((string)$options['after'], '/')
+                    preg_quote($options['after'], '/')
                 );
                 $str = (string)preg_replace($kleenex, $clean['replacement'], $str);
                 break;
@@ -367,7 +367,7 @@ class Text
         $wrapped = self::wrap($text, $options);
 
         if (!empty($options['indent'])) {
-            $indentationLength = mb_strlen((string)$options['indent']);
+            $indentationLength = mb_strlen($options['indent']);
             $chunks = explode("\n", $wrapped);
             $count = count($chunks);
             if ($count < 2) {
@@ -549,7 +549,7 @@ class Text
             return $text;
         }
 
-        $truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen((string)$ellipsis));
+        $truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
         if (!$options['exact']) {
             $spacepos = mb_strpos($truncate, ' ');
             $truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
@@ -591,7 +591,7 @@ class Text
         $suffix = $options['ellipsis'];
 
         if ($options['html']) {
-            $ellipsisLength = self::_strlen(strip_tags((string)$options['ellipsis']), $options);
+            $ellipsisLength = self::_strlen(strip_tags($options['ellipsis']), $options);
 
             $truncateLength = 0;
             $totalLength = 0;
@@ -1145,7 +1145,7 @@ class Text
 
         $regex = '^\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
         if ($options['preserve']) {
-            $regex .= preg_quote((string)$options['preserve'], '/');
+            $regex .= preg_quote($options['preserve'], '/');
         }
         $quotedReplacement = preg_quote((string)$options['replacement'], '/');
         $map = [

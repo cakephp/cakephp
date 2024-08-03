@@ -676,8 +676,8 @@ class Router
 
         if ($request) {
             $base = $request->getAttribute('base', '');
-            if ($base !== '' && stristr($url, (string)$base)) {
-                $url = (string)preg_replace('/^' . preg_quote((string)$base, '/') . '/', '', $url, 1);
+            if ($base !== '' && stristr($url, $base)) {
+                $url = (string)preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
             }
         }
         $url = '/' . $url;

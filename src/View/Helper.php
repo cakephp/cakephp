@@ -145,7 +145,7 @@ class Helper implements EventListenerInterface
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
-        } elseif (isset($options[$key]) && trim((string)$options[$key])) {
+        } elseif (isset($options[$key]) && trim($options[$key])) {
             $options[$key] .= ' ' . $class;
         } else {
             $options[$key] = $class;

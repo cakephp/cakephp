@@ -191,14 +191,14 @@ class RouteCollection
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
-            $plugin = strtolower((string)$url['plugin']);
+            $plugin = strtolower($url['plugin']);
         }
         $prefix = false;
         if (isset($url['prefix']) && $url['prefix'] !== false) {
-            $prefix = strtolower((string)$url['prefix']);
+            $prefix = strtolower($url['prefix']);
         }
-        $controller = isset($url['controller']) ? strtolower((string)$url['controller']) : null;
-        $action = strtolower((string)$url['action']);
+        $controller = isset($url['controller']) ? strtolower($url['controller']) : null;
+        $action = strtolower($url['action']);
 
         $names = [
             "{$controller}:{$action}",

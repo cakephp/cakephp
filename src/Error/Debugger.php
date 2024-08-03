@@ -442,10 +442,10 @@ class Debugger
         if (defined('APP') && str_starts_with($path, APP)) {
             return str_replace(APP, 'APP/', $path);
         }
-        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, (string)CAKE_CORE_INCLUDE_PATH)) {
+        if (defined('CAKE_CORE_INCLUDE_PATH') && str_starts_with($path, CAKE_CORE_INCLUDE_PATH)) {
             return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
-        if (defined('ROOT') && str_starts_with($path, (string)ROOT)) {
+        if (defined('ROOT') && str_starts_with($path, ROOT)) {
             return str_replace(ROOT, 'ROOT', $path);
         }
 

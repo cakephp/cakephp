@@ -95,7 +95,7 @@ class BinaryUuidTypeTest extends TestCase
 
         $value = Text::uuid();
         $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertSame(str_replace('-', '', $value), unpack('H*', (string)$result)[1]);
+        $this->assertSame(str_replace('-', '', $value), unpack('H*', $result)[1]);
     }
 
     /**

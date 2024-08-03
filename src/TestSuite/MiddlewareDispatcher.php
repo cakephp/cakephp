@@ -111,7 +111,7 @@ class MiddlewareDispatcher
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
             $spec['environment']
         );
-        if (str_contains((string)$environment['PHP_SELF'], 'phpunit')) {
+        if (str_contains($environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
         }
         $request = ServerRequestFactory::fromGlobals(

@@ -30,7 +30,7 @@ use function Cake\Core\h;
     <?php $stackTrace = Debugger::formatTrace($exc->getTrace(), ['format' => 'array']); ?>
     <?php foreach ($stackTrace as $i => $stack): ?>
         <?php
-        $class = isset($stack['file']) && str_contains((string) $stack['file'], APP) ? 'vendor-frame' : 'app-frame';
+        $class = isset($stack['file']) && str_contains($stack['file'], APP) ? 'vendor-frame' : 'app-frame';
         $class .= $i == 0 ? ' active' : '';
         ?>
         <li class="stack-frame <?= $class ?>">

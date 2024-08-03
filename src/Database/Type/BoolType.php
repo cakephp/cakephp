@@ -65,7 +65,7 @@ class BoolType extends BaseType implements BatchCastingInterface
         }
 
         if (!is_numeric($value)) {
-            return strtolower((string)$value) === 'true';
+            return strtolower($value) === 'true';
         }
 
         return !empty($value);
@@ -83,7 +83,7 @@ class BoolType extends BaseType implements BatchCastingInterface
             }
 
             if (!is_numeric($value)) {
-                $values[$field] = strtolower((string)$value) === 'true';
+                $values[$field] = strtolower($value) === 'true';
                 continue;
             }
 

@@ -56,7 +56,7 @@ class SqliteSchemaTest extends TestCase
     protected function _needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains((string)$config['driver'], 'Sqlite'), 'Not using Sqlite for test config');
+        $this->skipIf(!str_contains($config['driver'], 'Sqlite'), 'Not using Sqlite for test config');
     }
 
     /**

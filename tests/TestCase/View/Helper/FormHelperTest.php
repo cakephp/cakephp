@@ -391,7 +391,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateFile(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => 'file']);
         $expected = [
             'form' => [
@@ -410,7 +410,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateGet(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => 'get']);
         $expected = ['form' => [
             'method' => 'get', 'action' => '/articles/add',
@@ -426,7 +426,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateExplicitMethodEnctype(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(null, [
             'type' => 'get',
             'method' => 'put',
@@ -606,7 +606,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateTypeOptions(string $type, string $method, string $override): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create(null, ['type' => $type]);
         $expected = [
             'form' => [
@@ -657,7 +657,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateUpdateForm(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/edit/1')
@@ -684,7 +684,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateAutoUrl(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/delete/10')
@@ -763,7 +763,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post',
-                'accept-charset' => strtolower((string)Configure::read('App.encoding')),
+                'accept-charset' => strtolower(Configure::read('App.encoding')),
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -776,7 +776,7 @@ class FormHelperTest extends TestCase
     {
         $builder = Router::createRouteBuilder('/');
         $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('controller', 'Users'));
@@ -830,7 +830,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateQueryStringRequest(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'type' => 'post',
             'escape' => false,
@@ -866,7 +866,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateWithMultipleIdInData(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()->withData('Article.id', [1, 2]));
         $result = $this->Form->create($this->article);
@@ -885,7 +885,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreatePassedArgs(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $this->View->setRequest($this->View->getRequest()->withData('Article.id', 1));
         $result = $this->Form->create($this->article, [
             'type' => 'post',
@@ -910,7 +910,7 @@ class FormHelperTest extends TestCase
      */
     public function testGetFormCreate(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, ['type' => 'get']);
         $expected = ['form' => [
             'method' => 'get', 'action' => '/articles/add',
@@ -943,7 +943,7 @@ class FormHelperTest extends TestCase
      */
     public function testGetFormWithFalseModel(): void
     {
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $this->View->setRequest($this->View->getRequest()->withParam('controller', 'ContactTest'));
         $result = $this->Form->create(null, [
             'type' => 'get', 'url' => ['controller' => 'ContactTest'],
@@ -970,7 +970,7 @@ class FormHelperTest extends TestCase
     public function testCreateWithSecurity(): void
     {
         $this->View->setRequest($this->View->getRequest()->withAttribute('csrfToken', 'testKey'));
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'url' => '/articles/publish',
         ]);
@@ -1899,7 +1899,7 @@ class FormHelperTest extends TestCase
         ];
 
         $result = $this->Form->create($this->article, ['url' => '/articles/add']);
-        $encoding = strtolower((string)Configure::read('App.encoding'));
+        $encoding = strtolower(Configure::read('App.encoding'));
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding],
             'div' => ['style' => 'display:none;'],

@@ -326,8 +326,8 @@ class ServerRequest implements ServerRequestInterface
             $config['url'] = '/' . $config['url'];
         }
 
-        if (str_contains((string)$config['url'], '?')) {
-            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', (string)$config['url']);
+        if (str_contains($config['url'], '?')) {
+            [$config['url'], $config['environment']['QUERY_STRING']] = explode('?', $config['url']);
 
             parse_str($config['environment']['QUERY_STRING'], $queryArgs);
             $config['query'] += $queryArgs;

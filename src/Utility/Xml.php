@@ -291,7 +291,7 @@ class Xml
         }
         self::_fromArray($dom, $dom, $input, $options['format']);
 
-        $options['return'] = strtolower((string)$options['return']);
+        $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
             return new SimpleXMLElement((string)$dom->saveXML());
         }

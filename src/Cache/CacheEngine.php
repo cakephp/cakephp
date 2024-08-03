@@ -87,7 +87,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             $this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
         }
         if (!is_numeric($this->_config['duration'])) {
-            $this->_config['duration'] = strtotime((string)$this->_config['duration']) - time();
+            $this->_config['duration'] = strtotime($this->_config['duration']) - time();
         }
 
         return true;

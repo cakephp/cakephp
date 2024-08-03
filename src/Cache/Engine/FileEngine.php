@@ -91,7 +91,7 @@ class FileEngine extends CacheEngine
         parent::init($config);
 
         $this->_config['path'] ??= sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
-        if (substr((string)$this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
+        if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
         if ($this->_groupPrefix) {
@@ -297,7 +297,7 @@ class FileEngine extends CacheEngine
             return;
         }
 
-        $prefixLength = strlen((string)$this->_config['prefix']);
+        $prefixLength = strlen($this->_config['prefix']);
 
         while (($entry = $dir->read()) !== false) {
             if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {

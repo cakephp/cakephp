@@ -92,7 +92,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $this->assertMatchesRegularExpression('/^[A-Z0-9+\/]+=*$/i', $token, 'Should look like base64 data.');
         $requestAttr = $updatedRequest->getAttribute('csrfToken');
         $this->assertNotEquals($token, $requestAttr);
-        $this->assertEquals(strlen((string)$token) * 2, strlen((string)$requestAttr));
+        $this->assertEquals(strlen($token) * 2, strlen($requestAttr));
         $this->assertMatchesRegularExpression('/^[A-Z0-9\/+]+=*$/i', $requestAttr);
     }
 

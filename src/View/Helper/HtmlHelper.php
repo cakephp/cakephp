@@ -274,7 +274,8 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
-            $title = htmlentities((string)$title, ENT_QUOTES, $escapeTitle);
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
         $templater = $this->templater();
@@ -1010,7 +1011,7 @@ class HtmlHelper extends Helper
                     ];
                 }
                 if (!isset($source['type'])) {
-                    $ext = pathinfo((string)$source['src'], PATHINFO_EXTENSION);
+                    $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
                     $source['type'] = $this->_View->getResponse()->getMimeType($ext);
                 }
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
@@ -1034,10 +1035,10 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo((string)$path, PATHINFO_EXTENSION));
+                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
                 assert(is_string($mimeType));
             }
-            if (str_starts_with((string)$mimeType, 'video/')) {
+            if (str_starts_with($mimeType, 'video/')) {
                 $tag = 'video';
             } else {
                 $tag = 'audio';

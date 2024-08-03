@@ -391,7 +391,7 @@ class FormHelper extends Helper
         $options += [
             'type' => $isCreate ? 'post' : 'put',
             'url' => null,
-            'encoding' => strtolower((string)Configure::read('App.encoding')),
+            'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
             'valueSources' => null,
@@ -426,7 +426,7 @@ class FormHelper extends Helper
         unset($options['url'], $options['idPrefix']);
 
         $htmlAttributes = [];
-        switch (strtolower((string)$options['type'])) {
+        switch (strtolower($options['type'])) {
             case 'get':
                 $htmlAttributes['method'] = 'get';
                 break;
@@ -442,7 +442,7 @@ class FormHelper extends Helper
             case 'patch':
                 $append .= $this->hidden('_method', [
                     'name' => '_method',
-                    'value' => strtoupper((string)$options['type']),
+                    'value' => strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP,
                 ]);
             // Default to post method
@@ -450,13 +450,13 @@ class FormHelper extends Helper
                 $htmlAttributes['method'] = 'post';
         }
         if (isset($options['method'])) {
-            $htmlAttributes['method'] = strtolower((string)$options['method']);
+            $htmlAttributes['method'] = strtolower($options['method']);
         }
         if (isset($options['enctype'])) {
-            $htmlAttributes['enctype'] = strtolower((string)$options['enctype']);
+            $htmlAttributes['enctype'] = strtolower($options['enctype']);
         }
 
-        $this->requestType = strtolower((string)$options['type']);
+        $this->requestType = strtolower($options['type']);
 
         if (!empty($options['encoding'])) {
             $htmlAttributes['accept-charset'] = $options['encoding'];
@@ -1087,8 +1087,8 @@ class FormHelper extends Helper
             // Don't include aria-describedby unless we have a good chance of
             // having error message show up.
             if (
-                str_contains((string)$templater->get('error'), '{{id}}') &&
-                str_contains((string)$templater->get('inputContainerError'), '{{error}}')
+                str_contains($templater->get('error'), '{{id}}') &&
+                str_contains($templater->get('inputContainerError'), '{{error}}')
             ) {
                 $options += [
                    'aria-describedby' => $isFieldError ? $this->_domId($fieldName) . '-error' : null,
@@ -1222,7 +1222,7 @@ class FormHelper extends Helper
     {
         $label = $options['labelOptions'];
         unset($options['labelOptions']);
-        switch (strtolower((string)$options['type'])) {
+        switch (strtolower($options['type'])) {
             case 'select':
             case 'radio':
             case 'multicheckbox':
@@ -1863,7 +1863,7 @@ class FormHelper extends Helper
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
-            $requestMethod = strtoupper((string)$options['method']);
+            $requestMethod = strtoupper($options['method']);
             unset($options['method']);
         }
 

@@ -115,7 +115,7 @@ class BinaryUuidType extends BaseType
      */
     protected function convertBinaryUuidToString(mixed $binary): string
     {
-        $string = unpack('H*', (string)$binary);
+        $string = unpack('H*', $binary);
         assert($string !== false, 'Could not unpack uuid');
 
         /** @var array<string> $string */
