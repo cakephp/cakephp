@@ -37,7 +37,6 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error\Debugger;
 use Cake\I18n\DateTime;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
