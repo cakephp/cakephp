@@ -177,7 +177,9 @@ class SqliteTest extends TestCase
             ->shouldAllowMockingMethod('quoteIdentifier')
             ->makePartial();
         $mock->shouldReceive('quote')
-            ->andReturnUsing(fn ($value)=> '"' . $value . '"');
+            ->andReturnUsing(function ($value) {
+                return '"' . $value . '"';
+            });
 
         $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])

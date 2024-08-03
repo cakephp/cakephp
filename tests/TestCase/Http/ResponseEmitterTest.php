@@ -342,7 +342,9 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeCallbackStream(): void
     {
-        $stream = new CallbackStream(fn () => 'It worked');
+        $stream = new CallbackStream(function () {
+            return 'It worked';
+        });
         $response = (new Response())
             ->withStatus(201)
             ->withBody($stream)

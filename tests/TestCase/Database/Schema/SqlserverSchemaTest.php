@@ -1147,7 +1147,9 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->willReturnCallback(fn ($value)=> "'$value'");
+            ->willReturnCallback(function ($value) {
+                return "'$value'";
+            });
 
         $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])

@@ -133,7 +133,9 @@ class BodyParserMiddlewareTest extends TestCase
     public function testAddParserReturn(): void
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $f1 = fn (string $body)=> json_decode($body, true);
+        $f1 = function (string $body) {
+            return json_decode($body, true);
+        };
         $this->assertSame($parser, $parser->addParser(['application/json'], $f1));
     }
 
@@ -144,8 +146,12 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $parser = new BodyParserMiddleware(['json' => false]);
 
-        $f1 = fn (string $body)=> json_decode($body, true);
-        $f2 = fn (string $body)=> ['overridden'];
+        $f1 = function (string $body) {
+            return json_decode($body, true);
+        };
+        $f2 = function (string $body) {
+            return ['overridden'];
+        };
         $parser->addParser(['application/json'], $f1);
         $parser->addParser(['application/json'], $f2);
 
@@ -410,7 +416,9 @@ XML;
             ],
             'input' => 'lol',
         ]);
-        $handler = new TestRequestHandler(fn ($req)=> new Response());
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
         $this->expectException(BadRequestException::class);
         $parser = new BodyParserMiddleware();
         $parser->process($request, $handler);

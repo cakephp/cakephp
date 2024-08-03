@@ -17,8 +17,12 @@ class MiddlewareApplication extends BaseApplication
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
-            ->add(fn ($request, $handler)=> $handler->handle($request)->withHeader('X-First', 'first'))
-            ->add(fn ($request, $handler)=> $handler->handle($request)->withHeader('X-Second', 'second'))
+            ->add(function ($request, $handler) {
+                return $handler->handle($request)->withHeader('X-First', 'first');
+            })
+            ->add(function ($request, $handler) {
+                return $handler->handle($request)->withHeader('X-Second', 'second');
+            })
             ->add(function ($request, $handler) {
                 $response = $handler->handle($request);
 

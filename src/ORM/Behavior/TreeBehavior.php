@@ -393,7 +393,9 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$left, $right] = array_map(
-            fn ($field)=> $this->_table->aliasField($field),
+            function ($field) {
+                return $this->_table->aliasField($field);
+            },
             [$config['left'], $config['right']]
         );
 
@@ -447,7 +449,9 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = array_map(
-            fn ($field)=> $this->_table->aliasField($field),
+            function ($field) {
+                return $this->_table->aliasField($field);
+            },
             [$config['parent'], $config['left'], $config['right']]
         );
 

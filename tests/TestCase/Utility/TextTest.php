@@ -1824,8 +1824,10 @@ HTML_WRAP;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod(Text::class, '_strlen');
-        $strlen = fn () => $method->invokeArgs(null, func_get_args());
+        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
+        $strlen = function () use ($method) {
+            return $method->invokeArgs(null, func_get_args());
+        };
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame(20, $strlen($text, []));
@@ -1845,8 +1847,10 @@ HTML_WRAP;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod(Text::class, '_substr');
-        $substr = fn () => $method->invokeArgs(null, func_get_args());
+        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
+        $substr = function () use ($method) {
+            return $method->invokeArgs(null, func_get_args());
+        };
 
         $text = 'データベースアクセス &amp; ORM';
         $this->assertSame('アクセス', $substr($text, 6, 4, []));

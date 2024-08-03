@@ -36,9 +36,15 @@ class PostsController extends AppController
         $this->loadComponent('Flash');
         $this->loadComponent('FormProtection');
 
-        $this->middleware(fn ($request, $handler)=> $handler->handle($request->withAttribute('for-all', true)));
-        $this->middleware(fn ($request, $handler)=> $handler->handle($request->withAttribute('index-only', true)), ['only' => 'index']);
-        $this->middleware(fn ($request, $handler)=> $handler->handle($request->withAttribute('all-except-index', true)), ['except' => ['index']]);
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('for-all', true));
+        });
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('index-only', true));
+        }, ['only' => 'index']);
+        $this->middleware(function ($request, $handler) {
+            return $handler->handle($request->withAttribute('all-except-index', true));
+        }, ['except' => ['index']]);
     }
 
     /**

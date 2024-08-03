@@ -1540,7 +1540,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(fn ($key)=> var_export($key, true), $primaryKey);
+            $primaryKey = array_map(function ($key) {
+                return var_export($key, true);
+            }, $primaryKey);
 
             throw new InvalidPrimaryKeyException(sprintf(
                 'Record not found in table `%s` with primary key `[%s]`.',
@@ -2150,7 +2152,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
-        $filteredKeys = array_filter($primary, fn ($v)=> $v !== null);
+        $filteredKeys = array_filter($primary, function ($v) {
+            return $v !== null;
+        });
         $data += $filteredKeys;
 
         if (count($primary) > 1) {

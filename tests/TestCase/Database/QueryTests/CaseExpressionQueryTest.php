@@ -66,16 +66,18 @@ class CaseExpressionQueryTest extends TestCase
     public function testSimpleCase(): void
     {
         $query = $this->query
-            ->select(fn (Query $query)=> [
-                'name',
-                'category_name' => $query->newExpr()
-                    ->case($query->identifier('products.category'))
-                    ->when(1)
-                    ->then('Touring')
-                    ->when(2)
-                    ->then('Urban')
-                    ->else('Other'),
-            ])
+            ->select(function (Query $query) {
+                return [
+                    'name',
+                    'category_name' => $query->newExpr()
+                        ->case($query->identifier('products.category'))
+                        ->when(1)
+                        ->then('Touring')
+                        ->when(2)
+                        ->then('Urban')
+                        ->else('Other'),
+                ];
+            })
             ->from('products')
             ->orderByAsc('category')
             ->orderByAsc('name');
@@ -104,17 +106,19 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(fn (Query $query)=> [
-                'name',
-                'price',
-                'price_range' => $query->newExpr()
-                    ->case()
-                    ->when(['price <' => 20])
-                    ->then('Under $20')
-                    ->when(['price >=' => 20, 'price <' => 30])
-                    ->then('Under $30')
-                    ->else('$30 and above'),
-            ])
+            ->select(function (Query $query) {
+                return [
+                    'name',
+                    'price',
+                    'price_range' => $query->newExpr()
+                        ->case()
+                        ->when(['price <' => 20])
+                        ->then('Under $20')
+                        ->when(['price >=' => 20, 'price <' => 30])
+                        ->then('Under $30')
+                        ->else('$30 and above'),
+                ];
+            })
             ->from('products')
             ->orderByAsc('price')
             ->orderByAsc('name')
@@ -151,14 +155,18 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['article_id', 'user_id'])
             ->from('comments')
             ->orderByAsc('comments.article_id')
-            ->orderByDesc(fn (QueryExpression $exp, Query $query)=> $query->newExpr()
-                ->case($query->identifier('comments.article_id'))
-                ->when(1)
-                ->then($query->identifier('comments.user_id')))
-            ->orderByAsc(fn (QueryExpression $exp, Query $query)=> $query->newExpr()
-                ->case($query->identifier('comments.article_id'))
-                ->when(2)
-                ->then($query->identifier('comments.user_id')))
+            ->orderByDesc(function (QueryExpression $exp, Query $query) {
+                return $query->newExpr()
+                    ->case($query->identifier('comments.article_id'))
+                    ->when(1)
+                    ->then($query->identifier('comments.user_id'));
+            })
+            ->orderByAsc(function (QueryExpression $exp, Query $query) {
+                return $query->newExpr()
+                    ->case($query->identifier('comments.article_id'))
+                    ->when(2)
+                    ->then($query->identifier('comments.user_id'));
+            })
             ->setSelectTypeMap($typeMap);
 
         $expected = [
@@ -283,13 +291,15 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(fn (Query $query)=> [
-                'val' => $query->newExpr()
-                    ->case($query->newExpr(':value'))
-                    ->when($query->newExpr(':when'))
-                    ->then($query->newExpr(':then'))
-                    ->else($query->newExpr(':else')),
-            ])
+            ->select(function (Query $query) {
+                return [
+                    'val' => $query->newExpr()
+                        ->case($query->newExpr(':value'))
+                        ->when($query->newExpr(':when'))
+                        ->then($query->newExpr(':then'))
+                        ->else($query->newExpr(':else')),
+                ];
+            })
             ->from('products')
             ->bind(':value', $value, 'integer')
             ->bind(':when', $when, 'integer')

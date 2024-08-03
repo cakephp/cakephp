@@ -64,7 +64,9 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder())
         );
 
-        $w = (new WindowExpression())->partition(fn (QueryExpression $expr)=> $expr->add(new AggregateExpression('MyAggregate', ['param'])));
+        $w = (new WindowExpression())->partition(function (QueryExpression $expr) {
+            return $expr->add(new AggregateExpression('MyAggregate', ['param']));
+        });
         $this->assertEqualsSql(
             'PARTITION BY MyAggregate(:param0)',
             $w->sql(new ValueBinder())
@@ -95,8 +97,12 @@ class WindowExpressionTest extends TestCase
         );
 
         $w = (new WindowExpression())
-            ->orderBy(fn () => 'test')
-            ->orderBy(fn (QueryExpression $expr)=> [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')]);
+            ->orderBy(function () {
+                return 'test';
+            })
+            ->orderBy(function (QueryExpression $expr) {
+                return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
+            });
         $this->assertEqualsSql(
             'ORDER BY test, test2, test3 DESC',
             $w->sql(new ValueBinder())

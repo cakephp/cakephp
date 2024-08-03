@@ -134,7 +134,9 @@ class ServerTest extends TestCase
             ->makePartial();
         $app->shouldReceive('pluginBootstrap', 'pluginMiddleware')
             ->with(Mockery::type(MiddlewareQueue::class))
-            ->andReturnUsing(fn ($middleware)=> $middleware);
+            ->andReturnUsing(function ($middleware) {
+                return $middleware;
+            });
 
         $server = new Server($app);
         $res = $server->run($request);

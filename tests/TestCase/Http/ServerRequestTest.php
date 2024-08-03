@@ -42,7 +42,9 @@ class ServerRequestTest extends TestCase
     public function testCustomArgsDetector(): void
     {
         $request = new ServerRequest();
-        $request->addDetector('controller', fn ($request, $name)=> $request->getParam('controller') === $name);
+        $request->addDetector('controller', function ($request, $name) {
+            return $request->getParam('controller') === $name;
+        });
 
         $request = $request->withParam('controller', 'cake');
         $this->assertTrue($request->is('controller', 'cake'));
@@ -745,10 +747,14 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        ServerRequest::addDetector('closure', fn ($request)=> true);
+        ServerRequest::addDetector('closure', function ($request) {
+            return true;
+        });
         $this->assertTrue($request->is('closure'));
 
-        ServerRequest::addDetector('get', fn ($request)=> $request->getEnv('REQUEST_METHOD') === 'GET');
+        ServerRequest::addDetector('get', function ($request) {
+            return $request->getEnv('REQUEST_METHOD') === 'GET';
+        });
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
@@ -811,7 +817,9 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
 
-        ServerRequest::addDetector('callme', fn ($request)=> $request->getAttribute('return'));
+        ServerRequest::addDetector('callme', function ($request) {
+            return $request->getAttribute('return');
+        });
         $request = $request->withAttribute('return', true);
         $request->clearDetectorCache();
         $this->assertTrue($request->isCallMe());

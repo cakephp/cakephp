@@ -2471,7 +2471,9 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', fn (EventInterface $event, $query)=> $query->contain(['Articles']));
+        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
+            return $query->contain(['Articles']);
+        });
         $marshall = new Marshaller($this->comments);
         $result = $marshall->mergeMany($entities, $data);
 

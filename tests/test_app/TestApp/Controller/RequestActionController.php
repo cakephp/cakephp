@@ -179,7 +179,9 @@ class RequestActionController extends AppController
     public function uploaded_files()
     {
         $files = Hash::flatten($this->request->getUploadedFiles());
-        $names = collection($files)->map(fn (UploadedFileInterface $file)=> $file->getClientFilename());
+        $names = collection($files)->map(function (UploadedFileInterface $file) {
+            return $file->getClientFilename();
+        });
 
         return $this->response->withStringBody(json_encode($names));
     }

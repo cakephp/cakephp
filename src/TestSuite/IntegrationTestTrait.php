@@ -668,9 +668,9 @@ trait IntegrationTestTrait
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
 
-            $keys = array_map(fn (
-                $field
-            )=> preg_replace('/(\.\d+)+$/', '', (string)$field), array_keys(Hash::flatten($fields)));
+            $keys = array_map(function ($field) {
+                return preg_replace('/(\.\d+)+$/', '', (string)$field);
+            }, array_keys(Hash::flatten($fields)));
 
             $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);
             foreach ($keys as $field) {

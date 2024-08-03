@@ -93,7 +93,9 @@ class TranslateBehaviorEavTest extends TestCase
                 return [];
             }
 
-            return array_map(fn (EntityInterface $entity)=> $entity->toArray(), $translations);
+            return array_map(function (EntityInterface $entity) {
+                return $entity->toArray();
+            }, $translations);
         });
     }
 
@@ -606,7 +608,9 @@ class TranslateBehaviorEavTest extends TestCase
         $table->setLocale('eng');
         $comments->setLocale('eng');
 
-        $results = $table->find()->contain(['Comments' => fn ($q)=> $q->select(['id', 'comment', 'article_id'])]);
+        $results = $table->find()->contain(['Comments' => function ($q) {
+            return $q->select(['id', 'comment', 'article_id']);
+        }]);
 
         $list = new Collection($results->first()->comments);
         $expected = [
@@ -638,7 +642,9 @@ class TranslateBehaviorEavTest extends TestCase
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $results = $table->find('translations')->contain([
-            'Comments' => fn ($q)=> $q->find('translations')->select(['id', 'comment', 'article_id']),
+            'Comments' => function ($q) {
+                return $q->find('translations')->select(['id', 'comment', 'article_id']);
+            },
         ]);
 
         $comments = $results->first()->comments;
@@ -677,7 +683,9 @@ class TranslateBehaviorEavTest extends TestCase
         $table->setLocale('cze');
         $comments->setLocale('eng');
         $results = $table->find('translations')->contain([
-            'Comments' => fn ($q)=> $q->find('translations')->select(['id', 'comment', 'article_id']),
+            'Comments' => function ($q) {
+                return $q->find('translations')->select(['id', 'comment', 'article_id']);
+            },
         ]);
 
         $comments = $results->first()->comments;
@@ -730,7 +738,9 @@ class TranslateBehaviorEavTest extends TestCase
         $results = $table->find()
             ->select(['title', 'body'])
             ->orderBy(['title' => 'asc'])
-            ->contain(['Authors' => fn (SelectQuery $q)=> $q->select(['id', 'name'])]);
+            ->contain(['Authors' => function (SelectQuery $q) {
+                return $q->select(['id', 'name']);
+            }]);
 
         $expected = [
             [
@@ -752,7 +762,9 @@ class TranslateBehaviorEavTest extends TestCase
                 '_locale' => 'eng',
             ],
         ];
-        $results = array_map(fn (EntityInterface $r)=> $r->toArray(), $results->toArray());
+        $results = array_map(function (EntityInterface $r) {
+            return $r->toArray();
+        }, $results->toArray());
         $this->assertEquals($expected, $results);
     }
 
@@ -2013,7 +2025,9 @@ class TranslateBehaviorEavTest extends TestCase
         $result = $table
             ->find()
             ->contain([
-                'Articles' => fn ($query)=> $query->matching('Tags'),
+                'Articles' => function ($query) {
+                    return $query->matching('Tags');
+                },
                 'Articles.Tags',
             ])
             ->first();

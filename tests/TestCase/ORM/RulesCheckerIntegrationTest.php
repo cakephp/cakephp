@@ -105,7 +105,9 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                fn (EntityInterface $entity)=> false,
+                function (EntityInterface $entity) {
+                    return false;
+                },
                 ['errorField' => 'title', 'message' => 'This is an error']
             );
 
@@ -193,7 +195,9 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                fn (Entity $article)=> is_numeric($article->title),
+                function (Entity $article) {
+                    return is_numeric($article->title);
+                },
                 ['errorField' => 'title', 'message' => 'This is an error']
             );
 
@@ -231,7 +235,9 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(fn (Entity $entity)=> $entity->article_id > 4);
+            ->add(function (Entity $entity) {
+                return $entity->article_id > 4;
+            });
 
         $this->assertFalse($table->save($entity));
         $this->assertTrue($entity->isNew());
@@ -268,7 +274,9 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(fn (Entity $entity)=> $entity->tag_id > 4);
+            ->add(function (Entity $entity) {
+                return $entity->tag_id > 4;
+            });
 
         $this->assertSame($entity, $table->save($entity, ['atomic' => false]));
         $this->assertFalse($entity->isNew());
@@ -295,7 +303,9 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(
-            fn () => false,
+            function () {
+                return false;
+            },
             'ruleName',
             ['errorField' => 'name']
         );
@@ -1120,7 +1130,9 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->addDelete(fn ($entity)=> false);
+        $rules->addDelete(function ($entity) {
+            return false;
+        });
 
         $entity = $table->get(1);
         $this->assertFalse($table->delete($entity));
@@ -1182,7 +1194,9 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(fn () => 'So much nope', ['errorField' => 'name']);
+        $rules->add(function () {
+            return 'So much nope';
+        }, ['errorField' => 'name']);
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['So much nope'], $entity->getError('name'));
@@ -1201,7 +1215,9 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(fn () => 'So much nope');
+        $rules->add(function () {
+            return 'So much nope';
+        });
 
         $this->assertFalse($table->save($entity));
         $this->assertEmpty($entity->getErrors());

@@ -530,7 +530,9 @@ class I18nExtractCommand extends Command
         /** @psalm-suppress UndefinedConstant */
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
-        usort($paths, fn (string $a, string $b)=> strlen($a) - strlen($b));
+        usort($paths, function (string $a, string $b) {
+            return strlen($a) - strlen($b);
+        });
 
         foreach ($this->_translations as $domain => $translations) {
             foreach ($translations as $msgid => $contexts) {

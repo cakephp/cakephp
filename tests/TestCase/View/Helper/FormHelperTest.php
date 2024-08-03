@@ -305,8 +305,10 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
-        $this->Form->addContextProvider('orm', fn ($request, $data)=> $stub);
+        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
+            return $stub;
+        });
         $this->Form->create($entity);
         $result = $this->Form->context();
         $this->assertSame($stub, $result);

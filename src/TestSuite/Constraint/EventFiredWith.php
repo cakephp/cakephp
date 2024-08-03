@@ -76,7 +76,9 @@ class EventFiredWith extends Constraint
         }
 
         $eventGroup = (new Collection($firedEvents))
-            ->groupBy(fn (EventInterface $event): string => $event->getName())
+            ->groupBy(function (EventInterface $event): string {
+                return $event->getName();
+            })
             ->toArray();
 
         if (!array_key_exists($other, $eventGroup)) {

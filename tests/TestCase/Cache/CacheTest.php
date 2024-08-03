@@ -819,7 +819,9 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         $counter = 0;
-        $cacher = fn () => 'This is some data ' . $counter;
+        $cacher = function () use ($counter) {
+            return 'This is some data ' . $counter;
+        };
 
         $expected = 'This is some data 0';
         $result = Cache::remember('test_key', $cacher, 'tests');

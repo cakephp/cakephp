@@ -490,7 +490,9 @@ class CommandRunnerTest extends TestCase
         $app->expects($this->once())
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
-            ->willReturnCallback(fn ($commands)=> $commands);
+            ->willReturnCallback(function ($commands) {
+                return $commands;
+            });
         $app->expects($this->once())->method('routes');
         $app->expects($this->once())->method('pluginRoutes');
 

@@ -745,7 +745,9 @@ class ValidatorTest extends TestCase
         $validator->allowEmptyString(
             'title',
             'very required',
-            fn ($context)=> $context['data']['otherField'] === true
+            function ($context) {
+                return $context['data']['otherField'] === true;
+            }
         )
             ->scalar('title');
 

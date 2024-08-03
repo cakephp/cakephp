@@ -930,7 +930,9 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(fn ($method)=> $method->name, $reflection->getMethods());
+        $classMethods = array_map(function ($method) {
+            return $method->name;
+        }, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
         $nonExistingMethods = array_diff($methods, $existingMethods);

@@ -254,7 +254,9 @@ class Sqlite extends Driver
                 $expression
                     ->setName('ROUND')
                     ->setConjunction('-')
-                    ->iterateParts(fn ($p)=> new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]));
+                    ->iterateParts(function ($p) {
+                        return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
+                    });
                 break;
             case 'NOW':
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);

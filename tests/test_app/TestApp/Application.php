@@ -58,7 +58,9 @@ class Application extends BaseApplication
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(fn ($request, $handler)=> $handler->handle($request)->withHeader('X-Middleware', 'true'));
+        $middlewareQueue->add(function ($request, $handler) {
+            return $handler->handle($request)->withHeader('X-Middleware', 'true');
+        });
         $middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error', [])));
         $middlewareQueue->add(new RoutingMiddleware($this));
 

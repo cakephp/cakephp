@@ -57,7 +57,9 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder())
         );
 
-        $f->filter(fn (QueryExpression $q)=> $q->add(['this2' => new IdentifierExpression('that2')]));
+        $f->filter(function (QueryExpression $q) {
+            return $q->add(['this2' => new IdentifierExpression('that2')]);
+        });
         $this->assertEqualsSql(
             'MyFunction() FILTER (WHERE (this = that AND this2 = that2))',
             $f->sql(new ValueBinder())

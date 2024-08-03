@@ -678,7 +678,9 @@ class Marshaller
 
                 return implode(';', $keys);
             })
-            ->map(fn ($element, $key)=> $key === '' ? $element : $element[0])
+            ->map(function ($element, $key) {
+                return $key === '' ? $element : $element[0];
+            })
             ->toArray();
 
         $new = $indexed[''] ?? [];
@@ -700,7 +702,9 @@ class Marshaller
         }
 
         $conditions = (new Collection($indexed))
-            ->map(fn ($data, $key)=> explode(';', (string)$key))
+            ->map(function ($data, $key) {
+                return explode(';', (string)$key);
+            })
             ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map($this->_table->aliasField(...), $primary);

@@ -382,7 +382,9 @@ class HasMany extends Association
                 $property,
                 (new Collection($sourceEntity->get($property)))
                 ->reject(
-                    fn ($assoc)=> in_array($assoc, $targetEntities)
+                    function ($assoc) use ($targetEntities) {
+                        return in_array($assoc, $targetEntities);
+                    }
                 )
                 ->toList()
             );
@@ -474,10 +476,14 @@ class HasMany extends Association
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            fn (EntityInterface $ent)=> $ent->extract($primaryKey)
+            function (EntityInterface $ent) use ($primaryKey) {
+                return $ent->extract($primaryKey);
+            }
         )
         ->filter(
-            fn ($v)=> !in_array(null, $v, true)
+            function ($v) {
+                return !in_array(null, $v, true);
+            }
         )
         ->toList();
 
@@ -554,7 +560,9 @@ class HasMany extends Association
         return !in_array(
             false,
             array_map(
-                fn ($prop)=> $table->getSchema()->isNullable($prop),
+                function ($prop) use ($table) {
+                    return $table->getSchema()->isNullable($prop);
+                },
                 $properties
             )
         );

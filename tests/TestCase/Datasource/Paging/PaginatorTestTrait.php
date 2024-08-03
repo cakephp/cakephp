@@ -167,7 +167,11 @@ trait PaginatorTestTrait
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', fn ($q)=> $q->matching('Authors', fn ($q)=> $q->where(['Authors.name' => 'larry'])));
+            $query ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
         });
         $results = $this->Paginator->paginate($articles);
         $result = $results->first();

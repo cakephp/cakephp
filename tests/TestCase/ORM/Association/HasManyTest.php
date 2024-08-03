@@ -176,7 +176,9 @@ class HasManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = fn () => ['id' => 'ASC'];
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
         $assoc->setSort($closure);
         $this->assertSame($closure, $assoc->getSort());
 
@@ -207,7 +209,9 @@ class HasManyTest extends TestCase
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
-        $assoc->setSort(fn () => ['Articles.id' => 'DESC']);
+        $assoc->setSort(function () {
+            return ['Articles.id' => 'DESC'];
+        });
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
@@ -414,7 +418,9 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $queryBuilder = fn ($query)=> $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
+        $queryBuilder = function ($query) {
+            return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
+        };
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 
         $expected = [
@@ -614,7 +620,9 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $articles = $association->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(fn () => false);
+            $rules->addDelete(function () {
+                return false;
+            });
         });
 
         $author = new Entity(['id' => 1, 'name' => 'mark']);
@@ -1167,7 +1175,9 @@ class HasManyTest extends TestCase
         $authors->hasMany('Articles')
             ->setDependent(true)
             ->setSaveStrategy('replace')
-            ->setConditions(fn () => ['published' => 'Y']);
+            ->setConditions(function () {
+                return ['published' => 'Y'];
+            });
 
         $entity = $authors->newEntity([
             'name' => 'mylux',

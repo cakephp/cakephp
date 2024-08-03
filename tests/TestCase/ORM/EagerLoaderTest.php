@@ -401,10 +401,14 @@ class EagerLoaderTest extends TestCase
     {
         $loader = new EagerLoader();
         $loader->contain([
-            'clients' => fn ($query)=> $query->select(['a']),
+            'clients' => function ($query) {
+                return $query->select(['a']);
+            },
         ]);
         $loader->contain([
-            'clients' => fn ($query)=> $query->select(['b']),
+            'clients' => function ($query) {
+                return $query->select(['b']);
+            },
         ]);
         $builder = $loader->getContain()['clients']['queryBuilder'];
         $table = $this->getTableLocator()->get('foo');
@@ -610,7 +614,9 @@ class EagerLoaderTest extends TestCase
     protected function _quoteArray($elements): array
     {
         if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
-            $quoter = fn ($e)=> $this->connection->getDriver()->quoteIdentifier($e);
+            $quoter = function ($e) {
+                return $this->connection->getDriver()->quoteIdentifier($e);
+            };
 
             return array_combine(
                 array_map($quoter, array_keys($elements)),

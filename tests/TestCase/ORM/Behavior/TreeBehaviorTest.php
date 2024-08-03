@@ -193,7 +193,9 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', [
-            'scope' => fn ($query)=> $query->where(['menu' => 'main-menu']),
+            'scope' => function ($query) {
+                return $query->where(['menu' => 'main-menu']);
+            },
         ]);
         $count = $table->childCount($table->get(1), false);
         $this->assertSame(4, $count);
@@ -1447,13 +1449,15 @@ class TreeBehaviorTest extends TestCase
         $displayField = $table->getDisplayField();
 
         $options = [
-            'valuePath' => fn ($item, $key, $iterator)=> sprintf(
-                '%s:%s - %s:%s',
-                str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),
-                str_pad((string)$item->rght, 2, ' ', STR_PAD_LEFT),
-                str_pad((string)$item->$primaryKey, 2, ' ', STR_PAD_LEFT),
-                $item->{$displayField}
-            ),
+            'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField) {
+                return sprintf(
+                    '%s:%s - %s:%s',
+                    str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),
+                    str_pad((string)$item->rght, 2, ' ', STR_PAD_LEFT),
+                    str_pad((string)$item->$primaryKey, 2, ' ', STR_PAD_LEFT),
+                    $item->{$displayField}
+                );
+            },
         ];
         $result = array_values($query->find('treeList', ...$options)->toArray());
 

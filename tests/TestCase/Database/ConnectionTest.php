@@ -946,21 +946,27 @@ class ConnectionTest extends TestCase
     public function testNestedTransactionRollbackExceptionNotThrown(): void
     {
         $this->connection->transactional(function () {
-            $this->connection->transactional(fn () => true);
+            $this->connection->transactional(function () {
+                return true;
+            });
 
             return true;
         });
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(fn () => true);
+            $this->connection->transactional(function () {
+                return true;
+            });
 
             return false;
         });
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(fn () => false);
+            $this->connection->transactional(function () {
+                return false;
+            });
 
             return false;
         });
@@ -978,7 +984,9 @@ class ConnectionTest extends TestCase
         $e = null;
         try {
             $this->connection->transactional(function () {
-                $this->connection->transactional(fn () => false);
+                $this->connection->transactional(function () {
+                    return false;
+                });
                 $this->rollbackSourceLine = __LINE__ - 1;
 
                 return true;
@@ -1007,12 +1015,16 @@ class ConnectionTest extends TestCase
             $this->connection->transactional(function () {
                 $this->pushNestedTransactionState();
 
-                $this->connection->transactional(fn () => true);
+                $this->connection->transactional(function () {
+                    return true;
+                });
 
                 $this->connection->transactional(function () {
                     $this->pushNestedTransactionState();
 
-                    $this->connection->transactional(fn () => false);
+                    $this->connection->transactional(function () {
+                        return false;
+                    });
                     $this->rollbackSourceLine = __LINE__ - 1;
 
                     $this->pushNestedTransactionState();
@@ -1020,7 +1032,9 @@ class ConnectionTest extends TestCase
                     return true;
                 });
 
-                $this->connection->transactional(fn () => false);
+                $this->connection->transactional(function () {
+                    return false;
+                });
 
                 $this->pushNestedTransactionState();
 

@@ -36,7 +36,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addDelete(
-            fn () => false,
+            function () {
+                return false;
+            },
             'ruleName',
             ['errorField' => 'name']
         );
@@ -61,7 +63,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addUpdate(
-            fn () => false,
+            function () {
+                return false;
+            },
             'ruleName',
             ['errorField' => 'name']
         );
@@ -86,7 +90,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addCreate(
-            fn () => false,
+            function () {
+                return false;
+            },
             'ruleName',
             ['errorField' => 'name']
         );
@@ -111,7 +117,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            fn () => false,
+            function () {
+                return false;
+            },
             'ruleName',
             ['errorField' => 'name']
         );
@@ -131,7 +139,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            fn () => 'worst thing ever',
+            function () {
+                return 'worst thing ever';
+            },
             ['errorField' => 'name']
         );
 
@@ -150,7 +160,9 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            fn () => false,
+            function () {
+                return false;
+            },
             ['message' => 'this is bad', 'errorField' => 'name']
         );
 
@@ -168,7 +180,9 @@ class RulesCheckerTest extends TestCase
         ]);
 
         $rules = new RulesChecker();
-        $rules->add(fn () => false);
+        $rules->add(function () {
+            return false;
+        });
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
         $this->assertEmpty($entity->getErrors());

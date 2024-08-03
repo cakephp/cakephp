@@ -443,7 +443,9 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $event)=> false);
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
+            return false;
+        });
 
         $result = $Controller->render('index');
         $this->assertInstanceOf(Response::class, $result);
@@ -536,7 +538,9 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', fn (EventInterface $event, $url, Response $response)=> $newResponse);
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
+            return $newResponse;
+        });
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
@@ -619,8 +623,12 @@ class ControllerTest extends TestCase
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.initialize')],
-                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.startup')]
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'Controller.initialize';
+                    })],
+                    [$this->callback(function (EventInterface $event) {
+                        return $event->getName() === 'Controller.startup';
+                    })]
                 )
             )
             ->willReturn(new Event('stub'));
@@ -638,7 +646,9 @@ class ControllerTest extends TestCase
 
         $eventManager->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(fn (EventInterface $event)=> $event->getName() === 'Controller.shutdown'))
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'Controller.shutdown';
+            }))
             ->willReturn(new Event('stub'));
 
         $controller->shutdownProcess();
@@ -900,13 +910,17 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+            return $e->getSubject()->getResponse();
+        });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+            return $e->getSubject()->getResponse();
+        });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
@@ -917,7 +931,9 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', fn (EventInterface $e)=> $e->getSubject()->getResponse());
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+            return $e->getSubject()->getResponse();
+        });
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());
     }

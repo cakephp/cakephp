@@ -127,9 +127,11 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseSetCookieHeader(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(fn ($req)=> (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
-            ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
-            ->withAddedHeader('Set-Cookie', 'ninja=shuriken'));
+        $handler = new TestRequestHandler(function ($req) {
+            return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
+                ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
+                ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
+        });
         $response = $this->middleware->process($request, $handler);
         $this->assertStringNotContainsString('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
         $this->assertStringContainsString('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
@@ -148,9 +150,11 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseCookieData(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(fn ($req)=> (new Response())->withCookie(new Cookie('secret', 'be quiet'))
-            ->withCookie(new Cookie('plain', 'in clear'))
-            ->withCookie(new Cookie('ninja', 'shuriken')));
+        $handler = new TestRequestHandler(function ($req) {
+            return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
+                ->withCookie(new Cookie('plain', 'in clear'))
+                ->withCookie(new Cookie('ninja', 'shuriken'));
+        });
         $response = $this->middleware->process($request, $handler);
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertSame(

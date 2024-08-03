@@ -148,7 +148,9 @@ class BelongsToManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = fn () => ['id' => 'ASC'];
+        $closure = function () {
+            return ['id' => 'ASC'];
+        };
         $assoc->setSort($closure);
         $this->assertSame($closure, $assoc->getSort());
 
@@ -179,7 +181,9 @@ class BelongsToManyTest extends TestCase
         $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
-        $assoc->setSort(fn () => ['Tags.id' => 'DESC']);
+        $assoc->setSort(function () {
+            return ['Tags.id' => 'DESC'];
+        });
         $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
@@ -518,7 +522,9 @@ class BelongsToManyTest extends TestCase
         $this->article->getAssociation($articleTag->getAlias());
 
         $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(fn () => false);
+            $rules->addDelete(function () {
+                return false;
+            });
         });
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $this->assertFalse($association->cascadeDelete($entity));
@@ -1044,7 +1050,9 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
-            $rules->add(fn () => false, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
+            $rules->add(function () {
+                return false;
+            }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
         });
 
         $assoc = $articles->belongsToMany('Tags', [
@@ -1121,10 +1129,12 @@ class BelongsToManyTest extends TestCase
         $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
         $tag2 = $tags->find()->where(['Tags.name' => 'tag2'])->firstOrFail();
 
-        $findArticle = fn ($article)=> $articles->find()
-            ->where(['CompositeKeyArticles.author_id' => $article->author_id])
-            ->contain('Tags')
-            ->firstOrFail();
+        $findArticle = function ($article) use ($articles) {
+            return $articles->find()
+                ->where(['CompositeKeyArticles.author_id' => $article->author_id])
+                ->contain('Tags')
+                ->firstOrFail();
+        };
 
         $article = $findArticle($article);
         $this->assertEmpty($article->tags);
@@ -1481,7 +1491,9 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => fn (SelectQuery $q)=> $q->select(['id'])])
+            ->contain(['Tags' => function (SelectQuery $q) {
+                return $q->select(['id']);
+            }])
             ->first();
 
         $this->assertNotEmpty($result->tags[0]->id);
@@ -1512,7 +1524,9 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => fn (SelectQuery $q)=> $q->select(['two' => $q->newExpr('1 + 1')])->enableAutoFields()])
+            ->contain(['Tags' => function (SelectQuery $q) {
+                return $q->select(['two' => $q->newExpr('1 + 1')])->enableAutoFields();
+            }])
             ->first();
 
         $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');
@@ -1579,7 +1593,9 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', fn (SelectQuery $q)=> $q->where(['Tags.name' => 'tag1']));
+        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
         $results = $query->toArray();
         $this->assertCount(1, $results);
         $this->assertNotEmpty($results[0]->_matchingData);
@@ -1595,7 +1611,9 @@ class BelongsToManyTest extends TestCase
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', fn (SelectQuery $q)=> $q->where(['Tags.name' => 'tag1']));
+        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
+            return $q->where(['Tags.name' => 'tag1']);
+        });
         $results = $query->toArray();
         $this->assertCount(1, $results);
         $this->assertNotEmpty($results[0]->_matchingData);
@@ -1611,7 +1629,9 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->Tags->find()->matching('Articles', fn (SelectQuery $query)=> $query->where(['Articles.id' => 1]));
+        $query = $table->Tags->find()->matching('Articles', function (SelectQuery $query) {
+            return $query->where(['Articles.id' => 1]);
+        });
         // The inner join on special_tags excludes the results.
         $this->assertSame(0, $query->count());
     }
@@ -1634,7 +1654,9 @@ class BelongsToManyTest extends TestCase
         ]);
 
         $results = $table->find()
-            ->contain('SpecialTags', fn ($query)=> $query->orderBy(['SpecialTags.tag_id']))
+            ->contain('SpecialTags', function ($query) {
+                return $query->orderBy(['SpecialTags.tag_id']);
+            })
             ->where(['id' => 2])
             ->toArray();
 
@@ -1695,7 +1717,9 @@ class BelongsToManyTest extends TestCase
             'bindingKey' => 'name',
         ]);
         $query = $table->find()
-            ->matching('Articles', fn ($q)=> $q->where(['Articles.id >' => 0]));
+            ->matching('Articles', function ($q) {
+                return $q->where(['Articles.id >' => 0]);
+            });
         $results = $query->all();
 
         // 4 records in the junction table.

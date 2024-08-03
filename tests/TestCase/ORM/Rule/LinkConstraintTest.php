@@ -608,10 +608,12 @@ class LinkConstraintTest extends TestCase
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(fn (QueryExpression $exp)=> $exp->eq(
-                        new IdentifierExpression('Articles.id'),
-                        new IdentifierExpression('RecentComments.article_id')
-                    ))
+                    ->where(function (QueryExpression $exp) {
+                        return $exp->eq(
+                            new IdentifierExpression('Articles.id'),
+                            new IdentifierExpression('RecentComments.article_id')
+                        );
+                    })
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -642,10 +644,12 @@ class LinkConstraintTest extends TestCase
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(fn (QueryExpression $exp)=> $exp->eq(
-                        new IdentifierExpression('Articles.id'),
-                        new IdentifierExpression('RecentComments.article_id')
-                    ))
+                    ->where(function (QueryExpression $exp) {
+                        return $exp->eq(
+                            new IdentifierExpression('Articles.id'),
+                            new IdentifierExpression('RecentComments.article_id')
+                        );
+                    })
                     ->orderBy(['RecentComments.created' => 'DESC'])
                     ->limit(1);
 
@@ -734,10 +738,12 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => fn (QueryExpression $exp)=> $exp->notEq(
-                new IdentifierExpression('Comments.published'),
-                new IdentifierExpression('Articles.published')
-            ),
+            'conditions' => function (QueryExpression $exp) {
+                return $exp->notEq(
+                    new IdentifierExpression('Comments.published'),
+                    new IdentifierExpression('Articles.published')
+                );
+            },
         ]);
 
         $article = $Articles->save($Articles->newEntity([
@@ -768,10 +774,12 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => fn (QueryExpression $exp)=> $exp->eq(
-                new IdentifierExpression('Comments.published'),
-                new IdentifierExpression('Articles.published')
-            ),
+            'conditions' => function (QueryExpression $exp) {
+                return $exp->eq(
+                    new IdentifierExpression('Comments.published'),
+                    new IdentifierExpression('Articles.published')
+                );
+            },
         ]);
 
         $rulesChecker = $Articles->rulesChecker();

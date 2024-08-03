@@ -40,6 +40,7 @@ use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
+use Traversable;
 use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -83,7 +84,9 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v): bool=> (bool)$v;
+        $callback ??= function ($v) {
+            return (bool)$v;
+        };
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -93,7 +96,9 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v, $k, $i): bool=> (bool)$v;
+        $callback ??= function ($v, $k, $i) {
+            return (bool)$v;
+        };
 
         return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
     }
@@ -103,7 +108,9 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v)=> $v;
+        $callback ??= function ($v) {
+            return $v;
+        };
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -189,7 +196,9 @@ trait CollectionTrait
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
             $extractor = $extractor
-                ->filter(fn ($data)=> $data !== null && (is_iterable($data)))
+                ->filter(function ($data) {
+                    return $data !== null && ($data instanceof Traversable || is_array($data));
+                })
                 ->unfold();
         }
 
@@ -834,7 +843,9 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($item)=> $item;
+        $callback ??= function ($item) {
+            return $item;
+        };
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
@@ -995,9 +1006,10 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(fn ($value, $keys, $index)=>
+            $currentCombination = array_map(function ($value, $keys, $index) {
                 /** @psalm-suppress InvalidArrayOffset */
-                $value[$keys[$index]], $collectionArrays, $collectionArraysKeys, $currentIndexes);
+                return $value[$keys[$index]];
+            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
             if ($filter === null || $filter($currentCombination)) {
                 $result[] = $operation === null ? $currentCombination : $operation($currentCombination);

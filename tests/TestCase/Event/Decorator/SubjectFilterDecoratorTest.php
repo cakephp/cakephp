@@ -32,7 +32,9 @@ class SubjectFilterDecoratorTest extends TestCase
     public function testCanTrigger(): void
     {
         $event = new Event('decorator.test', $this);
-        $callable = fn (EventInterface $event)=> 'success';
+        $callable = function (EventInterface $event) {
+            return 'success';
+        };
 
         $decorator = new SubjectFilterDecorator($callable, [
             'allowedSubject' => self::class,

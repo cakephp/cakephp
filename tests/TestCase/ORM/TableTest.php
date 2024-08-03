@@ -783,7 +783,9 @@ class TableTest extends TestCase
         );
 
         $query = $table->find('all')
-            ->formatResults(fn (ResultSetDecorator $results)=> $results);
+            ->formatResults(function (ResultSetDecorator $results) {
+                return $results;
+            });
         $query->limit(1);
         $this->assertEquals($expected, $query->all()->toArray());
     }
@@ -1557,7 +1559,9 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $query = $table->find('list', valueField: fn ($row)=> $row->username);
+        $query = $table->find('list', valueField: function ($row) {
+            return $row->username;
+        });
         $this->assertEmpty($query->clause('select'));
 
         $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
@@ -3283,7 +3287,9 @@ class TableTest extends TestCase
         $sections = $this->getTableLocator()->get('Sections');
         $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
         $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(fn () => false);
+            $rules->addDelete(function () {
+                return false;
+            });
         });
 
         $sections->belongsToMany('Members', [
@@ -3319,14 +3325,20 @@ class TableTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [$this->anything()],
-                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Model.beforeDelete' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options])],
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.beforeDelete' &&
+                        $event->getData() == ['entity' => $entity, 'options' => $options];
+                    })],
                     [
-                    $this->callback(fn (EventInterface $event)=> $event->getName() === 'Model.afterDelete' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options]),
+                    $this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.afterDelete' &&
+                            $event->getData() == ['entity' => $entity, 'options' => $options];
+                    }),
                     ],
-                    [$this->callback(fn (EventInterface $event)=> $event->getName() === 'Model.afterDeleteCommit' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options])]
+                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                        return $event->getName() === 'Model.afterDeleteCommit' &&
+                        $event->getData() == ['entity' => $entity, 'options' => $options];
+                    })]
                 )
             );
 
@@ -6353,7 +6365,9 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $options = [
             'SiteArticles' => ['fields' => ['title', 'author_id']],
-            'Articles.Tags' => fn ($q)=> $q->where(['Tags.name' => 'tag2']),
+            'Articles.Tags' => function ($q) {
+                return $q->where(['Tags.name' => 'tag2']);
+            },
         ];
         $result = $table->loadInto($entity, $options);
         $this->assertSame($entity, $result);

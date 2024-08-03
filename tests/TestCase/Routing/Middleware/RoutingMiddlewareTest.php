@@ -83,7 +83,9 @@ class RoutingMiddlewareTest extends TestCase
     {
         $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn ($request)=> new Response());
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
@@ -450,7 +452,9 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn ($request)=> new Response('php://memory', 200));
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response('php://memory', 200);
+        });
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());
@@ -466,7 +470,9 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(fn ($request)=> new Response('php://memory', 200));
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response('php://memory', 200);
+        });
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());
@@ -481,7 +487,9 @@ class RoutingMiddlewareTest extends TestCase
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')
-            ->willReturnCallback(fn (RouteBuilder $routes)=> $routes);
+            ->willReturnCallback(function (RouteBuilder $routes) {
+                return $routes;
+            });
 
         if ($handleCallback) {
             $mock->method('handle')

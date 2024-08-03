@@ -228,9 +228,11 @@ class UpdateQueryTest extends TestCase
         $query = new UpdateQuery($this->connection);
         $date = new DateTime();
         $query->update('comments')
-            ->set(fn ($exp)=> $exp
-                ->eq('comment', 'mark')
-                ->eq('created', $date, 'date'))
+            ->set(function ($exp) use ($date) {
+                return $exp
+                    ->eq('comment', 'mark')
+                    ->eq('created', $date, 'date');
+            })
             ->where(['id' => 1]);
         $result = $query->sql();
 

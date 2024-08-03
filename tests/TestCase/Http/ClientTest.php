@@ -1026,7 +1026,9 @@ class ClientTest extends TestCase
     {
         $one = new Response(['HTTP/1.0 200'], 'one');
         Client::addMockResponse('GET', 'http://example.com/info', $one, [
-            'match' => fn ($request)=> false,
+            'match' => function ($request) {
+                return false;
+            },
         ]);
 
         $two = new Response(['HTTP/1.0 200'], 'two');
@@ -1117,7 +1119,9 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => fn () => false,
+            'match' => function () {
+                return false;
+            },
         ]);
 
         $client = new Client();
@@ -1134,7 +1138,9 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => fn ($request)=> 'invalid',
+            'match' => function ($request) {
+                return 'invalid';
+            },
         ]);
 
         $client = new Client();

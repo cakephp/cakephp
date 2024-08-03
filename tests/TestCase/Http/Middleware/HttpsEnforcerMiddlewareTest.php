@@ -53,7 +53,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response(['body' => 'success']));
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -68,7 +70,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response(['body' => 'success']));
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000]]);
 
@@ -83,7 +87,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response(['body' => 'success']));
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000, 'includeSubDomains' => true, 'preload' => true]]);
 
@@ -98,7 +104,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response(['body' => 'success']));
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'success']);
+        });
 
         $middleware = new HttpsEnforcerMiddleware(['hsts' => true]);
 
@@ -113,7 +121,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('GET');
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response());
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -146,7 +156,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
             'method' => 'GET',
         ]);
 
-        $handler = new TestRequestHandler(fn () => new Response());
+        $handler = new TestRequestHandler(function () {
+            return new Response();
+        });
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -167,7 +179,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response());
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => false]);
         $middleware->process($request, $handler);
@@ -184,7 +198,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('POST');
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response());
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
 
         $middleware = new HttpsEnforcerMiddleware(['redirect' => true]);
         $middleware->process($request, $handler);
@@ -201,7 +217,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(fn ($req)=> new Response(['body' => 'skipped']));
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response(['body' => 'skipped']);
+        });
 
         $middleware = new HttpsEnforcerMiddleware();
 
@@ -223,7 +241,9 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
-        $handler = new TestRequestHandler(fn () => new Response());
+        $handler = new TestRequestHandler(function () {
+            return new Response();
+        });
 
         $middleware = new HttpsEnforcerMiddleware();
         $result = $middleware->process($request, $handler);
