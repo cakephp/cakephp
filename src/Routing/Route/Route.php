@@ -809,8 +809,10 @@ class Route
         }
 
         if (str_contains($this->template, '**')) {
-            array_push($search, '**', '%2F');
-            array_push($replace, $pass, '/');
+            $search[] = '**';
+            $search[] = '%2F';
+            $replace[] = $pass;
+            $replace[] = '/';
         } elseif (str_contains($this->template, '*')) {
             $search[] = '*';
             $replace[] = $pass;
