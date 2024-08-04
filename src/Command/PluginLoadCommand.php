@@ -76,9 +76,9 @@ class PluginLoadCommand extends Command
 
         try {
             Plugin::getCollection()->findPath($plugin);
-        } catch (MissingPluginException $e) {
+        } catch (MissingPluginException $missingPluginException) {
             if (empty($options['optional'])) {
-                $io->err($e->getMessage());
+                $io->err($missingPluginException->getMessage());
                 $io->err('Ensure you have the correct spelling and casing.');
 
                 return static::CODE_ERROR;

@@ -53,8 +53,8 @@ class SchemacacheClearCommand extends Command
             assert($connection instanceof Connection);
 
             $cache = new SchemaCache($connection);
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $io->error($runtimeException->getMessage());
 
             return static::CODE_ERROR;
         }

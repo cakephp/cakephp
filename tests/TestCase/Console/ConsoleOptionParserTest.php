@@ -509,7 +509,7 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['--he', 'other'], $this->io);
-        } catch (MissingOptionException $e) {
+        } catch (MissingOptionException $missingOptionException) {
             $this->assertStringContainsString(
                 "Unknown option `he`.\n" .
                 "Did you mean: `help`?\n" .
@@ -517,7 +517,7 @@ class ConsoleOptionParserTest extends TestCase
                 "Other valid choices:\n" .
                 "\n" .
                 '- help',
-                $e->getFullMessage()
+                $missingOptionException->getFullMessage()
             );
         }
     }
@@ -534,8 +534,8 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['-f'], $this->io);
-        } catch (MissingOptionException $e) {
-            $this->assertStringContainsString('Unknown short option `f`.', $e->getFullMessage());
+        } catch (MissingOptionException $missingOptionException) {
+            $this->assertStringContainsString('Unknown short option `f`.', $missingOptionException->getFullMessage());
         }
     }
 

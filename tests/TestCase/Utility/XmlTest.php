@@ -50,8 +50,8 @@ class XmlTest extends TestCase
             $value = 'invalid-xml-input<<';
             Xml::build($value);
             $this->fail('This line should not be executed because of exception above.');
-        } catch (XmlException $exception) {
-            $cause = $exception->getPrevious();
+        } catch (XmlException $xmlException) {
+            $cause = $xmlException->getPrevious();
             $this->assertNotNull($cause);
             $this->assertInstanceOf(Exception::class, $cause);
         }
@@ -208,7 +208,7 @@ class XmlTest extends TestCase
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }

@@ -88,7 +88,7 @@ class Application extends BaseApplication
 
             try {
                 $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
-            } catch (DuplicateNamedRouteException $e) {
+            } catch (DuplicateNamedRouteException $duplicateNamedRouteException) {
                 // do nothing. This happens when one test does multiple requests.
             }
             $routes->redirect('/redirect', 'http://example.com/test.html');

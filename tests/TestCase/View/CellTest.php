@@ -198,10 +198,10 @@ class CellTest extends TestCase
         $e = null;
         try {
             $cell->render('fooBar');
-        } catch (MissingCellTemplateException $e) {
+        } catch (MissingCellTemplateException $missingCellTemplateException) {
         }
 
-        $this->assertNotNull($e);
+        $this->assertNotNull($missingCellTemplateException);
         $message = $e->getMessage();
         $this->assertStringContainsString(
             str_replace('/', DS, 'Cell template file `cell/Articles/foo_bar.php` could not be found.'),
@@ -209,7 +209,7 @@ class CellTest extends TestCase
         );
         $this->assertStringContainsString('The following paths', $message);
         $this->assertStringContainsString(ROOT . DS . 'templates', $message);
-        $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
+        $this->assertInstanceOf(MissingTemplateException::class, $missingCellTemplateException->getPrevious());
     }
 
     /**

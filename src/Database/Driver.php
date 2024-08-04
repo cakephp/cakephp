@@ -190,14 +190,14 @@ abstract class Driver
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
         try {
             return $retry->run($action);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             throw new MissingConnectionException(
                 [
                     'driver' => App::shortName(static::class, 'Database/Driver'),
-                    'reason' => $e->getMessage(),
+                    'reason' => $pdoException->getMessage(),
                 ],
                 null,
-                $e
+                $pdoException
             );
         } finally {
             $this->connectRetries = $retry->getRetries();
@@ -258,8 +258,8 @@ abstract class Driver
     {
         try {
             return $this->getPdo()->exec($sql);
-        } catch (PDOException $e) {
-            throw new QueryException($sql, $e);
+        } catch (PDOException $pdoException) {
+            throw new QueryException($sql, $pdoException);
         }
     }
 
@@ -332,8 +332,8 @@ abstract class Driver
             $start = microtime(true);
             $statement->execute($params);
             $took = (float)number_format((microtime(true) - $start) * 1000, 1);
-        } catch (PDOException $e) {
-            $exception = $e;
+        } catch (PDOException $pdoException) {
+            $exception = $pdoException;
         }
 
         $logContext = [
@@ -385,10 +385,10 @@ abstract class Driver
     {
         try {
             $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             throw new QueryException(
                 $query instanceof Query ? $query->sql() : $query,
-                $e
+                $pdoException
             );
         }
 

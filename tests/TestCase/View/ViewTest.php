@@ -873,8 +873,8 @@ class ViewTest extends TestCase
         try {
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The `Html` alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertStringContainsString('The `Html` alias has already been loaded', $runtimeException->getMessage());
         }
     }
 
@@ -1477,7 +1477,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (CakeException $e) {
+        } catch (CakeException $cakeException) {
             ob_end_clean();
             $this->assertTrue(true);
         }
@@ -1492,9 +1492,9 @@ class ViewTest extends TestCase
         try {
             $this->View->render('open_block');
             $this->fail('No exception');
-        } catch (LogicException $e) {
+        } catch (LogicException $logicException) {
             ob_end_clean();
-            $this->assertStringContainsString('The `no_close` block was left open', $e->getMessage());
+            $this->assertStringContainsString('The `no_close` block was left open', $logicException->getMessage());
         }
     }
 
@@ -1521,8 +1521,8 @@ TEXT;
         try {
             $this->View->render('extend_self', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('cannot have templates extend themselves', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('cannot have templates extend themselves', $logicException->getMessage());
         }
     }
 
@@ -1534,8 +1534,8 @@ TEXT;
         try {
             $this->View->render('extend_loop', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('cannot have templates extend in a loop', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('cannot have templates extend in a loop', $logicException->getMessage());
         }
     }
 
@@ -1580,8 +1580,8 @@ TEXT;
         try {
             $this->View->render('extend_missing_element', false);
             $this->fail('No exception');
-        } catch (LogicException $e) {
-            $this->assertStringContainsString('element', $e->getMessage());
+        } catch (LogicException $logicException) {
+            $this->assertStringContainsString('element', $logicException->getMessage());
         }
     }
 
@@ -1626,11 +1626,11 @@ TEXT;
         $e = null;
         try {
             $this->View->element('exception_with_open_buffers');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
-        $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertNotNull($exception);
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 
@@ -1661,14 +1661,14 @@ TEXT;
                 'key' => __FUNCTION__,
                 'config' => 'test_view',
             ]);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         Cache::clear('test_view');
         Cache::drop('test_view');
 
         $this->assertNotNull($e);
-        $this->assertSame('Exception with open buffers', $e->getMessage());
+        $this->assertSame('Exception with open buffers', $exception->getMessage());
         $this->assertSame($bufferLevel, ob_get_level());
     }
 

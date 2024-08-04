@@ -146,9 +146,9 @@ class ErrorTrap
                 return true;
             }
             $renderer->write($event->getResult() ?: $renderer->render($error, $debug));
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Fatal errors always log.
-            $this->logger()->logException($e);
+            $this->logger()->logException($exception);
 
             return false;
         }

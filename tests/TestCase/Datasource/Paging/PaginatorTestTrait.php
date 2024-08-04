@@ -772,13 +772,13 @@ trait PaginatorTestTrait
         try {
             $this->Paginator->paginate($table, $params);
             $this->fail('No exception raised');
-        } catch (PageOutOfBoundsException $exception) {
+        } catch (PageOutOfBoundsException $pageOutOfBoundsException) {
             $this->assertEquals(
                 'Page number `3000` could not be found.',
-                $exception->getMessage()
+                $pageOutOfBoundsException->getMessage()
             );
 
-            $attributes = $exception->getAttributes();
+            $attributes = $pageOutOfBoundsException->getAttributes();
             $this->assertSame(3000, $attributes['requestedPage']);
             $this->assertArrayHasKey('pagingParams', $attributes);
         }

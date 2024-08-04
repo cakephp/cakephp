@@ -76,7 +76,7 @@ class Collection extends IteratorIterator implements CollectionInterface
     {
         try {
             $count = $this->count();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $count = 'An exception occurred while getting count';
         }
 

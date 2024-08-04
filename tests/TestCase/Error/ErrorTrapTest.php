@@ -91,9 +91,9 @@ class ErrorTrapTest extends TestCase
         try {
             trigger_error('Oh no it was bad', E_USER_ERROR);
             $this->fail('Should raise a fatal error');
-        } catch (FatalErrorException $e) {
-            $this->assertEquals('Oh no it was bad', $e->getMessage());
-            $this->assertEquals(E_USER_ERROR, $e->getCode());
+        } catch (FatalErrorException $fatalErrorException) {
+            $this->assertEquals('Oh no it was bad', $fatalErrorException->getMessage());
+            $this->assertEquals(E_USER_ERROR, $fatalErrorException->getCode());
         } finally {
             restore_error_handler();
         }

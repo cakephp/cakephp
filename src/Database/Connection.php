@@ -633,9 +633,9 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $this->rollback(false);
-            throw $e;
+            throw $throwable;
         }
 
         if ($result === false) {
@@ -646,9 +646,9 @@ class Connection implements ConnectionInterface
 
         try {
             $this->commit();
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $nestedTransactionRollbackException) {
             $this->rollback(false);
-            throw $e;
+            throw $nestedTransactionRollbackException;
         }
 
         return $result;

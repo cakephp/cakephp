@@ -151,23 +151,23 @@ class Cache
 
         try {
             $registry->load($name, $config);
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $runtimeException) {
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                trigger_error($runtimeException->getMessage(), E_USER_WARNING);
 
                 return;
             }
 
             if ($config['fallback'] === false) {
-                throw $e;
+                throw $runtimeException;
             }
 
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
                     '`%s` cache configuration cannot fallback to itself.',
                     $name
-                ), 0, $e);
+                ), 0, $runtimeException);
             }
 
             $fallbackEngine = clone static::pool($config['fallback']);

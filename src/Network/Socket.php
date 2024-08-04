@@ -501,9 +501,9 @@ class Socket
                 throw new CakeException('You must call connect() first.');
             }
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
-        } catch (Exception $e) {
-            $this->setLastError(null, $e->getMessage());
-            throw new SocketException($e->getMessage(), null, $e);
+        } catch (Exception $exception) {
+            $this->setLastError(null, $exception->getMessage());
+            throw new SocketException($exception->getMessage(), null, $exception);
         }
 
         if ($enableCryptoResult === true) {

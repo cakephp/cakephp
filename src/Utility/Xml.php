@@ -216,8 +216,8 @@ class Xml
 
         try {
             return $callable($input, $options, $flags);
-        } catch (Exception $e) {
-            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } catch (Exception $exception) {
+            throw new XmlException('Xml cannot be read. ' . $exception->getMessage(), null, $exception);
         } finally {
             libxml_use_internal_errors($internalErrors);
         }

@@ -1950,8 +1950,8 @@ class TableTest extends TestCase
         try {
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The `Sluggable` alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertStringContainsString('The `Sluggable` alias has already been loaded', $runtimeException->getMessage());
         }
     }
 
@@ -4151,7 +4151,7 @@ class TableTest extends TestCase
                 ->setFinder('list')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException $badMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('articles', $articles->getTable());
@@ -4176,7 +4176,7 @@ class TableTest extends TestCase
                 ->setStrategy('select')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException $badMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4203,7 +4203,7 @@ class TableTest extends TestCase
                 ->setSaveStrategy('replace')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException $badMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4230,7 +4230,7 @@ class TableTest extends TestCase
                 ->setSaveStrategy('append')
                 ->setThrough('author_articles')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException $badMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -6357,8 +6357,8 @@ class TableTest extends TestCase
 
         try {
             $table->saveOrFail($entity);
-        } catch (PersistenceFailedException $e) {
-            $this->assertSame($entity, $e->getEntity());
+        } catch (PersistenceFailedException $persistenceFailedException) {
+            $this->assertSame($entity, $persistenceFailedException->getEntity());
         }
     }
 
@@ -6389,8 +6389,8 @@ class TableTest extends TestCase
 
         try {
             $table->deleteOrFail($entity);
-        } catch (PersistenceFailedException $e) {
-            $this->assertSame($entity, $e->getEntity());
+        } catch (PersistenceFailedException $persistenceFailedException) {
+            $this->assertSame($entity, $persistenceFailedException->getEntity());
         }
     }
 

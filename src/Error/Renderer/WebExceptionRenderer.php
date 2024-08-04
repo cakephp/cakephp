@@ -186,11 +186,11 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             assert(is_subclass_of($class, Controller::class));
             $controller = new $class($request);
             $controller->startupProcess();
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             Log::warning(
                 "Failed to construct or call startup() on the resolved controller class of `$class`. " .
-                    "Using Fallback Controller instead. Error {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                    "Using Fallback Controller instead. Error {$throwable->getMessage()}" .
+                    "\nStack Trace\n: {$throwable->getTraceAsString()}",
                 'cake.error'
             );
             $controller = null;

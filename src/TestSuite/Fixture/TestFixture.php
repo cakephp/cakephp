@@ -153,13 +153,13 @@ class TestFixture implements FixtureInterface
             $this->_schema = $schema;
 
             $this->getTableLocator()->clear();
-        } catch (CakeException $e) {
+        } catch (CakeException $cakeException) {
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
                 $this->table,
                 static::class
             );
-            throw new CakeException($message, null, $e);
+            throw new CakeException($message, null, $cakeException);
         }
     }
 

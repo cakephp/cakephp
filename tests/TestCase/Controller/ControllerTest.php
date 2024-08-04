@@ -978,8 +978,8 @@ class ControllerTest extends TestCase
         try {
             $controller->loadComponent('FormProtection', ['bad' => 'settings']);
             $this->fail('No exception');
-        } catch (RuntimeException $e) {
-            $this->assertStringContainsString('The `FormProtection` alias has already been loaded', $e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertStringContainsString('The `FormProtection` alias has already been loaded', $runtimeException->getMessage());
         }
     }
 

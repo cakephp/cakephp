@@ -885,8 +885,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $this->request->getQueryParams(),
                 $settings
             );
-        } catch (PageOutOfBoundsException $exception) {
-            throw new NotFoundException(null, null, $exception);
+        } catch (PageOutOfBoundsException $pageOutOfBoundsException) {
+            throw new NotFoundException(null, null, $pageOutOfBoundsException);
         }
 
         return $results;

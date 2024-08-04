@@ -78,10 +78,10 @@ class DriverTest extends TestCase
     {
         try {
             new StubDriver(['login' => 'Bear']);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
-                $e->getMessage()
+                $exception->getMessage()
             );
         }
     }
@@ -380,7 +380,7 @@ class DriverTest extends TestCase
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
         }
 
         $messages = Log::engine('queries')->read();

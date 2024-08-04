@@ -170,8 +170,8 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
                 $options,
                 $parser->argumentNames()
             );
-        } catch (ConsoleException $e) {
-            $io->err('Error: ' . $e->getMessage());
+        } catch (ConsoleException $consoleException) {
+            $io->err('Error: ' . $consoleException->getMessage());
 
             return static::CODE_ERROR;
         }
@@ -282,8 +282,8 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
         try {
             return $command->run($args, $io);
-        } catch (StopException $e) {
-            return $e->getCode();
+        } catch (StopException $stopException) {
+            return $stopException->getCode();
         }
     }
 }

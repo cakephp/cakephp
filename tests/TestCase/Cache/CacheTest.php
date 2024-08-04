@@ -131,14 +131,14 @@ class CacheTest extends TestCase
         $e = null;
         try {
             Cache::pool('tests');
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $invalidArgumentException) {
         }
 
         Cache::drop('tests');
         unlink($filename);
 
         $this->assertNotNull($e);
-        $this->assertStringEndsWith('cannot fallback to itself.', $e->getMessage());
+        $this->assertStringEndsWith('cannot fallback to itself.', $invalidArgumentException->getMessage());
         $this->assertInstanceOf('RunTimeException', $e->getPrevious());
     }
 

@@ -392,8 +392,8 @@ class RouteCollectionTest extends TestCase
         try {
             $this->collection->parseRequest($request);
             $this->fail('No exception raised');
-        } catch (MissingRouteException $e) {
-            $this->assertStringContainsString('/fallback', $e->getMessage());
+        } catch (MissingRouteException $missingRouteException) {
+            $this->assertStringContainsString('/fallback', $missingRouteException->getMessage());
         }
     }
 

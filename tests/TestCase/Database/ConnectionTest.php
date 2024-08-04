@@ -278,16 +278,16 @@ class ConnectionTest extends TestCase
         $e = null;
         try {
             $connection->getDriver()->connect();
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException $missingConnectionException) {
         }
 
-        $this->assertNotNull($e);
+        $this->assertNotNull($missingConnectionException);
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
                 App::shortName(get_class($connection->getDriver()), 'Database/Driver')
             ),
-            $e->getMessage()
+            $missingConnectionException->getMessage()
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
@@ -301,7 +301,7 @@ class ConnectionTest extends TestCase
 
         try {
             $connection->execute('SELECT 1');
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException $missingConnectionException) {
             $this->assertSame(4, $connection->getDriver()->getConnectRetries());
         }
     }
@@ -1032,7 +1032,7 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $nestedTransactionRollbackException) {
         }
 
         $trace = $e->getTrace();
@@ -1084,7 +1084,7 @@ class ConnectionTest extends TestCase
             });
 
             $this->fail('NestedTransactionRollbackException should be thrown');
-        } catch (NestedTransactionRollbackException $e) {
+        } catch (NestedTransactionRollbackException $nestedTransactionRollbackException) {
         }
 
         $this->pushNestedTransactionState();
@@ -1164,8 +1164,8 @@ class ConnectionTest extends TestCase
 
         try {
             $conn->execute('SELECT 1');
-        } catch (Exception $e) {
-            $this->assertInstanceOf(Exception::class, $e);
+        } catch (Exception $exception) {
+            $this->assertInstanceOf(Exception::class, $exception);
             $prop->setValue($conn, $oldDriver);
             $conn->rollback();
         }

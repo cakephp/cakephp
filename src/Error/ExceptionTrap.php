@@ -237,8 +237,8 @@ class ExceptionTrap
 
             $renderer = $this->renderer($exception, $request);
             $renderer->write($event->getResult() ?: $renderer->render());
-        } catch (Throwable $exception) {
-            $this->logInternalError($exception);
+        } catch (Throwable $throwable) {
+            $this->logInternalError($throwable);
         }
         // Use this constant as a proxy for cakephp tests.
         if (PHP_SAPI === 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {

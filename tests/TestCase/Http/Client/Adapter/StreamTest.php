@@ -63,7 +63,7 @@ class StreamTest extends TestCase
 
         try {
             $responses = $stream->send($request, []);
-        } catch (CakeException $e) {
+        } catch (CakeException $cakeException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
         $this->assertInstanceOf(Response::class, $responses[0]);
@@ -98,7 +98,7 @@ class StreamTest extends TestCase
 
         try {
             $stream->send($request, []);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         $newHandler = set_error_handler(function (): void {

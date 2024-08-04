@@ -2282,7 +2282,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
-        } catch (PersistenceFailedException $exception) {
+        } catch (PersistenceFailedException $persistenceFailedException) {
             return false;
         }
     }
@@ -2353,10 +2353,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         }
                     }
                 });
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $cleanupOnFailure($entities);
 
-            throw $e;
+            throw $exception;
         }
 
         if ($failed !== null) {

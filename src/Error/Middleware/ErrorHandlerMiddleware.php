@@ -154,8 +154,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return $response instanceof ResponseInterface
                 ? $response
                 : new Response(['body' => $response, 'status' => 500]);
-        } catch (Throwable $internalException) {
-            $trap->logException($internalException, $request);
+        } catch (Throwable $throwable) {
+            $trap->logException($throwable, $request);
 
             return $this->handleInternalError();
         }
@@ -226,11 +226,11 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             if ($this->app instanceof PluginApplicationInterface) {
                 $this->app->pluginRoutes($builder);
             }
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             triggerWarning(sprintf(
                 "Exception loading routes when rendering an error page: \n %s - %s",
-                get_class($e),
-                $e->getMessage()
+                get_class($throwable),
+                $throwable->getMessage()
             ));
         }
     }

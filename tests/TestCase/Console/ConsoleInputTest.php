@@ -53,7 +53,7 @@ class ConsoleInputTest extends TestCase
 
         try {
             $this->assertFalse($this->in->dataAvailable());
-        } catch (ConsoleException $e) {
+        } catch (ConsoleException $consoleException) {
             $this->markTestSkipped(
                 'stream_select raised an exception. ' .
                 'This can happen when FD_SETSIZE is too small.'

@@ -174,7 +174,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
                 $this->dispatchEvent('Cell.afterAction', [$this, $this->action, $this->args]);
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException $reflectionException) {
                 throw new BadMethodCallException(sprintf(
                     'Class `%s` does not have a `%s` method.',
                     static::class,
@@ -203,7 +203,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $view = $this->createView();
             try {
                 return $view->render($template, false);
-            } catch (MissingTemplateException $e) {
+            } catch (MissingTemplateException $missingTemplateException) {
                 $attributes = $e->getAttributes();
                 throw new MissingCellTemplateException(
                     $name,

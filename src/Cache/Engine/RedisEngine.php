@@ -126,9 +126,9 @@ class RedisEngine extends CacheEngine
             } else {
                 $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
             }
-        } catch (RedisException $e) {
+        } catch (RedisException $redisException) {
             if (class_exists(Log::class)) {
-                Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
+                Log::error('RedisEngine could not connect. Got error: ' . $redisException->getMessage());
             }
 
             return false;

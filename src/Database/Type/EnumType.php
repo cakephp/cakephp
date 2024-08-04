@@ -60,12 +60,12 @@ class EnumType extends BaseType
 
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException $reflectionException) {
             throw new DatabaseException(sprintf(
                 'Unable to use `%s` for type `%s`. %s.',
                 $enumClassName,
                 $name,
-                $e->getMessage()
+                $reflectionException->getMessage()
             ));
         }
 

@@ -157,8 +157,8 @@ class CommandRunner implements EventDispatcherInterface
         try {
             [$name, $argv] = $this->longestCommandName($commands, $argv);
             $name = $this->resolveName($commands, $io, $name);
-        } catch (MissingOptionException $e) {
-            $io->error($e->getFullMessage());
+        } catch (MissingOptionException $missingOptionException) {
+            $io->error($missingOptionException->getFullMessage());
 
             return CommandInterface::CODE_ERROR;
         }
@@ -324,8 +324,8 @@ class CommandRunner implements EventDispatcherInterface
             }
 
             return $command->run($argv, $io);
-        } catch (StopException $e) {
-            return $e->getCode();
+        } catch (StopException $stopException) {
+            return $stopException->getCode();
         }
     }
 

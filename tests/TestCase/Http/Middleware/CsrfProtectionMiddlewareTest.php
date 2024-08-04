@@ -335,8 +335,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
 
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
@@ -477,8 +477,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
@@ -544,8 +544,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $middleware->process($request, $this->_getRequestHandler());
 
             $this->fail();
-        } catch (InvalidCsrfTokenException $exception) {
-            $responseHeaders = $exception->getHeaders();
+        } catch (InvalidCsrfTokenException $invalidCsrfTokenException) {
+            $responseHeaders = $invalidCsrfTokenException->getHeaders();
             $this->assertEmpty($responseHeaders, 'Should not send any header');
         }
     }

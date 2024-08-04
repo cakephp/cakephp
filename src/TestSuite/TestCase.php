@@ -298,8 +298,8 @@ abstract class TestCase extends BaseTestCase
             $reflect = new ReflectionClass($className);
             $app = $reflect->newInstanceArgs($appArgs);
             assert($app instanceof RoutingApplicationInterface);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf('Cannot load `%s` to load routes from.', $className), 0, $e);
+        } catch (ReflectionException $reflectionException) {
+            throw new LogicException(sprintf('Cannot load `%s` to load routes from.', $className), 0, $reflectionException);
         }
         $builder = Router::createRouteBuilder('/');
         $app->routes($builder);

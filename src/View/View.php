@@ -715,12 +715,12 @@ class View implements EventDispatcherInterface
 
         try {
             $block();
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             while (ob_get_level() > $bufferLevel) {
                 ob_end_clean();
             }
 
-            throw $exception;
+            throw $throwable;
         }
 
         $result = (string)ob_get_clean();
@@ -1186,12 +1186,12 @@ class View implements EventDispatcherInterface
         try {
             // Avoiding $templateFile here due to collision with extract() vars.
             include func_get_arg(0);
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             while (ob_get_level() > $bufferLevel) {
                 ob_end_clean();
             }
 
-            throw $exception;
+            throw $throwable;
         }
 
         return (string)ob_get_clean();
