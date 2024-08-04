@@ -400,7 +400,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (!$this->_containments && !$this->_matching instanceof \Cake\ORM\EagerLoader) {
+        if (!$this->_containments && !$this->_matching instanceof EagerLoader) {
             return;
         }
 
@@ -696,7 +696,7 @@ class EagerLoader
             return $map;
         }
 
-        assert($this->_matching instanceof \Cake\ORM\EagerLoader, 'EagerLoader not available');
+        assert($this->_matching instanceof EagerLoader, 'EagerLoader not available');
 
         $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
         $map = $this->_buildAssociationsMap($map, $this->normalized($table));

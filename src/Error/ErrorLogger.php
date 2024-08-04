@@ -95,7 +95,7 @@ class ErrorLogger implements ErrorLoggerInterface
     ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
-        if ($request instanceof \Psr\Http\Message\ServerRequestInterface) {
+        if ($request instanceof ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
         $this->error($message);

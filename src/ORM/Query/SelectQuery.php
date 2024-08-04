@@ -421,7 +421,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if ($overwrite) {
             $this->_mapReduce = [];
         }
-        if (!$mapper instanceof \Closure) {
+        if (!$mapper instanceof Closure) {
             if (!$overwrite) {
                 throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
             }
@@ -540,7 +540,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];
         }
-        if (!$formatter instanceof \Closure) {
+        if (!$formatter instanceof Closure) {
             if ($mode !== self::OVERWRITE) {
                 throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
             }
@@ -1380,7 +1380,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function __clone()
     {
         parent::__clone();
-        if ($this->_eagerLoader instanceof \Cake\ORM\EagerLoader) {
+        if ($this->_eagerLoader instanceof EagerLoader) {
             $this->_eagerLoader = clone $this->_eagerLoader;
         }
     }
@@ -1408,7 +1408,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
-        if ($counter instanceof \Closure) {
+        if ($counter instanceof Closure) {
             $query->counter(null);
 
             return (int)$counter($query);
@@ -1431,10 +1431,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
         }
 
-        if (!$complex && $this->_valueBinder instanceof \Cake\Database\ValueBinder) {
+        if (!$complex && $this->_valueBinder instanceof ValueBinder) {
             $order = $this->clause('order');
             assert($order === null || $order instanceof QueryExpression);
-            $complex = !$order instanceof \Cake\Database\Expression\QueryExpression ? false : $order->hasNestedExpression();
+            $complex = !$order instanceof QueryExpression ? false : $order->hasNestedExpression();
         }
 
         $count = ['count' => $query->func()->count('*')];

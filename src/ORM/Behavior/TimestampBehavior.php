@@ -154,7 +154,7 @@ class TimestampBehavior extends Behavior
                 $this->_config['refreshTimestamp'] = false;
             }
             $this->_ts = new DateTime($ts);
-        } elseif (!$this->_ts instanceof \Cake\I18n\DateTime || $refreshTimestamp) {
+        } elseif (!$this->_ts instanceof DateTime || $refreshTimestamp) {
             $this->_ts = new DateTime();
         }
 

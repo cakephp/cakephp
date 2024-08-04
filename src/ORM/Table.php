@@ -36,6 +36,7 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -347,7 +348,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $this->initialize($config);
 
-        assert($this->_eventManager instanceof \Cake\Event\EventManagerInterface, 'EventManager not available');
+        assert($this->_eventManager instanceof EventManagerInterface, 'EventManager not available');
 
         $this->_eventManager->on($this);
         $this->dispatchEvent('Model.initialize');
@@ -538,7 +539,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getSchema(): TableSchemaInterface
     {
-        if (!$this->_schema instanceof \Cake\Database\Schema\TableSchemaInterface) {
+        if (!$this->_schema instanceof TableSchemaInterface) {
             $this->_schema = $this->getConnection()
                 ->getSchemaCollection()
                 ->describe($this->getTable());
@@ -594,7 +595,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function checkAliasLengths(): void
     {
-        if (!$this->_schema instanceof \Cake\Database\Schema\TableSchemaInterface) {
+        if (!$this->_schema instanceof TableSchemaInterface) {
             throw new DatabaseException(sprintf(
                 'Unable to check max alias lengths for `%s` without schema.',
                 $this->getAlias()
@@ -937,7 +938,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasAssociation(string $name): bool
     {
-        return $this->findAssociation($name) instanceof \Cake\ORM\Association;
+        return $this->findAssociation($name) instanceof Association;
     }
 
     /**
@@ -964,7 +965,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $result = $this->_associations->get($name);
         }
 
-        if ($result instanceof \Cake\ORM\Association && $next !== null) {
+        if ($result instanceof Association && $next !== null) {
             $result = $result->getTarget()->getAssociation($next);
         }
 
@@ -2359,7 +2360,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw $e;
         }
 
-        if ($failed instanceof \Cake\Datasource\EntityInterface) {
+        if ($failed instanceof EntityInterface) {
             $cleanupOnFailure($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
@@ -2464,7 +2465,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $failed = $this->_deleteMany($entities, $options);
 
-        if ($failed instanceof \Cake\Datasource\EntityInterface) {
+        if ($failed instanceof EntityInterface) {
             return false;
         }
 
@@ -2488,7 +2489,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $failed = $this->_deleteMany($entities, $options);
 
-        if ($failed instanceof \Cake\Datasource\EntityInterface) {
+        if ($failed instanceof EntityInterface) {
             throw new PersistenceFailedException($failed, ['deleteMany']);
         }
 

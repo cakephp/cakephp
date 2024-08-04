@@ -5,6 +5,7 @@ namespace Cake\TestSuite\Constraint;
 
 use Cake\Collection\Collection;
 use Cake\Event\EventInterface;
+use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
@@ -50,7 +51,7 @@ class EventFiredWith extends Constraint
         $this->_dataKey = $dataKey;
         $this->_dataValue = $dataValue;
 
-        if (!$this->_eventManager->getEventList() instanceof \Cake\Event\EventList) {
+        if (!$this->_eventManager->getEventList() instanceof EventList) {
             throw new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             );
@@ -68,7 +69,7 @@ class EventFiredWith extends Constraint
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
-        if ($list instanceof \Cake\Event\EventList) {
+        if ($list instanceof EventList) {
             $totalEvents = count($list);
             for ($e = 0; $e < $totalEvents; $e++) {
                 $firedEvents[] = $list[$e];

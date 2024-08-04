@@ -158,7 +158,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         // If the current request doesn't have routing data, but we
         // found a request in the router context copy the params over
-        if ($request->getParam('controller') === null && $routerRequest instanceof \Cake\Http\ServerRequest) {
+        if ($request->getParam('controller') === null && $routerRequest instanceof ServerRequest) {
             $request = $request->withAttribute('params', $routerRequest->getAttribute('params'));
         }
 
@@ -196,7 +196,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller = null;
         }
 
-        if (!$controller instanceof \Cake\Controller\Controller) {
+        if (!$controller instanceof Controller) {
             return new Controller($request);
         }
 

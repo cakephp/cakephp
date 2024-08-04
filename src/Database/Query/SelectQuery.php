@@ -814,7 +814,7 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->_resultDecorators = [];
         }
 
-        if ($callback instanceof \Closure) {
+        if ($callback instanceof Closure) {
             $this->_resultDecorators[] = $callback;
         }
 
@@ -968,7 +968,7 @@ class SelectQuery extends Query implements IteratorAggregate
         parent::__clone();
 
         $this->_results = null;
-        if ($this->_selectTypeMap instanceof \Cake\Database\TypeMap) {
+        if ($this->_selectTypeMap instanceof TypeMap) {
             $this->_selectTypeMap = clone $this->_selectTypeMap;
         }
     }

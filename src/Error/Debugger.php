@@ -284,7 +284,7 @@ class Debugger
      */
     public static function getUniqueFrames(Throwable $exception, ?Throwable $parent): array
     {
-        if (!$parent instanceof \Throwable) {
+        if (!$parent instanceof Throwable) {
             return $exception->getTrace();
         }
         $parentFrames = $parent->getTrace();

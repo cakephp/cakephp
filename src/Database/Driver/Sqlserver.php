@@ -112,7 +112,7 @@ class Sqlserver extends Driver
      */
     public function connect(): void
     {
-        if ($this->pdo instanceof \PDO) {
+        if ($this->pdo instanceof PDO) {
             return;
         }
         $config = $this->_config;

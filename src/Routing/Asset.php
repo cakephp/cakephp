@@ -18,6 +18,7 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use function Cake\Core\pluginSplit;
 
@@ -342,7 +343,7 @@ class Asset
     protected static function requestWebroot(): string
     {
         $request = Router::getRequest();
-        if (!$request instanceof \Cake\Http\ServerRequest) {
+        if (!$request instanceof ServerRequest) {
             return '/';
         }
 

@@ -70,7 +70,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
     {
         $exceptions = [$this->error];
         $previous = $this->error->getPrevious();
-        while ($previous instanceof \Throwable) {
+        while ($previous instanceof Throwable) {
             $exceptions[] = $previous;
             $previous = $previous->getPrevious();
         }

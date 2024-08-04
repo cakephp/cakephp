@@ -59,7 +59,7 @@ class I18n
      */
     public static function translators(): TranslatorRegistry
     {
-        if (static::$_collection instanceof \Cake\I18n\TranslatorRegistry) {
+        if (static::$_collection instanceof TranslatorRegistry) {
             return static::$_collection;
         }
 
@@ -158,7 +158,7 @@ class I18n
         }
 
         $translator = $translators->get($name);
-        if (!$translator instanceof \Cake\I18n\Translator) {
+        if (!$translator instanceof Translator) {
             throw new I18nException(sprintf(
                 'Translator for domain `%s` could not be found.',
                 $name

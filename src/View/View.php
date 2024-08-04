@@ -340,7 +340,7 @@ class View implements EventDispatcherInterface
         ?EventManagerInterface $eventManager = null,
         array $viewOptions = []
     ) {
-        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
+        if ($eventManager instanceof EventManagerInterface) {
             // Set the event manager before accessing the helper registry below
             // to ensure that helpers are registered as listeners with the manager when loaded.
             $this->setEventManager($eventManager);

@@ -439,7 +439,7 @@ class Xml
             $obj = simplexml_import_dom($obj);
         }
 
-        if (!$obj instanceof \SimpleXMLElement) {
+        if (!$obj instanceof SimpleXMLElement) {
             throw new XmlException('Failed converting DOMNode to SimpleXMLElement');
         }
 

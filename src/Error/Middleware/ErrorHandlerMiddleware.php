@@ -196,7 +196,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     protected function getExceptionTrap(): ExceptionTrap
     {
-        if (!$this->exceptionTrap instanceof \Cake\Error\ExceptionTrap) {
+        if (!$this->exceptionTrap instanceof ExceptionTrap) {
             /** @var class-string<\Cake\Error\ExceptionTrap> $className */
             $className = App::className('ExceptionTrap', 'Error');
             $this->exceptionTrap = new $className($this->getConfig());

@@ -60,7 +60,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
     {
-        if ($controller instanceof \Cake\Controller\Controller) {
+        if ($controller instanceof Controller) {
             $this->setController($controller);
         }
         $this->container = $container;
@@ -87,7 +87,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     public function getController(): Controller
     {
-        if (!$this->_Controller instanceof \Cake\Controller\Controller) {
+        if (!$this->_Controller instanceof Controller) {
             throw new RuntimeException('Controller must be set first.');
         }
 

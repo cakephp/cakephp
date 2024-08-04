@@ -1780,7 +1780,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function __clone()
     {
         $this->_statement = null;
-        if ($this->_valueBinder instanceof \Cake\Database\ValueBinder) {
+        if ($this->_valueBinder instanceof ValueBinder) {
             $this->_valueBinder = clone $this->_valueBinder;
         }
         foreach ($this->_parts as $name => $part) {

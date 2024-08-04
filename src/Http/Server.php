@@ -86,7 +86,7 @@ class Server implements EventDispatcherInterface
 
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
-        if (!$middlewareQueue instanceof \Cake\Http\MiddlewareQueue) {
+        if (!$middlewareQueue instanceof MiddlewareQueue) {
             if ($this->app instanceof ContainerApplicationInterface) {
                 $middlewareQueue = new MiddlewareQueue([], $this->app->getContainer());
             } else {
