@@ -448,7 +448,7 @@ class ServerRequest implements ServerRequestInterface
                 $ref = '/';
             }
             if (!str_starts_with($ref, '/')) {
-                $ref = '/' . $ref;
+                return '/' . $ref;
             }
 
             return $ref;
@@ -781,7 +781,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = str_replace('-', '_', strtoupper($name));
         if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
-            $name = 'HTTP_' . $name;
+            return 'HTTP_' . $name;
         }
 
         return $name;
@@ -1772,7 +1772,7 @@ class ServerRequest implements ServerRequestInterface
         }
 
         if (!$target) {
-            $target = '/';
+            return '/';
         }
 
         return $target;

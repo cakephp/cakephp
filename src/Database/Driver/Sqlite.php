@@ -297,7 +297,7 @@ class Sqlite extends Driver
                     ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = ['value' => $p, 'type' => null];
+                            return ['value' => $p, 'type' => null];
                         }
 
                         return $p;

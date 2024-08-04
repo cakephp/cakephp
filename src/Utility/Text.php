@@ -834,7 +834,7 @@ class Text
             // Some languages are written without word separation.
             // We recognize a string as a word if it doesn't contain any full-width characters.
             if (mb_strwidth($lastWord) === mb_strlen($lastWord)) {
-                $text = mb_substr($text, 0, $spacepos);
+                return mb_substr($text, 0, $spacepos);
             }
 
             return $text;

@@ -195,7 +195,7 @@ trait CollectionTrait
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
-            $extractor = $extractor
+            return $extractor
                 ->filter(function ($data) {
                     return $data !== null && ($data instanceof Traversable || is_array($data));
                 })
@@ -962,7 +962,7 @@ trait CollectionTrait
         }
 
         if ($iterator !== $this && $iterator instanceof CollectionInterface) {
-            $iterator = $iterator->unwrap();
+            return $iterator->unwrap();
         }
 
         return $iterator;
@@ -1088,7 +1088,7 @@ trait CollectionTrait
         $iterator = $this->unwrap();
 
         if ($iterator::class === ArrayIterator::class) {
-            $iterator = $iterator->getArrayCopy();
+            return $iterator->getArrayCopy();
         }
 
         return $iterator;

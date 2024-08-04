@@ -194,7 +194,7 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            $data = unserialize($data);
+            return unserialize($data);
         }
 
         return $data;

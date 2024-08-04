@@ -153,7 +153,7 @@ class ConsoleInputArgument
         }
         $name = '<' . $name . '>';
         if (!$this->isRequired()) {
-            $name = '[' . $name . ']';
+            return '[' . $name . ']';
         }
 
         return $name;

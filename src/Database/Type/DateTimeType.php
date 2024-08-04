@@ -225,7 +225,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             && $instance->getTimezone()
             && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
         ) {
-            $instance = $instance->setTimezone($this->defaultTimezone);
+            return $instance->setTimezone($this->defaultTimezone);
         }
 
         return $instance;
@@ -324,7 +324,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                 }
 
                 if ($dateTime) {
-                    $dateTime = $dateTime->setTimezone($this->defaultTimezone);
+                    return $dateTime->setTimezone($this->defaultTimezone);
                 }
 
                 return $dateTime;

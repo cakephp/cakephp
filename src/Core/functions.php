@@ -418,7 +418,7 @@ function toString(mixed $value): ?string
         }
 
         if ($return === null || str_contains($return, 'e')) {
-            $return = rtrim(sprintf('%.' . (PHP_FLOAT_DIG + 3) . 'F', $value), '.0');
+            return rtrim(sprintf('%.' . (PHP_FLOAT_DIG + 3) . 'F', $value), '.0');
         }
 
         return $return;

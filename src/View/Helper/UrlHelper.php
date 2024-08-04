@@ -90,7 +90,7 @@ class UrlHelper extends Helper
 
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
-            $url = (string)h($url);
+            return (string)h($url);
         }
 
         return $url;

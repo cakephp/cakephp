@@ -381,7 +381,7 @@ class Router
             $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
-                $output = static::fullBaseUrl() . $output;
+                return static::fullBaseUrl() . $output;
             }
 
             return $output;

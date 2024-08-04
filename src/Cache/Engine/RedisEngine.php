@@ -137,7 +137,7 @@ class RedisEngine extends CacheEngine
             $return = $this->_Redis->auth($this->_config['password']);
         }
         if ($return) {
-            $return = $this->_Redis->select((int)$this->_config['database']);
+            return $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;

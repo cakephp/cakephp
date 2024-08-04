@@ -234,7 +234,7 @@ class ResultSetFactory
             $results = $results[$data['primaryAlias']];
         }
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
-            $results = new $data['entityClass']($results, $options);
+            return new $data['entityClass']($results, $options);
         }
 
         return $results;

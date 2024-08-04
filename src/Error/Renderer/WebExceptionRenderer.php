@@ -320,7 +320,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         $result = $this->{$method}($exception);
         $this->_shutdown();
         if (is_string($result)) {
-            $result = $this->controller->getResponse()->withStringBody($result);
+            return $this->controller->getResponse()->withStringBody($result);
         }
 
         return $result;

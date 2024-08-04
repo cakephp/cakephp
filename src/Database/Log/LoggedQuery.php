@@ -185,7 +185,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     {
         $sql = $this->query;
         if ($this->params) {
-            $sql = $this->interpolate();
+            return $this->interpolate();
         }
 
         return $sql;

@@ -287,7 +287,7 @@ class Postgres extends Driver
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = sprintf("'%s'", $p);
+                            return sprintf("'%s'", $p);
                         }
 
                         return $p;
