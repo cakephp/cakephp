@@ -70,7 +70,7 @@ if ($missing) {
 $mainRequire = $mainJson['require'];
 
 $issues = [];
-foreach ($packages as $fullPackageName => $package) {
+foreach ($packages as $package) {
     $content = file_get_contents($path . $package . DS . 'composer.json');
     $json = json_decode($content, true);
     $require = $json['require'] ?? [];
