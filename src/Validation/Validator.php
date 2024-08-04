@@ -1277,19 +1277,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                         $typeEnumeration
                     );
                 }
+            } elseif ($type === 'all') {
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of any type'
+                );
             } else {
-                if ($type === 'all') {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of any type'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of these types: `{0}`',
-                        $typeEnumeration
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of these types: `{0}`',
+                    $typeEnumeration
+                );
             }
         }
 
@@ -1979,19 +1977,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 } else {
                     $message = sprintf('The provided value must be decimal with `%s` decimal places', $places);
                 }
+            } elseif ($places === null) {
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with any number of decimal places, including none'
+                );
             } else {
-                if ($places === null) {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with any number of decimal places, including none'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with `{0}` decimal places',
-                        $places
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with `{0}` decimal places',
+                    $places
+                );
             }
         }
 

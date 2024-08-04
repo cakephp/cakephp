@@ -140,15 +140,13 @@ class Text
                     if ($char === $rightBound) {
                         $depth--;
                     }
-                } else {
-                    if ($char === $leftBound) {
-                        if (!$open) {
-                            $depth++;
-                            $open = true;
-                        } else {
-                            $depth--;
-                            $open = false;
-                        }
+                } elseif ($char === $leftBound) {
+                    if (!$open) {
+                        $depth++;
+                        $open = true;
+                    } else {
+                        $depth--;
+                        $open = false;
                     }
                 }
                 $tmpOffset += 1;
