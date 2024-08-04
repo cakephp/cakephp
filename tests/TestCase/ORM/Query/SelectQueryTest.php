@@ -2395,7 +2395,7 @@ class SelectQueryTest extends TestCase
                         })
                         ->formatResults(function ($authors) {
                             return $authors->map(function ($author) {
-                                $author->idCopy = $author->idCopy + 2;
+                                $author->idCopy += 2;
 
                                 return $author;
                             });
@@ -2431,7 +2431,7 @@ class SelectQueryTest extends TestCase
                 })
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
-                        $result->idCopy = $result->idCopy + 2;
+                        $result->idCopy += 2;
 
                         return $result;
                     });

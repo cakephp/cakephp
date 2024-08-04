@@ -536,7 +536,7 @@ trait CollectionTrait
                 $offset++;
             }
 
-            $offset = $offset % $length;
+            $offset %= $length;
             $head = array_slice($result, $offset);
             $tail = array_slice($result, 0, $offset);
 
