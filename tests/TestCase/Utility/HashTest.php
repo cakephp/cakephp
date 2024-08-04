@@ -1143,7 +1143,7 @@ class HashTest extends TestCase
      * @param \ArrayAccess|array $data
      */
     #[DataProvider('articleDataSets')]
-    public function testExtractAttributePresence($data): void
+    public function testExtractAttributePresence(array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[published]');
         $expected = [$data[1]['Article']];
@@ -1160,7 +1160,7 @@ class HashTest extends TestCase
      * @param \ArrayAccess|array $data
      */
     #[DataProvider('articleDataSets')]
-    public function testExtractAttributeEquality($data): void
+    public function testExtractAttributeEquality(array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[id=3]');
         $expected = [$data[2]['Article']];
@@ -1273,7 +1273,7 @@ class HashTest extends TestCase
      * @param \ArrayAccess|array $data
      */
     #[DataProvider('articleDataSets')]
-    public function testExtractAttributeComparison($data): void
+    public function testExtractAttributeComparison(array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
         $expected = [$data[0]['Comment'][1]];
@@ -1302,7 +1302,7 @@ class HashTest extends TestCase
      * @param \ArrayAccess|array $data
      */
     #[DataProvider('articleDataSets')]
-    public function testExtractAttributeMultiple($data): void
+    public function testExtractAttributeMultiple(array $data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
         $this->assertEmpty($result);
@@ -1319,7 +1319,7 @@ class HashTest extends TestCase
      * @param \ArrayAccess|array $data
      */
     #[DataProvider('articleDataSets')]
-    public function testExtractAttributePattern($data): void
+    public function testExtractAttributePattern(array $data): void
     {
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');
         $expected = [$data[0]['Article']];

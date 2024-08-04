@@ -712,7 +712,7 @@ class Marshaller
                 return explode(';', (string)$key);
             })
             ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
-            ->reduce(function ($conditions, $keys) use ($primary) {
+            ->reduce(function (array $conditions, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);
 

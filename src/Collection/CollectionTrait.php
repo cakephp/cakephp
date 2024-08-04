@@ -684,7 +684,7 @@ trait CollectionTrait
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
+        $mapper = function (array $row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
@@ -1006,7 +1006,7 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = array_map(function (array $value, array $keys, $index) {
                 /** @psalm-suppress InvalidArrayOffset */
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);

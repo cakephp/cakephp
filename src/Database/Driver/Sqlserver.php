@@ -380,7 +380,7 @@ class Sqlserver extends Driver
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(function (array $row) {
             if (isset($row['_cake_page_rownum_'])) {
                 unset($row['_cake_page_rownum_']);
             }
@@ -431,7 +431,7 @@ class Sqlserver extends Driver
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(function (array $row) {
             if (isset($row['_cake_distinct_pivot_'])) {
                 unset($row['_cake_distinct_pivot_']);
             }

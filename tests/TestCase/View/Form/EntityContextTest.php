@@ -817,7 +817,7 @@ class EntityContextTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
-        $validator->notEmptyString('title', 'nope', function ($context) {
+        $validator->notEmptyString('title', 'nope', function (array $context) {
             return $context['providers']['entity']->isRequired();
         });
         $articles->setValidator('default', $validator);
@@ -843,7 +843,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
-        $validator->allowEmptyString('comment', null, function ($context) {
+        $validator->allowEmptyString('comment', null, function (array $context) {
             return $context['providers']['entity']->isNew();
         });
 

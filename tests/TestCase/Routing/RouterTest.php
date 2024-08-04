@@ -1099,7 +1099,7 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $calledCount = 0;
-        Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+        Router::addUrlFilter(function (array $url, $request) use (&$calledCount) {
             $calledCount++;
             $url['lang'] = $request->getParam('lang');
 

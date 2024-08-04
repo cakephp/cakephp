@@ -96,7 +96,7 @@ class TreeIteratorTest extends TestCase
         ];
         $items = new NestIterator($items, 'stuff');
         $result = (new TreeIterator($items))
-            ->printer(function ($element, $key, $iterator) {
+            ->printer(function (array $element, $key, $iterator) {
                 return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
             }, null, '')
             ->toArray();

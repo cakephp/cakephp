@@ -1161,7 +1161,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new SelectQuery($table);
         $query->select(['a' => 'id'])->limit(2)->orderBy(['id' => 'ASC']);
-        $query->mapReduce(function ($v, $k, $mr): void {
+        $query->mapReduce(function (array $v, $k, $mr): void {
             $mr->emit($v['a']);
         });
         $query->mapReduce(
@@ -1224,7 +1224,7 @@ class SelectQueryTest extends TestCase
      */
     public function testFirstMapReduce(): void
     {
-        $map = function ($row, $key, $mapReduce): void {
+        $map = function (array $row, $key, $mapReduce): void {
             $mapReduce->emitIntermediate($row['id'], 'id');
         };
         $reduce = function ($values, $key, $mapReduce): void {

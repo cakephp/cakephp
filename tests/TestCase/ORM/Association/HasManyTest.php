@@ -824,7 +824,7 @@ class HasManyTest extends TestCase
      * @param array $expected Array of expected fields.
      * @param \Cake\ORM\Query\SelectQuery $query The query to check.
      */
-    protected function assertSelectClause($expected, $query): void
+    protected function assertSelectClause(array $expected, $query): void
     {
         if ($this->autoQuote) {
             $driver = $query->getConnection()->getDriver();

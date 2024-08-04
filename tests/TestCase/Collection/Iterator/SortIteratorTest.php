@@ -81,7 +81,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 2, 'bar' => 'a'],
             ['foo' => 13, 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
+        $callback = function (array $a) {
             return $a['foo'];
         };
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
@@ -114,7 +114,7 @@ class SortIteratorTest extends TestCase
             ['foo' => 'foo_2', 'bar' => 'a'],
             ['foo' => 'foo_13', 'bar' => 'a'],
         ]);
-        $callback = function ($a) {
+        $callback = function (array $a) {
             return $a['foo'];
         };
         $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NATURAL);

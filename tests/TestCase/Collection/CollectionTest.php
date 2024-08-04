@@ -540,7 +540,7 @@ class CollectionTest extends TestCase
     public function testMaxCallback(iterable $items): void
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
+        $callback = function (array $e) {
             return $e['a']['b']['c'] * -1;
         };
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
@@ -553,7 +553,7 @@ class CollectionTest extends TestCase
     public function testMaxCallable(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function (array $e) {
             return $e['a']['b']['c'] * -1;
         }));
     }
@@ -660,7 +660,7 @@ class CollectionTest extends TestCase
                 ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
             ],
         ];
-        $grouped = $collection->groupBy(function ($element) {
+        $grouped = $collection->groupBy(function (array $element) {
             return $element['parent_id'];
         });
         $this->assertEquals($expected, iterator_to_array($grouped));
@@ -799,7 +799,7 @@ class CollectionTest extends TestCase
     public function testIndexByCallback(iterable $items): void
     {
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
+        $grouped = $collection->indexBy(function (array $element) {
             return $element['id'];
         });
         $expected = [
@@ -820,7 +820,7 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
         ];
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
+        $grouped = $collection->indexBy(function (array $element) {
             return $element['thing'];
         });
         $expected = [
@@ -840,7 +840,7 @@ class CollectionTest extends TestCase
             ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
         ];
         $collection = new Collection($items);
-        $grouped = $collection->indexBy(function ($element) {
+        $grouped = $collection->indexBy(function (array $element) {
             return $element['thing'];
         });
         $expected = [
@@ -935,7 +935,7 @@ class CollectionTest extends TestCase
             11 => 1,
         ];
         $collection = new Collection($items);
-        $grouped = $collection->countBy(function ($element) {
+        $grouped = $collection->countBy(function (array $element) {
             return $element['parent_id'];
         });
         $this->assertEquals($expected, iterator_to_array($grouped));
@@ -1320,13 +1320,13 @@ class CollectionTest extends TestCase
             '2-3' => ['baz-2-3' => '2-3-baz'],
         ];
         $collection = (new Collection($items))->combine(
-            function ($value, $key) {
+            function (array $value, $key) {
                 return $value['name'] . '-' . $key;
             },
-            function ($value, $key) {
+            function (array $value, $key) {
                 return $key . '-' . $value['name'];
             },
-            function ($value, $key) {
+            function (array $value, $key) {
                 return $key . '-' . $value['id'];
             }
         );
@@ -1859,7 +1859,7 @@ class CollectionTest extends TestCase
     #[DataProvider('sumOfProvider')]
     public function testSumOfCallable(iterable $items, $expected): void
     {
-        $sum = (new Collection($items))->sumOf(function ($v) {
+        $sum = (new Collection($items))->sumOf(function (array $v) {
             return $v['invoice']['total'];
         });
         $this->assertEquals($expected, $sum);

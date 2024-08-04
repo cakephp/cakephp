@@ -144,7 +144,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $entity, $options) use ($table) {
+                function (Entity $entity, array $options) use ($table) {
                     $this->assertSame($table, $options['_sourceTable']);
 
                     return $entity->title === '1';
@@ -1109,7 +1109,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function ($entity, $options) {
+        $rules->add(function ($entity, array $options) {
             $this->assertSame('bar', $options['foo']);
             $this->assertSame('option', $options['another']);
 
@@ -1126,7 +1126,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->addDelete(function ($entity, $options) {
+        $rules->addDelete(function ($entity, array $options) {
             $this->assertSame('bar', $options['foo']);
             $this->assertSame('option', $options['another']);
 

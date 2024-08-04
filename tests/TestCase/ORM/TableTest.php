@@ -2258,10 +2258,10 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener1 = function ($event, $entity, $options): void {
+        $listener1 = function ($event, $entity, array $options): void {
             $options['crazy'] = true;
         };
-        $listener2 = function ($event, $entity, $options): void {
+        $listener2 = function ($event, $entity, array $options): void {
             $this->assertTrue($options['crazy']);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener1);

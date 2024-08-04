@@ -258,7 +258,7 @@ class Sqlite extends Driver
                 $expression
                     ->setName('ROUND')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
+                    ->iterateParts(function (array $p) {
                         return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
                     });
                 break;

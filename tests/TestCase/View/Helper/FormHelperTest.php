@@ -283,7 +283,7 @@ class FormHelperTest extends TestCase
     {
         $context = 'My data';
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
+        $this->Form->addContextProvider('test', function ($request, array $data) use ($context, $stub) {
             $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
             $this->assertSame($context, $data['entity']);
 
@@ -316,7 +316,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
+        $this->Form->addContextProvider('newshiny', function ($request, array $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
             }

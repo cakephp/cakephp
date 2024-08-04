@@ -1753,7 +1753,7 @@ class PaginatorHelperTest extends TestCase
      * @param array $options Options for PaginatorHelper::numbers
      * @return string[]
      */
-    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, $options = []): array
+    protected function getNumbersForMultiplePages($pagesToCheck, $pageCount, array $options = []): array
     {
         $options['templates'] = [
             'first' => '<{{text}} ',

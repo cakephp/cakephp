@@ -907,7 +907,7 @@ class ServerRequestFactoryTest extends TestCase
      * @param array $expected
      */
     #[DataProvider('environmentGenerator')]
-    public function testEnvironmentDetection($name, $data, $expected): void
+    public function testEnvironmentDetection($name, $data, array $expected): void
     {
         if (isset($data['App'])) {
             Configure::write('App', $data['App']);

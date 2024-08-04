@@ -2711,7 +2711,7 @@ class SelectQueryTest extends TestCase
             ->select(['id', 'title'])
             ->from('articles')
             ->orderBy(['id' => 'ASC'])
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['modified_id'] = $row['id'] + 1;
 
                 return $row;
@@ -2723,7 +2723,7 @@ class SelectQueryTest extends TestCase
         }
 
         $result = $query
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['modified_id']--;
 
                 return $row;
@@ -2735,7 +2735,7 @@ class SelectQueryTest extends TestCase
         }
 
         $result = $query
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['foo'] = 'bar';
 
                 return $row;
@@ -2761,7 +2761,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id', 'title'])
             ->from('articles')
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['generated'] = 'test';
 
                 return $row;
@@ -2804,7 +2804,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select(['id', 'title'])
             ->from('articles')
-            ->decorateResults(function ($row) {
+            ->decorateResults(function (array $row) {
                 $row['generated'] = 'test';
 
                 return $row;

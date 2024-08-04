@@ -395,7 +395,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, array $options) use (&$called): void {
             $this->assertSame('more', $options['something']);
             $called = true;
         });

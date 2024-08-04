@@ -1478,7 +1478,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             $fields = $options[$field];
             $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
-            $options[$field] = function ($row) use ($fields, $glue): string {
+            $options[$field] = function (array $row) use ($fields, $glue): string {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];

@@ -324,7 +324,7 @@ class MarshallerTest extends TestCase
         $users->hasOne('Articles', [
             'foreignKey' => 'author_id',
         ]);
-        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, $data, $options): void {
+        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, array $data, $options): void {
             // Blank the association, so it doesn't become dirty.
             unset($data['not_a_real_field']);
         });
@@ -3106,7 +3106,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options): void {
+            function ($e, array $data, array $options): void {
                 $this->assertArrayHasKey('validate', $options);
                 $data['title'] = 'Modified title';
                 $data['user']['username'] = 'robert';
@@ -3151,7 +3151,7 @@ class MarshallerTest extends TestCase
         // Assert event options are correct
         $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options): void {
+            function ($e, $data, array $options): void {
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertTrue($options['validate']);
 
@@ -3165,28 +3165,28 @@ class MarshallerTest extends TestCase
 
         $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options): void {
+            function ($e, array $data, $options): void {
                 $data['secret'] = 'h45h3d';
             }
         );
 
         $this->articles->Comments->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            function ($e, array $data): void {
                 $data['comment'] .= ' (modified)';
             }
         );
 
         $this->articles->Tags->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            function ($e, array $data): void {
                 $data['tag'] .= ' (modified)';
             }
         );
 
         $this->articles->Tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            function ($e, array $data): void {
                 $data['modified_by'] = 1;
             }
         );
@@ -3222,7 +3222,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.afterMarshal',
-            function ($e, $entity, $data, $options): void {
+            function ($e, $entity, array $data, array $options): void {
                 $this->assertInstanceOf('Cake\ORM\Entity', $entity);
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertFalse($options['isMerge']);
@@ -3264,7 +3264,7 @@ class MarshallerTest extends TestCase
 
         $this->articles->getEventManager()->on(
             'Model.afterMarshal',
-            function ($e, $entity, $data, $options): void {
+            function ($e, $entity, array $data, array $options): void {
                 $this->assertInstanceOf('Cake\ORM\Entity', $entity);
                 $this->assertArrayHasKey('validate', $options);
                 $this->assertTrue($options['isMerge']);

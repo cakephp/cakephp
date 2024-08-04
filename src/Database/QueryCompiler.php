@@ -355,7 +355,7 @@ class QueryCompiler
      */
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
-        $parts = array_map(function ($p) use ($binder) {
+        $parts = array_map(function (array $p) use ($binder) {
             /** @var \Cake\Database\Expression\IdentifierExpression $expr */
             $expr = $p['query'];
             $p['query'] = $expr->sql($binder);

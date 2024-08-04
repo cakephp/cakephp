@@ -355,7 +355,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $require = true;
-        $validator->requirePresence('title', function ($context) use (&$require) {
+        $validator->requirePresence('title', function (array $context) use (&$require) {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertSame('title', $context['field']);
@@ -745,7 +745,7 @@ class ValidatorTest extends TestCase
         $validator->allowEmptyString(
             'title',
             'very required',
-            function ($context) {
+            function (array $context) {
                 return $context['data']['otherField'] === true;
             }
         )
@@ -1328,7 +1328,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $allow = true;
-        $validator->allowEmptyString('title', null, function ($context) use (&$allow) {
+        $validator->allowEmptyString('title', null, function (array $context) use (&$allow) {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertTrue($context['newRecord']);
@@ -1349,7 +1349,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $prevent = true;
-        $validator->notEmptyString('title', 'error message', function ($context) use (&$prevent) {
+        $validator->notEmptyString('title', 'error message', function (array $context) use (&$prevent) {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertFalse($context['newRecord']);

@@ -87,7 +87,7 @@ class ExtractIteratorTest extends TestCase
             ['a' => 1, 'b' => 2],
             ['a' => 3, 'b' => 4],
         ];
-        $extractor = new ExtractIterator($items, function ($item) {
+        $extractor = new ExtractIterator($items, function (array $item) {
             return $item['b'];
         });
         $this->assertEquals([2, 4], iterator_to_array($extractor));
