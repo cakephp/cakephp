@@ -196,7 +196,7 @@ class I18nExtractCommand extends Command
         }
 
         if ($args->hasOption('extract-core')) {
-            $this->_extractCore = !(strtolower((string)$args->getOption('extract-core')) === 'no');
+            $this->_extractCore = strtolower((string)$args->getOption('extract-core')) !== 'no';
         } else {
             $response = $io->askChoice(
                 'Would you like to extract the messages from the CakePHP core?',
@@ -251,7 +251,7 @@ class I18nExtractCommand extends Command
         }
 
         if ($args->hasOption('merge')) {
-            $this->_merge = !(strtolower((string)$args->getOption('merge')) === 'no');
+            $this->_merge = strtolower((string)$args->getOption('merge')) !== 'no';
         } else {
             $io->out();
             $response = $io->askChoice(
