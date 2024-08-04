@@ -183,11 +183,10 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     public function __toString(): string
     {
-        $sql = $this->query;
         if ($this->params) {
-            $sql = $this->interpolate();
+            return $this->interpolate();
         }
 
-        return $sql;
+        return $this->query;
     }
 }
