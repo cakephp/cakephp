@@ -425,7 +425,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         if (is_string($options['accuracy'])) {
             $accuracy = $options['accuracy'];
             $options['accuracy'] = [];
-            foreach ($class::$wordAccuracy as $key => $level) {
+            foreach (array_keys($class::$wordAccuracy) as $key) {
                 $options['accuracy'][$key] = $accuracy;
             }
         } else {

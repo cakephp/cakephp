@@ -583,7 +583,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             $this->value = clone $this->value;
         }
 
-        foreach ($this->when as $key => $when) {
+        foreach (array_keys($this->when) as $key) {
             $this->when[$key] = clone $this->when[$key];
         }
 

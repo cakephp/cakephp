@@ -88,7 +88,7 @@ class TypeFactory
      */
     public static function buildAll(): array
     {
-        foreach (static::$_types as $name => $type) {
+        foreach (array_keys(static::$_types) as $name) {
             static::$_builtTypes[$name] ??= static::build($name);
         }
 

@@ -116,7 +116,7 @@ class LoggedQuery implements JsonSerializable, Stringable
 
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;
-        foreach ($params as $key => $param) {
+        foreach (array_keys($params) as $key) {
             $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
         }
 

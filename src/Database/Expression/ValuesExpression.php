@@ -227,7 +227,7 @@ class ValuesExpression implements ExpressionInterface
 
         $types = [];
         $typeMap = $this->getTypeMap();
-        foreach ($defaults as $col => $v) {
+        foreach (array_keys($defaults) as $col) {
             $types[$col] = $typeMap->type($col);
         }
 

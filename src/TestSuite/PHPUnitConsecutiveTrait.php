@@ -37,7 +37,7 @@ trait PHPUnitConsecutiveTrait
 
         $mockedMethodCall = 0;
         $callbackCall = 0;
-        foreach ($argumentList as $index => $argument) {
+        foreach (array_keys($argumentList) as $index) {
             yield new Callback(
                 static function (mixed $actualArgument) use (
                     $argumentList,

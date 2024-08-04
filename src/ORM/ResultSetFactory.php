@@ -110,7 +110,7 @@ class ResultSetFactory
             $fields[$parts[0]][$key] = $parts[1];
         }
 
-        foreach ($data['matchingAssoc'] as $alias => $assoc) {
+        foreach (array_keys($data['matchingAssoc']) as $alias) {
             if (!isset($fields[$alias])) {
                 continue;
             }
@@ -218,7 +218,7 @@ class ResultSetFactory
             $results = $instance->transformRow($results, $alias, $assoc['canBeJoined'], $assoc['targetProperty']);
         }
 
-        foreach ($presentAliases as $alias => $present) {
+        foreach (array_keys($presentAliases) as $alias) {
             if (!isset($results[$alias])) {
                 continue;
             }

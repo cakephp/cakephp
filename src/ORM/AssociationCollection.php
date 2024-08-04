@@ -202,7 +202,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function removeAll(): void
     {
-        foreach ($this->_items as $alias => $object) {
+        foreach (array_keys($this->_items) as $alias) {
             $this->remove($alias);
         }
     }

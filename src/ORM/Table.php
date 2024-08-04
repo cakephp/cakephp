@@ -2159,7 +2159,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (count($primary) > 1) {
             $schema = $this->getSchema();
-            foreach ($primary as $k => $v) {
+            foreach (array_keys($primary) as $k) {
                 if (!isset($data[$k]) && empty($schema->getColumn($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
                     $msg .= sprintf(
@@ -2186,7 +2186,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $entity->set($filteredKeys, ['guard' => false]);
             $schema = $this->getSchema();
             $driver = $this->getConnection()->getDriver();
-            foreach ($primary as $key => $v) {
+            foreach (array_keys($primary) as $key) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
                     $type = $schema->getColumnType($key);
@@ -2734,7 +2734,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $paramNames[] = $param->getName();
                 }
 
-                foreach ($args as $key => $value) {
+                foreach (array_keys($args) as $key) {
                     if (is_string($key) && !in_array($key, $paramNames, true)) {
                         unset($args[$key]);
                     }
