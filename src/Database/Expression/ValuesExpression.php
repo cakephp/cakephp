@@ -93,7 +93,7 @@ class ValuesExpression implements ExpressionInterface
                 $values instanceof Query
             ) ||
             (
-                $this->_query &&
+                $this->_query instanceof \Cake\Database\Query &&
                 is_array($values)
             )
         ) {

@@ -437,7 +437,7 @@ class EventManager implements EventManagerInterface
      */
     public function isTrackingEvents(): bool
     {
-        return $this->_trackEvents && $this->_eventList;
+        return $this->_trackEvents && $this->_eventList instanceof \Cake\Event\EventList;
     }
 
     /**

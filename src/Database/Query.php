@@ -1767,7 +1767,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         $this->_dirty = true;
 
-        if ($this->_statement && $this->_valueBinder) {
+        if ($this->_statement instanceof \Cake\Database\StatementInterface && $this->_valueBinder instanceof \Cake\Database\ValueBinder) {
             $this->getValueBinder()->reset();
         }
     }

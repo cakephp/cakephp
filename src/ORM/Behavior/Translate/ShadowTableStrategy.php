@@ -263,7 +263,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $clause = $query->clause($name);
         assert($clause === null || $clause instanceof QueryExpression);
-        if (!$clause || !$clause->count()) {
+        if (!$clause instanceof \Cake\Database\Expression\QueryExpression || !$clause->count()) {
             return false;
         }
 

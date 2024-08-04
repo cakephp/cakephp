@@ -1699,7 +1699,7 @@ class FormHelper extends Helper
             ['secure' => static::SECURE_SKIP]
         ));
 
-        if ($secure === true && $this->formProtector) {
+        if ($secure === true && $this->formProtector instanceof \Cake\Form\FormProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 true,
@@ -1964,7 +1964,7 @@ class FormHelper extends Helper
             'templateVars' => [],
         ];
 
-        if (isset($options['name']) && $this->formProtector) {
+        if (isset($options['name']) && $this->formProtector instanceof \Cake\Form\FormProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 $options['secure']
