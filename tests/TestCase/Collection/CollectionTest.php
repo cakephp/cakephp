@@ -2026,7 +2026,7 @@ class CollectionTest extends TestCase
         ];
         $this->assertSame($expected, $result);
 
-        $filter = function ($value) {
+        $filter = function ($value): never {
             throw new Exception('filter exception');
         };
         $iterator = new CallbackFilterIterator(new ArrayIterator($items), $filter);

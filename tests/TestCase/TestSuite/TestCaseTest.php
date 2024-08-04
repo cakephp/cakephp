@@ -200,7 +200,7 @@ class TestCaseTest extends TestCase
     public function testDeprecatedWithAssertAfterTriggerWarning(): void
     {
         try {
-            $this->deprecated(function () {
+            $this->deprecated(function (): never {
                 trigger_error('deprecation message', E_USER_DEPRECATED);
                 $this->fail('A random message');
             });
