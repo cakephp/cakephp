@@ -690,7 +690,7 @@ class PaginatorHelperTest extends TestCase
      * @param string $expected
      */
     #[DataProvider('urlGenerationResetsToPage1Provider')]
-    public function testUrlGenerationResetsToPage1($field, $options, $expected): void
+    public function testUrlGenerationResetsToPage1(string $field, $options, $expected): void
     {
         $this->setPaginatedResult([
             'alias' => 'Article',

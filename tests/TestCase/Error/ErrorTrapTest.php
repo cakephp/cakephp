@@ -111,7 +111,7 @@ class ErrorTrapTest extends TestCase
     }
 
     #[DataProvider('logLevelProvider')]
-    public function testHandleErrorLoggingLevel($level, $logLevel)
+    public function testHandleErrorLoggingLevel($level, string $logLevel)
     {
         Log::setConfig('test_error', [
             'className' => 'Array',

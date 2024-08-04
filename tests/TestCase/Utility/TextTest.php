@@ -1685,7 +1685,7 @@ HTML;
      * @param String $expected Expected string
      */
     #[DataProvider('transliterateInputProvider')]
-    public function testTransliterate($string, $transliterator, $expected): void
+    public function testTransliterate(string $string, \Transliterator|string|null $transliterator, $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
         $this->assertSame($expected, $result);
@@ -1804,7 +1804,7 @@ HTML;
      * @param String $expected Expected string
      */
     #[DataProvider('slugInputProvider')]
-    public function testSlug($string, $options, $expected): void
+    public function testSlug(string $string, array|string $options, $expected): void
     {
         $result = Text::slug($string, $options);
         $this->assertSame($expected, $result);

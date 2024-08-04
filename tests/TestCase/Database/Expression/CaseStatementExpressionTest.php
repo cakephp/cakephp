@@ -1938,7 +1938,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $type The then type.
      */
     #[DataProvider('invalidThenTypeDataProvider')]
-    public function testInvalidThenType($type): void
+    public function testInvalidThenType(?string $type): void
     {
         $this->expectException(TypeError::class);
 
@@ -2004,7 +2004,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param mixed $type The else type.
      */
     #[DataProvider('invalidElseTypeDataProvider')]
-    public function testInvalidElseType($type): void
+    public function testInvalidElseType(?string $type): void
     {
         $this->expectException(TypeError::class);
 

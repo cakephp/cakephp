@@ -864,7 +864,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertWithinRange($expected, $result, $margin, $message = '')
+    protected static function assertWithinRange($expected, $result, $margin, string $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
@@ -880,7 +880,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertNotWithinRange($expected, $result, $margin, $message = '')
+    protected static function assertNotWithinRange($expected, $result, $margin, string $message = '')
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
@@ -895,7 +895,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message the text to display if the assertion is not correct
      * @return void
      */
-    protected static function assertPathEquals($expected, $result, $message = '')
+    protected static function assertPathEquals($expected, $result, string $message = '')
     {
         $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
         $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
@@ -909,7 +909,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message Message for skip
      * @return bool
      */
-    protected function skipUnless($condition, $message = '')
+    protected function skipUnless($condition, string $message = '')
     {
         if (!$condition) {
             $this->markTestSkipped($message);

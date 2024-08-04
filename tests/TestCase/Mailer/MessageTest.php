@@ -488,7 +488,7 @@ HTML;
      * @param array|string $value
      */
     #[DataProvider('invalidEmails')]
-    public function testInvalidEmail($value): void
+    public function testInvalidEmail(array|string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->message->setTo($value);
@@ -500,7 +500,7 @@ HTML;
      * @param array|string $value
      */
     #[DataProvider('invalidEmails')]
-    public function testInvalidEmailAdd($value): void
+    public function testInvalidEmailAdd(array|string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->message->addTo($value);

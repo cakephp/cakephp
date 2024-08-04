@@ -86,7 +86,7 @@ class TestAppCacheEngine extends CacheEngine
      * @param mixed $ttl
      * @return int
      */
-    public function getDuration($ttl): int
+    public function getDuration(\DateInterval|int|null $ttl): int
     {
         return $this->duration($ttl);
     }

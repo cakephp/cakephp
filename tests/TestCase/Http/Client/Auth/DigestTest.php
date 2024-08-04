@@ -335,7 +335,7 @@ class DigestTest extends TestCase
      * @return void
      */
     #[DataProvider('algorithmsProvider')]
-    public function testAlgorithms($message, $headers, $method, $data, $expected)
+    public function testAlgorithms(string $message, $headers, $method, $data, $expected)
     {
         $response = new Response($headers, '');
         $this->client->expects($this->once())

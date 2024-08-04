@@ -158,7 +158,7 @@ class CorsBuilderTest extends TestCase
      * @param \Cake\Http\Response $response The Response object.
      * @param string $header The header key to check
      */
-    protected function assertHeader($expected, Response $response, $header): void
+    protected function assertHeader($expected, Response $response, string $header): void
     {
         $this->assertTrue($response->hasHeader($header), 'Header key not found.');
         $this->assertSame($expected, $response->getHeaderLine($header), 'Header value not found.');
@@ -170,7 +170,7 @@ class CorsBuilderTest extends TestCase
      * @param \Cake\Http\Response $response The Response object.
      * @param string $header The header key to check
      */
-    protected function assertNoHeader(Response $response, $header): void
+    protected function assertNoHeader(Response $response, string $header): void
     {
         $this->assertFalse($response->hasHeader($header), 'Header key was found.');
     }

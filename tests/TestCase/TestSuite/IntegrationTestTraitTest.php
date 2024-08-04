@@ -1545,7 +1545,7 @@ class IntegrationTestTraitTest extends TestCase
      * @param mixed ...$rest
      */
     #[DataProvider('assertionFailureMessagesProvider')]
-    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
+    public function testAssertionFailureMessages($assertion, string $message, array|string $url, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);

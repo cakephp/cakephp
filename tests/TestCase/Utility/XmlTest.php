@@ -184,7 +184,7 @@ class XmlTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('invalidDataProvider')]
-    public function testBuildInvalidData($value): void
+    public function testBuildInvalidData(object|array|string $value): void
     {
         $this->expectException(CakeException::class);
         Xml::build($value);
@@ -606,7 +606,7 @@ XML;
      * @param mixed $value
      */
     #[DataProvider('invalidArrayDataProvider')]
-    public function testFromArrayFail($value): void
+    public function testFromArrayFail(object|array $value): void
     {
         $this->expectException(Exception::class);
         Xml::fromArray($value);

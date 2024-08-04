@@ -58,7 +58,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, Stringable|string $message, array $context = []): void
+    public function log(string|int $level, Stringable|string $message, array $context = []): void
     {
         Log::write($level, $message, $context);
     }

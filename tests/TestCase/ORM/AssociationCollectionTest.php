@@ -187,7 +187,7 @@ class AssociationCollectionTest extends TestCase
      * @param string $belongsToManyStr
      */
     #[DataProvider('associationCollectionType')]
-    public function testGetByType($belongsToStr, $belongsToManyStr): void
+    public function testGetByType(array|string $belongsToStr, array|string $belongsToManyStr): void
     {
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);

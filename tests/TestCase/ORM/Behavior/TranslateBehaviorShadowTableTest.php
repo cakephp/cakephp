@@ -1108,7 +1108,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
      *
      * @param string $tableAlias
      */
-    protected function _testFind($tableAlias = 'Articles'): void
+    protected function _testFind(string $tableAlias = 'Articles'): void
     {
         $table = $this->getTableLocator()->get($tableAlias);
         $table->setLocale('eng');

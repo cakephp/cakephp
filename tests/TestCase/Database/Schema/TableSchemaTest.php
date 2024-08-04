@@ -640,7 +640,7 @@ class TableSchemaTest extends TestCase
      * @param string $query the result to compare against
      * @param bool $optional
      */
-    public function assertQuotedQuery($pattern, $query, $optional = false): void
+    public function assertQuotedQuery($pattern, string $query, $optional = false): void
     {
         if ($optional) {
             $optional = '?';

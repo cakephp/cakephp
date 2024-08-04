@@ -102,7 +102,7 @@ class ConsoleIoTest extends TestCase
      * @param array|string $choices
      */
     #[DataProvider('choiceProvider')]
-    public function testAskChoices($choices): void
+    public function testAskChoices(array|string $choices): void
     {
         $this->in->expects($this->once())
             ->method('read')
@@ -118,7 +118,7 @@ class ConsoleIoTest extends TestCase
      * @param array|string $choices
      */
     #[DataProvider('choiceProvider')]
-    public function testAskChoicesInsensitive($choices): void
+    public function testAskChoicesInsensitive(array|string $choices): void
     {
         $this->in->expects($this->once())
             ->method('read')

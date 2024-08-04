@@ -77,7 +77,7 @@ class PostsController extends AppController
      * @param string $layout
      * @return void
      */
-    public function index($layout = 'default')
+    public function index(?string $layout = 'default')
     {
         $this->Flash->error('An error message');
         $this->response = $this->response->withCookie(new Cookie('remember_me', 1));

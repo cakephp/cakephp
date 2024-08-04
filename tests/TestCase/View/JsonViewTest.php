@@ -227,7 +227,7 @@ class JsonViewTest extends TestCase
      * @param string $expected
      */
     #[DataProvider('renderWithoutViewProvider')]
-    public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected): void
+    public function testRenderWithoutView(array|string $data, $serialize, $jsonOptions, $expected): void
     {
         $Request = new ServerRequest();
         $Controller = new Controller($Request);
