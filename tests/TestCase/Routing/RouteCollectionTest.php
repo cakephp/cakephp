@@ -825,7 +825,7 @@ class RouteCollectionTest extends TestCase
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->expectExceptionMessage("Cannot add 'bad' middleware to group 'group'. It has not been registered.");
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

@@ -293,7 +293,7 @@ abstract class Association
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The class name `%s` doesn\'t match the target table class name of `%s`.',
+                "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
                 get_class($this->_targetTable)
             ));
@@ -378,8 +378,8 @@ abstract class Association
                 $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
-                    $msg = '`%s` association `%s` of type `%s` to `%s` doesn\'t match the expected class `%s`. ';
-                    $msg .= 'You can\'t have an association of the same name with a different target ';
+                    $msg = "`%s` association `%s` of type `%s` to `%s` doesn't match the expected class `%s`. ";
+                    $msg .= "You can't have an association of the same name with a different target ";
                     $msg .= '"className" option anywhere in your app.';
 
                     throw new DatabaseException(sprintf(

@@ -1809,7 +1809,7 @@ class SelectQueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
+            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) " .
             'is not allowed to avoid potential SQL injection. ' .
             'Use QueryExpression or numeric array instead.'
         );

@@ -251,7 +251,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
-            'The default locale doesn\'t need a join'
+            "The default locale doesn't need a join"
         );
 
         $table->setLocale('eng');
@@ -267,7 +267,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
-            'Other isn\'t the table class with the translate behavior, nothing to do'
+            "Other isn't the table class with the translate behavior, nothing to do"
         );
     }
 
@@ -490,13 +490,13 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->select(['id'])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
 
         $article = $table->find('all')
             ->select(['title'])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
     }
 
     /**
@@ -512,13 +512,13 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->where(['id' => 1])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
 
         $article = $table->find('all')
             ->where(['title' => 1])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
     }
 
     /**
@@ -1126,7 +1126,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertSame(
             $expected,
             $result,
-            'Title and body are translated values, but don\'t match'
+            "Title and body are translated values, but don't match"
         );
     }
 

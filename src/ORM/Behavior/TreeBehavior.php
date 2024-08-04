@@ -111,7 +111,7 @@ class TreeBehavior extends Behavior
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) === $parent) {
-            throw new DatabaseException('Cannot set a node\'s parent as itself.');
+            throw new DatabaseException("Cannot set a node's parent as itself.");
         }
 
         if ($isNew) {
