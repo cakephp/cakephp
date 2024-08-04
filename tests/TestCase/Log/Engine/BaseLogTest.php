@@ -61,7 +61,7 @@ class BaseLogTest extends TestCase
      */
     public function testLogUnicodeString(): void
     {
-        $this->logger->log(LogLevel::INFO, implode($this->testData));
+        $this->logger->log(LogLevel::INFO, implode('', $this->testData));
 
         $this->assertUnescapedUnicode($this->testData, $this->logger->getMessage());
     }
