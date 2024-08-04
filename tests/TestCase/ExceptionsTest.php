@@ -38,7 +38,7 @@ class ExceptionsTest extends TestCase
      * @param int $defaultCode The default exception code
      */
     #[DataProvider('exceptionProvider')]
-    public function testSimpleException($class, $defaultCode): void
+    public function testSimpleException(string $class, int $defaultCode): void
     {
         $previous = new Exception();
 

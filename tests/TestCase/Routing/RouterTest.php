@@ -2387,7 +2387,7 @@ class RouterTest extends TestCase
      * Test parseRoutePath() with valid strings
      */
     #[DataProvider('routePathProvider')]
-    public function testParseRoutePath($path, $expected): void
+    public function testParseRoutePath(string $path, array $expected): void
     {
         $this->assertSame($expected, Router::parseRoutePath($path));
     }

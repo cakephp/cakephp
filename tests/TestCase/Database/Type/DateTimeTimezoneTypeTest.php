@@ -321,7 +321,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('marshalProvider')]
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -427,7 +427,7 @@ class DateTimeTimezoneTypeTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('marshalProviderWithoutMicroseconds')]
-    public function testMarshalWithoutMicroseconds($value, $expected): void
+    public function testMarshalWithoutMicroseconds(bool|string|int|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

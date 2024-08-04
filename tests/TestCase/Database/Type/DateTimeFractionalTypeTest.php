@@ -297,7 +297,7 @@ class DateTimeFractionalTypeTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('marshalProvider')]
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
@@ -403,7 +403,7 @@ class DateTimeFractionalTypeTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('marshalProvider')]
-    public function testMarshalWithoutMicroseconds($value, $expected): void
+    public function testMarshalWithoutMicroseconds(bool|string|array|null $value, ?DateTime $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

@@ -105,7 +105,7 @@ class DriverTest extends TestCase
      * @param mixed $input
      */
     #[DataProvider('schemaValueProvider')]
-    public function testSchemaValue($input, string $expected): void
+    public function testSchemaValue(bool|int|string|null $input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
         $this->assertSame($expected, $result);

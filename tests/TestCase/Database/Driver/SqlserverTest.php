@@ -101,7 +101,7 @@ class SqlserverTest extends TestCase
      * @param string $dnsString
      */
     #[DataProvider('dnsStringDataProvider')]
-    public function testDnsString($constructorArgs, $dnsString): void
+    public function testDnsString(array $constructorArgs, string $dnsString): void
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->onlyMethods(['createPdo'])

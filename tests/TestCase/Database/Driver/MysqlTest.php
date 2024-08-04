@@ -171,7 +171,7 @@ class MysqlTest extends TestCase
      * @param string $expectedVersion
      */
     #[DataProvider('versionStringProvider')]
-    public function testVersion($dbVersion, $expectedVersion): void
+    public function testVersion(string $dbVersion, string $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
         $connection = $this->getMockBuilder(PDO::class)

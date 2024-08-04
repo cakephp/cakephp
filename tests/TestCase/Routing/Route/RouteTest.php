@@ -295,7 +295,7 @@ class RouteTest extends TestCase
      * @param array $ext
      */
     #[DataProvider('provideMatchParseExtension')]
-    public function testMatchParseExtension($url, array $expected, array $ext): void
+    public function testMatchParseExtension(string $url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         $result = $route->parseExtension($url);
@@ -324,7 +324,7 @@ class RouteTest extends TestCase
      * @param array $ext
      */
     #[DataProvider('provideNoMatchParseExtension')]
-    public function testNoMatchParseExtension($url, array $ext): void
+    public function testNoMatchParseExtension(string $url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
         [$outUrl, $outExt] = $route->parseExtension($url);

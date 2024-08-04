@@ -172,7 +172,7 @@ class SqliteTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('schemaValueProvider')]
-    public function testSchemaValue($input, $expected): void
+    public function testSchemaValue(bool|float|string|int|null $input, string|int $expected): void
     {
         $mock = Mockery::mock(PDO::class)
             ->shouldAllowMockingMethod('quoteIdentifier')

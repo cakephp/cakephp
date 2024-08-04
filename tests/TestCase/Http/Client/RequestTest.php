@@ -48,7 +48,7 @@ class RequestTest extends TestCase
      * @param string $method The HTTP method to use.
      */
     #[DataProvider('additionProvider')]
-    public function testMethods(array $headers, $data, $method): void
+    public function testMethods(array $headers, array $data, string $method): void
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 

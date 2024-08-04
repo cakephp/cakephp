@@ -312,7 +312,7 @@ class DateTimeTypeTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('marshalProvider')]
-    public function testMarshal($value, $expected): void
+    public function testMarshal(bool|string|int|NativeDateTime|DateTimeImmutable|array|null $value, NativeDateTime|DateTimeImmutable|null $expected): void
     {
         $result = $this->type->marshal($value);
         if (is_object($expected)) {

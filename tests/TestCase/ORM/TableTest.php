@@ -5277,7 +5277,7 @@ class TableTest extends TestCase
      * @param array $options
      */
     #[DataProvider('providerForTestGet')]
-    public function testGet($options): void
+    public function testGet(array $options): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['selectQuery'])
@@ -5344,7 +5344,7 @@ class TableTest extends TestCase
      * @param mixed $primaryKey
      */
     #[DataProvider('providerForTestGetWithCache')]
-    public function testGetWithCache($options, $cacheKey, $cacheConfig, $primaryKey): void
+    public function testGetWithCache(array $options, string $cacheKey, string $cacheConfig, int|string|DateTime $primaryKey): void
     {
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['selectQuery'])

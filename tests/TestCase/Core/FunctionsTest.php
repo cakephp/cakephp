@@ -187,7 +187,7 @@ class FunctionsTest extends TestCase
      * @param mixed $expected
      */
     #[DataProvider('hInputProvider')]
-    public function testH($value, $expected): void
+    public function testH(string|int|float|stdClass|Response|array|null $value, string|int|float|array|null $expected): void
     {
         $result = h($value);
         $this->assertSame($expected, $result);

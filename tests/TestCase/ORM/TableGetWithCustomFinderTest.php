@@ -46,7 +46,7 @@ class TableGetWithCustomFinderTest extends TestCase
      * @param array $options
      */
     #[DataProvider('providerForTestGetWithCustomFinder')]
-    public function testGetWithCustomFinder($options): void
+    public function testGetWithCustomFinder(array $options): void
     {
         $table = $this->getMockBuilder(GetWithCustomFinderTable::class)
             ->onlyMethods(['selectQuery', 'findCustom'])

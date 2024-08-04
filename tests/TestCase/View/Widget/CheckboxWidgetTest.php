@@ -177,7 +177,7 @@ class CheckboxWidgetTest extends TestCase
      * @param mixed $checked
      */
     #[DataProvider('checkedProvider')]
-    public function testRenderCheckedValue($checked): void
+    public function testRenderCheckedValue(string|int|bool $checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [
@@ -219,7 +219,7 @@ class CheckboxWidgetTest extends TestCase
      * @param mixed $checked
      */
     #[DataProvider('uncheckedProvider')]
-    public function testRenderUnCheckedValue($checked): void
+    public function testRenderUnCheckedValue(string|int|bool|null $checked): void
     {
         $checkbox = new CheckboxWidget($this->templates);
         $data = [

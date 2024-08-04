@@ -690,7 +690,7 @@ class PaginatorHelperTest extends TestCase
      * @param string $expected
      */
     #[DataProvider('urlGenerationResetsToPage1Provider')]
-    public function testUrlGenerationResetsToPage1($field, $options, $expected): void
+    public function testUrlGenerationResetsToPage1(string $field, array $options, string $expected): void
     {
         $this->setPaginatedResult([
             'alias' => 'Article',
@@ -2682,7 +2682,7 @@ class PaginatorHelperTest extends TestCase
      * @param string $expected
      */
     #[DataProvider('dataMetaProvider')]
-    public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected): void
+    public function testMeta(int $page, bool $prevPage, bool $nextPage, int $pageCount, array $options, string $expected): void
     {
         $this->setPaginatedResult([
             'currentPage' => $page,

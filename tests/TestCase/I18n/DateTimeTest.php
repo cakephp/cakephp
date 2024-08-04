@@ -539,7 +539,7 @@ class DateTimeTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('invalidDataProvider')]
-    public function testToStringInvalid($value): void
+    public function testToStringInvalid(?string $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);
@@ -552,7 +552,7 @@ class DateTimeTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('invalidDataProvider')]
-    public function testToStringInvalidFrozen($value): void
+    public function testToStringInvalidFrozen(?string $value): void
     {
         $time = new DateTime($value);
         $this->assertIsString((string)$time);

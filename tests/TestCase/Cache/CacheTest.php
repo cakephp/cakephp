@@ -373,7 +373,7 @@ class CacheTest extends TestCase
      * @param \Cake\Cache\CacheEngine|array $config
      */
     #[DataProvider('configProvider')]
-    public function testConfigVariants($config): void
+    public function testConfigVariants(FileEngine|array $config): void
     {
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
         Cache::setConfig('tests', $config);

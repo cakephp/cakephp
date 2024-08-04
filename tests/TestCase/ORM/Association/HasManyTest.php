@@ -947,7 +947,7 @@ class HasManyTest extends TestCase
      * @param mixed $value Empty value.
      */
     #[DataProvider('emptySetDataProvider')]
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate(string|bool|array|null $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -972,7 +972,7 @@ class HasManyTest extends TestCase
      * @param mixed $value Empty value.
      */
     #[DataProvider('emptySetDataProvider')]
-    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
+    public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate(string|bool|array|null $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1002,7 +1002,7 @@ class HasManyTest extends TestCase
      * @param mixed $value Empty value.
      */
     #[DataProvider('emptySetDataProvider')]
-    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate(string|bool|array|null $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
@@ -1027,7 +1027,7 @@ class HasManyTest extends TestCase
      * @param mixed $value Empty value.
      */
     #[DataProvider('emptySetDataProvider')]
-    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
+    public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate(string|bool|array|null $value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [

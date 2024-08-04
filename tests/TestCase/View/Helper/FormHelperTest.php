@@ -361,7 +361,7 @@ class FormHelperTest extends TestCase
      * @param mixed $data
      */
     #[DataProvider('contextSelectionProvider')]
-    public function testCreateContextSelectionBuiltIn($data, string $class): void
+    public function testCreateContextSelectionBuiltIn(Article|Collection|Form|StubContext|array|null $data, string $class): void
     {
         $this->Form->create($data);
         $this->assertInstanceOf($class, $this->Form->context());

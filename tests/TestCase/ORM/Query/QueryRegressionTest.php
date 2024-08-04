@@ -316,7 +316,7 @@ class QueryRegressionTest extends TestCase
      * @param string $strategy
      */
     #[DataProvider('strategyProvider')]
-    public function testBelongsToManyDeepSave($strategy): void
+    public function testBelongsToManyDeepSave(string $strategy): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [

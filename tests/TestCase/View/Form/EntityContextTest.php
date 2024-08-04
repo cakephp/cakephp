@@ -130,7 +130,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testIsCreateCollection($collection): void
+    public function testIsCreateCollection(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -226,7 +226,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testCollectionOperationsNoTableArg($collection): void
+    public function testCollectionOperationsNoTableArg(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -276,7 +276,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testValOnCollections($collection): void
+    public function testValOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -306,7 +306,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testValOnCollectionsWithRootName($collection): void
+    public function testValOnCollectionsWithRootName(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -334,7 +334,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testErrorsOnCollections($collection): void
+    public function testErrorsOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $context = new EntityContext([
             'entity' => $collection,
@@ -359,7 +359,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testSchemaOnCollections($collection): void
+    public function testSchemaOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $this->_setupTables();
         $context = new EntityContext([
@@ -387,7 +387,7 @@ class EntityContextTest extends TestCase
      * @param mixed $collection
      */
     #[DataProvider('collectionProvider')]
-    public function testValidatorsOnCollections($collection): void
+    public function testValidatorsOnCollections(ArrayObject|ArrayIterator|Collection|array $collection): void
     {
         $this->_setupTables();
 

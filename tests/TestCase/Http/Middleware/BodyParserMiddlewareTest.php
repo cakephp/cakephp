@@ -382,7 +382,7 @@ XML;
      * @param mixed $expected
      */
     #[DataProvider('jsonScalarValues')]
-    public function testInvokeParseNoArray(string $body, $expected): void
+    public function testInvokeParseNoArray(string $body, array $expected): void
     {
         $parser = new BodyParserMiddleware();
 

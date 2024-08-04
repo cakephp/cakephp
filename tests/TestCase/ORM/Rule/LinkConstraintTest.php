@@ -185,7 +185,7 @@ class LinkConstraintTest extends TestCase
      * @param mixed $options
      */
     #[DataProvider('invalidRepositoryOptionsDataProvider')]
-    public function testInvalidRepository($options): void
+    public function testInvalidRepository(array $options): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');

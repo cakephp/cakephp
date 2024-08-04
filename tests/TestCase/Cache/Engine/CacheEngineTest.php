@@ -24,7 +24,7 @@ class CacheEngineTest extends TestCase
      * Test duration with null, int and DateInterval multiple format.
      */
     #[DataProvider('durationProvider')]
-    public function testDuration($ttl, $expected): void
+    public function testDuration(int|DateInterval|null $ttl, int $expected): void
     {
         $engine = new TestAppCacheEngine();
         $engine->setConfig(['duration' => 10]);

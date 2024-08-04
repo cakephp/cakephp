@@ -1191,7 +1191,7 @@ class BelongsToManyTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('emptyProvider')]
-    public function testSaveAssociatedEmptySetSuccess($value): void
+    public function testSaveAssociatedEmptySetSuccess(string|bool|array|null $value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)
@@ -1221,7 +1221,7 @@ class BelongsToManyTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('emptyProvider')]
-    public function testSaveAssociatedEmptySetUpdateSuccess($value): void
+    public function testSaveAssociatedEmptySetUpdateSuccess(string|bool|array|null $value): void
     {
         /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
         $table = $this->getMockBuilder(Table::class)

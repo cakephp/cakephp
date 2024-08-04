@@ -1365,7 +1365,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      */
     #[DataProvider('blockValueProvider')]
-    public function testBlockAppend($value): void
+    public function testBlockAppend(string|float|TestObjectWithToString $value): void
     {
         $this->View->assign('testBlock', 'Block');
         $this->View->append('testBlock', $value);
@@ -1394,7 +1394,7 @@ class ViewTest extends TestCase
      * @param mixed $value Value
      */
     #[DataProvider('blockValueProvider')]
-    public function testBlockPrepend($value): void
+    public function testBlockPrepend(string|float|TestObjectWithToString $value): void
     {
         $this->View->assign('test', 'Block');
         $result = $this->View->prepend('test', $value);

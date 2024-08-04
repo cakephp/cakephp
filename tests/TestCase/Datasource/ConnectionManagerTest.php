@@ -62,7 +62,7 @@ class ConnectionManagerTest extends TestCase
      * @param \Cake\Datasource\ConnectionInterface|array $settings
      */
     #[DataProvider('configProvider')]
-    public function testConfigVariants($settings): void
+    public function testConfigVariants(FakeConnection|array $settings): void
     {
         $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
         ConnectionManager::setConfig('test_variant', $settings);

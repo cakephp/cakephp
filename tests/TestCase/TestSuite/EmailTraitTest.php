@@ -199,7 +199,7 @@ class EmailTraitTest extends TestCase
      * @param array $params Assertion params
      */
     #[DataProvider('failureMessageDataProvider')]
-    public function testFailureMessages($assertion, $expectedMessage, $params): void
+    public function testFailureMessages(string $assertion, string $expectedMessage, array $params): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($expectedMessage);

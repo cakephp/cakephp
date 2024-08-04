@@ -235,7 +235,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $type The expected type.
      */
     #[DataProvider('valueTypeInferenceDataProvider')]
-    public function testInferValueType($value, ?string $type): void
+    public function testInferValueType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -277,7 +277,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $type The expected type.
      */
     #[DataProvider('whenTypeInferenceDataProvider')]
-    public function testInferWhenType($value, ?string $type): void
+    public function testInferWhenType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|array $value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']));
@@ -315,7 +315,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $type The expected type.
      */
     #[DataProvider('resultTypeInferenceDataProvider')]
-    public function testInferResultType($value, ?string $type): void
+    public function testInferResultType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
@@ -337,7 +337,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param string|null $type The expected type.
      */
     #[DataProvider('resultTypeInferenceDataProvider')]
-    public function testInferElseType($value, ?string $type): void
+    public function testInferElseType(string|int|float|bool|ChronosDate|Chronos|IdentifierExpression|FunctionExpression|stdClass|null $value, ?string $type): void
     {
         $expression = new CaseStatementExpressionStub();
 
@@ -1513,7 +1513,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
     #[DataProvider('validWhenValuesSimpleCaseDataProvider')]
-    public function testValidWhenValueSimpleCase($value, ?string $expectedSql, $typeOrBindings = null): void
+    public function testValidWhenValueSimpleCase($value, ?string $expectedSql, string|array|null $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
             'Table.column_a' => 'integer',
@@ -1635,7 +1635,7 @@ class CaseStatementExpressionTest extends TestCase
      * @param array|string|null $typeOrBindings The expected bound type(s).
      */
     #[DataProvider('validWhenValuesSearchedCaseDataProvider')]
-    public function testValidWhenValueSearchedCase($value, ?string $expectedSql, $typeOrBindings = null): void
+    public function testValidWhenValueSearchedCase($value, ?string $expectedSql, string|array|null $typeOrBindings = null): void
     {
         $typeMap = new TypeMap([
             'Table.column_a' => 'integer',

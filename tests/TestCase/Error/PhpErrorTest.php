@@ -47,7 +47,7 @@ class PhpErrorTest extends TestCase
     }
 
     #[DataProvider('errorCodeProvider')]
-    public function testMappings($phpCode, $label, $logLevel)
+    public function testMappings(int $phpCode, string $label, int $logLevel)
     {
         $error = new PhpError($phpCode, 'something bad');
         $this->assertEquals($phpCode, $error->getCode());

@@ -1326,7 +1326,7 @@ class MarshallerTest extends TestCase
      * @param mixed $value
      */
     #[DataProvider('emptyProvider')]
-    public function testMergeFalseyValues($value): void
+    public function testMergeFalseyValues(int|string $value): void
     {
         $marshall = new Marshaller($this->articles);
         $entity = new Entity();

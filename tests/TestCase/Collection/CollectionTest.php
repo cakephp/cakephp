@@ -1846,7 +1846,7 @@ class CollectionTest extends TestCase
      * @param float|int $expected
      */
     #[DataProvider('sumOfProvider')]
-    public function testSumOf(iterable $items, $expected): void
+    public function testSumOf(iterable $items, int|float $expected): void
     {
         $this->assertEquals($expected, (new Collection($items))->sumOf('invoice.total'));
     }
@@ -1857,7 +1857,7 @@ class CollectionTest extends TestCase
      * @param float|int $expected
      */
     #[DataProvider('sumOfProvider')]
-    public function testSumOfCallable(iterable $items, $expected): void
+    public function testSumOfCallable(iterable $items, int|float $expected): void
     {
         $sum = (new Collection($items))->sumOf(function ($v) {
             return $v['invoice']['total'];
@@ -2224,7 +2224,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      */
     #[DataProvider('simpleProvider')]
-    public function testLastN($data): void
+    public function testLastN(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->takeLast(3)->toArray();
@@ -2238,7 +2238,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      */
     #[DataProvider('simpleProvider')]
-    public function testLastNtWithOverflow($data): void
+    public function testLastNtWithOverflow(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->takeLast(10)->toArray();
@@ -2252,7 +2252,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      */
     #[DataProvider('simpleProvider')]
-    public function testLastNtWithOddData($data): void
+    public function testLastNtWithOddData(Generator|array $data): void
     {
         $collection = new Collection($data);
         $result = $collection->take(3)->takeLast(2)->toArray();
@@ -2282,7 +2282,7 @@ class CollectionTest extends TestCase
      * @param iterable $data The data to test with.
      */
     #[DataProvider('simpleProvider')]
-    public function testLastNtWithNegative($data): void
+    public function testLastNtWithNegative(Generator|array $data): void
     {
         $collection = new Collection($data);
 

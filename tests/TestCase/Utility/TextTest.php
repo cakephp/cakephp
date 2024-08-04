@@ -1537,7 +1537,7 @@ HTML;
      * @param mixed $expected
      */
     #[DataProvider('filesizes')]
-    public function testParseFileSize(array $params, $expected): void
+    public function testParseFileSize(array $params, int|string $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
         $this->assertSame($expected, $result);
@@ -1685,7 +1685,7 @@ HTML;
      * @param String $expected Expected string
      */
     #[DataProvider('transliterateInputProvider')]
-    public function testTransliterate($string, $transliterator, $expected): void
+    public function testTransliterate(string $string, ?Transliterator $transliterator, string $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
         $this->assertSame($expected, $result);
@@ -1804,7 +1804,7 @@ HTML;
      * @param String $expected Expected string
      */
     #[DataProvider('slugInputProvider')]
-    public function testSlug($string, $options, $expected): void
+    public function testSlug(string $string, array $options, string $expected): void
     {
         $result = Text::slug($string, $options);
         $this->assertSame($expected, $result);

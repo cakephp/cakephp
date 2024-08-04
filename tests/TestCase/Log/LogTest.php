@@ -159,7 +159,7 @@ class LogTest extends TestCase
      * @param mixed $settings
      */
     #[DataProvider('configProvider')]
-    public function testConfigVariants($settings): void
+    public function testConfigVariants(FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
@@ -173,7 +173,7 @@ class LogTest extends TestCase
      * @param mixed $settings
      */
     #[DataProvider('configProvider')]
-    public function testSetConfigVariants($settings): void
+    public function testSetConfigVariants(FileLog|array $settings): void
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());

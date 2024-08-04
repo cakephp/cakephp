@@ -154,7 +154,7 @@ class IntegerTypeTest extends TestCase
      * @param  mixed $value Invalid value to test against the database type.
      */
     #[DataProvider('invalidIntegerProvider')]
-    public function testToDatabaseInvalid($value): void
+    public function testToDatabaseInvalid(string|array $value): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->type->toDatabase($value, $this->driver);

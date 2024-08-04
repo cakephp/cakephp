@@ -401,7 +401,7 @@ class ExceptionTrapTest extends TestCase
     }
 
     #[DataProvider('initialMemoryProvider')]
-    public function testIncreaseMemoryLimit($initial)
+    public function testIncreaseMemoryLimit(string $initial)
     {
         ini_set('memory_limit', $initial);
         $this->assertEquals($initial, ini_get('memory_limit'));
