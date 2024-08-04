@@ -884,13 +884,11 @@ class Hash
     public static function maxDimensions(array $data): int
     {
         $depth = [];
-        if ($data) {
-            foreach ($data as $value) {
-                if (is_array($value)) {
-                    $depth[] = static::maxDimensions($value) + 1;
-                } else {
-                    $depth[] = 1;
-                }
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $depth[] = static::maxDimensions($value) + 1;
+            } else {
+                $depth[] = 1;
             }
         }
 
