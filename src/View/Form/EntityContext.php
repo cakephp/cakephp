@@ -285,7 +285,7 @@ class EntityContext implements ContextInterface
     protected function _schemaDefault(array $parts): mixed
     {
         $table = $this->_getTable($parts);
-        if ($table === null) {
+        if (!$table instanceof \Cake\ORM\Table) {
             return null;
         }
         $field = end($parts);

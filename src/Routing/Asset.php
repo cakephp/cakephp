@@ -342,7 +342,7 @@ class Asset
     protected static function requestWebroot(): string
     {
         $request = Router::getRequest();
-        if ($request === null) {
+        if (!$request instanceof \Cake\Http\ServerRequest) {
             return '/';
         }
 

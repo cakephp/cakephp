@@ -196,10 +196,10 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function sql(ValueBinder $binder): string
     {
         $sql = parent::sql($binder);
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $sql .= ' FILTER (WHERE ' . $this->filter->sql($binder) . ')';
         }
-        if ($this->window !== null) {
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             if ($this->window->isNamedOnly()) {
                 $sql .= ' OVER ' . $this->window->sql($binder);
             } else {
@@ -216,11 +216,11 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function traverse(Closure $callback)
     {
         parent::traverse($callback);
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $callback($this->filter);
             $this->filter->traverse($callback);
         }
-        if ($this->window !== null) {
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             $callback($this->window);
             $this->window->traverse($callback);
         }
@@ -234,7 +234,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function count(): int
     {
         $count = parent::count();
-        if ($this->window !== null) {
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             $count = $count + 1;
         }
 
@@ -249,10 +249,10 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     public function __clone()
     {
         parent::__clone();
-        if ($this->filter !== null) {
+        if ($this->filter instanceof \Cake\Database\Expression\QueryExpression) {
             $this->filter = clone $this->filter;
         }
-        if ($this->window !== null) {
+        if ($this->window instanceof \Cake\Database\Expression\WindowExpression) {
             $this->window = clone $this->window;
         }
     }

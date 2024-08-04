@@ -165,7 +165,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function getStrategy(): TranslateStrategyInterface
     {
-        if ($this->strategy !== null) {
+        if ($this->strategy instanceof \Cake\ORM\Behavior\Translate\TranslateStrategyInterface) {
             return $this->strategy;
         }
 

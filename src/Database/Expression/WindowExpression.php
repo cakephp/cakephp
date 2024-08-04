@@ -337,7 +337,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         foreach ($this->partitions as $i => $partition) {
             $this->partitions[$i] = clone $partition;
         }
-        if ($this->order !== null) {
+        if ($this->order instanceof \Cake\Database\Expression\OrderByExpression) {
             $this->order = clone $this->order;
         }
     }

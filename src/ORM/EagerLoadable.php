@@ -174,7 +174,7 @@ class EagerLoadable
      */
     public function instance(): Association
     {
-        if ($this->_instance === null) {
+        if (!$this->_instance instanceof \Cake\ORM\Association) {
             throw new DatabaseException('No instance set.');
         }
 

@@ -50,7 +50,7 @@ class EventFiredWith extends Constraint
         $this->_dataKey = $dataKey;
         $this->_dataValue = $dataValue;
 
-        if ($this->_eventManager->getEventList() === null) {
+        if (!$this->_eventManager->getEventList() instanceof \Cake\Event\EventList) {
             throw new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.'
             );
@@ -68,7 +68,7 @@ class EventFiredWith extends Constraint
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
-        if ($list !== null) {
+        if ($list instanceof \Cake\Event\EventList) {
             $totalEvents = count($list);
             for ($e = 0; $e < $totalEvents; $e++) {
                 $firedEvents[] = $list[$e];

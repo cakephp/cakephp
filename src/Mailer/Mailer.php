@@ -325,7 +325,7 @@ class Mailer implements EventListenerInterface
 
         $this->clonedInstances['message'] = clone $this->message;
         $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
+        if ($this->transport instanceof \Cake\Mailer\AbstractTransport) {
             $this->clonedInstances['transport'] = clone $this->transport;
         }
 
@@ -475,7 +475,7 @@ class Mailer implements EventListenerInterface
      */
     public function getTransport(): AbstractTransport
     {
-        if ($this->transport === null) {
+        if (!$this->transport instanceof \Cake\Mailer\AbstractTransport) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
                 . 'You must set on using setTransport() or set `transport` option in your mailer profile.'

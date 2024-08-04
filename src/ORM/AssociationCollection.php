@@ -57,7 +57,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function __construct(?LocatorInterface $tableLocator = null)
     {
-        if ($tableLocator !== null) {
+        if ($tableLocator instanceof \Cake\ORM\Locator\LocatorInterface) {
             $this->_tableLocator = $tableLocator;
         }
     }

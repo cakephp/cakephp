@@ -356,7 +356,7 @@ class Connection implements ConnectionInterface
      */
     public function getSchemaCollection(): SchemaCollectionInterface
     {
-        if ($this->_schemaCollection !== null) {
+        if ($this->_schemaCollection instanceof \Cake\Database\Schema\CollectionInterface) {
             return $this->_schemaCollection;
         }
 
@@ -450,7 +450,7 @@ class Connection implements ConnectionInterface
         if ($this->_transactionLevel === 0) {
             if ($this->wasNestedTransactionRolledback()) {
                 $e = $this->nestedTransactionRollbackException;
-                assert($e !== null);
+                assert($e instanceof \Cake\Database\Exception\NestedTransactionRollbackException);
                 $this->nestedTransactionRollbackException = null;
                 throw $e;
             }
@@ -740,7 +740,7 @@ class Connection implements ConnectionInterface
      */
     public function getCacher(): CacheInterface
     {
-        if ($this->cacher !== null) {
+        if ($this->cacher instanceof \Psr\SimpleCache\CacheInterface) {
             return $this->cacher;
         }
 

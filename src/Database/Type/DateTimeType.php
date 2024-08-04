@@ -148,7 +148,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
 
         if (
-            $this->dbTimezone !== null
+            $this->dbTimezone instanceof \DateTimeZone
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
             if (!$value instanceof DateTimeImmutable) {

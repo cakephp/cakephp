@@ -154,7 +154,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->setRequest($request);
 
         $result = $controller->startupProcess();
-        if ($result !== null) {
+        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
             return $result;
         }
 
@@ -166,7 +166,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $controller->invokeAction($action, $args);
 
         $result = $controller->shutdownProcess();
-        if ($result !== null) {
+        if ($result instanceof \Psr\Http\Message\ResponseInterface) {
             return $result;
         }
 

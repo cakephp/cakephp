@@ -122,7 +122,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
-        if ($eventManager !== null) {
+        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
             $this->setEventManager($eventManager);
         }
         $this->request = $request;

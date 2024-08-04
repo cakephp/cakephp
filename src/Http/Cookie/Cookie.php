@@ -773,7 +773,7 @@ class Cookie implements CookieInterface
             'httponly' => $this->httpOnly,
         ];
 
-        if ($this->sameSite !== null) {
+        if ($this->sameSite instanceof \Cake\Http\Cookie\SameSiteEnum) {
             $options['samesite'] = $this->sameSite->value;
         }
 

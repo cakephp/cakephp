@@ -222,10 +222,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->setRequest($request);
         $this->response = new Response();
 
-        if ($eventManager !== null) {
+        if ($eventManager instanceof \Cake\Event\EventManagerInterface) {
             $this->setEventManager($eventManager);
         }
-        if ($components !== null) {
+        if ($components instanceof \Cake\Controller\ComponentRegistry) {
             $this->_components = $components;
             $components->setController($this);
         }

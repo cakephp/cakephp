@@ -347,7 +347,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $this->initialize($config);
 
-        assert($this->_eventManager !== null, 'EventManager not available');
+        assert($this->_eventManager instanceof \Cake\Event\EventManagerInterface, 'EventManager not available');
 
         $this->_eventManager->on($this);
         $this->dispatchEvent('Model.initialize');
@@ -538,7 +538,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getSchema(): TableSchemaInterface
     {
-        if ($this->_schema === null) {
+        if (!$this->_schema instanceof \Cake\Database\Schema\TableSchemaInterface) {
             $this->_schema = $this->getConnection()
                 ->getSchemaCollection()
                 ->describe($this->getTable());
@@ -594,7 +594,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function checkAliasLengths(): void
     {
-        if ($this->_schema === null) {
+        if (!$this->_schema instanceof \Cake\Database\Schema\TableSchemaInterface) {
             throw new DatabaseException(sprintf(
                 'Unable to check max alias lengths for `%s` without schema.',
                 $this->getAlias()
@@ -937,7 +937,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasAssociation(string $name): bool
     {
-        return $this->findAssociation($name) !== null;
+        return $this->findAssociation($name) instanceof \Cake\ORM\Association;
     }
 
     /**
@@ -964,7 +964,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $result = $this->_associations->get($name);
         }
 
-        if ($result !== null && $next !== null) {
+        if ($result instanceof \Cake\ORM\Association && $next !== null) {
             $result = $result->getTarget()->getAssociation($next);
         }
 
@@ -2359,7 +2359,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw $e;
         }
 
-        if ($failed !== null) {
+        if ($failed instanceof \Cake\Datasource\EntityInterface) {
             $cleanupOnFailure($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
@@ -2464,7 +2464,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $failed = $this->_deleteMany($entities, $options);
 
-        if ($failed !== null) {
+        if ($failed instanceof \Cake\Datasource\EntityInterface) {
             return false;
         }
 
@@ -2488,7 +2488,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $failed = $this->_deleteMany($entities, $options);
 
-        if ($failed !== null) {
+        if ($failed instanceof \Cake\Datasource\EntityInterface) {
             throw new PersistenceFailedException($failed, ['deleteMany']);
         }
 

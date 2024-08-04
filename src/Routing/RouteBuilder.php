@@ -422,7 +422,7 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if ($callback !== null) {
+        if ($callback instanceof \Closure) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/{' . $idName . '}';
             $this->scope($path, [], $callback);
@@ -918,7 +918,7 @@ class RouteBuilder
             $callback = $params;
             $params = [];
         }
-        if ($callback === null) {
+        if (!$callback instanceof \Closure) {
             throw new InvalidArgumentException('Need a valid Closure to connect routes.');
         }
 

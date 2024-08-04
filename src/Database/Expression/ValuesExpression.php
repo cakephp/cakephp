@@ -213,7 +213,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if (!$this->_values && $this->_query === null) {
+        if (!$this->_values && !$this->_query instanceof \Cake\Database\Query) {
             return '';
         }
 

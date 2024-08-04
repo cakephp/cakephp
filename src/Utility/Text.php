@@ -1077,7 +1077,7 @@ class Text
     public static function setTransliteratorId(string $transliteratorId): void
     {
         $transliterator = transliterator_create($transliteratorId);
-        if ($transliterator === null) {
+        if (!$transliterator instanceof \Transliterator) {
             throw new CakeException(sprintf('Unable to create transliterator for id: %s.', $transliteratorId));
         }
 

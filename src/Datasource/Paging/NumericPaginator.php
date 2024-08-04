@@ -208,7 +208,7 @@ class NumericPaginator implements PaginatorInterface
         if ($target instanceof QueryInterface) {
             $query = $target;
             $target = $query->getRepository();
-            if ($target === null) {
+            if (!$target instanceof \Cake\Datasource\RepositoryInterface) {
                 throw new CakeException('No repository set for query.');
             }
         }
@@ -265,7 +265,7 @@ class NumericPaginator implements PaginatorInterface
             ['order' => null, 'page' => null, 'limit' => null],
         );
 
-        if ($query === null) {
+        if (!$query instanceof \Cake\Datasource\QueryInterface) {
             $args = [];
             $type = !empty($options['finder']) ? $options['finder'] : 'all';
             if (is_array($type)) {

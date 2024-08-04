@@ -240,10 +240,10 @@ abstract class Driver
      */
     protected function getPdo(): PDO
     {
-        if ($this->pdo === null) {
+        if (!$this->pdo instanceof \PDO) {
             $this->connect();
         }
-        assert($this->pdo !== null);
+        assert($this->pdo instanceof \PDO);
 
         return $this->pdo;
     }
@@ -315,7 +315,7 @@ abstract class Driver
      */
     protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
-        if ($this->logger === null) {
+        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
             try {
                 $statement->execute($params);
             } catch (PDOException $e) {
@@ -819,7 +819,7 @@ abstract class Driver
      */
     public function isConnected(): bool
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof \PDO) {
             try {
                 $connected = (bool)$this->pdo->query('SELECT 1');
             } catch (PDOException $e) {
@@ -971,7 +971,7 @@ abstract class Driver
      */
     public function log(Stringable|string $message, array $context = []): bool
     {
-        if ($this->logger === null) {
+        if (!$this->logger instanceof \Psr\Log\LoggerInterface) {
             return false;
         }
 
@@ -1011,7 +1011,7 @@ abstract class Driver
     public function __debugInfo(): array
     {
         return [
-            'connected' => $this->pdo !== null,
+            'connected' => $this->pdo instanceof \PDO,
             'role' => $this->getRole(),
         ];
     }

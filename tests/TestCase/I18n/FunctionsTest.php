@@ -34,7 +34,7 @@ class FunctionsTest extends TestCase
     #[DataProvider('toDateTimeProvider')]
     public function testToDateTime(mixed $rawValue, string $format, ?DateTime $expected): void
     {
-        if ($expected === null) {
+        if (!$expected instanceof \Cake\I18n\DateTime) {
             $this->assertNull(toDateTime($rawValue, $format));
 
             return;
@@ -107,7 +107,7 @@ class FunctionsTest extends TestCase
     #[DataProvider('toDateProvider')]
     public function testToDate(mixed $rawValue, string $format, ?Date $expected): void
     {
-        if ($expected === null) {
+        if (!$expected instanceof \Cake\I18n\Date) {
             $this->assertNull(toDate($rawValue, $format));
 
             return;

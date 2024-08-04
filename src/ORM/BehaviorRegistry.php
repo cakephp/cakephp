@@ -69,7 +69,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     public function __construct(?Table $table = null)
     {
-        if ($table !== null) {
+        if ($table instanceof \Cake\ORM\Table) {
             $this->setTable($table);
         }
     }

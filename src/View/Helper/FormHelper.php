@@ -335,7 +335,7 @@ class FormHelper extends Helper
      */
     public function contextFactory(?ContextFactory $instance = null, array $contexts = []): ContextFactory
     {
-        if ($instance === null) {
+        if (!$instance instanceof \Cake\View\Form\ContextFactory) {
             return $this->_contextFactory ??= ContextFactory::createWithDefaults($contexts);
         }
         $this->_contextFactory = $instance;
@@ -2477,7 +2477,7 @@ class FormHelper extends Helper
      */
     protected function _getContext(array $data = []): ContextInterface
     {
-        if ($this->_context !== null && !$data) {
+        if ($this->_context instanceof \Cake\View\Form\ContextInterface && !$data) {
             return $this->_context;
         }
         $data += ['entity' => null];
@@ -2523,7 +2523,7 @@ class FormHelper extends Helper
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
         if (
-            $this->formProtector !== null &&
+            $this->formProtector instanceof \Cake\Form\FormProtector &&
             isset($data['name']) &&
             $secure !== null &&
             $secure !== self::SECURE_SKIP

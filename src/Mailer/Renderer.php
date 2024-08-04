@@ -114,7 +114,7 @@ class Renderer
      */
     public function __clone()
     {
-        if ($this->_viewBuilder !== null) {
+        if ($this->_viewBuilder instanceof \Cake\View\ViewBuilder) {
             $this->_viewBuilder = clone $this->_viewBuilder;
         }
     }
