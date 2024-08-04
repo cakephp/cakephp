@@ -252,7 +252,7 @@ class Validation
         bool $deep = false,
         ?string $regex = null
     ): bool {
-        if (!(is_string($check) || is_int($check))) {
+        if (!is_string($check) && !is_int($check)) {
             return false;
         }
 
