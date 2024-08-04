@@ -45,9 +45,9 @@ if (!function_exists('Cake\Core\pathCombine')) {
         if ($numParts === 0) {
             if ($trailing === true) {
                 return '/';
-            } else {
-                return '';
             }
+
+            return '';
         }
 
         $path = $parts[0];
@@ -456,9 +456,9 @@ function toInt(mixed $value): ?int
     if (is_float($value)) {
         if (is_nan($value) || is_infinite($value)) {
             return null;
-        } else {
-            return (int)$value;
         }
+
+        return (int)$value;
     }
     if (is_bool($value)) {
         return (int)$value;

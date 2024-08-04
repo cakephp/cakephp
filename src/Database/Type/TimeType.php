@@ -97,9 +97,9 @@ class TimeType extends BaseType implements BatchCastingInterface
         if (is_string($value)) {
             if ($this->_useLocaleMarshal) {
                 return $this->_parseLocalTimeValue($value);
-            } else {
-                return $this->_parseTimeValue($value);
             }
+
+            return $this->_parseTimeValue($value);
         }
 
         if (!is_array($value)) {
