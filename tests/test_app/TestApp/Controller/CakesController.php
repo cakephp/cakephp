@@ -33,7 +33,7 @@ class CakesController extends Controller
      *
      * @return void
      */
-    public function noRender()
+    public function noRender(): void
     {
         $this->autoRender = false;
         $this->response = $this->response->withStringBody('autoRender false body');

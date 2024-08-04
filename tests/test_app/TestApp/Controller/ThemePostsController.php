@@ -24,7 +24,7 @@ class ThemePostsController extends Controller
      *
      * @return void
      */
-    public function index()
+    public function index(): void
     {
         $this->set('testData', 'Some test data');
         $test2 = 'more data';

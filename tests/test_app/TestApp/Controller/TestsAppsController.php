@@ -26,7 +26,7 @@ use RuntimeException;
 
 class TestsAppsController extends AppController
 {
-    public function index()
+    public function index(): void
     {
         $var = '';
         if ($this->request->getQuery('var')) {
@@ -43,7 +43,7 @@ class TestsAppsController extends AppController
         return $this->response->withStringBody('5');
     }
 
-    public function set_action()
+    public function set_action(): void
     {
         $this->set('var', 'string');
         $this->render('index');

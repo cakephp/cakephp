@@ -24,12 +24,12 @@ namespace TestPlugin\Controller;
 
 class TestPluginController extends TestPluginAppController
 {
-    public function index()
+    public function index(): void
     {
         $this->autoRender = false;
     }
 
-    public function add()
+    public function add(): void
     {
         $this->autoRender = false;
     }

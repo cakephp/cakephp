@@ -26,21 +26,21 @@ use TestApp\View\PlainTextView;
  */
 class ContentTypesController extends AppController
 {
-    public function all()
+    public function all(): void
     {
         $this->viewClasses = [JsonView::class, XmlView::class];
         $this->set('data', ['hello', 'world']);
         $this->viewBuilder()->setOption('serialize', ['data']);
     }
 
-    public function matchAll()
+    public function matchAll(): void
     {
         $this->viewClasses = [JsonView::class, XmlView::class, NegotiationRequiredView::class];
         $this->set('data', ['hello', 'world']);
         $this->viewBuilder()->setOption('serialize', ['data']);
     }
 
-    public function plain()
+    public function plain(): void
     {
         $this->viewClasses = [PlainTextView::class];
         $this->set('body', 'hello world');

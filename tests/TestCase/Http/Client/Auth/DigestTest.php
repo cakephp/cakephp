@@ -335,7 +335,7 @@ class DigestTest extends TestCase
      * @return void
      */
     #[DataProvider('algorithmsProvider')]
-    public function testAlgorithms($message, $headers, $method, $data, $expected)
+    public function testAlgorithms($message, $headers, $method, $data, $expected): void
     {
         $response = new Response($headers, '');
         $this->client->expects($this->once())
@@ -349,7 +349,7 @@ class DigestTest extends TestCase
         $this->assertSame($expected, $result, $message);
     }
 
-    public function testAlgorithmException()
+    public function testAlgorithmException(): void
     {
         $headers = [
             'WWW-Authenticate: Digest algorithm="WRONG",realm="The batcave",nonce="4cded326c6c51"',

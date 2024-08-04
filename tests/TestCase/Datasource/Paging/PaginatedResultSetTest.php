@@ -25,7 +25,7 @@ use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
 {
-    public function testItems()
+    public function testItems(): void
     {
         $paginatedResults = new PaginatedResultSet(
             $this->getMockBuilder(ResultSetInterface::class)->getMock(),
@@ -36,7 +36,7 @@ class PaginatedResultSetTest extends TestCase
     }
 
     #[WithoutErrorHandler]
-    public function testCall()
+    public function testCall(): void
     {
         $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
         $resultSet
@@ -56,7 +56,7 @@ class PaginatedResultSetTest extends TestCase
         });
     }
 
-    public function testJsonEncode()
+    public function testJsonEncode(): void
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
@@ -66,7 +66,7 @@ class PaginatedResultSetTest extends TestCase
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
     }
 
-    public function testSerialization()
+    public function testSerialization(): void
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),

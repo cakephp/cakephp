@@ -1098,7 +1098,7 @@ class BelongsToManyTest extends TestCase
         $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
     }
 
-    public function testReplaceLinksComplexTypeForeignKey()
+    public function testReplaceLinksComplexTypeForeignKey(): void
     {
         $articles = $this->fetchTable('CompositeKeyArticles');
         $tags = $this->fetchTable('Tags');
@@ -1153,7 +1153,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('tag2', $result->tags[1]->name);
     }
 
-    public function testReplaceLinksMissingKeyData()
+    public function testReplaceLinksMissingKeyData(): void
     {
         $articles = $this->fetchTable('Articles');
         $tags = $this->fetchTable('Tags');

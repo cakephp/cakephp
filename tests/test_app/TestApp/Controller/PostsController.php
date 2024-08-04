@@ -50,7 +50,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->FormProtection);
@@ -59,7 +59,7 @@ class PostsController extends AppController
         $this->FormProtection->setConfig('unlockedFields', ['some_unlocked_field']);
     }
 
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         if ($this->request->getQuery('clear')) {
             $this->set('flash', $this->request->getSession()->consume('Flash'));
@@ -77,7 +77,7 @@ class PostsController extends AppController
      * @param string $layout
      * @return void
      */
-    public function index($layout = 'default')
+    public function index($layout = 'default'): void
     {
         $this->Flash->error('An error message');
         $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
@@ -112,7 +112,7 @@ class PostsController extends AppController
      *
      * @return void
      */
-    public function get()
+    public function get(): void
     {
         // Do nothing.
     }
@@ -122,7 +122,7 @@ class PostsController extends AppController
      *
      * @return void
      */
-    public function ajax()
+    public function ajax(): void
     {
         $data = [];
 
@@ -195,7 +195,7 @@ class PostsController extends AppController
             ->withStringBody('ok');
     }
 
-    public function redirectWithCookie()
+    public function redirectWithCookie(): void
     {
         $cookies = [
             Cookie::create('remember', '1'),
@@ -226,7 +226,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function throw_exception()
+    public function throw_exception(): void
     {
         $this->Flash->error('Error 1');
         throw new OutOfBoundsException('oh no!');
@@ -235,7 +235,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function throw_chained()
+    public function throw_chained(): void
     {
         $inner = new RuntimeException('inner badness');
         throw new OutOfBoundsException('oh no!', 1, $inner);

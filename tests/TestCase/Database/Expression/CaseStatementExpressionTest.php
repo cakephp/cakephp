@@ -773,7 +773,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1);
     }
 
-    public function testSqlInjectionViaUntypedWhenValueIsNotPossible()
+    public function testSqlInjectionViaUntypedWhenValueIsNotPossible(): void
     {
         $expression = (new CaseStatementExpression())
             ->when('1 THEN 1 END; DELETE * FROM foo; --')
@@ -954,7 +954,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Getters
 
-    public function testGetInvalidCaseExpressionClause()
+    public function testGetInvalidCaseExpressionClause(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -964,7 +964,7 @@ class CaseStatementExpressionTest extends TestCase
         (new CaseStatementExpression())->clause('invalid');
     }
 
-    public function testGetInvalidWhenThenExpressionClause()
+    public function testGetInvalidWhenThenExpressionClause(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(

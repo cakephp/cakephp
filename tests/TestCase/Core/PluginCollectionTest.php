@@ -60,7 +60,7 @@ class PluginCollectionTest extends TestCase
         $plugins->add(new TestPlugin());
     }
 
-    public function testAddFromConfig()
+    public function testAddFromConfig(): void
     {
         Configure::write('debug', false);
 
