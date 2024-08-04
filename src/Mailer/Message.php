@@ -1313,13 +1313,15 @@ class Message implements JsonSerializable
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
         $boundary = $this->boundary ?? '';
-        $relBoundary = $textBoundary = $boundary;
+        $relBoundary = $boundary;
+        $textBoundary = $boundary;
 
         if ($hasInlineAttachments) {
             $msg[] = '--' . $boundary;
             $msg[] = 'Content-Type: multipart/related; boundary="rel-' . $boundary . '"';
             $msg[] = '';
-            $relBoundary = $textBoundary = 'rel-' . $boundary;
+            $relBoundary = 'rel-' . $boundary;
+            $textBoundary = 'rel-' . $boundary;
         }
 
         if ($hasMultipleTypes && $hasAttachments) {
@@ -1638,7 +1640,8 @@ class Message implements JsonSerializable
             }
 
             $tagOpen = false;
-            $tmpLine = $tag = '';
+            $tmpLine = '';
+            $tag = '';
             $tmpLineLength = 0;
             for ($i = 0, $count = strlen($line); $i < $count; $i++) {
                 $char = $line[$i];

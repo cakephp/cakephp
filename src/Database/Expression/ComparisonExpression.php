@@ -297,8 +297,8 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         if ($values instanceof ExpressionInterface) {
             return [$values, []];
         }
-
-        $expressions = $result = [];
+        $expressions = [];
+        $result = [];
         $isArray = is_array($values);
 
         if ($isArray) {

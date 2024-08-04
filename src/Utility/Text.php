@@ -859,8 +859,8 @@ class Text
         if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
-
-        $append = $prepend = $ellipsis;
+        $append = $ellipsis;
+        $prepend = $ellipsis;
 
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);

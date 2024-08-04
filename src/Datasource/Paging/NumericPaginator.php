@@ -396,8 +396,8 @@ class NumericPaginator implements PaginatorInterface
      */
     protected function addStartEndParams(array $data): void
     {
-        $start = $end = 0;
-
+        $start = 0;
+        $end = 0;
         if ($this->pagingParams['count'] > 0) {
             $start = (($this->pagingParams['currentPage'] - 1) * $this->pagingParams['perPage']) + 1;
             $end = $start + $this->pagingParams['count'] - 1;
@@ -434,7 +434,8 @@ class NumericPaginator implements PaginatorInterface
     {
         $defaults = $data['defaults'];
         $order = (array)$data['options']['order'];
-        $sortDefault = $directionDefault = false;
+        $sortDefault = false;
+        $directionDefault = false;
 
         if (!empty($defaults['order']) && count($defaults['order']) >= 1) {
             $sortDefault = key($defaults['order']);

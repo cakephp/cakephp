@@ -385,8 +385,8 @@ class Debugger
             if (isset($backtrace[$i])) {
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
-
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';

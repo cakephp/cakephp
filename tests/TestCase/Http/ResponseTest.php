@@ -294,7 +294,8 @@ class ResponseTest extends TestCase
     public function testWithCache(): void
     {
         $response = new Response();
-        $since = $time = time();
+        $since = time();
+        $time = $since;
 
         $new = $response->withCache($since, $time);
         $this->assertFalse($response->hasHeader('Date'));
