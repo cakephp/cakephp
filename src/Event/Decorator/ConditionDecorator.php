@@ -30,7 +30,7 @@ class ConditionDecorator extends AbstractDecorator
     /**
      * @inheritDoc
      */
-    public function __invoke(...$args): mixed
+    public function __invoke(mixed ...$args): mixed
     {
         if (!$this->canTrigger($args[0])) {
             return null;
