@@ -466,6 +466,7 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
+
         return $value === null ||
         (
             is_array($value) &&

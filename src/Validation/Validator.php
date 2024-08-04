@@ -3129,6 +3129,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 }
             }
         }
+
         return ($flags & self::EMPTY_FILE)
         && $data instanceof UploadedFileInterface
         && $data->getError() === UPLOAD_ERR_NO_FILE;
