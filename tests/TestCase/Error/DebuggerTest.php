@@ -601,7 +601,7 @@ TEXT;
         $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
     }
 
-    protected function _makeException()
+    protected function _makeException(): \RuntimeException
     {
         return new RuntimeException('testing');
     }
