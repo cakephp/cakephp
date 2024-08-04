@@ -267,7 +267,7 @@ class NumericPaginator implements PaginatorInterface
 
         if ($query === null) {
             $args = [];
-            $type = !empty($options['finder']) ? $options['finder'] : 'all';
+            $type = empty($options['finder']) ? 'all' : $options['finder'];
             if (is_array($type)) {
                 $args = (array)current($type);
                 $type = key($type);
@@ -470,7 +470,7 @@ class NumericPaginator implements PaginatorInterface
     {
         if (!empty($settings['scope'])) {
             $scope = $settings['scope'];
-            $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
+            $params = empty($params[$scope]) ? [] : (array)$params[$scope];
         }
         $params = array_intersect_key($params, array_flip($this->getConfig('allowedParameters')));
 
