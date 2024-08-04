@@ -1235,7 +1235,7 @@ trait EntityTrait
     public function setInvalid(array $fields, bool $overwrite = false)
     {
         foreach ($fields as $field => $value) {
-            if ($overwrite === true) {
+            if ($overwrite) {
                 $this->_invalid[$field] = $value;
                 continue;
             }

@@ -759,7 +759,7 @@ abstract class TestCase extends BaseTestCase
                  * @var string $string
                  */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
-                if ($fullDebug === true && $string === false) {
+                if ($fullDebug && $string === false) {
                     debug($string, true);
                     debug($regex, true);
                 }
@@ -781,7 +781,7 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if (!$matches) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
@@ -830,7 +830,7 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if ($matches === false) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }

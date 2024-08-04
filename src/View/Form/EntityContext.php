@@ -206,7 +206,7 @@ class EntityContext implements ContextInterface
             }
         }
         if ($entity instanceof EntityInterface) {
-            return $entity->isNew() !== false;
+            return $entity->isNew();
         }
 
         return true;
