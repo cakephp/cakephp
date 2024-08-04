@@ -138,7 +138,7 @@ class QueryCompiler
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
-                (is_array($part) && empty($part)) ||
+                ($part === []) ||
                 ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
