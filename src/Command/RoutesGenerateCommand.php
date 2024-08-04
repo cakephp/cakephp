@@ -47,7 +47,7 @@ class RoutesGenerateCommand extends Command
         try {
             $args = $this->_splitArgs($args->getArguments());
             $url = Router::url($args);
-            $io->out("> $url");
+            $io->out("> {$url}");
             $io->out();
         } catch (MissingRouteException) {
             $io->err('<warning>The provided parameters do not match any routes.</warning>');

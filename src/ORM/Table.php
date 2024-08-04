@@ -2024,7 +2024,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = $this->getAlias();
             $conditions = [];
             foreach ($entity->extract($primaryColumns) as $k => $v) {
-                $conditions["$alias.$k"] = $v;
+                $conditions["{$alias}.{$k}"] = $v;
             }
             $entity->setNew(!$this->exists($conditions));
         }
@@ -2246,7 +2246,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (count($primaryColumns) === 0) {
             $entityClass = $entity::class;
             $table = $this->getTable();
-            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            $message = "Cannot update `{$entityClass}`. The `{$table}` has no primary key.";
             throw new InvalidArgumentException($message);
         }
 

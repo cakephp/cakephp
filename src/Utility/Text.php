@@ -499,7 +499,7 @@ class Text
             foreach ($phrase as $key => $segment) {
                 $segment = '(' . preg_quote($segment, '|') . ')';
                 if ($options['html']) {
-                    $segment = "(?![^<]+>)$segment(?![^<]+>)";
+                    $segment = "(?![^<]+>){$segment}(?![^<]+>)";
                 }
 
                 $with[] = is_array($options['format']) ? $options['format'][$key] : $options['format'];
@@ -511,7 +511,7 @@ class Text
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
         if ($options['html']) {
-            $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+            $phrase = "(?![^<]+>){$phrase}(?![^<]+>)";
         }
 
         return (string)preg_replace(

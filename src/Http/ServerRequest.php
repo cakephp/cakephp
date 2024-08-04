@@ -1548,7 +1548,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '$name'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute."
             );
         }
         unset($new->attributes[$name]);

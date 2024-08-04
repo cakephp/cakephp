@@ -111,7 +111,7 @@ class ResultSetTest extends TestCase
 
         // Use a loop to test Iterator implementation
         foreach ($results as $i => $row) {
-            $this->assertEquals($this->fixtureData[$i], $row, "Row $i does not match");
+            $this->assertEquals($this->fixtureData[$i], $row, "Row {$i} does not match");
         }
     }
 
@@ -129,7 +129,7 @@ class ResultSetTest extends TestCase
             $expected->setNew(false);
             $expected->setSource($this->table->getAlias());
             $expected->clean();
-            $this->assertEquals($expected, $row, "Row $i does not match");
+            $this->assertEquals($expected, $row, "Row {$i} does not match");
         }
     }
 

@@ -282,7 +282,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $then = $this->compileNullableValue($binder, $this->then, $this->thenType);
 
-        return "WHEN $when THEN $then";
+        return "WHEN {$when} THEN {$then}";
     }
 
     /**

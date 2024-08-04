@@ -257,11 +257,11 @@ class FormData implements Countable, Stringable
             $boundary = $this->boundary();
             $out = '';
             foreach ($this->_parts as $part) {
-                $out .= "--$boundary\r\n";
+                $out .= "--{$boundary}\r\n";
                 $out .= (string)$part;
                 $out .= "\r\n";
             }
-            $out .= "--$boundary--\r\n";
+            $out .= "--{$boundary}--\r\n";
 
             return $out;
         }

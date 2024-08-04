@@ -125,7 +125,7 @@ class CommandCollectionTest extends TestCase
     public function testAddCommandInvalidName(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("The command name `$name` is invalid.");
+        $this->expectExceptionMessage("The command name `{$name}` is invalid.");
         $collection = new CommandCollection();
         $collection->add($name, DemoCommand::class);
     }

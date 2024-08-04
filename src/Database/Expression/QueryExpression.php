@@ -533,7 +533,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
         }
 
-        return sprintf($template, implode(" $conjunction ", $parts));
+        return sprintf($template, implode(" {$conjunction} ", $parts));
     }
 
     /**

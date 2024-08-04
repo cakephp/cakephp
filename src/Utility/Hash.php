@@ -1229,8 +1229,8 @@ class Hash
 
         $alias = key(current($data));
         $options += [
-            'idPath' => "{n}.$alias.id",
-            'parentPath' => "{n}.$alias.parent_id",
+            'idPath' => "{n}.{$alias}.id",
+            'parentPath' => "{n}.{$alias}.parent_id",
             'children' => 'children',
             'root' => null,
         ];
