@@ -143,7 +143,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function file()
+    public function file(): \Psr\Http\Message\MessageInterface|\Cake\Http\Response
     {
         $filename = $this->request->getQuery('file');
         if ($filename) {

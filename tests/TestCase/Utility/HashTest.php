@@ -2686,7 +2686,7 @@ class HashTest extends TestCase
      * @param mixed $value Value
      * @return mixed
      */
-    public function mapCallback($value)
+    public function mapCallback($value): int|float
     {
         return $value * 2;
     }
@@ -2698,7 +2698,7 @@ class HashTest extends TestCase
      * @param mixed $two Second param
      * @return mixed
      */
-    public function reduceCallback($one, $two)
+    public function reduceCallback($one, $two): float|int|array
     {
         return $one + $two;
     }
