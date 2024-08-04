@@ -98,7 +98,7 @@ class FormData implements Countable, Stringable
      * @param mixed $value The value for the part.
      * @return $this
      */
-    public function add(FormDataPart|string $name, mixed $value = null)
+    public function add(FormDataPart|string $name, mixed $value = null): static
     {
         if (is_string($name)) {
             if (is_array($value)) {
@@ -124,7 +124,7 @@ class FormData implements Countable, Stringable
      * @param array $data Array of data to add.
      * @return $this
      */
-    public function addMany(array $data)
+    public function addMany(array $data): static
     {
         foreach ($data as $name => $value) {
             $this->add($name, $value);

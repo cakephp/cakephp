@@ -166,7 +166,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->_field instanceof ExpressionInterface) {
             $callback($this->_field);

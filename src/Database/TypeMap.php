@@ -73,7 +73,7 @@ class TypeMap
      * are the correspondent type.
      * @return $this
      */
-    public function setDefaults(array $defaults)
+    public function setDefaults(array $defaults): static
     {
         $this->_defaults = $defaults;
 
@@ -118,7 +118,7 @@ class TypeMap
      * are the correspondent type.
      * @return $this
      */
-    public function setTypes(array $types)
+    public function setTypes(array $types): static
     {
         $this->_types = $types;
 

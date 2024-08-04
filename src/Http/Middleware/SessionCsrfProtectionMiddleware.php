@@ -143,7 +143,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      * @param callable $callback A callable.
      * @return $this
      */
-    public function skipCheckCallback(callable $callback)
+    public function skipCheckCallback(callable $callback): static
     {
         $this->skipCheckCallback = $callback;
 

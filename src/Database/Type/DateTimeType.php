@@ -170,7 +170,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \DateTimeZone|string|null $timezone Database timezone.
      * @return $this
      */
-    public function setDatabaseTimezone(DateTimeZone|string|null $timezone)
+    public function setDatabaseTimezone(DateTimeZone|string|null $timezone): static
     {
         if (is_string($timezone)) {
             $timezone = new DateTimeZone($timezone);
@@ -188,7 +188,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \DateTimeZone|string|null $timezone User timezone.
      * @return $this
      */
-    public function setUserTimezone(DateTimeZone|string|null $timezone)
+    public function setUserTimezone(DateTimeZone|string|null $timezone): static
     {
         if (is_string($timezone)) {
             $timezone = new DateTimeZone($timezone);
@@ -245,7 +245,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      *      to DateTime instances.
      * @return $this
      */
-    public function setKeepDatabaseTimezone(bool $keep)
+    public function setKeepDatabaseTimezone(bool $keep): static
     {
         $this->keepDatabaseTimezone = $keep;
 
@@ -378,7 +378,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param bool $enable Whether to enable
      * @return $this
      */
-    public function useLocaleParser(bool $enable = true)
+    public function useLocaleParser(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useLocaleMarshal = $enable;
@@ -404,7 +404,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @see \Cake\I18n\Time::parseDateTime()
      * @return $this
      */
-    public function setLocaleFormat(array|string $format)
+    public function setLocaleFormat(array|string $format): static
     {
         $this->_localeMarshalFormat = $format;
 

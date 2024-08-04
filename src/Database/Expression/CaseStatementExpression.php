@@ -291,7 +291,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @throws \LogicException In case the callable doesn't return an instance of
      *  `\Cake\Database\Expression\WhenThenExpression`.
      */
-    public function when(mixed $when, array|string|null $type = null)
+    public function when(mixed $when, array|string|null $type = null): static
     {
         if ($this->whenBuffer !== null) {
             throw new LogicException('Cannot call `when()` between `when()` and `then()`.');
@@ -373,7 +373,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @throws \LogicException In case `when()` wasn't previously called with a value other than a closure or an
      *  instance of `\Cake\Database\Expression\WhenThenExpression`.
      */
-    public function then(mixed $result, ?string $type = null)
+    public function then(mixed $result, ?string $type = null): static
     {
         if ($this->whenBuffer === null) {
             throw new LogicException('Cannot call `then()` before `when()`.');
@@ -401,7 +401,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @throws \InvalidArgumentException In case the `$result` argument is neither a scalar value, nor an object, an
      *  instance of `\Cake\Database\ExpressionInterface`, or `null`.
      */
-    public function else(mixed $result, ?string $type = null)
+    public function else(mixed $result, ?string $type = null): static
     {
         if ($this->whenBuffer !== null) {
             throw new LogicException('Cannot call `else()` between `when()` and `then()`.');
@@ -475,7 +475,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @param string $type The type name to use.
      * @return $this
      */
-    public function setReturnType(string $type)
+    public function setReturnType(string $type): static
     {
         $this->returnType = $type;
 
@@ -544,7 +544,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->whenBuffer !== null) {
             throw new LogicException('Case expression has incomplete when clause. Missing `then()` after `when()`.');

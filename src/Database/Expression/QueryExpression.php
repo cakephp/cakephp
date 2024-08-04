@@ -83,7 +83,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string $conjunction Value to be used for joining conditions
      * @return $this
      */
-    public function setConjunction(string $conjunction)
+    public function setConjunction(string $conjunction): static
     {
         $this->_conjunction = strtoupper($conjunction);
 
@@ -120,7 +120,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
      */
-    public function add(ExpressionInterface|array|string $conditions, array $types = [])
+    public function add(ExpressionInterface|array|string $conditions, array $types = []): static
     {
         if (is_string($conditions) || $conditions instanceof ExpressionInterface) {
             $this->_conditions[] = $conditions;
@@ -539,7 +539,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -566,7 +566,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Closure $callback The callback to run for each part
      * @return $this
      */
-    public function iterateParts(Closure $callback)
+    public function iterateParts(Closure $callback): static
     {
         $parts = [];
         foreach ($this->_conditions as $k => $c) {

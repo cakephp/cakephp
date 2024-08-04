@@ -134,7 +134,7 @@ class RulesChecker
      * second argument.
      * @return $this
      */
-    public function add(callable $rule, array|string|null $name = null, array $options = [])
+    public function add(callable $rule, array|string|null $name = null, array $options = []): static
     {
         if (is_string($name)) {
             $this->_rules[$name] = $this->_addError($rule, $name, $options);
@@ -152,7 +152,7 @@ class RulesChecker
      * @return $this
      * @since 5.1.0
      */
-    public function remove(string $name)
+    public function remove(string $name): static
     {
         unset($this->_rules[$name]);
 
@@ -177,7 +177,7 @@ class RulesChecker
      * second argument.
      * @return $this
      */
-    public function addCreate(callable $rule, array|string|null $name = null, array $options = [])
+    public function addCreate(callable $rule, array|string|null $name = null, array $options = []): static
     {
         if (is_string($name)) {
             $this->_createRules[$name] = $this->_addError($rule, $name, $options);
@@ -195,7 +195,7 @@ class RulesChecker
      * @return $this
      * @since 5.1.0
      */
-    public function removeCreate(string $name)
+    public function removeCreate(string $name): static
     {
         unset($this->_createRules[$name]);
 
@@ -220,7 +220,7 @@ class RulesChecker
      * second argument.
      * @return $this
      */
-    public function addUpdate(callable $rule, array|string|null $name = null, array $options = [])
+    public function addUpdate(callable $rule, array|string|null $name = null, array $options = []): static
     {
         if (is_string($name)) {
             $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
@@ -238,7 +238,7 @@ class RulesChecker
      * @return $this
      * @since 5.1.0
      */
-    public function removeUpdate(string $name)
+    public function removeUpdate(string $name): static
     {
         unset($this->_updateRules[$name]);
 
@@ -263,7 +263,7 @@ class RulesChecker
      * second argument.
      * @return $this
      */
-    public function addDelete(callable $rule, array|string|null $name = null, array $options = [])
+    public function addDelete(callable $rule, array|string|null $name = null, array $options = []): static
     {
         if (is_string($name)) {
             $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
@@ -281,7 +281,7 @@ class RulesChecker
      * @return $this
      * @since 5.1.0
      */
-    public function removeDelete(string $name)
+    public function removeDelete(string $name): static
     {
         unset($this->_deleteRules[$name]);
 

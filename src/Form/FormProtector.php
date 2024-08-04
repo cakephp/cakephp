@@ -114,7 +114,7 @@ class FormProtector
      * @param mixed $value Field value, if value should not be tampered with.
      * @return $this
      */
-    public function addField(array|string $field, bool $lock = true, mixed $value = null)
+    public function addField(array|string $field, bool $lock = true, mixed $value = null): static
     {
         if (is_string($field)) {
             $field = $this->getFieldNameArray($field);
@@ -187,7 +187,7 @@ class FormProtector
      * @param string $name The dot separated name for the field.
      * @return $this
      */
-    public function unlockField(string $name)
+    public function unlockField(string $name): static
     {
         if (!in_array($name, $this->unlockedFields, true)) {
             $this->unlockedFields[] = $name;

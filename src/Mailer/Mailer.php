@@ -237,7 +237,7 @@ class Mailer implements EventListenerInterface
      * @param \Cake\Mailer\Renderer $renderer Render instance.
      * @return $this
      */
-    public function setRenderer(Renderer $renderer)
+    public function setRenderer(Renderer $renderer): static
     {
         $this->renderer = $renderer;
 
@@ -260,7 +260,7 @@ class Mailer implements EventListenerInterface
      * @param \Cake\Mailer\Message $message Message instance.
      * @return $this
      */
-    public function setMessage(Message $message)
+    public function setMessage(Message $message): static
     {
         $this->message = $message;
 
@@ -291,7 +291,7 @@ class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function setViewVars(array|string $key, mixed $value = null)
+    public function setViewVars(array|string $key, mixed $value = null): static
     {
         $this->getRenderer()->set($key, $value);
 
@@ -351,7 +351,7 @@ class Mailer implements EventListenerInterface
      * @param string $content Content.
      * @return $this
      */
-    public function render(string $content = '')
+    public function render(string $content = ''): static
     {
         $content = $this->getRenderer()->render(
             $content,
@@ -387,7 +387,7 @@ class Mailer implements EventListenerInterface
      *    an array with config.
      * @return $this
      */
-    public function setProfile(array|string $config)
+    public function setProfile(array|string $config): static
     {
         if (is_string($config)) {
             $name = $config;
@@ -457,7 +457,7 @@ class Mailer implements EventListenerInterface
      * @return $this
      * @throws \LogicException When the chosen transport lacks a send method.
      */
-    public function setTransport(AbstractTransport|string $name)
+    public function setTransport(AbstractTransport|string $name): static
     {
         if (is_string($name)) {
             $this->transport = TransportFactory::get($name);
@@ -490,7 +490,7 @@ class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    protected function restore()
+    protected function restore(): static
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
@@ -509,7 +509,7 @@ class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->message->reset();
         $this->getRenderer()->reset();

@@ -398,7 +398,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $table Table name.
      * @return $this
      */
-    public function setTable(string $table)
+    public function setTable(string $table): static
     {
         $this->_table = $table;
 
@@ -434,7 +434,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $alias Table alias
      * @return $this
      */
-    public function setAlias(string $alias)
+    public function setAlias(string $alias): static
     {
         $this->_alias = $alias;
 
@@ -485,7 +485,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $registryAlias The key used to access this object.
      * @return $this
      */
-    public function setRegistryAlias(string $registryAlias)
+    public function setRegistryAlias(string $registryAlias): static
     {
         $this->_registryAlias = $registryAlias;
 
@@ -508,7 +508,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Connection $connection The connection instance
      * @return $this
      */
-    public function setConnection(Connection $connection)
+    public function setConnection(Connection $connection): static
     {
         $this->_connection = $connection;
 
@@ -560,7 +560,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Schema\TableSchemaInterface|array $schema Schema to be used for this table
      * @return $this
      */
-    public function setSchema(TableSchemaInterface|array $schema)
+    public function setSchema(TableSchemaInterface|array $schema): static
     {
         if (is_array($schema)) {
             $constraints = [];
@@ -640,7 +640,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param list<string>|string $key Sets a new name to be used as primary key
      * @return $this
      */
-    public function setPrimaryKey(array|string $key)
+    public function setPrimaryKey(array|string $key): static
     {
         $this->_primaryKey = $key;
 
@@ -671,7 +671,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param list<string>|string $field Name to be used as display field.
      * @return $this
      */
-    public function setDisplayField(array|string $field)
+    public function setDisplayField(array|string $field): static
     {
         $this->_displayField = $field;
 
@@ -752,7 +752,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
      * @return $this
      */
-    public function setEntityClass(string $name)
+    public function setEntityClass(string $name): static
     {
         /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
         $class = App::className($name, 'Model/Entity');
@@ -789,7 +789,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
-    public function addBehavior(string $name, array $options = [])
+    public function addBehavior(string $name, array $options = []): static
     {
         $this->_behaviors->load($name, $options);
 
@@ -812,7 +812,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      */
-    public function addBehaviors(array $behaviors)
+    public function addBehaviors(array $behaviors): static
     {
         foreach ($behaviors as $name => $options) {
             if (is_int($name)) {
@@ -841,7 +841,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return $this
      * @see \Cake\ORM\Behavior
      */
-    public function removeBehavior(string $name)
+    public function removeBehavior(string $name): static
     {
         $this->_behaviors->unload($name);
 
@@ -1008,7 +1008,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @see \Cake\ORM\Table::hasMany()
      * @see \Cake\ORM\Table::belongsToMany()
      */
-    public function addAssociations(array $params)
+    public function addAssociations(array $params): static
     {
         foreach ($params as $assocType => $tables) {
             foreach ($tables as $associated => $options) {

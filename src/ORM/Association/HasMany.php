@@ -112,7 +112,7 @@ class HasMany extends Association
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return $this
      */
-    public function setSaveStrategy(string $strategy)
+    public function setSaveStrategy(string $strategy): static
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy `%s`', $strategy);
@@ -608,7 +608,7 @@ class HasMany extends Association
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort(ExpressionInterface|Closure|array|string $sort)
+    public function setSort(ExpressionInterface|Closure|array|string $sort): static
     {
         $this->_sort = $sort;
 

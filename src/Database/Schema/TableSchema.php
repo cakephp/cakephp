@@ -325,7 +325,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addColumn(string $name, $attrs)
+    public function addColumn(string $name, $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -344,7 +344,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function removeColumn(string $name)
+    public function removeColumn(string $name): static
     {
         unset($this->_columns[$name], $this->_typeMap[$name]);
 
@@ -388,7 +388,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function setColumnType(string $name, string $type)
+    public function setColumnType(string $name, string $type): static
     {
         if (!isset($this->_columns[$name])) {
             $message = sprintf(
@@ -482,7 +482,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addIndex(string $name, $attrs)
+    public function addIndex(string $name, $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -554,7 +554,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addConstraint(string $name, $attrs)
+    public function addConstraint(string $name, $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -617,7 +617,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function dropConstraint(string $name)
+    public function dropConstraint(string $name): static
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);
@@ -689,7 +689,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $this->_options = $options + $this->_options;
 
@@ -707,7 +707,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function setTemporary(bool $temporary)
+    public function setTemporary(bool $temporary): static
     {
         $this->_temporary = $temporary;
 

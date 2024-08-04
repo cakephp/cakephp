@@ -150,7 +150,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @return $this
      * @throws \Cake\Database\Exception\DatabaseException
      */
-    public function useLocaleParser(bool $enable = true)
+    public function useLocaleParser(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;

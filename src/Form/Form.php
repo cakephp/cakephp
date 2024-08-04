@@ -140,7 +140,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema $schema The schema to set
      * @return $this
      */
-    public function setSchema(Schema $schema)
+    public function setSchema(Schema $schema): static
     {
         $this->_schema = $schema;
 
@@ -233,7 +233,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $errors Errors list.
      * @return $this
      */
-    public function setErrors(array $errors)
+    public function setErrors(array $errors): static
     {
         $this->_errors = $errors;
 
@@ -310,7 +310,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param mixed $value Value to set for var
      * @return $this
      */
-    public function set(array|string $name, mixed $value = null)
+    public function set(array|string $name, mixed $value = null): static
     {
         $write = $name;
         if (!is_array($name)) {
@@ -331,7 +331,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $data Data array.
      * @return $this
      */
-    public function setData(array $data)
+    public function setData(array $data): static
     {
         $this->_data = $data;
 

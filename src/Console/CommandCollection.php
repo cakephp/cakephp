@@ -61,7 +61,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function add(string $name, CommandInterface|string $command)
+    public function add(string $name, CommandInterface|string $command): static
     {
         if (is_string($command)) {
             assert(
@@ -93,7 +93,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */
-    public function addMany(array $commands)
+    public function addMany(array $commands): static
     {
         foreach ($commands as $name => $class) {
             $this->add($name, $class);
@@ -108,7 +108,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $name The named shell.
      * @return $this
      */
-    public function remove(string $name)
+    public function remove(string $name): static
     {
         unset($this->commands[$name]);
 

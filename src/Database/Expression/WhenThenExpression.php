@@ -118,7 +118,7 @@ class WhenThenExpression implements ExpressionInterface
      * neither a string, nor null.
      * @see CaseStatementExpression::when() for a more detailed usage explanation.
      */
-    public function when(object|array|string|float|int|bool $when, array|string|null $type = null)
+    public function when(object|array|string|float|int|bool $when, array|string|null $type = null): static
     {
         if (is_array($when)) {
             if (!$when) {
@@ -180,7 +180,7 @@ class WhenThenExpression implements ExpressionInterface
      *  result value.
      * @return $this
      */
-    public function then(mixed $result, ?string $type = null)
+    public function then(mixed $result, ?string $type = null): static
     {
         /** @psalm-suppress DocblockTypeContradiction */
         if (
@@ -288,7 +288,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->when instanceof ExpressionInterface) {
             $callback($this->when);

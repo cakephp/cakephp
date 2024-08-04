@@ -273,7 +273,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addCookie(CookieInterface $cookie)
+    public function addCookie(CookieInterface $cookie): static
     {
         if (!$cookie->getDomain() || !$cookie->getPath()) {
             throw new InvalidArgumentException('Cookie must have a domain and a path set.');

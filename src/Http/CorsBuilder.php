@@ -107,7 +107,7 @@ class CorsBuilder
      * @param list<string>|string $domains The allowed domains
      * @return $this
      */
-    public function allowOrigin(array|string $domains)
+    public function allowOrigin(array|string $domains): static
     {
         $allowed = $this->_normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
@@ -154,7 +154,7 @@ class CorsBuilder
      * @param list<string> $methods The allowed HTTP methods
      * @return $this
      */
-    public function allowMethods(array $methods)
+    public function allowMethods(array $methods): static
     {
         $this->_headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
 
@@ -166,7 +166,7 @@ class CorsBuilder
      *
      * @return $this
      */
-    public function allowCredentials()
+    public function allowCredentials(): static
     {
         $this->_headers['Access-Control-Allow-Credentials'] = 'true';
 
@@ -179,7 +179,7 @@ class CorsBuilder
      * @param list<string> $headers The list of headers to accept in CORS requests.
      * @return $this
      */
-    public function allowHeaders(array $headers)
+    public function allowHeaders(array $headers): static
     {
         $this->_headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
 
@@ -192,7 +192,7 @@ class CorsBuilder
      * @param list<string> $headers The list of headers to expose CORS responses
      * @return $this
      */
-    public function exposeHeaders(array $headers)
+    public function exposeHeaders(array $headers): static
     {
         $this->_headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
 
@@ -205,7 +205,7 @@ class CorsBuilder
      * @param string|int $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
-    public function maxAge(string|int $age)
+    public function maxAge(string|int $age): static
     {
         $this->_headers['Access-Control-Max-Age'] = $age;
 

@@ -158,7 +158,7 @@ class StringTemplate
      * @param array<string, string> $templates An associative list of named templates.
      * @return $this
      */
-    public function add(array $templates)
+    public function add(array $templates): static
     {
         $this->setConfig($templates);
         $this->_compileTemplates(array_keys($templates));

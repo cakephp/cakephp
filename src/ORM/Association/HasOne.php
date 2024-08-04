@@ -64,7 +64,7 @@ class HasOne extends Association
      *  no join conditions will be generated automatically.
      * @return $this
      */
-    public function setForeignKey(array|string|false $key)
+    public function setForeignKey(array|string|false $key): static
     {
         $this->_foreignKey = $key;
 

@@ -197,7 +197,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @return $this
      * @since 4.0.0
      */
-    public function setStrategy(TranslateStrategyInterface $strategy)
+    public function setStrategy(TranslateStrategyInterface $strategy): static
     {
         $this->strategy = $strategy;
 
@@ -286,7 +286,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @link https://book.cakephp.org/5/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
      * @link https://book.cakephp.org/5/en/orm/behaviors/translate.html#saving-in-another-language
      */
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): static
     {
         $this->getStrategy()->setLocale($locale);
 

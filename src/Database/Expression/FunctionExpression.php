@@ -79,7 +79,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param string $name The name of the function
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->_name = $name;
 
@@ -108,7 +108,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false)
+    public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false): static
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);

@@ -110,7 +110,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param bool $allow Flag to enable or disable fallback
      * @return $this
      */
-    public function allowFallbackClass(bool $allow)
+    public function allowFallbackClass(bool $allow): static
     {
         $this->allowFallbackClass = $allow;
 
@@ -128,7 +128,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return $this
      * @psalm-param class-string<\Cake\ORM\Table> $className
      */
-    public function setFallbackClassName(string $className)
+    public function setFallbackClassName(string $className): static
     {
         $this->fallbackClassName = $className;
 
@@ -138,7 +138,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
-    public function setConfig(array|string $alias, ?array $options = null)
+    public function setConfig(array|string $alias, ?array $options = null): static
     {
         if (!is_string($alias)) {
             $this->_config = $alias;
@@ -373,7 +373,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return $this
      * @since 3.8.0
      */
-    public function addLocation(string $location)
+    public function addLocation(string $location): static
     {
         $location = str_replace('\\', '/', $location);
         $this->locations[] = trim($location, '/');

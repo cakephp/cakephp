@@ -68,12 +68,12 @@ class FakeConnection implements ConnectionInterface
         throw new RuntimeException('Not implemented');
     }
 
-    public function enableQueryLogging(bool $enable = true)
+    public function enableQueryLogging(bool $enable = true): static
     {
         return $this;
     }
 
-    public function disableQueryLogging()
+    public function disableQueryLogging(): static
     {
         return $this;
     }

@@ -112,7 +112,7 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         return $this;
     }

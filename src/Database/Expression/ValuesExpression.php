@@ -116,7 +116,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $columns Array with columns to be inserted.
      * @return $this
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): static
     {
         $this->_columns = $columns;
         $this->_castedExpressions = false;
@@ -161,7 +161,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $values Array with values to be inserted.
      * @return $this
      */
-    public function setValues(array $values)
+    public function setValues(array $values): static
     {
         $this->_values = $values;
         $this->_castedExpressions = false;
@@ -190,7 +190,7 @@ class ValuesExpression implements ExpressionInterface
      * @param \Cake\Database\Query $query The query to set
      * @return $this
      */
-    public function setQuery(Query $query)
+    public function setQuery(Query $query): static
     {
         $this->_query = $query;
 
@@ -262,7 +262,7 @@ class ValuesExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         if ($this->_query) {
             return $this;

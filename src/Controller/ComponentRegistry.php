@@ -72,7 +72,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param \Cake\Controller\Controller $controller Controller instance.
      * @return $this
      */
-    public function setController(Controller $controller)
+    public function setController(Controller $controller): static
     {
         $this->_Controller = $controller;
         $this->setEventManager($controller->getEventManager());

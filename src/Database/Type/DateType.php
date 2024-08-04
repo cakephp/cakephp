@@ -203,7 +203,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param bool $enable Whether to enable
      * @return $this
      */
-    public function useLocaleParser(bool $enable = true)
+    public function useLocaleParser(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useLocaleMarshal = $enable;
@@ -229,7 +229,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @see \Cake\I18n\Date::parseDate()
      * @return $this
      */
-    public function setLocaleFormat(string|int $format)
+    public function setLocaleFormat(string|int $format): static
     {
         $this->_localeMarshalFormat = $format;
 

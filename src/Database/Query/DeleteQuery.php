@@ -57,7 +57,7 @@ class DeleteQuery extends Query
      * @param string|null $table The table to use when deleting.
      * @return $this
      */
-    public function delete(?string $table = null)
+    public function delete(?string $table = null): static
     {
         $this->_dirty();
         if ($table !== null) {

@@ -239,7 +239,7 @@ class ConsoleOptionParser
      * @param \Cake\Console\ConsoleOptionParser|array $spec ConsoleOptionParser or spec to merge with.
      * @return $this
      */
-    public function merge(ConsoleOptionParser|array $spec)
+    public function merge(ConsoleOptionParser|array $spec): static
     {
         if ($spec instanceof ConsoleOptionParser) {
             $spec = $spec->toArray();
@@ -266,7 +266,7 @@ class ConsoleOptionParser
      * @param string $text The text to set.
      * @return $this
      */
-    public function setCommand(string $text)
+    public function setCommand(string $text): static
     {
         $this->_command = Inflector::underscore($text);
 
@@ -290,7 +290,7 @@ class ConsoleOptionParser
      *   text will be imploded with "\n".
      * @return $this
      */
-    public function setDescription(array|string $text)
+    public function setDescription(array|string $text): static
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -318,7 +318,7 @@ class ConsoleOptionParser
      *   be imploded with "\n".
      * @return $this
      */
-    public function setEpilog(array|string $text)
+    public function setEpilog(array|string $text): static
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -362,7 +362,7 @@ class ConsoleOptionParser
      * @param array<string, mixed> $options An array of parameters that define the behavior of the option
      * @return $this
      */
-    public function addOption(ConsoleInputOption|string $name, array $options = [])
+    public function addOption(ConsoleInputOption|string $name, array $options = []): static
     {
         if ($name instanceof ConsoleInputOption) {
             $option = $name;
@@ -407,7 +407,7 @@ class ConsoleOptionParser
      * @param string $name The option name to remove.
      * @return $this
      */
-    public function removeOption(string $name)
+    public function removeOption(string $name): static
     {
         unset($this->_options[$name]);
 
@@ -432,7 +432,7 @@ class ConsoleOptionParser
      * @param array<string, mixed> $params Parameters for the argument, see above.
      * @return $this
      */
-    public function addArgument(ConsoleInputArgument|string $name, array $params = [])
+    public function addArgument(ConsoleInputArgument|string $name, array $params = []): static
     {
         if ($name instanceof ConsoleInputArgument) {
             $arg = $name;
@@ -472,7 +472,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::addArgument()
      * @return $this
      */
-    public function addArguments(array $args)
+    public function addArguments(array $args): static
     {
         foreach ($args as $name => $params) {
             if ($params instanceof ConsoleInputArgument) {
@@ -493,7 +493,7 @@ class ConsoleOptionParser
      * @see \Cake\Console\ConsoleOptionParser::addOption()
      * @return $this
      */
-    public function addOptions(array $options)
+    public function addOptions(array $options): static
     {
         foreach ($options as $name => $params) {
             if ($params instanceof ConsoleInputOption) {
@@ -661,7 +661,7 @@ class ConsoleOptionParser
      * @param string $name The root command name
      * @return $this
      */
-    public function setRootName(string $name)
+    public function setRootName(string $name): static
     {
         $this->rootName = $name;
 

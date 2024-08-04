@@ -120,7 +120,7 @@ class ContextFactory
      *   when the form context is the correct type.
      * @return $this
      */
-    public function addProvider(string $type, callable $check)
+    public function addProvider(string $type, callable $check): static
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;

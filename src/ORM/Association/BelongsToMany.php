@@ -169,7 +169,7 @@ class BelongsToMany extends Association
      * @param list<string>|string $key the key to be used to link both tables together
      * @return $this
      */
-    public function setTargetForeignKey(array|string $key)
+    public function setTargetForeignKey(array|string $key): static
     {
         $this->_targetForeignKey = $key;
 
@@ -216,7 +216,7 @@ class BelongsToMany extends Association
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause
      * @return $this
      */
-    public function setSort(ExpressionInterface|Closure|array|string $sort)
+    public function setSort(ExpressionInterface|Closure|array|string $sort): static
     {
         $this->_sort = $sort;
 
@@ -637,7 +637,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return $this
      */
-    public function setSaveStrategy(string $strategy)
+    public function setSaveStrategy(string $strategy): static
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy `%s`', $strategy);
@@ -965,7 +965,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    public function setConditions(Closure|array $conditions)
+    public function setConditions(Closure|array $conditions): static
     {
         parent::setConditions($conditions);
         $this->_targetConditions = $this->_junctionConditions = null;
@@ -979,7 +979,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table|string $through Name of the Table instance or the instance itself
      * @return $this
      */
-    public function setThrough(Table|string $through)
+    public function setThrough(Table|string $through): static
     {
         $this->_through = $through;
 

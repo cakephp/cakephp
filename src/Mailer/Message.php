@@ -587,7 +587,7 @@ class Message implements JsonSerializable
      * @param string $charset Character set.
      * @return $this
      */
-    public function setCharset(string $charset)
+    public function setCharset(string $charset): static
     {
         $this->charset = $charset;
 
@@ -610,7 +610,7 @@ class Message implements JsonSerializable
      * @param string|null $charset Character set.
      * @return $this
      */
-    public function setHeaderCharset(?string $charset)
+    public function setHeaderCharset(?string $charset): static
     {
         $this->headerCharset = $charset;
 
@@ -634,7 +634,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setTransferEncoding(?string $encoding)
+    public function setTransferEncoding(?string $encoding): static
     {
         if ($encoding !== null) {
             $encoding = strtolower($encoding);
@@ -670,7 +670,7 @@ class Message implements JsonSerializable
      *   null to unset the pattern and make use of filter_var() instead.
      * @return $this
      */
-    public function setEmailPattern(?string $regex)
+    public function setEmailPattern(?string $regex): static
     {
         $this->emailPattern = $regex;
 
@@ -697,7 +697,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmail(string $varName, array|string $email, ?string $name)
+    protected function setEmail(string $varName, array|string $email, ?string $name): static
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
@@ -754,7 +754,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function setEmailSingle(string $varName, array|string $email, ?string $name, string $throwMessage)
+    protected function setEmailSingle(string $varName, array|string $email, ?string $name, string $throwMessage): static
     {
         if ($email === []) {
             $this->{$varName} = $email;
@@ -782,7 +782,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function addEmail(string $varName, array|string $email, ?string $name)
+    protected function addEmail(string $varName, array|string $email, ?string $name): static
     {
         if (!is_array($email)) {
             $this->validateEmail($email, $varName);
@@ -810,7 +810,7 @@ class Message implements JsonSerializable
      * @param string $subject Subject string.
      * @return $this
      */
-    public function setSubject(string $subject)
+    public function setSubject(string $subject): static
     {
         $this->subject = $this->encodeForHeader($subject);
 
@@ -843,7 +843,7 @@ class Message implements JsonSerializable
      * @param array $headers Associative array containing headers to be set.
      * @return $this
      */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): static
     {
         $this->headers = $headers;
 
@@ -856,7 +856,7 @@ class Message implements JsonSerializable
      * @param array $headers Headers to set.
      * @return $this
      */
-    public function addHeaders(array $headers)
+    public function addHeaders(array $headers): static
     {
         $this->headers = Hash::merge($this->headers, $headers);
 
@@ -1025,7 +1025,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setEmailFormat(string $format)
+    public function setEmailFormat(string $format): static
     {
         if (!in_array($format, $this->emailFormatAvailable, true)) {
             throw new InvalidArgumentException('Format not available.');
@@ -1069,7 +1069,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setMessageId(string|bool $message)
+    public function setMessageId(string|bool $message): static
     {
         if (is_bool($message)) {
             $this->messageId = $message;
@@ -1103,7 +1103,7 @@ class Message implements JsonSerializable
      * @param string $domain Manually set the domain for CLI mailing.
      * @return $this
      */
-    public function setDomain(string $domain)
+    public function setDomain(string $domain): static
     {
         $this->domain = $domain;
 
@@ -1169,7 +1169,7 @@ class Message implements JsonSerializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setAttachments(array $attachments)
+    public function setAttachments(array $attachments): static
     {
         $attach = [];
         foreach ($attachments as $name => $fileInfo) {
@@ -1241,7 +1241,7 @@ class Message implements JsonSerializable
      * @throws \InvalidArgumentException
      * @see \Cake\Mailer\Email::setAttachments()
      */
-    public function addAttachments(array $attachments)
+    public function addAttachments(array $attachments): static
     {
         $current = $this->attachments;
         $this->setAttachments($attachments);
@@ -1460,7 +1460,7 @@ class Message implements JsonSerializable
      * @param int|null $priority 1 (highest) to 5 (lowest)
      * @return $this
      */
-    public function setPriority(?int $priority)
+    public function setPriority(?int $priority): static
     {
         $this->priority = $priority;
 
@@ -1483,7 +1483,7 @@ class Message implements JsonSerializable
      * @param array<string, mixed> $config Config array.
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): static
     {
         $simpleMethods = [
             'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
@@ -1510,7 +1510,7 @@ class Message implements JsonSerializable
      *   content string of respective type.
      * @return $this
      */
-    public function setBody(array $content)
+    public function setBody(array $content): static
     {
         foreach ($content as $type => $text) {
             if (!in_array($type, $this->emailFormatAvailable, true)) {
@@ -1542,7 +1542,7 @@ class Message implements JsonSerializable
      * @param string $content Content string
      * @return $this
      */
-    public function setBodyText(string $content)
+    public function setBodyText(string $content): static
     {
         $this->setBody([static::MESSAGE_TEXT => $content]);
 
@@ -1555,7 +1555,7 @@ class Message implements JsonSerializable
      * @param string $content Content string
      * @return $this
      */
-    public function setBodyHtml(string $content)
+    public function setBodyHtml(string $content): static
     {
         $this->setBody([static::MESSAGE_HTML => $content]);
 
@@ -1717,7 +1717,7 @@ class Message implements JsonSerializable
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->to = [];
         $this->from = [];
@@ -1872,7 +1872,7 @@ class Message implements JsonSerializable
      * @param array<string, mixed> $config Email configuration array.
      * @return $this
      */
-    public function createFromArray(array $config)
+    public function createFromArray(array $config): static
     {
         foreach ($config as $property => $value) {
             $this->{$property} = $value;

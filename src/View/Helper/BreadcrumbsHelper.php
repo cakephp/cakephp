@@ -78,7 +78,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function add(array|string $title, array|string|null $url = null, array $options = [])
+    public function add(array|string $title, array|string|null $url = null, array $options = []): static
     {
         if (is_array($title)) {
             foreach ($title as $crumb) {
@@ -114,7 +114,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function prepend(array|string $title, array|string|null $url = null, array $options = [])
+    public function prepend(array|string $title, array|string|null $url = null, array $options = []): static
     {
         if (is_array($title)) {
             $crumbs = [];
@@ -154,7 +154,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the index is out of bound
      */
-    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = [])
+    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = []): static
     {
         if (!isset($this->crumbs[$index]) && $index !== count($this->crumbs)) {
             throw new LogicException(sprintf('No crumb could be found at index `%s`.', $index));
@@ -248,7 +248,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->crumbs = [];
 

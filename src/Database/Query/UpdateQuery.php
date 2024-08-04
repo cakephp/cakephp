@@ -59,7 +59,7 @@ class UpdateQuery extends Query
      * @param \Cake\Database\ExpressionInterface|string $table The table you want to update.
      * @return $this
      */
-    public function update(ExpressionInterface|string $table)
+    public function update(ExpressionInterface|string $table): static
     {
         $this->_dirty();
         $this->_parts['update'][0] = $table;
@@ -101,7 +101,7 @@ class UpdateQuery extends Query
      * @param array<string, string>|string $types The column types to treat data as.
      * @return $this
      */
-    public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = [])
+    public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = []): static
     {
         if (empty($this->_parts['set'])) {
             $this->_parts['set'] = $this->newExpr()->setConjunction(',');

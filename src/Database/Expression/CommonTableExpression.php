@@ -84,7 +84,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param string $name The CTE name.
      * @return $this
      */
-    public function name(string $name)
+    public function name(string $name): static
     {
         $this->name = new IdentifierExpression($name);
 
@@ -97,7 +97,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param \Cake\Database\ExpressionInterface|\Closure $query CTE query
      * @return $this
      */
-    public function query(ExpressionInterface|Closure $query)
+    public function query(ExpressionInterface|Closure $query): static
     {
         if ($query instanceof Closure) {
             $query = $query();
@@ -118,7 +118,7 @@ class CommonTableExpression implements ExpressionInterface
      * @param \Cake\Database\Expression\IdentifierExpression|list<string>|array<\Cake\Database\Expression\IdentifierExpression>|string $fields Field names
      * @return $this
      */
-    public function field(IdentifierExpression|array|string $fields)
+    public function field(IdentifierExpression|array|string $fields): static
     {
         $fields = (array)$fields;
         /** @var array<string|\Cake\Database\Expression\IdentifierExpression> $fields */
@@ -139,7 +139,7 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @return $this
      */
-    public function materialized()
+    public function materialized(): static
     {
         $this->materialized = 'MATERIALIZED';
 
@@ -151,7 +151,7 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @return $this
      */
-    public function notMaterialized()
+    public function notMaterialized(): static
     {
         $this->materialized = 'NOT MATERIALIZED';
 
@@ -173,7 +173,7 @@ class CommonTableExpression implements ExpressionInterface
      *
      * @return $this
      */
-    public function recursive()
+    public function recursive(): static
     {
         $this->recursive = true;
 
@@ -205,7 +205,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
-    public function traverse(Closure $callback)
+    public function traverse(Closure $callback): static
     {
         $callback($this->name);
         foreach ($this->fields as $field) {

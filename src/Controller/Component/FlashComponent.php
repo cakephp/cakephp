@@ -96,7 +96,7 @@ class FlashComponent extends Component
      * @return $this
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
      */
-    public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
+    public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static
     {
         $this->flash()->setConfig($key, $value, $merge);
 
@@ -134,7 +134,7 @@ class FlashComponent extends Component
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function configShallow(array|string $key, mixed $value = null)
+    public function configShallow(array|string $key, mixed $value = null): static
     {
         $this->flash()->configShallow($key, $value);
 

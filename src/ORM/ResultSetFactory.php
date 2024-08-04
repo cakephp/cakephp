@@ -246,7 +246,7 @@ class ResultSetFactory
      * @param class-string<\Cake\Datasource\ResultSetInterface> $resultSetClass Class name.
      * @return $this
      */
-    public function setResultSetClass(string $resultSetClass)
+    public function setResultSetClass(string $resultSetClass): static
     {
         if (!is_a($resultSetClass, ResultSetInterface::class, true)) {
             throw new InvalidArgumentException(sprintf(

@@ -152,7 +152,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult(mixed $value = null)
+    public function setResult(mixed $value = null): static
     {
         $this->result = $value;
 
@@ -174,7 +174,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    public function setData(array|string $key, $value = null)
+    public function setData(array|string $key, $value = null): static
     {
         if (is_array($key)) {
             $this->_data = $key;

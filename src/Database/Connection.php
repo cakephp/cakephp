@@ -342,7 +342,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Schema\CollectionInterface $collection The schema collection object
      * @return $this
      */
-    public function setSchemaCollection(SchemaCollectionInterface $collection)
+    public function setSchemaCollection(SchemaCollectionInterface $collection): static
     {
         $this->_schemaCollection = $collection;
 
@@ -512,7 +512,7 @@ class Connection implements ConnectionInterface
      * @param bool $enable Whether save points should be used.
      * @return $this
      */
-    public function enableSavePoints(bool $enable = true)
+    public function enableSavePoints(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useSavePoints = false;
@@ -528,7 +528,7 @@ class Connection implements ConnectionInterface
      *
      * @return $this
      */
-    public function disableSavePoints()
+    public function disableSavePoints(): static
     {
         $this->_useSavePoints = false;
 
@@ -728,7 +728,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function setCacher(CacheInterface $cacher)
+    public function setCacher(CacheInterface $cacher): static
     {
         $this->cacher = $cacher;
 

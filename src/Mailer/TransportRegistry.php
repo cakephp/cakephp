@@ -81,7 +81,7 @@ class TransportRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
         unset($this->_loaded[$name]);
 

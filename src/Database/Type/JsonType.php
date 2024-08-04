@@ -112,7 +112,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @return $this
      * @see https://www.php.net/manual/en/function.json-encode.php
      */
-    public function setEncodingOptions(int $options)
+    public function setEncodingOptions(int $options): static
     {
         $this->_encodingOptions = $options;
 

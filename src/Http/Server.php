@@ -193,7 +193,7 @@ class Server implements EventDispatcherInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager): static
     {
         if ($this->app instanceof EventDispatcherInterface) {
             $this->app->setEventManager($eventManager);

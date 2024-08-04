@@ -131,7 +131,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param bool $enable Whether to enable
      * @return $this
      */
-    public function useLocaleParser(bool $enable = true)
+    public function useLocaleParser(bool $enable = true): static
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;

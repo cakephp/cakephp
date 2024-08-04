@@ -102,7 +102,7 @@ class EventManager implements EventManagerInterface
         EventListenerInterface|string $eventKey,
         callable|array $options = [],
         ?callable $callable = null
-    ) {
+    ): static {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
 
@@ -155,7 +155,7 @@ class EventManager implements EventManagerInterface
     public function off(
         EventListenerInterface|callable|string $eventKey,
         EventListenerInterface|callable|null $callable = null
-    ) {
+    ): static {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
 
@@ -410,7 +410,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventInterface<TSubject> $event An event to add to the list.
      * @return $this
      */
-    public function addEventToList(EventInterface $event)
+    public function addEventToList(EventInterface $event): static
     {
         $this->_eventList?->add($event);
 
@@ -423,7 +423,7 @@ class EventManager implements EventManagerInterface
      * @param bool $enabled True or false to enable / disable it.
      * @return $this
      */
-    public function trackEvents(bool $enabled)
+    public function trackEvents(bool $enabled): static
     {
         $this->_trackEvents = $enabled;
 
@@ -446,7 +446,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventList $eventList The event list object to use.
      * @return $this
      */
-    public function setEventList(EventList $eventList)
+    public function setEventList(EventList $eventList): static
     {
         $this->_eventList = $eventList;
         $this->_trackEvents = true;
@@ -459,7 +459,7 @@ class EventManager implements EventManagerInterface
      *
      * @return $this
      */
-    public function unsetEventList()
+    public function unsetEventList(): static
     {
         $this->_eventList = null;
         $this->_trackEvents = false;

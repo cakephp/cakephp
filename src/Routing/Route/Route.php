@@ -149,7 +149,7 @@ class Route
      * @param list<string> $extensions The extensions to set.
      * @return $this
      */
-    public function setExtensions(array $extensions)
+    public function setExtensions(array $extensions): static
     {
         $this->_extensions = array_map('strtolower', $extensions);
 
@@ -173,7 +173,7 @@ class Route
      * @return $this
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
-    public function setMethods(array $methods)
+    public function setMethods(array $methods): static
     {
         $this->defaults['_method'] = $this->normalizeAndValidateMethods($methods);
 
@@ -212,7 +212,7 @@ class Route
      * @param array<string, string> $patterns The patterns to apply to routing elements
      * @return $this
      */
-    public function setPatterns(array $patterns)
+    public function setPatterns(array $patterns): static
     {
         $patternValues = implode('', $patterns);
         if (mb_strlen($patternValues) < strlen($patternValues)) {
@@ -229,7 +229,7 @@ class Route
      * @param string $host The host name this route is bound to
      * @return $this
      */
-    public function setHost(string $host)
+    public function setHost(string $host): static
     {
         $this->options['_host'] = $host;
 
@@ -242,7 +242,7 @@ class Route
      * @param list<string> $names The names of the parameters that should be passed.
      * @return $this
      */
-    public function setPass(array $names)
+    public function setPass(array $names): static
     {
         $this->options['pass'] = $names;
 
@@ -264,7 +264,7 @@ class Route
      * @param array $names The names of the parameters that should be passed.
      * @return $this
      */
-    public function setPersist(array $names)
+    public function setPersist(array $names): static
     {
         $this->options['persist'] = $names;
 
@@ -888,7 +888,7 @@ class Route
      *   Middleware names will not be checked until the route is matched.
      * @return $this
      */
-    public function setMiddleware(array $middleware)
+    public function setMiddleware(array $middleware): static
     {
         $this->middleware = $middleware;
 

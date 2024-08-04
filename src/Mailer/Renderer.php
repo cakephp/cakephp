@@ -95,7 +95,7 @@ class Renderer
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): static
     {
         $this->_viewBuilder = null;
 

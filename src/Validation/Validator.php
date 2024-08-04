@@ -207,7 +207,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param bool $stopOnFailure If to apply last flag.
      * @return $this
      */
-    public function setStopOnFailure(bool $stopOnFailure = true)
+    public function setStopOnFailure(bool $stopOnFailure = true): static
     {
         $this->_stopOnFailure = $stopOnFailure;
 
@@ -308,7 +308,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @psalm-param object|class-string $object
      * @return $this
      */
-    public function setProvider(string $name, object|string $object)
+    public function setProvider(string $name, object|string $object): static
     {
         $this->_providers[$name] = $object;
 
@@ -475,7 +475,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @throws \InvalidArgumentException If numeric index cannot be resolved to a string one
      * @return $this
      */
-    public function add(string $field, array|string $name, ValidationRule|array $rule = [])
+    public function add(string $field, array|string $name, ValidationRule|array $rule = []): static
     {
         $validationSet = $this->field($field);
 
@@ -529,7 +529,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Validator $validator,
         ?string $message = null,
         Closure|string|null $when = null
-    ) {
+    ): static {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
         $validationSet = $this->field($field);
@@ -577,7 +577,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Validator $validator,
         ?string $message = null,
         Closure|string|null $when = null
-    ) {
+    ): static {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
         $validationSet = $this->field($field);
@@ -624,7 +624,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $rule the name of the rule to be removed
      * @return $this
      */
-    public function remove(string $field, ?string $rule = null)
+    public function remove(string $field, ?string $rule = null): static
     {
         if ($rule === null) {
             unset($this->_fields[$field]);
@@ -653,7 +653,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The message to show if the field presence validation fails.
      * @return $this
      */
-    public function requirePresence(array|string $field, Closure|string|bool $mode = true, ?string $message = null)
+    public function requirePresence(array|string $field, Closure|string|bool $mode = true, ?string $message = null): static
     {
         $defaults = [
             'mode' => $mode,
@@ -752,7 +752,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ?int $flags = null,
         Closure|string|bool $when = true,
         ?string $message = null
-    ) {
+    ): static {
         $this->field($field)->allowEmpty($when);
         if ($message) {
             $this->_allowEmptyMessages[$field] = $message;

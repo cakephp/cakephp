@@ -345,7 +345,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return $this
      * @since 3.6.0
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -370,7 +370,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return $this
      * @since 3.6.0
      */
-    public function setPlugin(?string $name)
+    public function setPlugin(?string $name): static
     {
         $this->plugin = $name;
 
@@ -394,7 +394,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return $this
      * @since 3.6.0
      */
-    public function enableAutoRender()
+    public function enableAutoRender(): static
     {
         $this->autoRender = true;
 
@@ -407,7 +407,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return $this
      * @since 3.6.0
      */
-    public function disableAutoRender()
+    public function disableAutoRender(): static
     {
         $this->autoRender = false;
 
@@ -435,7 +435,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
      */
-    public function setRequest(ServerRequest $request)
+    public function setRequest(ServerRequest $request): static
     {
         $this->request = $request;
         $this->plugin = $request->getParam('plugin');
@@ -461,7 +461,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return $this
      * @since 3.6.0
      */
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): static
     {
         $this->response = $response;
 
@@ -738,7 +738,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @see \Cake\Http\ContentTypeNegotiation
      * @since 4.5.0
      */
-    public function addViewClasses(array $viewClasses)
+    public function addViewClasses(array $viewClasses): static
     {
         $this->viewClasses = array_merge($this->viewClasses, $viewClasses);
 
