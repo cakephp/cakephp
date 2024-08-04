@@ -1919,7 +1919,7 @@ class FormHelper extends Helper
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
             $onClick = $this->_confirm($onClick, '');
-            $onClick = $onClick . 'event.returnValue = false; return false;';
+            $onClick .= 'event.returnValue = false; return false;';
             $onClick = $this->templater()->format('confirmJs', [
                 'confirmMessage' => h($confirmMessage),
                 'formName' => $formName,

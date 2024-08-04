@@ -208,7 +208,7 @@ class QueryCompiler
         $parts = $this->_stringifyExpressions($parts, $binder);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ';
+                $p .= ' AS ';
                 if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {
