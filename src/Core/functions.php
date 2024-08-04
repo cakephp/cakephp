@@ -53,7 +53,7 @@ if (!function_exists('Cake\Core\pathCombine')) {
         $path = $parts[0];
         for ($i = 1; $i < $numParts; ++$i) {
             $part = $parts[$i];
-            if ((string) $part === '') {
+            if ($part === '') {
                 continue;
             }
 
