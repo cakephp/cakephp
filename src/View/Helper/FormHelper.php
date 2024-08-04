@@ -2341,7 +2341,7 @@ class FormHelper extends Helper
         $options += ['fieldName' => $field];
 
         if (!isset($options['secure'])) {
-            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
+            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') !== null;
         }
         $context = $this->_getContext();
 
