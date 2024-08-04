@@ -196,7 +196,7 @@ class MessagesFileLoader
         $name = str_replace('/', '_', $name);
 
         foreach ($folders as $folder) {
-            $path = $folder . $name . ".{$ext}";
+            $path = "{$folder}{$name}.{$ext}";
             if (is_file($path)) {
                 $file = $path;
                 break;
