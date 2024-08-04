@@ -2421,7 +2421,7 @@ class FormHelper extends Helper
                     fn ($i) => in_array($i['value'], $options['disabled'], true)
                 );
 
-                return count($disabled) > 0;
+                return $disabled !== [];
             }
         }
 

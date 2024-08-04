@@ -108,7 +108,7 @@ TEXT;
             $val = $item->getValue();
             $vars[] = $break . $this->export($item->getKey(), $indent) . ' => ' . $this->export($val, $indent);
         }
-        if (count($vars)) {
+        if ($vars !== []) {
             return $out . implode(',', $vars) . $end . ']';
         }
 
@@ -145,7 +145,7 @@ TEXT;
                 $props[] = "{$name} => " . $this->export($property->getValue(), $indent);
             }
         }
-        if (count($props)) {
+        if ($props !== []) {
             return $out . $break . implode($break, $props) . $end;
         }
 

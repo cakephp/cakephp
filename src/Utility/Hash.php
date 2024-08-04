@@ -647,7 +647,7 @@ class Hash
             return false;
         }
 
-        return count($results) > 0;
+        return $results !== [];
     }
 
     /**

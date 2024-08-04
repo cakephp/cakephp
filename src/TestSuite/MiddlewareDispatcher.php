@@ -60,7 +60,7 @@ class MiddlewareDispatcher
     public function resolveUrl(array|string $url): string
     {
         // If we need to resolve a Route URL but there are no routes, load routes.
-        if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
+        if (is_array($url) && Router::getRouteCollection()->routes() === []) {
             return $this->resolveRoute($url);
         }
 

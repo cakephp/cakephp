@@ -517,7 +517,7 @@ class Route
 
         $route['_route'] = $this;
         $route['_matchedRoute'] = $this->template;
-        if (count($this->middleware) > 0) {
+        if ($this->middleware !== []) {
             $route['_middleware'] = $this->middleware;
         }
 

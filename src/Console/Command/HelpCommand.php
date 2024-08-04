@@ -159,7 +159,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         if (defined('CORE_PATH')) {
             $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
-        if (!count($paths)) {
+        if ($paths === []) {
             return;
         }
         $io->out('<info>Current Paths:</info>', 2);

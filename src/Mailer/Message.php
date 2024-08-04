@@ -1307,7 +1307,7 @@ class Message implements JsonSerializable
         $msg = [];
 
         $contentIds = array_filter((array)Hash::extract($this->attachments, '{s}.contentId'));
-        $hasInlineAttachments = count($contentIds) > 0;
+        $hasInlineAttachments = $contentIds !== [];
         $hasAttachments = !empty($this->attachments);
         $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);

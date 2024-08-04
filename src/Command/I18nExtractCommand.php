@@ -140,7 +140,7 @@ class I18nExtractCommand extends Command
         );
         $defaultPathIndex = 0;
         while (true) {
-            $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
+            $currentPaths = $this->_paths !== [] ? $this->_paths : ['None'];
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths)

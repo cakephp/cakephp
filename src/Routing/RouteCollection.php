@@ -115,7 +115,7 @@ class RouteCollection
         $path = $route->staticPath();
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if ($extensions !== []) {
             $this->setExtensions($extensions);
         }
 

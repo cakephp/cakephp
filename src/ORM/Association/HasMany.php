@@ -355,7 +355,7 @@ class HasMany extends Association
         } else {
             $options += ['cleanProperty' => true];
         }
-        if (count($targetEntities) === 0) {
+        if ($targetEntities === []) {
             return;
         }
 
@@ -489,7 +489,7 @@ class HasMany extends Association
 
         $conditions = $foreignKeyReference;
 
-        if (count($exclusions) > 0) {
+        if ($exclusions !== []) {
             $conditions = [
                 'NOT' => [
                     'OR' => $exclusions,
