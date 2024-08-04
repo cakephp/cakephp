@@ -101,7 +101,7 @@ trait ConsoleIntegrationTestTrait
             $this->_exitCode = $runner->run($args, $io);
         } catch (MissingConsoleInputException $e) {
             $messages = $this->_out->messages();
-            if (count($messages)) {
+            if ($messages !== []) {
                 $e->setQuestion($messages[count($messages) - 1]);
             }
             throw $e;

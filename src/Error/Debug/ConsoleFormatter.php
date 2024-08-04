@@ -163,7 +163,7 @@ class ConsoleFormatter implements FormatterInterface
         }
 
         $close = $this->style('punct', ']');
-        if (count($vars)) {
+        if ($vars !== []) {
             return $out . implode($this->style('punct', ','), $vars) . $end . $close;
         }
 
@@ -215,7 +215,7 @@ class ConsoleFormatter implements FormatterInterface
                     $this->export($property->getValue(), $indent);
             }
         }
-        if (count($props)) {
+        if ($props !== []) {
             return $out . $break . implode($break, $props) . $end;
         }
 

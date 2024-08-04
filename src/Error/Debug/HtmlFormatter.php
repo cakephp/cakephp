@@ -250,7 +250,7 @@ class HtmlFormatter implements FormatterInterface
             $this->style('punct', '}') .
             '</span>';
 
-        if (count($props)) {
+        if ($props !== []) {
             return $out . implode('', $props) . $end;
         }
 

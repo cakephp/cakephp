@@ -114,7 +114,7 @@ class Collection implements CollectionInterface
         $table = $this->_connection->getDriver()->newTableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
-        if (count($table->columns()) === 0) {
+        if ($table->columns() === []) {
             throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
         }
 

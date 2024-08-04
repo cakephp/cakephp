@@ -192,7 +192,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $this->_errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
             ->validate($data);
 
-        return count($this->_errors) === 0;
+        return $this->_errors === [];
     }
 
     /**

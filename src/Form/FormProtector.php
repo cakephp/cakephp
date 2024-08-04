@@ -560,7 +560,7 @@ class FormProtector
      */
     protected function debugExpectedFields(array $expectedFields = [], string $missingMessage = ''): ?string
     {
-        if (count($expectedFields) === 0) {
+        if ($expectedFields === []) {
             return null;
         }
 

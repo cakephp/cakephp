@@ -140,7 +140,7 @@ class WhenThenExpression implements ExpressionInterface
             $typeMap = clone $this->_typeMap;
             if (
                 is_array($type) &&
-                count($type) > 0
+                $type !== []
             ) {
                 $typeMap = $typeMap->setTypes($type);
             }
