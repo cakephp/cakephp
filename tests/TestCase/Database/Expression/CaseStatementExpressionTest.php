@@ -2102,6 +2102,8 @@ class CaseStatementExpressionTest extends TestCase
         $this->deprecated(function () {
             $expression = (new CaseStatementExpression())
                 ->when(['Table.column' => true]);
+
+            clone $expression;
         });
     }
 
