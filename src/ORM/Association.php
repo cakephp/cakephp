@@ -360,7 +360,7 @@ abstract class Association
         if (!isset($this->_targetTable)) {
             if (str_contains($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
-                $registryAlias = (string)$plugin . $this->_name;
+                $registryAlias = $plugin . $this->_name;
             } else {
                 $registryAlias = $this->_name;
             }
