@@ -52,7 +52,10 @@ class FieldTypeConverter
         $types = TypeFactory::buildAll();
         foreach ($typeMap->toArray() as $field => $typeName) {
             $type = $types[$typeName] ?? null;
-            if (!$type || ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast())) {
+            if (!$type) {
+                continue;
+            }
+            if ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast()) {
                 continue;
             }
 

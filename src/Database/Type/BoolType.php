@@ -78,7 +78,10 @@ class BoolType extends BaseType implements BatchCastingInterface
     {
         foreach ($fields as $field) {
             $value = $values[$field] ?? null;
-            if ($value === null || is_bool($value)) {
+            if ($value === null) {
+                continue;
+            }
+            if (is_bool($value)) {
                 continue;
             }
 

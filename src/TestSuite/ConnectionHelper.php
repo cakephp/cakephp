@@ -43,10 +43,12 @@ class ConnectionHelper
     {
         ConnectionManager::alias('test', 'default');
         foreach (ConnectionManager::configured() as $connection) {
-            if ($connection === 'test' || $connection === 'default') {
+            if ($connection === 'test') {
                 continue;
             }
-
+            if ($connection === 'default') {
+                continue;
+            }
             if (str_starts_with($connection, 'test_')) {
                 $original = substr($connection, 5);
                 ConnectionManager::alias($connection, $original);
