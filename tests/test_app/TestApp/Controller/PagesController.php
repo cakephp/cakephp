@@ -38,10 +38,8 @@ class PagesController extends AppController
      * @throws \Cake\Http\Exception\NotFoundException When the view file could not be found.
      * @throws \Cake\View\Exception\MissingTemplateException In debug mode.
      */
-    public function display()
+    public function display(...$path)
     {
-        $path = func_get_args();
-
         $count = count($path);
         if (!$count) {
             return $this->redirect('/');
