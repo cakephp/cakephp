@@ -507,8 +507,8 @@ class SqliteSchemaDialect extends SchemaDialect
 
         if (
             in_array($data['type'], $hasUnsigned, true) &&
-            isset($data['unsigned']) && 
-            $data['unsigned'] === true && 
+            isset($data['unsigned']) &&
+            $data['unsigned'] === true &&
             ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
         ) {
             $out .= ' UNSIGNED';
