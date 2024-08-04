@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Routing\Route;
 
 use Cake\Http\Exception\RedirectException;
-use Cake\Routing\Route\Route as Route;
+use Cake\Routing\Route\Route;
 
 class HeaderRedirectRoute extends Route
 {
