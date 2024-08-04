@@ -1164,7 +1164,6 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $article = $table->find('translations')->first();
-        $results = $article;
 
         $translations = $article->get('_translations');
         $translations['deu']->set('title', 'Another title');
@@ -1173,7 +1172,6 @@ class TranslateBehaviorEavTest extends TestCase
         $table->save($article);
         $this->assertNull($article->get('_i18n'));
         $article = $table->find('translations')->first();
-        $results = $article;
         $translations = $article->get('_translations');
         $this->assertSame('Another title', $translations['deu']->get('title'));
         $this->assertSame('Another body', $translations['eng']->get('body'));
@@ -1187,7 +1185,6 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $article = $table->find('translations')->first();
-        $results = $article;
 
         $translations = $article->get('_translations');
         $translations['deu']->set('title', 'Another title');
@@ -1198,7 +1195,6 @@ class TranslateBehaviorEavTest extends TestCase
         $table->save($article);
         $this->assertNull($article->get('_i18n'));
         $article = $table->find('translations')->first();
-        $results = $article;
         $translations = $article->get('_translations');
         $this->assertSame('Another title', $translations['deu']->get('title'));
         $this->assertSame('Another body', $translations['eng']->get('body'));
@@ -1215,7 +1211,6 @@ class TranslateBehaviorEavTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $articles = $table->find('translations');
-        $results = $articles;
         $all = $articles->all();
         $this->assertCount(3, $all);
         $article = $all->first();
