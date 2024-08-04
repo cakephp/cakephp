@@ -102,7 +102,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     protected function ensureValidKey(mixed $key): void
     {
-        if (!is_string($key) || strlen($key) === 0) {
+        if (!is_string($key) || $key === '') {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');
         }
     }
