@@ -127,7 +127,7 @@ class JsonTypeTest extends TestCase
      *
      * @return void
      */
-    public function testEncodingOptions()
+    public function testEncodingOptions(): void
     {
         // New instance to prevent others tests breaking
         $instance = new JsonType();

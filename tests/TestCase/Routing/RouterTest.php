@@ -2399,7 +2399,7 @@ class RouterTest extends TestCase
         Router::parseRoutePath('Bookmarks::view/1invalid=cakephp');
     }
 
-    public function testParseRoutePathInvalidParameterKey()
+    public function testParseRoutePathInvalidParameterKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Param key `-invalid` is not valid');

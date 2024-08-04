@@ -731,7 +731,7 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit without order.
      */
-    public function testSubqueryWithLimit()
+    public function testSubqueryWithLimit(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
@@ -752,7 +752,7 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit with order.
      */
-    public function testSubqueryWithLimitAndOrder()
+    public function testSubqueryWithLimitAndOrder(): void
     {
         $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver, 'Sql Server does not support ORDER BY on field not in GROUP BY');
 
