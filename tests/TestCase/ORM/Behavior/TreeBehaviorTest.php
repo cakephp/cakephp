@@ -1449,7 +1449,7 @@ class TreeBehaviorTest extends TestCase
         $displayField = $table->getDisplayField();
 
         $options = [
-            'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField) {
+            'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField): string {
                 return sprintf(
                     '%s:%s - %s:%s',
                     str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),

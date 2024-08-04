@@ -366,7 +366,7 @@ class HasMany extends Association
 
         $conditions = [
             'OR' => (new Collection($targetEntities))
-                ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
+                ->map(function (EntityInterface $entity) use ($targetPrimaryKey): array {
                     /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
                     /** @var list<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
@@ -382,7 +382,7 @@ class HasMany extends Association
                 $property,
                 (new Collection($sourceEntity->get($property)))
                 ->reject(
-                    function ($assoc) use ($targetEntities) {
+                    function ($assoc) use ($targetEntities): bool {
                         return in_array($assoc, $targetEntities);
                     }
                 )
@@ -476,12 +476,12 @@ class HasMany extends Association
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            function (EntityInterface $ent) use ($primaryKey) {
+            function (EntityInterface $ent) use ($primaryKey): array {
                 return $ent->extract($primaryKey);
             }
         )
         ->filter(
-            function ($v) {
+            function ($v): bool {
                 return !in_array(null, $v, true);
             }
         )
@@ -560,7 +560,7 @@ class HasMany extends Association
         return !in_array(
             false,
             array_map(
-                function ($prop) use ($table) {
+                function ($prop) use ($table): bool {
                     return $table->getSchema()->isNullable($prop);
                 },
                 $properties

@@ -53,7 +53,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response(['body' => 'success']);
         });
 
@@ -70,7 +70,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response(['body' => 'success']);
         });
 
@@ -87,7 +87,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response(['body' => 'success']);
         });
 
@@ -104,7 +104,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response(['body' => 'success']);
         });
 
@@ -121,7 +121,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('GET');
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response();
         });
 
@@ -156,7 +156,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
             'method' => 'GET',
         ]);
 
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): Response {
             return new Response();
         });
 
@@ -179,7 +179,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response();
         });
 
@@ -198,7 +198,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri)->withMethod('POST');
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response();
         });
 
@@ -217,7 +217,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withUri($uri);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response(['body' => 'skipped']);
         });
 
@@ -241,7 +241,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): Response {
             return new Response();
         });
 

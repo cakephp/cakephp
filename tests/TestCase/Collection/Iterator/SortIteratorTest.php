@@ -58,7 +58,7 @@ class SortIteratorTest extends TestCase
     public function testSortNumbersCustom(): void
     {
         $items = new ArrayObject([3, 5, 1, 2, 4]);
-        $callback = function ($a) {
+        $callback = function ($a): int|float {
             return $a * -1;
         };
         $sorted = new SortIterator($items, $callback);

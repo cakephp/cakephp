@@ -97,10 +97,10 @@ class WindowExpressionTest extends TestCase
         );
 
         $w = (new WindowExpression())
-            ->orderBy(function () {
+            ->orderBy(function (): string {
                 return 'test';
             })
-            ->orderBy(function (QueryExpression $expr) {
+            ->orderBy(function (QueryExpression $expr): array {
                 return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
             });
         $this->assertEqualsSql(

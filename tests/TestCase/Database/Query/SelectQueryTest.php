@@ -129,7 +129,7 @@ class SelectQueryTest extends TestCase
     {
         $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new SelectQuery($this->connection);
-        $result = $query->select(function ($q) use ($query) {
+        $result = $query->select(function ($q) use ($query): array {
             $this->assertSame($query, $q);
 
             return ['1 + 2', '1 + 5'];
@@ -1302,7 +1302,7 @@ class SelectQueryTest extends TestCase
             ->where([
                 'id' => 'Cake\Error\Debugger::dump',
                 'title' => ['Cake\Error\Debugger', 'dump'],
-                'author_id' => function (ExpressionInterface $exp) {
+                'author_id' => function (ExpressionInterface $exp): int {
                     return 1;
                 },
             ]);
@@ -1831,7 +1831,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function ($exp, $q) use ($query) {
+            ->orderBy(function ($exp, $q) use ($query): array {
                 $this->assertInstanceOf(QueryExpression::class, $exp);
                 $this->assertSame($query, $q);
 
@@ -1848,7 +1848,7 @@ class SelectQueryTest extends TestCase
         $query
             ->select('*')
             ->from('articles')
-            ->orderBy(function (ExpressionInterface $exp) {
+            ->orderBy(function (ExpressionInterface $exp): array {
                 return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
             });
 
@@ -2844,7 +2844,7 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $result = $query->select(
-            function ($q) {
+            function ($q): array {
                 return ['total' => $q->func()->count('*')];
             }
         )
@@ -2948,7 +2948,7 @@ class SelectQueryTest extends TestCase
                 'ye' => '2007',
             ] + $expected;
         } elseif ($driver instanceof Postgres || $driver instanceof Sqlserver) {
-            $expected = array_map(function ($value) {
+            $expected = array_map(function ($value): string {
                 return (string)$value;
             }, $expected);
         }
@@ -3589,7 +3589,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($this->connection);
         $query
             ->window('window1', new WindowExpression())
-            ->window('window2', function (WindowExpression $window) {
+            ->window('window2', function (WindowExpression $window): WindowExpression {
                 return $window;
             });
 

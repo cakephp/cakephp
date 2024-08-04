@@ -196,7 +196,7 @@ trait CollectionTrait
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
             $extractor = $extractor
-                ->filter(function ($data) {
+                ->filter(function ($data): bool {
                     return $data !== null && ($data instanceof Traversable || is_array($data));
                 })
                 ->unfold();
@@ -231,7 +231,7 @@ trait CollectionTrait
             $result = $result->extract($path);
         }
         $result = $result
-            ->reduce(function ($acc, $current) {
+            ->reduce(function ($acc, $current): array {
                 [$count, $sum] = $acc;
 
                 return [$count + 1, $sum + $current];

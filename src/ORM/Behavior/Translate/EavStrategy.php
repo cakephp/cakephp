@@ -27,6 +27,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
+use Closure;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -180,8 +181,8 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $conditions = function (string $field, string $locale, SelectQuery $query, array $select) {
-            return function (SelectQuery $q) use ($field, $locale, $query, $select) {
+        $conditions = function (string $field, string $locale, SelectQuery $query, array $select): Closure {
+            return function (SelectQuery $q) use ($field, $locale, $query, $select): SelectQuery {
                 $table = $q->getRepository();
                 $q->where([$table->aliasField('locale') => $locale]);
 

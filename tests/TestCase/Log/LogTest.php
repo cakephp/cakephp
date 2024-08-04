@@ -664,7 +664,7 @@ class LogTest extends TestCase
     public function testCreateLoggerWithCallable(): void
     {
         $instance = new FileLog();
-        Log::setConfig('default', function ($alias) use ($instance) {
+        Log::setConfig('default', function ($alias) use ($instance): FileLog {
             $this->assertSame('default', $alias);
 
             return $instance;

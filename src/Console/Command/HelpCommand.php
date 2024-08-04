@@ -179,7 +179,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return (string)array_shift($names);
         }
 
-        usort($names, function ($a, $b) {
+        usort($names, function ($a, $b): int {
             return strlen($a) - strlen($b);
         });
 

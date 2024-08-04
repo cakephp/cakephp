@@ -18,6 +18,7 @@ namespace Cake\ORM\Behavior;
 
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
+use Cake\Collection\Iterator\TreePrinter;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -393,7 +394,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$left, $right] = array_map(
-            function ($field) {
+            function ($field): string {
                 return $this->_table->aliasField($field);
             },
             [$config['left'], $config['right']]
@@ -449,7 +450,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = array_map(
-            function ($field) {
+            function ($field): string {
                 return $this->_table->aliasField($field);
             },
             [$config['parent'], $config['left'], $config['right']]
@@ -519,7 +520,7 @@ class TreeBehavior extends Behavior
         ?string $spacer = null
     ): SelectQuery {
         return $query->formatResults(
-            function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer) {
+            function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer): TreePrinter {
                 $keyPath ??= $this->_getPrimaryKey();
                 $valuePath ??= $this->_table->getDisplayField();
                 $spacer ??= '_';
@@ -546,7 +547,7 @@ class TreeBehavior extends Behavior
      */
     public function removeFromTree(EntityInterface $node): EntityInterface|false
     {
-        return $this->_table->getConnection()->transactional(function () use ($node) {
+        return $this->_table->getConnection()->transactional(function () use ($node): EntityInterface|false {
             $this->_ensureFields($node);
 
             return $this->_removeFromTree($node);
@@ -611,7 +612,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->getConnection()->transactional(function () use ($node, $number) {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number): EntityInterface {
             $this->_ensureFields($node);
 
             return $this->_moveUp($node, $number);
@@ -699,7 +700,7 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->_table->getConnection()->transactional(function () use ($node, $number) {
+        return $this->_table->getConnection()->transactional(function () use ($node, $number): EntityInterface {
             $this->_ensureFields($node);
 
             return $this->_moveDown($node, $number);

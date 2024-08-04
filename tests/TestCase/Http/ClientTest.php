@@ -234,7 +234,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('2', $request->getProtocolVersion());
@@ -267,7 +267,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
                 $this->assertSame(
@@ -299,7 +299,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
@@ -333,7 +333,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . ''
@@ -368,7 +368,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search', '' . $request->getUri());
                 $this->assertSame('some data', '' . $request->getBody());
@@ -424,7 +424,7 @@ class ClientTest extends TestCase
         ];
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/', '' . $request->getUri());
                 $this->assertSame($headers['Authorization'], $request->getHeaderLine('Authorization'));
@@ -476,7 +476,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($method) {
+            ->with($this->callback(function ($request) use ($method): bool {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals($method, $request->getMethod());
                 $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
@@ -526,7 +526,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
                 $this->assertEquals($headers['Accept'], $request->getHeaderLine('Accept'));
@@ -555,7 +555,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->any())
             ->method('send')
-            ->with($this->callback(function ($request) use ($data) {
+            ->with($this->callback(function ($request) use ($data): bool {
                 $this->assertSame($data, '' . $request->getBody());
                 $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
 
@@ -693,7 +693,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) {
+            ->with($this->callback(function ($request): bool {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
@@ -744,33 +744,33 @@ class ClientTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url, (string)$request->getUri());
 
                         return true;
                     }),
-                    $this->callback(function ($options) {
+                    $this->callback(function ($options): bool {
                         $this->assertArrayNotHasKey('redirect', $options);
 
                         return true;
                     }),
                     ],
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
 
                         return true;
                     }),
-                    $this->callback(function ($options) {
+                    $this->callback(function ($options): bool {
                         $this->assertArrayNotHasKey('redirect', $options);
 
                         return true;
                     }),
                     ],
                     [
-                    $this->callback(function (Request $request) use ($url) {
+                    $this->callback(function (Request $request) use ($url): bool {
                         $this->assertInstanceOf(Request::class, $request);
                         $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
 
@@ -816,7 +816,7 @@ class ClientTest extends TestCase
             ->getMock();
         $mock->expects($this->once())
             ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+            ->with($this->callback(function ($request) use ($headers): bool {
                 $this->assertInstanceOf('Laminas\Diactoros\Request', $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
@@ -873,7 +873,7 @@ class ClientTest extends TestCase
             'GET',
             'http://bar.test',
             new Response(body: 'other'),
-            ['match' => function (Request $request, array $options) {
+            ['match' => function (Request $request, array $options): bool {
                 $this->assertSame(['some' => 'value'], $options);
 
                 return true;
@@ -890,7 +890,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): Response {
                 return new Response(body: 'short circuit');
             }
         );
@@ -912,7 +912,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): Response {
                 return new Response(body: 'modified response');
             }
         );
@@ -947,7 +947,7 @@ class ClientTest extends TestCase
                 ...self::withConsecutive(
                     [$this->anything()],
                     [
-                    $this->callback(function ($request) {
+                    $this->callback(function ($request): bool {
                         $this->assertSame('http://backstage.example.org', (string)$request->getUri());
                         $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
@@ -1108,7 +1108,7 @@ class ClientTest extends TestCase
     {
         $one = new Response(['HTTP/1.0 200'], 'one');
         Client::addMockResponse('GET', 'http://example.com/info', $one, [
-            'match' => function ($request) {
+            'match' => function ($request): bool {
                 return false;
             },
         ]);
@@ -1178,7 +1178,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
+            'match' => function ($request): bool {
                 $this->assertInstanceOf(Request::class, $request);
                 $uri = $request->getUri();
                 $this->assertEquals('/path', $uri->getPath());
@@ -1201,7 +1201,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function () {
+            'match' => function (): bool {
                 return false;
             },
         ]);
@@ -1220,7 +1220,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
+            'match' => function ($request): string {
                 return 'invalid';
             },
         ]);

@@ -1442,7 +1442,7 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->willReturnCallback(function ($value) {
+            ->willReturnCallback(function ($value): string {
                 return "'$value'";
             });
 

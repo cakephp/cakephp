@@ -135,7 +135,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->_capturedError = null;
         set_error_handler(
-            function (int $code, string $description, string $file, int $line) {
+            function (int $code, string $description, string $file, int $line): bool {
                 $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
                 assert(is_array($trace));
                 $this->_capturedError = new PhpError($code, $description, $file, $line, $trace);

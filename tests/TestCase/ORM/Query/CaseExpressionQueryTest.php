@@ -30,7 +30,7 @@ class CaseExpressionQueryTest extends TestCase
     {
         $query = $this->getTableLocator()->get('Products')
             ->find()
-            ->select(function (SelectQuery $query) {
+            ->select(function (SelectQuery $query): array {
                 return [
                     'name',
                     'price',
@@ -70,7 +70,7 @@ class CaseExpressionQueryTest extends TestCase
     {
         $query = $this->getTableLocator()->get('Products')
             ->find()
-            ->select(function (SelectQuery $query) {
+            ->select(function (SelectQuery $query): array {
                 $expression = $query->newExpr()
                     ->case()
                     ->when(['Products.price <' => 20])

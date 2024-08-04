@@ -150,7 +150,7 @@ class BodyParserMiddlewareTest extends TestCase
         $f1 = function (string $body) {
             return json_decode($body, true);
         };
-        $f2 = function (string $body) {
+        $f2 = function (string $body): array {
             return ['overridden'];
         };
         $parser->addParser(['application/json'], $f1);
@@ -174,7 +174,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => 'a,b,c',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals([], $req->getParsedBody());
 
             return new Response();
@@ -197,7 +197,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -220,7 +220,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -242,7 +242,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
             return new Response();
@@ -265,7 +265,7 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals([], $req->getParsedBody());
 
             return new Response();
@@ -292,7 +292,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'article' => ['title' => 'yay'],
             ];
@@ -323,7 +323,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $expected = [
                 'article' => [
                     'id' => 1,
@@ -367,7 +367,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertEquals([], $req->getParsedBody());
 
             return new Response();
@@ -393,7 +393,7 @@ XML;
                 ],
                 'input' => $body,
         ]);
-        $handler = new TestRequestHandler(function ($req) use ($expected) {
+        $handler = new TestRequestHandler(function ($req) use ($expected): Response {
             $this->assertSame($expected, $req->getParsedBody());
 
             return new Response();
@@ -413,7 +413,7 @@ XML;
             ],
             'input' => 'lol',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return new Response();
         });
         $this->expectException(BadRequestException::class);

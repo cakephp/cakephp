@@ -87,13 +87,13 @@ class TranslateBehaviorEavTest extends TestCase
      */
     protected function _extractTranslations($data): CollectionInterface
     {
-        return (new Collection($data))->map(function (EntityInterface $row) {
+        return (new Collection($data))->map(function (EntityInterface $row): array {
             $translations = $row->get('_translations');
             if (!$translations) {
                 return [];
             }
 
-            return array_map(function (EntityInterface $entity) {
+            return array_map(function (EntityInterface $entity): array {
                 return $entity->toArray();
             }, $translations);
         });
@@ -762,7 +762,7 @@ class TranslateBehaviorEavTest extends TestCase
                 '_locale' => 'eng',
             ],
         ];
-        $results = array_map(function (EntityInterface $r) {
+        $results = array_map(function (EntityInterface $r): array {
             return $r->toArray();
         }, $results->toArray());
         $this->assertEquals($expected, $results);

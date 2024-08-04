@@ -35,6 +35,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Error;
 use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Application;
@@ -96,7 +97,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
+        $factory = function ($exception): MockObject {
             $this->assertInstanceOf('LogicException', $exception);
             $response = new Response();
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
@@ -345,7 +346,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         EventManager::instance()->on(
             'Exception.beforeRender',
-            function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
+            function (EventInterface $event, Throwable $e, ServerRequestInterface $req): string {
                 return 'Response string from event';
             }
         );
@@ -362,7 +363,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
+        $factory = function ($exception): MockObject {
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->getMock();
             $mock->expects($this->once())

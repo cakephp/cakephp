@@ -65,7 +65,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $author, array $options) use ($table) {
+                function (Entity $author, array $options) use ($table): bool {
                     $this->assertSame($options['repository'], $table->getAssociation('authors')->getTarget());
 
                     return false;
@@ -101,7 +101,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (EntityInterface $entity) {
+                function (EntityInterface $entity): bool {
                     return false;
                 },
                 ['errorField' => 'title', 'message' => 'This is an error']
@@ -144,7 +144,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $entity, $options) use ($table) {
+                function (Entity $entity, $options) use ($table): bool {
                     $this->assertSame($table, $options['_sourceTable']);
 
                     return $entity->title === '1';
@@ -191,7 +191,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $article) {
+                function (Entity $article): bool {
                     return is_numeric($article->title);
                 },
                 ['errorField' => 'title', 'message' => 'This is an error']
@@ -229,7 +229,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(function (Entity $entity) {
+            ->add(function (Entity $entity): bool {
                 return $entity->article_id > 4;
             });
 
@@ -266,7 +266,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(function (Entity $entity) {
+            ->add(function (Entity $entity): bool {
                 return $entity->tag_id > 4;
             });
 
@@ -293,7 +293,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -658,7 +658,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation): bool {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -696,7 +696,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation): bool {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -1090,7 +1090,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->addDelete(function ($entity) {
+        $rules->addDelete(function ($entity): bool {
             return false;
         });
 
@@ -1109,7 +1109,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function ($entity, $options) {
+        $rules->add(function ($entity, $options): bool {
             $this->assertSame('bar', $options['foo']);
             $this->assertSame('option', $options['another']);
 
@@ -1126,7 +1126,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->addDelete(function ($entity, $options) {
+        $rules->addDelete(function ($entity, $options): bool {
             $this->assertSame('bar', $options['foo']);
             $this->assertSame('option', $options['another']);
 
@@ -1148,7 +1148,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function () {
+        $rules->add(function (): string {
             return 'So much nope';
         }, ['errorField' => 'name']);
 
@@ -1167,7 +1167,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function () {
+        $rules->add(function (): string {
             return 'So much nope';
         });
 
@@ -1199,7 +1199,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->hasMany('articles');
         $table->getAssociation('articles')->belongsTo('authors');
         $checker = $table->getAssociation('articles')->getTarget()->rulesChecker();
-        $checker->add(function ($entity, $options) use ($checker) {
+        $checker->add(function ($entity, $options) use ($checker): bool {
             $rule = $checker->existsIn('author_id', 'authors');
             $id = $entity->author_id;
             $entity->author_id = 5000;

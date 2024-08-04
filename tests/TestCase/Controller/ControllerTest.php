@@ -441,7 +441,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): bool {
             return false;
         });
 
@@ -535,7 +535,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse): Response {
             return $newResponse;
         });
 
@@ -620,10 +620,10 @@ class ControllerTest extends TestCase
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'Controller.initialize';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'Controller.startup';
                     })]
                 )
@@ -643,7 +643,7 @@ class ControllerTest extends TestCase
 
         $eventManager->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
+            ->with($this->callback(function (EventInterface $event): bool {
                 return $event->getName() === 'Controller.shutdown';
             }))
             ->willReturn(new Event('stub'));
@@ -989,7 +989,7 @@ class ControllerTest extends TestCase
     public function testLoadComponentWithContainer(): void
     {
         $container = new Container();
-        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config): FlashComponent {
             return new FlashComponent($registry, $config);
         })
         ->addArgument(ComponentRegistry::class)

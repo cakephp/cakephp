@@ -109,7 +109,7 @@ class SqlserverTest extends TestCase
             ->getMock();
 
         $driver->method('createPdo')
-            ->with($this->callback(function ($dns) use ($dnsString) {
+            ->with($this->callback(function ($dns) use ($dnsString): bool {
                 $this->assertSame($dns, $dnsString);
 
                 return true;

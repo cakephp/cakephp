@@ -257,7 +257,7 @@ class Postgres extends Driver
                 $expression
                     ->setName('')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
+                    ->iterateParts(function ($p): FunctionExpression {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
                         } else {

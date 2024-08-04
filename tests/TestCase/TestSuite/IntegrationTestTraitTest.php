@@ -1778,7 +1778,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, function () {
+        $this->mockService(ReflectionDependency::class, function (): ReflectionDependency {
             return new ReflectionDependency();
         });
         $this->get('/dependencies/reflectionDep');

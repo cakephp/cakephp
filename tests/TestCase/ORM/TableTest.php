@@ -778,7 +778,7 @@ class TableTest extends TestCase
         );
 
         $query = $table->find('all')
-            ->formatResults(function (ResultSet $results) {
+            ->formatResults(function (ResultSet $results): ResultSet {
                 return $results;
             });
         $query->limit(1);
@@ -2327,7 +2327,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): int {
             $event->stopPropagation();
 
             return 1;
@@ -3092,7 +3092,7 @@ class TableTest extends TestCase
 
         $articles = $table->getAssociation('Articles')->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function ($entity) {
+            $rules->addDelete(function ($entity): bool {
                 if ($entity->author_id === 3) {
                     return false;
                 } else {
@@ -3223,7 +3223,7 @@ class TableTest extends TestCase
         $sections = $this->getTableLocator()->get('Sections');
         $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
         $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+            $rules->addDelete(function (): bool {
                 return false;
             });
         });
@@ -3261,17 +3261,17 @@ class TableTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [$this->anything()],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                    [$this->callback(function (EventInterface $event) use ($entity, $options): bool {
                         return $event->getName() === 'Model.beforeDelete' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
                     })],
                     [
-                    $this->callback(function (EventInterface $event) use ($entity, $options) {
+                    $this->callback(function (EventInterface $event) use ($entity, $options): bool {
                         return $event->getName() === 'Model.afterDelete' &&
                             $event->getData() == ['entity' => $entity, 'options' => $options];
                     }),
                     ],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
+                    [$this->callback(function (EventInterface $event) use ($entity, $options): bool {
                         return $event->getName() === 'Model.afterDeleteCommit' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
                     })]
@@ -3347,7 +3347,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->willReturnCallback(function (EventInterface $event) {
+            ->willReturnCallback(function (EventInterface $event): EventInterface {
                 $event->stopPropagation();
 
                 return $event;
@@ -3369,7 +3369,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->willReturnCallback(function (EventInterface $event) {
+            ->willReturnCallback(function (EventInterface $event): EventInterface {
                 $event->stopPropagation();
                 $event->setResult('got stopped');
 

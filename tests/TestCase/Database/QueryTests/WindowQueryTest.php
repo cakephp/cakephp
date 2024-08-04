@@ -101,7 +101,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new SelectQuery($this->connection))->window('name', function () {
+        (new SelectQuery($this->connection))->window('name', function (): QueryExpression {
             return new QueryExpression();
         });
     }

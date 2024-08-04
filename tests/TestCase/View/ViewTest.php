@@ -947,28 +947,28 @@ class ViewTest extends TestCase
             ->method('dispatch')
             ->with(
                 ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.beforeRender';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.beforeRenderFile';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.afterRenderFile';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.afterRender';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.beforeLayout';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.beforeRenderFile';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.afterRenderFile';
                     })],
-                    [$this->callback(function (EventInterface $event) {
+                    [$this->callback(function (EventInterface $event): bool {
                         return $event->getName() === 'View.afterLayout';
                     })]
                 )

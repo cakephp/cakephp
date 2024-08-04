@@ -38,6 +38,7 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
@@ -283,7 +284,7 @@ class FormHelperTest extends TestCase
     {
         $context = 'My data';
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
+        $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub): MockObject {
             $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
             $this->assertSame($context, $data['entity']);
 
@@ -301,7 +302,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
+        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub): MockObject {
             return $stub;
         });
         $this->Form->create($entity);

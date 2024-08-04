@@ -2968,7 +2968,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::numElements($array, Validation::COMPARE_GREATER, 3));
         $this->assertFalse(Validation::numElements($array, Validation::COMPARE_LESS, 1));
 
-        $callable = function () {
+        $callable = function (): string {
             return '';
         };
 

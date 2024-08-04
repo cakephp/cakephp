@@ -36,7 +36,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addDelete(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -63,7 +63,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addUpdate(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -90,7 +90,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addCreate(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -117,7 +117,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -139,7 +139,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            function (): string {
                 return 'worst thing ever';
             },
             ['errorField' => 'name']
@@ -160,7 +160,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            function (): bool {
                 return false;
             },
             ['message' => 'this is bad', 'errorField' => 'name']
@@ -180,7 +180,7 @@ class RulesCheckerTest extends TestCase
         ]);
 
         $rules = new RulesChecker();
-        $rules->add(function () {
+        $rules->add(function (): bool {
             return false;
         });
 
@@ -196,7 +196,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -212,7 +212,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addCreate(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -229,7 +229,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addUpdate(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',
@@ -246,7 +246,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addDelete(
-            function () {
+            function (): bool {
                 return false;
             },
             'ruleName',

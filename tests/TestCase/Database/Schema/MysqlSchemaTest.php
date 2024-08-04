@@ -1517,7 +1517,7 @@ SQL;
             ->getMock();
             $this->pdo->expects($this->any())
             ->method('quote')
-            ->willReturnCallback(function ($value) {
+            ->willReturnCallback(function ($value): string {
                 return "'$value'";
             });
 

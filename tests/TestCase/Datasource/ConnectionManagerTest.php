@@ -416,7 +416,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigWithCallable(): void
     {
         $connection = new FakeConnection();
-        $callable = function ($alias) use ($connection) {
+        $callable = function ($alias) use ($connection): FakeConnection {
             $this->assertSame('test_variant', $alias);
 
             return $connection;

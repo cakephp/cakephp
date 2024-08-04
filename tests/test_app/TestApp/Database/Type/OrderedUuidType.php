@@ -30,7 +30,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
         if ($value instanceof UuidValue) {
             $value = $value->value;
         }
-        $substr = function ($start, $length = null) use ($value) {
+        $substr = function ($start, $length = null) use ($value): FunctionExpression {
             return new FunctionExpression(
                 'SUBSTR',
                 $length === null ? [$value, $start] : [$value, $start, $length],

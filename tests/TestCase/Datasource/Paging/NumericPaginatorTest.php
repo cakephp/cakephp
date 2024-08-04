@@ -39,7 +39,7 @@ class NumericPaginatorTest extends TestCase
      */
     public function testPaginateCustomFind(): void
     {
-        $titleExtractor = function ($result) {
+        $titleExtractor = function ($result): array {
             $ids = [];
             foreach ($result as $record) {
                 $ids[] = $record->title;

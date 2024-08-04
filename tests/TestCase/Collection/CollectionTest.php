@@ -253,7 +253,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
 
-        $filtered = $collection->filter(function ($value, $key, $iterator) {
+        $filtered = $collection->filter(function ($value, $key, $iterator): bool {
             return $value > 2;
         });
         $this->assertInstanceOf(Collection::class, $filtered);
@@ -271,7 +271,7 @@ class CollectionTest extends TestCase
     public function testReject(): void
     {
         $collection = new Collection([]);
-        $result = $collection->reject(function ($v) {
+        $result = $collection->reject(function ($v): bool {
             return false;
         });
         $this->assertSame([], iterator_to_array($result));
@@ -283,7 +283,7 @@ class CollectionTest extends TestCase
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $result = $collection->reject(function ($v, $k, $items) use ($collection) {
+        $result = $collection->reject(function ($v, $k, $items) use ($collection): bool {
             $this->assertSame($collection->getInnerIterator(), $items);
 
             return $v > 2;
@@ -324,7 +324,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $results = [];
-        $this->assertTrue($collection->every(function ($value, $key) use (&$results) {
+        $this->assertTrue($collection->every(function ($value, $key) use (&$results): bool {
             $results[] = [$key => $value];
 
             return true;
@@ -341,7 +341,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $results = [];
-        $this->assertFalse($collection->every(function ($value, $key) use (&$results) {
+        $this->assertFalse($collection->every(function ($value, $key) use (&$results): bool {
             $results[] = [$key => $value];
 
             return $key !== 'b';
@@ -355,7 +355,7 @@ class CollectionTest extends TestCase
     public function testSomeReturnTrue(): void
     {
         $collection = new Collection([]);
-        $result = $collection->some(function ($v) {
+        $result = $collection->some(function ($v): bool {
             return true;
         });
         $this->assertFalse($result);
@@ -364,7 +364,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $results = [];
-        $this->assertTrue($collection->some(function ($value, $key) use (&$results) {
+        $this->assertTrue($collection->some(function ($value, $key) use (&$results): bool {
             $results[] = [$key => $value];
 
             return $key === 'b';
@@ -381,7 +381,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $results = [];
-        $this->assertFalse($collection->some(function ($value, $key) use (&$results) {
+        $this->assertFalse($collection->some(function ($value, $key) use (&$results): bool {
             $results[] = [$key => $value];
 
             return false;
@@ -427,7 +427,7 @@ class CollectionTest extends TestCase
     public function testMap(iterable $items): void
     {
         $collection = new Collection($items);
-        $map = $collection->map(function ($v, $k, $it) use ($collection) {
+        $map = $collection->map(function ($v, $k, $it) use ($collection): int|float {
             $this->assertSame($collection->getInnerIterator(), $it);
 
             return $v * $v;
@@ -443,7 +443,7 @@ class CollectionTest extends TestCase
     public function testReduceWithInitialValue(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertSame(20, $collection->reduce(function ($reduction, $value, $key) {
+        $this->assertSame(20, $collection->reduce(function ($reduction, $value, $key): float|int|array {
             return $value + $reduction;
         }, 10));
     }
@@ -455,7 +455,7 @@ class CollectionTest extends TestCase
     public function testReduceWithoutInitialValue(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertSame(10, $collection->reduce(function ($reduction, $value, $key) {
+        $this->assertSame(10, $collection->reduce(function ($reduction, $value, $key): float|int|array {
             return $value + $reduction;
         }));
     }
@@ -540,7 +540,7 @@ class CollectionTest extends TestCase
     public function testMaxCallback(iterable $items): void
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
+        $callback = function ($e): int|float {
             return $e['a']['b']['c'] * -1;
         };
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
@@ -553,7 +553,7 @@ class CollectionTest extends TestCase
     public function testMaxCallable(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e): int|float {
             return $e['a']['b']['c'] * -1;
         }));
     }
@@ -1250,7 +1250,7 @@ class CollectionTest extends TestCase
 
         $results = [];
         $compiled = $collection
-            ->map(function ($value, $key) use (&$results) {
+            ->map(function ($value, $key) use (&$results): int|float {
                 $results[] = [$key => $value];
 
                 return $value + 3;
@@ -1320,13 +1320,13 @@ class CollectionTest extends TestCase
             '2-3' => ['baz-2-3' => '2-3-baz'],
         ];
         $collection = (new Collection($items))->combine(
-            function ($value, $key) {
+            function ($value, $key): string {
                 return $value['name'] . '-' . $key;
             },
-            function ($value, $key) {
+            function ($value, $key): string {
                 return $key . '-' . $value['name'];
             },
-            function ($value, $key) {
+            function ($value, $key): string {
                 return $key . '-' . $value['id'];
             }
         );
@@ -1871,7 +1871,7 @@ class CollectionTest extends TestCase
     #[DataProvider('simpleProvider')]
     public function testStopWhenCallable(iterable $items): void
     {
-        $collection = (new Collection($items))->stopWhen(function ($v) {
+        $collection = (new Collection($items))->stopWhen(function ($v): bool {
             return $v > 3;
         });
         $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3], $collection->toArray());
@@ -1933,7 +1933,7 @@ class CollectionTest extends TestCase
     public function testUnfoldWithCallable(): void
     {
         $items = [1, 2, 3];
-        $collection = (new Collection($items))->unfold(function ($item) {
+        $collection = (new Collection($items))->unfold(function ($item): array {
             return range($item, $item * 2);
         });
         $expected = [1, 2, 2, 3, 4, 3, 4, 5, 6];
@@ -1959,7 +1959,7 @@ class CollectionTest extends TestCase
     public function testThroughReturnArray(): void
     {
         $items = [1, 2, 3];
-        $collection = (new Collection($items))->through(function ($collection) {
+        $collection = (new Collection($items))->through(function ($collection): array {
             $list = $collection->toList();
 
             return array_merge($list, $list);
@@ -1975,7 +1975,7 @@ class CollectionTest extends TestCase
     public function testComplexSortBy(): void
     {
         $results = collection([3, 7])
-            ->unfold(function ($value) {
+            ->unfold(function ($value): array {
                 return [
                     ['sorting' => $value * 2],
                     ['sorting' => $value * 2],
@@ -2096,12 +2096,12 @@ class CollectionTest extends TestCase
     public function testZipWith(): void
     {
         $collection = new Collection([1, 2]);
-        $zipped = $collection->zipWith([3, 4], function ($a, $b) {
+        $zipped = $collection->zipWith([3, 4], function ($a, $b): int|float {
             return $a * $b;
         });
         $this->assertEquals([3, 8], $zipped->toList());
 
-        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args) {
+        $zipped = $collection->zipWith([3, 4], [5, 6, 7], function (...$args): int|float {
             return array_sum($args);
         });
         $this->assertEquals([9, 12], $zipped->toList());
@@ -2164,7 +2164,7 @@ class CollectionTest extends TestCase
         $collection = new Collection([1, 2, 3]);
         $this->assertSame(3, $collection->last());
 
-        $collection = $collection->map(function ($e) {
+        $collection = $collection->map(function ($e): int|float {
             return $e * 2;
         });
         $this->assertSame(6, $collection->last());
@@ -2386,11 +2386,11 @@ class CollectionTest extends TestCase
     public function testSerializeWithNestedIterators(): void
     {
         $collection = new Collection([1, 2, 3]);
-        $collection = $collection->map(function ($e) {
+        $collection = $collection->map(function ($e): int|float {
             return $e * 3;
         });
 
-        $collection = $collection->groupBy(function ($e) {
+        $collection = $collection->groupBy(function ($e): int {
             return $e % 2;
         });
 
@@ -2538,9 +2538,9 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([[1, 2, 3], ['A', 'B', 'C'], ['a', 'b', 'c']]);
 
-        $result = $collection->cartesianProduct(function ($value) {
+        $result = $collection->cartesianProduct(function ($value): array {
             return [strval($value[0]) . $value[1] . $value[2]];
-        }, function ($value) {
+        }, function ($value): bool {
             return $value[0] >= 2;
         });
 
@@ -2571,7 +2571,7 @@ class CollectionTest extends TestCase
 
         $result = $collection->cartesianProduct(function ($value) {
             return [$value[0] => [$value[1] => $value[2]]];
-        }, function ($value) {
+        }, function ($value): bool {
             return $value[2] !== 'surname';
         });
 

@@ -507,7 +507,7 @@ class BelongsToMany extends Association
         $subquery = $this->_appendJunctionJoin($subquery);
 
         $query
-            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds) {
+            ->andWhere(function (QueryExpression $exp) use ($subquery, $conds): QueryExpression {
                 $identifiers = [];
                 foreach (array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
@@ -563,7 +563,7 @@ class BelongsToMany extends Association
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
-            'finder' => function () {
+            'finder' => function (): SelectQuery {
                 return $this->_appendJunctionJoin($this->find(), []);
             },
         ]);
@@ -874,7 +874,7 @@ class BelongsToMany extends Association
         $sourceEntity->set($property, $links);
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options) {
+            function () use ($sourceEntity, $targetEntities, $options): bool {
                 return $this->_saveLinks($sourceEntity, $targetEntities, $options);
             }
         );
@@ -1190,7 +1190,7 @@ class BelongsToMany extends Association
         }
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+            function () use ($sourceEntity, $targetEntities, $primaryValue, $options): bool {
                 $junction = $this->junction();
                 $target = $this->getTarget();
 
@@ -1418,11 +1418,11 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var list<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function ($key) {
+        $foreignKey = array_map(function ($key): string {
             return $key . ' IS';
         }, $foreignKey);
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function ($key) {
+        $assocForeignKey = array_map(function ($key): string {
             return $key . ' IS';
         }, $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());

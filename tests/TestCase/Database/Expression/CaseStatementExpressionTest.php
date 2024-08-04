@@ -319,7 +319,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
-            ->when(function (WhenThenExpression $whenThen) {
+            ->when(function (WhenThenExpression $whenThen): WhenThenExpression {
                 return $whenThen;
             });
 
@@ -1034,7 +1034,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpression $whenThen) {
+            ->when(function (WhenThenExpression $whenThen): WhenThenExpression {
                 return $whenThen;
             });
 

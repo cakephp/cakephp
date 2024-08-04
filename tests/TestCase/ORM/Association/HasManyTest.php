@@ -175,7 +175,7 @@ class HasManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = function () {
+        $closure = function (): array {
             return ['id' => 'ASC'];
         };
         $assoc->setSort($closure);
@@ -208,7 +208,7 @@ class HasManyTest extends TestCase
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
-        $assoc->setSort(function () {
+        $assoc->setSort(function (): array {
             return ['Articles.id' => 'DESC'];
         });
         $result = $authors->get(1, ...['contain' => 'Articles']);
@@ -616,7 +616,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $articles = $association->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+            $rules->addDelete(function (): bool {
                 return false;
             });
         });
@@ -1154,7 +1154,7 @@ class HasManyTest extends TestCase
         $authors->Articles
             ->setDependent(true)
             ->setSaveStrategy('replace')
-            ->setConditions(function () {
+            ->setConditions(function (): array {
                 return ['published' => 'Y'];
             });
 

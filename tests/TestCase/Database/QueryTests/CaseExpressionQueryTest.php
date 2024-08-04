@@ -67,7 +67,7 @@ class CaseExpressionQueryTest extends TestCase
     public function testSimpleCase(): void
     {
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(function (Query $query): array {
                 return [
                     'name',
                     'category_name' => $query->newExpr()
@@ -107,7 +107,7 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(function (Query $query): array {
                 return [
                     'name',
                     'price',
@@ -292,7 +292,7 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(function (Query $query): array {
                 return [
                     'val' => $query->newExpr()
                         ->case($query->newExpr(':value'))

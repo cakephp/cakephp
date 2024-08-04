@@ -1002,7 +1002,7 @@ trait EntityTrait
         $this->_hasBeenVisited = true;
         try {
             $errors = $this->_errors + (new Collection($diff))
-                ->filter(function ($value) {
+                ->filter(function ($value): bool {
                     return is_array($value) || $value instanceof EntityInterface;
                 })
                 ->map(function ($value) {

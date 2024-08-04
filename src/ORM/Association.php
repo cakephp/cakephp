@@ -982,7 +982,7 @@ abstract class Association
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
         $query->formatResults(
-            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath) {
+            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath): CollectionInterface {
                 $extracted = [];
                 foreach ($results as $result) {
                     foreach ($propertyPath as $propertyPathItem) {
@@ -1005,7 +1005,7 @@ abstract class Association
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    $results = $results->map(function (EntityInterface $result) {
+                    $results = $results->map(function (EntityInterface $result): EntityInterface {
                         $result->clean();
 
                         return $result;

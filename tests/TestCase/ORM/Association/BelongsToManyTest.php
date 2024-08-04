@@ -149,7 +149,7 @@ class BelongsToManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = function () {
+        $closure = function (): array {
             return ['id' => 'ASC'];
         };
         $assoc->setSort($closure);
@@ -182,7 +182,7 @@ class BelongsToManyTest extends TestCase
         $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
-        $assoc->setSort(function () {
+        $assoc->setSort(function (): array {
             return ['Tags.id' => 'DESC'];
         });
         $result = $articles->get(1, ...['contain' => 'Tags']);
@@ -519,7 +519,7 @@ class BelongsToManyTest extends TestCase
         $this->article->getAssociation($articleTag->getAlias());
 
         $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+            $rules->addDelete(function (): bool {
                 return false;
             });
         });
@@ -699,7 +699,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->once())
             ->method('save')
-            ->willReturnCallback(function (EntityInterface $e) {
+            ->willReturnCallback(function (EntityInterface $e): EntityInterface {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
@@ -1037,7 +1037,7 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
-            $rules->add(function () {
+            $rules->add(function (): bool {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
         });

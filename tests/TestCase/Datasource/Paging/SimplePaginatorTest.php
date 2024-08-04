@@ -57,7 +57,7 @@ class SimplePaginatorTest extends NumericPaginatorTest
      */
     public function testPaginateCustomFind(): void
     {
-        $titleExtractor = function ($result) {
+        $titleExtractor = function ($result): array {
             $ids = [];
             foreach ($result as $record) {
                 $ids[] = $record->title;

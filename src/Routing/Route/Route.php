@@ -789,7 +789,7 @@ class Route
      */
     protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $pass = array_map(function ($value) {
+        $pass = array_map(function ($value): string {
             return rawurlencode((string)$value);
         }, $pass);
         $pass = implode('/', $pass);

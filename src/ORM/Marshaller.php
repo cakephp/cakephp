@@ -676,7 +676,7 @@ class Marshaller
         $primary = (array)$this->_table->getPrimaryKey();
 
         $indexed = (new Collection($data))
-            ->groupBy(function ($el) use ($primary) {
+            ->groupBy(function ($el) use ($primary): string {
                 $keys = [];
                 foreach ($primary as $key) {
                     $keys[] = $el[$key] ?? '';
@@ -708,7 +708,7 @@ class Marshaller
         }
 
         $conditions = (new Collection($indexed))
-            ->map(function ($data, $key) {
+            ->map(function ($data, $key): array {
                 return explode(';', (string)$key);
             })
             ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))

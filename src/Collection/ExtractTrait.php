@@ -144,7 +144,7 @@ trait ExtractTrait
             };
         }
 
-        return function ($value) use ($matchers) {
+        return function ($value) use ($matchers): bool {
             foreach ($matchers as $match) {
                 if (!$match($value)) {
                     return false;

@@ -53,7 +53,7 @@ class MailTransport extends AbstractTransport
                 'bcc',
             ],
             $eol,
-            function ($val) {
+            function ($val): array|string {
                 return str_replace("\r\n", '', $val);
             }
         );

@@ -906,7 +906,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testInvokeComponentFromContainer(): void
     {
-        $this->container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+        $this->container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config): FlashComponent {
             return new FlashComponent($registry, $config);
         })
         ->addArgument(ComponentRegistry::class)

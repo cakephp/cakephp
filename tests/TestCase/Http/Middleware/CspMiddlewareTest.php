@@ -35,7 +35,7 @@ class CspMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function ($request) {
+        return new TestRequestHandler(function ($request): Response {
             return new Response();
         });
     }
@@ -90,7 +90,7 @@ class CspMiddlewareTest extends TestCase
             'styleNonce' => true,
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertNotEmpty($request->getAttribute('cspScriptNonce'));
             $this->assertNotEmpty($request->getAttribute('cspStyleNonce'));
 

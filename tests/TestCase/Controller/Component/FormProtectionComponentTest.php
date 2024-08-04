@@ -265,7 +265,7 @@ class FormProtectionComponentTest extends TestCase
 
     public function testCallbackReturnResponse(): void
     {
-        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
+        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception): Response {
             return new Response(['body' => 'from callback']);
         });
 

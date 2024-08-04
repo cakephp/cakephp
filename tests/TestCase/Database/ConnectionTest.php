@@ -874,7 +874,7 @@ class ConnectionTest extends TestCase
             ->getMock();
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
-        $result = $connection->transactional(function ($conn) use ($connection) {
+        $result = $connection->transactional(function ($conn) use ($connection): string {
             $this->assertSame($connection, $conn);
 
             return 'thing';
@@ -896,7 +896,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $connection->expects($this->never())->method('commit');
-        $result = $connection->transactional(function ($conn) use ($connection) {
+        $result = $connection->transactional(function ($conn) use ($connection): bool {
             $this->assertSame($connection, $conn);
 
             return false;
@@ -981,8 +981,8 @@ class ConnectionTest extends TestCase
      */
     public function testNestedTransactionRollbackExceptionNotThrown(): void
     {
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(function (): bool {
                 return true;
             });
 
@@ -990,8 +990,8 @@ class ConnectionTest extends TestCase
         });
         $this->assertFalse($this->connection->inTransaction());
 
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(function (): bool {
                 return true;
             });
 
@@ -999,8 +999,8 @@ class ConnectionTest extends TestCase
         });
         $this->assertFalse($this->connection->inTransaction());
 
-        $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+        $this->connection->transactional(function (): bool {
+            $this->connection->transactional(function (): bool {
                 return false;
             });
 
@@ -1019,8 +1019,8 @@ class ConnectionTest extends TestCase
 
         $e = null;
         try {
-            $this->connection->transactional(function () {
-                $this->connection->transactional(function () {
+            $this->connection->transactional(function (): bool {
+                $this->connection->transactional(function (): bool {
                     return false;
                 });
                 $this->rollbackSourceLine = __LINE__ - 1;
@@ -1051,17 +1051,17 @@ class ConnectionTest extends TestCase
 
         $e = null;
         try {
-            $this->connection->transactional(function () {
+            $this->connection->transactional(function (): bool {
                 $this->pushNestedTransactionState();
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(function (): bool {
                     return true;
                 });
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(function (): bool {
                     $this->pushNestedTransactionState();
 
-                    $this->connection->transactional(function () {
+                    $this->connection->transactional(function (): bool {
                         return false;
                     });
                     $this->rollbackSourceLine = __LINE__ - 1;
@@ -1074,7 +1074,7 @@ class ConnectionTest extends TestCase
                     return true;
                 });
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(function (): bool {
                     return false;
                 });
 

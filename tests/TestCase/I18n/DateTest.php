@@ -38,7 +38,7 @@ class DateTest extends TestCase
         parent::setUp();
 
         Cache::clear('_cake_translations_');
-        I18n::setTranslator('cake', function () {
+        I18n::setTranslator('cake', function (): Package {
             $package = new Package();
             $package->setMessages([
                 '{0} ago' => '{0} ago (translated)',

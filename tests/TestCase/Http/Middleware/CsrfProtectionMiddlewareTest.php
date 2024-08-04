@@ -77,7 +77,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
+        return new TestRequestHandler(function (): Response {
             return new Response();
         });
     }
@@ -94,7 +94,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -126,7 +126,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -162,7 +162,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest): Response {
             $updatedRequest = $request;
 
             return new Response();
@@ -223,7 +223,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): RedirectResponse {
             return new RedirectResponse('/');
         });
 
@@ -241,7 +241,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $request = $request->withAttribute('csrfToken', 'not-good');
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): RedirectResponse {
             return new RedirectResponse('/');
         });
 
@@ -258,7 +258,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): \Laminas\Diactoros\Response {
             return new DiactorosResponse();
         });
 
@@ -363,7 +363,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -391,7 +391,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => $token],
         ]);
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertNull($request->getData('_csrfToken'));
 
             return new Response();
@@ -617,13 +617,13 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->skipCheckCallback(function (ServerRequestInterface $request) {
+        $middleware->skipCheckCallback(function (ServerRequestInterface $request): bool {
             $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
 
             return true;
         });
 
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(function ($request): Response {
             $this->assertEmpty($request->getParsedBody());
 
             return new Response();

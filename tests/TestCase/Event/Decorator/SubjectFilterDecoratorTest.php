@@ -32,7 +32,7 @@ class SubjectFilterDecoratorTest extends TestCase
     public function testCanTrigger(): void
     {
         $event = new Event('decorator.test', $this);
-        $callable = function (EventInterface $event) {
+        $callable = function (EventInterface $event): string {
             return 'success';
         };
 

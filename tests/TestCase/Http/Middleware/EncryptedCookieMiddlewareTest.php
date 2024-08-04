@@ -24,6 +24,7 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\CookieCryptTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Message\MessageInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -73,7 +74,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         ]);
         $this->assertNotEquals('decoded', $request->getCookie('decoded'));
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): MessageInterface {
             $this->assertSame('decoded', $req->getCookie('secret'));
             $this->assertSame('always plain', $req->getCookie('plain'));
 
@@ -94,7 +95,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams(['secret' => $cookie]);
 
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             $this->assertSame('', $req->getCookie('secret'));
 
             return new Response();
@@ -128,7 +129,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseSetCookieHeader(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): MessageInterface {
             return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
                 ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
                 ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
@@ -151,7 +152,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseCookieData(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(function ($req): Response {
             return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
                 ->withCookie(new Cookie('plain', 'in clear'))
                 ->withCookie(new Cookie('ninja', 'shuriken'));

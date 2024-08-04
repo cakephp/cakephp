@@ -130,7 +130,7 @@ class CommonTableExpressionQueryTest extends TestCase
                 $anchorQuery = $query->select(1);
 
                 $recursiveQuery = $query->getConnection()
-                    ->selectQuery(function (Query $query) {
+                    ->selectQuery(function (Query $query): QueryExpression {
                         return $query->newExpr('col + 1');
                     }, 'cte')
                     ->where(['col !=' => 3], ['col' => 'integer']);

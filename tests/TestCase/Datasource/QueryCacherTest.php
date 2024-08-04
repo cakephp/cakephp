@@ -60,7 +60,7 @@ class QueryCacherTest extends TestCase
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 
-        $cacher = new QueryCacher(function ($q) use ($query) {
+        $cacher = new QueryCacher(function ($q) use ($query): string {
             $this->assertSame($query, $q);
 
             return 'my_key';
@@ -80,7 +80,7 @@ class QueryCacherTest extends TestCase
         $this->engine->set('my_key', 'A winner');
         $query = new stdClass();
 
-        $cacher = new QueryCacher(function ($q) {
+        $cacher = new QueryCacher(function ($q): bool {
             return false;
         }, 'queryCache');
 

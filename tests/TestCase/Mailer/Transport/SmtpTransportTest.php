@@ -922,7 +922,7 @@ class SmtpTransportTest extends TestCase
         $message->setTo('cake@cakephp.org', 'CakePHP');
         $message->expects($this->exactly(2))->method('getBody')->willReturn(['First Line']);
 
-        $callback = function ($arg) {
+        $callback = function ($arg): int {
             $this->assertNotEquals("QUIT\r\n", $arg);
 
             return 1;

@@ -1861,7 +1861,7 @@ class Message implements JsonSerializable
             }
         });
 
-        return array_filter($array, function ($i) {
+        return array_filter($array, function ($i): bool {
             return $i !== null && !is_array($i) && !is_bool($i) && strlen($i) || !empty($i);
         });
     }

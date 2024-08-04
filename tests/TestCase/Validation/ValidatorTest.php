@@ -136,7 +136,7 @@ class ValidatorTest extends TestCase
         $validator->setProvider('test', $this);
 
         $inner = new Validator();
-        $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
+        $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator): bool {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
 
             return false;
@@ -197,7 +197,7 @@ class ValidatorTest extends TestCase
         $validator->setProvider('test', $this);
 
         $inner = new Validator();
-        $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
+        $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator): bool {
             $this->assertSame($validator->providers(), $inner->providers(), 'Providers should match');
 
             return false;
@@ -355,7 +355,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $require = true;
-        $validator->requirePresence('title', function ($context) use (&$require) {
+        $validator->requirePresence('title', function ($context) use (&$require): bool {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertSame('title', $context['field']);
@@ -745,7 +745,7 @@ class ValidatorTest extends TestCase
         $validator->allowEmptyString(
             'title',
             'very required',
-            function ($context) {
+            function ($context): bool {
                 return $context['data']['otherField'] === true;
             }
         )
@@ -1328,7 +1328,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $allow = true;
-        $validator->allowEmptyString('title', null, function ($context) use (&$allow) {
+        $validator->allowEmptyString('title', null, function ($context) use (&$allow): bool {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertTrue($context['newRecord']);
@@ -1349,7 +1349,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $prevent = true;
-        $validator->notEmptyString('title', 'error message', function ($context) use (&$prevent) {
+        $validator->notEmptyString('title', 'error message', function ($context) use (&$prevent): bool {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
             $this->assertFalse($context['newRecord']);
@@ -1525,7 +1525,7 @@ class ValidatorTest extends TestCase
 
         $thing = $this->getMockBuilder(stdMock::class)->getMock();
         $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $context) use ($thing) {
+            ->willReturnCallback(function ($data, $context) use ($thing): string {
                 $this->assertSame('bar', $data);
                 $expected = [
                     'default' => new RulesProvider(),
@@ -1567,7 +1567,7 @@ class ValidatorTest extends TestCase
         ]);
         $thing = $this->getMockBuilder(stdMock::class)->getMock();
         $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $a, $b, $context) use ($thing) {
+            ->willReturnCallback(function ($data, $a, $b, $context) use ($thing): string {
                 $this->assertSame('bar', $data);
                 $this->assertSame('and', $a);
                 $this->assertSame('awesome', $b);
@@ -1603,7 +1603,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->add('name', 'myRule', [
-            'rule' => function ($data, $provider) {
+            'rule' => function ($data, $provider): string {
                 $this->assertSame('foo', $data);
 
                 return 'You fail';

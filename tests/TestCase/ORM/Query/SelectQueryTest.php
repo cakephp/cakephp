@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Cache\Engine\FileEngine;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
@@ -2271,7 +2272,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results) {
+        $query->select()->formatResults(function ($results): CollectionInterface {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
             return $results->indexBy('id');
@@ -2286,7 +2287,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results) {
+        $query->select()->formatResults(function ($results): CollectionInterface {
             $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
             return $results->indexBy('id');
@@ -2442,7 +2443,7 @@ class SelectQueryTest extends TestCase
             ->orderBy(['ArticlesTags.article_id' => 'ASC']);
 
         $query->formatResults(function ($results) {
-            return $results->map(function ($row) {
+            return $results->map(function ($row): string {
                 return sprintf(
                     '%s - %s - %s',
                     $row->tag_id,
@@ -3234,7 +3235,7 @@ class SelectQueryTest extends TestCase
         $table->belongsTo('authors');
         $result = $table
             ->find()
-            ->select(function ($q) {
+            ->select(function ($q): array {
                 return ['foo' => $q->newExpr('1 + 1')];
             })
             ->select($table)
@@ -3244,7 +3245,7 @@ class SelectQueryTest extends TestCase
 
         $expected = $table
             ->find()
-            ->select(function ($q) {
+            ->select(function ($q): array {
                 return ['foo' => $q->newExpr('1 + 1')];
             })
             ->enableAutoFields()
@@ -3912,13 +3913,13 @@ class SelectQueryTest extends TestCase
 
         $articles
             ->find()
-            ->contain('Comments', function (SelectQuery $query) {
+            ->contain('Comments', function (SelectQuery $query): SelectQuery {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
                 return $query;
             })
-            ->contain('Comments.Articles', function (SelectQuery $query) {
+            ->contain('Comments.Articles', function (SelectQuery $query): SelectQuery {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
@@ -3932,7 +3933,7 @@ class SelectQueryTest extends TestCase
                     ->enableHydration()
                     ->enableResultsCasting();
             })
-            ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query) {
+            ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query): SelectQuery {
                 $this->assertTrue($query->isHydrationEnabled());
                 $this->assertTrue($query->isResultsCastingEnabled());
 

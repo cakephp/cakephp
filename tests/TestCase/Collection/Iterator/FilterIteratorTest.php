@@ -31,7 +31,7 @@ class FilterIteratorTest extends TestCase
     public function testFilter(): void
     {
         $items = new ArrayIterator([1, 2, 3]);
-        $callable = function ($value, $key, $itemArg) use ($items) {
+        $callable = function ($value, $key, $itemArg) use ($items): bool {
             $this->assertSame($items, $itemArg);
             $this->assertContains($value, $items);
             $this->assertContains($key, [0, 1, 2]);

@@ -109,7 +109,7 @@ class TranslatorRegistry
         $this->formatters = $formatters;
         $this->setLocale($locale);
 
-        $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale) {
+        $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale): Package {
             $loader = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
                 new MessagesFileLoader($name, $locale, 'po'),

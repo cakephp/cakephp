@@ -2873,7 +2873,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'hasAtLeast', $extra + [
-            'rule' => function ($value) use ($count) {
+            'rule' => function ($value) use ($count): bool {
                 if (is_array($value) && isset($value['_ids'])) {
                     $value = $value['_ids'];
                 }
@@ -2908,7 +2908,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'hasAtMost', $extra + [
-            'rule' => function ($value) use ($count) {
+            'rule' => function ($value) use ($count): bool {
                 if (is_array($value) && isset($value['_ids'])) {
                     $value = $value['_ids'];
                 }

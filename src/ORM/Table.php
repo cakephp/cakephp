@@ -1540,7 +1540,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(function ($key) {
+            $primaryKey = array_map(function ($key): ?string {
                 return var_export($key, true);
             }, $primaryKey);
 
@@ -2152,7 +2152,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
-        $filteredKeys = array_filter($primary, function ($v) {
+        $filteredKeys = array_filter($primary, function ($v): bool {
             return $v !== null;
         });
         $data += $filteredKeys;

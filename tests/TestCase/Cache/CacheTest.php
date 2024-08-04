@@ -819,7 +819,7 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         $counter = 0;
-        $cacher = function () use ($counter) {
+        $cacher = function () use ($counter): string {
             return 'This is some data ' . $counter;
         };
 

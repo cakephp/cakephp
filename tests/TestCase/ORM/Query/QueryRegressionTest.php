@@ -1065,7 +1065,7 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Comments');
         $ratio = $table->find()
-            ->select(function ($query) use ($table) {
+            ->select(function ($query) use ($table): array {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
                 $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
@@ -1519,7 +1519,7 @@ class QueryRegressionTest extends TestCase
 
         $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
-                return $results->map(function (Entity $tag) {
+                return $results->map(function (Entity $tag): Entity {
                     $tag->name .= ' - visited';
 
                     return $tag;
@@ -1550,7 +1550,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q
                         ->func()
@@ -1577,7 +1577,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q->func()->UPPER([
                         $table
@@ -1604,7 +1604,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q
                         ->func()
@@ -1640,7 +1640,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q->func()->coalesce([
                         $table
@@ -1669,7 +1669,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q->func()->concat([
                         $table
@@ -1696,7 +1696,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $table
             ->find()
-            ->select(function (SelectQuery $q) use ($table) {
+            ->select(function (SelectQuery $q) use ($table): array {
                 return [
                     'value' => $q->func()->concat([
                         $table
