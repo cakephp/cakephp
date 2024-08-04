@@ -52,7 +52,7 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to()
+    public function redirect_to(): ?\Cake\Http\Response
     {
         return $this->redirect('http://cakephp.org');
     }
@@ -60,7 +60,7 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to_permanent()
+    public function redirect_to_permanent(): ?\Cake\Http\Response
     {
         return $this->redirect('http://cakephp.org', 301);
     }

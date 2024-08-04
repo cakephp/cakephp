@@ -88,7 +88,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response|null
      */
-    public function someRedirect()
+    public function someRedirect(): ?\Cake\Http\Response
     {
         $this->Flash->success('A success message');
 
@@ -100,7 +100,7 @@ class PostsController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function flashNoRender()
+    public function flashNoRender(): ?\Cake\Http\Response
     {
         $this->Flash->error('An error message');
 
