@@ -69,7 +69,11 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @var array<string, string>
      */
-    protected array $aliases = [];
+    protected array $aliases = [
+        '--version' => 'version',
+        '--help' => 'help',
+        '-h' => 'help',
+    ];
 
     /**
      * Constructor
@@ -86,11 +90,6 @@ class CommandRunner implements EventDispatcherInterface
         $this->app = $app;
         $this->root = $root;
         $this->factory = $factory;
-        $this->aliases = [
-            '--version' => 'version',
-            '--help' => 'help',
-            '-h' => 'help',
-        ];
     }
 
     /**
