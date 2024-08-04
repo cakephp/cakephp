@@ -551,11 +551,7 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
             return true;
         }
-        if (isset($detect['param']) && $this->_paramDetector($detect)) {
-            return true;
-        }
-
-        return false;
+        return isset($detect['param']) && $this->_paramDetector($detect);
     }
 
     /**
@@ -581,11 +577,7 @@ class ServerRequest implements ServerRequestInterface
         if ($accepted === null) {
             return false;
         }
-        if ($exclude && in_array($accepted, $exclude, true)) {
-            return false;
-        }
-
-        return true;
+        return !($exclude && in_array($accepted, $exclude, true));
     }
 
     /**

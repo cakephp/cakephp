@@ -466,18 +466,12 @@ trait EntityTrait
     public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
-        if (
-            $value === null ||
-            (
-                is_array($value) &&
-                empty($value) ||
-                $value === ''
-            )
-        ) {
-            return true;
-        }
-
-        return false;
+        return $value === null ||
+        (
+            is_array($value) &&
+            empty($value) ||
+            $value === ''
+        );
     }
 
     /**

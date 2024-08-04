@@ -31,11 +31,7 @@ class TestAppCacheEngine extends CacheEngine
      */
     public function set($key, $value, $ttl = null): bool
     {
-        if ($key === 'fail') {
-            return false;
-        }
-
-        return true;
+        return $key !== 'fail';
     }
 
     /**

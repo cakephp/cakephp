@@ -925,12 +925,7 @@ class Validation
             if (!is_array($options['only'])) {
                 $options['only'] = [$options['only']];
             }
-
-            if (in_array($enum, $options['only'], true)) {
-                return true;
-            }
-
-            return false;
+            return in_array($enum, $options['only'], true);
         }
 
         if ($options['except']) {
@@ -1507,12 +1502,7 @@ class Validation
         ) {
             return false;
         }
-
-        if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
-            return false;
-        }
-
-        return true;
+        return !(isset($options['types']) && !static::mimeType($file, $options['types']));
     }
 
     /**
