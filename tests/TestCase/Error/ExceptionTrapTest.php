@@ -251,7 +251,7 @@ class ExceptionTrapTest extends TestCase
             'skipLog' => [InvalidArgumentException::class],
         ]);
 
-        $trap->getEventManager()->on('Exception.beforeRender', function () {
+        $trap->getEventManager()->on('Exception.beforeRender', function (): void {
             $this->triggered = true;
         });
 
@@ -268,7 +268,7 @@ class ExceptionTrapTest extends TestCase
     public function testEventTriggered()
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error) {
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error): void {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
         });
@@ -284,7 +284,7 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventAborted(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req): void {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
             $event->stopPropagation();
@@ -301,7 +301,7 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventExceptionChanged(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req): void {
             $event->setData('exception', new NotFoundException());
         });
         $error = new InvalidArgumentException('nope', 100);

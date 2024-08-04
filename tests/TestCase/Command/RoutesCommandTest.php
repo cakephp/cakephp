@@ -140,7 +140,7 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteListSorted(): void
     {
-        Configure::write('TestApp.routes', function ($routes) {
+        Configure::write('TestApp.routes', function ($routes): void {
             $routes->connect(
                 new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
             );
@@ -314,7 +314,7 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteDuplicateWarning(): void
     {
-        Configure::write('TestApp.routes', function ($builder) {
+        Configure::write('TestApp.routes', function ($builder): void {
             $builder->connect(
                 new Route('/unique-path', [], ['_name' => '_aRoute'])
             );

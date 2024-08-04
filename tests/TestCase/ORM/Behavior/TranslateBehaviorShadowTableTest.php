@@ -1140,7 +1140,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->setLocale('fra');
 
         $articles = $table->find()->all();
-        $articles->each(function ($article) {
+        $articles->each(function ($article): void {
             $article->published = 'N';
         });
 

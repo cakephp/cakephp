@@ -365,7 +365,7 @@ class ServerTest extends TestCase
         $triggered = false;
         $server->getEventManager()->on(
             'Server.terminate',
-            function ($event, $request, $response) use (&$triggered) {
+            function ($event, $request, $response) use (&$triggered): void {
                 $triggered = true;
                 $this->assertInstanceOf(ServerRequest::class, $request);
                 $this->assertInstanceOf(Response::class, $response);
