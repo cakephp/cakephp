@@ -2785,7 +2785,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $conditions;
         };
 
-        if ($hasOr !== false && $hasAnd !== false) {
+        if ($hasOr && $hasAnd) {
             throw new BadMethodCallException(
                 'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
             );
@@ -2793,7 +2793,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
-        } elseif ($hasOr !== false) {
+        } elseif ($hasOr) {
             $fields = explode('_or_', $fields);
             $conditions = [
                 'OR' => $makeConditions($fields, $args),

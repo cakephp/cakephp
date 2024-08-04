@@ -1569,7 +1569,7 @@ class View implements EventDispatcherInterface
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
-        if ($cached === true) {
+        if ($cached) {
             if ($plugin === null && !empty($this->_paths)) {
                 return $this->_paths;
             }

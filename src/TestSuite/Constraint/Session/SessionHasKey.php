@@ -52,7 +52,7 @@ class SessionHasKey extends Constraint
         // Which means, that we cannot use Session object here to access the session data.
         // Call to Session::read will start new session (and will erase the data).
         /** @psalm-suppress InvalidScalarArgument */
-        return Hash::check($_SESSION, $this->path) === true;
+        return Hash::check($_SESSION, $this->path);
     }
 
     /**
