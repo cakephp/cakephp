@@ -393,7 +393,7 @@ class View implements EventDispatcherInterface
     protected function setContentType(): void
     {
         $viewContentType = $this->contentType();
-        if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
+        if (!$viewContentType || $viewContentType === static::TYPE_MATCH_ALL) {
             return;
         }
         $response = $this->getResponse();
@@ -1340,7 +1340,7 @@ class View implements EventDispatcherInterface
         if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && str_ends_with($templatePath, $subDir)) {
+            if ($templatePath !== $subDir && str_ends_with($templatePath, $subDir)) {
                 $subDir = '';
             }
         }
