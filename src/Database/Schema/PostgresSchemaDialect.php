@@ -670,7 +670,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $dbSchema = $this->_driver->schema();
-        if ($dbSchema != 'public') {
+        if ($dbSchema !== 'public') {
             $tableName = $this->_driver->quoteIdentifier($dbSchema) . '.' . $tableName;
         }
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
