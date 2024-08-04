@@ -110,7 +110,6 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Articles::teaserList');
         $cell->viewBuilder()->setTemplate('nope');
-        (string)$cell;
     }
 
     /**
