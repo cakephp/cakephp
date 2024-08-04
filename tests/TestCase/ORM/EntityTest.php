@@ -481,7 +481,7 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->has(['id', 'nope']));
 
         $entity = new class extends Entity {
-            protected function _getThings()
+            protected function _getThings(): never
             {
                 throw new Exception('_getThings() should not have been called');
             }
