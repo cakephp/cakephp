@@ -149,7 +149,7 @@ class LazyEagerLoader
         /** @var array<\Cake\Datasource\EntityInterface> $results */
         $results = $query
             ->all()
-            ->indexBy(fn (EntityInterface $e) => implode(';', $e->extract($primaryKey)))
+            ->indexBy(fn (EntityInterface $e): string => implode(';', $e->extract($primaryKey)))
             ->toArray();
 
         foreach ($entities as $k => $object) {

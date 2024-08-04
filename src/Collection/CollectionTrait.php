@@ -100,7 +100,7 @@ trait CollectionTrait
             return (bool)$v;
         };
 
-        return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
+        return new FilterIterator($this->unwrap(), fn ($value, $key, $items): bool => !$callback($value, $key, $items));
     }
 
     /**

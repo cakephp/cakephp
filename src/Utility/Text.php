@@ -211,7 +211,7 @@ class Text
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map(
-            fn ($str) => hash('xxh128', $str),
+            fn ($str): string => hash('xxh128', $str),
             $dataKeys
         );
         /** @var array<string, string> $tempData */

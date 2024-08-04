@@ -308,7 +308,7 @@ class CollectionTest extends TestCase
         $result = $collection->unique();
         $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
 
-        $result = $collection->unique(fn ($v) => (string)$v);
+        $result = $collection->unique(fn ($v): string => (string)$v);
         $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
 
         $result = $collection->unique(fn ($v, $k) => $k);
