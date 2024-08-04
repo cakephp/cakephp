@@ -377,7 +377,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = ($this->trustedProxies !== []);
+            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
 
             if ($trusted) {
