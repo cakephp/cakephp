@@ -30,7 +30,7 @@ class TestsController extends TestPluginAppController
     /**
      * @return \Cake\Http\Response
      */
-    public function some_method()
+    public function some_method(): \Cake\Http\Response
     {
         $this->response->body(25);
 
