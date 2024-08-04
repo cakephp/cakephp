@@ -35,7 +35,7 @@ class NonExtending implements EntityInterface
         }
 
         if ($options['markNew'] !== null) {
-            $this->isNew();
+            $this->setNew($options['markNew']);
         }
 
         if (!empty($options['source'])) {
