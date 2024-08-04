@@ -443,7 +443,11 @@ class RouteCollection
      */
     public function middlewareExists(string $name): bool
     {
-        return $this->hasMiddleware($name) || $this->hasMiddlewareGroup($name);
+        if ($this->hasMiddleware($name)) {
+            return true;
+        }
+
+        return $this->hasMiddlewareGroup($name);
     }
 
     /**

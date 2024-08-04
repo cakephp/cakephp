@@ -225,7 +225,11 @@ class FormData implements Countable, Stringable
      */
     public function isMultipart(): bool
     {
-        return $this->hasFile() || $this->_hasComplexPart;
+        if ($this->hasFile()) {
+            return true;
+        }
+
+        return $this->_hasComplexPart;
     }
 
     /**
