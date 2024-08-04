@@ -469,8 +469,7 @@ trait EntityTrait
         if (
             $value === null ||
             (
-                is_array($value) &&
-                empty($value) ||
+                $value === [] ||
                 $value === ''
             )
         ) {
