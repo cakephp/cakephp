@@ -184,7 +184,7 @@ class FileLogTest extends TestCase
      *
      * @param string $dir
      */
-    protected function _deleteLogs($dir): void
+    protected function _deleteLogs(string $dir): void
     {
         $files = array_merge(glob($dir . '*.log'), glob($dir . '*.log.*'));
         foreach ($files as $file) {

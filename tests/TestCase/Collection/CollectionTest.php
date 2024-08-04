@@ -1320,13 +1320,13 @@ class CollectionTest extends TestCase
             '2-3' => ['baz-2-3' => '2-3-baz'],
         ];
         $collection = (new Collection($items))->combine(
-            function ($value, $key) {
+            function ($value, string $key) {
                 return $value['name'] . '-' . $key;
             },
-            function ($value, $key) {
+            function ($value, string $key) {
                 return $key . '-' . $value['name'];
             },
-            function ($value, $key) {
+            function ($value, string $key) {
                 return $key . '-' . $value['id'];
             }
         );

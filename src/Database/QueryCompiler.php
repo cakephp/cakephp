@@ -135,7 +135,7 @@ class QueryCompiler
      */
     protected function _sqlCompiler(string &$sql, Query $query, ValueBinder $binder): Closure
     {
-        return function ($part, $partName) use (&$sql, $query, $binder): void {
+        return function ($part, string $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
                 ($part === []) ||

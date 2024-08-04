@@ -78,7 +78,7 @@ class PluginUnloadCommandTest extends TestCase
      * testUnload
      */
     #[DataProvider('pluginNameProvider')]
-    public function testUnload($plugin): void
+    public function testUnload(string $plugin): void
     {
         $this->exec('plugin unload ' . $plugin);
 
