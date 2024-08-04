@@ -1299,7 +1299,7 @@ class BelongsToMany extends Association
                     if (is_object($unmatchedKeys[$key]) && is_object($existingKeys[$key])) {
                         // If both sides are an object then use == so that value objects
                         // are seen as equivalent.
-                        $matched = $existingKeys[$key] === $unmatchedKeys[$key];
+                        $matched = $existingKeys[$key] == $unmatchedKeys[$key];
                     } else {
                         // Use strict equality for all other values.
                         $matched = $existingKeys[$key] === $unmatchedKeys[$key];
