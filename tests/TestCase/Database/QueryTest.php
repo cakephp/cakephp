@@ -84,7 +84,7 @@ class QueryTest extends TestCase
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
-    protected function newQuery(): \Cake\Database\Query
+    protected function newQuery(): Query
     {
         return new class ($this->connection) extends Query
         {
