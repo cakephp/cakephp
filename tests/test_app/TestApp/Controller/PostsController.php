@@ -19,6 +19,7 @@ namespace TestApp\Controller;
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
 use Cake\View\JsonView;
 use OutOfBoundsException;
 use RuntimeException;
@@ -88,7 +89,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response|null
      */
-    public function someRedirect(): ?\Cake\Http\Response
+    public function someRedirect(): ?Response
     {
         $this->Flash->success('A success message');
 
@@ -100,7 +101,7 @@ class PostsController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function flashNoRender(): ?\Cake\Http\Response
+    public function flashNoRender(): ?Response
     {
         $this->Flash->error('An error message');
 
