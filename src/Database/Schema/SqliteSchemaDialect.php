@@ -508,11 +508,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if (
             in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) &&
-            $data['unsigned'] === true
+            $data['unsigned'] === true &&
+            ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
         ) {
-            if ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
-                $out .= ' UNSIGNED';
-            }
+            $out .= ' UNSIGNED';
         }
 
         if (isset($typeMap[$data['type']])) {
@@ -577,14 +576,11 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
-            if ($schema->getPrimaryKey() === [$name]) {
-                $out .= ' PRIMARY KEY';
-
-                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
-                    $out .= ' AUTOINCREMENT';
-                    unset($data['default']);
-                }
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
+            $out .= ' PRIMARY KEY';
+            if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                $out .= ' AUTOINCREMENT';
+                unset($data['default']);
             }
         }
 

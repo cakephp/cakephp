@@ -116,10 +116,8 @@ class Debugger
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower(get_class($instance[0])))) {
+            $instance[0] = new $class();
         }
         if (!$instance) {
             $instance[0] = new Debugger();

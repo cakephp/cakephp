@@ -522,14 +522,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     continue;
                 }
 
-                if ($translation[$field] !== null) {
-                    if ($allowEmpty || $translation[$field] !== '') {
-                        $row[$field] = $translation[$field];
-
-                        if ($hydrated) {
-                            /** @var \Cake\Datasource\EntityInterface $row */
-                            $row->setDirty($field, false);
-                        }
+                if ($translation[$field] !== null && ($allowEmpty || $translation[$field] !== '')) {
+                    $row[$field] = $translation[$field];
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
                     }
                 }
             }
