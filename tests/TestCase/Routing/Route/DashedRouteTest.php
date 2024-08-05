@@ -207,7 +207,7 @@ class DashedRouteTest extends TestCase
         $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 
-    public function testMatchDoesNotCorruptDefaults()
+    public function testMatchDoesNotCorruptDefaults(): void
     {
         $route = new DashedRoute('/user-permissions/edit', [
             'controller' => 'UserPermissions',

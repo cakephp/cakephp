@@ -166,7 +166,7 @@ class RequestActionController extends AppController
      * @throws \Cake\Http\Exception\NotFoundException
      * @return void
      */
-    public function error_method()
+    public function error_method(): never
     {
         throw new NotFoundException('Not there or here.');
     }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Error\Renderer;
 
+use Cake\Controller\Controller;
 use Cake\Error\Renderer\WebExceptionRenderer;
 
 class MyCustomExceptionRenderer extends WebExceptionRenderer
@@ -10,7 +11,7 @@ class MyCustomExceptionRenderer extends WebExceptionRenderer
     /**
      * @param \Cake\Controller\Controller $controller
      */
-    public function setController($controller): void
+    public function setController(Controller $controller): void
     {
         $this->controller = $controller;
     }

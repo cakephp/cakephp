@@ -96,7 +96,7 @@ class CollectionTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function testListTables()
+    public function testListTables(): void
     {
         $config = $this->connection->config();
         $driver = new $config['driver']($config);

@@ -860,7 +860,7 @@ class ResponseTest extends TestCase
         $this->assertSame(1, $new->getCookie('yay')['expires']);
     }
 
-    public function testWithExpiredCookieNotUtc()
+    public function testWithExpiredCookieNotUtc(): void
     {
         date_default_timezone_set('Europe/Paris');
 

@@ -3095,9 +3095,9 @@ class TableTest extends TestCase
             $rules->addDelete(function ($entity) {
                 if ($entity->author_id === 3) {
                     return false;
-                } else {
-                    return true;
                 }
+
+                return true;
             });
         });
 
