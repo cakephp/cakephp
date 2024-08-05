@@ -228,7 +228,7 @@ class HtmlHelper extends Helper
         }
 
         return $this->formatTemplate('charset', [
-            'charset' => empty($charset) ? 'utf-8' : $charset,
+            'charset' => $charset ?: 'utf-8',
         ]);
     }
 
