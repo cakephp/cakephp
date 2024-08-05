@@ -86,7 +86,7 @@ class EventManager implements EventManagerInterface
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (!static::$_generalManager instanceof \Cake\Event\EventManager) {
+        if (static::$_generalManager === null) {
             static::$_generalManager = new static();
         }
 
