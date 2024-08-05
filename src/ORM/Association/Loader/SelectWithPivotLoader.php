@@ -111,7 +111,7 @@ class SelectWithPivotLoader extends SelectLoader
 
         foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;
-            $joinFields[$key] = "$name.$f";
+            $joinFields[$key] = "{$name}.{$f}";
             $types[$key] = $type;
         }
 

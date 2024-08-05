@@ -210,7 +210,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs("   --json='{$json}'");
         $expected = [
             '--json=' . $json,
         ];

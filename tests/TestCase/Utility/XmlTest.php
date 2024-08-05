@@ -1173,7 +1173,7 @@ XML;
         $file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
         $xml = <<<XML
 <!DOCTYPE cakephp [
-  <!ENTITY payload SYSTEM "file://$file" >]>
+  <!ENTITY payload SYSTEM "file://{$file}" >]>
 <request>
   <xxe>&payload;</xxe>
 </request>

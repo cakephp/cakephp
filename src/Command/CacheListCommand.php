@@ -60,7 +60,7 @@ class CacheListCommand extends Command
     {
         $engines = Cache::configured();
         foreach ($engines as $engine) {
-            $io->out("- $engine");
+            $io->out("- {$engine}");
         }
 
         return static::CODE_SUCCESS;

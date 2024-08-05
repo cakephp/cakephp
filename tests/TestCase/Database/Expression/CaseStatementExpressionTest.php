@@ -1365,7 +1365,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE $sqlValue WHEN :c0 THEN :c1 ELSE NULL END",
+                "CASE {$sqlValue} WHEN :c0 THEN :c1 ELSE NULL END",
                 $sql
             );
 
@@ -1710,7 +1710,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE WHEN :c0 THEN $sqlValue ELSE NULL END",
+                "CASE WHEN :c0 THEN {$sqlValue} ELSE NULL END",
                 $sql
             );
 
@@ -1787,7 +1787,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE WHEN :c0 THEN :c1 ELSE $sqlValue END",
+                "CASE WHEN :c0 THEN :c1 ELSE {$sqlValue} END",
                 $sql
             );
 
@@ -1865,7 +1865,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$value` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         new CaseStatementExpression($value);
@@ -1909,7 +1909,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         (new CaseStatementExpression())
@@ -1973,7 +1973,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         (new CaseStatementExpression())

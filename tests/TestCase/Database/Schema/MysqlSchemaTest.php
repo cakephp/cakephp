@@ -1518,7 +1518,7 @@ SQL;
             $this->pdo->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Mysql::class)
