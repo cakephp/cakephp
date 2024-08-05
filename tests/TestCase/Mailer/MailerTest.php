@@ -658,6 +658,53 @@ class MailerTest extends TestCase
     }
 
     /**
+     * Test setting inline attachments with multibyte names
+     */
+    public function testSendWithInlineAttachmentsMultibyteName(): void
+    {
+        $name = '日本語の名前';
+        $this->mailer->setTransport('debug');
+        $this->mailer->setFrom('cake@cakephp.org');
+        $this->mailer->setTo('cake@cakephp.org');
+        $this->mailer->setSubject('My title');
+        $this->mailer->setEmailFormat('html');
+        $this->mailer->setAttachments([
+            $name => [
+                'file' => CORE_PATH . 'VERSION.txt',
+                'contentId' => 'abc123',
+            ],
+        ]);
+        $result = $this->mailer->deliver('Hello');
+
+        $boundary = $this->mailer->boundary;
+        $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+        $expected = "--$boundary\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Type: text/html; charset=UTF-8\r\n" .
+            "Content-Transfer-Encoding: 8bit\r\n" .
+            "\r\n" .
+            'Hello' .
+            "\r\n" .
+            "\r\n" .
+            "\r\n" .
+            "--rel-$boundary\r\n" .
+            "Content-Disposition: inline; filename=\"ri ben yuno ming qian\"; filename*=utf-8''%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E5%90%8D%E5%89%8D\r\n" .
+            "Content-Type: text/plain\r\n" .
+            "Content-Transfer-Encoding: base64\r\n" .
+            "Content-ID: <abc123>\r\n" .
+            "\r\n";
+        $this->assertStringContainsString($expected, $result['message']);
+        $this->assertStringContainsString('--rel-' . $boundary . '--', $result['message']);
+        $this->assertStringContainsString('--' . $boundary . '--', $result['message']);
+
+        // Extract the encoded filename and decode it.
+        preg_match("/utf-8''(.*?)\s/", $result['message'], $matches);
+        $this->assertEquals(urldecode($matches[1]), $name);
+    }
+
+    /**
      * Test disabling content-disposition.
      */
     public function testSendWithNoContentDispositionAttachments(): void
