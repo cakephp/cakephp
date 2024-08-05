@@ -731,11 +731,9 @@ class Route
         }
 
         // check patterns for routed params
-        if ($this->options) {
-            foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
-                    return null;
-                }
+        foreach ($this->options as $key => $pattern) {
+            if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
+                return null;
             }
         }
         $url += $hostOptions;
