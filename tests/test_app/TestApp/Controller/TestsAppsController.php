@@ -22,6 +22,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Controller;
 
+use Cake\Http\Response;
 use RuntimeException;
 
 class TestsAppsController extends AppController
@@ -52,7 +53,7 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to()
+    public function redirect_to(): ?Response
     {
         return $this->redirect('http://cakephp.org');
     }
@@ -60,7 +61,7 @@ class TestsAppsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function redirect_to_permanent()
+    public function redirect_to_permanent(): ?Response
     {
         return $this->redirect('http://cakephp.org', 301);
     }
