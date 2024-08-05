@@ -226,7 +226,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function throw_exception()
+    public function throw_exception(): never
     {
         $this->Flash->error('Error 1');
         throw new OutOfBoundsException('oh no!');
@@ -235,7 +235,7 @@ class PostsController extends AppController
     /**
      * @return \Cake\Http\Response
      */
-    public function throw_chained()
+    public function throw_chained(): never
     {
         $inner = new RuntimeException('inner badness');
         throw new OutOfBoundsException('oh no!', 1, $inner);
