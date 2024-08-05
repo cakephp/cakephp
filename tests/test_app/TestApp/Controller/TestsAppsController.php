@@ -73,7 +73,7 @@ class TestsAppsController extends AppController
         return $this->response->withType('json');
     }
 
-    public function throw_exception()
+    public function throw_exception(): never
     {
         throw new RuntimeException('Foo');
     }
