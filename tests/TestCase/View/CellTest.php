@@ -471,8 +471,8 @@ class CellTest extends TestCase
         $args = ['msg1' => 'dummy', 'msg2' => ' message'];
         /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles::doEcho', $args);
-
-        $beforeEventIsCalled = $afterEventIsCalled = false;
+        $beforeEventIsCalled = false;
+        $afterEventIsCalled = false;
         $manager = $this->View->getEventManager();
         $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled): void {
             $this->assertSame($eventCell, $cell);

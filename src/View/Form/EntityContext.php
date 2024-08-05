@@ -153,8 +153,8 @@ class EntityContext implements ContextInterface
         if (!($table instanceof Table)) {
             throw new CakeException('Unable to find table class for current entity.');
         }
-
-        $alias = $this->_rootName = $table->getAlias();
+        $alias = $table->getAlias();
+        $this->_rootName = $alias;
         $this->_tables[$alias] = $table;
     }
 

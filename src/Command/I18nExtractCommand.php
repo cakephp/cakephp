@@ -332,8 +332,11 @@ class I18nExtractCommand extends Command
         $this->_extractTokens($args, $io);
         $this->_buildFiles($args);
         $this->_writeFiles($args, $io);
-        $this->_paths = $this->_files = $this->_storage = [];
-        $this->_translations = $this->_tokens = [];
+        $this->_paths = [];
+        $this->_files = [];
+        $this->_storage = [];
+        $this->_translations = [];
+        $this->_tokens = [];
         $io->out();
         if ($this->_countMarkerError) {
             $io->err("{$this->_countMarkerError} marker error(s) detected.");

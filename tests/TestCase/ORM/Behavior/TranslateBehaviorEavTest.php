@@ -1163,7 +1163,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $article = $results = $table->find('translations')->first();
+        $article = $table->find('translations')->first();
 
         $translations = $article->get('_translations');
         $translations['deu']->set('title', 'Another title');
@@ -1171,8 +1171,7 @@ class TranslateBehaviorEavTest extends TestCase
         $article->set('_translations', $translations);
         $table->save($article);
         $this->assertNull($article->get('_i18n'));
-
-        $article = $results = $table->find('translations')->first();
+        $article = $table->find('translations')->first();
         $translations = $article->get('_translations');
         $this->assertSame('Another title', $translations['deu']->get('title'));
         $this->assertSame('Another body', $translations['eng']->get('body'));
@@ -1185,7 +1184,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $article = $results = $table->find('translations')->first();
+        $article = $table->find('translations')->first();
 
         $translations = $article->get('_translations');
         $translations['deu']->set('title', 'Another title');
@@ -1195,8 +1194,7 @@ class TranslateBehaviorEavTest extends TestCase
         $article->set('_translations', $translations);
         $table->save($article);
         $this->assertNull($article->get('_i18n'));
-
-        $article = $results = $table->find('translations')->first();
+        $article = $table->find('translations')->first();
         $translations = $article->get('_translations');
         $this->assertSame('Another title', $translations['deu']->get('title'));
         $this->assertSame('Another body', $translations['eng']->get('body'));
@@ -1212,7 +1210,7 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $articles = $results = $table->find('translations');
+        $articles = $table->find('translations');
         $all = $articles->all();
         $this->assertCount(3, $all);
         $article = $all->first();

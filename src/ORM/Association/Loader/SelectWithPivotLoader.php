@@ -107,7 +107,8 @@ class SelectWithPivotLoader extends SelectLoader
 
         $tempName = $this->alias . '_CJoin';
         $schema = $assoc->getSchema();
-        $joinFields = $types = [];
+        $joinFields = [];
+        $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;

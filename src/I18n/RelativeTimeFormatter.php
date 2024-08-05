@@ -230,7 +230,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $past['m'],
                 $past['Y'],
             ] = explode('/', date('H/i/s/d/m/Y', $pastTime));
-            $weeks = $days = $hours = $minutes = $seconds = 0;
+            $weeks = 0;
+            $days = 0;
+            $hours = 0;
+            $minutes = 0;
+            $seconds = 0;
 
             $years = (int)$future['Y'] - (int)$past['Y'];
             $months = (int)$future['m'] + (12 * $years) - (int)$past['m'];
@@ -275,7 +279,9 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $days -= $weeks * 7;
             }
         } else {
-            $years = $months = $weeks = 0;
+            $years = 0;
+            $months = 0;
+            $weeks = 0;
             $days = floor($diff / 86400);
 
             $diff -= $days * 86400;

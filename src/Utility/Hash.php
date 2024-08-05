@@ -1232,8 +1232,8 @@ class Hash
             'children' => 'children',
             'root' => null,
         ];
-
-        $return = $idMap = [];
+        $return = [];
+        $idMap = [];
         $ids = static::extract($data, $options['idPath']);
         assert(is_array($ids));
 

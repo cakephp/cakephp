@@ -55,7 +55,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 
@@ -139,7 +140,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 

@@ -72,7 +72,8 @@ class ResultSetTest extends TestCase
     {
         $query = $this->table->find('all');
         $results = $query->all();
-        $first = $second = [];
+        $first = [];
+        $second = [];
         foreach ($results as $result) {
             $first[] = $result;
         }

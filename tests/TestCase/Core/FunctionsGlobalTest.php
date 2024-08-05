@@ -60,18 +60,19 @@ class FunctionsGlobalTest extends TestCase
 
         $server = $_SERVER;
         $env = $_ENV;
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_ENV['CGI_MODE'] = 'BINARY';
         $_ENV['SCRIPT_URL'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertFalse(env('HTTPS'));
 
@@ -103,8 +104,8 @@ class FunctionsGlobalTest extends TestCase
 
         $_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
         $this->assertFalse(env('HTTPS'));
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertNull(env('TEST_ME'));
 

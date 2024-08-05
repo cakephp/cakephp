@@ -5976,11 +5976,10 @@ class TableTest extends TestCase
         );
         $table->getValidator();
         $this->assertSame(1, $buildValidatorCount);
-
-        $buildRulesCount =
-        $beforeRulesCount =
-        $afterRulesCount =
-        $beforeSaveCount =
+        $buildRulesCount = 0;
+        $beforeRulesCount = 0;
+        $afterRulesCount = 0;
+        $beforeSaveCount = 0;
         $afterSaveCount = 0;
         $eventManager->on(
             'Model.buildRules',
@@ -6022,8 +6021,7 @@ class TableTest extends TestCase
         $this->assertSame(1, $afterRulesCount);
         $this->assertSame(1, $beforeSaveCount);
         $this->assertSame(1, $afterSaveCount);
-
-        $beforeDeleteCount =
+        $beforeDeleteCount = 0;
         $afterDeleteCount = 0;
         $eventManager->on(
             'Model.beforeDelete',

@@ -59,7 +59,9 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (str_contains($length, ',')) {

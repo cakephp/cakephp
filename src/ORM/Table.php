@@ -318,7 +318,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!empty($config['entityClass'])) {
             $this->setEntityClass($config['entityClass']);
         }
-        $eventManager = $behaviors = $associations = null;
+        $eventManager = null;
+        $behaviors = null;
+        $associations = null;
         if (!empty($config['eventManager'])) {
             $eventManager = $config['eventManager'];
         }

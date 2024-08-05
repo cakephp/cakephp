@@ -316,7 +316,8 @@ class Route
             return;
         }
         $route = $this->template;
-        $names = $routeParams = [];
+        $names = [];
+        $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
         preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
@@ -792,8 +793,8 @@ class Route
         }, $pass);
         $pass = implode('/', $pass);
         $out = $this->template;
-
-        $search = $replace = [];
+        $search = [];
+        $replace = [];
         foreach ($this->keys as $key) {
             if (!array_key_exists($key, $params)) {
                 throw new InvalidArgumentException(sprintf(
