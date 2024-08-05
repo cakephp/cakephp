@@ -1562,7 +1562,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return void
      */
-    public function testAssertMessagePrevious()
+    public function testAssertMessagePrevious(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Caused by `RuntimeException`');

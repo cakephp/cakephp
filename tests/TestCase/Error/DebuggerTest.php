@@ -609,7 +609,7 @@ TEXT;
     /**
      * Test stack frame comparisons.
      */
-    public function testGetUniqueFrames()
+    public function testGetUniqueFrames(): void
     {
         $parent = new RuntimeException('parent');
         $child = $this->_makeException();

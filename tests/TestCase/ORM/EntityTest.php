@@ -1723,7 +1723,7 @@ class EntityTest extends TestCase
      * Test infinite recursion in getErrors and hasErrors
      * See https://github.com/cakephp/cakephp/issues/17318
      */
-    public function testGetErrorsRecursionError()
+    public function testGetErrorsRecursionError(): void
     {
         $entity = new Entity();
         $secondEntity = new Entity();
@@ -1741,7 +1741,7 @@ class EntityTest extends TestCase
      * Test infinite recursion in getErrors and hasErrors
      * See https://github.com/cakephp/cakephp/issues/17318
      */
-    public function testHasErrorsRecursionError()
+    public function testHasErrorsRecursionError(): void
     {
         $entity = new Entity();
         $secondEntity = new Entity();
