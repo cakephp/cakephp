@@ -1524,6 +1524,6 @@ trait IntegrationTestTrait
      */
     protected function responseBody(): string
     {
-        return PHP_EOL . '------' . PHP_EOL . (string)$this->_response->getBody() . PHP_EOL . '------' . PHP_EOL;
+        return PHP_EOL . '------' . PHP_EOL . $this->_response->getBody() . PHP_EOL . '------' . PHP_EOL;
     }
 }

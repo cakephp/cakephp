@@ -392,7 +392,7 @@ class HtmlHelper extends Helper
         if (is_array($path)) {
             $out = '';
             foreach ($path as $i) {
-                $out .= "\n\t" . (string)$this->css($i, $options);
+                $out .= "\n\t" . $this->css($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -492,7 +492,7 @@ class HtmlHelper extends Helper
         if (is_array($url)) {
             $out = '';
             foreach ($url as $i) {
-                $out .= "\n\t" . (string)$this->script($i, $options);
+                $out .= "\n\t" . $this->script($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";

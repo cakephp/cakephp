@@ -946,9 +946,9 @@ class Message implements JsonSerializable
 
         $headers['MIME-Version'] = '1.0';
         if ($this->attachments) {
-            $headers['Content-Type'] = 'multipart/mixed; boundary="' . (string)$this->boundary . '"';
+            $headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->boundary . '"';
         } elseif ($this->emailFormat === static::MESSAGE_BOTH) {
-            $headers['Content-Type'] = 'multipart/alternative; boundary="' . (string)$this->boundary . '"';
+            $headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->boundary . '"';
         } elseif ($this->emailFormat === static::MESSAGE_TEXT) {
             $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
         } elseif ($this->emailFormat === static::MESSAGE_HTML) {
