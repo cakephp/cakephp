@@ -25,7 +25,7 @@ class TestMailer extends Mailer
 {
     protected string $messageClass = TestMessage::class;
 
-    public $boundary = null;
+    public $boundary;
 
     public function deliver(string $content = ''): array
     {

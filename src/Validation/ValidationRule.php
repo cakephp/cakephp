@@ -40,7 +40,7 @@ class ValidationRule
      *
      * @var callable|string|null
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
