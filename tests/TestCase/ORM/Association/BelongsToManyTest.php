@@ -967,7 +967,7 @@ class BelongsToManyTest extends TestCase
         ]);
         $joint->setEntityClass(ArticlesTag::class);
 
-        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity) {
+        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity): void {
             $this->assertInstanceOf(ArticlesTag::class, $entity);
             $this->assertNotEmpty($entity->tag_id);
             $this->assertNotEmpty($entity->article_id);

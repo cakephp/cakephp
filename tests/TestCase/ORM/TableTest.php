@@ -620,7 +620,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testFindAllOldStyleOptionsArray(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $table = new Table([
                 'table' => 'users',
                 'connection' => $this->connection,
@@ -1604,7 +1604,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $table->setDisplayField('username');
-        $this->deprecated(function () use ($table) {
+        $this->deprecated(function () use ($table): void {
             $query = $table
                 ->find('list', ['fields' => ['id', 'username']])
                 ->orderBy('id');
@@ -1680,7 +1680,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testFindListWithArray(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $articles = new Table([
                 'table' => 'articles',
                 'connection' => $this->connection,
@@ -2905,7 +2905,7 @@ class TableTest extends TestCase
         $entities->first()->name = 'admad';
         $entities->first()->articles[0]->title = 'First Article Edited';
 
-        $listener = function (EventInterface $event, EntityInterface $entity, $options) {
+        $listener = function (EventInterface $event, EntityInterface $entity, $options): void {
             if ($entity->id === 1) {
                 $this->assertTrue($entity->isDirty());
 
@@ -5391,7 +5391,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testGetBackwardsCompatibility(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $table = $this->getTableLocator()->get('Articles');
             $article = $table->get(1, ['contain' => 'Authors']);
             $this->assertNotEmpty($article->author);

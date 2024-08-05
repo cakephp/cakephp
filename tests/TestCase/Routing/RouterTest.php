@@ -1166,7 +1166,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function () {
+        Router::addUrlFilter(function (): void {
             throw new Exception();
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);

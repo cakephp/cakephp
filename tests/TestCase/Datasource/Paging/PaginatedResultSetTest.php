@@ -50,7 +50,7 @@ class PaginatedResultSetTest extends TestCase
             []
         );
 
-        $this->deprecated(function () use ($paginatedResults) {
+        $this->deprecated(function () use ($paginatedResults): void {
             $result = $paginatedResults->extract('foo')->toList();
             $this->assertEquals(['bar'], $result);
         });

@@ -258,7 +258,7 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error): void {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());
             $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
         });
@@ -274,7 +274,7 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error): void {
             $this->assertEquals(E_USER_NOTICE, $error->getCode());
             $this->assertStringContainsString('Oh no it was bad', $error->getMessage());
             $event->stopPropagation();

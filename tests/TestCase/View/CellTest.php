@@ -474,13 +474,13 @@ class CellTest extends TestCase
 
         $beforeEventIsCalled = $afterEventIsCalled = false;
         $manager = $this->View->getEventManager();
-        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled) {
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled): void {
             $this->assertSame($eventCell, $cell);
             $this->assertEquals('doEcho', $action);
             $this->assertEquals($args, $eventArgs);
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$afterEventIsCalled) {
+        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$afterEventIsCalled): void {
             $this->assertSame($eventCell, $cell);
             $this->assertEquals('doEcho', $action);
             $this->assertEquals($args, $eventArgs);
