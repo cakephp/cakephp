@@ -77,7 +77,7 @@ class PluginAssetsRemoveCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'Remove plugin assets from app\'s webroot.',
+            "Remove plugin assets from app's webroot.",
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to remove.',
             'required' => false,

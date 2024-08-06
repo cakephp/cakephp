@@ -5434,7 +5434,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnTooMuchData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[1, \'two\']`.');
+        $this->expectExceptionMessage("Record not found in table `articles` with primary key `[1, 'two']`.");
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,

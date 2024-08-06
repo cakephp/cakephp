@@ -702,7 +702,7 @@ class ControllerTest extends TestCase
         );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
 
-        $this->assertNull($results->pageCount(), 'SimplePaginator doesn\'t have a page count');
+        $this->assertNull($results->pageCount(), "SimplePaginator doesn't have a page count");
     }
 
     /**
