@@ -267,7 +267,7 @@ class NumericPaginator implements PaginatorInterface
 
         if ($query === null) {
             $args = [];
-            $type = $options['finder'] ?: 'all';
+            $type = empty($options['finder']) ? 'all' : $options['finder'];
             if (is_array($type)) {
                 $args = (array)current($type);
                 $type = key($type);
