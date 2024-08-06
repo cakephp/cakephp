@@ -982,7 +982,14 @@ abstract class Association
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
         $query->formatResults(
-            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath): CollectionInterface {
+            function (
+                CollectionInterface $results,
+                SelectQuery $query
+            ) use (
+                $formatters,
+                $property,
+                $propertyPath
+            ): CollectionInterface {
                 $extracted = [];
                 foreach ($results as $result) {
                     foreach ($propertyPath as $propertyPathItem) {

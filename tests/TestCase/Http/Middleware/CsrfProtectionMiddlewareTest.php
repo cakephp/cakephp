@@ -258,7 +258,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function (): \Laminas\Diactoros\Response {
+        $handler = new TestRequestHandler(function (): DiactorosResponse {
             return new DiactorosResponse();
         });
 

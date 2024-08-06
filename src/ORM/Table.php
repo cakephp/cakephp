@@ -1544,7 +1544,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(function ($key): ?string {
+            $primaryKey = array_map(function ($key): string {
                 return var_export($key, true);
             }, $primaryKey);
 
