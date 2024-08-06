@@ -94,7 +94,7 @@ trait ConsoleIntegrationTestTrait
         $this->_out->clear();
         $this->_err->clear();
 
-        $args = $this->commandStringToArgs("cake $command");
+        $args = $this->commandStringToArgs("cake {$command}");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
         try {

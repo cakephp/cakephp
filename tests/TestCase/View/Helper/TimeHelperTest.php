@@ -218,7 +218,7 @@ class TimeHelperTest extends TestCase
             $yourTimezone = new DateTimeZone($timezone);
             $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
-            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on {$timezone}");
         }
     }
 

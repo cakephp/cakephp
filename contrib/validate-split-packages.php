@@ -92,13 +92,11 @@ foreach ($packages as $package) {
     }
 }
 
-if ($issues) {
-    foreach ($issues as $packageName => $packageIssues) {
-        echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
-        foreach ($packageIssues as $issue) {
-            echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
-            $code = 1;
-        }
+foreach ($issues as $packageName => $packageIssues) {
+    echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
+    foreach ($packageIssues as $issue) {
+        echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
+        $code = 1;
     }
 }
 

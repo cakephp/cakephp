@@ -845,7 +845,7 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
                 $eventTriggered = true;
             }
         );
@@ -863,7 +863,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setRequest(new Request('http://bar.test'));
                 $event->setAdapterOptions(['some' => 'value']);
             }
@@ -897,7 +897,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $this->assertFalse($event->getData('requestSent'));
             }
         );

@@ -413,7 +413,7 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'Let \'em eat cake',
+                'default' => "Let 'em eat cake",
                 'length' => 20,
                 'precision' => null,
                 'comment' => null,

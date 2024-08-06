@@ -97,9 +97,9 @@ class TimeType extends BaseType implements BatchCastingInterface
         if (is_string($value)) {
             if ($this->_useLocaleMarshal) {
                 return $this->_parseLocalTimeValue($value);
-            } else {
-                return $this->_parseTimeValue($value);
             }
+
+            return $this->_parseTimeValue($value);
         }
 
         if (!is_array($value)) {
@@ -233,10 +233,7 @@ class TimeType extends BaseType implements BatchCastingInterface
     {
         if (
             $enable &&
-            !(
-                $this->_className === Time::class ||
-                is_subclass_of($this->_className, Time::class)
-            )
+            ($this->_className !== Time::class && !is_subclass_of($this->_className, Time::class))
         ) {
             throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
         }

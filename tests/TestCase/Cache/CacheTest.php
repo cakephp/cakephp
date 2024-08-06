@@ -109,7 +109,7 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function () {
+        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function (): void {
             Cache::pool('tests');
         });
     }

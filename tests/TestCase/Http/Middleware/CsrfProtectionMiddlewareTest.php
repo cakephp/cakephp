@@ -199,7 +199,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testRegenerateTokenOnGetWithInvalidData()
+    public function testRegenerateTokenOnGetWithInvalidData(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -406,7 +406,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidTokenStringCookies()
+    public function testInvalidTokenStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
@@ -425,7 +425,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidTokenEmptyStringCookies()
+    public function testInvalidTokenEmptyStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([

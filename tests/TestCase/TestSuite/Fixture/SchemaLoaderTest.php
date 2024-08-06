@@ -29,7 +29,7 @@ class SchemaLoaderTest extends TestCase
     /**
      * @var bool|null
      */
-    protected $restore = null;
+    protected $restore;
 
     /**
      * @var \Cake\TestSuite\Fixture\SchemaLoader

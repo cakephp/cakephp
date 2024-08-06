@@ -174,7 +174,7 @@ class BelongsToManyTest extends TestCase
             $field = $driver->quoteIdentifier($field);
         }
 
-        $assoc->setSort("$field DESC");
+        $assoc->setSort("{$field} DESC");
         $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
@@ -967,7 +967,7 @@ class BelongsToManyTest extends TestCase
         ]);
         $joint->setEntityClass(ArticlesTag::class);
 
-        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity) {
+        $joint->getEventManager()->on('Model.afterDelete', function ($event, $entity): void {
             $this->assertInstanceOf(ArticlesTag::class, $entity);
             $this->assertNotEmpty($entity->tag_id);
             $this->assertNotEmpty($entity->article_id);
@@ -1098,7 +1098,7 @@ class BelongsToManyTest extends TestCase
         $this->assertCount(1, $refresh->binary_uuid_tags, 'One tag should remain');
     }
 
-    public function testReplaceLinksComplexTypeForeignKey()
+    public function testReplaceLinksComplexTypeForeignKey(): void
     {
         $articles = $this->fetchTable('CompositeKeyArticles');
         $tags = $this->fetchTable('Tags');
@@ -1153,7 +1153,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('tag2', $result->tags[1]->name);
     }
 
-    public function testReplaceLinksMissingKeyData()
+    public function testReplaceLinksMissingKeyData(): void
     {
         $articles = $this->fetchTable('Articles');
         $tags = $this->fetchTable('Tags');

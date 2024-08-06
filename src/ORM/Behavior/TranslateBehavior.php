@@ -352,7 +352,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         return $query
             ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias): QueryInterface {
                 if ($locales) {
-                    $query->where(["$targetAlias.locale IN" => $locales]);
+                    $query->where(["{$targetAlias}.locale IN" => $locales]);
                 }
 
                 return $query;

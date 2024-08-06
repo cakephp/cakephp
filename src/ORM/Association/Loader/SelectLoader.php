@@ -451,7 +451,8 @@ class SelectLoader
         }
 
         $fields = $query->aliasFields($keys, $this->sourceAlias);
-        $group = $fields = array_values($fields);
+        $group = array_values($fields);
+        $fields = $group;
 
         /** @var \Cake\Database\Expression\QueryExpression $order */
         $order = $query->clause('order');

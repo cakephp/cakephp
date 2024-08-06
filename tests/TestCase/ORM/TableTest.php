@@ -620,7 +620,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testFindAllOldStyleOptionsArray(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $table = new Table([
                 'table' => 'users',
                 'connection' => $this->connection,
@@ -1604,7 +1604,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $table->setDisplayField('username');
-        $this->deprecated(function () use ($table) {
+        $this->deprecated(function () use ($table): void {
             $query = $table
                 ->find('list', ['fields' => ['id', 'username']])
                 ->orderBy('id');
@@ -1680,7 +1680,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testFindListWithArray(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $articles = new Table([
                 'table' => 'articles',
                 'connection' => $this->connection,
@@ -2905,7 +2905,7 @@ class TableTest extends TestCase
         $entities->first()->name = 'admad';
         $entities->first()->articles[0]->title = 'First Article Edited';
 
-        $listener = function (EventInterface $event, EntityInterface $entity, $options) {
+        $listener = function (EventInterface $event, EntityInterface $entity, $options): void {
             if ($entity->id === 1) {
                 $this->assertTrue($entity->isDirty());
 
@@ -3095,9 +3095,9 @@ class TableTest extends TestCase
             $rules->addDelete(function ($entity): bool {
                 if ($entity->author_id === 3) {
                     return false;
-                } else {
-                    return true;
                 }
+
+                return true;
             });
         });
 
@@ -5391,7 +5391,7 @@ class TableTest extends TestCase
     #[WithoutErrorHandler]
     public function testGetBackwardsCompatibility(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $table = $this->getTableLocator()->get('Articles');
             $article = $table->get(1, ['contain' => 'Authors']);
             $this->assertNotEmpty($article->author);
@@ -5434,7 +5434,7 @@ class TableTest extends TestCase
     public function testGetExceptionOnTooMuchData(): void
     {
         $this->expectException(InvalidPrimaryKeyException::class);
-        $this->expectExceptionMessage('Record not found in table `articles` with primary key `[1, \'two\']`.');
+        $this->expectExceptionMessage("Record not found in table `articles` with primary key `[1, 'two']`.");
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5976,11 +5976,10 @@ class TableTest extends TestCase
         );
         $table->getValidator();
         $this->assertSame(1, $buildValidatorCount);
-
-        $buildRulesCount =
-        $beforeRulesCount =
-        $afterRulesCount =
-        $beforeSaveCount =
+        $buildRulesCount = 0;
+        $beforeRulesCount = 0;
+        $afterRulesCount = 0;
+        $beforeSaveCount = 0;
         $afterSaveCount = 0;
         $eventManager->on(
             'Model.buildRules',
@@ -6022,8 +6021,7 @@ class TableTest extends TestCase
         $this->assertSame(1, $afterRulesCount);
         $this->assertSame(1, $beforeSaveCount);
         $this->assertSame(1, $afterSaveCount);
-
-        $beforeDeleteCount =
+        $beforeDeleteCount = 0;
         $afterDeleteCount = 0;
         $eventManager->on(
             'Model.beforeDelete',

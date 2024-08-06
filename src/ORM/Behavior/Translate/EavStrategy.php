@@ -145,9 +145,9 @@ class EavStrategy implements TranslateStrategyInterface
             ]);
         }
 
-        $conditions = ["$targetAlias.model" => $model];
+        $conditions = ["{$targetAlias}.model" => $model];
         if (!$this->_config['allowEmptyTranslations']) {
-            $conditions["$targetAlias.content !="] = '';
+            $conditions["{$targetAlias}.content !="] = '';
         }
 
         if ($this->table->associations()->has($targetAlias)) {

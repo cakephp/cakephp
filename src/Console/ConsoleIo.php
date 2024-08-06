@@ -515,14 +515,14 @@ class ConsoleIo
 
         $optionsText = '';
         if ($options !== null) {
-            $optionsText = " $options ";
+            $optionsText = " {$options} ";
         }
 
         $defaultText = '';
         if ($default !== null) {
-            $defaultText = "[$default] ";
+            $defaultText = "[{$default}] ";
         }
-        $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
+        $this->_out->write('<question>' . $prompt . "</question>{$optionsText}\n{$defaultText}> ", 0);
         $result = $this->_in->read();
 
         $result = $result === null ? '' : trim($result);

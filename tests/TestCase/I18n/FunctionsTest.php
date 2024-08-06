@@ -143,7 +143,7 @@ class FunctionsTest extends TestCase
             '(string) false' => ['false', 'Y-m-d', null],
             '(string) true' => ['true', 'Y-m-d', null],
             '(string) partially valid date' => ['2024-07-01', 'Y-m-d', Date::create(2024, 7, 1)],
-            '(string) date with time' => ['2024-07-01T14:30:00', 'Y-m-d\'T\'H:m:s', null],
+            '(string) date with time' => ['2024-07-01T14:30:00', "Y-m-d'T'H:m:s", null],
 
             // int input types
             '(int) valid timestamp' => [$timestamp, 'Y-m-d', Date::create(2024, 7, 1)],
@@ -167,7 +167,7 @@ class FunctionsTest extends TestCase
             '(other) simple object' => [new stdClass(), 'Y-m-d', null],
 
             // mixed valid cases
-            '(mixed) DateTime string input' => ['2024-07-01T00:00:00Z', 'Y-m-d\'T\'H:m:s\'Z\'', null],
+            '(mixed) DateTime string input' => ['2024-07-01T00:00:00Z', "Y-m-d'T'H:m:s'Z'", null],
             '(mixed) integer string input' => ['1719844200', 'U', Date::create(2024, 7, 1)],
 
             // custom format cases

@@ -393,7 +393,8 @@ class Marshaller
 
         $target = $assoc->getTarget();
         $primaryKey = array_flip((array)$target->getPrimaryKey());
-        $records = $conditions = [];
+        $records = [];
+        $conditions = [];
         $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {

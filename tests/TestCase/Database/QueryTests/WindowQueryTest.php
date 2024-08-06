@@ -38,7 +38,7 @@ class WindowQueryTest extends TestCase
     /**
      * @var \Cake\Database\Connection
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @var bool

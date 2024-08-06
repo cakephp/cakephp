@@ -653,17 +653,17 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '`title` VARCHAR(25) DEFAULT \'ignored\'',
+                "`title` VARCHAR(25) DEFAULT 'ignored'",
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => ''],
-                '`title` VARCHAR(25) DEFAULT \'\'',
+                "`title` VARCHAR(25) DEFAULT ''",
             ],
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\'',
+                "`role` VARCHAR(10) NOT NULL DEFAULT 'admin'",
             ],
             [
                 'id',
@@ -870,7 +870,7 @@ SQL;
             [
                 'created',
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
-                '`created` DATETIME COMMENT \'Created timestamp\'',
+                "`created` DATETIME COMMENT 'Created timestamp'",
             ],
             [
                 'created',
@@ -880,7 +880,7 @@ SQL;
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '`open_date` DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "`open_date` DATETIME NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'created_with_precision',
@@ -917,7 +917,7 @@ SQL;
             [
                 'open_date',
                 ['type' => 'timestamp', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '`open_date` TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "`open_date` TIMESTAMP NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'created_with_precision',
@@ -1518,7 +1518,7 @@ SQL;
             $this->pdo->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value): string {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Mysql::class)

@@ -171,7 +171,8 @@ class ConsoleInputOption
      */
     public function help(int $width = 0): string
     {
-        $default = $short = '';
+        $default = '';
+        $short = '';
         if ($this->_default && $this->_default !== true) {
             $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }

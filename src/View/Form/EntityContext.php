@@ -153,8 +153,8 @@ class EntityContext implements ContextInterface
         if (!($table instanceof Table)) {
             throw new CakeException('Unable to find table class for current entity.');
         }
-
-        $alias = $this->_rootName = $table->getAlias();
+        $alias = $table->getAlias();
+        $this->_rootName = $alias;
         $this->_tables[$alias] = $table;
     }
 
@@ -417,7 +417,7 @@ class EntityContext implements ContextInterface
             $next = $this->_getProp($entity, $prop);
 
             // Did not dig into an entity, return the current one.
-            if (is_array($entity) && !($next instanceof EntityInterface || $next instanceof Traversable)) {
+            if (is_array($entity) && (!$next instanceof EntityInterface && !$next instanceof Traversable)) {
                 return [$leafEntity, array_slice($path, $i - 1)];
             }
 

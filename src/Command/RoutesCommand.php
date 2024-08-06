@@ -45,7 +45,8 @@ class RoutesCommand extends Command
         }
 
         $availableRoutes = Router::routes();
-        $output = $duplicateRoutesCounter = [];
+        $output = [];
+        $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];

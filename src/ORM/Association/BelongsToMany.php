@@ -968,7 +968,8 @@ class BelongsToMany extends Association
     public function setConditions(Closure|array $conditions)
     {
         parent::setConditions($conditions);
-        $this->_targetConditions = $this->_junctionConditions = null;
+        $this->_targetConditions = null;
+        $this->_junctionConditions = null;
 
         return $this;
     }
@@ -1201,8 +1202,8 @@ class BelongsToMany extends Association
 
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
                 $junctionQueryAlias = $junction->getAlias() . '__matches';
-
-                $keys = $matchesConditions = [];
+                $keys = [];
+                $matchesConditions = [];
                 /** @var string $key */
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
                     $aliased = $junction->aliasField($key);
@@ -1282,7 +1283,9 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         $keys = array_merge($foreignKey, $assocForeignKey);
-        $deletes = $unmatchedEntityKeys = $present = [];
+        $deletes = [];
+        $unmatchedEntityKeys = [];
+        $present = [];
 
         foreach ($jointEntities as $i => $entity) {
             $unmatchedEntityKeys[$i] = $entity->extract($keys);

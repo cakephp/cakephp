@@ -326,7 +326,7 @@ class StringTemplate
             $value = implode(' ', $value);
         }
         if (is_numeric($key)) {
-            return "$value=\"$value\"";
+            return "{$value}=\"{$value}\"";
         }
         $truthy = [1, '1', true, 'true', $key];
         $isMinimized = isset($this->_compactAttributes[$key]);
@@ -334,7 +334,7 @@ class StringTemplate
             $key = h($key);
         }
         if ($isMinimized && in_array($value, $truthy, true)) {
-            return "$key=\"$key\"";
+            return "{$key}=\"{$key}\"";
         }
         if ($isMinimized) {
             return '';

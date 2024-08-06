@@ -168,7 +168,7 @@ class NumericPaginatorTest extends TestCase
     {
         $this->expectWarningMessageMatches(
             '/Passing query options as paginator settings is no longer supported/',
-            function () {
+            function (): void {
                 $table = $this->getTableLocator()->get('PaginatorPosts');
                 $this->Paginator->paginate($table, [], ['fields' => ['title']]);
             }

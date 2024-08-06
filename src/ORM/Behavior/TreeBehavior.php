@@ -112,7 +112,7 @@ class TreeBehavior extends Behavior
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) === $parent) {
-            throw new DatabaseException('Cannot set a node\'s parent as itself.');
+            throw new DatabaseException("Cannot set a node's parent as itself.");
         }
 
         if ($isNew) {
@@ -404,8 +404,8 @@ class TreeBehavior extends Behavior
 
         return $this->_scope($query)
             ->where([
-                "$left <=" => $node->get($config['left']),
-                "$right >=" => $node->get($config['right']),
+                "{$left} <=" => $node->get($config['left']),
+                "{$right} >=" => $node->get($config['right']),
             ])
             ->orderBy([$left => 'ASC']);
     }
@@ -638,7 +638,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
@@ -649,7 +649,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
@@ -727,7 +727,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
@@ -738,7 +738,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
