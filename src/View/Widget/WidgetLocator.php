@@ -209,9 +209,11 @@ class WidgetLocator
                 }
             }
 
+            /** @var \Cake\View\Widget\WidgetInterface */
             return $reflection->newInstanceArgs($arguments);
         }
 
+        /** @var \Cake\View\Widget\WidgetInterface */
         return new $className($this->_templates);
     }
 }

@@ -48,6 +48,7 @@ class CommandFactory implements CommandFactoryInterface
             return $this->container->get($className);
         }
 
+        /** @var \Cake\Console\CommandInterface */
         return new $className();
     }
 }
