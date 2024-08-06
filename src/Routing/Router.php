@@ -792,7 +792,7 @@ class Router
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
                 throw new InvalidArgumentException(
-                    "`$key` cannot be used when defining route targets with a string route path."
+                    "`{$key}` cannot be used when defining route targets with a string route path."
                 );
             }
         }

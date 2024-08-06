@@ -306,7 +306,8 @@ class FormProtector
 
         $fields = Hash::flatten($formData);
         $fieldList = array_keys($fields);
-        $multi = $lockedFields = [];
+        $multi = [];
+        $lockedFields = [];
         $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
@@ -332,14 +333,12 @@ class FormProtector
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
-            if ($unlockedFields) {
-                foreach ($unlockedFields as $off) {
-                    $off = explode('.', $off);
-                    $field = array_values(array_intersect(explode('.', $key), $off));
-                    $isUnlocked = ($field === $off);
-                    if ($isUnlocked) {
-                        break;
-                    }
+            foreach ($unlockedFields as $off) {
+                $off = explode('.', $off);
+                $field = array_values(array_intersect(explode('.', $key), $off));
+                $isUnlocked = ($field === $off);
+                if ($isUnlocked) {
+                    break;
                 }
             }
 
@@ -560,7 +559,7 @@ class FormProtector
      */
     protected function debugExpectedFields(array $expectedFields = [], string $missingMessage = ''): ?string
     {
-        if (count($expectedFields) === 0) {
+        if ($expectedFields === []) {
             return null;
         }
 

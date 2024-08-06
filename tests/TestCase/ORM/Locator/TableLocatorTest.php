@@ -685,7 +685,7 @@ class TableLocatorTest extends TestCase
         $this->assertSame($table, $mock);
     }
 
-    public function testQueryFactoryInstance()
+    public function testQueryFactoryInstance(): void
     {
         $articles = $this->_locator->get(ArticlesTable::class);
         $prop1 = new ReflectionProperty($articles, 'queryFactory');

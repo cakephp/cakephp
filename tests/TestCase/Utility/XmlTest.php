@@ -824,7 +824,7 @@ XML;
         $expected = [
             'title' => 'Alertpay automated sales via IPN',
             'link' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
-            'description' => 'I\'m going to show you how I implemented a payment module via the Alertpay payment processor.',
+            'description' => "I'm going to show you how I implemented a payment module via the Alertpay payment processor.",
             'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
             'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
         ];
@@ -1173,7 +1173,7 @@ XML;
         $file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
         $xml = <<<XML
 <!DOCTYPE cakephp [
-  <!ENTITY payload SYSTEM "file://$file" >]>
+  <!ENTITY payload SYSTEM "file://{$file}" >]>
 <request>
   <xxe>&payload;</xxe>
 </request>

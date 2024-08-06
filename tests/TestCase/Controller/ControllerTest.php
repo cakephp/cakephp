@@ -110,7 +110,7 @@ class ControllerTest extends TestCase
      */
     public function testUndefinedPropertyError(): void
     {
-        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function () {
+        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function (): void {
             $controller = new Controller(new ServerRequest());
             $controller->Foo->baz();
         });
@@ -133,7 +133,7 @@ class ControllerTest extends TestCase
         );
     }
 
-    public function testAutoLoadModelUsingDefaultTable()
+    public function testAutoLoadModelUsingDefaultTable(): void
     {
         Configure::write('App.namespace', 'TestApp');
         $Controller = new WithDefaultTableController(new ServerRequest());
@@ -232,7 +232,7 @@ class ControllerTest extends TestCase
         $this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
     }
 
-    public function testAddViewClasses()
+    public function testAddViewClasses(): void
     {
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
@@ -251,7 +251,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassesContentNegotiationMatch()
+    public function testRenderViewClassesContentNegotiationMatch(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -268,7 +268,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassContentNegotiationMatchLast()
+    public function testRenderViewClassContentNegotiationMatchLast(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -285,7 +285,7 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('<?xml', $response->getBody() . '');
     }
 
-    public function testRenderViewClassesContentNegotiationNoMatch()
+    public function testRenderViewClassesContentNegotiationNoMatch(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -302,7 +302,7 @@ class ControllerTest extends TestCase
     /**
      * Test that render() will skip content-negotiation when a view class is set.
      */
-    public function testRenderViewClassContentNegotiationSkipWithViewClass()
+    public function testRenderViewClassContentNegotiationSkipWithViewClass(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -325,7 +325,7 @@ class ControllerTest extends TestCase
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
-    public function testRenderViewClassesContentNegotiationMatchAllType()
+    public function testRenderViewClassesContentNegotiationMatchAllType(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -339,7 +339,7 @@ class ControllerTest extends TestCase
         $this->assertSame(406, $response->getStatusCode(), 'status code is wrong');
     }
 
-    public function testRenderViewClassesSetContentTypeHeader()
+    public function testRenderViewClassesSetContentTypeHeader(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -353,7 +353,7 @@ class ControllerTest extends TestCase
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
-    public function testRenderViewClassesUsesSingleMimeExt()
+    public function testRenderViewClassesUsesSingleMimeExt(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -367,7 +367,7 @@ class ControllerTest extends TestCase
         $this->assertNotEmpty(json_decode($response->getBody() . ''), 'Body should be json');
     }
 
-    public function testRenderViewClassesUsesMultiMimeExt()
+    public function testRenderViewClassesUsesMultiMimeExt(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -381,7 +381,7 @@ class ControllerTest extends TestCase
         $this->assertTextStartsWith('<?xml', $response->getBody() . '', 'Body should be xml');
     }
 
-    public function testRenderViewClassesMineExtMissingView()
+    public function testRenderViewClassesMineExtMissingView(): void
     {
         $request = new ServerRequest([
             'url' => '/',
@@ -707,7 +707,7 @@ class ControllerTest extends TestCase
         );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
 
-        $this->assertNull($results->pageCount(), 'SimplePaginator doesn\'t have a page count');
+        $this->assertNull($results->pageCount(), "SimplePaginator doesn't have a page count");
     }
 
     /**
@@ -725,7 +725,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf(PaginatedInterface::class, $results);
     }
 
-    public function testPaginateException()
+    public function testPaginateException(): void
     {
         $this->expectException(NotFoundException::class);
 

@@ -366,7 +366,8 @@ class Log
         foreach ($registry->loaded() as $streamName) {
             /** @var \Psr\Log\LoggerInterface $logger */
             $logger = $registry->{$streamName};
-            $levels = $scopes = null;
+            $levels = null;
+            $scopes = null;
 
             if ($logger instanceof BaseLog) {
                 $levels = $logger->levels();

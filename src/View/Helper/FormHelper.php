@@ -1919,7 +1919,7 @@ class FormHelper extends Helper
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
             $onClick = $this->_confirm($onClick, '');
-            $onClick = $onClick . 'event.returnValue = false; return false;';
+            $onClick .= 'event.returnValue = false; return false;';
             $onClick = $this->templater()->format('confirmJs', [
                 'confirmMessage' => h($confirmMessage),
                 'formName' => $formName,
@@ -2341,7 +2341,7 @@ class FormHelper extends Helper
         $options += ['fieldName' => $field];
 
         if (!isset($options['secure'])) {
-            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
+            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') !== null;
         }
         $context = $this->_getContext();
 
@@ -2421,7 +2421,7 @@ class FormHelper extends Helper
                     fn ($i) => in_array($i['value'], $options['disabled'], true)
                 );
 
-                return count($disabled) > 0;
+                return $disabled !== [];
             }
         }
 
@@ -2582,8 +2582,8 @@ class FormHelper extends Helper
         $diff = array_diff($sources, $this->supportedValueSources);
 
         if ($diff) {
-            array_walk($diff, fn (&$x) => $x = "`$x`");
-            array_walk($this->supportedValueSources, fn (&$x) => $x = "`$x`");
+            array_walk($diff, fn (&$x) => $x = "`{$x}`");
+            array_walk($this->supportedValueSources, fn (&$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),

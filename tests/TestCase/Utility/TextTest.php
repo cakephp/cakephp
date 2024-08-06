@@ -539,7 +539,7 @@ TEXT;
         $text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
         $text4 = '<IMG src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
         $text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
-        $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
+        $text6 = "<p><strong>Extra dates have been announced for this year's tour.</strong></p><p>Tickets for the new shows in</p>";
         $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
         $text8 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
         $text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
@@ -583,8 +583,8 @@ TEXT;
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertSame($expected, $result);
 
-        $text = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The quick brown fox jumps over the lazy dog</p>';
-        $expected = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The qu...</p>';
+        $text = "<style>text-align: center;</style><script>console.log('test');</script><p>The quick brown fox jumps over the lazy dog</p>";
+        $expected = "<style>text-align: center;</style><script>console.log('test');</script><p>The qu...</p>";
         $result = $this->Text->truncate($text, 9, ['html' => true, 'ellipsis' => '...']);
         $this->assertSame($expected, $result);
     }

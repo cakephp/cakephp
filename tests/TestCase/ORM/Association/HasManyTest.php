@@ -202,7 +202,7 @@ class HasManyTest extends TestCase
             $field = $driver->quoteIdentifier($field);
         }
 
-        $assoc->setSort("$field DESC");
+        $assoc->setSort("{$field} DESC");
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
@@ -733,7 +733,7 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit without order.
      */
-    public function testSubqueryWithLimit()
+    public function testSubqueryWithLimit(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
@@ -754,7 +754,7 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit with order.
      */
-    public function testSubqueryWithLimitAndOrder()
+    public function testSubqueryWithLimitAndOrder(): void
     {
         $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver, 'Sql Server does not support ORDER BY on field not in GROUP BY');
 

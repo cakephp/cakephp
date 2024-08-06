@@ -234,7 +234,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $alias = $config['mainTableAlias'];
         $joinRequired = false;
         foreach ($this->translatedFields() as $field) {
-            if (array_intersect($select, [$field, "$alias.$field"])) {
+            if (array_intersect($select, [$field, "{$alias}.{$field}"])) {
                 $joinRequired = true;
                 $query->select($query->aliasField($field, $config['hasOneAlias']));
             }
@@ -281,9 +281,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $field = "$alias.$field";
+                    $field = "{$alias}.{$field}";
                 } elseif (in_array($field, $mainTableFields, true)) {
-                    $field = "$mainTableAlias.$field";
+                    $field = "{$mainTableAlias}.{$field}";
                 }
 
                 return $c;
@@ -331,13 +331,13 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $expression->setField("$alias.$field");
+                    $expression->setField("{$alias}.{$field}");
 
                     return;
                 }
 
                 if (in_array($field, $mainTableFields, true)) {
-                    $expression->setField("$mainTableAlias.$field");
+                    $expression->setField("{$mainTableAlias}.{$field}");
                 }
             }
         );
@@ -522,14 +522,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     continue;
                 }
 
-                if ($translation[$field] !== null) {
-                    if ($allowEmpty || $translation[$field] !== '') {
-                        $row[$field] = $translation[$field];
-
-                        if ($hydrated) {
-                            /** @var \Cake\Datasource\EntityInterface $row */
-                            $row->setDirty($field, false);
-                        }
+                if ($translation[$field] !== null && ($allowEmpty || $translation[$field] !== '')) {
+                    $row[$field] = $translation[$field];
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
                     }
                 }
             }

@@ -116,10 +116,8 @@ class Debugger
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower($instance[0]::class)) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower($instance[0]::class))) {
+            $instance[0] = new $class();
         }
         if (!$instance) {
             $instance[0] = new Debugger();
@@ -385,8 +383,8 @@ class Debugger
             if (isset($backtrace[$i])) {
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
-
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';

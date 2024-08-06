@@ -216,7 +216,7 @@ class Statement implements StatementInterface
 
         return static::MODE_NAME_MAP[$mode]
             ??
-            throw new InvalidArgumentException('Invalid fetch mode requested. Expected \'assoc\', \'num\' or \'obj\'.');
+            throw new InvalidArgumentException("Invalid fetch mode requested. Expected 'assoc', 'num' or 'obj'.");
     }
 
     /**

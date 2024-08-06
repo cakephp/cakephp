@@ -63,8 +63,8 @@ foreach ($exceptions as $level => $exc):
     <ul class="stack-frames">
     <?php
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];

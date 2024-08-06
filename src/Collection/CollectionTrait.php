@@ -535,7 +535,7 @@ trait CollectionTrait
                 $offset++;
             }
 
-            $offset = $offset % $length;
+            $offset %= $length;
             $head = array_slice($result, $offset);
             $tail = array_slice($result, 0, $offset);
 
@@ -812,7 +812,7 @@ trait CollectionTrait
 
             if (!isset($modes[$order])) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid direction `%s` provided. Must be one of: \'desc\', \'asc\', \'leaves\'.',
+                    "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'.",
                     $order
                 ));
             }

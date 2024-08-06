@@ -140,7 +140,7 @@ class WhenThenExpression implements ExpressionInterface
             $typeMap = clone $this->_typeMap;
             if (
                 is_array($type) &&
-                count($type) > 0
+                $type !== []
             ) {
                 $typeMap = $typeMap->setTypes($type);
             }
@@ -282,7 +282,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $then = $this->compileNullableValue($binder, $this->then, $this->thenType);
 
-        return "WHEN $when THEN $then";
+        return "WHEN {$when} THEN {$then}";
     }
 
     /**

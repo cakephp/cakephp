@@ -743,7 +743,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -772,7 +772,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints2(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -830,7 +830,7 @@ class ConnectionTest extends TestCase
         );
 
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());

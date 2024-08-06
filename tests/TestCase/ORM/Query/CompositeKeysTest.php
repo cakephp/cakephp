@@ -712,7 +712,7 @@ class CompositeKeysTest extends TestCase
         } elseif ($driver instanceof Sqlite) {
             $serverVersion = $driver->version();
             if (version_compare($serverVersion, '3.15.0', '<')) {
-                $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
+                $this->markTestSkipped("Sqlite ({$serverVersion}) does not support the requirements of this test.");
             }
         }
 

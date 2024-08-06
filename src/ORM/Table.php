@@ -318,7 +318,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!empty($config['entityClass'])) {
             $this->setEntityClass($config['entityClass']);
         }
-        $eventManager = $behaviors = $associations = null;
+        $eventManager = null;
+        $behaviors = null;
+        $associations = null;
         if (!empty($config['eventManager'])) {
             $eventManager = $config['eventManager'];
         }
@@ -1407,12 +1409,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->combine(
-                $options['keyField'],
-                $options['valueField'],
-                $options['groupField']
-            ));
+        return $query->formatResults(fn (CollectionInterface $results) => $results->combine(
+            $options['keyField'],
+            $options['valueField'],
+            $options['groupField']
+        ));
     }
 
     /**
@@ -1447,8 +1448,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
-        return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->nest($options['keyField'], $options['parentField'], $nestingKey));
+        return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
+            $options['keyField'],
+            $options['parentField'],
+            $nestingKey
+        ));
     }
 
     /**
@@ -2024,7 +2028,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = $this->getAlias();
             $conditions = [];
             foreach ($entity->extract($primaryColumns) as $k => $v) {
-                $conditions["$alias.$k"] = $v;
+                $conditions["{$alias}.{$k}"] = $v;
             }
             $entity->setNew(!$this->exists($conditions));
         }
@@ -2243,10 +2247,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        if (count($primaryColumns) === 0) {
+        if ($primaryColumns === []) {
             $entityClass = $entity::class;
             $table = $this->getTable();
-            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            $message = "Cannot update `{$entityClass}`. The `{$table}` has no primary key.";
             throw new InvalidArgumentException($message);
         }
 
@@ -2785,7 +2789,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $conditions;
         };
 
-        if ($hasOr !== false && $hasAnd !== false) {
+        if ($hasOr && $hasAnd) {
             throw new BadMethodCallException(
                 'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
             );
@@ -2793,7 +2797,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
-        } elseif ($hasOr !== false) {
+        } elseif ($hasOr) {
             $fields = explode('_or_', $fields);
             $conditions = [
                 'OR' => $makeConditions($fields, $args),

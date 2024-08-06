@@ -56,7 +56,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**
@@ -1300,7 +1300,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])

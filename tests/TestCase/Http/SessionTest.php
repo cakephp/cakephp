@@ -526,7 +526,7 @@ class SessionTest extends TestCase
         $this->assertSame($engine, $session->engine());
     }
 
-    public function testEngineIsNull()
+    public function testEngineIsNull(): void
     {
         $session = new Session();
         $this->assertNull($session->engine());

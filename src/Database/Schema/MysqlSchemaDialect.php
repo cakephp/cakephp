@@ -105,7 +105,9 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[2]) && strlen($matches[2])) {
             $length = $matches[2];
             if (str_contains($matches[2], ',')) {
@@ -232,11 +234,13 @@ class MysqlSchemaDialect extends SchemaDialect
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = null;
-        $columns = $length = [];
+        $columns = [];
+        $length = [];
 
         $name = $row['Key_name'];
         if ($name === 'PRIMARY') {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
         }
 
         if (!empty($row['Column_name'])) {

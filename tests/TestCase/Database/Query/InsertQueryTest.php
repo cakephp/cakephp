@@ -286,7 +286,7 @@ class InsertQueryTest extends TestCase
             !$this->autoQuote
         );
         $this->assertQuotedQuery(
-            'SELECT <name>, \'some text\', 99 FROM <authors>',
+            "SELECT <name>, 'some text', 99 FROM <authors>",
             $result,
             !$this->autoQuote
         );

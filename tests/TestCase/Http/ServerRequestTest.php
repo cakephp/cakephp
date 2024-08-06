@@ -476,7 +476,7 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('delete'));
     }
 
-    public function testExceptionForInvalidType()
+    public function testExceptionForInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No detector set for type `nonexistent`');

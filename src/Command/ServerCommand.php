@@ -160,7 +160,7 @@ class ServerCommand extends Command
     {
         $parser->setDescription([
             'PHP Built-in Server for CakePHP',
-            '<warning>[WARN] Don\'t use this in a production environment</warning>',
+            "<warning>[WARN] Don't use this in a production environment</warning>",
         ])->addOption('host', [
             'short' => 'H',
             'help' => 'ServerHost',

@@ -106,7 +106,7 @@ class TableHelper extends Helper
      */
     protected function _render(array $row, array $widths, array $options = []): void
     {
-        if (count($row) === 0) {
+        if ($row === []) {
             return;
         }
 

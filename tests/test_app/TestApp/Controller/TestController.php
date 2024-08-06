@@ -82,7 +82,7 @@ class TestController extends ControllerTestAppController
     /**
      * @return \Cake\Http\Response
      */
-    public function willCauseException()
+    public function willCauseException(): string
     {
         return '';
     }

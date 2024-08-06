@@ -160,7 +160,8 @@ class TextHelper extends Helper
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
-            $link = $url = $content['content'];
+            $link = $content['content'];
+            $url = $content['content'];
             $envelope = $content['envelope'];
             if (!preg_match('#^[a-z]+\://#i', $url)) {
                 $url = 'http://' . $url;

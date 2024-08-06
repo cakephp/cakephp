@@ -44,7 +44,7 @@ class MailContains extends MailConstraintBase
             $method = $this->getTypeMethod();
             $message = $message->$method();
 
-            if (preg_match("/$other/", $message) > 0) {
+            if (preg_match("/{$other}/", $message) > 0) {
                 return true;
             }
         }

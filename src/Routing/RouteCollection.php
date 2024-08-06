@@ -115,7 +115,7 @@ class RouteCollection
         $path = $route->staticPath();
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if ($extensions !== []) {
             $this->setExtensions($extensions);
         }
 
@@ -397,13 +397,13 @@ class RouteCollection
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            $message = "Cannot add middleware group '{$name}'. A middleware by this name has already been registered.";
             throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
-                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                $message = "Cannot add '{$middlewareName}' middleware to group '{$name}'. It has not been registered.";
                 throw new InvalidArgumentException($message);
             }
         }

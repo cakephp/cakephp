@@ -377,7 +377,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = (count($this->trustedProxies) > 0);
+            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
 
             if ($trusted) {
@@ -622,10 +622,10 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+            return isset($this->params[$key]) && $this->params[$key] == $value;
         }
         if (isset($detect['options'])) {
-            return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+            return isset($this->params[$key]) && in_array($this->params[$key], $detect['options']);
         }
 
         return false;
@@ -1548,7 +1548,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '$name'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute."
             );
         }
         unset($new->attributes[$name]);

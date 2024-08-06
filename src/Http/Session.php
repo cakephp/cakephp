@@ -356,8 +356,8 @@ class Session
         if (session_status() === PHP_SESSION_ACTIVE) {
             throw new CakeException('Session was already started');
         }
-
-        $filename = $line = null;
+        $filename = null;
+        $line = null;
         if (ini_get('session.use_cookies') && headers_sent($filename, $line)) {
             $this->headerSentInfo = ['filename' => $filename, 'line' => $line];
 

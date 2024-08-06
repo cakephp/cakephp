@@ -406,7 +406,7 @@ class CookieCollectionTest extends TestCase
      */
     public function testCookieSizeWarning(): void
     {
-        $this->expectWarningMessageMatches('/The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.*/', function () {
+        $this->expectWarningMessageMatches('/The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.*/', function (): void {
             $string = Security::insecureRandomBytes(9000);
             $collection = new CookieCollection();
             $collection = $collection

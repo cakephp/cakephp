@@ -773,7 +773,7 @@ class CaseStatementExpressionTest extends TestCase
             ->then(1);
     }
 
-    public function testSqlInjectionViaUntypedWhenValueIsNotPossible()
+    public function testSqlInjectionViaUntypedWhenValueIsNotPossible(): void
     {
         $expression = (new CaseStatementExpression())
             ->when('1 THEN 1 END; DELETE * FROM foo; --')
@@ -954,7 +954,7 @@ class CaseStatementExpressionTest extends TestCase
 
     // region Getters
 
-    public function testGetInvalidCaseExpressionClause()
+    public function testGetInvalidCaseExpressionClause(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -964,7 +964,7 @@ class CaseStatementExpressionTest extends TestCase
         (new CaseStatementExpression())->clause('invalid');
     }
 
-    public function testGetInvalidWhenThenExpressionClause()
+    public function testGetInvalidWhenThenExpressionClause(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -1191,7 +1191,7 @@ class CaseStatementExpressionTest extends TestCase
             '`\Cake\Database\Expression\WhenThenExpression`, `null` given.'
         );
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             (new CaseStatementExpression())
                 ->when(function () {
                     return null;
@@ -1278,7 +1278,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression must have at least one when statement.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             (new CaseStatementExpression())->sql(new ValueBinder());
         });
     }
@@ -1288,7 +1288,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             (new CaseStatementExpression())
                 ->when(['Table.column' => true])
                 ->sql(new ValueBinder());
@@ -1300,7 +1300,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `when()`.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             (new CaseStatementExpression())
                 ->when(function (WhenThenExpression $whenThen) {
                     return $whenThen->then(1);
@@ -1314,7 +1314,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             (new CaseStatementExpression())
                 ->when(function (WhenThenExpression $whenThen) {
                     return $whenThen->when(1);
@@ -1365,7 +1365,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE $sqlValue WHEN :c0 THEN :c1 ELSE NULL END",
+                "CASE {$sqlValue} WHEN :c0 THEN :c1 ELSE NULL END",
                 $sql
             );
 
@@ -1710,7 +1710,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE WHEN :c0 THEN $sqlValue ELSE NULL END",
+                "CASE WHEN :c0 THEN {$sqlValue} ELSE NULL END",
                 $sql
             );
 
@@ -1787,7 +1787,7 @@ class CaseStatementExpressionTest extends TestCase
 
         if ($sqlValue) {
             $this->assertEqualsSql(
-                "CASE WHEN :c0 THEN :c1 ELSE $sqlValue END",
+                "CASE WHEN :c0 THEN :c1 ELSE {$sqlValue} END",
                 $sql
             );
 
@@ -1847,7 +1847,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function () {
+                function (): void {
                 },
                 'Closure',
             ],
@@ -1865,7 +1865,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$value` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         new CaseStatementExpression($value);
@@ -1891,7 +1891,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function () {
+                function (): void {
                 },
                 'Closure',
             ],
@@ -1909,7 +1909,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         (new CaseStatementExpression())
@@ -1927,7 +1927,7 @@ class CaseStatementExpressionTest extends TestCase
             [1.0],
             [new stdClass()],
             [
-                function () {
+                function (): void {
                 },
             ],
             [$res, 'resource (closed)'],
@@ -1955,7 +1955,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function () {
+                function (): void {
                 },
                 'Closure',
             ],
@@ -1973,7 +1973,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `$typeName` given."
+            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given."
         );
 
         (new CaseStatementExpression())
@@ -1992,7 +1992,7 @@ class CaseStatementExpressionTest extends TestCase
             [1.0],
             [new stdClass()],
             [
-                function () {
+                function (): void {
                 },
                 'Closure',
             ],
@@ -2035,7 +2035,7 @@ class CaseStatementExpressionTest extends TestCase
             ->else($else);
 
         $expressions = [];
-        $expression->traverse(function ($expression) use (&$expressions) {
+        $expression->traverse(function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 
@@ -2058,12 +2058,12 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $expression = (new CaseStatementExpression())
                 ->when(['Table.column' => true]);
 
             $expression->traverse(
-                function () {
+                function (): void {
                 }
             );
         });
@@ -2099,7 +2099,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $expression = (new CaseStatementExpression())
                 ->when(['Table.column' => true]);
 

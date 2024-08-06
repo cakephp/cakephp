@@ -393,7 +393,7 @@ class View implements EventDispatcherInterface
     protected function setContentType(): void
     {
         $viewContentType = static::contentType();
-        if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
+        if (!$viewContentType || $viewContentType === static::TYPE_MATCH_ALL) {
             return;
         }
         $response = $this->getResponse();
@@ -1332,15 +1332,15 @@ class View implements EventDispatcherInterface
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
-        $templatePath = $subDir = '';
-
+        $templatePath = '';
+        $subDir = '';
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
         if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && str_ends_with($templatePath, $subDir)) {
+            if ($templatePath !== $subDir && str_ends_with($templatePath, $subDir)) {
                 $subDir = '';
             }
         }
@@ -1569,7 +1569,7 @@ class View implements EventDispatcherInterface
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
-        if ($cached === true) {
+        if ($cached) {
             if ($plugin === null && !empty($this->_paths)) {
                 return $this->_paths;
             }
@@ -1578,7 +1578,8 @@ class View implements EventDispatcherInterface
             }
         }
         $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
-        $pluginPaths = $themePaths = [];
+        $pluginPaths = [];
+        $themePaths = [];
         if ($plugin) {
             foreach ($templatePaths as $templatePath) {
                 $pluginPaths[] = $templatePath

@@ -140,15 +140,13 @@ class Text
                     if ($char === $rightBound) {
                         $depth--;
                     }
-                } else {
-                    if ($char === $leftBound) {
-                        if (!$open) {
-                            $depth++;
-                            $open = true;
-                        } else {
-                            $depth--;
-                            $open = false;
-                        }
+                } elseif ($char === $leftBound) {
+                    if (!$open) {
+                        $depth++;
+                        $open = true;
+                    } else {
+                        $depth--;
+                        $open = false;
                     }
                 }
                 $tmpOffset += 1;
@@ -501,7 +499,7 @@ class Text
             foreach ($phrase as $key => $segment) {
                 $segment = '(' . preg_quote($segment, '|') . ')';
                 if ($options['html']) {
-                    $segment = "(?![^<]+>)$segment(?![^<]+>)";
+                    $segment = "(?![^<]+>){$segment}(?![^<]+>)";
                 }
 
                 $with[] = is_array($options['format']) ? $options['format'][$key] : $options['format'];
@@ -513,7 +511,7 @@ class Text
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
         if ($options['html']) {
-            $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+            $phrase = "(?![^<]+>){$phrase}(?![^<]+>)";
         }
 
         return (string)preg_replace(
@@ -861,8 +859,8 @@ class Text
         if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
-
-        $append = $prepend = $ellipsis;
+        $append = $ellipsis;
+        $prepend = $ellipsis;
 
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);

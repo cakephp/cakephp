@@ -1108,7 +1108,7 @@ class PaginatorHelper extends Helper
             );
         }
 
-        $out = implode($links);
+        $out = implode('', $links);
 
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;

@@ -104,8 +104,8 @@ class EagerLoaderTest extends TestCase
                 'primary' => ['type' => 'primary', 'columns' => ['id']],
             ],
         ];
-
-        $this->table = $table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $this->table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $table = $this->table;
         $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
         $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
         $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);

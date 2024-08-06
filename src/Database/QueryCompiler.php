@@ -138,7 +138,7 @@ class QueryCompiler
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
-                (is_array($part) && empty($part)) ||
+                ($part === []) ||
                 ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
@@ -208,7 +208,7 @@ class QueryCompiler
         $parts = $this->_stringifyExpressions($parts, $binder);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ';
+                $p .= ' AS ';
                 if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {

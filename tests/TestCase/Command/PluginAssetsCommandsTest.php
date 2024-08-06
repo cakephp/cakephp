@@ -223,7 +223,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**
@@ -243,7 +243,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'test_plugin');
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'company' . DS . 'test_plugin_three');
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**
