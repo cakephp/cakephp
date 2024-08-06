@@ -2996,12 +2996,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field is required';
-        } else {
-            $message = __d('cake', 'This field is required');
+            return 'This field is required';
         }
 
-        return $message;
+        return __d('cake', 'This field is required');
     }
 
     /**
@@ -3027,12 +3025,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field cannot be left empty';
-        } else {
-            $message = __d('cake', 'This field cannot be left empty');
+            return 'This field cannot be left empty';
         }
 
-        return $message;
+        return __d('cake', 'This field cannot be left empty');
     }
 
     /**

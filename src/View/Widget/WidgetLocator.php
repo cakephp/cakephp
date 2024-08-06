@@ -208,12 +208,12 @@ class WidgetLocator
                     $arguments[] = $this->get($requirement);
                 }
             }
-            $instance = $reflection->newInstanceArgs($arguments);
-        } else {
-            $instance = new $className($this->_templates);
+
+            /** @var \Cake\View\Widget\WidgetInterface */
+            return $reflection->newInstanceArgs($arguments);
         }
 
         /** @var \Cake\View\Widget\WidgetInterface */
-        return $instance;
+        return new $className($this->_templates);
     }
 }
