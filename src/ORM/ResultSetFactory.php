@@ -234,6 +234,7 @@ class ResultSetFactory
             $results = $results[$data['primaryAlias']];
         }
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
+            /** @var \Cake\Datasource\EntityInterface */
             return new $data['entityClass']($results, $options);
         }
 
