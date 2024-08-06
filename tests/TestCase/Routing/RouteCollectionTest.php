@@ -776,7 +776,7 @@ class RouteCollectionTest extends TestCase
         });
         $this->assertSame($result, $this->collection);
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
@@ -795,7 +795,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('closure', function (): void {
         });
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $this->collection->registerMiddleware('callable', $callable);
 
@@ -825,7 +825,7 @@ class RouteCollectionTest extends TestCase
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->expectExceptionMessage("Cannot add 'bad' middleware to group 'group'. It has not been registered.");
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

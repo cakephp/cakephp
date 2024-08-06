@@ -76,7 +76,7 @@ class RoutesCheckCommand extends Command
             $io->helper('table')->output($output);
             $io->out();
         } catch (MissingRouteException) {
-            $io->warning("'$url' did not match any routes.");
+            $io->warning("'{$url}' did not match any routes.");
             $io->out();
 
             return static::CODE_ERROR;

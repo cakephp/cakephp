@@ -189,7 +189,7 @@ class TestCaseTest extends TestCase
      */
     public function testDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             trigger_error('deprecation message', E_USER_DEPRECATED);
         });
     }
@@ -200,7 +200,7 @@ class TestCaseTest extends TestCase
     public function testDeprecatedWithAssertAfterTriggerWarning(): void
     {
         try {
-            $this->deprecated(function () {
+            $this->deprecated(function (): void {
                 trigger_error('deprecation message', E_USER_DEPRECATED);
                 $this->fail('A random message');
             });
@@ -217,7 +217,7 @@ class TestCaseTest extends TestCase
     public function testDeprecatedWithNoDeprecation(): void
     {
         try {
-            $this->deprecated(function () {
+            $this->deprecated(function (): void {
             });
 
             $this->fail();
@@ -236,13 +236,13 @@ class TestCaseTest extends TestCase
          * setting stackframe = 0 and having same method
          * to have same deprecation message and same line for all cases
          */
-        $fun = function () {
+        $fun = function (): void {
             deprecationWarning('5.0.0', 'Test same deprecation message', 0);
         };
-        $this->deprecated(function () use ($fun) {
+        $this->deprecated(function () use ($fun): void {
             $fun();
         });
-        $this->deprecated(function () use ($fun) {
+        $this->deprecated(function () use ($fun): void {
             $fun();
         });
     }
@@ -388,7 +388,7 @@ class TestCaseTest extends TestCase
         $Tags = $this->getMockForModel('Tags', ['save']);
         $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $SluggedPosts = $this->getMockForModel('SluggedPosts', ['slugify']);
             $SluggedPosts->expects($this->once())
                 ->method('slugify')

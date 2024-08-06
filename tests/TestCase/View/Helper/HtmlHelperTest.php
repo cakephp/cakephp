@@ -300,7 +300,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => 'http://www.example.org?param1=value1&amp;param2=value2'], 'http://www.example.org?param1=value1&amp;param2=value2', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+        $result = $this->Html->link('alert', "javascript:alert('cakephp');");
         $expected = ['a' => ['href' => 'javascript:alert(&#039;cakephp&#039;);'], 'alert', '/a'];
         $this->assertHtml($expected, $result);
 

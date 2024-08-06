@@ -142,11 +142,9 @@ trait LogTestTrait
             }
             $messages = $engineObj->read();
             $engineScopes = $engineObj->scopes();
-            if ($scope !== null) {
-                // No overlapping scopes
-                if (!in_array($scope, $engineScopes, true)) {
-                    continue;
-                }
+            // No overlapping scopes
+            if ($scope !== null && !in_array($scope, $engineScopes, true)) {
+                continue;
             }
             foreach ($messages as $message) {
                 if ($contains && str_contains($message, $expectedMessage) || $message === $expectedMessage) {

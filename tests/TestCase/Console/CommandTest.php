@@ -74,7 +74,7 @@ class CommandTest extends TestCase
     public function testSetNameInvalid(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+        $this->expectExceptionMessage("The name 'routes_show' is missing a space. Names should look like `cake routes`");
 
         $command = new Command();
         $command->setName('routes_show');

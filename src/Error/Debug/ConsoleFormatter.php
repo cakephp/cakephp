@@ -124,7 +124,7 @@ class ConsoleFormatter implements FormatterInterface
             return match ($var->getType()) {
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
-                'string' => $this->style('string', "'" . (string)$var->getValue() . "'"),
+                'string' => $this->style('string', "'" . $var->getValue() . "'"),
                 'int', 'float' => $this->style('visibility', "({$var->getType()})") .
                         ' ' . $this->style('number', "{$var->getValue()}"),
                 default => "({$var->getType()}) {$var->getValue()}",

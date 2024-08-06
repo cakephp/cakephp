@@ -263,7 +263,7 @@ class BaseApplicationTest extends TestCase
     public function testBuildContainerEventReplaceContainer(): void
     {
         $app = $this->app;
-        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event) {
+        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event): void {
             $new = new Container();
             $new->add('testing', 'yes');
 

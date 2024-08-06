@@ -453,8 +453,8 @@ class CommandRunnerTest extends TestCase
 
         $output = new StubConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
-
-        $startedEventTriggered = $finishedEventTriggered = false;
+        $startedEventTriggered = false;
+        $finishedEventTriggered = false;
         $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);

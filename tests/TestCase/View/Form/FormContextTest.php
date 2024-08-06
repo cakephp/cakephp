@@ -40,7 +40,7 @@ class FormContextTest extends TestCase
     public function testGetRequiredMessage(): void
     {
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
 
         $form = new Form();
         $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
@@ -50,7 +50,7 @@ class FormContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**

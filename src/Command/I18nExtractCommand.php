@@ -332,8 +332,11 @@ class I18nExtractCommand extends Command
         $this->_extractTokens($args, $io);
         $this->_buildFiles($args);
         $this->_writeFiles($args, $io);
-        $this->_paths = $this->_files = $this->_storage = [];
-        $this->_translations = $this->_tokens = [];
+        $this->_paths = [];
+        $this->_files = [];
+        $this->_storage = [];
+        $this->_translations = [];
+        $this->_tokens = [];
         $io->out();
         if ($this->_countMarkerError) {
             $io->err("{$this->_countMarkerError} marker error(s) detected.");
@@ -373,7 +376,7 @@ class I18nExtractCommand extends Command
             'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
         ])->addOption('plugin', [
             'help' => 'Extracts tokens only from the plugin specified and '
-                . 'puts the result in the plugin\'s `locales` directory.',
+                . "puts the result in the plugin's `locales` directory.",
             'short' => 'p',
         ])->addOption('exclude', [
             'help' => 'Comma separated list of directories to exclude.' .

@@ -74,7 +74,7 @@ TEXT;
             return match ($var->getType()) {
                 'bool' => $var->getValue() ? 'true' : 'false',
                 'null' => 'null',
-                'string' => "'" . (string)$var->getValue() . "'",
+                'string' => "'" . $var->getValue() . "'",
                 default => "({$var->getType()}) {$var->getValue()}",
             };
         }

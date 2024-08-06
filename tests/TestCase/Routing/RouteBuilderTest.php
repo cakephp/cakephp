@@ -1010,7 +1010,7 @@ class RouteBuilderTest extends TestCase
     public function testMiddlewareGroupOverlap(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
+        $this->expectExceptionMessage("Cannot add middleware group 'test'. A middleware by this name has already been registered.");
         $func = function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');

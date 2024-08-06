@@ -120,7 +120,7 @@ class FixtureHelperTest extends TestCase
         ConnectionManager::alias('test', 'test2');
 
         $numCalls = 0;
-        (new FixtureHelper())->runPerConnection(function () use (&$numCalls) {
+        (new FixtureHelper())->runPerConnection(function () use (&$numCalls): void {
             ++$numCalls;
         }, [$fixture1, $fixture2]);
         $this->assertSame(2, $numCalls);

@@ -270,7 +270,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
 
         $validator = $options['validate'] === true ? static::DEFAULT_VALIDATOR : $options['validate'];
 
-        return $this->validate($data, $validator) ? $this->_execute($data) : false;
+        return $this->validate($data, $validator) && $this->_execute($data);
     }
 
     /**

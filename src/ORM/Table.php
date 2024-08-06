@@ -318,7 +318,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!empty($config['entityClass'])) {
             $this->setEntityClass($config['entityClass']);
         }
-        $eventManager = $behaviors = $associations = null;
+        $eventManager = null;
+        $behaviors = null;
+        $associations = null;
         if (!empty($config['eventManager'])) {
             $eventManager = $config['eventManager'];
         }
@@ -1448,7 +1450,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
         return $query->formatResults(fn (CollectionInterface $results): CollectionInterface =>
-            $results->nest($options['keyField'], $options['parentField'], $nestingKey));
+            $results->nest(
+                $options['keyField'],
+                $options['parentField'],
+                $nestingKey
+            ));
     }
 
     /**
@@ -2024,7 +2030,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = $this->getAlias();
             $conditions = [];
             foreach ($entity->extract($primaryColumns) as $k => $v) {
-                $conditions["$alias.$k"] = $v;
+                $conditions["{$alias}.{$k}"] = $v;
             }
             $entity->setNew(!$this->exists($conditions));
         }
@@ -2246,7 +2252,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($primaryColumns === []) {
             $entityClass = $entity::class;
             $table = $this->getTable();
-            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            $message = "Cannot update `{$entityClass}`. The `{$table}` has no primary key.";
             throw new InvalidArgumentException($message);
         }
 

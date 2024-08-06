@@ -2800,7 +2800,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return void
      */
-    public function testLimitControlUrlWithQuery()
+    public function testLimitControlUrlWithQuery(): void
     {
         $request = new ServerRequest([
             'url' => '/batches?owner=billy&expected=1',

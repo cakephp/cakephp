@@ -119,18 +119,19 @@ class FunctionsTest extends TestCase
 
         $server = $_SERVER;
         $env = $_ENV;
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $_ENV['CGI_MODE'] = 'BINARY';
         $_ENV['SCRIPT_URL'] = '/a/test/test.php';
         $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertFalse(env('HTTPS'));
 
@@ -162,8 +163,8 @@ class FunctionsTest extends TestCase
 
         $_ENV['SCRIPT_URI'] = 'http://domain.test/a/test.php';
         $this->assertFalse(env('HTTPS'));
-
-        $_SERVER = $_ENV = [];
+        $_SERVER = [];
+        $_ENV = [];
 
         $this->assertNull(env('TEST_ME'));
 
@@ -327,7 +328,7 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabled(): void
     {
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/', function () {
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away\n(.*?)[\/\\\]FunctionsTest.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 deprecationWarning('5.0.0', 'This is going away', 2);
             });
@@ -339,7 +340,7 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
-        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+        $this->expectDeprecationMessageMatches('/Since 5.0.0: This is going away too\n(.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 deprecationWarning('5.0.0', 'This is going away too');
             });
@@ -376,7 +377,7 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function () {
+        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 triggerWarning('This will be gone one day');
                 $this->assertTrue(true);
