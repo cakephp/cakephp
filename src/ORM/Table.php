@@ -1409,12 +1409,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(fn (CollectionInterface $results): CollectionInterface =>
-            $results->combine(
-                $options['keyField'],
-                $options['valueField'],
-                $options['groupField']
-            ));
+        return $query->formatResults(fn (CollectionInterface $results): CollectionInterface => $results->combine(
+            $options['keyField'],
+            $options['valueField'],
+            $options['groupField']
+        ));
     }
 
     /**
@@ -1449,12 +1448,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
-        return $query->formatResults(fn (CollectionInterface $results): CollectionInterface =>
-            $results->nest(
-                $options['keyField'],
-                $options['parentField'],
-                $nestingKey
-            ));
+        return $query->formatResults(fn (CollectionInterface $results): CollectionInterface => $results->nest(
+            $options['keyField'],
+            $options['parentField'],
+            $nestingKey
+        ));
     }
 
     /**
