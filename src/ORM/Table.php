@@ -1448,7 +1448,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
-        return $query->formatResults(fn (CollectionInterface $results) => $results->nest($options['keyField'], $options['parentField'], $nestingKey));
+        return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
+            $options['keyField'],
+            $options['parentField'],
+            $nestingKey
+        ));
     }
 
     /**
