@@ -836,7 +836,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($local && $base && str_starts_with($url, $base)) {
             $url = substr($url, strlen($base));
             if (!str_starts_with($url, '/')) {
-                $url = '/' . $url;
+                return '/' . $url;
             }
 
             return $url;

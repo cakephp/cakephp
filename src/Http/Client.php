@@ -679,7 +679,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             $request = $this->_addAuthentication($request, $options);
         }
         if (isset($options['proxy'])) {
-            $request = $this->_addProxy($request, $options);
+            return $this->_addProxy($request, $options);
         }
 
         return $request;

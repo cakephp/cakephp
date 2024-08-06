@@ -69,7 +69,7 @@ class ValueBinder
     {
         $number = $this->_bindingsCount++;
         if (!str_starts_with($token, ':') && $token !== '?') {
-            $token = sprintf(':%s%s', $token, $number);
+            return sprintf(':%s%s', $token, $number);
         }
 
         return $token;

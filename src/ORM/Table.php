@@ -967,7 +967,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($result !== null && $next !== null) {
-            $result = $result->getTarget()->getAssociation($next);
+            return $result->getTarget()->getAssociation($next);
         }
 
         return $result;

@@ -185,7 +185,7 @@ class Xml
                 $xml->loadHTML($input, $flags);
 
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                    $xml = simplexml_import_dom($xml);
+                    return simplexml_import_dom($xml);
                 }
 
                 return $xml;

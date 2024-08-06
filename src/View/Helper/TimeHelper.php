@@ -75,7 +75,7 @@ class TimeHelper extends Helper
     ): DateTime {
         $time = new DateTime($dateString);
         if ($timezone !== null) {
-            $time = $time->setTimezone($timezone);
+            return $time->setTimezone($timezone);
         }
 
         return $time;
@@ -327,7 +327,7 @@ class TimeHelper extends Helper
         $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
-            $relativeDate = sprintf(
+            return sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),

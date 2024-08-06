@@ -229,7 +229,7 @@ class ArrayContext implements ContextInterface
         }
 
         if ($required === true) {
-            $required = __d('cake', 'This field cannot be left empty');
+            return __d('cake', 'This field cannot be left empty');
         }
 
         return $required;

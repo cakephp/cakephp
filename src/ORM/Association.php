@@ -1005,7 +1005,7 @@ abstract class Association
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    $results = $results->map(function (EntityInterface $result) {
+                    return $results->map(function (EntityInterface $result) {
                         $result->clean();
 
                         return $result;

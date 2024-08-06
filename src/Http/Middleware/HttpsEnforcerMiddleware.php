@@ -94,7 +94,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         ) {
             $response = $handler->handle($request);
             if ($this->config['hsts']) {
-                $response = $this->addHsts($response);
+                return $this->addHsts($response);
             }
 
             return $response;

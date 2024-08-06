@@ -472,7 +472,7 @@ class SmtpTransport extends AbstractTransport
     {
         $from = $message->getReturnPath();
         if (!$from) {
-            $from = $message->getFrom();
+            return $message->getFrom();
         }
 
         return $from;
