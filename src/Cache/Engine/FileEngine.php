@@ -128,7 +128,7 @@ class FileEngine extends CacheEngine
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, PHP_EOL, $value, PHP_EOL]);
+        $contents = implode('', [$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);

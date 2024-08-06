@@ -258,7 +258,7 @@ class Cookie implements CookieInterface
         }
 
         if ($expires !== null) {
-            return new DateTimeImmutable('@' . (string)$expires);
+            return new DateTimeImmutable('@' . $expires);
         }
 
         return $expires;

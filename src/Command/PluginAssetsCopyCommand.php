@@ -68,7 +68,7 @@ class PluginAssetsCopyCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'Copy plugin assets to app\'s webroot.',
+            "Copy plugin assets to app's webroot.",
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to copy assets for.',
             'required' => false,

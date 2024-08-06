@@ -134,7 +134,8 @@ class ResultSetFactory
      */
     protected function groupResult(array $row, array $data): EntityInterface|array
     {
-        $results = $presentAliases = [];
+        $results = [];
+        $presentAliases = [];
         $options = [
             'useSetters' => false,
             'markClean' => true,

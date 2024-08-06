@@ -471,13 +471,13 @@ class UpdateQueryTest extends TestCase
         $driver = $this->connection->getDriver();
         $version = $this->connection->getDriver()->version();
         if ($driver instanceof Postgres && version_compare($version, '12.0.0', '<')) {
-            $skip == true;
+            $skip = true;
         } elseif ($driver instanceof Mysql && version_compare($version, '8.0.21', '<')) {
-            $skip == true;
+            $skip = true;
         } elseif ($driver instanceof Sqlserver && version_compare($version, '13', '<')) {
-            $skip == true;
+            $skip = true;
         } elseif ($driver instanceof Sqlite && version_compare($version, '3.19', '<')) {
-            $skip == true;
+            $skip = true;
         }
         $this->skipIf($skip, 'The current database backend does not support JSON value operations');
 

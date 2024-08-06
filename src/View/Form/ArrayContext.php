@@ -249,7 +249,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        return Hash::get($this->_context['schema'], "$field.length");
+        return Hash::get($this->_context['schema'], "{$field}.length");
     }
 
     /**

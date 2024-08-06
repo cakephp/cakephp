@@ -1839,7 +1839,7 @@ TEXT;
     /**
      * Somewhat pointless, but helps ensure BC for defaults.
      */
-    public function testContentType()
+    public function testContentType(): void
     {
         $this->assertSame('', $this->View->contentType());
     }

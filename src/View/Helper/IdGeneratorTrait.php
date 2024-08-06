@@ -75,7 +75,7 @@ trait IdGeneratorTrait
      */
     protected function _idSuffix(string $val): string
     {
-        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
+        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', "'"], '-', $val));
         $count = 1;
         $check = $idSuffix;
         while (in_array($check, $this->_idSuffixes, true)) {

@@ -168,7 +168,8 @@ class Connection implements ConnectionInterface
             $readDriver = new $driverClass(['_role' => self::ROLE_READ] + $readConfig);
             $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
         } else {
-            $readDriver = $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+            $readDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+            $writeDriver = $readDriver;
         }
 
         if (!$writeDriver->enabled()) {

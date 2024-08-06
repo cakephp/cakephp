@@ -396,8 +396,8 @@ class Xml
         $dom = $data['dom'];
         /** @var \DOMNode $node */
         $node = $data['node'];
-
-        $childNS = $childValue = null;
+        $childNS = null;
+        $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
             $value = $value->toArray();
         }

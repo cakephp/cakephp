@@ -40,7 +40,8 @@ if (isset($controller)) {
 // Mailer MissingActionException support
 if (isset($mailer)) {
     $baseClass = 'Cake\Mailer\Mailer';
-    $type = $extends = 'Mailer';
+    $type = 'Mailer';
+    $extends = 'Mailer';
     $class = Inflector::camelize($mailer);
 }
 

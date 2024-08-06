@@ -195,10 +195,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 $parser = $value->getOptionParser();
 
                 foreach ($parser->options() as $name => $option) {
-                    $options[] = "--$name";
+                    $options[] = "--{$name}";
                     $short = $option->short();
                     if ($short) {
-                        $options[] = "-$short";
+                        $options[] = "-{$short}";
                     }
                 }
             }

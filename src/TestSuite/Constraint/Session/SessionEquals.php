@@ -62,6 +62,6 @@ class SessionEquals extends Constraint
      */
     public function toString(): string
     {
-        return sprintf('is in session path \'%s\'', $this->path);
+        return sprintf("is in session path '%s'", $this->path);
     }
 }
