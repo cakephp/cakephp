@@ -728,7 +728,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function createSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
-        $columns = $constraints = $indexes = [];
+        $columns = [];
+        $constraints = [];
+        $indexes = [];
         foreach (array_keys($this->_columns) as $name) {
             $columns[] = $dialect->columnSql($this, $name);
         }

@@ -58,7 +58,7 @@ class FakeConnection implements ConnectionInterface
     {
     }
 
-    public function setCacher(CacheInterface $cacher)
+    public function setCacher(CacheInterface $cacher): never
     {
         throw new RuntimeException('Not implemented');
     }

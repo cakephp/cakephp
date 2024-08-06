@@ -262,8 +262,9 @@ class FileEngineTest extends TestCase
             'prefix' => 'prefix_two_',
             'duration' => 3600,
         ]);
-
-        $dataOne = $dataTwo = $expected = 'content to cache';
+        $dataOne = 'content to cache';
+        $dataTwo = 'content to cache';
+        $expected = 'content to cache';
         $FileOne->set('prefix_one_key_one', $dataOne);
         $FileTwo->set('prefix_two_key_two', $dataTwo);
 

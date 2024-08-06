@@ -220,7 +220,7 @@ class InflectedRouteTest extends TestCase
         $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 
-    public function testMatchDoesNotCorruptDefaults()
+    public function testMatchDoesNotCorruptDefaults(): void
     {
         $route = new InflectedRoute('/user_permissions/edit', ['controller' => 'UserPermissions', 'action' => 'edit']);
         $route->match(['controller' => 'UserPermissions', 'action' => 'edit'], []);

@@ -601,7 +601,7 @@ TEXT;
         $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
     }
 
-    protected function _makeException()
+    protected function _makeException(): RuntimeException
     {
         return new RuntimeException('testing');
     }
@@ -609,7 +609,7 @@ TEXT;
     /**
      * Test stack frame comparisons.
      */
-    public function testGetUniqueFrames()
+    public function testGetUniqueFrames(): void
     {
         $parent = new RuntimeException('parent');
         $child = $this->_makeException();

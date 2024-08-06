@@ -77,7 +77,7 @@ class OrderByExpression extends QueryExpression
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
+                        "Passing extra expressions by associative array (`'%s' => '%s'`) " .
                         'is not allowed to avoid potential SQL injection. ' .
                         'Use QueryExpression or numeric array instead.',
                         $key,

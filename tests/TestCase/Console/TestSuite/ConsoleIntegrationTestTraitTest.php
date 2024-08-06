@@ -210,7 +210,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs("   --json='{$json}'");
         $expected = [
             '--json=' . $json,
         ];
@@ -246,11 +246,11 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         return [
             'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
-            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
-            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],
+            'assertOutputContains' => ['assertOutputContains', "Failed asserting that 'missing' is in output", 'routes', 'missing'],
+            'assertOutputNotContains' => ['assertOutputNotContains', "Failed asserting that 'controller' is not in output", 'routes', 'controller'],
             'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'],
             'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `.*` row was in output', 'routes', ['test', 'missing']],
-            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output', 'routes', 'test'],
+            'assertErrorContains' => ['assertErrorContains', "Failed asserting that 'test' is in error output", 'routes', 'test'],
             'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
         ];
     }

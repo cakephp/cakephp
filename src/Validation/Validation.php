@@ -252,7 +252,7 @@ class Validation
         bool $deep = false,
         ?string $regex = null
     ): bool {
-        if (!(is_string($check) || is_int($check))) {
+        if (!is_string($check) && !is_int($check)) {
             return false;
         }
 
@@ -1535,13 +1535,14 @@ class Validation
         if ($file === null) {
             return false;
         }
-
-        $width = $height = null;
+        $width = null;
+        $height = null;
         $imageSize = getimagesize($file);
         if ($imageSize) {
             [$width, $height] = $imageSize;
         }
-        $validWidth = $validHeight = null;
+        $validWidth = null;
+        $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

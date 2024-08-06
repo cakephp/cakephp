@@ -69,7 +69,7 @@ class PluginAssetsSymlinkCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'Symlink (copy as fallback) plugin assets to app\'s webroot.',
+            "Symlink (copy as fallback) plugin assets to app's webroot.",
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'required' => false,

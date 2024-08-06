@@ -24,8 +24,8 @@ foreach ($exceptions as $exc):
         'args' => true,
     ]);
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];

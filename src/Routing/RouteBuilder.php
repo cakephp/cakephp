@@ -994,7 +994,7 @@ class RouteBuilder
         /** @var list<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
-                $message = "Cannot apply `$name` middleware or middleware group. " .
+                $message = "Cannot apply `{$name}` middleware or middleware group. " .
                     'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
             }
