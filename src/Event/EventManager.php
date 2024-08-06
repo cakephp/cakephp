@@ -86,9 +86,7 @@ class EventManager implements EventManagerInterface
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (static::$_generalManager === null) {
-            static::$_generalManager = new static();
-        }
+        static::$_generalManager ??= new static();
 
         static::$_generalManager->_isGlobal = true;
 
