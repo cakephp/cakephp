@@ -1039,7 +1039,7 @@ class SmtpTransportTest extends TestCase
                 "250 OK\r\n",
                 "354 OK\r\n",
                 'Message size too large',
-                '',
+                null,
             );
 
         $this->socket->expects($this->exactly(5))
