@@ -70,7 +70,7 @@ if ($missing) {
 $mainRequire = $mainJson['require'];
 
 $issues = [];
-foreach ($packages as $fullPackageName => $package) {
+foreach ($packages as $package) {
     $content = file_get_contents($path . $package . DS . 'composer.json');
     $json = json_decode($content, true);
     $require = $json['require'] ?? [];
@@ -92,13 +92,11 @@ foreach ($packages as $fullPackageName => $package) {
     }
 }
 
-if ($issues) {
-    foreach ($issues as $packageName => $packageIssues) {
-        echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
-        foreach ($packageIssues as $issue) {
-            echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
-            $code = 1;
-        }
+foreach ($issues as $packageName => $packageIssues) {
+    echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
+    foreach ($packageIssues as $issue) {
+        echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
+        $code = 1;
     }
 }
 

@@ -500,7 +500,7 @@ SQL;
             'field3' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'O\'hare',
+                'default' => "O'hare",
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
@@ -783,7 +783,7 @@ SQL;
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '[open_date] DATETIME2 NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "[open_date] DATETIME2 NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'open_date',
@@ -1201,7 +1201,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Sqlserver::class)

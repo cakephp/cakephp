@@ -551,7 +551,8 @@ class ConsoleOptionParser
      */
     public function parse(array $argv, ?ConsoleIo $io = null): array
     {
-        $params = $args = [];
+        $params = [];
+        $args = [];
         $this->_tokens = $argv;
 
         $afterDoubleDash = false;

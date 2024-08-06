@@ -102,7 +102,7 @@ class IsUnique
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["$alias.$key IS"] = $value;
+            $aliased["{$alias}.{$key} IS"] = $value;
         }
 
         return $aliased;

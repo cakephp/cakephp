@@ -69,7 +69,7 @@ class HeaderUtilityTest extends TestCase
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
 
-        $encodedLinkHeader = '</extended-attr-example>; rel=start; title*=UTF-8\'en\'%E2%91%A0%E2%93%AB%E2%85%93%E3%8F%A8%E2%99%B3%F0%9D%84%9E%CE%BB';
+        $encodedLinkHeader = "</extended-attr-example>; rel=start; title*=UTF-8'en'%E2%91%A0%E2%93%AB%E2%85%93%E3%8F%A8%E2%99%B3%F0%9D%84%9E%CE%BB";
         $new = $response
             ->withHeader('Link', $encodedLinkHeader);
         $this->assertSame($encodedLinkHeader, $new->getHeaderLine('Link'));

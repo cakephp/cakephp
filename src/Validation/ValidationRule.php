@@ -40,7 +40,7 @@ class ValidationRule
      *
      * @var callable|string|null
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
@@ -201,7 +201,7 @@ class ValidationRule
                 $value = array_shift($value);
             }
             if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'], true)) {
-                $this->{"_$key"} = $value;
+                $this->{"_{$key}"} = $value;
             }
         }
     }

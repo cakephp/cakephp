@@ -1332,8 +1332,8 @@ class View implements EventDispatcherInterface
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
-        $templatePath = $subDir = '';
-
+        $templatePath = '';
+        $subDir = '';
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
@@ -1578,7 +1578,8 @@ class View implements EventDispatcherInterface
             }
         }
         $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
-        $pluginPaths = $themePaths = [];
+        $pluginPaths = [];
+        $themePaths = [];
         if ($plugin) {
             foreach ($templatePaths as $templatePath) {
                 $pluginPaths[] = $templatePath

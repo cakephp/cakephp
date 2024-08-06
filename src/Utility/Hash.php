@@ -126,7 +126,7 @@ class Hash
         // Simple paths.
         if (!preg_match('/[{\[]/', $path)) {
             $data = static::get($data, $path);
-            if ($data !== null && !(is_array($data) || $data instanceof ArrayAccess)) {
+            if ($data !== null && (!is_array($data) && !$data instanceof ArrayAccess)) {
                 return [$data];
             }
 
@@ -884,13 +884,11 @@ class Hash
     public static function maxDimensions(array $data): int
     {
         $depth = [];
-        if ($data) {
-            foreach ($data as $value) {
-                if (is_array($value)) {
-                    $depth[] = static::maxDimensions($value) + 1;
-                } else {
-                    $depth[] = 1;
-                }
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $depth[] = static::maxDimensions($value) + 1;
+            } else {
+                $depth[] = 1;
             }
         }
 
@@ -1229,13 +1227,13 @@ class Hash
 
         $alias = key(current($data));
         $options += [
-            'idPath' => "{n}.$alias.id",
-            'parentPath' => "{n}.$alias.parent_id",
+            'idPath' => "{n}.{$alias}.id",
+            'parentPath' => "{n}.{$alias}.parent_id",
             'children' => 'children',
             'root' => null,
         ];
-
-        $return = $idMap = [];
+        $return = [];
+        $idMap = [];
         $ids = static::extract($data, $options['idPath']);
         assert(is_array($ids));
 

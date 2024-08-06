@@ -72,6 +72,6 @@ class MailContainsAttachment extends MailContains
     {
         [$expectedFilename] = $other;
 
-        return '\'' . $expectedFilename . '\' ' . $this->toString();
+        return "'" . $expectedFilename . "' " . $this->toString();
     }
 }

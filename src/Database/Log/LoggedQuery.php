@@ -108,7 +108,7 @@ class LoggedQuery implements JsonSerializable, Stringable
 
                 $p = strtr($p, $replacements);
 
-                return "'$p'";
+                return "'{$p}'";
             }
 
             return $p;
@@ -117,7 +117,7 @@ class LoggedQuery implements JsonSerializable, Stringable
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;
         foreach ($params as $key => $param) {
-            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
+            $keys[] = is_string($key) ? "/:{$key}\b/" : '/[?]/';
         }
 
         return (string)preg_replace($keys, $params, $this->query, $limit);
@@ -183,11 +183,10 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     public function __toString(): string
     {
-        $sql = $this->query;
         if ($this->params) {
-            $sql = $this->interpolate();
+            return $this->interpolate();
         }
 
-        return $sql;
+        return $this->query;
     }
 }

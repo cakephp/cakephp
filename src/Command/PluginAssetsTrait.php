@@ -122,12 +122,12 @@ trait PluginAssetsTrait
             if (file_exists($dest)) {
                 if ($overwrite && !$this->_remove($config)) {
                     continue;
-                } elseif (!$overwrite) {
+                }
+                if (!$overwrite) {
                     $this->io->verbose(
                         $dest . ' already exists',
                         1
                     );
-
                     continue;
                 }
             }
@@ -187,11 +187,10 @@ trait PluginAssetsTrait
                 $this->io->out('Unlinked ' . $dest);
 
                 return true;
-            } else {
-                $this->io->err('Failed to unlink  ' . $dest);
-
-                return false;
             }
+            $this->io->err('Failed to unlink  ' . $dest);
+
+            return false;
         }
 
         $fs = new Filesystem();
@@ -199,11 +198,10 @@ trait PluginAssetsTrait
             $this->io->out('Deleted ' . $dest);
 
             return true;
-        } else {
-            $this->io->err('Failed to delete ' . $dest);
-
-            return false;
         }
+        $this->io->err('Failed to delete ' . $dest);
+
+        return false;
     }
 
     /**

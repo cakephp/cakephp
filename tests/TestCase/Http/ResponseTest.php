@@ -294,7 +294,8 @@ class ResponseTest extends TestCase
     public function testWithCache(): void
     {
         $response = new Response();
-        $since = $time = time();
+        $since = time();
+        $time = $since;
 
         $new = $response->withCache($since, $time);
         $this->assertFalse($response->hasHeader('Date'));
@@ -860,7 +861,7 @@ class ResponseTest extends TestCase
         $this->assertSame(1, $new->getCookie('yay')['expires']);
     }
 
-    public function testWithExpiredCookieNotUtc()
+    public function testWithExpiredCookieNotUtc(): void
     {
         date_default_timezone_set('Europe/Paris');
 

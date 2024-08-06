@@ -70,9 +70,9 @@ class ContextFactory
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($data);
-                        } else {
-                            return new NullContext($data);
                         }
+
+                        return new NullContext($data);
                     }
                 },
             ],
