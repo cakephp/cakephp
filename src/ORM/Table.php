@@ -2286,7 +2286,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
-        } catch (PersistenceFailedException $exception) {
+        } catch (PersistenceFailedException) {
             return false;
         }
     }

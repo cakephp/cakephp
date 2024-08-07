@@ -329,7 +329,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
 
                 return $dateTime;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
 

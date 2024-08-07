@@ -797,7 +797,7 @@ HTML;
     public function testDomain(): void
     {
         $result = $this->message->getDomain();
-        $expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+        $expected = env('HTTP_HOST') ?: php_uname('n');
         $this->assertSame($expected, $result);
 
         $this->message->setDomain('example.org');

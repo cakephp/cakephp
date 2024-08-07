@@ -486,7 +486,7 @@ class TableSchemaTest extends TestCase
             'engine' => 'InnoDB',
         ];
         $return = $table->setOptions($options);
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $return);
+        $this->assertInstanceOf(TableSchema::class, $return);
         $this->assertEquals($options, $table->getOptions());
     }
 

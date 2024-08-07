@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
@@ -49,7 +50,7 @@ class TimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**

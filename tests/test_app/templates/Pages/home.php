@@ -81,7 +81,7 @@ if (file_exists(APP . 'Config/datasources.php')): ?>
 <?php endif; ?>
 
 <p>
-<?php if (Plugin::loaded('DebugKit')): ?>
+<?php if (Plugin::isLoaded('DebugKit')): ?>
     <span class="notice success">DebugKit plugin is present</span>
 <?php else: ?>
     <span class="notice">';

@@ -338,7 +338,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->head('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -360,7 +360,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->options('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -403,7 +403,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -574,7 +574,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -591,7 +591,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -1400,7 +1400,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+        $this->assertInstanceOf(EventManager::class, $eventManager);
 
         return $eventManager;
     }
@@ -1411,7 +1411,7 @@ class IntegrationTestTraitTest extends TestCase
     #[Depends('testEventManagerReset1')]
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
-        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
+        $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 

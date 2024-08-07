@@ -57,7 +57,7 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (NetworkException $e) {
+        } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
         $this->assertCount(1, $responses);
@@ -78,7 +78,7 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (NetworkException $e) {
+        } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
         $this->assertCount(1, $responses);

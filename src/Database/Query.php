@@ -1837,7 +1837,7 @@ abstract class Query implements ExpressionInterface, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {

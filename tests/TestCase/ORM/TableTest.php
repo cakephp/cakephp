@@ -21,6 +21,7 @@ use AssertionError;
 use BadMethodCallException;
 use Cake\Collection\Collection;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
@@ -40,10 +41,13 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\AssociationCollection;
+use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
+use Cake\ORM\Marshaller;
+use Cake\ORM\Query;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\SelectQuery;
@@ -60,11 +64,15 @@ use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
+use TestApp\Model\Entity\Article;
+use TestApp\Model\Entity\ArticlesTag;
+use TestApp\Model\Entity\Author;
 use TestApp\Model\Entity\ProtectedEntity;
 use TestApp\Model\Entity\Tag;
 use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
+use TestPlugin\Model\Table\CommentsTable;
 
 /**
  * Tests Table class
@@ -903,7 +911,7 @@ class TableTest extends TestCase
 
         $this->assertInstanceOf(Table::class, $Users->Comments->getTarget());
         $this->assertInstanceOf(Table::class, $Articles->Comments->getTarget());
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->getTarget());
+        $this->assertInstanceOf(CommentsTable::class, $Categories->Comments->getTarget());
     }
 
     /**
@@ -1047,7 +1055,7 @@ class TableTest extends TestCase
 
         $table->hasMany('TestPlugin.Comments');
         $comments = $table->Comments->getTarget();
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
+        $this->assertInstanceOf(CommentsTable::class, $comments);
     }
 
     /**
@@ -1063,7 +1071,7 @@ class TableTest extends TestCase
 
         $table->hasMany('Comments', ['className' => 'TestPlugin.Comments']);
         $comments = $table->Comments->getTarget();
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
+        $this->assertInstanceOf(CommentsTable::class, $comments);
     }
 
     /**
@@ -1117,7 +1125,7 @@ class TableTest extends TestCase
         $associations = $table->associations();
 
         $belongsTo = $associations->get('users');
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
+        $this->assertInstanceOf(BelongsTo::class, $belongsTo);
         $this->assertSame('users', $belongsTo->getName());
         $this->assertSame('fake_id', $belongsTo->getForeignKey());
         $this->assertEquals(['a' => 'b'], $belongsTo->getConditions());
@@ -1454,7 +1462,7 @@ class TableTest extends TestCase
             ->onlyMethods(['find', 'findList'])
             ->disableOriginalConstructor()
             ->getMock();
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['addDefaultTypes'])
             ->setConstructorArgs([$table])
             ->getMock();
@@ -1707,7 +1715,7 @@ class TableTest extends TestCase
     public function testEntityClassDefault(): void
     {
         $table = new Table();
-        $this->assertSame('Cake\ORM\Entity', $table->getEntityClass());
+        $this->assertSame(Entity::class, $table->getEntityClass());
     }
 
     /**
@@ -1716,7 +1724,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInApp(): void
     {
-        $class = get_class($this->createMock('Cake\ORM\Entity'));
+        $class = $this->createMock(Entity::class)::class;
 
         if (!class_exists('TestApp\Model\Entity\TestUser')) {
             class_alias($class, 'TestApp\Model\Entity\TestUser');
@@ -1732,7 +1740,7 @@ class TableTest extends TestCase
      */
     public function testEntityClassInflection(): void
     {
-        $class = get_class($this->createMock('Cake\ORM\Entity'));
+        $class = $this->createMock(Entity::class)::class;
 
         if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
             class_alias($class, 'TestApp\Model\Entity\CustomCookie');
@@ -1755,7 +1763,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInPlugin(): void
     {
-        $class = get_class($this->createMock('Cake\ORM\Entity'));
+        $class = $this->createMock(Entity::class)::class;
 
         if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
             class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
@@ -1788,7 +1796,7 @@ class TableTest extends TestCase
     public function testTableClassConventionForAPP(): void
     {
         $table = new ArticlesTable();
-        $this->assertSame('TestApp\Model\Entity\Article', $table->getEntityClass());
+        $this->assertSame(Article::class, $table->getEntityClass());
     }
 
     /**
@@ -1797,7 +1805,7 @@ class TableTest extends TestCase
     public function testSetEntityClass(): void
     {
         $table = new Table();
-        $class = '\\' . get_class($this->createMock('Cake\ORM\Entity'));
+        $class = '\\' . $this->createMock(Entity::class)::class;
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertSame($class, $table->getEntityClass());
     }
@@ -1812,7 +1820,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $result = $table->find('all')->contain(['Authors'])->first();
-        $this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
+        $this->assertInstanceOf(Author::class, $result->author);
     }
 
     /**
@@ -1827,7 +1835,7 @@ class TableTest extends TestCase
         $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
-            $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
+            $this->assertInstanceOf(Article::class, $article);
         }
     }
 
@@ -1841,9 +1849,9 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $result = $table->find('all')->contain(['Tags'])->first();
-        $this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
+        $this->assertInstanceOf(Tag::class, $result->tags[0]);
         $this->assertInstanceOf(
-            'TestApp\Model\Entity\ArticlesTag',
+            ArticlesTag::class,
             $result->tags[0]->_joinData
         );
     }
@@ -1909,7 +1917,7 @@ class TableTest extends TestCase
      */
     public function testAddBehavior(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\BehaviorRegistry')
+        $mock = $this->getMockBuilder(BehaviorRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->once())
@@ -1960,7 +1968,7 @@ class TableTest extends TestCase
      */
     public function testRemoveBehavior(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\BehaviorRegistry')
+        $mock = $this->getMockBuilder(BehaviorRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mock->expects($this->once())
@@ -2023,7 +2031,7 @@ class TableTest extends TestCase
     {
         $table = $this->getTableLocator()->get('article');
         $result = $table->behaviors();
-        $this->assertInstanceOf('Cake\ORM\BehaviorRegistry', $result);
+        $this->assertInstanceOf(BehaviorRegistry::class, $result);
     }
 
     /**
@@ -2090,7 +2098,7 @@ class TableTest extends TestCase
         $table->addBehavior('Sluggable');
 
         $query = $table->find('noSlug');
-        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $this->assertInstanceOf(Query::class, $query);
         $this->assertNotEmpty($query->clause('where'));
     }
 
@@ -2103,7 +2111,7 @@ class TableTest extends TestCase
         $table->addBehavior('Sluggable', ['implementedFinders' => ['special' => 'findNoSlug']]);
 
         $query = $table->find('special');
-        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $this->assertInstanceOf(Query::class, $query);
         $this->assertNotEmpty($query->clause('where'));
     }
 
@@ -2553,7 +2561,7 @@ class TableTest extends TestCase
     {
         $config = ConnectionManager::getConfig('test');
 
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + $config])
             ->getMock();
@@ -2578,7 +2586,7 @@ class TableTest extends TestCase
     {
         $this->expectException(PDOException::class);
         /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['begin', 'rollback'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
@@ -2617,7 +2625,7 @@ class TableTest extends TestCase
     public function testAtomicSaveRollbackOnFailure(): void
     {
         /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['begin', 'rollback'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
@@ -2788,7 +2796,7 @@ class TableTest extends TestCase
     public function testSaveUpdatePrimaryKeyNotModified(): void
     {
         /** @var \Cake\Database\Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['run'])
             ->setConstructorArgs([['driver' => $this->connection->getDriver()] + ConnectionManager::getConfig('test')])
             ->getMock();
@@ -3251,7 +3259,7 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
         $options = new ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
 
         $mock->expects($this->once())
             ->method('on');
@@ -3344,7 +3352,7 @@ class TableTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
             ->willReturnCallback(function (EventInterface $event) {
@@ -3366,7 +3374,7 @@ class TableTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
             ->willReturnCallback(function (EventInterface $event) {
@@ -3453,7 +3461,7 @@ class TableTest extends TestCase
         $table = new Table();
         $validator = $table->getValidator();
         $this->assertSame($table, $validator->getProvider('table'));
-        $this->assertInstanceOf('Cake\Validation\Validator', $validator);
+        $this->assertInstanceOf(Validator::class, $validator);
         $default = $table->getValidator('default');
         $this->assertSame($validator, $default);
     }
@@ -3556,7 +3564,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
 
         $result = $table->findByUsername('garrett');
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
 
         $expected = new QueryExpression(['Users.username' => 'garrett'], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
@@ -3606,7 +3614,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
 
         $result = $table->findByUsernameAndId('garrett', 4);
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
 
         $expected = new QueryExpression(['Users.username' => 'garrett', 'Users.id' => 4], $this->usersTypeMap);
         $this->assertEquals($expected, $result->clause('where'));
@@ -3620,7 +3628,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
 
         $result = $table->findByUsernameOrId('garrett', 4);
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
 
         $expected = new QueryExpression([], $this->usersTypeMap);
         $expected->add(
@@ -3642,7 +3650,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
 
         $result = $table->findAllByAuthorId(1);
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
         $this->assertNull($result->clause('limit'));
 
         $expected = new QueryExpression(['Articles.author_id' => 1], $this->articlesTypeMap);
@@ -3657,7 +3665,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
 
         $result = $table->findAllByAuthorIdAndPublished(1, 'Y');
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression(
             ['Users.author_id' => 1, 'Users.published' => 'Y'],
@@ -3674,7 +3682,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
 
         $result = $table->findAllByAuthorIdOrPublished(1, 'Y');
-        $this->assertInstanceOf('Cake\ORM\Query', $result);
+        $this->assertInstanceOf(Query::class, $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
         $expected->getTypeMap()->setDefaults($this->usersTypeMap->toArray());
@@ -4151,7 +4159,7 @@ class TableTest extends TestCase
                 ->setFinder('list')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('articles', $articles->getTable());
@@ -4176,7 +4184,7 @@ class TableTest extends TestCase
                 ->setStrategy('select')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4203,7 +4211,7 @@ class TableTest extends TestCase
                 ->setSaveStrategy('replace')
                 ->setProperty('authors')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4230,7 +4238,7 @@ class TableTest extends TestCase
                 ->setSaveStrategy('append')
                 ->setThrough('author_articles')
                 ->setJoinType('inner');
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException) {
             $this->fail('Method chaining should be ok');
         }
         $this->assertSame('authors', $authors->getTable());
@@ -4523,7 +4531,7 @@ class TableTest extends TestCase
 
         $associations = new AssociationCollection();
 
-        $hasManyArticles = $this->getMockBuilder('Cake\ORM\Association\HasMany')
+        $hasManyArticles = $this->getMockBuilder(HasMany::class)
             ->onlyMethods(['getTarget'])
             ->setConstructorArgs([
                 'articles',
@@ -5452,7 +5460,7 @@ class TableTest extends TestCase
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['marshaller'])
             ->getMock();
-        $marshaller = $this->getMockBuilder('Cake\ORM\Marshaller')
+        $marshaller = $this->getMockBuilder(Marshaller::class)
             ->setConstructorArgs([$table])
             ->getMock();
         $table->belongsTo('users');
@@ -5493,7 +5501,7 @@ class TableTest extends TestCase
         $table = $this->getMockBuilder(Table::class)
             ->onlyMethods(['marshaller'])
             ->getMock();
-        $marshaller = $this->getMockBuilder('Cake\ORM\Marshaller')
+        $marshaller = $this->getMockBuilder(Marshaller::class)
             ->setConstructorArgs([$table])
             ->getMock();
         $table->belongsTo('users');
@@ -5542,7 +5550,7 @@ class TableTest extends TestCase
             'registryAlias' => 'articles',
             'table' => 'articles',
             'alias' => 'articles',
-            'entityClass' => 'TestApp\Model\Entity\Article',
+            'entityClass' => Article::class,
             'associations' => ['Authors', 'Tags', 'ArticlesTags'],
             'behaviors' => ['Timestamp'],
             'defaultConnection' => 'default',
@@ -5556,7 +5564,7 @@ class TableTest extends TestCase
             'registryAlias' => 'Foo.Articles',
             'table' => 'articles',
             'alias' => 'Articles',
-            'entityClass' => 'Cake\ORM\Entity',
+            'entityClass' => Entity::class,
             'associations' => [],
             'behaviors' => [],
             'defaultConnection' => 'default',
@@ -5619,7 +5627,7 @@ class TableTest extends TestCase
         $article = $articles->findOrCreate(
             ['author_id' => 2, 'title' => 'First Article'],
             function ($article) use (&$callbackExecuted): void {
-                $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+                $this->assertInstanceOf(EntityInterface::class, $article);
                 $article->set(['published' => 'N', 'body' => 'New body']);
                 $callbackExecuted = true;
             }
@@ -5662,11 +5670,11 @@ class TableTest extends TestCase
         $calledOne = false;
         $calledTwo = false;
         $article = $articles->findOrCreate(function ($query) use (&$calledOne): void {
-            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $this->assertInstanceOf(Query::class, $query);
             $query->where(['title' => 'Something Else']);
             $calledOne = true;
         }, function ($article) use (&$calledTwo): void {
-            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $article->title = 'Set Defaults Here';
             $calledTwo = true;
         });
@@ -5685,7 +5693,7 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $article = $articles->findOrCreate(['title' => 'A New Article', 'published' => 'Y'], function ($article): void {
-            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $article->title = 'A Different Title';
         }, ['defaults' => false]);
         $this->assertFalse($article->isNew());
@@ -5705,11 +5713,11 @@ class TableTest extends TestCase
         });
 
         $article = $articles->findOrCreate(function ($query): void {
-            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $this->assertInstanceOf(Query::class, $query);
             $query->where(['title' => 'Find Something New']);
             $this->assertTrue($this->connection->inTransaction());
         }, function ($article): void {
-            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $article->title = 'Success';
             $this->assertTrue($this->connection->inTransaction());
         });

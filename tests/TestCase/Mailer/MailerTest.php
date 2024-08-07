@@ -223,7 +223,7 @@ class MailerTest extends TestCase
         $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
-        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
+        $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->deliver('This is the message');
 
@@ -969,7 +969,7 @@ class MailerTest extends TestCase
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTemplate('image');
         $this->mailer->setEmailFormat('html');
-        $server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+        $server = env('SERVER_NAME') ?: 'localhost';
 
         if (env('SERVER_PORT') && env('SERVER_PORT') !== 80) {
             $server .= ':' . env('SERVER_PORT');

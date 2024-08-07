@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Log;
 use Cake\Log\Log;
 use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test case for LogTrait
@@ -35,7 +36,7 @@ class LogTraitTest extends TestCase
      */
     public function testLog(): void
     {
-        $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $mock = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $mock->expects($this->exactly(2))
             ->method('log')
             ->with(

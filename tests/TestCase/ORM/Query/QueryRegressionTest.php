@@ -29,6 +29,8 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
 
 /**
@@ -233,7 +235,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
@@ -320,7 +322,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
             'saveStrategy' => $strategy,
@@ -412,12 +414,12 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $articles->Highlights->hasMany('TopArticles', [
-            'className' => 'TestApp\Model\Table\ArticlesTable',
+            'className' => ArticlesTable::class,
             'foreignKey' => 'author_id',
         ]);
         $entity = $articles->get(2, ...['contain' => ['Highlights']]);
@@ -942,8 +944,8 @@ class QueryRegressionTest extends TestCase
             })
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertInstanceOf(Entity::class, $result->article);
+        $this->assertInstanceOf(Entity::class, $result->user);
         $this->assertSame(2, $result->user->id);
         $this->assertSame(1, $result->article->id);
     }

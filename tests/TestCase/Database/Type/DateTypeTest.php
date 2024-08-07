@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosDate;
+use Cake\Database\Driver;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -52,7 +53,7 @@ class DateTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
 
         $this->originalTimeZone = date_default_timezone_get();
     }

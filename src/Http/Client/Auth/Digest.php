@@ -109,7 +109,7 @@ class Digest
                 implode(',', array_keys(self::HASH_ALGORITHMS)));
         }
         $this->algorithm = $algorithm;
-        $this->isSessAlgorithm = strpos($this->algorithm, '-sess') !== false;
+        $this->isSessAlgorithm = str_contains($this->algorithm, '-sess');
         $this->hashType = Hash::get(self::HASH_ALGORITHMS, $this->algorithm);
     }
 

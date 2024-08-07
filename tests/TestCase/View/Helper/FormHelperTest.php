@@ -32,9 +32,15 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
+use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\FormContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -161,12 +167,12 @@ class FormHelperTest extends TestCase
     {
         $config = [
             'widgets' => [
-                'datetime' => ['Cake\View\Widget\LabelWidget', 'select'],
+                'datetime' => [LabelWidget::class, 'select'],
             ],
         ];
         $helper = new FormHelper($this->View, $config);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('datetime'));
     }
 
     /**
@@ -177,7 +183,7 @@ class FormHelperTest extends TestCase
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('text'));
     }
 
     /**
@@ -214,7 +220,7 @@ class FormHelperTest extends TestCase
         $data = [
             'val' => 1,
         ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
         $mock->expects($this->once())
             ->method('render')
@@ -238,7 +244,7 @@ class FormHelperTest extends TestCase
             'val' => 1,
             'name' => 'test',
         ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
 
         $mock->expects($this->once())
@@ -282,9 +288,9 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider(): void
     {
         $context = 'My data';
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
-            $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
+            $this->assertInstanceOf(ServerRequest::class, $request);
             $this->assertSame($context, $data['entity']);
 
             return $stub;
@@ -300,7 +306,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
@@ -315,7 +321,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -345,12 +351,12 @@ class FormHelperTest extends TestCase
         $custom = new StubContext();
 
         return [
-            'entity' => [$entity, 'Cake\View\Form\EntityContext'],
-            'collection' => [$collection, 'Cake\View\Form\EntityContext'],
-            'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
-            'array' => [$data, 'Cake\View\Form\ArrayContext'],
-            'form' => [$form, 'Cake\View\Form\FormContext'],
-            'none' => [null, 'Cake\View\Form\NullContext'],
+            'entity' => [$entity, EntityContext::class],
+            'collection' => [$collection, EntityContext::class],
+            'empty_collection' => [$emptyCollection, NullContext::class],
+            'array' => [$data, ArrayContext::class],
+            'form' => [$form, FormContext::class],
+            'none' => [null, NullContext::class],
             'custom' => [$custom, $custom::class],
         ];
     }
@@ -8231,9 +8237,9 @@ class FormHelperTest extends TestCase
     public function testContext(): void
     {
         $result = $this->Form->context();
-        $this->assertInstanceOf('Cake\View\Form\ContextInterface', $result);
+        $this->assertInstanceOf(ContextInterface::class, $result);
 
-        $mock = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $mock = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
     }

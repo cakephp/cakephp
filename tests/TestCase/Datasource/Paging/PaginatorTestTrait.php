@@ -23,7 +23,9 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 trait PaginatorTestTrait
 {
@@ -1257,7 +1259,7 @@ trait PaginatorTestTrait
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+        return $this->getMockBuilder(PaginatorPostsTable::class)
             ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
@@ -1288,7 +1290,7 @@ trait PaginatorTestTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+        $results = $this->getMockBuilder(ResultSet::class)
             ->disableOriginalConstructor()
             ->getMock();
 

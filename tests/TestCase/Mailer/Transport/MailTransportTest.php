@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
+use Cake\Mailer\Transport\MailTransport;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,7 +39,7 @@ class MailTransportTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
+        $this->MailTransport = $this->getMockBuilder(MailTransport::class)
             ->onlyMethods(['_mail'])
             ->getMock();
         $this->MailTransport->setConfig(['additionalParameters' => '-f']);

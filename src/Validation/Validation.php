@@ -817,7 +817,7 @@ class Validation
 
         $firstKey = array_key_first($cases);
         $firstValue = $cases[$firstKey];
-        $enumClassName = get_class($firstValue);
+        $enumClassName = $firstValue::class;
 
         $options = ['only' => $cases];
 
@@ -840,7 +840,7 @@ class Validation
 
         $firstKey = array_key_first($cases);
         $firstValue = $cases[$firstKey];
-        $enumClassName = get_class($firstValue);
+        $enumClassName = $firstValue::class;
 
         $options = ['except' => $cases];
 

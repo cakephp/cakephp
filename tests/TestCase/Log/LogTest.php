@@ -23,6 +23,8 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use TestApp\Log\Engine\TestAppLog;
+use TestPlugin\Log\Engine\TestPluginLog;
 
 /**
  * LogTest class
@@ -58,11 +60,11 @@ class LogTest extends TestCase
         ]);
 
         $result = Log::engine('libtest');
-        $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
+        $this->assertInstanceOf(TestAppLog::class, $result);
         $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
-        $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
+        $this->assertInstanceOf(TestPluginLog::class, $result);
         $this->assertContains('libtest', Log::configured());
         $this->assertContains('plugintest', Log::configured());
 

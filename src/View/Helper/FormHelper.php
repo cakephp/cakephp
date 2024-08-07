@@ -1653,7 +1653,7 @@ class FormHelper extends Helper
             throw new CakeException(sprintf('Missing field name for `FormHelper::%s`.', $method));
         }
         $options = $params[1] ?? [];
-        $options['type'] = $options['type'] ?? $method;
+        $options['type'] ??= $method;
         $options = $this->_initInputField($params[0], $options);
 
         return $this->widget($options['type'], $options);

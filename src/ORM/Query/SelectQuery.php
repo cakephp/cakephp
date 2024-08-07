@@ -1787,5 +1787,5 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 }
 
 // phpcs:disable
-class_exists('Cake\ORM\Query');
+class_exists(\Cake\ORM\Query::class);
 // phpcs:enable

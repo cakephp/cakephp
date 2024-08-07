@@ -57,7 +57,7 @@ class RouterTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        Router::defaultRouteClass('Cake\Routing\Route\Route');
+        Router::defaultRouteClass(Route::class);
     }
 
     /**
@@ -2079,14 +2079,14 @@ class RouterTest extends TestCase
         try {
             Router::url(['controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
 
         try {
             Router::url(['prefix' => '1', 'controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }
@@ -2991,7 +2991,7 @@ class RouterTest extends TestCase
     {
         $url = 'http://example.com/posts/view/1';
 
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
+        $route = $this->getMockBuilder(Route::class)
             ->onlyMethods(['match'])
             ->setConstructorArgs(['/{controller}/{action}/*'])
             ->getMock();

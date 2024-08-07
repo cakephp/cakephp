@@ -90,7 +90,7 @@ class ExistsIn
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
-                    get_class($options['repository'])
+                    $options['repository']::class
                 ));
             }
             $repository = $table->getAssociation($this->_repository);

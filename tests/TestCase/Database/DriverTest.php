@@ -380,7 +380,7 @@ class DriverTest extends TestCase
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
-        } catch (PDOException $e) {
+        } catch (PDOException) {
         }
 
         $messages = Log::engine('queries')->read();

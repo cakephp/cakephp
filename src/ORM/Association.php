@@ -295,7 +295,7 @@ abstract class Association
             throw new InvalidArgumentException(sprintf(
                 "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
-                get_class($this->_targetTable)
+                $this->_targetTable::class
             ));
         }
 
@@ -384,10 +384,10 @@ abstract class Association
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
+                        isset($this->_sourceTable) ? $this->_sourceTable::class : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
+                        $this->_targetTable::class,
                         $className
                     ));
                 }
