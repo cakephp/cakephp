@@ -14,14 +14,16 @@ parameters:
 			message: "#^Property Cake\\\\Console\\\\ConsoleInput\\:\\:\\$_input \\(resource\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: src/Console/ConsoleInput.php
-		-
-			message: "#^Property Cake\\\\Console\\\\ConsoleOutput\\:\\:\\$_output \\(resource\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: src/Console/ConsoleOutput.php
+
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
+
+		-
+			message: "#^Property Cake\\\\Console\\\\ConsoleOutput\\:\\:\\$_output \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			count: 2
+			path: src/Console/ConsoleOutput.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -127,6 +129,11 @@ parameters:
 			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Helper/TimeHelper.php
+
+		-
+			message: "#^Cannot access constant class on Closure\\|PDO\\|resource\\.$#"
+			count: 1
+			path: src/View/ViewBuilder.php
 
 		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
