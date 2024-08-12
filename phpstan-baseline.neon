@@ -156,6 +156,11 @@ parameters:
 			path: src/View/Helper/TimeHelper.php
 
 		-
+			message: "#^Cannot access constant class on Closure\\|PDO\\|resource\\.$#"
+			count: 1
+			path: src/View/ViewBuilder.php
+
+		-
 			message: "#^Call to an undefined method Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
