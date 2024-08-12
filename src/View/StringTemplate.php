@@ -137,7 +137,7 @@ class StringTemplate
      */
     public function pop(): void
     {
-        if (empty($this->_configStack)) {
+        if (!$this->_configStack) {
             return;
         }
         [$this->_config, $this->_compiled] = array_pop($this->_configStack);
@@ -174,7 +174,7 @@ class StringTemplate
      */
     protected function _compileTemplates(array $templates = []): void
     {
-        if (empty($templates)) {
+        if (!$templates) {
             $templates = array_keys($this->_config);
         }
         foreach ($templates as $name) {
@@ -357,7 +357,7 @@ class StringTemplate
         string $useIndex = 'class'
     ): array|string|null {
         // NOOP
-        if (empty($newClass)) {
+        if (!$newClass) {
             return $input;
         }
 

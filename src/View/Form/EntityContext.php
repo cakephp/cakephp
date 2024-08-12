@@ -129,7 +129,7 @@ class EntityContext implements ContextInterface
         $entity = $this->_context['entity'];
         $this->_isCollection = is_iterable($entity);
 
-        if (empty($table)) {
+        if (!$table) {
             if ($this->_isCollection) {
                 /** @var iterable<\Cake\Datasource\EntityInterface|array> $entity */
                 foreach ($entity as $e) {
@@ -324,7 +324,7 @@ class EntityContext implements ContextInterface
      *
      * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
-     * @param array|null $path Each one of the parts in a path for a field name
+     * @param array<string>|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
@@ -644,6 +644,7 @@ class EntityContext implements ContextInterface
         foreach ($normalized as $part) {
             if ($part === '_joinData') {
                 if ($assoc !== null) {
+                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
                     $table = $assoc->junction();
                     $assoc = null;
                     continue;

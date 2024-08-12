@@ -135,7 +135,7 @@ class I18nExtractCommand extends Command
         /** @psalm-suppress UndefinedConstant */
         $defaultPaths = array_merge(
             [APP],
-            App::path('templates'),
+            array_values(App::path('templates')),
             ['D'] // This is required to break the loop below
         );
         $defaultPathIndex = 0;
@@ -185,10 +185,13 @@ class I18nExtractCommand extends Command
         }
         if ($args->getOption('paths')) {
             $this->_paths = explode(',', (string)$args->getOption('paths'));
-        } elseif ($args->getOption('plugin')) {
+        }
+        if ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
-        } else {
+            if (empty($this->_paths)) {
+                $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
+            }
+        } elseif (!$args->getOption('paths')) {
             $this->_getPaths($io);
         }
 
@@ -219,7 +222,7 @@ class I18nExtractCommand extends Command
                 . 'locales' . DIRECTORY_SEPARATOR;
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
-            $localePaths = App::path('locales');
+            $localePaths = array_values(App::path('locales'));
             if (!$localePaths) {
                 $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales';
             }
@@ -261,7 +264,7 @@ class I18nExtractCommand extends Command
 
         $this->_markerError = (bool)$args->getOption('marker-error');
 
-        if (empty($this->_files)) {
+        if (!$this->_files) {
             $this->_searchFiles();
         }
 
@@ -284,7 +287,7 @@ class I18nExtractCommand extends Command
      *
      * @param string $domain The domain
      * @param string $msgid The message string
-     * @param array $details Context and plural form if any, file and line references
+     * @param array<string, mixed> $details Context and plural form if any, file and line references
      * @return void
      */
     protected function _addTranslation(string $domain, string $msgid, array $details = []): void
@@ -816,7 +819,7 @@ class I18nExtractCommand extends Command
     protected function _searchFiles(): void
     {
         $pattern = false;
-        if (!empty($this->_exclude)) {
+        if ($this->_exclude) {
             $exclude = [];
             foreach ($this->_exclude as $e) {
                 if (DIRECTORY_SEPARATOR !== '\\' && $e[0] !== DIRECTORY_SEPARATOR) {

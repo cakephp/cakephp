@@ -318,7 +318,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
         $handler = new TestRequestHandler(function (): void {
-            throw new MissingControllerException(['class' => 'Articles']);
+            throw new MissingControllerException(['controller' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
         $this->assertSame(404, $result->getStatusCode());
@@ -329,7 +329,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $logs[0]
         );
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);
-        $this->assertStringContainsString("'class' => 'Articles'", $logs[0]);
+        $this->assertStringContainsString("'controller' => 'Articles'", $logs[0]);
         $this->assertStringContainsString('Request URL:', $logs[0]);
     }
 

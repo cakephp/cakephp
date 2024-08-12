@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use BackedEnum;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
 use Cake\Utility\Text;
@@ -147,7 +148,7 @@ class Validation
      */
     public static function notBlank(mixed $check): bool
     {
-        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
+        if (!$check && !is_bool($check) && !is_numeric($check)) {
             return false;
         }
 
@@ -596,7 +597,7 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -628,7 +629,7 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (!is_string($check)) {
@@ -692,6 +693,9 @@ class Validation
     /**
      * Checks that a value is a valid decimal. Both the sign and exponent are optional.
      *
+     * Be aware that the currently set locale is being used to determine
+     * the decimal and thousands separator of the given number.
+     *
      * Valid Places:
      *
      * - null => Any number of decimal places, including none. The '.' is not required.
@@ -736,7 +740,7 @@ class Validation
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
         // There are two types of non-breaking spaces - we inject a space to account for human input
-        if ($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+        if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
             $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
         } else {
             $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
@@ -804,7 +808,16 @@ class Validation
         $backingType = null;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $backingType = $reflectionEnum->getBackingType();
+
+            /** @var \ReflectionNamedType|\ReflectionUnionType|null $reflectionBackingType */
+            $reflectionBackingType = $reflectionEnum->getBackingType();
+            if ($reflectionBackingType) {
+                if (method_exists($reflectionBackingType, 'getName')) {
+                    $backingType = $reflectionBackingType->getName();
+                } else {
+                    $backingType = (string)$reflectionBackingType;
+                }
+            }
         } catch (ReflectionException) {
         }
 
@@ -812,6 +825,17 @@ class Validation
             throw new InvalidArgumentException(
                 'The `$enumClassName` argument must be the classname of a valid backed enum.'
             );
+        }
+
+        if (!is_string($check) && !is_int($check)) {
+            return false;
+        }
+
+        if ($backingType === 'int') {
+            if (!is_numeric($check)) {
+                return false;
+            }
+            $check = (int)$check;
         }
 
         if (get_debug_type($check) !== (string)$backingType) {
@@ -840,7 +864,7 @@ class Validation
      * and arrays with a `name` key.
      *
      * @param mixed $check Value to check
-     * @param array<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param list<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
@@ -853,7 +877,7 @@ class Validation
             return static::extension(array_shift($check), $extensions);
         }
 
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
 
@@ -997,7 +1021,7 @@ class Validation
         $check = array_filter((array)$check, function ($value) {
             return $value || is_numeric($value);
         });
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
         if ($options['max'] && count($check) > $options['max']) {
@@ -1121,11 +1145,11 @@ class Validation
     }
 
     /**
-     * Checks if a value is in a given list. Comparison is case sensitive by default.
+     * Checks if a value is in a given list. Comparison is case-sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param array<string> $list List to check against.
-     * @param bool $caseInsensitive Set to true for case insensitive comparison.
+     * @param list<string> $list List to check against.
+     * @param bool $caseInsensitive Set to true for case-insensitive comparison.
      * @return bool Success.
      */
     public static function inList(mixed $check, array $list, bool $caseInsensitive = false): bool
@@ -1411,9 +1435,12 @@ class Validation
             return false;
         }
 
-        [$width, $height] = getimagesize($file) ?: [];
-        $validHeight = null;
-        $validWidth = null;
+        $width = $height = null;
+        $imageSize = getimagesize($file);
+        if ($imageSize) {
+            [$width, $height] = $imageSize;
+        }
+        $validWidth = $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

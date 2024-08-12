@@ -43,3 +43,8 @@ phpstan-baseline.neon export-ignore
 phpunit.xml.dist export-ignore
 psalm.xml export-ignore
 psalm-baseline.xml export-ignore
+
+# Split package files
+src/Validation/.gitattributes export-ignore
+src/Validation/phpstan.neon.dist export-ignore
+src/Validation/tests/ export-ignore

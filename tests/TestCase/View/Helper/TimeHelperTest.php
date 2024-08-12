@@ -473,6 +473,10 @@ class TimeHelperTest extends TestCase
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertStringStartsWith('Thursday, January 14, 2010 at 1:59:28 PM', $result);
 
+        $result = $this->Time->format($time, [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertSame('1/14/10, 1:59:28 PM', $result);
+
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
         $this->assertSame($expected, $result);

@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Type\DateTimeType;
+use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
@@ -199,6 +201,10 @@ class DateTimeTypeTest extends TestCase
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertSame('2014-06-04 18:36:35', $result);
+
+        $date = new Date('2024-01-27');
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertSame('2024-01-27 00:00:00', $result);
     }
 
     /**
@@ -227,6 +233,7 @@ class DateTimeTypeTest extends TestCase
             ['2014-02-14T13:14:15', new DateTime('2014-02-14T13:14:15')],
             ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
             ['2017-04-05T17:18:00+00:00', new DateTime('2017-04-05T17:18:00+00:00')],
+            ['2024-03-02 15:46:00.000000', new DateTime('2024-03-02T15:46:00+00:00')],
 
             [new DateTime('2017-04-05T17:18:00+00:00'), new DateTime('2017-04-05T17:18:00+00:00')],
             [new NativeDateTime('2017-04-05T17:18:00+00:00'), new NativeDateTime('2017-04-05T17:18:00+00:00')],
@@ -408,5 +415,18 @@ class DateTimeTypeTest extends TestCase
         $expected = new DateTime('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test marshaling date into datetime type
+     */
+    public function testMarshalDateWithTimezone(): void
+    {
+        date_default_timezone_set('Europe/Vienna');
+        $value = new ChronosDate('2023-04-26');
+
+        $result = $this->type->marshal($value);
+        $this->assertEquals($value->format('Y-m-d'), $result->format('Y-m-d'));
+        $this->assertEquals('Europe/Vienna', $result->getTimezone()->getName());
     }
 }

@@ -181,7 +181,7 @@ class MapReduce implements IteratorAggregate
             $mapper($val, $key, $this);
         }
 
-        if (!empty($this->_intermediate) && empty($this->_reducer)) {
+        if ($this->_intermediate && $this->_reducer === null) {
             throw new LogicException('No reducer function was provided');
         }
 

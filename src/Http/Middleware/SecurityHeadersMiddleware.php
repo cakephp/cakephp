@@ -172,7 +172,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
         if ($option === self::ALLOW_FROM) {
-            if (empty($url)) {
+            if (!$url) {
                 throw new InvalidArgumentException('The 2nd arg $url can not be empty when `allow-from` is used');
             }
             $option .= ' ' . $url;
@@ -247,7 +247,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value Value to check
-     * @param array<string> $allowed List of allowed values
+     * @param list<string> $allowed List of allowed values
      * @return void
      */
     protected function checkValues(string $value, array $allowed): void

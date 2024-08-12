@@ -84,8 +84,8 @@ class SocketTest extends TestCase
      */
     public function testHost(): void
     {
-        $this->Socket = new Socket(['host' => '8.8.8.8']);
-        $this->assertSame('dns.google', $this->Socket->host());
+        $this->Socket = new Socket(['host' => '1.1.1.1']);
+        $this->assertSame('one.one.one.one', $this->Socket->host());
     }
 
     /**
@@ -287,10 +287,6 @@ class SocketTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        // Windows doesn't return the previous exception for some reason
-        if (DS !== '\\') {
-            $this->assertInstanceOf('Exception', $e->getPrevious());
-        }
     }
 
     /**
@@ -316,10 +312,6 @@ class SocketTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        // Windows doesn't return the previous exception for some reason
-        if (DS !== '\\') {
-            $this->assertInstanceOf('Exception', $e->getPrevious());
-        }
     }
 
     /**

@@ -115,7 +115,7 @@ class XmlView extends SerializedView
         $rootNode = $this->getConfig('rootNode', 'response');
 
         if (is_array($serialize)) {
-            if (empty($serialize)) {
+            if (!$serialize) {
                 $serialize = '';
             } elseif (count($serialize) === 1) {
                 $serialize = current($serialize);

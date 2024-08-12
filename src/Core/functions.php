@@ -94,7 +94,7 @@ if (!function_exists('Cake\Core\pluginSplit')) {
                 $parts[0] .= '.';
             }
 
-            /** @psalm-var array{string, string}*/
+            /** @psalm-var array{string, string} */
             return $parts;
         }
 

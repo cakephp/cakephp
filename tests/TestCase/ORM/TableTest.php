@@ -1286,6 +1286,25 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
+    public function testFindTypedParameterCompatibility(): void
+    {
+        $articles = $this->fetchTable('Articles');
+        $article = $articles->find('titled')->first();
+        $this->assertNotEmpty($article);
+
+        // Options arrays are deprecated but should work
+        $this->deprecated(function () use ($articles) {
+            $article = $articles->find('titled', ['title' => 'Second Article'])->first();
+            $this->assertNotEmpty($article);
+            $this->assertEquals('Second Article', $article->title);
+        });
+
+        // Named parameters should be compatible with options finders
+        $article = $articles->find('titled', title: 'Second Article')->first();
+        $this->assertNotEmpty($article);
+        $this->assertEquals('Second Article', $article->title);
+    }
+
     public function testFindForFinderVariadic(): void
     {
         $testTable = $this->fetchTable('Test');
@@ -1903,6 +1922,21 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding a plugin behavior to a table.
+     */
+    public function testAddBehaviorPlugin(): void
+    {
+        $table = new Table([
+            'table' => 'articles',
+        ]);
+        $result = $table->addBehavior('TestPlugin.PersisterOne', ['some' => 'key']);
+
+        $this->assertSame(['PersisterOne'], $result->behaviors()->loaded());
+        $className = $result->behaviors()->get('PersisterOne')->getConfig('className');
+        $this->assertSame('TestPlugin.PersisterOne', $className);
+    }
+
+    /**
      * Test adding a behavior that is a duplicate.
      */
     public function testAddBehaviorDuplicate(): void
@@ -1936,6 +1970,20 @@ class TableTest extends TestCase
         ]);
         $result = $table->removeBehavior('Sluggable');
         $this->assertSame($table, $result);
+    }
+
+    /**
+     * Test removing a behavior from a table clears the method map for the behavior
+     */
+    public function testRemoveBehaviorMethodMapCleared(): void
+    {
+        $table = new Table(['table' => 'articles']);
+        $table->addBehavior('Sluggable');
+        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+
+        $table->removeBehavior('Sluggable');
+        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
     }
 
     /**

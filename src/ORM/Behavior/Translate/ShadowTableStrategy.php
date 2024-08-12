@@ -402,6 +402,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         if ($id) {
             $where['id'] = $id;
 
+            /** @var \Cake\Datasource\EntityInterface|null $translation */
             $translation = $this->translationTable->find()
                 ->select(array_merge(['id', 'locale'], $fields))
                 ->where($where)
@@ -481,7 +482,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
 
-            $hydrated = !is_array($row);
+            $hydrated = $row instanceof EntityInterface;
 
             if (empty($row['translation'])) {
                 $row['_locale'] = $locale;
@@ -489,7 +490,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if ($hydrated) {
                     /** @var \Cake\Datasource\EntityInterface $row */
-                    $row->clean();
+                    $row->setDirty('_locale', false);
                 }
 
                 return $row;
@@ -515,6 +516,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if ($translation[$field] !== null) {
                     if ($allowEmpty || $translation[$field] !== '') {
                         $row[$field] = $translation[$field];
+
+                        if ($hydrated) {
+                            /** @var \Cake\Datasource\EntityInterface $row */
+                            $row->setDirty($field, false);
+                        }
                     }
                 }
             }
@@ -524,7 +530,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $row */
-                $row->clean();
+                $row->setDirty('_locale', false);
             }
 
             return $row;
@@ -545,7 +551,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
-            if (empty($translations) && $row->get('_translations')) {
+            if (!$translations && $row->get('_translations')) {
                 return $row;
             }
 
@@ -558,7 +564,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             $row['_translations'] = $result;
             unset($row['_i18n']);
             if ($row instanceof EntityInterface) {
-                $row->clean();
+                $row->setDirty('_translations', false);
             }
 
             return $row;
@@ -578,7 +584,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         /** @var array<string, \Cake\ORM\Entity> $translations */
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->isDirty('_translations')) {
+        if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 

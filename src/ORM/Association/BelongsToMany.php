@@ -37,6 +37,9 @@ use SplObjectStorage;
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
  * In this example 'Article' is the source table and 'Tags' is the target table.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsToMany extends Association
 {
@@ -115,9 +118,9 @@ class BelongsToMany extends Association
     /**
      * The table instance for the junction relation.
      *
-     * @var \Cake\ORM\Table|string
+     * @var \Cake\ORM\Table|string|null
      */
-    protected Table|string $_through;
+    protected Table|string|null $_through = null;
 
     /**
      * Valid strategies for this type of association
@@ -258,7 +261,7 @@ class BelongsToMany extends Association
         }
 
         $tableLocator = $this->getTableLocator();
-        if ($table === null && isset($this->_through)) {
+        if ($table === null && $this->_through !== null) {
             $table = $this->_through;
         } elseif ($table === null) {
             $tableName = $this->_junctionTableName();
@@ -475,7 +478,9 @@ class BelongsToMany extends Association
 
         $foreignKey = $this->getTargetForeignKey();
         $thisJoin = $query->clause('join')[$this->getName()];
-        $thisJoin['conditions']->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
+        /** @var \Cake\Database\Expression\QueryExpression $conditions */
+        $conditions = $thisJoin['conditions'];
+        $conditions->add($assoc->_joinCondition(['foreignKey' => $foreignKey]));
     }
 
     /**
@@ -752,7 +757,9 @@ class BelongsToMany extends Association
             // Saving the new linked entity failed, copy errors back into the
             // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\Datasource\EntityInterface $originalEntity */
+                $originalEntity = $original[$k];
+                $originalEntity->setErrors($entity->getErrors());
             }
 
             return false;
@@ -981,10 +988,11 @@ class BelongsToMany extends Association
 
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
+     * Returns null if not defined.
      *
-     * @return \Cake\ORM\Table|string
+     * @return \Cake\ORM\Table|string|null
      */
-    public function getThrough(): Table|string
+    public function getThrough(): Table|string|null
     {
         return $this->_through;
     }
@@ -1282,6 +1290,7 @@ class BelongsToMany extends Association
         }
 
         foreach ($existing as $existingLink) {
+            /** @var \Cake\ORM\Entity $existingLink */
             $existingKeys = $existingLink->extract($keys);
             $found = false;
             foreach ($unmatchedEntityKeys as $i => $unmatchedKeys) {
@@ -1401,7 +1410,7 @@ class BelongsToMany extends Association
             $result[] = $joint;
         }
 
-        if (empty($missing)) {
+        if (!$missing) {
             return $result;
         }
 

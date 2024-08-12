@@ -342,7 +342,7 @@ class Socket
      */
     public function lastError(): ?string
     {
-        if (empty($this->lastError)) {
+        if (!$this->lastError) {
             return null;
         }
 
@@ -396,7 +396,7 @@ class Socket
      */
     public function read(int $length = 1024): ?string
     {
-        if ($length < 0) {
+        if ($length < 1) {
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
@@ -458,9 +458,9 @@ class Socket
      */
     public function reset(?array $state = null): void
     {
-        if (empty($state)) {
+        if (!$state) {
             static $initialState = [];
-            if (empty($initialState)) {
+            if (!$initialState) {
                 $initialState = get_class_vars(self::class);
             }
             $state = $initialState;

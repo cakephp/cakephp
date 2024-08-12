@@ -107,7 +107,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $trustedProxies = [];
 
@@ -406,7 +406,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * register trusted proxies
      *
-     * @param array<string> $proxies ips list of trusted proxies
+     * @param list<string> $proxies ips list of trusted proxies
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
@@ -419,7 +419,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getTrustedProxies(): array
     {
@@ -438,7 +438,7 @@ class ServerRequest implements ServerRequestInterface
         $ref = $this->getEnv('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
-        if (empty($ref) || empty($base)) {
+        if (!$ref || !$base) {
             return null;
         }
 
@@ -663,7 +663,7 @@ class ServerRequest implements ServerRequestInterface
      * See Request::is() for how to add additional types and the
      * built-in types.
      *
-     * @param array<string> $types The types to check.
+     * @param list<string> $types The types to check.
      * @return bool Success.
      * @see \Cake\Http\ServerRequest::is()
      */
@@ -934,7 +934,7 @@ class ServerRequest implements ServerRequestInterface
      * There are a few ways to specify a method.
      *
      * - If your client supports it you can use native HTTP methods.
-     * - You can set the HTTP-X-Method-Override header.
+     * - You can set the X-Http-Method-Override header.
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
@@ -1065,7 +1065,7 @@ class ServerRequest implements ServerRequestInterface
     public function domain(int $tldLength = 1): string
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return '';
         }
 
@@ -1085,7 +1085,7 @@ class ServerRequest implements ServerRequestInterface
     public function subdomains(int $tldLength = 1): array
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return [];
         }
 
@@ -1562,7 +1562,6 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
      * @return mixed
-     * @psalm-suppress MethodSignatureMismatch
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
@@ -1772,7 +1771,7 @@ class ServerRequest implements ServerRequestInterface
             $target .= '?' . $this->uri->getQuery();
         }
 
-        if (empty($target)) {
+        if (!$target) {
             $target = '/';
         }
 

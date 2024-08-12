@@ -521,7 +521,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             throw new LogicException('Case expression has incomplete when clause. Missing `then()` after `when()`.');
         }
 
-        if (empty($this->when)) {
+        if (!$this->when) {
             throw new LogicException('Case expression must have at least one when statement.');
         }
 

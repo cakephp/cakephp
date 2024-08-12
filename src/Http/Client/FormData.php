@@ -157,10 +157,20 @@ class FormData implements Countable, Stringable
             if (stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
                 $metadata = stream_get_meta_data($value);
-                $contentType = (string)$finfo->file($metadata['uri']);
-                $filename = basename($metadata['uri']);
+                $uri = $metadata['uri'] ?? '';
+                $contentType = (string)$finfo->file($uri);
+                $filename = basename($uri);
             }
         } else {
+            assert(
+                is_string($value),
+                sprintf(
+                    '`$value` must be a string, a resource or an instance of `Psr\Http\Message\UploadedFileInterface`.'
+                    . ' `%s` given.',
+                    get_debug_type($value)
+                )
+            );
+
             $finfo = new finfo(FILEINFO_MIME);
             $value = substr($value, 1);
             $filename = basename($value);

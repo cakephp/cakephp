@@ -94,6 +94,7 @@ class SelectWithPivotLoader extends SelectLoader
         $query = parent::_buildQuery($options);
 
         if ($queryBuilder) {
+            /** @var \Cake\ORM\Query\SelectQuery $query */
             $query = $queryBuilder($query);
         }
 

@@ -29,6 +29,9 @@ use function Cake\Core\pluginSplit;
  * related to only one record in the target table and vice versa.
  *
  * An example of a HasOne association would be User has one Profile.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class HasOne extends Association
 {
@@ -118,7 +121,7 @@ class HasOne extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 

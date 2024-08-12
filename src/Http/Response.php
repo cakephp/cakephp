@@ -1373,13 +1373,14 @@ class Response implements ResponseInterface, Stringable
         if ($options['download']) {
             $agent = (string)env('HTTP_USER_AGENT');
 
+            $contentType = null;
             if ($agent && preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
             } elseif ($agent && preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
             }
 
-            if (isset($contentType)) {
+            if ($contentType !== null) {
                 $new = $new->withType($contentType);
             }
             $name = $options['name'] ?: $file->getFileName();

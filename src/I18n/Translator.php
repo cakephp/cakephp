@@ -134,7 +134,7 @@ class Translator
             unset($tokensValues['_context']);
         }
 
-        if (empty($tokensValues)) {
+        if (!$tokensValues) {
             // Fallback for plurals that were using the singular key
             if (is_array($message)) {
                 return array_values($message + [''])[0];

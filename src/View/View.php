@@ -786,7 +786,7 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -821,7 +821,7 @@ class View implements EventDispatcherInterface
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
 
-        if (!empty($content)) {
+        if ($content) {
             $this->Blocks->set('content', $content);
         }
 
@@ -1134,7 +1134,7 @@ class View implements EventDispatcherInterface
      */
     protected function _render(string $templateFile, array $data = []): string
     {
-        if (empty($data)) {
+        if (!$data) {
             $data = $this->viewVars;
         }
         $this->_current = $templateFile;
@@ -1347,7 +1347,7 @@ class View implements EventDispatcherInterface
 
         $name ??= $this->template;
 
-        if (empty($name)) {
+        if (!$name) {
             throw new CakeException('Template name not provided');
         }
 
@@ -1433,7 +1433,7 @@ class View implements EventDispatcherInterface
             $name = $second;
             $plugin = $first;
         }
-        if (isset($this->plugin) && !$plugin && $fallback) {
+        if ($this->plugin !== null && !$plugin && $fallback) {
             $plugin = $this->plugin;
         }
 
@@ -1451,7 +1451,7 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if (empty($this->layout)) {
+            if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
                     'To disable layout rendering use method `View::disableAutoLayout()` instead.'
@@ -1579,7 +1579,7 @@ class View implements EventDispatcherInterface
         }
         $templatePaths = App::path(static::NAME_TEMPLATE);
         $pluginPaths = $themePaths = [];
-        if (!empty($plugin)) {
+        if ($plugin) {
             foreach ($templatePaths as $templatePath) {
                 $pluginPaths[] = $templatePath
                     . static::PLUGIN_TEMPLATE_FOLDER
@@ -1590,7 +1590,7 @@ class View implements EventDispatcherInterface
             $pluginPaths[] = Plugin::templatePath($plugin);
         }
 
-        if (!empty($this->theme)) {
+        if ($this->theme) {
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
@@ -1624,7 +1624,7 @@ class View implements EventDispatcherInterface
      * @param string $name Element name
      * @param array $data Data
      * @param array<string, mixed> $options Element options
-     * @return array Element Cache configuration.
+     * @return array<string, mixed> Element Cache configuration.
      * @psalm-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array

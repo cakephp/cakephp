@@ -27,7 +27,7 @@ use Cake\ORM\Query\SelectQuery;
 trait PaginatorTestTrait
 {
     /**
-     * @var \Cake\Datasource\Paginator
+     * @var \Cake\Datasource\Paging\NumericPaginator
      */
     protected $Paginator;
 
@@ -109,9 +109,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];

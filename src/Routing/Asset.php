@@ -154,6 +154,7 @@ class Asset
             return ltrim(Router::url($path), '/');
         }
 
+        $plugin = null;
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             [$plugin, $path] = static::pluginSplit($path);
         }
@@ -162,7 +163,7 @@ class Asset
             $placeHolderVal = '';
             if (!empty($options['theme'])) {
                 $placeHolderVal = static::inflectString($options['theme']) . '/';
-            } elseif (isset($plugin)) {
+            } elseif ($plugin !== null) {
                 $placeHolderVal = static::inflectString($plugin) . '/';
             }
 
@@ -181,7 +182,7 @@ class Asset
             return Router::url($path);
         }
 
-        if (isset($plugin)) {
+        if ($plugin !== null) {
             $path = static::inflectString($plugin) . '/' . $path;
         }
 

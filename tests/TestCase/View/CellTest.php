@@ -315,6 +315,7 @@ class CellTest extends TestCase
      */
     public function testCellOptions(): void
     {
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
         $this->assertSame(10, $cell->limit);
         $this->assertTrue(!isset($cell->nope), 'Not a valid option');
@@ -435,6 +436,7 @@ class CellTest extends TestCase
     public function testCachedRenderSimpleCustomTemplateViewBuilder(): void
     {
         Cache::setConfig('default', ['className' => 'Array']);
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => ['key' => 'celltest']]);
         $result = $cell->render();
         $this->assertSame(1, $cell->counter);

@@ -18,6 +18,7 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
+use BackedEnum;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -39,6 +40,7 @@ use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
 use Traversable;
+use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_NUMERIC;
@@ -290,6 +292,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue][] = $value;
         }
 
@@ -311,6 +319,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue] = $value;
         }
 
@@ -612,6 +626,12 @@ trait CollectionTrait
                     );
                 }
 
+                if ($mapKey instanceof BackedEnum) {
+                    $mapKey = $mapKey->value;
+                } elseif ($mapKey instanceof UnitEnum) {
+                    $mapKey = $mapKey->name;
+                }
+
                 $mapReduce->emit($rowVal($value, $key), $mapKey);
 
                 return null;
@@ -677,7 +697,7 @@ trait CollectionTrait
                 $isObject = is_object(current($parents));
                 $foundOutType = true;
             }
-            if (empty($key) || !isset($parents[$key])) {
+            if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
@@ -695,7 +715,10 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(fn ($value) => $isObject ? $value : $value->getArrayCopy());
+            ->map(function ($value) use ($isObject) {
+                /** @var \ArrayIterator|\ArrayObject $value */
+                return $isObject ? $value : $value->getArrayCopy();
+            });
     }
 
     /**

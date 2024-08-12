@@ -136,7 +136,7 @@ class ServerCommand extends Command
             escapeshellarg($this->_documentRoot)
         );
 
-        if (!empty($this->_iniPath)) {
+        if ($this->_iniPath) {
             $command = sprintf('%s -c %s', $command, $this->_iniPath);
         }
 

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Query;
 
 use Cake\Cache\Engine\FileEngine;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -26,6 +27,7 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -2601,6 +2603,7 @@ class SelectQueryTest extends TestCase
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->getValueBinder()->bindings(),
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
@@ -3078,7 +3081,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find()->where(['id >' => 1]);
-        $query->where(function ($exp) {
+        $query->where(function (ExpressionInterface $exp) {
             return $exp->add('author_id = :author');
         });
         $query->bind(':author', 1, 'integer');

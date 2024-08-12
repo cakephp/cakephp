@@ -364,7 +364,7 @@ class EavStrategy implements TranslateStrategyInterface
             if ($row === null) {
                 return $row;
             }
-            $hydrated = !is_array($row);
+            $hydrated = $row instanceof EntityInterface;
 
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
@@ -378,6 +378,11 @@ class EavStrategy implements TranslateStrategyInterface
                 $content = $translation['content'] ?? null;
                 if ($content !== null) {
                     $row[$field] = $content;
+
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
+                    }
                 }
 
                 unset($row[$name]);
@@ -386,7 +391,7 @@ class EavStrategy implements TranslateStrategyInterface
             $row['_locale'] = $locale;
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $row */
-                $row->clean();
+                $row->setDirty('_locale', false);
             }
 
             return $row;
@@ -407,7 +412,7 @@ class EavStrategy implements TranslateStrategyInterface
                 return $row;
             }
             $translations = (array)$row->get('_i18n');
-            if (empty($translations) && $row->get('_translations')) {
+            if (!$translations && $row->get('_translations')) {
                 return $row;
             }
             $grouped = new Collection($translations);
@@ -425,8 +430,8 @@ class EavStrategy implements TranslateStrategyInterface
 
             $options = ['setter' => false, 'guard' => false];
             $row->set('_translations', $result, $options);
+            $row->setDirty('_translations', false);
             unset($row['_i18n']);
-            $row->clean();
 
             return $row;
         });
@@ -445,7 +450,7 @@ class EavStrategy implements TranslateStrategyInterface
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->isDirty('_translations')) {
+        if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
@@ -467,7 +472,7 @@ class EavStrategy implements TranslateStrategyInterface
             }
         }
 
-        if (empty($find)) {
+        if (!$find) {
             return;
         }
 

@@ -183,7 +183,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * View classes for content negotiation.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $viewClasses = [];
 
@@ -288,7 +288,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get(string $name): mixed
     {
-        if (!empty($this->defaultTable)) {
+        if ($this->defaultTable) {
             if (str_contains($this->defaultTable, '\\')) {
                 $class = App::shortName($this->defaultTable, 'Model/Table', 'Table');
             } else {
@@ -714,8 +714,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Each view class must implement the `getContentType()` hook method
      * to participate in negotiation.
      *
-     * @see Cake\Http\ContentTypeNegotiation
-     * @return array<string>
+     * @see \Cake\Http\ContentTypeNegotiation
+     * @return list<string>
      */
     public function viewClasses(): array
     {
@@ -728,9 +728,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Each view class must implement the `getContentType()` hook method
      * to participate in negotiation.
      *
-     * @param array $viewClasses View classes list.
+     * @param list<string> $viewClasses View classes list.
      * @return $this
-     * @see Cake\Http\ContentTypeNegotiation
+     * @see \Cake\Http\ContentTypeNegotiation
      * @since 4.5.0
      */
     public function addViewClasses(array $viewClasses)
@@ -749,7 +749,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function chooseViewClass(): ?string
     {
         $possibleViewClasses = $this->viewClasses();
-        if (empty($possibleViewClasses)) {
+        if (!$possibleViewClasses) {
             return null;
         }
         // Controller or component has already made a view class decision.

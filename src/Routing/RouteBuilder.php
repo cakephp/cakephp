@@ -28,10 +28,7 @@ use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
- * Provides features for building routes inside scopes.
- *
- * Gives an easy to use way to build routes and append them
- * into a route collection.
+ * Provides features for building routes and parsing/matching URLs to routes.
  */
 class RouteBuilder
 {
@@ -389,7 +386,7 @@ class RouteBuilder
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
-        if (empty($only)) {
+        if (!$only) {
             $only = array_keys($resourceMap);
         }
 
@@ -701,11 +698,11 @@ class RouteBuilder
      */
     protected function parseDefaults(array|string $defaults): array
     {
-        if (!is_string($defaults)) {
-            return $defaults;
+        if (is_string($defaults)) {
+            return Router::parseRoutePath($defaults);
         }
 
-        return Router::parseRoutePath($defaults);
+        return $defaults;
     }
 
     /**
@@ -1020,7 +1017,7 @@ class RouteBuilder
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group
-     * @param array<string> $middlewareNames Names of the middleware
+     * @param list<string> $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup(string $name, array $middlewareNames)

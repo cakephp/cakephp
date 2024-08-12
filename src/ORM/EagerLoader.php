@@ -400,7 +400,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (empty($this->_containments) && $this->_matching === null) {
+        if (!$this->_containments && $this->_matching === null) {
             return;
         }
 
@@ -557,10 +557,9 @@ class EagerLoader
     protected function _correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
-        $currentStrategy = $config['strategy'] ??
-            'join';
+        $currentStrategy = $config['strategy'] ?? Association::STRATEGY_JOIN;
 
-        if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
+        if (!$loadable->canBeJoined() || $currentStrategy !== Association::STRATEGY_JOIN) {
             return;
         }
 
@@ -614,13 +613,13 @@ class EagerLoader
      */
     public function loadExternal(SelectQuery $query, array $results): array
     {
-        if (empty($results)) {
+        if (!$results) {
             return $results;
         }
 
         $table = $query->getRepository();
         $external = $this->externalAssociations($table);
-        if (empty($external)) {
+        if (!$external) {
             return $results;
         }
 
@@ -792,7 +791,7 @@ class EagerLoader
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
-        if (empty($collectKeys)) {
+        if (!$collectKeys) {
             return [];
         }
 

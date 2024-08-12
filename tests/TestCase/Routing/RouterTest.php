@@ -3499,8 +3499,6 @@ class RouterTest extends TestCase
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Test the url() function which wraps Router::url()
      *
      * @return void
@@ -3521,7 +3519,6 @@ class RouterTest extends TestCase
     }
 
     /**
->>>>>>> origin/4.next
      * Helper to create a request for a given URL and method.
      *
      * @param string $url The URL to create a request for

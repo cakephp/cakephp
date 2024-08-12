@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -42,26 +43,11 @@ require_once __DIR__ . '/stubs.php';
 class ValidationTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $_appEncoding;
-
-    /**
-     * setUp method
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->_appEncoding = Configure::read('App.encoding');
-    }
-
-    /**
      * tearDown method
      */
     public function tearDown(): void
     {
         parent::tearDown();
-        Configure::write('App.encoding', $this->_appEncoding);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 
@@ -1542,7 +1528,6 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::time('00:00'));
         $this->assertTrue(Validation::time('23:59'));
-        $this->assertFalse(Validation::time('24:00'));
         $this->assertTrue(Validation::time('12:00'));
         $this->assertTrue(Validation::time('12:01'));
         $this->assertTrue(Validation::time('12:01am'));
@@ -1551,8 +1536,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1 pm'));
         $this->assertTrue(Validation::time('1 PM'));
         $this->assertTrue(Validation::time('01:00'));
-        $this->assertFalse(Validation::time('1:00'));
         $this->assertTrue(Validation::time('1:00pm'));
+        $this->assertTrue(Validation::time(new ChronosTime()));
+
+        $this->assertFalse(Validation::time('1:00'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
         $this->assertFalse(Validation::time('00'));
@@ -1561,6 +1548,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::time('9'));
         $this->assertFalse(Validation::time('10'));
         $this->assertFalse(Validation::time('23'));
+        $this->assertFalse(Validation::time('24:00'));
     }
 
     /**
@@ -1659,6 +1647,8 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime(): void
     {
+        $this->assertTrue(Validation::localizedTime(new ChronosTime()));
+
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
         $this->assertFalse(Validation::localizedTime(1, 'date'));
@@ -2019,19 +2009,22 @@ class ValidationTest extends TestCase
 
     public function testEnum(): void
     {
-        $this->assertTrue(Validation::enum(ArticleStatus::PUBLISHED, ArticleStatus::class));
+        $this->assertTrue(Validation::enum(ArticleStatus::Published, ArticleStatus::class));
         $this->assertTrue(Validation::enum('Y', ArticleStatus::class));
 
-        $this->assertTrue(Validation::enum(Priority::LOW, Priority::class));
+        $this->assertTrue(Validation::enum(Priority::Low, Priority::class));
         $this->assertTrue(Validation::enum(1, Priority::class));
 
-        $this->assertFalse(Validation::enum(Priority::LOW, ArticleStatus::class));
+        $this->assertFalse(Validation::enum(Priority::Low, ArticleStatus::class));
         $this->assertFalse(Validation::enum(1, ArticleStatus::class));
         $this->assertFalse(Validation::enum('non-existent', ArticleStatus::class));
 
-        $this->assertFalse(Validation::enum(ArticleStatus::PUBLISHED, Priority::class));
+        $this->assertFalse(Validation::enum(ArticleStatus::Published, Priority::class));
         $this->assertFalse(Validation::enum('wrong type', Priority::class));
         $this->assertFalse(Validation::enum(123, Priority::class));
+
+        $this->assertTrue(Validation::enum('1', Priority::class));
+        $this->assertFalse(Validation::enum('a1', Priority::class));
     }
 
     public function testEnumNonBacked(): void

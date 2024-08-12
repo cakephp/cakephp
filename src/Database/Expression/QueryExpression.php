@@ -72,7 +72,7 @@ class QueryExpression implements ExpressionInterface, Countable
     ) {
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
-        if (!empty($conditions)) {
+        if ($conditions) {
             $this->add($conditions, $this->getTypeMap()->getTypes());
         }
     }

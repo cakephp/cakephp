@@ -514,7 +514,7 @@ class ConsoleIo
         }
 
         $optionsText = '';
-        if (isset($options)) {
+        if ($options !== null) {
             $optionsText = " $options ";
         }
 

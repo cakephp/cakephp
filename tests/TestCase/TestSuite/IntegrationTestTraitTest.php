@@ -233,6 +233,28 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test for issue #17612 - skip adding tokens for GET without data.
+     */
+    public function testAddTokenInGetRequest(): void
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithoutTokens = $this->_buildRequest('tasks/view', 'GET');
+
+        $this->assertArrayNotHasKey('_Token', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('csrfToken', $requestWithoutTokens['cookies']);
+
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithTokens = $this->_buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
+
+        $this->assertArrayHasKey('_Token', $requestWithTokens['post']);
+        $this->assertArrayHasKey('csrfToken', $requestWithTokens['cookies']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithTokens['post']);
+    }
+
+    /**
      * Test building a request, with query parameters
      */
     public function testRequestBuildingQueryParameters(): void
@@ -741,7 +763,10 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertCookieNotSet(): void
     {
         $this->cookie('test', 'value');
-        $this->get('/cookie_component_test/remove_cookie/test');
+        $this->get('/posts/index');
+        $this->assertCookieNotSet('test');
+
+        $this->get('/posts/redirectWithCookie');
         $this->assertCookieNotSet('test');
     }
 
@@ -774,6 +799,9 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/posts/secretCookie');
         $this->assertCookieIsSet('secrets');
+
+        $this->get('/posts/redirectWithCookie');
+        $this->assertCookieIsSet('remember');
     }
 
     /**
@@ -818,6 +846,20 @@ class IntegrationTestTraitTest extends TestCase
         $data = [
             'title' => 'Some title',
             'body' => 'Some text',
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action.
+     */
+    public function testPostSecuredFormNumericField(): void
+    {
+        $this->enableSecurityToken();
+        $data = [
+            '123456789' => 'Some text',
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();

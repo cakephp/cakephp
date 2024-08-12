@@ -48,6 +48,10 @@ use function Cake\I18n\__d;
  * @method string email(string $fieldName, array $options = []) Creates input of type email.
  * @method string password(string $fieldName, array $options = []) Creates input of type password.
  * @method string search(string $fieldName, array $options = []) Creates input of type search.
+ * @method string day(string $fieldName, array $options = []) Creates input of type day.
+ * @method string hour(string $fieldName, array $options = []) Creates input of type hour.
+ * @method string minute(string $fieldName, array $options = []) Creates input of type minute.
+ * @method string meridian(string $fieldName, array $options = []) Creates input of type meridian.
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/5/en/views/helpers/form.html
@@ -235,7 +239,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $supportedValueSources = ['context', 'data', 'query'];
 
@@ -470,7 +474,7 @@ class FormHelper extends Helper
             $append .= $this->_csrfField();
         }
 
-        if (!empty($append)) {
+        if ($append) {
             $append = $templater->format('hiddenBlock', ['content' => $append]);
         }
 
@@ -654,13 +658,18 @@ class FormHelper extends Helper
      * Add to the list of fields that are currently unlocked.
      *
      * Unlocked fields are not included in the form protection field hash.
+     * It will be no-op if the FormProtectionComponent is not loaded in the controller.
      *
      * @param string $name The dot separated name for the field.
      * @return $this
      */
     public function unlockField(string $name)
     {
-        $this->getFormProtector()->unlockField($name);
+        try {
+            $this->getFormProtector()->unlockField($name);
+        } catch (CakeException) {
+            // Ignore exception when the FormProtector is not created (FormProtectionComponent is not loaded).
+        }
 
         return $this;
     }
@@ -1359,7 +1368,8 @@ class FormHelper extends Helper
         /** @var \BackedEnum $case */
         foreach ($enumClass::cases() as $case) {
             $hasLabel = $case instanceof EnumLabelInterface || method_exists($case, 'label');
-            $values[$case->value] = $hasLabel ? $case->label() : $case->name;
+            $values[$case->value] = $hasLabel ? $case->label()
+                : Inflector::humanize(Inflector::underscore($case->name));
         }
 
         return $values;
@@ -1420,9 +1430,13 @@ class FormHelper extends Helper
             $options['templateVars']['customValidityMessage'] = $message;
 
             if ($this->getConfig('autoSetCustomValidity')) {
+                $condition = 'this.value';
+                if ($options['type'] === 'checkbox') {
+                    $condition = 'this.checked';
+                }
                 $options['data-validity-message'] = $message;
                 $options['oninvalid'] = "this.setCustomValidity(''); "
-                    . 'if (!this.value) this.setCustomValidity(this.dataset.validityMessage)';
+                    . "if (!{$condition}) this.setCustomValidity(this.dataset.validityMessage)";
                 $options['oninput'] = "this.setCustomValidity('')";
             }
         }
@@ -1647,7 +1661,7 @@ class FormHelper extends Helper
      */
     public function __call(string $method, array $params): string
     {
-        if (empty($params)) {
+        if (!$params) {
             throw new CakeException(sprintf('Missing field name for `FormHelper::%s`.', $method));
         }
         $options = $params[1] ?? [];
@@ -2475,7 +2489,7 @@ class FormHelper extends Helper
      */
     protected function _getContext(mixed $data = []): ContextInterface
     {
-        if (isset($this->_context) && empty($data)) {
+        if ($this->_context !== null && !$data) {
             return $this->_context;
         }
         $data += ['entity' => null];
@@ -2571,7 +2585,7 @@ class FormHelper extends Helper
     /**
      * Validate value sources.
      *
-     * @param array<string> $sources A list of strings identifying a source.
+     * @param list<string> $sources A list of strings identifying a source.
      * @return void
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */

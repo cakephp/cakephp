@@ -40,7 +40,7 @@ class Route
     /**
      * An array of additional parameters for the Route.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     public array $options = [];
 
@@ -83,7 +83,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_extensions = [];
 
@@ -97,7 +97,7 @@ class Route
     /**
      * Valid HTTP methods.
      *
-     * @var array<string>
+     * @var list<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
@@ -146,7 +146,7 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param array<string> $extensions The extensions to set.
+     * @param list<string> $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array $extensions)
@@ -169,7 +169,7 @@ class Route
     /**
      * Set the accepted HTTP methods for this route.
      *
-     * @param array<string> $methods The HTTP methods to accept.
+     * @param list<string> $methods The HTTP methods to accept.
      * @return $this
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
@@ -183,8 +183,8 @@ class Route
     /**
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
-     * @param array<string>|string $methods Methods.
-     * @return array<string>|string
+     * @param list<string>|string $methods Methods.
+     * @return list<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods(array|string $methods): array|string
@@ -209,7 +209,7 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param array<string> $patterns The patterns to apply to routing elements
+     * @param array<string, string> $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns)
@@ -250,7 +250,7 @@ class Route
     }
 
     /**
-     * Set the names of parameters that will persisted automatically
+     * Set the names of parameters that will be persisted automatically
      *
      * Persistent parameters allow you to define which route parameters should be automatically
      * included when generating new URLs. You can override persistent parameters
@@ -375,7 +375,7 @@ class Route
      */
     public function getName(): string
     {
-        if (!empty($this->_name)) {
+        if ($this->_name) {
             return $this->_name;
         }
         $name = '';
@@ -495,7 +495,7 @@ class Route
             unset($route['_trailing_']);
         }
 
-        if (!empty($ext)) {
+        if ($ext) {
             $route['_ext'] = $ext;
         }
 
@@ -575,7 +575,7 @@ class Route
         $urldecode = $this->options['_urldecode'] ?? true;
 
         foreach ($args as $param) {
-            if (empty($param) && $param !== '0') {
+            if (!$param && $param !== '0') {
                 continue;
             }
             $pass[] = $urldecode ? rawurldecode($param) : $param;
@@ -619,7 +619,7 @@ class Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        if (empty($this->_compiledRoute)) {
+        if (!$this->_compiledRoute) {
             $this->compile();
         }
         $defaults = $this->defaults;
@@ -731,7 +731,7 @@ class Route
         }
 
         // check patterns for routed params
-        if (!empty($this->options)) {
+        if ($this->options) {
             foreach ($this->options as $key => $pattern) {
                 if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
                     return null;
@@ -844,7 +844,7 @@ class Route
         if (!empty($params['_ext'])) {
             $out .= '.' . $params['_ext'];
         }
-        if (!empty($query)) {
+        if ($query) {
             $out .= rtrim('?' . http_build_query($query), '?');
         }
 

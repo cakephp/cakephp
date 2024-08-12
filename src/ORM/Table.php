@@ -338,6 +338,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
         $this->_eventManager = $eventManager ?: new EventManager();
+        /** @var \Cake\ORM\BehaviorRegistry $behaviors */
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
         $this->_behaviors->setTable($this);
         $this->_associations = $associations ?: new AssociationCollection();
@@ -1406,12 +1407,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField']
         );
 
-        return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->combine(
-                $options['keyField'],
-                $options['valueField'],
-                $options['groupField']
-            ));
+        return $query->formatResults(fn (CollectionInterface $results) => $results->combine(
+            $options['keyField'],
+            $options['valueField'],
+            $options['groupField']
+        ));
     }
 
     /**
@@ -1446,8 +1446,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
-        return $query->formatResults(fn (CollectionInterface $results) =>
-            $results->nest($options['keyField'], $options['parentField'], $nestingKey));
+        return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
+            $options['keyField'],
+            $options['parentField'],
+            $nestingKey
+        ));
     }
 
     /**
@@ -1459,7 +1462,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * composite keys when comparing values.
      *
      * @param array<string, mixed> $options the original options passed to a finder
-     * @param array<string> $keys the keys to check in $options to build matchers from
+     * @param list<string> $keys the keys to check in $options to build matchers from
      * the associated value
      * @return array<string, mixed>
      */
@@ -1939,7 +1942,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
@@ -1990,7 +1993,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the entity contains errors or the save was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
-     * @param array $options The options to use when saving.
+     * @param array<string, mixed> $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @see \Cake\ORM\Table::save()
@@ -2137,7 +2140,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primary = (array)$this->getPrimaryKey();
-        if (empty($primary)) {
+        if (!$primary) {
             $msg = sprintf(
                 'Cannot insert row in `%s` table, it has no primary key.',
                 $this->getTable()
@@ -2171,7 +2174,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        if (empty($data)) {
+        if (!$data) {
             return false;
         }
 
@@ -2238,7 +2241,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primaryKey = $entity->extract($primaryColumns);
 
         $data = array_diff_key($data, $primaryKey);
-        if (empty($data)) {
+        if (!$data) {
             return $entity;
         }
 
@@ -2271,7 +2274,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @return iterable<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
      * @throws \Exception
      */
@@ -2294,7 +2297,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
@@ -2306,7 +2309,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
      * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
@@ -2327,6 +2330,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         /** @var array<bool> $isNew */
         $isNew = [];
         $cleanupOnFailure = function ($entities) use (&$isNew): void {
+            /** @var iterable<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unset($this->getPrimaryKey());
@@ -2335,6 +2339,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
+        /** @var \Cake\Datasource\EntityInterface|null $failed */
         $failed = null;
         try {
             $this->getConnection()
@@ -2418,7 +2423,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the options used in the delete operation.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param array $options The options for the delete.
+     * @param array<string, mixed> $options The options for the delete.
      * @return bool success
      */
     public function delete(EntityInterface $entity, array $options = []): bool
@@ -2452,7 +2457,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @return iterable<\Cake\Datasource\EntityInterface>|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
@@ -2476,7 +2481,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * error.
      *
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param array $options Options used when calling Table::save() for each entity.
+     * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
@@ -2494,7 +2499,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
-     * @param array $options Options used.
+     * @param array<string, mixed> $options Options used.
      * @return \Cake\Datasource\EntityInterface|null
      */
     protected function _deleteMany(iterable $entities, array $options = []): ?EntityInterface
@@ -2532,7 +2537,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * has no primary key value, application rules checks failed or the delete was aborted by a callback.
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
-     * @param array $options The options for the delete.
+     * @param array<string, mixed> $options The options for the delete.
      * @return true
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete()
@@ -2666,45 +2671,54 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $reflected = new ReflectionFunction($callable);
         $params = $reflected->getParameters();
         $secondParam = $params[1] ?? null;
-        $secondParamType = null;
 
-        if ($args === [] || isset($args[0])) {
-            $secondParamType = $secondParam?->getType();
-            $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
-            // Backwards compatibility of 4.x style finders with signature `findFoo(SelectQuery $query, array $options)`
+        $secondParamType = $secondParam?->getType();
+        $secondParamTypeName = $secondParamType instanceof ReflectionNamedType ? $secondParamType->getName() : null;
+
+        $secondParamIsOptions = (
+            count($params) === 2 &&
+            $secondParam?->name === 'options' &&
+            !$secondParam->isVariadic() &&
+            ($secondParamType === null || $secondParamTypeName === 'array')
+        );
+
+        if (($args === [] || isset($args[0])) && $secondParamIsOptions) {
+            // Backwards compatibility of 4.x style finders
+            // with signature `findFoo(SelectQuery $query, array $options)`
             // called as `find('foo')` or `find('foo', [..])`
-            if (
-                count($params) === 2 &&
-                $secondParam?->name === 'options' &&
-                !$secondParam->isVariadic() &&
-                ($secondParamType === null || $secondParamTypeName === 'array')
-            ) {
-                if (isset($args[0])) {
-                    deprecationWarning(
-                        '5.0.0',
-                        'Using options array for the `find()` call is deprecated.'
-                        . ' Use named arguments instead.'
-                    );
-
-                    $args = $args[0];
-                }
-
-                $query->applyOptions($args);
-
-                return $callable($query, $query->getOptions());
-            }
-
-            // Backwards compatibility for core finders like `findList()` called in 4.x style
-            // with an array `find('list', ['valueField' => 'foo'])` instead of `find('list', valueField: 'foo')`
-            if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+            if (isset($args[0])) {
                 deprecationWarning(
                     '5.0.0',
-                    "Calling `{$reflected->getName()}` finder with options array is deprecated."
-                     . ' Use named arguments instead.'
+                    'Calling finders with options arrays is deprecated.'
+                    . ' Update your finder methods to used named arguments instead.'
                 );
-
                 $args = $args[0];
             }
+            $query->applyOptions($args);
+
+            return $callable($query, $query->getOptions());
+        }
+
+        // Backwards compatibility for 4.x style finders with signatures like
+        // `findFoo(SelectQuery $query, array $options)` called as
+        // `find('foo', key: $value)`.
+        if (!isset($args[0]) && $secondParamIsOptions) {
+            $query->applyOptions($args);
+
+            return $callable($query, $query->getOptions());
+        }
+
+        // Backwards compatibility for core finders like `findList()` called in 4.x
+        // style with an array `find('list', ['valueField' => 'foo'])` instead of
+        // `find('list', valueField: 'foo')`
+        if (isset($args[0]) && is_array($args[0]) && $secondParamTypeName !== 'array') {
+            deprecationWarning(
+                '5.0.0',
+                "Calling `{$reflected->getName()}` finder with options array is deprecated."
+                 . ' Use named arguments instead.'
+            );
+
+            $args = $args[0];
         }
 
         if ($args) {
@@ -2746,7 +2760,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $method = Inflector::underscore($method);
         preg_match('/^find_([\w]+)_by_/', $method, $matches);
-        if (empty($matches)) {
+        if (!$matches) {
             // find_by_ is 8 characters.
             $fields = substr($method, 8);
             $findType = 'all';

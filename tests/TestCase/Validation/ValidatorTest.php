@@ -755,7 +755,9 @@ class ValidatorTest extends TestCase
             'title' => '',
             'otherField' => false,
         ];
-        $this->assertNotEmpty($validator->validate($data));
+        $result = $validator->validate($data);
+        $this->assertNotEmpty($result);
+        $this->assertEquals(['_empty' => 'very required'], $result['title']);
 
         $data = [
             'title' => '',
@@ -2712,10 +2714,10 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->enum('status', ArticleStatus::class);
 
-        $this->assertEmpty($validator->validate(['status' => ArticleStatus::PUBLISHED]));
+        $this->assertEmpty($validator->validate(['status' => ArticleStatus::Published]));
         $this->assertEmpty($validator->validate(['status' => 'Y']));
 
-        $this->assertNotEmpty($validator->validate(['status' => Priority::LOW]));
+        $this->assertNotEmpty($validator->validate(['status' => Priority::Low]));
         $this->assertNotEmpty($validator->validate(['status' => 'wrong type']));
         $this->assertNotEmpty($validator->validate(['status' => 123]));
         $this->assertNotEmpty($validator->validate(['status' => NonBacked::Basic]));

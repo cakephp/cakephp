@@ -42,6 +42,7 @@ use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
 use TestApp\Model\Enum\ArticleStatusLabelInterface;
+use TestApp\Model\Enum\Priority;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -2186,13 +2187,13 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->checkbox('Model.checkbox', ['disabled' => true]);
-        $this->Form->text('Model.text', ['disabled' => true]);
-        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->textarea('Model.textarea', ['disabled' => true]);
         $this->Form->select('Model.select', [1, 2], ['disabled' => true]);
         $this->Form->radio('Model.radio', [1, 2], ['disabled' => [1, 2]]);
         $this->Form->year('Model.year', ['disabled' => true]);
         $this->Form->month('Model.month', ['disabled' => true]);
+        $this->Form->text('Model.text', ['disabled' => true]);
+        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->day('Model.day', ['disabled' => true]);
         $this->Form->hour('Model.hour', ['disabled' => true]);
         $this->Form->minute('Model.minute', ['disabled' => true]);
@@ -2274,6 +2275,22 @@ class FormHelperTest extends TestCase
         $this->Form->hidden('Contact.id', ['value' => 1]);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('1', $result['Contact.id'], 'Hidden input should be secured.');
+    }
+
+    /**
+     * testUnlockFieldWithFormTokenData method
+     *
+     * Test that unlockField() becomes a no-op and does not throw an exception
+     * when called without `formTokenData` being present in the request.
+     *
+     * @return void
+     */
+    public function testUnlockFieldWithFormTokenData(): void
+    {
+        $this->Form->create();
+        $result = $this->Form->unlockField('foo');
+
+        $this->assertSame($this->Form, $result);
     }
 
     /**
@@ -3637,10 +3654,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'PUBLISHED',
+            'Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'UNPUBLISHED',
+            'Unpublished',
             '/option',
             '/select',
             '/div',
@@ -3660,10 +3677,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'Is published',
+            'Is Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            'Is Unpublished',
             '/option',
             '/select',
             '/div',
@@ -3675,20 +3692,36 @@ class FormHelperTest extends TestCase
             EnumType::from(ArticleStatusLabelInterface::class)
         );
 
-        $article = $articlesTable->newEmptyEntity();
-        $this->Form->create($article);
+        $this->Form->create($articlesTable->newEmptyEntity());
         $result = $this->Form->control('published');
+        $this->assertHtml($expected, $result);
+
+        $articlePriosTable = $this->getTableLocator()->get('ArticlePrios');
+        $articlePriosTable->getSchema()->setColumnType(
+            'priority',
+            EnumType::from(Priority::class)
+        );
+
+        $this->Form->create($articlePriosTable->newEmptyEntity());
+        // Select empty by default
+        $result = $this->Form->control('priority', ['empty' => ['' => ' - please select - '], 'default' => '']);
         $expected = [
             'div' => ['class' => 'input select'],
-            'label' => ['for' => 'published'],
-            'Published',
+            'label' => ['for' => 'priority'],
+            'Priority',
             '/label',
-            'select' => ['name' => 'published', 'id' => 'published'],
-            ['option' => ['value' => 'Y']],
-            'Is published',
+            'select' => ['name' => 'priority', 'id' => 'priority'],
+            ['option' => ['value' => '', 'selected' => 'selected']],
+            ' - please select - ',
             '/option',
-            ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            ['option' => ['value' => '1']],
+            'Is Low',
+            '/option',
+            ['option' => ['value' => '2']],
+            'Is Medium',
+            '/option',
+            ['option' => ['value' => '3']],
+            'Is High',
             '/option',
             '/select',
             '/div',
@@ -4566,7 +4599,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->radio('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -4787,11 +4820,11 @@ class FormHelperTest extends TestCase
                 'input' => ['type' => 'hidden', 'name' => 'published', 'value' => '', 'id' => 'published'],
                 ['label' => ['for' => 'published-y']],
                 ['input' => ['type' => 'radio', 'name' => 'published', 'value' => 'Y', 'id' => 'published-y']],
-                'PUBLISHED',
+                'Published',
                 '/label',
                 ['label' => ['for' => 'published-n']],
                 ['input' => ['type' => 'radio', 'name' => 'published', 'value' => 'N', 'id' => 'published-n', 'checked' => 'checked']],
-                'UNPUBLISHED',
+                'Unpublished',
                 '/label',
             '/div',
         ];
@@ -4991,7 +5024,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->select('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -6572,7 +6605,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->hidden('status');
@@ -7811,6 +7844,7 @@ class FormHelperTest extends TestCase
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
+            ->requirePresence('accept_tos')
             ->notBlank('phone');
 
         $table = $this->getTableLocator()->get('Contacts', [
@@ -7875,6 +7909,28 @@ class FormHelperTest extends TestCase
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
             ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('accept_tos', ['type' => 'checkbox']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'accept_tos', 'value' => '0']],
+            'label' => ['for' => 'accept-tos'],
+            [
+                'input' => [
+                    'aria-required' => 'true',
+                    'required' => 'required',
+                    'type' => 'checkbox',
+                    'name' => 'accept_tos',
+                    'id' => 'accept-tos',
+                    'value' => '1',
+                    'data-validity-message' => 'This field cannot be left empty',
+                    'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                    'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.checked) this.setCustomValidity(this.dataset.validityMessage)',
+                ],
+            ],
+            'Accept Tos',
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }

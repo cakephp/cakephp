@@ -116,7 +116,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         } catch (RedirectException $exception) {
             return $this->handleRedirect($exception);
         } catch (Throwable $exception) {
-            return $this->handleException($exception, $request);
+            return $this->handleException($exception, Router::getRequest() ?? $request);
         }
     }
 
@@ -146,9 +146,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
 
         $response = $event->getResult();
         try {
-            if ($response === null) {
-                $response = $renderer->render();
-            }
+            $response ??= $renderer->render();
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);
             }

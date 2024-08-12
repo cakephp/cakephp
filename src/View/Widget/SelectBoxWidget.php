@@ -162,7 +162,7 @@ class SelectBoxWidget extends BasicWidget
         if (!empty($data['empty'])) {
             $options = $this->_emptyValue($data['empty']) + (array)$options;
         }
-        if (empty($options)) {
+        if (!$options) {
             return [];
         }
 
@@ -253,6 +253,7 @@ class SelectBoxWidget extends BasicWidget
         foreach ($options as $key => $val) {
             // Option groups
             $isIterable = is_iterable($val);
+            /** @var \ArrayAccess|array $val */
             if (
                 (
                     !is_int($key) &&
@@ -290,7 +291,7 @@ class SelectBoxWidget extends BasicWidget
             if ($this->_isDisabled((string)$key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
-            if (!empty($templateVars)) {
+            if ($templateVars) {
                 $optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
             }
             $optAttrs['escape'] = $escape;

@@ -151,6 +151,7 @@ class I18n
     {
         $translators = static::translators();
 
+        $currentLocale = null;
         if ($locale) {
             $currentLocale = $translators->getLocale();
             $translators->setLocale($locale);
@@ -164,7 +165,7 @@ class I18n
             ));
         }
 
-        if (isset($currentLocale)) {
+        if ($currentLocale !== null) {
             $translators->setLocale($currentLocale);
         }
 

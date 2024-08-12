@@ -121,7 +121,7 @@ class DatabaseSession implements SessionHandlerInterface
             ->disableHydration()
             ->first();
 
-        if (empty($result)) {
+        if (!$result) {
             return '';
         }
 
@@ -180,10 +180,10 @@ class DatabaseSession implements SessionHandlerInterface
     /**
      * Helper function called on gc for database sessions.
      *
-     * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+     * @param int $max_lifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false The number of deleted sessions on success, or false on failure.
      */
-    public function gc(int $maxlifetime): int|false
+    public function gc(int $max_lifetime): int|false
     {
         return $this->_table->deleteAll(['expires <' => time()]);
     }

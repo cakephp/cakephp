@@ -31,6 +31,9 @@ use function Cake\Core\pluginSplit;
  * related to only one record in the target table.
  *
  * An example of a BelongsTo association would be Article belongs to Author.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsTo extends Association
 {
@@ -134,7 +137,7 @@ class BelongsTo extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 
@@ -173,7 +176,7 @@ class BelongsTo extends Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $msg = 'The `%s` table does not define a primary key. Please set one.';
                 throw new DatabaseException(sprintf($msg, $this->getTarget()->getTable()));
             }

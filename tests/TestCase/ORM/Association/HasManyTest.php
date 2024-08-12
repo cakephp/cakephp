@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\Connection;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -23,6 +25,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
@@ -114,6 +117,13 @@ class HasManyTest extends TestCase
             'Articles__author_id' => 'integer',
         ]);
         $this->autoQuote = $connection->getDriver()->isAutoQuotingEnabled();
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::drop('test_read_write');
+        Log::drop('queries');
     }
 
     /**
@@ -1584,5 +1594,66 @@ class HasManyTest extends TestCase
         $this->assertSame(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
+    }
+
+    public function testEagerLoaderConnectionRole(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        Log::setConfig('queries', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+
+        ConnectionManager::setConfig('test_read_write', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'write' => [
+                'database' => ':memory:',
+                'cached' => 'shared', // used so role configs are unique
+                'log' => true,
+            ],
+            'read' => [
+                'database' => ':memory:',
+                'log' => true,
+            ],
+        ]);
+
+        $connection = ConnectionManager::get('test_read_write');
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+
+        // Create belongs to many relationships with unique table names
+        $driver = $connection->getDriver(Connection::ROLE_WRITE);
+        $driver->execute('CREATE TABLE unique_items (id int PRIMARY KEY, article_id int);');
+        $driver->execute('CREATE TABLE articles (id int PRIMARY KEY);');
+
+        $driver = $connection->getDriver(Connection::ROLE_READ);
+        $driver->execute('CREATE TABLE unique_items (id int PRIMARY KEY, article_id int);');
+        $driver->execute('CREATE TABLE articles (id int PRIMARY KEY);');
+        $driver->execute('INSERT INTO unique_items (id, article_id) VALUES (1, 1)');
+        $driver->execute('INSERT INTO articles (id) VALUES (1)');
+
+        $articles = $this->getTableLocator()->get('Articles')->setConnection($connection);
+        $articles->hasMany('UniqueItems')->setStrategy('select')->getTarget()->setConnection($connection);
+
+        $query = $articles->find();
+        $this->assertSame(Connection::ROLE_WRITE, $query->getConnectionRole(), 'This test assumes select queries still default to write role');
+
+        $results = $query->contain('UniqueItems')->useReadRole()->toArray();
+        $this->assertCount(1, $results);
+        $this->assertCount(1, $results[0]->unique_items);
+        $this->assertSame(1, $results[0]->unique_items[0]->id);
+
+        $logs = Log::engine('queries')->read();
+        $this->assertNotEmpty($logs);
+
+        foreach ($logs as $log) {
+            if (
+                str_contains($log, 'FROM articles') ||
+                str_contains($log, 'FROM unique_items')
+            ) {
+                $this->assertStringContainsString('role=read', $log);
+            }
+        }
     }
 }

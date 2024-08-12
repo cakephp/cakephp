@@ -101,7 +101,7 @@ class Text
         string $leftBound = '(',
         string $rightBound = ')'
     ): array {
-        if (empty($data)) {
+        if (!$data) {
             return [];
         }
 
@@ -158,11 +158,11 @@ class Text
                 $offset = $length + 1;
             }
         }
-        if (empty($results) && !empty($buffer)) {
+        if (!$results && $buffer) {
             $results[] = $buffer;
         }
 
-        if (!empty($results)) {
+        if ($results) {
             return array_map('trim', $results);
         }
 
@@ -199,19 +199,17 @@ class Text
             'before' => ':', 'after' => '', 'escape' => '\\', 'format' => null, 'clean' => false,
         ];
         $options += $defaults;
-        if (empty($data)) {
+        if (!$data) {
             return $options['clean'] ? static::cleanInsert($str, $options) : $str;
         }
 
         $format = $options['format'];
-        if ($format === null) {
-            $format = sprintf(
-                '/(?<!%s)%s%%s%s/',
-                preg_quote($options['escape'], '/'),
-                str_replace('%', '%%', preg_quote($options['before'], '/')),
-                str_replace('%', '%%', preg_quote($options['after'], '/'))
-            );
-        }
+        $format ??= sprintf(
+            '/(?<!%s)%s%%s%s/',
+            preg_quote($options['escape'], '/'),
+            str_replace('%', '%%', preg_quote($options['before'], '/')),
+            str_replace('%', '%%', preg_quote($options['after'], '/'))
+        );
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map('md5', $dataKeys);
@@ -481,7 +479,7 @@ class Text
      */
     public static function highlight(string $text, array|string $phrase, array $options = []): string
     {
-        if (empty($phrase)) {
+        if (!$phrase) {
             return $text;
         }
 
@@ -857,7 +855,7 @@ class Text
      */
     public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '...'): string
     {
-        if (empty($text) || empty($phrase)) {
+        if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
 
@@ -891,7 +889,7 @@ class Text
     /**
      * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
      *
-     * @param array<string> $list The list to be joined.
+     * @param list<string> $list The list to be joined.
      * @param string|null $and The word used to join the last and second last items together with. Defaults to 'and'.
      * @param string $separator The separator used to join all the other items together. Defaults to ', '.
      * @return string The glued together string.
@@ -948,7 +946,7 @@ class Text
             if ($value < 128) {
                 $map[] = $value;
             } else {
-                if (empty($values)) {
+                if (!$values) {
                     $find = $value < 224 ? 2 : 3;
                 }
                 $values[] = $value;
@@ -1097,7 +1095,7 @@ class Text
      */
     public static function transliterate(string $string, Transliterator|string|null $transliterator = null): string
     {
-        if (empty($transliterator)) {
+        if (!$transliterator) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 

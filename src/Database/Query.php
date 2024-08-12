@@ -746,7 +746,6 @@ abstract class Query implements ExpressionInterface, Stringable
 
         /**
          * @var string $alias
-         * @psalm-suppress InvalidArrayOffset
          */
         return [
             $alias => [
@@ -1240,9 +1239,7 @@ abstract class Query implements ExpressionInterface, Stringable
             return $this;
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
+        $this->_parts['order'] ??= new OrderByExpression();
         $this->_conjugate('order', $fields, '', []);
 
         return $this;
@@ -1293,10 +1290,11 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'ASC'));
+        $this->_parts['order'] ??= new OrderByExpression();
+
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'ASC'));
 
         return $this;
     }
@@ -1346,10 +1344,11 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'DESC'));
+        $this->_parts['order'] ??= new OrderByExpression();
+
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'DESC'));
 
         return $this;
     }
@@ -1734,8 +1733,9 @@ abstract class Query implements ExpressionInterface, Stringable
         string $conjunction,
         array $types
     ): void {
+        /** @var \Cake\Database\Expression\QueryExpression $expression */
         $expression = $this->_parts[$part] ?: $this->newExpr();
-        if (empty($append)) {
+        if (!$append) {
             $this->_parts[$part] = $expression;
 
             return;
@@ -1784,7 +1784,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_valueBinder = clone $this->_valueBinder;
         }
         foreach ($this->_parts as $name => $part) {
-            if (empty($part)) {
+            if (!$part) {
                 continue;
             }
             if (is_array($part)) {
@@ -1847,6 +1847,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 '(help)' => 'This is a Query object, to get the results execute or iterate it.',
                 'sql' => $sql,
                 'params' => $params,
+                'role' => $this->connectionRole,
                 'defaultTypes' => $this->getDefaultTypes(),
                 'executed' => (bool)$this->_statement,
             ];

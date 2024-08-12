@@ -404,20 +404,20 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets the rule set for a field
      *
-     * @param string $field name of the field to set
-     * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
+     * @param string $offset name of the field to set
+     * @param \Cake\Validation\ValidationSet|array $value set of rules to apply to field
      * @return void
      */
-    public function offsetSet(mixed $field, mixed $rules): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (!$rules instanceof ValidationSet) {
+        if (!$value instanceof ValidationSet) {
             $set = new ValidationSet();
-            foreach ($rules as $name => $rule) {
+            foreach ($value as $name => $rule) {
                 $set->add($name, $rule);
             }
-            $rules = $set;
+            $value = $set;
         }
-        $this->_fields[$field] = $rules;
+        $this->_fields[$offset] = $value;
     }
 
     /**
@@ -596,7 +596,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return false;
                 }
                 $check = $validator->validate($row, $context['newRecord']);
-                if (!empty($check)) {
+                if ($check) {
                     $errors[$i] = $check;
                 }
             }
@@ -1791,7 +1791,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1832,7 +1832,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.

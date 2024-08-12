@@ -30,7 +30,7 @@ use IntlDateFormatter;
 class DateTimeTest extends TestCase
 {
     /**
-     * @var \Cake\Chronos\ChronosInterface|null
+     * @var \Cake\Chronos\Chronos|null
      */
     protected $now;
 
@@ -412,6 +412,12 @@ class DateTimeTest extends TestCase
         $result = $time->i18nFormat(IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
+
+        // Test with milliseconds
+        $timeMillis = new DateTime('2014-07-06T13:09:01.523000+00:00');
+        $result = $timeMillis->i18nFormat("yyyy-MM-dd'T'HH':'mm':'ss.SSSxxx", null, 'en-US');
+        $expected = '2014-07-06T13:09:01.523+00:00';
+        $this->assertSame($expected, $result);
     }
 
     /**

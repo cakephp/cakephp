@@ -216,7 +216,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveParents(Table $table, EntityInterface $entity, array $associations, array $options = []): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -238,7 +238,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -308,7 +308,7 @@ class AssociationCollection implements IteratorAggregate
         if (!$entity->isDirty($association->getProperty())) {
             return true;
         }
-        if (!empty($nested)) {
+        if ($nested) {
             $options = $nested + $options;
         }
 
@@ -361,7 +361,7 @@ class AssociationCollection implements IteratorAggregate
             $keys = $this->keys();
         }
 
-        if (empty($keys)) {
+        if (!$keys) {
             return [];
         }
 

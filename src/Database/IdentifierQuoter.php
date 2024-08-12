@@ -164,7 +164,7 @@ class IdentifierQuoter
             }
 
             $result = $this->_basicQuoter($contents);
-            if (!empty($result)) {
+            if ($result) {
                 $query->{$part}($result, true);
             }
         }

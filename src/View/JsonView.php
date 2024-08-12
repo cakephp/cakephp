@@ -170,7 +170,7 @@ class JsonView extends SerializedView
                 }
             }
 
-            return !empty($data) ? $data : null;
+            return $data ?: null;
         }
 
         return $this->viewVars[$serialize] ?? null;

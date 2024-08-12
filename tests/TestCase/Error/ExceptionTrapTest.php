@@ -260,7 +260,8 @@ class ExceptionTrapTest extends TestCase
         ob_get_clean();
 
         $logs = Log::engine('test_error')->read();
-        $this->assertEmpty($logs);
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('MissingTemplateException - Failed to render', $logs[0]);
         $this->assertTrue($this->triggered, 'Should have triggered event when skipping logging.');
     }
 
@@ -268,6 +269,22 @@ class ExceptionTrapTest extends TestCase
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
         $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error) {
+            $this->assertEquals(100, $error->getCode());
+            $this->assertStringContainsString('nope', $error->getMessage());
+        });
+        $error = new InvalidArgumentException('nope', 100);
+
+        ob_start();
+        $trap->handleException($error);
+        $out = ob_get_clean();
+
+        $this->assertNotEmpty($out);
+    }
+
+    public function testBeforeRenderEventAborted(): void
+    {
+        $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
+        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
             $this->assertEquals(100, $error->getCode());
             $this->assertStringContainsString('nope', $error->getMessage());
             $event->stopPropagation();
@@ -278,7 +295,7 @@ class ExceptionTrapTest extends TestCase
         $trap->handleException($error);
         $out = ob_get_clean();
 
-        $this->assertNotEmpty($out);
+        $this->assertSame('', $out);
     }
 
     public function testBeforeRenderEventExceptionChanged(): void

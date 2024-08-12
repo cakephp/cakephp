@@ -736,7 +736,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $decorator = $this->_decoratorClass();
 
-        if (!empty($this->_mapReduce)) {
+        if ($this->_mapReduce) {
             foreach ($this->_mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
@@ -747,7 +747,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $result = new $decorator($result);
         }
 
-        if (!empty($this->_formatters)) {
+        if ($this->_formatters) {
             foreach ($this->_formatters as $formatter) {
                 $result = $formatter($result, $this);
             }
@@ -856,7 +856,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param array<string> $excludedFields The un-aliased column names you do not want selected from $table
+     * @param list<string> $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      */
@@ -1078,10 +1078,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $association = $table->getAssociation($name);
             $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
-            if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
+            if (!$primary || $typeMap->type($target->aliasField($primary[0])) === null) {
                 $this->addDefaultTypes($target);
             }
-            if (!empty($nested)) {
+            if ($nested) {
                 $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
             }
         }
@@ -1580,7 +1580,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function _execute(): iterable
     {
         $this->triggerBeforeFind();
-        if ($this->_results) {
+        if ($this->_results !== null) {
             return $this->_results;
         }
 

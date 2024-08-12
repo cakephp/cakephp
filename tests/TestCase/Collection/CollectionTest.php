@@ -34,6 +34,9 @@ use NoRewindIterator;
 use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
+use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
+use TestApp\Model\Enum\Priority;
 use function Cake\Collection\collection;
 
 /**
@@ -706,6 +709,54 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests grouping by an enum key
+     */
+    public function testGroupByEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+            ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+            ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('thing');
+        $expected = [
+            NonBacked::Basic->name => [
+                ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+                ['id' => 3, 'name' => 'baz', 'thing' => NonBacked::Basic],
+            ],
+            NonBacked::Advanced->name => [
+                ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+            ],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
+     * Tests grouping by a backed enum key
+     */
+    public function testGroupByBackedEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+            ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+            ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('thing');
+        $expected = [
+            Priority::Medium->value => [
+                ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+                ['id' => 3, 'name' => 'baz', 'thing' => Priority::Medium],
+            ],
+            Priority::High->value => [
+                ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+            ],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
      * Tests passing an invalid path to groupBy.
      */
     public function testGroupByInvalidPath(): void
@@ -719,6 +770,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot group by path that does not exist or contains a null value.');
+
         $collection->groupBy('missing');
     }
 
@@ -779,6 +831,46 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests indexBy with an enum
+     */
+    public function testIndexByEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+            ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->indexBy(function ($element) {
+            return $element['thing'];
+        });
+        $expected = [
+            NonBacked::Basic->name => ['id' => 1, 'name' => 'foo', 'thing' => NonBacked::Basic],
+            NonBacked::Advanced->name => ['id' => 2, 'name' => 'bar', 'thing' => NonBacked::Advanced],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
+     * Tests indexBy with a backed enum
+     */
+    public function testIndexByBackedEnum(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+            ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+        ];
+        $collection = new Collection($items);
+        $grouped = $collection->indexBy(function ($element) {
+            return $element['thing'];
+        });
+        $expected = [
+            Priority::Medium->value => ['id' => 1, 'name' => 'foo', 'thing' => Priority::Medium],
+            Priority::High->value => ['id' => 2, 'name' => 'bar', 'thing' => Priority::High],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    /**
      * Tests indexBy with a deep property
      */
     public function testIndexByDeep(): void
@@ -811,6 +903,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+
         $collection->indexBy('missing');
     }
 
@@ -828,6 +921,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+
         $collection->indexBy(function ($e) {
             return null;
         });
@@ -1267,6 +1361,21 @@ class CollectionTest extends TestCase
 
         $collection = (new Collection($items))->combine('id', 'crazy');
         $this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
+
+        $collection = (new Collection([
+            ['amount' => 10, 'article_status' => ArticleStatus::from('Y')],
+            ['amount' => 2, 'article_status' => ArticleStatus::from('N')],
+        ]))->combine('article_status', 'amount');
+        $this->assertEquals(['Y' => 10, 'N' => 2], $collection->toArray());
+    }
+
+    public function testCombineWithNonBackedEnum(): void
+    {
+        $collection = (new Collection([
+            ['amount' => 10, 'type' => NonBacked::Basic],
+            ['amount' => 2, 'type' => NonBacked::Advanced],
+        ]))->combine('type', 'amount');
+        $this->assertEquals(['Basic' => 10, 'Advanced' => 2], $collection->toArray());
     }
 
     public function testCombineNullKey(): void
@@ -1279,6 +1388,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+
         (new Collection($items))->combine('id', 'name');
     }
 
@@ -1292,6 +1402,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot group by path that does not exist or contains a null value');
+
         (new Collection($items))->combine('id', 'name', 'parent');
     }
 
@@ -1305,6 +1416,7 @@ class CollectionTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot index by path that does not exist or contains a null value');
+
         (new Collection($items))->combine('id', 'name', 'parent');
     }
 
@@ -2208,8 +2320,10 @@ class CollectionTest extends TestCase
     public function testLastNtWithNegative($data): void
     {
         $collection = new Collection($data);
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The takeLast method requires a number greater than 0.');
+
         $collection->takeLast(-1)->toArray();
     }
 
@@ -2562,6 +2676,7 @@ class CollectionTest extends TestCase
     public function testCartesianProductMultidimensionalArray(): void
     {
         $this->expectException(LogicException::class);
+
         $collection = new Collection([
             [
                 'names' => [
@@ -2604,6 +2719,7 @@ class CollectionTest extends TestCase
     public function testTransposeUnEvenLengthShouldThrowException(): void
     {
         $this->expectException(LogicException::class);
+
         $collection = new Collection([
             ['Products', '2012', '2013', '2014'],
             ['Product A', '200', '100', '50'],

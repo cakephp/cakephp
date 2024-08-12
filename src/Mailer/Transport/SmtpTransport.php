@@ -216,7 +216,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Parses and stores the response lines in `'code' => 'message'` format.
      *
-     * @param array<string> $responseLines Response lines to parse.
+     * @param list<string> $responseLines Response lines to parse.
      * @return void
      */
     protected function _bufferResponseLines(array $responseLines): void
@@ -471,7 +471,7 @@ class SmtpTransport extends AbstractTransport
     protected function _prepareFromAddress(Message $message): array
     {
         $from = $message->getReturnPath();
-        if (empty($from)) {
+        if (!$from) {
             $from = $message->getFrom();
         }
 
@@ -504,7 +504,7 @@ class SmtpTransport extends AbstractTransport
         $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
-            if (!empty($line) && ($line[0] === '.')) {
+            if (str_starts_with($line, '.')) {
                 $messages[] = '.' . $line;
             } else {
                 $messages[] = $line;
